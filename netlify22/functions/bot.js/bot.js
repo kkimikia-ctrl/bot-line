@@ -1,6 +1,7 @@
 exports.handler = async function(event, context) {
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: "Hello from LINE bot!" })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "success", message: "Webhook verified!" })
   };
 };
