@@ -1,8 +1,8 @@
 const line = require('@line/bot-sdk');
 
 const config = {
-  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.LINE_CHANNEL_SECRET
+  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+  channelSecret: process.env.CHANNEL_SECRET
 };
 
 const client = new line.Client(config);
@@ -16,13 +16,13 @@ exports.handler = async function(event, context) {
     const body = event.body;
     const data = JSON.parse(body);
 
-    // Se o LINE mandar um evento de teste (com array de eventos vazio), responde 200 direto
-    if (data.events && data.events.length === 0) {
+    // Se o LINE mandar um evento de teste ou eventos vazios, responde 200 direto
+    if (!data.events || data.events.length === 0) {
       return { statusCode: 200, body: JSON.stringify({ status: 'ok' }) };
     }
 
     const events = data.events;
-    
+
     await Promise.all(events.map(async (webhookEvent) => {
       if (webhookEvent.type === 'message' && webhookEvent.message.type === 'text') {
         const echo = { type: 'text', text: 'Recebi: ' + webhookEvent.message.text };
@@ -32,6 +32,6 @@ exports.handler = async function(event, context) {
 
     return { statusCode: 200, body: JSON.stringify({ status: 'success' }) };
   } catch (err) {
-    return { statusCode: 200, body: JSON.stringify({ error: err.toString() }) };
+    return { statusCode: 200, body: JSON.stringify({ status: 'ok' }) };
   }
-};
+};s
