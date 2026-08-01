@@ -1,8 +1,8 @@
 const line = require('@line/bot-sdk');
 
 const config = {
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.CHANNEL_SECRET
+  channelAccessToken: 'SEU_CHANNEL_ACCESS_TOKEN_AQUI',
+  channelSecret: 'SEU_CHANNEL_SECRET_AQUI'
 };
 
 const client = new line.Client(config);
@@ -16,7 +16,6 @@ exports.handler = async function(event, context) {
     const body = event.body;
     const data = JSON.parse(body);
 
-    // Se o LINE mandar um evento de teste ou eventos vazios, responde 200 direto
     if (!data.events || data.events.length === 0) {
       return { statusCode: 200, body: JSON.stringify({ status: 'ok' }) };
     }
@@ -34,4 +33,4 @@ exports.handler = async function(event, context) {
   } catch (err) {
     return { statusCode: 200, body: JSON.stringify({ status: 'ok' }) };
   }
-};s
+};
