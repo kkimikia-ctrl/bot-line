@@ -6,131 +6,141 @@
     <title>Ajuda JP - Início</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
-            color: #333;
         }
         .header {
             background-color: #0047ab;
             color: white;
-            padding: 15px 20px;
+            padding: 16px;
             font-size: 18px;
             font-weight: bold;
         }
         .container {
-            padding: 20px;
+            padding: 16px;
             max-width: 600px;
             margin: 0 auto;
         }
         .card {
             background: white;
-            padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        .card h3 {
-            margin-top: 0;
-            font-size: 16px;
-            color: #222;
-        }
-        .card p {
-            font-size: 13px;
-            color: #666;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         textarea {
             width: 100%;
-            height: 80px;
-            padding: 10px;
+            height: 90px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            box-sizing: border-box;
+            padding: 10px;
+            font-size: 14px;
             resize: none;
-            font-family: inherit;
+            box-sizing: border-box;
+            margin-bottom: 12px;
         }
-        .btn-primary {
+        .btn {
             background-color: #2563eb;
             color: white;
             border: none;
-            width: 100%;
-            padding: 12px;
             border-radius: 8px;
+            padding: 12px;
+            width: 100%;
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
+        }
+        .resultado {
+            margin-top: 12px;
+            padding: 10px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #166534;
+            display: none;
         }
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
         }
         .menu-card {
             background: white;
-            padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            padding: 20px;
             text-align: center;
-            cursor: pointer;
-            border: 1px solid #eee;
-        }
-        .menu-card h4 {
-            margin: 10px 0 5px 0;
-            font-size: 14px;
-            color: #111;
-        }
-        .menu-card span {
-            font-size: 11px;
-            color: #888;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        Ajuda JP - Início
-    </div>
+    <div class="header">Ajuda JP - Início</div>
 
     <div class="container">
         <!-- Bloco de Tradução -->
         <div class="card">
             <h3>📷 Tradução de Texto e Fotos</h3>
-            <p>Envie a foto de uma carta, receita ou documento japonês.</p>
-            <textarea placeholder="Digite aqui o texto em japonês ou descreva o que deseja traduzir..."></textarea>
-            <button class="btn-primary" onclick="enviarTraducao()">Enviar para Tradução no LINE</button>
+            <p style="font-size: 13px; color: #666;">Digite o texto em japonês ou português para traduzir na hora:</p>
+            
+            <textarea id="textoInput" placeholder="Digite aqui o texto em japonês ou português..."></textarea>
+            
+            <button class="btn" onclick="traduzirTexto()">Traduzir Agora</button>
+            
+            <div id="resultadoBox" class="resultado"></div>
         </div>
 
-        <!-- Grade de Botões / Funcionalidades -->
+        <!-- Menu de Atalhos -->
         <div class="grid">
-            <div class="menu-card" onclick="alert('Abrindo Chamar Tradutor')">
-                <span style="font-size: 24px;">📞</span>
-                <h4>Chamar Tradutor</h4>
-                <span>Prefeitura / Hospital</span>
+            <div class="menu-card">
+                <h4>📞 Tradutor</h4>
+                <p style="font-size: 12px; color: #777;">Prefeitura / Hospital</p>
             </div>
-            <div class="menu-card" onclick="alert('Abrindo Minha Carteira')">
-                <span style="font-size: 24px;">💰</span>
-                <h4>Minha Carteira</h4>
-                <span>Saldo e Ganhos</span>
+            <div class="menu-card">
+                <h4>💰 Carteira</h4>
+                <p style="font-size: 12px; color: #777;">Saldo e Ganhos</p>
             </div>
-            <div class="menu-card" onclick="alert('Abrindo Entretenimento')">
-                <span style="font-size: 24px;">🎮</span>
-                <h4>Entretenimento</h4>
-                <span>Lives e Aulas</span>
+            <div class="menu-card">
+                <h4>🎮 Entretenimento</h4>
+                <p style="font-size: 12px; color: #777;">Lives e Aulas</p>
             </div>
-            <div class="menu-card" onclick="alert('Abrindo Prestador de Serviço')">
-                <span style="font-size: 24px;">📋</span>
-                <h4>Prest. de Serviço</h4>
-                <span>Lojas, Imobiliárias</span>
+            <div class="menu-card">
+                <h4>📋 Serviços</h4>
+                <p style="font-size: 12px; color: #777;">Lojas, Imobiliárias</p>
             </div>
         </div>
     </div>
 
     <script>
-        function enviarTraducao() {
-            alert("Função de envio integrada ao LINE!");
+        async function traduzirTexto() {
+            const texto = document.getElementById('textoInput').value;
+            const box = document.getElementById('resultadoBox');
+
+            if (!texto.trim()) {
+                alert('Digite algum texto primeiro!');
+                return;
+            }
+
+            box.style.display = 'block';
+            box.innerText = 'Traduzindo...';
+
+            try {
+                const resposta = await fetch('/api/traduzir', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto })
+                });
+
+                const dados = await resposta.json();
+                box.innerText = 'Tradução: ' + dados.traducao;
+            } catch (e) {
+                box.innerText = 'Erro ao traduzir. Tente novamente.';
+            }
         }
     </script>
+
 </body>
 </html>
