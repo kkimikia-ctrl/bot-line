@@ -1,8 +1,9 @@
 const crypto = require('crypto');
+const https = require('https');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
-    return res.status(200).json({ status: 'ok', message: 'Endpoint ativo para o LINE' });
+    return res.status(200).json({ status: 'ok', message: 'Endpoint ativo' });
   }
 
   const events = req.body.events;
@@ -11,14 +12,12 @@ module.exports = async (req, res) => {
   }
 
   for (const event of events) {
-    // Aqui é onde o bot identifica o que o usuário fez (mandou mensagem, clicou em botão, etc.)
     if (event.type === 'message' && event.message.type === 'text') {
-      const userMessage = event.message.text.trim();
+      const userMessage = event.message.text.trim().toLowerCase();
       const replyToken = event.replyToken;
 
-      // Exemplo simples: Se o cliente mandar "tradutor" ou "ajuda", o bot inicia o fluxo
-      if (userMessage.toLowerCase() === 'tradutor' || userMessage.toLowerCase() === 'chamar tradutor') {
-        // Aqui vamos enviar as opções do questionário (Prefeitura, Escola, Imigração, etc.)
+      // Responde quando o usuário mandar "tradutor" ou "ajuda"
+      if (userMessage === 'tradutor' || userMessage === 'chamar tradutor' || userMessage === 'ajuda') {
         await sendQuestionnaire(replyToken);
       }
     }
@@ -27,8 +26,49 @@ module.exports = async (req, res) => {
   return res.status(200).json({ status: 'success' });
 };
 
-// Função para enviar o questionário (usaremos a API do LINE para responder)
 async function sendQuestionnaire(replyToken) {
-  // Vamos configurar as perguntas e botões interativos aqui
-  console.log('Enviando questionário para o token:', replyToken);
+  const token = process.env.LINE_ACCESS_TOKEN;
+  
+  const payload = JSON.stringify({
+    replyToken: replyToken,
+    messages: [
+      {
+        type: "template",
+        altText: "Chamada de Tradutor - Escolha o local",
+        template: {
+          type: "buttons",
+          title: "AjudaJP - Tradutor",
+          text: "Onde será o atendimento?",
+          actions: [
+            { type: "message", label: "Prefeitura", text: "Local: Prefeitura" },
+            { type: "message", label: "Imigração", text: "Local: Imigração" },
+            { type: "message", label: "Escola", text: "Local: Escola" },
+            { type: "message", label: "Outros", text: "Local: Outros" }
+          ]
+        }
+      }
+    ]
+  });
+
+  const options = {
+    hostname: 'api.line.me',
+    path: '/v2/bot/message/reply',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'Content-Length': Buffer.byteLength(payload)
+    }
+  };
+
+  return new Promise((resolve) => {
+    const lineReq = https.request(options, (lineRes) => {
+      let data = '';
+      lineRes.on('data', chunk => data += chunk);
+      lineRes.on('end', () => resolve(data));
+    });
+    lineReq.on('error', () => resolve(null));
+    lineReq.write(payload);
+    lineReq.end();
+  });
 }
