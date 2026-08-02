@@ -6,7 +6,8 @@ module.exports = async (req, res) => {
     return res.status(200).json({ status: 'ok', message: 'Endpoint ativo' });
   }
 
-  const events = req.body.events;
+  const const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+const events = body && body.events;
   if (!events || !Array.isArray(events)) {
     return res.status(200).json({ status: 'ok' });
   }
