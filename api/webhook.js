@@ -2,7 +2,7 @@ const https = require('https');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
-    return res.status(200).json({ status: 'ok', message: 'Endpoint ativo' });
+    return res.status(200).json({ status: 'ok', message: 'Webhook ativo e pronto!' });
   }
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
@@ -18,18 +18,10 @@ module.exports = async (req, res) => {
       const lowerMsg = userMessage.toLowerCase();
       const replyToken = event.replyToken;
 
-      // Respostas baseadas nos botões da sua interface
-      if (lowerMsg.includes('chamar tradutor')) {
-        await replyText(replyToken, "Modo Tradutor ativado. Envie a foto de uma carta/documento ou digite o texto em japonês ou português para traduzirmos.");
-      } else if (lowerMsg.includes('minha carteira') || lowerMsg.includes('sldo')) {
-        await replyText(replyToken, "Aqui você poderá consultar seu saldo e ganhos.");
-      } else if (lowerMsg.includes('entretenimento')) {
-        await replyText(replyToken, "Bem-vindo à seção de entretenimento, lives e aulas!");
-      } else if (lowerMsg.includes('prest') || lowerMsg.includes('serviço')) {
-        await replyText(replyToken, "Aqui estão as lojas, imobiliárias e prestadores de serviço disponíveis.");
+      if (lowerMsg.includes('tradutor')) {
+        await replyText(replyToken, "Modo Tradutor ativado! Envie o texto para traduzirmos.");
       } else {
-        // Tradução automática caso digite qualquer outro texto livre
-        await replyText(replyToken, `[AjudaJP Tradução]: Recebido "${userMessage}". Processando tradução...`);
+        await replyText(replyToken, `Mensagem recebida: "${userMessage}"`);
       }
     }
   }
