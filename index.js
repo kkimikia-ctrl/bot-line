@@ -1,7 +1,3 @@
-module.exports = async (req, res) => {
-  if (req.method === 'POST') {
-    res.status(200).json({ status: 'success' });
-  } else {
-    res.status(200).json({ message: 'Bot está rodando!' });
-  }
+module.exports = (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Webhook ativo com sucesso!' });
 };
