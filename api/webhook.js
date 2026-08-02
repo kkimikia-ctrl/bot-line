@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 const https = require('https');
 
 module.exports = async (req, res) => {
@@ -15,11 +14,22 @@ module.exports = async (req, res) => {
 
   for (const event of events) {
     if (event.type === 'message' && event.message.type === 'text') {
-      const userMessage = event.message.text.trim().toLowerCase();
+      const userMessage = event.message.text.trim();
+      const lowerMsg = userMessage.toLowerCase();
       const replyToken = event.replyToken;
 
-      if (userMessage === 'tradutor' || userMessage === 'chamar tradutor' || userMessage === 'ajuda') {
-        await sendQuestionnaire(replyToken);
+      // Respostas baseadas nos botões da sua interface
+      if (lowerMsg.includes('chamar tradutor')) {
+        await replyText(replyToken, "Modo Tradutor ativado. Envie a foto de uma carta/documento ou digite o texto em japonês ou português para traduzirmos.");
+      } else if (lowerMsg.includes('minha carteira') || lowerMsg.includes('sldo')) {
+        await replyText(replyToken, "Aqui você poderá consultar seu saldo e ganhos.");
+      } else if (lowerMsg.includes('entretenimento')) {
+        await replyText(replyToken, "Bem-vindo à seção de entretenimento, lives e aulas!");
+      } else if (lowerMsg.includes('prest') || lowerMsg.includes('serviço')) {
+        await replyText(replyToken, "Aqui estão as lojas, imobiliárias e prestadores de serviço disponíveis.");
+      } else {
+        // Tradução automática caso digite qualquer outro texto livre
+        await replyText(replyToken, `[AjudaJP Tradução]: Recebido "${userMessage}". Processando tradução...`);
       }
     }
   }
@@ -27,39 +37,11 @@ module.exports = async (req, res) => {
   return res.status(200).json({ status: 'success' });
 };
 
-async function sendQuestionnaire(replyToken) {
+async function replyText(replyToken, textMessage) {
   const token = process.env.LINE_ACCESS_TOKEN;
-
   const payload = JSON.stringify({
     replyToken: replyToken,
-    messages: [
-      {
-        type: "template",
-        altText: "Chamada de Tradutor - Escolha o local",
-        template: {
-          type: "buttons",
-          title: "AjudaJP - Tradutor",
-          text: "Onde será o atendimento?",
-          actions: [
-            {
-              type: "message",
-              label: "Prefeitura",
-              text: "Prefeitura"
-            },
-            {
-              type: "message",
-              label: "Hospital",
-              text: "Hospital"
-            },
-            {
-              type: "message",
-              label: "Escola",
-              text: "Escola"
-            }
-          ]
-        }
-      }
-    ]
+    messages: [{ type: "text", text: textMessage }]
   });
 
   const options = {
