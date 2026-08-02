@@ -7,7 +7,8 @@ module.exports = async (req, res) => {
   }
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-const events = body && body.events;
+  const events = body && body.events;
+
   if (!events || !Array.isArray(events)) {
     return res.status(200).json({ status: 'ok' });
   }
@@ -17,7 +18,6 @@ const events = body && body.events;
       const userMessage = event.message.text.trim().toLowerCase();
       const replyToken = event.replyToken;
 
-      // Responde quando o usuário mandar "tradutor" ou "ajuda"
       if (userMessage === 'tradutor' || userMessage === 'chamar tradutor' || userMessage === 'ajuda') {
         await sendQuestionnaire(replyToken);
       }
@@ -29,7 +29,7 @@ const events = body && body.events;
 
 async function sendQuestionnaire(replyToken) {
   const token = process.env.LINE_ACCESS_TOKEN;
-  
+
   const payload = JSON.stringify({
     replyToken: replyToken,
     messages: [
@@ -41,10 +41,21 @@ async function sendQuestionnaire(replyToken) {
           title: "AjudaJP - Tradutor",
           text: "Onde será o atendimento?",
           actions: [
-            { type: "message", label: "Prefeitura", text: "Local: Prefeitura" },
-            { type: "message", label: "Imigração", text: "Local: Imigração" },
-            { type: "message", label: "Escola", text: "Local: Escola" },
-            { type: "message", label: "Outros", text: "Local: Outros" }
+            {
+              type: "message",
+              label: "Prefeitura",
+              text: "Prefeitura"
+            },
+            {
+              type: "message",
+              label: "Hospital",
+              text: "Hospital"
+            },
+            {
+              type: "message",
+              label: "Escola",
+              text: "Escola"
+            }
           ]
         }
       }
@@ -57,19 +68,18 @@ async function sendQuestionnaire(replyToken) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'Content-Length': Buffer.byteLength(payload)
+      'Authorization': 'Bearer ' + token
     }
   };
 
-  return new Promise((resolve) => {
-    const lineReq = https.request(options, (lineRes) => {
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, (res) => {
       let data = '';
-      lineRes.on('data', chunk => data += chunk);
-      lineRes.on('end', () => resolve(data));
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve(data));
     });
-    lineReq.on('error', () => resolve(null));
-    lineReq.write(payload);
-    lineReq.end();
+    req.on('error', error => reject(error));
+    req.write(payload);
+    req.end();
   });
 }
