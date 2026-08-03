@@ -223,10 +223,10 @@
                 <option value="Outros">Outros</option>
             </select>
 
-            <label style="font-size: 14px; font-weight: bold;">Tempo estimado:</label>
-            <select id="tempoAtendimento">
-                <option value="30 minutos">30 minutos (1.500円)</option>
-            </select>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-top: 10px; margin-bottom: 12px;">
+                <p style="margin: 0; font-size: 14px; font-weight: bold; color: #1e293b;">Atendimento: Lote de 30 minutos</p>
+                <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Valor: 1.500円 (15s iniciais de teste grátis)</p>
+            </div>
 
             <div class="modal-buttons">
                 <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
@@ -246,16 +246,17 @@
             <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
             
             <div id="videoContainer">
-                <div id="timerDisplay" class="timer-badge">⏳ Teste de Vídeo/Som: 0s</div>
+                <div id="timerDisplay" class="timer-badge">⏳ Testando Áudio/Vídeo: 0s</div>
                 <video id="webcam" autoplay playsinline muted></video>
                 <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
             </div>
 
-            <!-- Alerta aos 25 minutos -->
-            <div id="alerta25Min" style="display:none; background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                <p style="font-size: 14px; font-weight: bold; color: #92400e; margin: 0 0 8px 0;">⚠️ Faltam apenas 5 minutos para encerrar os 30 min!</p>
+            <!-- Alerta aos 25 minutos (Caso não tenha crédito extra) -->
+            <div id="alerta25Min" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
+                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ A ligação desligará em 5 minutos!</p>
+                <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Você não possui créditos suficientes para continuar. Se quiser continuar, compre mais créditos.</p>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais</button>
+                    <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar crédito</button>
                     <button class="btn-primary" style="background-color: #dc2626; font-size: 14px; padding: 8px;" onclick="naoQueroMais()">❌ Não quero</button>
                 </div>
             </div>
@@ -268,10 +269,13 @@
         let streamVideo = null;
         let segundosDecorridos = 0; 
         let timerInterval = null;
-        let creditoDescontado = false; // Controla se o crédito já foi validado/cobrado
+        let creditoDescontado = false; 
 
-        // Altere para 'false' se quiser testar a tela de bloqueio por falta de saldo
+        // Altere para 'false' para testar a tela de bloqueio por falta de saldo no início
         let usuarioTemSaldo = true; 
+        
+        // Altere para 'false' para testar o aviso de falta de crédito aos 25 minutos
+        let temCreditoParaContinuar = false; 
 
         function verificarSaldoEChamar() {
             if (!usuarioTemSaldo) {
@@ -287,7 +291,7 @@
 
         function comprarCreditos() {
             alert("Redirecionando para a tela de pagamento de créditos...");
-            usuarioTemSaldo = true; // Simula recarga bem-sucedida
+            usuarioTemSaldo = true; 
             fecharModalSemSaldo();
             abrirModalTradutor();
         }
@@ -337,7 +341,7 @@
             subStatus.style.display = "block";
             videoContainer.style.display = "none";
             document.getElementById('alerta25Min').style.display = 'none';
-            creditoDescontado = false; // Garante que começou limpo
+            creditoDescontado = false; 
 
             setTimeout(async () => {
                 statusTexto.innerText = "Tradutor conectado!";
@@ -370,13 +374,18 @@
                 // Ao passar dos 15 segundos (segundo 16), o sistema desconta/efetiva o crédito da chamada
                 if (segundosDecorridos === 16 && !creditoDescontado) {
                     creditoDescontado = true;
-                    // Aqui entra a lógica de backend descontando os 1.500円 do saldo do usuário
                     console.log("Créditos de 1.500 ienes cobrados com sucesso após período de teste.");
                 }
 
                 // Aos 25 minutos oficiais de conversa (25 min = 1500 segundos, mais os 15s iniciais = 1515 segundos)
                 if (segundosDecorridos === 1515) {
-                    document.getElementById('alerta25Min').style.display = 'block';
+                    // Verifica se o usuário tem saldo para continuar
+                    if (!temCreditoParaContinuar) {
+                        document.getElementById('alerta25Min').style.display = 'block';
+                    } else {
+                        // Se tiver crédito, renova automaticamente por mais 30 min silenciosamente
+                        segundosDecorridos -= 1800;
+                    }
                 }
 
                 // Ao completar 30 minutos oficiais (30 min = 1800 segundos, mais os 15s = 1815 segundos)
@@ -404,14 +413,14 @@
 
         function comprarMaisCreditos() {
             alert("Créditos adicionados com sucesso! Mais 30 minutos liberados.");
-            usuarioTemSaldo = true;
+            temCreditoParaContinuar = true;
             segundosDecorridos -= 1800; // Estende o tempo em mais 30 min
             document.getElementById('alerta25Min').style.display = 'none';
         }
 
         function naoQueroMais() {
             document.getElementById('alerta25Min').style.display = 'none';
-            alert("Você optou por não renovar. A chamada será encerrada ao completar os 30 minutos.");
+            alert("Você optou por não comprar créditos. A chamada será encerrada ao completar os 30 minutos.");
         }
 
         function encerrarChamadaPorTempo() {
@@ -421,7 +430,7 @@
                 streamVideo = null;
             }
             document.getElementById('modalEspera').style.display = 'none';
-            alert("O tempo de atendimento de 30 minutos esgotou. A chamada foi encerrada automaticamente.");
+            alert("O tempo de atendimento de 30 minutos esgotou e não há créditos para renovação. A chamada foi encerrada.");
         }
 
         function cancelarChamada() {
