@@ -147,8 +147,8 @@
             transform: scaleX(-1);
         }
         .timer-badge {
-            background: #f3f4f6;
-            color: #1f2937;
+            background: #fef3c7;
+            color: #92400e;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 13px;
@@ -201,7 +201,7 @@
                 <img src="collage_export_107AAA8B-4A69-4E35-8BF8-5816DFAF27D6.jpeg" class="logo-img" alt="Logo">
                 <h3 style="margin:0; color: #dc2626;">Saldo Insuficiente</h3>
             </div>
-            <p style="font-size: 15px; color: #4b5563;">Você não possui créditos suficientes para iniciar a chamada com o tradutor (Necessário ao menos 1.500 ienes).</p>
+            <p style="font-size: 15px; color: #4b5563;">Você precisa ter créditos (ao menos 1.500 ienes) para iniciar a chamada com o tradutor.</p>
             <button class="btn-primary" style="background-color: #10b981; margin-top: 10px;" onclick="comprarCreditos()">🛒 Comprar Créditos Agora</button>
             <button class="btn-primary" style="background-color: #6b7280; margin-top: 8px;" onclick="fecharModalSemSaldo()">Voltar</button>
         </div>
@@ -246,12 +246,12 @@
             <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
             
             <div id="videoContainer">
-                <div id="timerDisplay" class="timer-badge">⏳ Teste Gratuito: 15s</div>
+                <div id="timerDisplay" class="timer-badge">⏳ Teste de Vídeo/Som: 0s</div>
                 <video id="webcam" autoplay playsinline muted></video>
                 <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
             </div>
 
-            <!-- Alerta e botões dos 25 minutos -->
+            <!-- Alerta aos 25 minutos -->
             <div id="alerta25Min" style="display:none; background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 8px; margin-top: 10px;">
                 <p style="font-size: 14px; font-weight: bold; color: #92400e; margin: 0 0 8px 0;">⚠️ Faltam apenas 5 minutos para encerrar os 30 min!</p>
                 <div style="display: flex; gap: 8px;">
@@ -266,11 +266,11 @@
 
     <script>
         let streamVideo = null;
-        let tempoRestante = 15; // Começa nos 15s de teste gratuito
+        let segundosDecorridos = 0; 
         let timerInterval = null;
-        let faseChamada = 'teste'; // 'teste', 'cobranca', 'aviso25'
+        let creditoDescontado = false; // Controla se o crédito já foi validado/cobrado
 
-        // Simulação de saldo do usuário (mude para true para testar com saldo ou false para sem saldo)
+        // Altere para 'false' se quiser testar a tela de bloqueio por falta de saldo
         let usuarioTemSaldo = true; 
 
         function verificarSaldoEChamar() {
@@ -287,7 +287,7 @@
 
         function comprarCreditos() {
             alert("Redirecionando para a tela de pagamento de créditos...");
-            usuarioTemSaldo = true; // Simula que comprou
+            usuarioTemSaldo = true; // Simula recarga bem-sucedida
             fecharModalSemSaldo();
             abrirModalTradutor();
         }
@@ -337,16 +337,15 @@
             subStatus.style.display = "block";
             videoContainer.style.display = "none";
             document.getElementById('alerta25Min').style.display = 'none';
+            creditoDescontado = false; // Garante que começou limpo
 
             setTimeout(async () => {
                 statusTexto.innerText = "Tradutor conectado!";
                 subStatus.style.display = "none";
                 videoContainer.style.display = "block";
 
-                // Inicia os 15 segundos grátis
-                faseChamada = 'teste';
-                tempoRestante = 15;
-                atualizarDisplayTempo();
+                segundosDecorridos = 0;
+                atualizarDisplayCronometro();
 
                 try {
                     streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -356,68 +355,63 @@
                     subStatus.innerText = "Câmera pronta (Modo Simulação)";
                 }
 
-                iniciarCronografo();
+                iniciarCronografoProgressivo();
 
             }, 3000);
         }
 
-        function iniciarCronografo() {
+        function iniciarCronografoProgressivo() {
             if (timerInterval) clearInterval(timerInterval);
 
             timerInterval = setInterval(() => {
-                tempoRestante--;
+                segundosDecorridos++;
+                atualizarDisplayCronometro();
 
-                if (faseChamada === 'teste') {
-                    document.getElementById('timerDisplay').innerText = `⏳ Teste Gratuito: ${tempoRestante}s`;
-                    if (tempoRestante <= 0) {
-                        // Acabou o teste grátis, entra na cobrança dos 30 minutos (1800 segundos)
-                        faseChamada = 'cobranca';
-                        tempoRestante = 1800; // 30 minutos em segundos
-                        document.getElementById('timerDisplay').style.backgroundColor = '#d1fae5';
-                        document.getElementById('timerDisplay').style.color = '#065f46';
-                    }
-                } else if (faseChamada === 'cobranca') {
-                    let minutos = Math.floor(tempoRestante / 60);
-                    let segundos = tempoRestante % 60;
-                    document.getElementById('timerDisplay').innerText = `⏱️ Tempo Restante: ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+                // Ao passar dos 15 segundos (segundo 16), o sistema desconta/efetiva o crédito da chamada
+                if (segundosDecorridos === 16 && !creditoDescontado) {
+                    creditoDescontado = true;
+                    // Aqui entra a lógica de backend descontando os 1.500円 do saldo do usuário
+                    console.log("Créditos de 1.500 ienes cobrados com sucesso após período de teste.");
+                }
 
-                    // Quando faltar 5 minutos (exatamente aos 25 minutos passados / restando 300 segundos)
-                    if (tempoRestante === 300) {
-                        faseChamada = 'aviso25';
-                        document.getElementById('alerta25Min').style.display = 'block';
-                    }
+                // Aos 25 minutos oficiais de conversa (25 min = 1500 segundos, mais os 15s iniciais = 1515 segundos)
+                if (segundosDecorridos === 1515) {
+                    document.getElementById('alerta25Min').style.display = 'block';
+                }
 
-                    if (tempoRestante <= 0) {
-                        encerrarChamadaPorTempo();
-                    }
-                } else if (faseChamada === 'aviso25') {
-                    let minutos = Math.floor(tempoRestante / 60);
-                    let segundos = tempoRestante % 60;
-                    document.getElementById('timerDisplay').innerText = `⏱️ Tempo Restante: ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
-
-                    if (tempoRestante <= 0) {
-                        encerrarChamadaPorTempo();
-                    }
+                // Ao completar 30 minutos oficiais (30 min = 1800 segundos, mais os 15s = 1815 segundos)
+                if (segundosDecorridos >= 1815) {
+                    encerrarChamadaPorTempo();
                 }
             }, 1000);
         }
 
-        function atualizarDisplayTempo() {
-            document.getElementById('timerDisplay').innerText = `⏳ Teste Gratuito: ${tempoRestante}s`;
+        function atualizarDisplayCronometro() {
+            const badge = document.getElementById('timerDisplay');
+            if (segundosDecorridos <= 15) {
+                badge.style.backgroundColor = '#fef3c7';
+                badge.style.color = '#92400e';
+                badge.innerText = `⏳ Testando Áudio/Vídeo: ${segundosDecorridos}s / 15s`;
+            } else {
+                badge.style.backgroundColor = '#d1fae5';
+                badge.style.color = '#065f46';
+                let tempoPago = segundosDecorridos - 15;
+                let minutos = Math.floor(tempoPago / 60);
+                let segundos = tempoPago % 60;
+                badge.innerText = `⏱️ Chamada Em Andamento: ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+            }
         }
 
         function comprarMaisCreditos() {
             alert("Créditos adicionados com sucesso! Mais 30 minutos liberados.");
             usuarioTemSaldo = true;
-            tempoRestante += 1800; // Adiciona mais 30 min
-            faseChamada = 'cobranca';
+            segundosDecorridos -= 1800; // Estende o tempo em mais 30 min
             document.getElementById('alerta25Min').style.display = 'none';
         }
 
         function naoQueroMais() {
             document.getElementById('alerta25Min').style.display = 'none';
-            alert("Você optou por não renovar. A chamada será encerrada ao fim dos 30 minutos.");
-            faseChamada = 'cobranca'; // Continua até zerar
+            alert("Você optou por não renovar. A chamada será encerrada ao completar os 30 minutos.");
         }
 
         function encerrarChamadaPorTempo() {
@@ -437,6 +431,11 @@
                 streamVideo = null;
             }
             document.getElementById('modalEspera').style.display = 'none';
+
+            // Se cancelou dentro dos 15 segundos iniciais
+            if (segundosDecorridos <= 15) {
+                alert("Chamada encerrada durante o teste de áudio/vídeo. Nenhuma cobrança foi feita!");
+            }
         }
     </script>
 
