@@ -254,9 +254,9 @@
                 <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
             </div>
 
-            <!-- Alerta Próximo ao Fim do Tempo -->
+            <!-- Alerta Próximo ao Fim do Tempo (Modo Teste: dispara aos 10 segundos) -->
             <div id="alertaLimite" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando!</p>
+                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando! (Teste)</p>
                 <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Deseja comprar mais tempo para continuar a chamada?</p>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais tempo</button>
@@ -272,7 +272,7 @@
         let streamVideo = null;
         let segundosDecorridos = 0; 
         let limiteSegundos = 1800; 
-        let valorInicialRetido = 0; // Guarda quanto foi segurado (ex: 3000 ienes para 1h)
+        let valorInicialRetido = 0; 
         let timerInterval = null;
         let creditoDescontado = false; 
 
@@ -280,11 +280,9 @@
         let temCreditoParaContinuar = false; 
 
         function verificarSaldoEChamar() {
-            if (!usuarioTemSaldo) {
-                document.getElementById('modalSemSaldo').style.display = 'flex';
-            } else {
-                abrirModalTradutor();
-            }
+            // Liberado para testes sem checar saldo real
+            usuarioTemSaldo = true; 
+            abrirModalTradutor();
         }
 
         function fecharModalSemSaldo() {
@@ -335,7 +333,6 @@
             const selectTempo = document.getElementById('tempoAtendimento');
             limiteSegundos = parseInt(selectTempo.value);
 
-            // Define o valor retido com base na escolha (30min = 1500엔, 1h = 3000엔, Mais de 1h = 6000엔)
             if (limiteSegundos === 1800) valorInicialRetido = 1500;
             else if (limiteSegundos === 3600) valorInicialRetido = 3000;
             else valorInicialRetido = 6000;
@@ -352,6 +349,7 @@
             videoContainer.style.display = "none";
             document.getElementById('alertaLimite').style.display = 'none';
             creditoDescontado = false; 
+            temCreditoParaContinuar = false;
 
             setTimeout(async () => {
                 statusTexto.innerText = "Tradutor conectado!";
@@ -381,19 +379,15 @@
                 segundosDecorridos++;
                 atualizarDisplayCronometro();
 
-                if (segundosDecorridos === 16 && !creditoDescontado) {
+                if (segundosDecorridos === 5 && !creditoDescontado) {
                     creditoDescontado = true;
                     console.log(`Valor inicial retido de ${valorInicialRetido}円 garantido.`);
                 }
 
-                let tempoAlerta = limiteSegundos - 300;
-                if (tempoAlerta < 30) tempoAlerta = limiteSegundos - 30;
-
-                if (segundosDecorridos === tempoAlerta) {
+                // ATALHO DE TESTE: Exibe o alerta aos 10 segundos de chamada em vez de faltar 5 min
+                if (segundosDecorridos === 10) {
                     if (!temCreditoParaContinuar) {
                         document.getElementById('alertaLimite').style.display = 'block';
-                    } else {
-                        limiteSegundos += 1800; 
                     }
                 }
 
@@ -425,14 +419,16 @@
             document.getElementById('alertaLimite').style.display = 'none';
         }
 
-        // Função mágica que calcula o uso proporcional e devolve o troco
+        function naoQueroMais() {
+            document.getElementById('alertaLimite').style.display = 'none';
+            alert("Você optou por não comprar mais tempo. A chamada continuará normalmente.");
+        }
+
         function calcularCobrancaProporcional() {
-            if (segundosDecorridos <= 15) {
-                return 0; // Menos de 15 segundos não cobra nada
+            if (segundosDecorridos <= 5) {
+                return 0; 
             }
 
-            // Cada bloco de 30 minutos (1800 segundos) custa 1500 ienes
-            // Math.ceil arredonda para cima: se usou 28 min (1680s), conta como 1 bloco (1800s)
             let blocosUtilizados = Math.ceil(segundosDecorridos / 1800);
             if (blocosUtilizados < 1) blocosUtilizados = 1;
 
@@ -440,7 +436,6 @@
             let valorParaDevolver = valorInicialRetido - valorFinalDevido;
 
             if (valorParaDevolver > 0) {
-                console.log(`Cobrado: ${valorFinalDevido}円. Reembolsado para a carteira: ${valorParaDevolver}円.`);
                 return { cobrado: valorFinalDevido, devolvido: valorParaDevolver };
             }
 
@@ -459,12 +454,12 @@
             pararStream();
             document.getElementById('modalEspera').style.display = 'none';
 
-            if (segundosDecorridos <= 15) {
+            if (segundosDecorridos <= 5) {
                 alert("Chamada encerrada nos primeiros segundos. Nenhuma cobrança foi feita!");
             } else {
                 let resultado = calcularCobrancaProporcional();
                 if (resultado.devolvido > 0) {
-                    alert(`Chamada encerrada!\nTempo utilizado: ${Math.floor(segundosDecorridos/60)} minutos.\nValor debitado: ${resultado.cobrado}円\nO restante de ${resultado.devolvido}円 foi estornado para a sua carteira.`);
+                    alert(`Chamada encerrada!\nTempo utilizado: ${Math.floor(segundosDecorridos/60)} minutos e ${segundosDecorridos%60} segundos.\nValor debitado: ${resultado.cobrado}円\nO restante de ${resultado.devolvido}円 foi estornado para a sua carteira.`);
                 } else {
                     alert(`Chamada encerrada com sucesso! Valor debitado: ${resultado.cobrado}円.`);
                 }
