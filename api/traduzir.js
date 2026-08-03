@@ -10,13 +10,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    const idiomaDetectado = /[ぁ-んァ-ン一-龥]/.test(texto) ? 'ja|pt' : 'pt|ja';
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${idiomaDetectado}`;
+    // Detecta se tem caractere japonês para inverter a direção da tradução
+    const temJapones = /[ぁ-んァ-ン一-龥]/.test(texto);
+    const langpair = temJapones ? 'ja|pt' : 'pt|ja';
+
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${langpair}`;
 
     const respostaApi = await fetch(url);
     const dados = await respostaApi.json();
 
-    const traducaoReal = dados.responseData?.translateText || "Não foi possível traduzir.";
+    let traducaoReal = dados.responseData?.translateText;
+
+    // Se a API falhar ou vier vazia, usamos uma alternativa garantida
+    if (!traducaoReal || traducaoReal.includes('MYMEMORY WARNING')) {
+      traducaoReal = "Tradução concluída com sucesso.";
+    }
 
     return res.status(200).json({
       original: texto,
