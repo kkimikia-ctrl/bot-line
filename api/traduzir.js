@@ -16,36 +16,54 @@ export default async function handler(req, res) {
     const sl = temJapones ? 'ja' : 'pt';
     const tl = temJapones ? 'pt' : 'ja';
 
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&dt=rm&q=${encodeURIComponent(termoLimpo)}`;
+    // 1. Traduz o texto normalmente
+    const urlTraducao = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(termoLimpo)}`;
+    const respTrad = await fetch(urlTraducao);
+    const dadosTrad = await respTrad.json();
 
-    const respostaApi = await fetch(url);
-    const dados = await respostaApi.json();
-
-    if (dados && dados[0]) {
-      let traducaoPrincipal = "";
-      let romajiCompleto = "";
-
-      // Junta todas as partes da frase traduzida e do romaji
-      for (let i = 0; i < dados[0].length; i++) {
-        if (dados[0][i][0]) {
-          traducaoPrincipal += dados[0][i][0];
-        }
-        if (dados[0][i][3]) {
-          romajiCompleto += (romajiCompleto ? " " : "") + dados[0][i][3];
+    let traducaoPrincipal = "";
+    if (dadosTrad && dadosTrad[0]) {
+      for (let i = 0; i < dadosTrad[0].length; i++) {
+        if (dadosTrad[0][i][0]) {
+          traducaoPrincipal += dadosTrad[0][i][0];
         }
       }
-
-      let resultadoFinal = traducaoPrincipal;
-
-      // Se traduziu para japonês e encontrou o romaji, adiciona entre parênteses
-      if (!temJapones && romajiCompleto && romajiCompleto.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
-        resultadoFinal = `${traducaoPrincipal} (${romajiCompleto})`;
-      }
-
-      return res.status(200).json({ traducao: resultadoFinal });
     }
 
-    return res.status(200).json({ traducao: "Não foi possível traduzir." });
+    if (!traducaoPrincipal) {
+      return res.status(200).json({ traducao: "Não foi possível traduzir." });
+    }
+
+    // Se o usuário digitou em japonês e quer ver em português, retorna só a tradução
+    if (temJapones) {
+      return res.status(200).json({ traducao: traducaoPrincipal });
+    }
+
+    // 2. Se o usuário digitou em português, buscamos especificamente o Romaji da frase traduzida
+    let romaji = "";
+    try {
+      const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
+      const respRomaji = await fetch(urlRomaji);
+      const dadosRomaji = await respRomaji.json();
+
+      if (dadosRomaji && dadosRomaji[0]) {
+        for (let i = 0; i < dadosRomaji[0].length; i++) {
+          if (dadosRomaji[0][i][3]) {
+            romaji += (romaji ? " " : "") + dadosRomaji[0][i][3];
+          }
+        }
+      }
+    } catch (err) {
+      // Ignora erro secundário de romaji se houver
+    }
+
+    // Monta o resultado final: Japonês + Romaji entre parênteses
+    let resultadoFinal = traducaoPrincipal;
+    if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
+      resultadoFinal = `${traducaoPrincipal} (${romaji})`;
+    }
+
+    return res.status(200).json({ traducao: resultadoFinal });
 
   } catch (e) {
     return res.status(200).json({ traducao: "Erro ao processar a tradução." });
