@@ -225,7 +225,7 @@
 
             <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
             <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-top: 5px; margin-bottom: 12px; font-size: 15px; font-weight: bold; color: #1e293b;">
-                ⏱️ 30 minutos (1.500円) - Com 15s de teste grátis
+                ⏱️ 30 minutos (1.500円)
             </div>
 
             <div class="modal-buttons">
@@ -246,7 +246,7 @@
             <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
             
             <div id="videoContainer">
-                <div id="timerDisplay" class="timer-badge">⏳ Testando Áudio/Vídeo: 0s / 15s</div>
+                <div id="timerDisplay" class="timer-badge">⏱️ Tempo: 0s</div>
                 <video id="webcam" autoplay playsinline muted></video>
                 <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
             </div>
@@ -271,10 +271,7 @@
         let timerInterval = null;
         let creditoDescontado = false; 
 
-        // Altere para 'false' para testar a tela de bloqueio por falta de saldo no início
         let usuarioTemSaldo = true; 
-        
-        // Altere para 'false' para testar o aviso de falta de crédito aos 25 minutos
         let temCreditoParaContinuar = false; 
 
         function verificarSaldoEChamar() {
@@ -398,7 +395,9 @@
             if (segundosDecorridos <= 15) {
                 badge.style.backgroundColor = '#fef3c7';
                 badge.style.color = '#92400e';
-                badge.innerText = `⏳ Testando Áudio/Vídeo: ${segundosDecorridos}s / 15s`;
+                let minutos = Math.floor(segundosDecorridos / 60);
+                let segundos = segundosDecorridos % 60;
+                badge.innerText = `⏱️ Tempo: ${minutos > 0 ? minutos + 'm ' : ''}${segundos}s`;
             } else {
                 badge.style.backgroundColor = '#d1fae5';
                 badge.style.color = '#065f46';
@@ -440,7 +439,7 @@
             document.getElementById('modalEspera').style.display = 'none';
 
             if (segundosDecorridos <= 15) {
-                alert("Chamada encerrada durante o teste de áudio/vídeo. Nenhuma cobrança foi feita!");
+                alert("Chamada encerrada durante os primeiros 15 segundos. Nenhuma cobrança foi feita!");
             }
         }
     </script>
