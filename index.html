@@ -6,73 +6,112 @@
     <title>Ajuda JP - Início</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
-            padding: 0;
+            padding: 15px;
+            color: #333;
         }
         .header {
             background-color: #0047ab;
             color: white;
-            padding: 16px;
+            padding: 12px 15px;
             font-size: 18px;
             font-weight: bold;
-        }
-        .container {
-            padding: 16px;
-            max-width: 600px;
-            margin: 0 auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
         }
         .card {
             background: white;
+            padding: 15px;
             border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
         }
-        textarea {
+        h3 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+        textarea, select {
             width: 100%;
-            height: 90px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
             padding: 10px;
-            font-size: 14px;
-            resize: none;
-            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 8px;
             margin-bottom: 12px;
+            box-sizing: border-box;
         }
-        .btn {
+        button.btn-primary {
             background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 12px;
             width: 100%;
-            font-size: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
         }
-        .resultado {
-            margin-top: 12px;
-            padding: 10px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+        button.btn-primary:active {
+            background-color: #1d4ed8;
+        }
+        .result-box {
+            background-color: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 14px;
-            color: #166534;
+            margin-top: 10px;
+            font-size: 16px;
+            white-space: pre-wrap;
             display: none;
         }
-        .grid {
+        .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
-        .menu-card {
+        .menu-item {
             background: white;
-            border-radius: 12px;
             padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .menu-item span {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            font-weight: normal;
+            margin-top: 5px;
+        }
+        /* Estilos do Modal do Tradutor */
+        #modalTradutor {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -80,39 +119,61 @@
 
     <div class="header">Ajuda JP - Início</div>
 
-    <div class="container">
-        <!-- Bloco de Tradução -->
-        <div class="card">
-            <h3>📷 Tradução de Texto e Fotos</h3>
-            <p style="font-size: 13px; color: #666;">Digite o texto em japonês ou português para traduzir na hora:</p>
-            
-            <textarea id="textoInput" placeholder="Digite aqui o texto em japonês ou português..."></textarea>
-            
-            <button class="btn" onclick="traduzirTexto()">Traduzir Agora</button>
-            
-            <div id="resultadoBox" class="resultado"></div>
-        </div>
+    <!-- Bloco de Tradução -->
+    <div class="card">
+        <h3>📸 Tradução de Texto e Fotos</h3>
+        <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto em japonês ou português para traduzir na hora:</p>
+        <textarea id="textoInput" rows="3" placeholder="Digite aqui..."></textarea>
+        <button class="btn-primary" onclick="traduzirTexto()">Traduzir Agora</button>
+        <div id="resultadoBox" class="result-box"></div>
+    </div>
 
-        <!-- Menu de Atalhos -->
-        <div class="grid">
-            <div class="menu-card">
-                <h4>📞 Tradutor</h4>
-                <p style="font-size: 12px; color: #777;">Prefeitura / Hospital</p>
-            </div>
-            <div class="menu-card">
-                <h4>💰 Carteira</h4>
-                <p style="font-size: 12px; color: #777;">Saldo e Ganhos</p>
-            </div>
-            <div class="menu-card">
-                <h4>🎮 Entretenimento</h4>
-                <p style="font-size: 12px; color: #777;">Lives e Aulas</p>
-            </div>
-            <div class="menu-card">
-                <h4>📋 Serviços</h4>
-                <p style="font-size: 12px; color: #777;">Lojas, Imobiliárias</p>
+    <!-- Menu Principal -->
+    <div class="grid-menu">
+        <button class="menu-item" onclick="abrirModalTradutor()">
+            📞 Tradutor
+            <span>Prefeitura / Hospital</span>
+        </button>
+        <button class="menu-item" onclick="alert('Tela Carteira em desenvolvimento')">
+            💰 Carteira
+            <span>Saldo e Ganhos</span>
+        </button>
+        <button class="menu-item" onclick="alert('Tela Entretenimento e Notícias em desenvolvimento')">
+            🎮 Entretenimento
+            <span>Lives, Aulas e Notícias</span>
+        </button>
+        <button class="menu-item" onclick="alert('Tela Serviços em desenvolvimento')">
+            📋 Serviços
+            <span>Lojas, Ar-condicionado, Mecânico</span>
+        </button>
+    </div>
+
+    <!-- Modal de Chamada do Tradutor -->
+    <div id="modalTradutor">
+        <div class="modal-content">
+            <h3>📞 Chamar Tradutor</h3>
+            <label style="font-size: 14px; font-weight: bold;">Onde você está?</label>
+            <select id="localAtendimento">
+                <option value="Hospital">Hospital</option>
+                <option value="Prefeitura">Prefeitura</option>
+                <option value="Escola">Escola</option>
+                <option value="Outros">Outros</option>
+            </select>
+
+            <label style="font-size: 14px; font-weight: bold;">Tempo estimado:</label>
+            <select id="tempoAtendimento">
+                <option value="30 minutos">30 minutos</option>
+                <option value="1 hora">1 hora</option>
+                <option value="Mais de 1 hora">Mais de 1 hora</option>
+            </select>
+
+            <div class="modal-buttons">
+                <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
+                <button class="btn-primary" onclick="confirmarChamadaTradutor()">Confirmar Pedido</button>
             </div>
         </div>
     </div>
+
     <script>
         async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value;
@@ -134,11 +195,26 @@
                 });
 
                 const dados = await resposta.json();
-                // Mostra APENAS o texto traduzido, limpo e sem a palavra "Tradução"
-                box.innerText = dados.traducao;
+                box.innerText = dados.traducao || 'Erro na tradução';
             } catch (e) {
-                box.innerText = 'Erro ao traduzir. Tente novamente.';
+                box.innerText = 'Erro ao conectar com o tradutor.';
             }
+        }
+
+        function abrirModalTradutor() {
+            document.getElementById('modalTradutor').style.display = 'flex';
+        }
+
+        function fecharModalTradutor() {
+            document.getElementById('modalTradutor').style.display = 'none';
+        }
+
+        function confirmarChamadaTradutor() {
+            const local = document.getElementById('localAtendimento').value;
+            const tempo = document.getElementById('tempoAtendimento').value;
+            
+            alert(`Pedido enviado com sucesso!\nLocal: ${local}\nTempo estimado: ${tempo}`);
+            fecharModalTradutor();
         }
     </script>
 
