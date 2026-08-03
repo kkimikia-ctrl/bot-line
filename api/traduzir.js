@@ -12,21 +12,37 @@ export default async function handler(req, res) {
   const termoLimpo = texto.trim();
 
   try {
-    // Detecta se tem caracteres japoneses para inverter a direção da tradução
     const temJapones = /[ぁ-んァ-ン一-龥]/.test(termoLimpo);
     const sl = temJapones ? 'ja' : 'pt';
     const tl = temJapones ? 'pt' : 'ja';
 
-    // Rota pública de tradução direta e estável
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(termoLimpo)}`;
+    // Busca a tradução e também a romanização (parâmetro de transliteração do Google)
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&dt=rm&q=${encodeURIComponent(termoLimpo)}`;
 
     const respostaApi = await fetch(url);
     const dados = await respostaApi.json();
 
-    // Extrai o texto traduzido do retorno do tradutor
-    if (dados && dados[0] && dados[0][0] && dados[0][0][0]) {
-      const traducaoFinal = dados[0][0][0];
-      return res.status(200).json({ traducao: traducaoFinal });
+    if (dados && dados[0] && dados[0][0]) {
+      let traducaoPrincipal = dados[0][0][0];
+      let romaji = "";
+
+      // Procura o Romaji na resposta estruturada do tradutor
+      if (dados[0]) {
+        for (let i = 0; i < dados[0].length; i++) {
+          if (dados[0][i][3]) {
+            romaji = dados[0][i][3];
+            break;
+          }
+        }
+      }
+
+      // Se traduziu para o japonês e encontrou o Romaji, exibe ambos lado a lado
+      let resultadoFinal = traducaoPrincipal;
+      if (!temJapones && romaji && romaji !== traducaoPrincipal) {
+        resultadoFinal = `${traducaoPrincipal} (${romaji})`;
+      }
+
+      return res.status(200).json({ traducao: resultadoFinal });
     }
 
     return res.status(200).json({ traducao: "Não foi possível traduzir este termo." });
