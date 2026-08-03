@@ -9,10 +9,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Nenhum texto enviado.' });
   }
 
-  // Aqui o sistema processa o texto digitado (identificando se é japonês ou português)
-  // Como exemplo inicial, retornamos uma resposta estruturada para aparecer na tela
-  return res.status(200).json({
-    original: texto,
-    traducao: "Tradução simulada: " + texto // Aqui conectaremos a API de tradução ou IA
-  });
+  try {
+    const idiomaDetectado = /[ぁ-んァ-ン一-龥]/.test(texto) ? 'ja|pt' : 'pt|ja';
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${idiomaDetectado}`;
+
+    const respostaApi = await fetch(url);
+    const dados = await respostaApi.json();
+
+    const traducaoReal = dados.responseData?.translateText || "Não foi possível traduzir.";
+
+    return res.status(200).json({
+      original: texto,
+      traducao: traducaoReal
+    });
+  } catch (e) {
+    return res.status(500).json({ error: 'Erro ao processar a tradução.' });
+  }
 }
