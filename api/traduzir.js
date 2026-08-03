@@ -10,36 +10,6 @@ export default async function handler(req, res) {
   }
 
   const termoLimpo = texto.trim();
-  const termoLower = termoLimpo.toLowerCase();
-
-  // Dicionário com Romaji garantido para termos frequentes
-  const dicionarioComRomaji = {
-    "carro": "車 (Kuruma)",
-    "casa": "家 (Ie)",
-    "trabalho": "仕事 (Shigoto)",
-    "hospital": "病院 (Byouin)",
-    "médico": "医者 (Isha)",
-    "cadeira": "椅子 (Isu)",
-    "dormir": "寝る (Neru)",
-    "falar": "話す (Hanasu)",
-    "água": "水 (Mizu)",
-    "comida": "食べ物 (Tabemono)",
-    "calor": "暑い (Atsui)",
-    "frio": "寒い (Samui)",
-    "hoje": "今日 (Kyou)",
-    "amanhã": "明日 (Ashita)",
-    "ontem": "昨日 (Kinou)",
-    "bom dia": "おはようございます (Ohayou gozaimasu)",
-    "boa tarde": "こんにちは (Konnichiwa)",
-    "boa noite": "こんばんは (Konbanwa)",
-    "obrigado": "ありがとうございます (Arigatou gozaimasu)",
-    "sim": "はい (Hai)",
-    "não": "いいえ (Iie)"
-  };
-
-  if (dicionarioComRomaji[termoLower]) {
-    return res.status(200).json({ traducao: dicionarioComRomaji[termoLower] });
-  }
 
   try {
     const temJapones = /[ぁ-んァ-ン一-龥]/.test(termoLimpo);
@@ -51,22 +21,25 @@ export default async function handler(req, res) {
     const respostaApi = await fetch(url);
     const dados = await respostaApi.json();
 
-    if (dados && dados[0] && dados[0][0]) {
-      let traducaoPrincipal = dados[0][0][0];
-      let romaji = "";
+    if (dados && dados[0]) {
+      let traducaoPrincipal = "";
+      let romajiCompleto = "";
 
-      if (dados[0]) {
-        for (let i = 0; i < dados[0].length; i++) {
-          if (dados[0][i][3]) {
-            romaji = dados[0][i][3];
-            break;
-          }
+      // Junta todas as partes da frase traduzida e do romaji
+      for (let i = 0; i < dados[0].length; i++) {
+        if (dados[0][i][0]) {
+          traducaoPrincipal += dados[0][i][0];
+        }
+        if (dados[0][i][3]) {
+          romajiCompleto += (romajiCompleto ? " " : "") + dados[0][i][3];
         }
       }
 
       let resultadoFinal = traducaoPrincipal;
-      if (!temJapones && romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
-        resultadoFinal = `${traducaoPrincipal} (${romaji})`;
+
+      // Se traduziu para japonês e encontrou o romaji, adiciona entre parênteses
+      if (!temJapones && romajiCompleto && romajiCompleto.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
+        resultadoFinal = `${traducaoPrincipal} (${romajiCompleto})`;
       }
 
       return res.status(200).json({ traducao: resultadoFinal });
