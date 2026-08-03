@@ -20,15 +20,8 @@ export default async function handler(req, res) {
 
     let traducaoReal = dados.responseData?.translateText;
 
-    if (!traducaoReal || traducaoReal.includes('MYMEMORY WARNING')) {
-      // Dicionário de apoio rápido caso a API externa restrinja
-      const dicionario = {
-        "Bom dia": "おはようございます (Ohayou gozaimasu)",
-        "おはようございます": "Bom dia",
-        "Hoje": "今日 (Kyou)",
-        "今日": "Hoje"
-      };
-      traducaoReal = dicionario[texto] || (temJapones ? "Bom dia / Traduzido" : "おはようございます");
+    if (!traducaoReal || traducaoReal.includes('MYMEMORY WARNING') || traducaoReal.includes('QUERY LENGTH')) {
+      traducaoReal = temJapones ? "Tradução indisponível para este termo." : "翻訳できませんでした";
     }
 
     return res.status(200).json({
