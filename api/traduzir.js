@@ -10,61 +10,38 @@ export default async function handler(req, res) {
   }
 
   const termoLimpo = texto.trim();
-
-  // Dicionário rápido e infalível para termos comuns (PT-JP e JP-PT)
-  const dicionarioGarantido = {
-    "calor": "暑い (Atsui)",
-    "frio": "寒い (Samui)",
-    "hoje": "今日 (Kyou)",
-    "amanhã": "明日 (Ashita)",
-    "ontem": "昨日 (Kinou)",
-    "bom dia": "おはようございます (Ohayou gozaimasu)",
-    "boa tarde": "こんにちは (Konnichiwa)",
-    "boa noite": "こんばんは (Konbanwa)",
-    "obrigado": "ありがとうございます (Arigatou gozaimasu)",
-    "sim": "はい (Hai)",
-    "não": "いいえ (Iie)",
-    "ajuda": "助けて / ヘルプ (Tasukete / Herupu)",
-    // Japonês para Português
-    "今日": "Hoje",
-    "明日": "Amanhã",
-    "昨日": "Ontem",
-    "暑い": "Calor / Quente",
-    "寒い": "Frio",
-    "おはようございます": "Bom dia",
-    "こんにちは": "Boa tarde / Olá",
-    "こんばんは": "Boa noite",
-    "ありがとうございます": "Obrigado"
-  };
-
-  // Verifica se a palavra exata está no dicionário (ignorando maiúsculas/minúsculas)
-  const termoLower = termoLimpo.toLowerCase();
-  if (dicionarioGarantido[termoLower]) {
-    return res.status(200).json({
-      original: texto,
-      traducao: dicionarioGarantido[termoLower]
-    });
-  }
+  const temJapones = /[ぁ-んァ-ン一-龥]/.test(termoLimpo);
+  const source = temJapones ? 'ja' : 'pt';
+  const target = temJapones ? 'pt' : 'ja';
 
   try {
-    const temJapones = /[ぁ-んァ-ン一-龥]/.test(termoLimpo);
-    const langpair = temJapones ? 'ja|pt' : 'pt|ja';
+    // Usando a API pública do LibreTranslate (altamente estável)
+    const respostaApi = await fetch('https://libretranslate.de/translate', {
+      method: 'POST',
+      body: JSON.stringify({
+        q: termoLimpo,
+        source: source,
+        target: target,
+        format: 'text'
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
 
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(termoLimpo)}&langpair=${langpair}`;
-
-    const respostaApi = await fetch(url);
     const dados = await respostaApi.json();
 
-    let traducaoReal = dados.responseData?.translateText;
-
-    if (!traducaoReal || traducaoReal.includes('MYMEMORY WARNING') || traducaoReal.includes('QUERY LENGTH')) {
-      traducaoReal = temJapones ? "Tradução não encontrada no momento." : "翻訳できませんでした";
+    if (dados && dados.translatedText) {
+      return res.status(200).json({
+        original: texto,
+        traducao: dados.translatedText
+      });
     }
 
+    // Fallback caso a API falhe
     return res.status(200).json({
       original: texto,
-      traducao: traducaoReal
+      traducao: temJapones ? "Não foi possível traduzir." : "翻訳できませんでした"
     });
+
   } catch (e) {
     return res.status(500).json({ error: 'Erro ao processar a tradução.' });
   }
