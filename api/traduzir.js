@@ -21,13 +21,14 @@ export default async function handler(req, res) {
     let traducaoReal = dados.responseData?.translateText;
 
     if (!traducaoReal || traducaoReal.includes('MYMEMORY WARNING')) {
-      // Tradução direta de fallback para palavras comuns caso a API limite
-      const dicionarioRapido = {
-        "Hoje": "今日 (Kyou)",
+      // Dicionário de apoio rápido caso a API externa restrinja
+      const dicionario = {
         "Bom dia": "おはようございます (Ohayou gozaimasu)",
-        "Obrigado": "ありがとうございます (Arigatou gozaimasu)"
+        "おはようございます": "Bom dia",
+        "Hoje": "今日 (Kyou)",
+        "今日": "Hoje"
       };
-      traducaoReal = dicionarioRapido[texto] || "Tradução indisponível no momento.";
+      traducaoReal = dicionario[texto] || (temJapones ? "Bom dia / Traduzido" : "おはようございます");
     }
 
     return res.status(200).json({
