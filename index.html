@@ -53,6 +53,7 @@
             margin-top: 8px;
             margin-bottom: 12px;
             box-sizing: border-box;
+            background-color: #fff;
         }
         button.btn-primary {
             background-color: #2563eb;
@@ -270,7 +271,7 @@
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
-        let limiteSegundos = 1800; // Padrão 30 min
+        let limiteSegundos = 1800; 
         let timerInterval = null;
         let creditoDescontado = false; 
 
@@ -330,7 +331,6 @@
         }
 
         function iniciarEspera() {
-            // Pega o limite escolhido no select (em segundos)
             const selectTempo = document.getElementById('tempoAtendimento');
             limiteSegundos = parseInt(selectTempo.value);
 
@@ -375,25 +375,22 @@
                 segundosDecorridos++;
                 atualizarDisplayCronometro();
 
-                // Efetiva a cobrança no segundo 16 sem mexer no relógio
                 if (segundosDecorridos === 16 && !creditoDescontado) {
                     creditoDescontado = true;
                     console.log("Cobrança efetuada com sucesso.");
                 }
 
-                // Dispara o alerta 5 minutos (300 segundos) antes de esgotar o tempo escolhido
                 let tempoAlerta = limiteSegundos - 300;
-                if (tempoAlerta < 30) tempoAlerta = limiteSegundos - 30; // Para tempos menores se houver
+                if (tempoAlerta < 30) tempoAlerta = limiteSegundos - 30;
 
                 if (segundosDecorridos === tempoAlerta) {
                     if (!temCreditoParaContinuar) {
                         document.getElementById('alertaLimite').style.display = 'block';
                     } else {
-                        limiteSegundos += 1800; // Estende mais 30 min se já comprou
+                        limiteSegundos += 1800; 
                     }
                 }
 
-                // Ao atingir o tempo total contratado
                 if (segundosDecorridos >= limiteSegundos) {
                     encerrarChamadaPorTempo();
                 }
