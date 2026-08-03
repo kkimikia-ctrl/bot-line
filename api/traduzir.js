@@ -1,48 +1,29 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método não permitido' });
-  }
+    <script>
+        async function traduzirTexto() {
+            const texto = document.getElementById('textoInput').value;
+            const box = document.getElementById('resultadoBox');
 
-  const { texto } = req.body;
+            if (!texto.trim()) {
+                alert('Digite algum texto primeiro!');
+                return;
+            }
 
-  if (!texto) {
-    return res.status(400).json({ error: 'Nenhum texto enviado.' });
-  }
+            box.style.display = 'block';
+            box.innerText = 'Traduzindo...';
 
-  const termoLimpo = texto.trim();
-  const temJapones = /[ぁ-んァ-ン一-龥]/.test(termoLimpo);
-  const source = temJapones ? 'ja' : 'pt';
-  const target = temJapones ? 'pt' : 'ja';
+            try {
+                const resposta = await fetch('/api/traduzir', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto })
+                });
 
-  try {
-    // Usando a API pública do LibreTranslate (altamente estável)
-    const respostaApi = await fetch('https://libretranslate.de/translate', {
-      method: 'POST',
-      body: JSON.stringify({
-        q: termoLimpo,
-        source: source,
-        target: target,
-        format: 'text'
-      }),
-      headers: { 'Content-Type': 'application/json' }
-    });
+                const dados = await resposta.json();
+                box.innerText = dados.traducao || 'Erro na tradução';
+            } catch (e) {
+                box.innerText = 'Erro ao conectar com o tradutor.';
+            }
+        }
+    </script>
 
-    const dados = await respostaApi.json();
-
-    if (dados && dados.translatedText) {
-      return res.status(200).json({
-        original: texto,
-        traducao: dados.translatedText
-      });
-    }
-
-    // Fallback caso a API falhe
-    return res.status(200).json({
-      original: texto,
-      traducao: temJapones ? "Não foi possível traduzir." : "翻訳できませんでした"
-    });
-
-  } catch (e) {
-    return res.status(500).json({ error: 'Erro ao processar a tradução.' });
-  }
-}
+    
