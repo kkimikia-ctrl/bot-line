@@ -147,8 +147,8 @@
             transform: scaleX(-1);
         }
         .timer-badge {
-            background: #fef3c7;
-            color: #92400e;
+            background: #d1fae5;
+            color: #065f46;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 13px;
@@ -246,7 +246,7 @@
             <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
             
             <div id="videoContainer">
-                <div id="timerDisplay" class="timer-badge">⏱️ Tempo: 0s</div>
+                <div id="timerDisplay" class="timer-badge">⏱️ Tempo em chamada: 0s</div>
                 <video id="webcam" autoplay playsinline muted></video>
                 <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
             </div>
@@ -368,23 +368,23 @@
                 segundosDecorridos++;
                 atualizarDisplayCronometro();
 
-                // Ao passar dos 15 segundos (segundo 16), o sistema desconta/efetiva o crédito da chamada
+                // Passados 16 segundos, o sistema efetiva a cobrança em background
                 if (segundosDecorridos === 16 && !creditoDescontado) {
                     creditoDescontado = true;
-                    console.log("Créditos de 1.500 ienes cobrados com sucesso após período de teste.");
+                    console.log("Créditos de 1.500 ienes cobrados com sucesso.");
                 }
 
-                // Aos 25 minutos oficiais de conversa (25 min = 1500 segundos, mais os 15s iniciais = 1515 segundos)
-                if (segundosDecorridos === 1515) {
+                // Aos 25 minutos de ligação contínua (1500 segundos)
+                if (segundosDecorridos === 1500) {
                     if (!temCreditoParaContinuar) {
                         document.getElementById('alerta25Min').style.display = 'block';
                     } else {
-                        segundosDecorridos -= 1800;
+                        segundosDecorridos -= 1800; // Estende mais 30 min se tiver saldo
                     }
                 }
 
-                // Ao completar 30 minutos oficiais (30 min = 1800 segundos, mais os 15s = 1815 segundos)
-                if (segundosDecorridos >= 1815) {
+                // Ao completar 30 minutos totais (1800 segundos)
+                if (segundosDecorridos >= 1800) {
                     encerrarChamadaPorTempo();
                 }
             }, 1000);
@@ -392,20 +392,9 @@
 
         function atualizarDisplayCronometro() {
             const badge = document.getElementById('timerDisplay');
-            if (segundosDecorridos <= 15) {
-                badge.style.backgroundColor = '#fef3c7';
-                badge.style.color = '#92400e';
-                let minutos = Math.floor(segundosDecorridos / 60);
-                let segundos = segundosDecorridos % 60;
-                badge.innerText = `⏱️ Tempo: ${minutos > 0 ? minutos + 'm ' : ''}${segundos}s`;
-            } else {
-                badge.style.backgroundColor = '#d1fae5';
-                badge.style.color = '#065f46';
-                let tempoPago = segundosDecorridos - 15;
-                let minutos = Math.floor(tempoPago / 60);
-                let segundos = tempoPago % 60;
-                badge.innerText = `⏱️ Chamada Em Andamento: ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
-            }
+            let minutos = Math.floor(segundosDecorridos / 60);
+            let segundos = segundosDecorridos % 60;
+            badge.innerText = `⏱️ Tempo em chamada: ${minutos > 0 ? minutos + 'm ' : ''}${segundos < 10 && minutos > 0 ? '0' : ''}${segundos}s`;
         }
 
         function comprarMaisCreditos() {
@@ -439,7 +428,7 @@
             document.getElementById('modalEspera').style.display = 'none';
 
             if (segundosDecorridos <= 15) {
-                alert("Chamada encerrada durante os primeiros 15 segundos. Nenhuma cobrança foi feita!");
+                alert("Chamada encerrada nos primeiros segundos. Nenhuma cobrança foi feita!");
             }
         }
     </script>
