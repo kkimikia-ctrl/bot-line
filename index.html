@@ -201,7 +201,7 @@
                 <img src="collage_export_107AAA8B-4A69-4E35-8BF8-5816DFAF27D6.jpeg" class="logo-img" alt="Logo">
                 <h3 style="margin:0; color: #dc2626;">Saldo Insuficiente</h3>
             </div>
-            <p style="font-size: 15px; color: #4b5563;">Você precisa ter créditos (ao menos 1.500 ienes) para iniciar a chamada com o tradutor.</p>
+            <p style="font-size: 15px; color: #4b5563;">Você precisa ter créditos suficientes para iniciar a chamada com o tradutor.</p>
             <button class="btn-primary" style="background-color: #10b981; margin-top: 10px;" onclick="comprarCreditos()">🛒 Comprar Créditos Agora</button>
             <button class="btn-primary" style="background-color: #6b7280; margin-top: 8px;" onclick="fecharModalSemSaldo()">Voltar</button>
         </div>
@@ -224,9 +224,11 @@
             </select>
 
             <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
-            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-top: 5px; margin-bottom: 12px; font-size: 15px; font-weight: bold; color: #1e293b;">
-                ⏱️ 30 minutos (1.500円)
-            </div>
+            <select id="tempoAtendimento">
+                <option value="1800">30 minutos (1.500円)</option>
+                <option value="3600">1 hora (3.000円)</option>
+                <option value="7200">Mais de 1 hora (6.000円)</option>
+            </select>
 
             <div class="modal-buttons">
                 <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
@@ -251,12 +253,12 @@
                 <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
             </div>
 
-            <!-- Alerta aos 25 minutos (Caso não tenha crédito extra) -->
-            <div id="alerta25Min" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ A ligação desligará em 5 minutos!</p>
-                <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Você não possui créditos suficientes para continuar. Se quiser continuar, compre mais créditos.</p>
+            <!-- Alerta Próximo ao Fim do Tempo -->
+            <div id="alertaLimite" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
+                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando!</p>
+                <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Deseja comprar mais tempo para continuar a chamada?</p>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar crédito</button>
+                    <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais tempo</button>
                     <button class="btn-primary" style="background-color: #dc2626; font-size: 14px; padding: 8px;" onclick="naoQueroMais()">❌ Não quero</button>
                 </div>
             </div>
@@ -268,6 +270,7 @@
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
+        let limiteSegundos = 1800; // Padrão 30 min
         let timerInterval = null;
         let creditoDescontado = false; 
 
@@ -327,6 +330,10 @@
         }
 
         function iniciarEspera() {
+            // Pega o limite escolhido no select (em segundos)
+            const selectTempo = document.getElementById('tempoAtendimento');
+            limiteSegundos = parseInt(selectTempo.value);
+
             fecharModalTradutor();
             const modalEspera = document.getElementById('modalEspera');
             const statusTexto = document.getElementById('statusTexto');
@@ -337,7 +344,7 @@
             statusTexto.innerText = "Procurando tradutor...";
             subStatus.style.display = "block";
             videoContainer.style.display = "none";
-            document.getElementById('alerta25Min').style.display = 'none';
+            document.getElementById('alertaLimite').style.display = 'none';
             creditoDescontado = false; 
 
             setTimeout(async () => {
@@ -368,23 +375,26 @@
                 segundosDecorridos++;
                 atualizarDisplayCronometro();
 
-                // Passados 16 segundos, o sistema efetiva a cobrança em background
+                // Efetiva a cobrança no segundo 16 sem mexer no relógio
                 if (segundosDecorridos === 16 && !creditoDescontado) {
                     creditoDescontado = true;
-                    console.log("Créditos de 1.500 ienes cobrados com sucesso.");
+                    console.log("Cobrança efetuada com sucesso.");
                 }
 
-                // Aos 25 minutos de ligação contínua (1500 segundos)
-                if (segundosDecorridos === 1500) {
+                // Dispara o alerta 5 minutos (300 segundos) antes de esgotar o tempo escolhido
+                let tempoAlerta = limiteSegundos - 300;
+                if (tempoAlerta < 30) tempoAlerta = limiteSegundos - 30; // Para tempos menores se houver
+
+                if (segundosDecorridos === tempoAlerta) {
                     if (!temCreditoParaContinuar) {
-                        document.getElementById('alerta25Min').style.display = 'block';
+                        document.getElementById('alertaLimite').style.display = 'block';
                     } else {
-                        segundosDecorridos -= 1800; // Estende mais 30 min se tiver saldo
+                        limiteSegundos += 1800; // Estende mais 30 min se já comprou
                     }
                 }
 
-                // Ao completar 30 minutos totais (1800 segundos)
-                if (segundosDecorridos >= 1800) {
+                // Ao atingir o tempo total contratado
+                if (segundosDecorridos >= limiteSegundos) {
                     encerrarChamadaPorTempo();
                 }
             }, 1000);
@@ -392,21 +402,29 @@
 
         function atualizarDisplayCronometro() {
             const badge = document.getElementById('timerDisplay');
-            let minutos = Math.floor(segundosDecorridos / 60);
+            let horas = Math.floor(segundosDecorridos / 3600);
+            let minutos = Math.floor((segundosDecorridos % 3600) / 60);
             let segundos = segundosDecorridos % 60;
-            badge.innerText = `⏱️ Tempo em chamada: ${minutos > 0 ? minutos + 'm ' : ''}${segundos < 10 && minutos > 0 ? '0' : ''}${segundos}s`;
+            
+            let textoTempo = '';
+            if (horas > 0) {
+                textoTempo = `${horas}h ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+            } else {
+                textoTempo = `${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+            }
+            badge.innerText = `⏱️ Tempo em chamada: ${textoTempo}`;
         }
 
         function comprarMaisCreditos() {
-            alert("Créditos adicionados com sucesso! Mais 30 minutos liberados.");
+            alert("Tempo adicional adicionado com sucesso!");
             temCreditoParaContinuar = true;
-            segundosDecorridos -= 1800; 
-            document.getElementById('alerta25Min').style.display = 'none';
+            limiteSegundos += 1800; 
+            document.getElementById('alertaLimite').style.display = 'none';
         }
 
         function naoQueroMais() {
-            document.getElementById('alerta25Min').style.display = 'none';
-            alert("Você optou por não comprar créditos. A chamada será encerrada ao completar os 30 minutos.");
+            document.getElementById('alertaLimite').style.display = 'none';
+            alert("Você optou por não comprar mais tempo. A chamada será encerrada ao atingir o limite.");
         }
 
         function encerrarChamadaPorTempo() {
@@ -416,7 +434,7 @@
                 streamVideo = null;
             }
             document.getElementById('modalEspera').style.display = 'none';
-            alert("O tempo de atendimento de 30 minutos esgotou e não há créditos para renovação. A chamada foi encerrada.");
+            alert("O tempo contratado esgotou e a chamada foi encerrada.");
         }
 
         function cancelarChamada() {
