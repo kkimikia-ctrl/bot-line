@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AjudaJP - Serviços e Anúncios</title>
     <style>
         body {
@@ -15,24 +15,32 @@
         header {
             background-color: #0066cc;
             color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 18px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 16px;
             font-weight: bold;
+        }
+        .header-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #fff;
         }
         .container {
             padding: 15px;
         }
 
-        /* Carrossel Superior 100% Fluido */
+        /* Carrossel Superior - Rolagem Direta */
         .destaque-scroll {
             display: flex;
-            overflow-x: auto;
             gap: 10px;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
             padding-bottom: 10px;
             margin-bottom: 15px;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-x;
         }
         .destaque-scroll::-webkit-scrollbar {
             display: none;
@@ -44,25 +52,22 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
             background-color: #ddd;
         }
         .banner-destaque img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            pointer-events: none;
         }
 
-        /* Abas de Região Clicáveis e Roláveis */
+        /* Abas de Região */
         .regioes-scroll {
             display: flex;
-            overflow-x: auto;
             gap: 8px;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
             margin-bottom: 20px;
             padding-bottom: 5px;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-x;
         }
         .regioes-scroll::-webkit-scrollbar {
             display: none;
@@ -76,7 +81,7 @@
             cursor: pointer;
             color: #333;
             flex-shrink: 0;
-            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .tag-regiao.active {
             background-color: #0066cc;
@@ -101,14 +106,12 @@
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             margin-bottom: 15px;
-            cursor: pointer;
             background-color: #ddd;
         }
         .banner-normal img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            pointer-events: none;
         }
 
         /* Tela Flutuante (Popup) */
@@ -171,7 +174,12 @@
 </head>
 <body>
 
-    <header>Serviços e Anúncios</header>
+    <!-- Cabeçalho com Logo Esquerda e Direita -->
+    <header>
+        <img src="https://via.placeholder.com/35" alt="Logo Esquerda" class="header-logo">
+        <span>Serviços e Anúncios</span>
+        <img src="https://via.placeholder.com/35" alt="Logo Direita" class="header-logo">
+    </header>
 
     <div class="container">
         <!-- Carrossel Superior -->
@@ -188,12 +196,12 @@
             <div class="banner-destaque" onclick="abrirDetalhes('Destaque 4', 'Descrição completa do Destaque 4. Todos os dados estão na imagem.', '09055556666')">
                 <img src="https://via.placeholder.com/120x80/8e44ad/ffffff?text=Destaque+4" alt="Destaque 4">
             </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 6', 'Descrição completa do Destaque 6. Todos os dados estão na imagem.', '08011112222')">
-                <img src="https://via.placeholder.com/120x80/e74c3c/ffffff?text=Destaque+6" alt="Destaque 6">
+            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 5', 'Descrição completa do Destaque 5. Todos os dados estão na imagem.', '08011112222')">
+                <img src="https://via.placeholder.com/120x80/e74c3c/ffffff?text=Destaque+5" alt="Destaque 5">
             </div>
         </div>
 
-        <!-- Filtros de Região Clicáveis -->
+        <!-- Filtros de Região (Usando ontouchstart e onclick para garantir o clique no celular) -->
         <div class="regioes-scroll">
             <div class="tag-regiao active" onclick="filtrarRegiao(this)">Todas</div>
             <div class="tag-regiao" onclick="filtrarRegiao(this)">Tokai (Aichi/Shizuoka/Gifu)</div>
@@ -204,23 +212,21 @@
             <div class="tag-regiao" onclick="filtrarRegiao(this)">Tohoku / Hokkaido</div>
         </div>
 
-        <!-- Todos os Serviços (Lista Principal) -->
+        <!-- Lista Principal -->
         <div class="lista-section">
             <div class="lista-title">Todos os Serviços</div>
 
-            <!-- Banner Normal 1 -->
             <div class="banner-normal" onclick="abrirDetalhes('Restaurante Sabor Brasil', 'Comida caseira todos os dias, marmitas e delivery. Confira os telefones e e-mail na arte da imagem.', '09012345678')">
                 <img src="https://via.placeholder.com/400x180/2980b9/ffffff?text=Anuncio+Tokai" alt="Anúncio Tokai">
             </div>
 
-            <!-- Banner Normal 2 -->
             <div class="banner-normal" onclick="abrirDetalhes('Oficina Mecânica Gomes', 'Manutenção geral, freios e troca de óleo. Contatos disponíveis na foto do anúncio.', '08087654321')">
                 <img src="https://via.placeholder.com/400x180/8e44ad/ffffff?text=Oficina+Mecanica" alt="Oficina Mecânica">
             </div>
         </div>
     </div>
 
-    <!-- Tela Flutuante (Popup) com Botão de Ligar -->
+    <!-- Tela Flutuante (Popup) -->
     <div id="modalDetalhes" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="fecharDetalhes()">&times;</span>
