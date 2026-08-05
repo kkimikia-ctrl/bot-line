@@ -24,13 +24,16 @@
             padding: 15px;
         }
 
-        /* Carrossel Superior Exatamente como estava antes */
+        /* Carrossel Superior Livre para Rolagem */
         .destaque-scroll {
             display: flex;
             gap: 10px;
             overflow-x: auto;
             padding-bottom: 10px;
             margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            z-index: 2;
         }
         .banner-destaque {
             min-width: 120px;
@@ -48,13 +51,16 @@
             object-fit: cover;
         }
 
-        /* Abas de Região */
+        /* Abas de Região Clicáveis e Livres */
         .regioes-scroll {
             display: flex;
             gap: 8px;
             overflow-x: auto;
             margin-bottom: 20px;
             padding-bottom: 5px;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            z-index: 2;
         }
         .regioes-scroll::-webkit-scrollbar {
             display: none;
@@ -112,7 +118,7 @@
             background-color: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 9999;
         }
         .modal-content {
             background-color: white;
@@ -169,6 +175,7 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
+            z-index: 100;
         }
         .nav-item {
             text-align: center;
@@ -187,7 +194,7 @@
     <header>Serviços e Anúncios</header>
 
     <div class="container">
-        <!-- Carrossel Superior (Restaurado ao formato original fluido) -->
+        <!-- Carrossel Superior -->
         <div class="destaque-scroll">
             <div class="banner-destaque" onclick="abrirDetalhes('Destaque 1', 'Descrição completa do Destaque 1. Todos os dados estão na imagem.', '09012345678')">
                 <img src="https://via.placeholder.com/120x80/0066cc/ffffff?text=Destaque+1" alt="Destaque 1">
@@ -206,15 +213,15 @@
             </div>
         </div>
 
-        <!-- Filtros de Região Completos -->
+        <!-- Filtros de Região Clicáveis -->
         <div class="regioes-scroll">
-            <div class="tag-regiao">Todas</div>
-            <div class="tag-regiao active">Tokai (Aichi/Shizuoka/Gifu)</div>
-            <div class="tag-regiao">Kanto (Tokyo/Kanagawa/Saitama/Chiba)</div>
-            <div class="tag-regiao">Kansai (Osaka/Kyoto/Hyogo)</div>
-            <div class="tag-regiao">Kyushu (Fukuoka/Kumamoto/...)</div>
-            <div class="tag-regiao">Chugoku / Shikoku</div>
-            <div class="tag-regiao">Tohoku / Hokkaido</div>
+            <div class="tag-regiao" onclick="filtrarRegiao(this)">Todas</div>
+            <div class="tag-regiao active" onclick="filtrarRegiao(this)">Tokai (Aichi/Shizuoka/Gifu)</div>
+            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kanto (Tokyo/Kanagawa/Saitama/Chiba)</div>
+            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kansai (Osaka/Kyoto/Hyogo)</div>
+            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kyushu (Fukuoka/Kumamoto/...)</div>
+            <div class="tag-regiao" onclick="filtrarRegiao(this)">Chugoku / Shikoku</div>
+            <div class="tag-regiao" onclick="filtrarRegiao(this)">Tohoku / Hokkaido</div>
         </div>
 
         <!-- Todos os Serviços (Lista Principal) -->
@@ -261,6 +268,12 @@
 
         function fecharDetalhes() {
             document.getElementById('modalDetalhes').style.display = 'none';
+        }
+
+        function filtrarRegiao(elemento) {
+            let tags = document.querySelectorAll('.tag-regiao');
+            tags.forEach(t => t.classList.remove('active'));
+            elemento.classList.add('active');
         }
     </script>
 
