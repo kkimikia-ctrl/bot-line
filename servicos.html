@@ -3,247 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serviços e Anúncios - Ajuda JP</title>
+    <title>AjudaJP - Anúncios</title>
     <style>
-        /* Configurações gerais da página */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
-            color: #333;
+            padding-bottom: 60px;
         }
-
-        /* --- CABEÇALHO COM LOGOS NOS CANTOS --- */
-        .app-header {
-            background-color: #1a73e8;
+        header {
+            background-color: #0066cc;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 6px 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .header-logo {
-            width: 32px;  /* Largura da logo */
-            height: 32px; /* Altura da logo */
-            border-radius: 50%; /* Opcional: deixa redondinha se quiser */
-            object-fit: cover;
-            background-color: #fff; /* Fundo caso a imagem demore a carregar */
-        }
-
-        .app-header h1 {
-            margin: 0;
-            font-size: 0.95rem;
-            font-weight: bold;
+            padding: 15px;
             text-align: center;
-            flex-grow: 1;
+            font-size: 18px;
+            font-weight: bold;
         }
-
-        /* --- TOPO FIXO: CARROSSEL DE MINI BANNERS --- */
-        .carousel-container {
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .container {
+            padding: 15px;
+        }
+        /* Seção Destaque (Topo) */
+        .destaque-section {
+            margin-bottom: 20px;
+        }
+        .destaque-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .banner-destaque {
             width: 100%;
+            height: 120px;
+            border-radius: 8px;
             overflow: hidden;
-            background: #ffffff;
-            padding: 8px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            background-color: #ddd;
         }
-
-        .carousel-track {
-            display: flex;
-            gap: 12px;
-            width: max-content;
-            animation: rolarInfinito 25s linear infinite;
-        }
-
-        .carousel-container:hover .carousel-track {
-            animation-play-state: paused;
-        }
-
-        .carousel-track a {
-            display: block;
-            flex-shrink: 0;
-            width: 120px;
-            height: 70px;
-            border-radius: 6px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            background: #ddd;
-        }
-
-        .carousel-track img {
+        .banner-destaque img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        @keyframes rolarInfinito {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(calc(-50% - 6px));
-            }
+        /* Seção Lista Principal (Banners Normais) */
+        .lista-section {
+            margin-top: 20px;
         }
-
-        /* --- FILTRO POR REGIÕES --- */
-        .region-filter {
-            position: sticky;
-            top: 78px; /* Altura ajustada para colar logo abaixo do carrossel */
-            z-index: 99;
-            display: flex;
-            overflow-x: auto;
-            gap: 8px;
-            padding: 8px 12px;
-            background: #ffffff;
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-top: 1px solid #eee;
-            margin-bottom: 15px;
-        }
-
-        .region-filter::-webkit-scrollbar {
-            display: none;
-        }
-
-        .region-btn {
-            background-color: #e4e6eb;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+        .lista-title {
+            font-size: 16px;
             color: #333;
-            cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
-        }
-
-        .region-btn.active {
-            background-color: #1a73e8;
-            color: white;
+            margin-bottom: 12px;
             font-weight: bold;
         }
-
-        /* --- FEED VERTICAL DE ANÚNCIOS --- */
-        .feed-container {
-            padding: 0 15px 30px 15px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .feed-container h2 {
-            font-size: 1.05rem;
-            margin: 10px 0 15px 0;
-            color: #444;
-        }
-
-        .feed-banner-card {
-            margin-bottom: 15px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            background: #fff;
-            transition: transform 0.2s;
-        }
-
-        .feed-banner-card:active {
-            transform: scale(0.98);
-        }
-
-        .feed-banner-card a {
-            display: block;
-        }
-
-        .feed-banner-card img {
+        .banner-normal {
             width: 100%;
-            height: auto;
-            display: block;
-            max-height: 220px;
+            height: 160px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            cursor: pointer;
+            background-color: #ddd;
+        }
+        .banner-normal img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+        }
+
+        /* Tela Flutuante (Popup) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 85%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #888;
+            cursor: pointer;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        .modal-descricao {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        /* Menu Inferior Fixo */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        .nav-item {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            text-decoration: none;
+        }
+        .nav-item.active {
+            color: #0066cc;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <!-- CABEÇALHO COM LOGOS NOS CANTOS -->
-    <header class="app-header">
-        <!-- Logo do lado esquerdo (mude o nome do arquivo da sua logo aqui) -->
-        <img src="logo.jpeg" alt="Logo Esquerda" class="header-logo">
-        
-        <h1>Serviços e Anúncios</h1>
-        
-        <!-- Logo do lado direito (pode usar a mesma imagem ou outra) -->
-        <img src="logo.jpeg" alt="Logo Direita" class="header-logo">
-    </header>
+    <header>AJUDAJP</header>
 
-    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS -->
-    <section class="carousel-container">
-        <div class="carousel-track">
-            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
-
-            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+    <div class="container">
+        <!-- Banner Destaque (Topo) -->
+        <div class="destaque-section">
+            <div class="destaque-title">Destaque da Semana</div>
+            <div class="banner-destaque" onclick="abrirDetalhes('Auto Peças Tanaka', 'Trabalhamos com peças novas e usadas para todas as marcas. Entre em contato direto pelo telefone ou e-mail indicados na imagem!')">
+                <!-- Coloque o link da arte do destaque abaixo -->
+                <img src="https://via.placeholder.com/400x120/0066cc/ffffff?text=Auto+Pecas+Tanaka" alt="Destaque">
+            </div>
         </div>
-    </section>
 
-    <!-- FILTRO POR REGIÕES -->
-    <div class="region-filter">
-        <button class="region-btn active" onclick="filtrarRegiao('todas')">Todas</button>
-        <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai (Aichi/Shizuoka/Gifu)</button>
-        <button class="region-btn" onclick="filtrarRegiao('kanto')">Kanto (Tokyo/Gunma...)</button>
-        <button class="region-btn" onclick="filtrarRegiao('kansai')">Kansai (Osaka/Mie...)</button>
-        <button class="region-btn" onclick="filtrarRegiao('hokkaido-tohoku')">Hokkaido / Tohoku</button>
-        <button class="region-btn" onclick="filtrarLogo('chugoku-shikoku')" onclick="filtrarRegiao('chugoku-shikoku')">Chugoku / Shikoku</button>
-        <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa')">Kyushu / Okinawa</button>
+        <!-- Lista Principal (Banners Normais) -->
+        <div class="lista-section">
+            <div class="lista-title">Anúncios em Destaque</div>
+
+            <!-- Banner 1 -->
+            <div class="banner-normal" onclick="abrirDetalhes('Restaurante Sabor Brasil', 'Comida caseira todos os dias, marmitas e delivery. Faça seu pedido antecipado ligando no número que está na imagem do anúncio.')">
+                <img src="https://via.placeholder.com/400x160/27ae60/ffffff?text=Restaurante+Sabor+Brasil" alt="Restaurante Sabor Brasil">
+            </div>
+
+            <!-- Banner 2 -->
+            <div class="banner-normal" onclick="abrirDetalhes('Oficina Mecânica Gomes', 'Manutenção geral, troca de óleo, freios e revisão completa. Atendimento rápido e de confiança.')">
+                <img src="https://via.placeholder.com/400x160/2980b9/ffffff?text=Oficina+Mecanica+Gomes" alt="Oficina Mecanica Gomes">
+            </div>
+        </div>
     </div>
 
-    <!-- CENTRO: FEED VERTICAL DE BANNERS -->
-    <section class="feed-container">
-        <h2>Todos os Serviços</h2>
-
-        <div class="feed-banner-card" data-regiao="tokai">
-            <a href="#" target="_blank"><img src="banner-grande-1.jpg" alt="Anúncio Tokai"></a>
+    <!-- Tela Flutuante (Popup para Descrição) -->
+    <div id="modalDetalhes" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fecharDetalhes()">&times;</span>
+            <div id="modalTitulo" class="modal-title">Título</div>
+            <div id="modalTexto" class="modal-descricao">Descrição completa do anunciante aparecerá aqui...</div>
         </div>
+    </div>
 
-        <div class="feed-banner-card" data-regiao="kanto">
-            <a href="#" target="_blank"><img src="banner-grande-2.jpg" alt="Anúncio Kanto"></a>
-        </div>
-
-        <div class="feed-banner-card" data-regiao="kansai">
-            <a href="#" target="_blank"><img src="banner-grande-3.jpg" alt="Anúncio Kansai"></a>
-        </div>
-
-        <div class="feed-banner-card" data-regiao="kyushu-okinawa">
-            <a href="#" target="_blank"><img src="banner-grande-4.jpg" alt="Anúncio Kyushu"></a>
-        </div>
-    </section>
+    <!-- Menu Inferior -->
+    <div class="nav-bar">
+        <a href="#" class="nav-item active">🏠 Home</a>
+        <a href="#" class="nav-item">📂 Categorias</a>
+        <a href="#" class="nav-item">👤 Perfil</a>
+        <a href="#" class="nav-item">📢 Anunciar</a>
+    </div>
 
     <script>
-        function filtrarRegiao(regiao) {
-            const clickedBtn = event.currentTarget || event.target;
-            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
-            clickedBtn.classList.add('active');
+        function abrirDetalhes(titulo, descricao) {
+            document.getElementById('modalTitulo').innerText = titulo;
+            document.getElementById('modalTexto').innerText = descricao;
+            document.getElementById('modalDetalhes').style.display = 'flex';
+        }
 
-            document.querySelectorAll('.feed-banner-card').forEach(card => {
-                if (regiao === 'todas' || card.getAttribute('data-regiao') === regiao) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+        function fecharDetalhes() {
+            document.getElementById('modalDetalhes').style.display = 'none';
         }
     </script>
 
