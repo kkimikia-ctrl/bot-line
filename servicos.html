@@ -4,7 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços e Anúncios - Ajuda JP</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Configurações gerais da página */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .app-header {
+            background-color: #1a73e8;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* --- CARROSSEL INFINITO AUTOMÁTICO --- */
+        .carousel-container {
+            width: 100%;
+            overflow: hidden;
+            background: #ffffff;
+            padding: 12px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            /* Animação infinita de rolagem contínua (25 segundos para dar a volta) */
+            animation: rolarInfinito 25s linear infinite;
+        }
+
+        /* Pausa a rolagem quando o usuário coloca o dedo ou mouse em cima */
+        .carousel-container:hover .carousel-track {
+            animation-play-state: paused;
+        }
+
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 140px; /* Largura padrão do mini banner */
+            height: 80px;  /* Altura padrão do mini banner */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #ddd;
+        }
+
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes rolarInfinito {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                /* Move exatamente metade da largura total duplicada para criar o loop perfeito */
+                transform: translateX(calc(-50% - 6px));
+            }
+        }
+
+        /* --- FILTRO POR REGIÕES --- */
+        .region-filter {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #ffffff;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .region-filter::-webkit-scrollbar {
+            display: none; /* Esconde a barra de rolagem no celular para ficar bonito */
+        }
+
+        .region-btn {
+            background-color: #e4e6eb;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .region-btn.active {
+            background-color: #1a73e8;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* --- FEED VERTICAL DE ANÚNCIOS --- */
+        .feed-container {
+            padding: 0 15px 30px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .feed-container h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .feed-banner-card {
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            transition: transform 0.2s;
+        }
+
+        .feed-banner-card:active {
+            transform: scale(0.98);
+        }
+
+        .feed-banner-card a {
+            display: block;
+        }
+
+        .feed-banner-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 220px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,85 +154,64 @@
         <h1>Serviços e Anúncios</h1>
     </header>
 
-    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS (AGORA COM 6 EXEMPLOS) -->
+    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS (ROLANDO SOZINHO EM LOOP INFINITO) -->
     <section class="carousel-container">
         <div class="carousel-track">
-            <!-- Banner 1 -->
-            <a href="#" target="_blank">
-                <img src="mini-banner-1.jpg" alt="Destaque 1">
-            </a>
-            <!-- Banner 2 -->
-            <a href="#" target="_blank">
-                <img src="mini-banner-2.jpg" alt="Destaque 2">
-            </a>
-            <!-- Banner 3 -->
-            <a href="#" target="_blank">
-                <img src="mini-banner-3.jpg" alt="Destaque 3">
-            </a>
-            <!-- Banner 4 (Novo) -->
-            <a href="#" target="_blank">
-                <img src="mini-banner-4.jpg" alt="Destaque 4">
-            </a>
-            <!-- Banner 5 (Novo) -->
-            <a href="#" target="_blank">
-                <img src="mini-banner-5.jpg" alt="Destaque 5">
-            </a>
-            <!-- Banner 6 (Novo) -->
-            <a href="#" target="_blank">
-                <img src="mini-banner-6.jpg" alt="Destaque 6">
-            </a>
+            <!-- Bloco Original de 6 Banners -->
+            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+
+            <!-- Cópia exata dos 6 banners para garantir o efeito de loop infinito sem buracos -->
+            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
         </div>
     </section>
 
     <!-- FILTRO POR REGIÕES DO JAPÃO -->
     <div class="region-filter">
         <button class="region-btn active" onclick="filtrarRegiao('todas')">Todas</button>
-        <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai</button>
-        <button class="region-btn" onclick="filtrarRegiao('kanto')">Kanto</button>
-        <button class="region-btn" onclick="filtrarRegiao('kansai')">Kansai</button>
+        <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai (Aichi/Shizuoka/Gifu)</button>
+        <button class="region-btn" onclick="filtrarRegiao('kanto')">Kanto (Tokyo/Gunma...)</button>
+        <button class="region-btn" onclick="filtrarRegiao('kansai')">Kansai (Osaka/Mie...)</button>
         <button class="region-btn" onclick="filtrarRegiao('hokkaido-tohoku')">Hokkaido / Tohoku</button>
         <button class="region-btn" onclick="filtrarRegiao('chugoku-shikoku')">Chugoku / Shikoku</button>
         <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa')">Kyushu / Okinawa</button>
     </div>
 
-    <!-- CENTRO: FEED VERTICAL DE BANNERS (COM 4 EXEMPLOS) -->
+    <!-- CENTRO: FEED VERTICAL DE BANNERS -->
     <section class="feed-container">
         <h2>Todos os Serviços</h2>
 
-        <!-- Anúncio 1: Tokai -->
         <div class="feed-banner-card" data-regiao="tokai">
-            <a href="#" target="_blank">
-                <img src="banner-grande-1.jpg" alt="Anúncio Tokai">
-            </a>
+            <a href="#" target="_blank"><img src="banner-grande-1.jpg" alt="Anúncio Tokai"></a>
         </div>
 
-        <!-- Anúncio 2: Kanto -->
         <div class="feed-banner-card" data-regiao="kanto">
-            <a href="#" target="_blank">
-                <img src="banner-grande-2.jpg" alt="Anúncio Kanto">
-            </a>
+            <a href="#" target="_blank"><img src="banner-grande-2.jpg" alt="Anúncio Kanto"></a>
         </div>
 
-        <!-- Anúncio 3: Kansai -->
         <div class="feed-banner-card" data-regiao="kansai">
-            <a href="#" target="_blank">
-                <img src="banner-grande-3.jpg" alt="Anúncio Kansai">
-            </a>
+            <a href="#" target="_blank"><img src="banner-grande-3.jpg" alt="Anúncio Kansai"></a>
         </div>
 
-        <!-- Anúncio 4: Kyushu / Okinawa -->
         <div class="feed-banner-card" data-regiao="kyushu-okinawa">
-            <a href="#" target="_blank">
-                <img src="banner-grande-4.jpg" alt="Anúncio Kyushu">
-            </a>
+            <a href="#" target="_blank"><img src="banner-grande-4.jpg" alt="Anúncio Kyushu"></a>
         </div>
     </section>
 
     <script>
-        // Função para filtrar por região
         function filtrarRegiao(regiao) {
-            document.querySelectorAll('.region-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            const clickedBtn = event.currentTarget || event.target;
+            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+            clickedBtn.classList.add('active');
 
             document.querySelectorAll('.feed-banner-card').forEach(card => {
                 if (regiao === 'todas' || card.getAttribute('data-regiao') === regiao) {
