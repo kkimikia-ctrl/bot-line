@@ -35,7 +35,7 @@
             -webkit-overflow-scrolling: touch;
         }
         .destaque-scroll::-webkit-scrollbar {
-            display: none; /* Esconde a barra de rolagem no celular */
+            display: none;
         }
         .banner-destaque {
             flex: 0 0 140px;
@@ -46,7 +46,6 @@
             cursor: pointer;
             background-color: #ddd;
             scroll-snap-align: start;
-            position: relative;
         }
         .banner-destaque img {
             width: 100%;
@@ -54,7 +53,7 @@
             object-fit: cover;
         }
 
-        /* Abas de Região */
+        /* Abas de Região (Todas as regiões de volta) */
         .regioes-scroll {
             display: flex;
             gap: 8px;
@@ -147,6 +146,20 @@
             font-size: 14px;
             color: #444;
             line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .btn-ligar {
+            display: block;
+            width: 100%;
+            background-color: #27ae60;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         /* Menu Inferior Fixo */
@@ -180,22 +193,24 @@
     <div class="container">
         <!-- Carrossel de Destaques (Topo) -->
         <div class="destaque-scroll">
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 1', 'Descrição do Destaque 1. Todos os dados de contato estão na imagem.')">
+            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 1', 'Descrição do Destaque 1. Todos os dados de contato estão na imagem.', '09012345678')">
                 <img src="https://via.placeholder.com/140x90/0066cc/ffffff?text=Destaque+1" alt="Destaque 1">
             </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 2', 'Descrição do Destaque 2. Todos os dados de contato estão na imagem.')">
+            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 2', 'Descrição do Destaque 2. Todos os dados de contato estão na imagem.', '09087654321')">
                 <img src="https://via.placeholder.com/140x90/27ae60/ffffff?text=Destaque+2" alt="Destaque 2">
             </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 6', 'Descrição do Destaque 6. Todos os dados de contato estão na imagem.')">
+            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 6', 'Descrição do Destaque 6. Todos os dados de contato estão na imagem.', '08011112222')">
                 <img src="https://via.placeholder.com/140x90/e74c3c/ffffff?text=Destaque+6" alt="Destaque 6">
             </div>
         </div>
 
-        <!-- Filtros de Região -->
+        <!-- Filtros de Região (Todas as regiões restauradas) -->
         <div class="regioes-scroll">
             <div class="tag-regiao">Todas</div>
             <div class="tag-regiao active">Tokai (Aichi/Shizuoka/Gifu)</div>
             <div class="tag-regiao">Kanto (Tokyo/...)</div>
+            <div class="tag-regiao">Kansai (Osaka/Kyoto/Hyogo)</div>
+            <div class="tag-regiao">Kyushu (Fukuoka/...)</div>
         </div>
 
         <!-- Todos os Serviços (Lista Principal) -->
@@ -203,23 +218,24 @@
             <div class="lista-title">Todos os Serviços</div>
 
             <!-- Banner Normal 1 -->
-            <div class="banner-normal" onclick="abrirDetalhes('Restaurante Sabor Brasil', 'Comida caseira todos os dias, marmitas e delivery. Confira os telefones e e-mail na arte da imagem.')">
+            <div class="banner-normal" onclick="abrirDetalhes('Restaurante Sabor Brasil', 'Comida caseira todos os dias, marmitas e delivery. Confira os telefones e e-mail na arte da imagem.', '09012345678')">
                 <img src="https://via.placeholder.com/400x180/2980b9/ffffff?text=Anuncio+Tokai" alt="Anúncio Tokai">
             </div>
 
             <!-- Banner Normal 2 -->
-            <div class="banner-normal" onclick="abrirDetalhes('Oficina Mecânica Gomes', 'Manutenção geral, freios e troca de óleo. Contatos disponíveis na foto do anúncio.')">
+            <div class="banner-normal" onclick="abrirDetalhes('Oficina Mecânica Gomes', 'Manutenção geral, freios e troca de óleo. Contatos disponíveis na foto do anúncio.', '08087654321')">
                 <img src="https://via.placeholder.com/400x180/8e44ad/ffffff?text=Oficina+Mecanica" alt="Oficina Mecânica">
             </div>
         </div>
     </div>
 
-    <!-- Tela Flutuante (Popup) -->
+    <!-- Tela Flutuante (Popup) com Botão de Ligar -->
     <div id="modalDetalhes" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="fecharDetalhes()">&times;</span>
             <div id="modalTitulo" class="modal-title">Título</div>
             <div id="modalTexto" class="modal-descricao">Descrição completa...</div>
+            <a id="btnLigarModal" href="#" class="btn-ligar">📞 Ligar Agora</a>
         </div>
     </div>
 
@@ -232,9 +248,10 @@
     </div>
 
     <script>
-        function abrirDetalhes(titulo, descricao) {
+        function abrirDetalhes(titulo, descricao, telefone) {
             document.getElementById('modalTitulo').innerText = titulo;
             document.getElementById('modalTexto').innerText = descricao;
+            document.getElementById('btnLigarModal').href = 'tel:' + telefone;
             document.getElementById('modalDetalhes').style.display = 'flex';
         }
 
