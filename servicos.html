@@ -1,77 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serviços e Anúncios - Ajuda JP</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <!-- CABEÇALHO DO MINI APP -->
-    <header class="app-header">
-        <h1>Serviços e Anúncios</h1>
-    </header>
-
-    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS (COM ROLAGEM AUTOMÁTICA) -->
-    <section class="carousel-container">
-        <div class="carousel-track" id="carouselTrack">
-            <a href="#" target="_blank">
-                <img src="mini-banner-1.jpg" alt="Destaque 1">
-            </a>
-            <a href="#" target="_blank">
-                <img src="mini-banner-2.jpg" alt="Destaque 2">
-            </a>
-            <a href="#" target="_blank">
-                <img src="mini-banner-3.jpg" alt="Destaque 3">
-            </a>
-        </div>
-    </section>
-
-    <!-- FILTRO POR REGIÕES DO JAPÃO -->
-    <div class="region-filter">
-        <button class="region-btn active" onclick="filtrarRegiao('todas')">Todas</button>
-        <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai (Aichi/Shizuoka/Gifu)</button>
-        <button class="region-btn" onclick="filtrarRegiao('kanto')">Kanto (Tokyo/Gunma...)</button>
-        <button class="region-btn" onclick="filtrarRegiao('kansai')">Kansai (Osaka/Mie...)</button>
-        <button class="region-btn" onclick="filtrarRegiao('hokkaido-tohoku')">Hokkaido / Tohoku</button>
-        <button class="region-btn" onclick="filtrarRegiao('chugoku-shikoku')">Chugoku / Shikoku</button>
-        <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa')">Kyushu / Okinawa</button>
-    </div>
-
-    <!-- CENTRO: FEED VERTICAL DE BANNERS -->
-    <section class="feed-container">
-        <h2>Todos os Serviços</h2>
-
-        <!-- Anúncio 1: Tokai -->
-        <div class="feed-banner-card" data-regiao="tokai">
-            <a href="#" target="_blank">
-                <img src="banner-grande-1.jpg" alt="Anúncio Tokai">
-            </a>
-        </div>
-
-        <!-- Anúncio 2: Kanto -->
-        <div class="feed-banner-card" data-regiao="kanto">
-            <a href="#" target="_blank">
-                <img src="banner-grande-2.jpg" alt="Anúncio Kanto">
-            </a>
-        </div>
-
-        <!-- Anúncio 3: Kansai -->
-        <div class="feed-banner-card" data-regiao="kansai">
-            <a href="#" target="_blank">
-                <img src="banner-grande-3.jpg" alt="Anúncio Kansai">
-            </a>
-        </div>
-
-        <!-- Anúncio 4: Kyushu / Okinawa -->
-        <div class="feed-banner-card" data-regiao="kyushu-okinawa">
-            <a href="#" target="_blank">
-                <img src="banner-grande-4.jpg" alt="Anúncio Kyushu">
-            </a>
-        </div>
-    </section>
-
     <script>
         // Função para filtrar por região
         function filtrarRegiao(regiao) {
@@ -87,23 +13,24 @@
             });
         }
 
-        // Função para o carrossel de cima rodar sozinho (autoplay) a cada 3 segundos
+        // Função infalível para o carrossel rodar sozinho
         const track = document.getElementById('carouselTrack');
-        let scrollAmount = 0;
+        let direcao = 1; // 1 vai para frente, -1 volta para trás
 
-        function rodarCarrossel() {
-            // Se chegou no final, volta para o começo
+        function rodarCarrosselAutomatico() {
+            // Se chegou no final da direita, inverte e volta para a esquerda
             if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 5) {
-                track.scrollTo({ left: 0, behavior: 'smooth' });
-            } else {
-                // Senão, avança a largura de um banner (ex: 120 pixels)
-                track.scrollBy({ left: 130, behavior: 'smooth' });
+                direcao = -1;
+            } 
+            // Se chegou no início da esquerda, volta a avançar para a direita
+            else if (track.scrollLeft <= 0) {
+                direcao = 1;
             }
+
+            // Move o carrossel suavemente 120 pixels na direção atual
+            track.scrollBy({ left: 120 * direcao, behavior: 'smooth' });
         }
 
-        // Dispara a função a cada 3000 milissegundos (3 segundos)
-        setInterval(rodarCarrossel, 3000);
+        // Roda a cada 3 segundos (3000ms)
+        setInterval(rodarCarrosselAutomatico, 3000);
     </script>
-
-</body>
-</html>
