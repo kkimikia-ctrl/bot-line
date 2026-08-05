@@ -13,9 +13,9 @@
         <h1>Serviços e Anúncios</h1>
     </header>
 
-    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS -->
+    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS (COM ROLAGEM AUTOMÁTICA) -->
     <section class="carousel-container">
-        <div class="carousel-track">
+        <div class="carousel-track" id="carouselTrack">
             <a href="#" target="_blank">
                 <img src="mini-banner-1.jpg" alt="Destaque 1">
             </a>
@@ -39,7 +39,7 @@
         <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa')">Kyushu / Okinawa</button>
     </div>
 
-    <!-- CENTRO: FEED VERTICAL DE BANNERS (ORDEM DE PUBLICAÇÃO) -->
+    <!-- CENTRO: FEED VERTICAL DE BANNERS -->
     <section class="feed-container">
         <h2>Todos os Serviços</h2>
 
@@ -73,6 +73,7 @@
     </section>
 
     <script>
+        // Função para filtrar por região
         function filtrarRegiao(regiao) {
             document.querySelectorAll('.region-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
@@ -85,6 +86,23 @@
                 }
             });
         }
+
+        // Função para o carrossel de cima rodar sozinho (autoplay) a cada 3 segundos
+        const track = document.getElementById('carouselTrack');
+        let scrollAmount = 0;
+
+        function rodarCarrossel() {
+            // Se chegou no final, volta para o começo
+            if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 5) {
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                // Senão, avança a largura de um banner (ex: 120 pixels)
+                track.scrollBy({ left: 130, behavior: 'smooth' });
+            }
+        }
+
+        // Dispara a função a cada 3000 milissegundos (3 segundos)
+        setInterval(rodarCarrossel, 3000);
     </script>
 
 </body>
