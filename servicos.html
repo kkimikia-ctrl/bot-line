@@ -14,35 +14,41 @@
             color: #333;
         }
 
+        /* --- CABEÇALHO AZUL FININHO --- */
         .app-header {
             background-color: #1a73e8;
             color: white;
             text-align: center;
-            padding: 15px;
-            font-size: 1.2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 8px 10px; /* Reduzido para ficar bem fininho */
+            font-size: 1rem;   /* Letra menor */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* --- CARROSSEL INFINITO AUTOMÁTICO --- */
+        .app-header h1 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        /* --- TOPO FIXO: CARROSSEL DE MINI BANNERS (GRUDADO NO TOPO) --- */
         .carousel-container {
+            position: sticky;
+            top: 0;
+            z-index: 100; /* Fica acima de tudo quando rola */
             width: 100%;
             overflow: hidden;
             background: #ffffff;
-            padding: 12px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            position: relative;
+            padding: 8px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .carousel-track {
             display: flex;
             gap: 12px;
             width: max-content;
-            /* Animação infinita de rolagem contínua (25 segundos para dar a volta) */
             animation: rolarInfinito 25s linear infinite;
         }
 
-        /* Pausa a rolagem quando o usuário coloca o dedo ou mouse em cima */
         .carousel-container:hover .carousel-track {
             animation-play-state: paused;
         }
@@ -50,11 +56,11 @@
         .carousel-track a {
             display: block;
             flex-shrink: 0;
-            width: 140px; /* Largura padrão do mini banner */
-            height: 80px;  /* Altura padrão do mini banner */
-            border-radius: 8px;
+            width: 120px; /* Mini banner mais compacto */
+            height: 70px;
+            border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
             background: #ddd;
         }
 
@@ -69,33 +75,36 @@
                 transform: translateX(0);
             }
             100% {
-                /* Move exatamente metade da largura total duplicada para criar o loop perfeito */
                 transform: translateX(calc(-50% - 6px));
             }
         }
 
-        /* --- FILTRO POR REGIÕES --- */
+        /* --- FILTRO POR REGIÕES (TAMBÉM TRAVADO LOGO ABAIXO DO CARROSSEL) --- */
         .region-filter {
+            position: sticky;
+            top: 86px; /* Fica logo abaixo do carrossel fixo */
+            z-index: 99;
             display: flex;
             overflow-x: auto;
             gap: 8px;
-            padding: 10px 15px;
+            padding: 8px 12px;
             background: #ffffff;
             white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-top: 1px solid #eee;
+            margin-bottom: 15px;
         }
 
         .region-filter::-webkit-scrollbar {
-            display: none; /* Esconde a barra de rolagem no celular para ficar bonito */
+            display: none;
         }
 
         .region-btn {
             background-color: #e4e6eb;
             border: none;
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #333;
             cursor: pointer;
             transition: background 0.2s;
@@ -116,8 +125,8 @@
         }
 
         .feed-container h2 {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+            font-size: 1.05rem;
+            margin: 10px 0 15px 0;
             color: #444;
         }
 
@@ -149,15 +158,14 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO DO MINI APP -->
+    <!-- CABEÇALHO AZUL FININHO -->
     <header class="app-header">
         <h1>Serviços e Anúncios</h1>
     </header>
 
-    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS (ROLANDO SOZINHO EM LOOP INFINITO) -->
+    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS (GRUDADO NO TOPO) -->
     <section class="carousel-container">
         <div class="carousel-track">
-            <!-- Bloco Original de 6 Banners -->
             <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
             <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
             <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
@@ -165,7 +173,6 @@
             <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
             <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
 
-            <!-- Cópia exata dos 6 banners para garantir o efeito de loop infinito sem buracos -->
             <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
             <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
             <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
@@ -175,7 +182,7 @@
         </div>
     </section>
 
-    <!-- FILTRO POR REGIÕES DO JAPÃO -->
+    <!-- FILTRO POR REGIÕES (FIXO LOGO ABAIXO DO CARROSSEL) -->
     <div class="region-filter">
         <button class="region-btn active" onclick="filtrarRegiao('todas')">Todas</button>
         <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai (Aichi/Shizuoka/Gifu)</button>
