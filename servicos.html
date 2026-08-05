@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AjudaJP - Serviços e Anúncios</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
-            padding-bottom: 60px;
+            padding-bottom: 70px;
         }
         header {
             background-color: #0066cc;
@@ -22,19 +25,29 @@
         }
         .container {
             padding: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* Carrossel Superior - Rolagem Simples e Fluida */
+        /* --- CARROSSEL SUPERIOR (Rolagem Fluida Forçada) --- */
+        .destaque-wrapper {
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
         .destaque-scroll {
             display: flex;
-            overflow-x: auto;
             gap: 10px;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            padding-bottom: 8px;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
         }
         .destaque-scroll::-webkit-scrollbar {
-            display: none;
+            display: none; /* Chrome, Safari, Opera */
         }
         .banner-destaque {
             flex: 0 0 120px;
@@ -45,31 +58,40 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             cursor: pointer;
             background-color: #ddd;
+            display: inline-block;
         }
         .banner-destaque img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            pointer-events: none;
         }
 
-        /* Abas de Região - Rolagem e Cliques Livres */
+        /* --- ABAS DE REGIÃO (Cliques Livres) --- */
+        .regioes-wrapper {
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
         .regioes-scroll {
             display: flex;
-            overflow-x: auto;
             gap: 8px;
-            margin-bottom: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
             padding-bottom: 5px;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
         .regioes-scroll::-webkit-scrollbar {
             display: none;
         }
         .tag-regiao {
+            display: inline-block;
             background-color: #e0e0e0;
             padding: 8px 14px;
             border-radius: 20px;
             font-size: 13px;
-            white-space: nowrap;
             cursor: pointer;
             color: #333;
             flex-shrink: 0;
@@ -81,7 +103,7 @@
             font-weight: bold;
         }
 
-        /* Seção Lista Principal (Banners Normais) */
+        /* --- LISTA PRINCIPAL --- */
         .lista-section {
             margin-top: 10px;
         }
@@ -105,9 +127,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            pointer-events: none;
         }
 
-        /* Tela Flutuante (Popup) */
+        /* --- POPUP DE DETALHES --- */
         .modal {
             display: none;
             position: fixed;
@@ -164,7 +187,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Menu Inferior Fixo */
+        /* --- MENU INFERIOR FIXO --- */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -175,7 +198,7 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            z-index: 100;
+            z-index: 1000;
         }
         .nav-item {
             text-align: center;
@@ -195,52 +218,54 @@
 
     <div class="container">
         <!-- Carrossel Superior -->
-        <div class="destaque-scroll">
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 1', 'Descrição completa do Destaque 1. Todos os dados estão na imagem.', '09012345678')">
-                <img src="https://via.placeholder.com/120x80/0066cc/ffffff?text=Destaque+1" alt="Destaque 1">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 2', 'Descrição completa do Destaque 2. Todos os dados estão na imagem.', '09087654321')">
-                <img src="https://via.placeholder.com/120x80/27ae60/ffffff?text=Destaque+2" alt="Destaque 2">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 3', 'Descrição completa do Destaque 3. Todos os dados estão na imagem.', '09033334444')">
-                <img src="https://via.placeholder.com/120x80/f39c12/ffffff?text=Destaque+3" alt="Destaque 3">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 4', 'Descrição completa do Destaque 4. Todos os dados estão na imagem.', '09055556666')">
-                <img src="https://via.placeholder.com/120x80/8e44ad/ffffff?text=Destaque+4" alt="Destaque 4">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 6', 'Descrição completa do Destaque 6. Todos os dados estão na imagem.', '08011112222')">
-                <img src="https://via.placeholder.com/120x80/e74c3c/ffffff?text=Destaque+6" alt="Destaque 6">
+        <div class="destaque-wrapper">
+            <div class="destaque-scroll">
+                <div class="banner-destaque" onclick="abrirDetalhes('Destaque 1', 'Descrição completa do Destaque 1. Todos os dados estão na imagem.', '09012345678')">
+                    <img src="https://via.placeholder.com/120x80/0066cc/ffffff?text=Destaque+1" alt="Destaque 1">
+                </div>
+                <div class="banner-destaque" onclick="abrirDetalhes('Destaque 2', 'Descrição completa do Destaque 2. Todos os dados estão na imagem.', '09087654321')">
+                    <img src="https://via.placeholder.com/120x80/27ae60/ffffff?text=Destaque+2" alt="Destaque 2">
+                </div>
+                <div class="banner-destaque" onclick="abrirDetalhes('Destaque 3', 'Descrição completa do Destaque 3. Todos os dados estão na imagem.', '09033334444')">
+                    <img src="https://via.placeholder.com/120x80/f39c12/ffffff?text=Destaque+3" alt="Destaque 3">
+                </div>
+                <div class="banner-destaque" onclick="abrirDetalhes('Destaque 4', 'Descrição completa do Destaque 4. Todos os dados estão na imagem.', '09055556666')">
+                    <img src="https://via.placeholder.com/120x80/8e44ad/ffffff?text=Destaque+4" alt="Destaque 4">
+                </div>
+                <div class="banner-destaque" onclick="abrirDetalhes('Destaque 5', 'Descrição completa do Destaque 5. Todos os dados estão na imagem.', '08011112222')">
+                    <img src="https://via.placeholder.com/120x80/e74c3c/ffffff?text=Destaque+5" alt="Destaque 5">
+                </div>
             </div>
         </div>
 
-        <!-- Filtros de Região Clicáveis -->
-        <div class="regioes-scroll">
-            <div class="tag-regiao active" onclick="filtrarRegiao(this)">Todas</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Tokai (Aichi/Shizuoka/Gifu)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kanto (Tokyo/Kanagawa/Saitama/Chiba)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kansai (Osaka/Kyoto/Hyogo)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kyushu (Fukuoka/Kumamoto/...)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Chugoku / Shikoku</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Tohoku / Hokkaido</div>
+        <!-- Filtros de Região -->
+        <div class="regioes-wrapper">
+            <div class="regioes-scroll">
+                <div class="tag-regiao active" onclick="filtrarRegiao(this)">Todas</div>
+                <div class="tag-regiao" onclick="filtrarRegiao(this)">Tokai (Aichi/Shizuoka/Gifu)</div>
+                <div class="tag-regiao" onclick="filtrarRegiao(this)">Kanto (Tokyo/Kanagawa/Saitama/Chiba)</div>
+                <div class="tag-regiao" onclick="filtrarRegiao(this)">Kansai (Osaka/Kyoto/Hyogo)</div>
+                <div class="tag-regiao" onclick="filtrarRegiao(this)">Kyushu (Fukuoka/Kumamoto/...)</div>
+                <div class="tag-regiao" onclick="filtrarRegiao(this)">Chugoku / Shikoku</div>
+                <div class="tag-regiao" onclick="filtrarRegiao(this)">Tohoku / Hokkaido</div>
+            </div>
         </div>
 
-        <!-- Todos os Serviços (Lista Principal) -->
+        <!-- Lista Principal -->
         <div class="lista-section">
             <div class="lista-title">Todos os Serviços</div>
 
-            <!-- Banner Normal 1 -->
             <div class="banner-normal" onclick="abrirDetalhes('Restaurante Sabor Brasil', 'Comida caseira todos os dias, marmitas e delivery. Confira os telefones e e-mail na arte da imagem.', '09012345678')">
                 <img src="https://via.placeholder.com/400x180/2980b9/ffffff?text=Anuncio+Tokai" alt="Anúncio Tokai">
             </div>
 
-            <!-- Banner Normal 2 -->
             <div class="banner-normal" onclick="abrirDetalhes('Oficina Mecânica Gomes', 'Manutenção geral, freios e troca de óleo. Contatos disponíveis na foto do anúncio.', '08087654321')">
                 <img src="https://via.placeholder.com/400x180/8e44ad/ffffff?text=Oficina+Mecanica" alt="Oficina Mecânica">
             </div>
         </div>
     </div>
 
-    <!-- Tela Flutuante (Popup) com Botão de Ligar -->
+    <!-- Modal / Popup -->
     <div id="modalDetalhes" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="fecharDetalhes()">&times;</span>
@@ -250,7 +275,7 @@
         </div>
     </div>
 
-    <!-- Menu Inferior com Link Home Real -->
+    <!-- Menu Inferior -->
     <div class="nav-bar">
         <a href="servicos.html" class="nav-item active">🏠 Home</a>
         <a href="#" class="nav-item">📂 Categorias</a>
@@ -260,7 +285,7 @@
 
     <script>
         function abrirDetalhes(titulo, descricao, telefone) {
-            document.getElementById('modalTitulo').innerText = titulo;
+            document.getElementById('modalTituloinnerText' in document.getElementById('modalTitulo') ? 'modalTitulo' : 'modalTitulo').innerText = titulo;
             document.getElementById('modalTexto').innerText = descricao;
             document.getElementById('btnLigarModal').href = 'tel:' + telefone;
             document.getElementById('modalDetalhes').style.display = 'flex';
