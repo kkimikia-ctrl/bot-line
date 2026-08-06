@@ -11,7 +11,6 @@
             margin: 0;
             padding: 15px;
             color: #333;
-            /* Espaço embaixo para a barra de navegação fixa não cobrir o conteúdo */
             padding-bottom: 80px;
         }
         .header {
@@ -135,7 +134,6 @@
             gap: 10px;
             margin-top: 15px;
         }
-        /* Tela de Vídeo Grande */
         #videoContainer {
             display: none;
             text-align: center;
@@ -159,8 +157,6 @@
             display: inline-block;
             margin-bottom: 8px;
         }
-
-        /* --- BARRA DE NAVEGAÇÃO INFERIOR FIXA --- */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -220,12 +216,13 @@
             💰 Carteira
             <span>Saldo e Ganhos</span>
         </button>
-        <button class="menu-item" onclick="alert('Tela Entretenimento e Notícias em desenvolvimento')">
+        <!-- Botão de Entretenimento corrigido -->
+        <button class="menu-item" onclick="window.location.href='entretenimento.html'">
             🎮 Entretenimento
             <span>Lives, Aulas e Notícias</span>
         </button>
-        <button class="menu-item" onclick="window.location.href='entretenimento.html'">
-
+        <!-- Botão de Serviços preservado -->
+        <button class="menu-item" onclick="window.location.href='servicos.html'">
             📋 Serviços
             <span>Lojas, Ar-condicionado, Mecânico</span>
         </button>
@@ -290,9 +287,8 @@
                 <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
             </div>
 
-            <!-- Alerta Próximo ao Fim do Tempo -->
             <div id="alertaLimite" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando! (Teste)</p>
+                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando!</p>
                 <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Deseja comprar mais tempo para continuar a chamada?</p>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais tempo</button>
@@ -304,17 +300,25 @@
         </div>
     </div>
 
-    <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA -->
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item active">
             <span class="icon">🏠</span>
             <span>Home</span>
         </a>
+        <a href="servicos.html" class="nav-item">
+            <span class="icon">📋</span>
+            <span>Serviços</span>
+        </a>
+        <a href="entretenimento.html" class="nav-item">
+            <span class="icon">🎬</span>
+            <span>Lazer</span>
+        </a>
         <a href="perfil.html" class="nav-item">
             <span class="icon">👤</span>
             <span>Perfil</span>
         </a>
-        <a href="servicos.html" class="nav-item">
+        <a href="anunciar.html" class="nav-item">
             <span class="icon">📢</span>
             <span>Anunciar</span>
         </a>
@@ -432,7 +436,6 @@
 
                 if (segundosDecorridos === 5 && !creditoDescontado) {
                     creditoDescontado = true;
-                    console.log(`Valor inicial retido de ${valorInicialRetido}円 garantido.`);
                 }
 
                 if (segundosDecorridos === 10) {
@@ -475,20 +478,12 @@
         }
 
         function calcularCobrancaProporcional() {
-            if (segundosDecorridos <= 5) {
-                return 0; 
-            }
-
+            if (segundosDecorridos <= 5) return 0; 
             let blocosUtilizados = Math.ceil(segundosDecorridos / 1800);
             if (blocosUtilizados < 1) blocosUtilizados = 1;
-
             let valorFinalDevido = blocosUtilizados * 1500;
             let valorParaDevolver = valorInicialRetido - valorFinalDevido;
-
-            if (valorParaDevolver > 0) {
-                return { cobrado: valorFinalDevido, devolvido: valorParaDevolver };
-            }
-
+            if (valorParaDevolver > 0) return { cobrado: valorFinalDevido, devolvido: valorParaDevolver };
             return { cobrado: valorInicialRetido, devolvido: 0 };
         }
 
@@ -523,27 +518,6 @@
             }
         }
     </script>
-
-
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <span class="icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="servicos.html" class="nav-item">
-            <span class="icon">📋</span>
-            <span>Serviços</span>
-        </a>
-        <a href="perfil.html" class="nav-item">
-            <span class="icon">👤</span>
-            <span>Perfil</span>
-        </a>
-        <a href="anunciar.html" class="nav-item active">
-            <span class="icon">📢</span>
-            <span>Anunciar</span>
-        </a>
-    </nav>
 
 </body>
 </html>
