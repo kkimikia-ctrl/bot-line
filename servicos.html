@@ -2,91 +2,244 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AjudaJP - Serviços e Anúncios</title>
-    <!-- Vincula o arquivo style.css do seu repositório -->
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços e Anúncios - Ajuda JP</title>
+    <style>
+        /* Configurações gerais da página */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* --- CABEÇALHO AZUL FININHO COM LOGOS NOS CANTOS --- */
+        .app-header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .header-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: white;
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* --- TOPO FIXO: CARROSSEL DE MINI BANNERS (GRUDADO NO TOPO) --- */
+        .carousel-container {
+            position: sticky;
+            top: 0;
+            z-index: 100; /* Fica acima de tudo quando rola */
+            width: 100%;
+            overflow: hidden;
+            background: #ffffff;
+            padding: 8px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            animation: rolarInfinito 25s linear infinite;
+        }
+
+        .carousel-container:hover .carousel-track {
+            animation-play-state: paused;
+        }
+
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 120px; /* Mini banner mais compacto */
+            height: 70px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            background: #ddd;
+        }
+
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes rolarInfinito {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-50% - 6px));
+            }
+        }
+
+        /* --- FILTRO POR REGIÕES (TAMBÉM TRAVADO LOGO ABAIXO DO CARROSSEL) --- */
+        .region-filter {
+            position: sticky;
+            top: 86px; /* Fica logo abaixo do carrossel fixo */
+            z-index: 99;
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #ffffff;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-top: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+
+        .region-filter::-webkit-scrollbar {
+            display: none;
+        }
+
+        .region-btn {
+            background-color: #e4e6eb;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .region-btn.active {
+            background-color: #1a73e8;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* --- FEED VERTICAL DE ANÚNCIOS --- */
+        .feed-container {
+            padding: 0 15px 30px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .feed-container h2 {
+            font-size: 1.05rem;
+            margin: 10px 0 15px 0;
+            color: #444;
+        }
+
+        .feed-banner-card {
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            transition: transform 0.2s;
+        }
+
+        .feed-banner-card:active {
+            transform: scale(0.98);
+        }
+
+        .feed-banner-card a {
+            display: block;
+        }
+
+        .feed-banner-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 220px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Cabeçalho com a sua logo real (logo.jpeg) nos dois cantos -->
-    <header>
+    <!-- CABEÇALHO AZUL FININHO COM LOGOS NOS CANTOS -->
+    <header class="app-header">
         <img src="logo.jpeg" alt="Logo Esquerda" class="header-logo" onerror="this.style.display='none'">
-        <span>Serviços e Anúncios</span>
+        <h1>Serviços e Anúncios</h1>
         <img src="logo.jpeg" alt="Logo Direita" class="header-logo" onerror="this.style.display='none'">
     </header>
 
-    <div class="container">
-        <!-- Carrossel Superior -->
-        <div class="destaque-scroll">
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 1', 'Descrição completa do Destaque 1. Todos os dados estão na imagem.', '09012345678')">
-                <img src="https://via.placeholder.com/120x80/0066cc/ffffff?text=Destaque+1" alt="Destaque 1">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 2', 'Descrição completa do Destaque 2. Todos os dados estão na imagem.', '09087654321')">
-                <img src="https://via.placeholder.com/120x80/27ae60/ffffff?text=Destaque+2" alt="Destaque 2">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 3', 'Descrição completa do Destaque 3. Todos os dados estão na imagem.', '09033334444')">
-                <img src="https://via.placeholder.com/120x80/f39c12/ffffff?text=Destaque+3" alt="Destaque 3">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 4', 'Descrição completa do Destaque 4. Todos os dados estão na imagem.', '09055556666')">
-                <img src="https://via.placeholder.com/120x80/8e44ad/ffffff?text=Destaque+4" alt="Destaque 4">
-            </div>
-            <div class="banner-destaque" onclick="abrirDetalhes('Destaque 5', 'Descrição completa do Destaque 5. Todos os dados estão na imagem.', '08011112222')">
-                <img src="https://via.placeholder.com/120x80/e74c3c/ffffff?text=Destaque+5" alt="Destaque 5">
-            </div>
+    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS (GRUDADO NO TOPO) -->
+    <section class="carousel-container">
+        <div class="carousel-track">
+            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+
+            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
         </div>
+    </section>
 
-        <!-- Filtros de Região -->
-        <div class="regioes-scroll">
-            <div class="tag-regiao active" onclick="filtrarRegiao(this)">Todas</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Tokai (Aichi/Shizuoka/Gifu)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kanto (Tokyo/Kanagawa/Saitama/Chiba)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kansai (Osaka/Kyoto/Hyogo)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Kyushu (Fukuoka/Kumamoto/...)</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Chugoku / Shikoku</div>
-            <div class="tag-regiao" onclick="filtrarRegiao(this)">Tohoku / Hokkaido</div>
-        </div>
-
-        <!-- Lista Principal -->
-        <div class="lista-section">
-            <div class="lista-title">Todos os Serviços</div>
-
-            <div class="banner-normal" onclick="abrirDetalhes('Restaurante Sabor Brasil', 'Comida caseira todos os dias, marmitas e delivery. Confira os telefones e e-mail na arte da imagem.', '09012345678')">
-                <img src="https://via.placeholder.com/400x180/2980b9/ffffff?text=Anuncio+Tokai" alt="Anúncio Tokai">
-            </div>
-
-            <div class="banner-normal" onclick="abrirDetalhes('Oficina Mecânica Gomes', 'Manutenção geral, freios e troca de óleo. Contatos disponíveis na foto do anúncio.', '08087654321')">
-                <img src="https://via.placeholder.com/400x180/8e44ad/ffffff?text=Oficina+Mecanica" alt="Oficina Mecânica">
-            </div>
-        </div>
+    <!-- FILTRO POR REGIÕES (FIXO LOGO ABAIXO DO CARROSSEL) -->
+    <div class="region-filter">
+        <button class="region-btn active" onclick="filtrarRegiao('todas')">Todas</button>
+        <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai (Aichi/Shizuoka/Gifu)</button>
+        <button class="region-btn" onclick="filtrarRegiao('kanto')">Kanto (Tokyo/Gunma...)</button>
+        <button class="region-btn" onclick="filtrarRegiao('kansai')">Kansai (Osaka/Mie...)</button>
+        <button class="region-btn" onclick="filtrarRegiao('hokkaido-tohoku')">Hokkaido / Tohoku</button>
+        <button class="region-btn" onclick="filtrarRegiao('chugoku-shikoku')">Chugoku / Shikoku</button>
+        <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa')">Kyushu / Okinawa</button>
     </div>
 
-    <!-- Tela Flutuante (Popup) -->
-    <div id="modalDetalhes" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="fecharDetalhes()">&times;</span>
-            <div id="modalTitulo" class="modal-title">Título</div>
-            <div id="modalTexto" class="modal-descricao">Descrição completa...</div>
-            <a id="btnLigarModal" href="#" class="btn-ligar">📞 Ligar Agora</a>
+    <!-- CENTRO: FEED VERTICAL DE BANNERS -->
+    <section class="feed-container">
+        <h2>Todos os Serviços</h2>
+
+        <div class="feed-banner-card" data-regiao="tokai">
+            <a href="#" target="_blank"><img src="banner-grande-1.jpg" alt="Anúncio Tokai"></a>
         </div>
-    </div>
+
+        <div class="feed-banner-card" data-regiao="kanto">
+            <a href="#" target="_blank"><img src="banner-grande-2.jpg" alt="Anúncio Kanto"></a>
+        </div>
+
+        <div class="feed-banner-card" data-regiao="kansai">
+            <a href="#" target="_blank"><img src="banner-grande-3.jpg" alt="Anúncio Kansai"></a>
+        </div>
+
+        <div class="feed-banner-card" data-regiao="kyushu-okinawa">
+            <a href="#" target="_blank"><img src="banner-grande-4.jpg" alt="Anúncio Kyushu"></a>
+        </div>
+    </section>
 
     <script>
-        function abrirDetalhes(titulo, descricao, telefone) {
-            document.getElementById('modalTitulo').innerText = titulo;
-            document.getElementById('modalTexto').innerText = descricao;
-            document.getElementById('btnLigarModal').href = 'tel:' + telefone;
-            document.getElementById('modalDetalhes').style.display = 'flex';
-        }
+        function filtrarRegiao(regiao) {
+            const clickedBtn = event.currentTarget || event.target;
+            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+            clickedBtn.classList.add('active');
 
-        function fecharDetalhes() {
-            document.getElementById('modalDetalhes').style.display = 'none';
-        }
-
-        function filtrarRegiao(elemento) {
-            let tags = document.querySelectorAll('.tag-regiao');
-            tags.forEach(t => t.classList.remove('active'));
-            elemento.classList.add('active');
+            document.querySelectorAll('.feed-banner-card').forEach(card => {
+                if (regiao === 'todas' || card.getAttribute('data-regiao') === regiao) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
     </script>
 
