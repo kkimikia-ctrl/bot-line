@@ -186,7 +186,7 @@
         </button>
         <button class="menu-item active" onclick="mostrarSecao('radio', this)">
             📻 Rádio
-            <span>Músicas e Programas PT</span>
+            <span>Músicas e Animação</span>
         </button>
         <button class="menu-item" onclick="mostrarSecao('karaoke', this)">
             🎤 Karaokê
@@ -217,17 +217,18 @@
     <!-- SEÇÃO 1: LIVES -->
     <div id="lives" class="content-section">
         <h2 class="section-title">🔴 Lives da Comunidade</h2>
-        <p>Assista à transmissão ao vivo e apoie os criadores.</p>
-        <button class="btn-action" onclick="alert('Live ativa!')">Assistir</button>
+        <p>Assista à transmissão ao vivo e apoie os criadores de conteúdo do Japão.</p>
+        <button class="btn-action" onclick="alert('Live ativa!')">Assistir Live Ativa</button>
     </div>
 
-    <!-- SEÇÃO 2: RÁDIO (CORRIGIDA) -->
+    <!-- SEÇÃO 2: RÁDIO -->
     <div id="radio" class="content-section active">
         <h2 class="section-title">📻 Rádio & Programas em Português</h2>
         <div class="radio-card">
             <h3 style="margin:0; font-size: 1.1rem;">🎧 Web Rádio Comunidade Brasil-Japão</h3>
             <p style="font-size: 0.85rem; margin: 5px 0 15px 0; opacity: 0.9;">Ouça músicas e programas ao vivo</p>
-            <audio controls preload="none" style="width: 100%;">
+            <!-- Player configurado com link seguro e carregamento direto -->
+            <audio id="audioRadio" controls style="width: 100%;">
                 <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
                 Seu navegador não suporta áudio.
             </audio>
@@ -242,7 +243,7 @@
 
     <!-- SEÇÃO 4: HORÓSCOPO -->
     <div id="horoscopo" class="content-section">
-        <h2 class="section-title">🔮 Horóscopo do Dia testnovo123 (Omikuji)</h2>
+        <h2 class="section-title">🔮 Horóscopo do Dia (Omikuji)</h2>
         <p>Mensagens de prosperidade e alegria para iluminar o seu dia:</p>
         
         <div class="omikuji-box">
@@ -252,7 +253,7 @@
             </div>
         </div>
 
-        <button id="btnConsultar" class="btn-action" onclick="tentarDeNovo()" style="background-color: #f57c00; margin-top: 15px;">🎯 Consultar Sorte</button>
+        <button class="btn-action" onclick="tentarDeNovo()" style="background-color: #f57c00; margin-top: 15px;">🎯 Revelar Sorte do Dia</button>
     </div>
 
     <!-- SEÇÃO 5: CHAT -->
@@ -310,6 +311,7 @@
     </nav>
 
     <script>
+        // Lista com várias variações puramente positivas
         const sortes = [
             "🌸 Daikichi (Grande Sorte): Excelente dia para finanças, trabalho e novos projetos de sucesso!",
             "🍀 Chukichi (Sorte Média): Sua dedicação e esforço trarão frutos maravilhosos muito em breve.",
@@ -329,44 +331,47 @@
             elementoBotao.classList.add('active');
         }
 
-        function obterSorteDoDia() {
+        // Lógica rigorosa de 1 visualização por dia
+        function verificarOmikuji() {
             const hoje = new Date();
             const dataString = hoje.getFullYear() + '-' + (hoje.getMonth() + 1) + '-' + hoje.getDate();
             
             let salvoNoDia = localStorage.getItem('omikuji_data');
             let sorteSalva = localStorage.getItem('omikuji_texto');
-            let jaTrouxeAviso = localStorage.getItem('ja_clicou_extra');
+            let jaAbriuHoje = localStorage.getItem('omikuji_bloqueado');
 
             if (salvoNoDia === dataString && sorteSalva) {
-                if (jaTrouxeAviso === 'sim') {
-                    document.getElementById("tituloSorte").innerText = "🔒 MENSAGEM DO DESTINO:";
-                    return "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para abrir um novo Omikuji!";
+                if (jaAbriuHoje === 'sim') {
+                    document.getElementById("tituloSorte").innerText = "🔒 SEGREDO DO DESTINO:";
+                    document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para descobrir qual será a mensagem do próximo dia.";
+                } else {
+                    document.getElementById("resultadoOmikuji").innerText = sorteSalva;
                 }
-                return sorteSalva;
             } else {
                 const indice = hoje.getDate() % sortes.length;
                 const novaSorte = sortes[indice];
                 localStorage.setItem('omikuji_data', dataString);
                 localStorage.setItem('omikuji_texto', novaSorte);
-                localStorage.setItem('ja_clicou_extra', 'nao');
-                return novaSorte;
+                localStorage.setItem('omikuji_bloqueado', 'nao');
+                document.getElementById("resultadoOmikuji").innerText = novaSorte;
             }
         }
 
         window.onload = function() {
-            document.getElementById("resultadoOmikuji").innerText = obterSorteDoDia();
+            verificarOmikuji();
         };
 
+        // Ao clicar novamente no dia, bloqueia com curiosidade
         function tentarDeNovo() {
-            let jaClicouExtra = localStorage.getItem('ja_clicou_extra');
+            let jaAbriuHoje = localStorage.getItem('omikuji_bloqueado');
             
-            if (jaClicouExtra === 'sim') {
-                document.getElementById("tituloSorte").innerText = "🔒 MENSAGEM DO DESTINO:";
-                document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para abrir um novo Omikuji cheinho de prosperidade!";
+            if (jaAbriuHoje === 'sim') {
+                document.getElementById("tituloSorte").innerText = "🔒 SEGREDO DO DESTINO:";
+                document.getElementById("resultadoOmikuji").innerText = "Psiu... O horóscopo de hoje já foi entregue! 🤫 Volte amanhã para abrir um novo Omikuji!";
             } else {
-                localStorage.setItem('ja_clicou_extra', 'sim');
-                document.getElementById("tituloSorte").innerText = "🔒 MENSAGEM DO DESTINO:";
-                document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para abrir um novo Omikuji!";
+                localStorage.setItem('omikuji_bloqueado', 'sim');
+                document.getElementById("tituloSorte").innerText = "🔒 SEGREDO DO DESTINO:";
+                document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para descobrir qual será a mensagem do próximo dia.";
             }
         }
 
