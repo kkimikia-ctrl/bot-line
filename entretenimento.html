@@ -3,74 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entretenimento e Lazer - Ajuda JP</title>
+    <title>Lazer e Entretenimento - Ajuda JP</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
-            padding: 0;
+            padding: 15px;
             color: #333;
             padding-bottom: 80px;
         }
 
-        /* --- CABEÇALHO --- */
-        .app-header {
+        .header {
             background-color: #1a73e8;
             color: white;
             padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .header-logo {
+        .logo-img {
             width: 35px;
             height: 35px;
             border-radius: 50%;
             object-fit: cover;
-            background-color: #ffffff;
+            background: white;
         }
 
-        .app-header h1 {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: bold;
+        /* Menu de Botões Estilo Grade */
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .menu-item {
+            background: white;
+            padding: 18px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             text-align: center;
-            flex-grow: 1;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-size: 15px;
+            font-weight: bold;
+            color: #1a73e8;
+            transition: all 0.2s;
         }
 
-        /* --- CONTAINER DE SEÇÕES --- */
-        .container {
-            max-width: 600px;
-            margin: 15px auto;
-            padding: 0 15px;
+        .menu-item:active, .menu-item.active {
+            border-color: #1a73e8;
+            background-color: #e8f0fe;
         }
 
-        .card {
-            background: #ffffff;
+        .menu-item span {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            font-weight: normal;
+            margin-top: 4px;
+        }
+
+        /* Seções de Conteúdo (Ocultas por padrão) */
+        .content-section {
+            display: none;
+            background: white;
             padding: 18px;
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             margin-bottom: 15px;
         }
 
-        .card h2 {
+        .content-section.active {
+            display: block;
+        }
+
+        .section-title {
             font-size: 1.1rem;
             color: #1a73e8;
             margin-top: 0;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .card p, .card label {
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        /* --- ESTILOS ESPECÍFICOS POR SEÇÃO --- */
         .rule-box {
             background: #e8f0fe;
             border-left: 4px solid #1a73e8;
@@ -92,14 +115,9 @@
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
-            transition: background 0.2s;
         }
 
-        .btn-action:active {
-            background-color: #1557b0;
-        }
-
-        /* Chat Simulado */
+        /* Chat */
         .chat-box {
             background: #f9f9f9;
             border: 1px solid #ddd;
@@ -110,28 +128,10 @@
             font-size: 0.85rem;
             margin-bottom: 10px;
         }
-
-        .chat-msg {
-            margin-bottom: 6px;
-        }
-
-        .chat-msg span {
-            font-weight: bold;
-            color: #1a73e8;
-        }
-
-        .chat-input-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .chat-input-group input {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.85rem;
-        }
+        .chat-msg { margin-bottom: 6px; }
+        .chat-msg span { font-weight: bold; color: #1a73e8; }
+        .chat-input-group { display: flex; gap: 8px; }
+        .chat-input-group input { flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem; }
 
         /* Cupons */
         .coupon-card {
@@ -142,7 +142,6 @@
             margin-top: 10px;
             text-align: center;
         }
-
         .coupon-code {
             font-weight: bold;
             background: #fff;
@@ -155,21 +154,10 @@
         }
 
         /* Ranking */
-        .ranking-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            font-size: 0.9rem;
-        }
+        .ranking-list { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+        .ranking-list li { padding: 6px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
 
-        .ranking-list li {
-            padding: 6px 0;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* --- BARRA DE NAVEGAÇÃO INFERIOR --- */
+        /* Barra Inferior */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -183,7 +171,6 @@
             box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
             z-index: 1000;
         }
-
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -192,46 +179,73 @@
             color: #666;
             font-size: 0.70rem;
             flex-grow: 1;
-            transition: color 0.2s;
         }
-
-        .nav-item.active {
-            color: #1a73e8;
-            font-weight: bold;
-        }
-
-        .nav-item span.icon {
-            font-size: 1.1rem;
-            margin-bottom: 2px;
-        }
+        .nav-item.active { color: #1a73e8; font-weight: bold; }
+        .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
-    <header class="app-header">
-        <img src="logo.jpeg" alt="Logo Esquerda" class="header-logo" onerror="this.style.display='none'">
-        <h1>Entretenimento e Comunidade</h1>
-        <img src="logo.jpeg" alt="Logo Direita" class="header-logo" onerror="this.style.display='none'">
+    <header class="header">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
+        <span>Lazer & Comunidade</span>
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
     </header>
 
-    <div class="container">
+    <!-- MENU DE BOTÕES PRINCIPAL -->
+    <div class="grid-menu">
+        <button class="menu-item active" onclick="mostrarSecao('lives', this)">
+            🔴 Lives
+            <span>Transmissões e Prêmios</span>
+        </button>
+        <button class="menu-item" onclick="mostrarSecao('radio', this)">
+            📻 Rádio
+            <span>Músicas e Programas PT</span>
+        </button>
+        <button class="menu-item" onclick="mostrarSecao('karaoke', this)">
+            🎤 Karaokê
+            <span>Cante com a Gente</span>
+        </button>
+        <button class="menu-item" onclick="mostrarSecao('horoscopo', this)">
+            🔮 Horóscopo
+            <span>Omikuji do Dia</span>
+        </button>
+        <button class="menu-item" onclick="mostrarSecao('chat', this)">
+            💬 Chat
+            <span>Comunidade Online</span>
+        </button>
+        <button class="menu-item" onclick="mostrarSecao('ranking', this)">
+            🏆 Ranking
+            <span>Usuários mais ativos</span>
+        </button>
+        <button class="menu-item" onclick="mostrarSecao('cupons', this)">
+            🎟️ Cupons
+            <span>Descontos em Lojas</span>
+        </button>
+        <button class="menu-item" onclick="mostrarSecao('jogos', this)">
+            🎮 Jogos
+            <span>Sorteios e Diversão</span>
+        </button>
+    </div>
 
-        <!-- 1. LIVES COM SISTEMA DE PRESENTES -->
-        <div class="card">
-            <h2>🔴 Lives da Comunidade</h2>
-            <div class="rule-box">
-                🎁 <strong>Regra de Presentes:</strong> Os primeiros 300¥ doados vão inteiros para o criador! A partir daí, a divisão justa é de 70% para o criador e 30% para a plataforma.
-            </div>
-            <p>Assista à transmissão ao vivo e apoie os criadores de conteúdo do Japão.</p>
-            <button class="btn-action" onclick="alert('Abrindo player da transmissão ao vivo...')">Assistir Live Ativa</button>
+    <!-- SEÇÃO 1: LIVES -->
+    <div id="lives" class="content-section active">
+        <h2 class="section-title">🔴 Lives da Comunidade</h2>
+        <div class="rule-box">
+            🎁 <strong>Regra de Presentes:</strong> Os primeiros 300¥ doados vão inteiros para o criador! A partir daí, a divisão justa é de 70% para o criador e 30% para a plataforma.
         </div>
+        <p>Assista à transmissão ao vivo e apoie os criadores de conteúdo do Japão.</p>
+        <button class="btn-action" onclick="alert('Abrindo player da transmissão ao vivo...')">Assistir Live Ativa</button>
+    </div>
 
-        <!-- 2. RÁDIO / MÚSICAS PARA ALEGRAR -->
-        <div class="card">
-            <h2>📻 Rádio & Trilha Sonora</h2>
-            <p>Ouça uma seleção especial de músicas para animar o seu dia enquanto navega pelo app!</p>
-            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin-top: 10px;">
+    <!-- SEÇÃO 2: RÁDIO -->
+    <div id="radio" class="content-section">
+        <h2 class="section-title">📻 Rádio & Programas em Português</h2>
+        <p>Ouça programações, notícias e músicas em português para matar a saudade do Brasil enquanto está no Japão:</p>
+        
+        <div style="margin-top: 15px;">
+            <p style="font-weight: bold; margin-bottom: 5px; font-size: 0.9rem;">🎵 Seleção de Músicas Brasileiras:</p>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
                 <iframe src="https://www.youtube.com/embed/videoseries?list=PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Qv" 
                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
                         allow="autoplay; encrypted-media" allowfullscreen>
@@ -239,73 +253,78 @@
             </div>
         </div>
 
-        <!-- 3. KARAOKÊ DA COMUNIDADE -->
-        <div class="card">
-            <h2>🎤 Karaokê & Cante Com A Gente</h2>
-            <p>Escolha um sucesso, solte a voz e divirta-se com a comunidade!</p>
-            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin-top: 10px;">
-                <iframe src="https://www.youtube.com/embed/videoseries?list=PLw-VjHDlEOgt46gA33U-j4D3h7y6C4eZz" 
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
-                        allow="autoplay; encrypted-media" allowfullscreen>
-                </iframe>
-            </div>
-            <button class="btn-action" style="background-color: #9c27b0; margin-top: 12px;" onclick="alert('Funcionalidade de sugerir música para o Karaokê em breve!')">🎵 Sugerir Música para o Karaokê</button>
+        <div style="margin-top: 20px; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+            <p style="font-weight: bold; margin-bottom: 8px; font-size: 0.9rem;">🎧 Rádios Online do Brasil:</p>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Acesse emissoras brasileiras ao vivo direto pelo navegador:</p>
+            <button class="btn-action" style="background-color: #2e7d32;" onclick="window.open('https://www.youtube.com/results?search_query=radio+sucesso+brasil+ao+vivo', '_blank')">🌐 Abrir Rádios Online</button>
         </div>
-
-        <!-- 4. HORÓSCOPO / OMIKUJI -->
-        <div class="card">
-            <h2>🔮 Horóscopo do Dia (Omikuji)</h2>
-            <p>Como será a sua sorte hoje no Japão? Clique no botão para tirar a sua sorte!</p>
-            <div id="resultadoOmikuji" style="font-weight: bold; color: #e65100; margin: 10px 0; text-align: center; min-height: 24px;"></div>
-            <button class="btn-action" onclick="tirarSorte()">Tirar Sorte de Hoje</button>
-        </div>
-
-        <!-- 5. CHAT DA COMUNIDADE -->
-        <div class="card">
-            <h2>💬 Chat da Comunidade</h2>
-            <p>Troque ideias com quem está online agora:</p>
-            <div class="chat-box" id="chatBox">
-                <div class="chat-msg"><span>Carlos (Aichi):</span> Olá pessoal, bom dia a todos!</div>
-                <div class="chat-msg"><span>Ana (Shizuoka):</span> Bom dia! Alguém vai no evento fim de semana?</div>
-            </div>
-            <div class="chat-input-group">
-                <input type="text" id="inputChat" placeholder="Digite sua mensagem...">
-                <button class="btn-action" style="margin-top:0; width:80px;" onclick="enviarMensagem()">Enviar</button>
-            </div>
-        </div>
-
-        <!-- 6. RANKING DE PARTICIPAÇÃO -->
-        <div class="card">
-            <h2>🏆 Ranking Semanal</h2>
-            <p>Os usuários mais ativos da comunidade:</p>
-            <ul class="ranking-list">
-                <li><span>🥇 1. Marcos Silva (Toyohashi)</span> <strong>450 pts</strong></li>
-                <li><span>🥈 2. Juliana Costa (Hamamatsu)</span> <strong>380 pts</strong></li>
-                <li><span>🥉 3. Roberto Tanaka (Tokyo)</span> <strong>310 pts</strong></li>
-            </ul>
-        </div>
-
-        <!-- 7. CUPONS DE DESCONTO DAS LOJAS PARCEIRAS -->
-        <div class="card">
-            <h2>🎟️ Cupons Exclusivos de Lojas</h2>
-            <p>Descontos especiais oferecidos por parceiros da comunidade:</p>
-            <div class="coupon-card">
-                <strong>Supermercado Brasileiro Parceiro</strong>
-                <div>5% de desconto nas compras acima de 5.000¥</div>
-                <div class="coupon-code">CUPOM: AJUDAJP5</div>
-            </div>
-        </div>
-
-        <!-- 8. JOGOS E SORTEIOS -->
-        <div class="card">
-            <h2>🎮 Jogos & Sorteios</h2>
-            <p>Participe dos sorteios mensais e divirta-se com mini-jogos rápidos.</p>
-            <button class="btn-action" style="background-color: #e65100;" onclick="alert('Você está participando do Sorteio do Mês!')">🎁 Participar do Sorteio Atual</button>
-        </div>
-
     </div>
 
-    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <!-- SEÇÃO 3: KARAOKÊ -->
+    <div id="karaoke" class="content-section">
+        <h2 class="section-title">🎤 Karaokê & Cante Com A Gente</h2>
+        <p>Escolha um sucesso, solte a voz e divirta-se com a comunidade!</p>
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin-top: 10px;">
+            <iframe src="https://www.youtube.com/embed/videoseries?list=PLw-VjHDlEOgt46gA33U-j4D3h7y6C4eZz" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
+                    allow="autoplay; encrypted-media" allowfullscreen>
+            </iframe>
+        </div>
+        <button class="btn-action" style="background-color: #9c27b0; margin-top: 12px;" onclick="alert('Funcionalidade de sugerir música em breve!')">🎵 Sugerir Música</button>
+    </div>
+
+    <!-- SEÇÃO 4: HORÓSCOPO -->
+    <div id="horoscopo" class="content-section">
+        <h2 class="section-title">🔮 Horóscopo do Dia (Omikuji)</h2>
+        <p>Como será a sua sorte hoje no Japão? Clique no botão para tirar a sua sorte!</p>
+        <div id="resultadoOmikuji" style="font-weight: bold; color: #e65100; margin: 10px 0; text-align: center; min-height: 24px;"></div>
+        <button class="btn-action" onclick="tirarSorte()">Tirar Sorte de Hoje</button>
+    </div>
+
+    <!-- SEÇÃO 5: CHAT -->
+    <div id="chat" class="content-section">
+        <h2 class="section-title">💬 Chat da Comunidade</h2>
+        <p>Troque ideias com quem está online agora:</p>
+        <div class="chat-box" id="chatBox">
+            <div class="chat-msg"><span>Carlos (Aichi):</span> Olá pessoal, bom dia a todos!</div>
+            <div class="chat-msg"><span>Ana (Shizuoka):</span> Bom dia! Alguém vai no evento fim de semana?</div>
+        </div>
+        <div class="chat-input-group">
+            <input type="text" id="inputChat" placeholder="Digite sua mensagem...">
+            <button class="btn-action" style="margin-top:0; width:80px;" onclick="enviarMensagem()">Enviar</button>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 6: RANKING -->
+    <div id="ranking" class="content-section">
+        <h2 class="section-title">🏆 Ranking Semanal</h2>
+        <p>Os usuários mais ativos da comunidade:</p>
+        <ul class="ranking-list">
+            <li><span>🥇 1. Marcos Silva (Toyohashi)</span> <strong>450 pts</strong></li>
+            <li><span>🥈 2. Juliana Costa (Hamamatsu)</span> <strong>380 pts</strong></li>
+            <li><span>🥉 3. Roberto Tanaka (Tokyo)</span> <strong>310 pts</strong></li>
+        </ul>
+    </div>
+
+    <!-- SEÇÃO 7: CUPONS -->
+    <div id="cupons" class="content-section">
+        <h2 class="section-title">🎟️ Cupons Exclusivos de Lojas</h2>
+        <p>Descontos especiais oferecidos por parceiros da comunidade:</p>
+        <div class="coupon-card">
+            <strong>Supermercado Brasileiro Parceiro</strong>
+            <div>5% de desconto nas compras acima de 5.000¥</div>
+            <div class="coupon-code">CUPOM: AJUDAJP5</div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 8: JOGOS -->
+    <div id="jogos" class="content-section">
+        <h2 class="section-title">🎮 Jogos & Sorteios</h2>
+        <p>Participe dos sorteios mensais e divirta-se com mini-jogos rápidos.</p>
+        <button class="btn-action" style="background-color: #e65100;" onclick="alert('Você está participando do Sorteio do Mês!')">🎁 Participar do Sorteio Atual</button>
+    </div>
+
+    <!-- BARRA INFERIOR -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
             <span class="icon">🏠</span>
@@ -330,7 +349,17 @@
     </nav>
 
     <script>
-        // Script do Horóscopo (Omikuji)
+        function mostrarSecao(idSecao, elementoBotao) {
+            const secoes = document.querySelectorAll('.content-section');
+            secoes.forEach(sec => sec.classList.remove('active'));
+
+            const botoes = document.querySelectorAll('.menu-item');
+            botoes.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(idSecao).classList.add('active');
+            elementoBotao.classList.add('active');
+        }
+
         function tirarSorte() {
             const sortes = [
                 "🌸 Daikichi (Grande Sorte): Hoje é um dia excelente para fechar negócios e finanças!",
@@ -342,7 +371,6 @@
             document.getElementById("resultadoOmikuji").innerText = sorteEscolhida;
         }
 
-        // Script simples para enviar mensagem no chat simulado
         function enviarMensagem() {
             const input = document.getElementById("inputChat");
             const chatBox = document.getElementById("chatBox");
@@ -356,6 +384,5 @@
             }
         }
     </script>
-
 </body>
 </html>
