@@ -173,9 +173,9 @@
 <body>
 
     <header class="header">
-        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.this.style.display='none'">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
         <span>Lazer & Comunidade</span>
-        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.this.style.display='none'">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
     </header>
 
     <!-- MENU DE BOTÕES PRINCIPAL -->
@@ -243,16 +243,16 @@
     <!-- SEÇÃO 4: HORÓSCOPO -->
     <div id="horoscopo" class="content-section active">
         <h2 class="section-title">🔮 Horóscopo do Dia (Omikuji)</h2>
-        <p>A sua sorte oficial de hoje já foi revelada. Mas se quiser tentar a sorte de novo, clique no botão!</p>
+        <p>Cada dia uma nova energia. Veja o que os astros revelam para você hoje:</p>
         
         <div class="omikuji-box">
-            <div style="font-size: 0.85rem; color: #795548; font-weight: bold; margin-bottom: 5px;" id="tituloSorte"> SUA SORTE DE HOJE:</div>
-            <div id="resultadoOmikuji" style="font-size: 1.1rem; font-weight: bold; color: #e65100; min-height: 40px; display: flex; align-items: center; justify-content: center;">
+            <div style="font-size: 0.85rem; color: #795548; font-weight: bold; margin-bottom: 5px;" id="tituloSorte">✨ SUA SORTE DE HOJE:</div>
+            <div id="resultadoOmikuji" style="font-size: 1.05rem; font-weight: bold; color: #e65100; min-height: 50px; display: flex; align-items: center; justify-content: center; text-align: center;">
                 Carregando...
             </div>
         </div>
 
-        <button class="btn-action" onclick="clicarDeNovo()" style="background-color: #f57c00; margin-top: 15px;">🎲 Quero tentar outro palpite!</button>
+        <button class="btn-action" onclick="tentarDe Novo()" style="background-color: #f57c00; margin-top: 15px;">🎯 Revelar / Consultar Sorte</button>
     </div>
 
     <!-- SEÇÃO 5: CHAT -->
@@ -325,26 +325,44 @@
             elementoBotao.classList.add('active');
         }
 
-        // Exibe a sorte oficial baseada no dia ao carregar a página
-        window.onload = function() {
+        // Define a sorte oficial do dia baseada na data atual do celular
+        function obterSorteDoDia() {
             const hoje = new Date();
-            const diaDoMes = hoje.getDate(); 
-            const indice = diaDoMes % sortes.length;
-            document.getElementById("resultadoOmikuji").innerText = sortes[indice];
+            const dataString = hoje.getFullYear() + '-' + (hoje.getMonth() + 1) + '-' + hoje.getDate();
+            
+            // Verifica se o usuário já consultou a sorte hoje salvando na memória do navegador (localStorage)
+            let salvoNoDia = localStorage.getItem('omikuji_data');
+            let sorteSalva = localStorage.getItem('omikuji_texto');
+
+            if (salvoNoDia === dataString && sorteSalva) {
+                return sorteSalva;
+            } else {
+                // Sorteia uma nova para o dia de hoje
+                const indice = hoje.getDate() % sortes.length;
+                const novaSorte = sortes[indice];
+                localStorage.setItem('omikuji_data', dataString);
+                localStorage.setItem('omikuji_texto', novaSorte);
+                localStorage.setItem('ja_clicou_extra', 'nao'); // Reseta o aviso para o novo dia
+                return novaSorte;
+            }
+        }
+
+        window.onload = function() {
+            document.getElementById("resultadoOmikuji").innerText = obterSorteDoDia();
         };
 
-        // Permite sortear de novo na hora caso a pessoa clique várias vezes
-        function clicarDeNovo() {
-            const sorteExtra = [
-                "✨ Sorte Extra: Um dinheiro inesperado ou boa notícia pode surgir hoje!",
-                "🎌 Sorte Extra: Sua energia positiva vai atrair ótimas parcerias no trabalho.",
-                "🍡 Sorte Extra: Tire um momento do dia para relaxar e aproveitar uma boa refeição.",
-                "🏮 Sorte Extra: Um contato antigo ou amigo distante pode mandar notícias.",
-                "⛩️ Sorte Extra: Ótimo momento para tomar decisões importantes com confiança!"
-            ];
-            const sorteEscolhida = sorteExtra[Math.floor(Math.random() * sorteExtra.length)];
-            document.getElementById("tituloSorte").innerText = "✨ PALPITE EXTRA DA SORTE:";
-            document.getElementById("resultadoOmikuji").innerText = sorteEscolhida;
+        // Função executada quando o usuário tenta apertar mais de uma vez no mesmo dia
+        function tentarDeNovo() {
+            let jaClicouExtra = localStorage.getItem('ja_clicou_extra');
+            
+            if (jaClicouExtra === 'sim') {
+                document.getElementById("tituloSorte").innerText = "🔒 MENSAGEM DO DESTINO:";
+                document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para descobrir o que o destino reservou para você.";
+            } else {
+                // Mostra a sorte do dia e marca que tentou de novo
+                document.getElementById("resultadoOmikuji").innerText = obterSorteDoDia();
+                localStorage.setItem('ja_clicou_extra', 'sim');
+            }
         }
 
         function enviarMensagem() {
