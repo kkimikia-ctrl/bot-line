@@ -184,7 +184,7 @@
             🔴 Lives
             <span>Transmissões e Prêmios</span>
         </button>
-        <button class="menu-item" onclick="mostrarSecao('radio', this)">
+        <button class="menu-item active" onclick="mostrarSecao('radio', this)">
             📻 Rádio
             <span>Músicas e Programas PT</span>
         </button>
@@ -192,7 +192,7 @@
             🎤 Karaokê
             <span>Cante com a Gente</span>
         </button>
-        <button class="menu-item active" onclick="mostrarSecao('horoscopo', this)">
+        <button class="menu-item" onclick="mostrarSecao('horoscopo', this)">
             🔮 Horóscopo
             <span>Omikuji do Dia</span>
         </button>
@@ -221,13 +221,13 @@
         <button class="btn-action" onclick="alert('Live ativa!')">Assistir</button>
     </div>
 
-    <!-- SEÇÃO 2: RÁDIO -->
-    <div id="radio" class="content-section">
+    <!-- SEÇÃO 2: RÁDIO (CORRIGIDA) -->
+    <div id="radio" class="content-section active">
         <h2 class="section-title">📻 Rádio & Programas em Português</h2>
         <div class="radio-card">
             <h3 style="margin:0; font-size: 1.1rem;">🎧 Web Rádio Comunidade Brasil-Japão</h3>
             <p style="font-size: 0.85rem; margin: 5px 0 15px 0; opacity: 0.9;">Ouça músicas e programas ao vivo</p>
-            <audio controls style="width: 100%;">
+            <audio controls preload="none" style="width: 100%;">
                 <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
                 Seu navegador não suporta áudio.
             </audio>
@@ -241,9 +241,9 @@
     </div>
 
     <!-- SEÇÃO 4: HORÓSCOPO -->
-    <div id="horoscopo" class="content-section active">
+    <div id="horoscopo" class="content-section">
         <h2 class="section-title">🔮 Horóscopo do Dia (Omikuji)</h2>
-        <p>Cada dia uma nova energia. Veja o que os astros revelam para você hoje:</p>
+        <p>Mensagens de prosperidade e alegria para iluminar o seu dia:</p>
         
         <div class="omikuji-box">
             <div style="font-size: 0.85rem; color: #795548; font-weight: bold; margin-bottom: 5px;" id="tituloSorte">✨ SUA SORTE DE HOJE:</div>
@@ -252,7 +252,7 @@
             </div>
         </div>
 
-        <button class="btn-action" onclick="tentarDe Novo()" style="background-color: #f57c00; margin-top: 15px;">🎯 Revelar / Consultar Sorte</button>
+        <button id="btnConsultar" class="btn-action" onclick="tentarDeNovo()" style="background-color: #f57c00; margin-top: 15px;">🎯 Consultar Sorte</button>
     </div>
 
     <!-- SEÇÃO 5: CHAT -->
@@ -311,11 +311,15 @@
 
     <script>
         const sortes = [
-            "🌸 Daikichi (Grande Sorte): Excelente dia para finanças, trabalho e novos projetos!",
-            "🍀 Chukichi (Sorte Média): Sua dedicação de hoje trará ótimos frutos em breve.",
-            "⭐ Shokichi (Pequena Sorte): Pequenos detalhes e conversas agradáveis alegrarão seu dia.",
-            "🌻 Kichi (Sorte): Mantenha o foco e a calma, o dia será tranquilo e produtivo.",
-            "☀️ Suekichi (Sorte Futura): A paciência trará recompensas muito positivas logo mais."
+            "🌸 Daikichi (Grande Sorte): Excelente dia para finanças, trabalho e novos projetos de sucesso!",
+            "🍀 Chukichi (Sorte Média): Sua dedicação e esforço trarão frutos maravilhosos muito em breve.",
+            "⭐ Shokichi (Pequena Sorte): Pequenos detalhes, sorrisos e conversas agradáveis vão alegrar o seu dia.",
+            "🌻 Kichi (Sorte Abundante): Mantenha o foco e a alegria, o dia será incrivelmente tranquilo e produtivo.",
+            "☀️ Suekichi (Sorte Próspera): Grandes oportunidades estão se aproximando rapidamente do seu caminho.",
+            "🎌 Omikuji Especial: Sua energia positiva hoje atrai prosperidade e excelentes amizades.",
+            "✨ Grande Brilho: Um momento especial de alegria e harmonia em família está reservado para você.",
+            "🏮 Sorte nos Negócios: Suas escolhas profissionais de hoje renderão excelentes frutos futuros.",
+            "🍀 Caminho Aberto: As portas da abundância e da tranquilidade estão totalmente abertas para você hoje!"
         ];
 
         function mostrarSecao(idSecao, elementoBotao) {
@@ -325,24 +329,26 @@
             elementoBotao.classList.add('active');
         }
 
-        // Define a sorte oficial do dia baseada na data atual do celular
         function obterSorteDoDia() {
             const hoje = new Date();
             const dataString = hoje.getFullYear() + '-' + (hoje.getMonth() + 1) + '-' + hoje.getDate();
             
-            // Verifica se o usuário já consultou a sorte hoje salvando na memória do navegador (localStorage)
             let salvoNoDia = localStorage.getItem('omikuji_data');
             let sorteSalva = localStorage.getItem('omikuji_texto');
+            let jaTrouxeAviso = localStorage.getItem('ja_clicou_extra');
 
             if (salvoNoDia === dataString && sorteSalva) {
+                if (jaTrouxeAviso === 'sim') {
+                    document.getElementById("tituloSorte").innerText = "🔒 MENSAGEM DO DESTINO:";
+                    return "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para abrir um novo Omikuji!";
+                }
                 return sorteSalva;
             } else {
-                // Sorteia uma nova para o dia de hoje
                 const indice = hoje.getDate() % sortes.length;
                 const novaSorte = sortes[indice];
                 localStorage.setItem('omikuji_data', dataString);
                 localStorage.setItem('omikuji_texto', novaSorte);
-                localStorage.setItem('ja_clicou_extra', 'nao'); // Reseta o aviso para o novo dia
+                localStorage.setItem('ja_clicou_extra', 'nao');
                 return novaSorte;
             }
         }
@@ -351,17 +357,16 @@
             document.getElementById("resultadoOmikuji").innerText = obterSorteDoDia();
         };
 
-        // Função executada quando o usuário tenta apertar mais de uma vez no mesmo dia
         function tentarDeNovo() {
             let jaClicouExtra = localStorage.getItem('ja_clicou_extra');
             
             if (jaClicouExtra === 'sim') {
                 document.getElementById("tituloSorte").innerText = "🔒 MENSAGEM DO DESTINO:";
-                document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para descobrir o que o destino reservou para você.";
+                document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para abrir um novo Omikuji cheinho de prosperidade!";
             } else {
-                // Mostra a sorte do dia e marca que tentou de novo
-                document.getElementById("resultadoOmikuji").innerText = obterSorteDoDia();
                 localStorage.setItem('ja_clicou_extra', 'sim');
+                document.getElementById("tituloSorte").innerText = "🔒 MENSAGEM DO DESTINO:";
+                document.getElementById("resultadoOmikuji").innerText = "A sua sorte de hoje já foi revelada! 🌙 Volte amanhã para abrir um novo Omikuji!";
             }
         }
 
