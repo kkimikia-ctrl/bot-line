@@ -35,18 +35,6 @@
             background: white;
         }
 
-        /* Aviso de teste para garantir atualização */
-        .aviso-teste {
-            background: #ff5252;
-            color: white;
-            padding: 8px;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-        }
-
         /* Menu de Botões Estilo Grade */
         .grid-menu {
             display: grid;
@@ -129,6 +117,16 @@
             margin-top: 10px;
         }
 
+        /* Caixa do Horóscopo */
+        .omikuji-box {
+            background: #fff8e1;
+            border: 2px dashed #ffb300;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
         /* Chat */
         .chat-box {
             background: #f9f9f9;
@@ -180,15 +178,13 @@
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
     </header>
 
-    <div class="aviso-teste">🚀 VERSÃO NOVA CARREGADA COM SUCESSO!</div>
-
     <!-- MENU DE BOTÕES PRINCIPAL -->
     <div class="grid-menu">
         <button class="menu-item" onclick="mostrarSecao('lives', this)">
             🔴 Lives
             <span>Transmissões e Prêmios</span>
         </button>
-        <button class="menu-item active" onclick="mostrarSecao('radio', this)">
+        <button class="menu-item" onclick="mostrarSecao('radio', this)">
             📻 Rádio
             <span>Músicas e Programas PT</span>
         </button>
@@ -196,7 +192,7 @@
             🎤 Karaokê
             <span>Cante com a Gente</span>
         </button>
-        <button class="menu-item" onclick="mostrarSecao('horoscopo', this)">
+        <button class="menu-item active" onclick="mostrarSecao('horoscopo', this)">
             🔮 Horóscopo
             <span>Omikuji do Dia</span>
         </button>
@@ -226,7 +222,7 @@
     </div>
 
     <!-- SEÇÃO 2: RÁDIO -->
-    <div id="radio" class="content-section active">
+    <div id="radio" class="content-section">
         <h2 class="section-title">📻 Rádio & Programas em Português</h2>
         <div class="radio-card">
             <h3 style="margin:0; font-size: 1.1rem;">🎧 Web Rádio Comunidade Brasil-Japão</h3>
@@ -244,11 +240,19 @@
         <p>Escolha um sucesso e cante!</p>
     </div>
 
-    <!-- SEÇÃO 4: HORÓSCOPO -->
-    <div id="horoscopo" class="content-section">
-        <h2 class="section-title">🔮 Horóscopo</h2>
-        <div id="resultadoOmikuji" style="font-weight: bold; color: #e65100; margin: 10px 0;"></div>
-        <button class="btn-action" onclick="document.getElementById('resultadoOmikuji').innerText = '🌸 Daikichi: Sorte Grande hoje!'">Tirar Sorte</button>
+    <!-- SEÇÃO 4: HORÓSCOPO (FUNCIONANDO) -->
+    <div id="horoscopo" class="content-section active">
+        <h2 class="section-title">🔮 Horóscopo do Dia (Omikuji)</h2>
+        <p>Descubra como será a sua sorte hoje no Japão clicando no botão abaixo:</p>
+        
+        <div class="omikuji-box">
+            <div style="font-size: 0.85rem; color: #795548; font-weight: bold; margin-bottom: 5px;">RESULTADO DA SUA SORTE:</div>
+            <div id="resultadoOmikuji" style="font-size: 1.1rem; font-weight: bold; color: #e65100; min-height: 40px; display: flex; align-items: center; justify-content: center;">
+                ✨ Toque no botão para tirar o seu Omikuji!
+            </div>
+        </div>
+
+        <button class="btn-action" onclick="tirarSorte()" style="background-color: #f57c00; margin-top: 15px;">🔮 Tirar Sorte de Hoje</button>
     </div>
 
     <!-- SEÇÃO 5: CHAT -->
@@ -259,7 +263,7 @@
         </div>
         <div class="chat-input-group">
             <input type="text" id="inputChat" placeholder="Mensagem...">
-            <button class="btn-action" style="margin-top:0; width:80px;" onclick="document.getElementById('chatBox').innerHTML+='<div class=\'chat-msg\'><span>Você:</span> '+document.getElementById('inputChat').value+'</div>'; document.getElementById('inputChat').value='';">Enviar</button>
+            <button class="btn-action" style="margin-top:0; width:80px;" onclick="enviarMensagem()">Enviar</button>
         </div>
     </div>
 
@@ -311,6 +315,31 @@
             document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
             document.getElementById(idSecao).classList.add('active');
             elementoBotao.classList.add('active');
+        }
+
+        function tirarSorte() {
+            const sortes = [
+                "🌸 Daikichi (Grande Sorte): Excelente dia para finanças, trabalho e novos projetos!",
+                "🍀 Chukichi (Sorte Média): Sua dedicação de hoje trará ótimos frutos em breve.",
+                "⭐ Shokichi (Pequena Sorte): Pequenos detalhes e conversas agradáveis alegrarão seu dia.",
+                "🌻 Kichi (Sorte): Mantenha o foco e a calma, o dia será tranquilo e produtivo.",
+                "☀️ Suekichi (Sorte Futura): A paciência trará recompensas muito positivas logo mais."
+            ];
+            const sorteEscolhida = sortes[Math.floor(Math.random() * sortes.length)];
+            document.getElementById("resultadoOmikuji").innerText = sorteEscolhida;
+        }
+
+        function enviarMensagem() {
+            const input = document.getElementById("inputChat");
+            const chatBox = document.getElementById("chatBox");
+            if (input.value.trim() !== "") {
+                const novaMsg = document.createElement("div");
+                novaMsg.className = "chat-msg";
+                novaMsg.innerHTML = `<span>Você:</span> ${input.value}`;
+                chatBox.appendChild(novaMsg);
+                input.value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         }
     </script>
 </body>
