@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Anúncio - Ajuda JP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        /* --- CABEÇALHO COM LOGOS NOS CANTOS --- */
+        .app-header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #ffffff;
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: #1a73e8;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+
+        input[type="file"] {
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .helper-text {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 3px;
+            margin-bottom: 10px;
+        }
+
+        /* --- TERMOS DE REGRAS --- */
+        .terms-box {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #555;
+            height: 100px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .btn-submit {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:active {
+            background-color: #1557b0;
+        }
+
+        /* --- BARRA DE NAVEGAÇÃO INFERIOR FIXA --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.75rem;
+            flex-grow: 1;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #1a73e8;
+            font-weight: bold;
+        }
+
+        .nav-item span.icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CABEÇALHO COM LOGO -->
+    <header class="app-header">
+        <img src="logo.jpeg" alt="Logo Esquerda" class="header-logo" onerror="this.style.display='none'">
+        <h1>Novo Anúncio</h1>
+        <img src="logo.jpeg" alt="Logo Direita" class="header-logo" onerror="this.style.display='none'">
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Cadastre seu Anúncio ou Banner</h2>
+            <form id="formAnuncio" onsubmit="enviarAnuncio(event)">
+                
+                <label for="titulo">Título do Serviço / Empresa</label>
+                <input type="text" id="titulo" required placeholder="Ex: Limpeza de Ar-condicionado / Loja do Tanaka">
+
+                <label for="regiao">Região de Atendimento / Destaque</label>
+                <select id="regiao" required>
+                    <option value="">Selecione a Região...</option>
+                    <option value="tokai">Tokai (Aichi / Shizuoka / Gifu)</option>
+                    <option value="kanto">Kanto (Tokyo / Gunma / Saitama...)</option>
+                    <option value="kansai">Kansai (Osaka / Mie / Kyoto...)</option>
+                    <option value="hokkaido-tohoku">Hokkaido / Tohoku</option>
+                    <option value="chugoku-shikoku">Chugoku / Shikoku</option>
+                    <option value="kyushu-okinawa">Kyushu / Okinawa</option>
+                </select>
+
+                <label for="tipoBanner">Tipo de Anúncio</label>
+                <select id="tipoBanner" required>
+                    <option value="carrossel">Mini Banner (Carrossel Superior) - 1.000円 / mês</option>
+                    <option value="feed">Banner Grande (Feed Principal) - 3.000円 / mês</option>
+                </select>
+
+                <label for="bannerFile">Enviar Imagem do Banner</label>
+                <input type="file" id="bannerFile" accept="image/*" required>
+                <div class="helper-text">Envie uma imagem nítida no formato adequado para o anúncio.</div>
+
+                <label for="contato">Contato (Telefone / LINE / WhatsApp)</label>
+                <input type="text" id="contato" required placeholder="Ex: 090-0000-0000 ou @seu_line">
+
+                <label for="formaPagamento">Forma de Pagamento</label>
+                <select id="formaPagamento" required>
+                    <option value="cartao">Cartão de Crédito</option>
+                    <option value="bank">Transferência Bancária (Yuucho / Banco)</option>
+                    <option value="konbini">Pagamento em Loja de Conveniência (Konbini)</option>
+                </select>
+
+                <label>Termos e Condições do Anúncio</label>
+                <div class="terms-box">
+                    1. O conteúdo do anúncio é de inteira responsabilidade do anunciante.<br>
+                    2. Não é permitida a divulgação de serviços ilegais, conteúdos pornográficos ou enganosos.<br>
+                    3. A administração do Ajuda JP se reserva o direito de remover anúncios que violem as diretrizes da comunidade sem aviso prévio.<br>
+                    4. O valor do plano é cobrado mensalmente e a renovação é automática, podendo ser cancelada a qualquer momento antes da data de vencimento.<br>
+                    5. Imagens com baixa qualidade poderão ser solicitadas para substituição para garantir a melhor experiência dos usuários.
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="aceitoTermos" required>
+                    <label for="aceitoTermos" style="margin:0; font-weight:normal;">Li e concordo com os Termos e Regras de Anúncio.</label>
+                </div>
+
+                <button type="submit" class="btn-submit">Publicar e Enviar para Análise</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="perfil.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Perfil</span>
+        </a>
+        <a href="anunciar.html" class="nav-item active">
+            <span class="icon">📢</span>
+            <span>Anunciar</span>
+        </a>
+    </nav>
+
+    <script>
+        function enviarAnuncio(event) {
+            event.preventDefault();
+            
+            // Aqui você pode integrar com o backend ou salvar os dados
+            alert("Anúncio enviado com sucesso! Após a confirmação do pagamento, ele aparecerá na vitrine correspondente.");
+            
+            // Redireciona de volta para a página de serviços/vitrine
+            window.location.href = "servicos.html";
+        }
+    </script>
+
+</body>
+</html>
