@@ -3,67 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lazer e Comunidade - Ajuda JP</title>
+    <title>Lazer e Entretenimento - Ajuda JP</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; padding-bottom: 80px; }
-        .header { background-color: #1a73e8; color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .section-box { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .btn-action { background: #1a73e8; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 15px; cursor: pointer; font-size: 16px; }
-        .btn-action:disabled { background: #ccc; cursor: not-allowed; }
-        .radio-box { text-align: center; padding: 20px; background: #1a73e8; color: white; border-radius: 10px; }
-        .omikuji-box { text-align: center; padding: 20px; background: #fff8e1; border: 2px dashed #ffb300; border-radius: 10px; margin-bottom: 15px; }
+        /* (Mantenha todo o seu CSS original abaixo, ele está bom) */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 15px; color: #333; padding-bottom: 80px; }
+        .header { background-color: #1a73e8; color: white; padding: 10px 15px; font-size: 18px; font-weight: bold; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .logo-img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; background: white; }
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .menu-item { background: white; padding: 18px 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; cursor: pointer; border: 2px solid transparent; font-size: 15px; font-weight: bold; color: #1a73e8; }
+        .menu-item.active { border-color: #1a73e8; background-color: #e8f0fe; }
+        .content-section { display: none; background: white; padding: 18px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .content-section.active { display: block; }
+        .section-title { font-size: 1.1rem; color: #1a73e8; margin-top: 0; margin-bottom: 12px; }
+        .btn-action { background-color: #1a73e8; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-action:disabled { background-color: #ccc; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; display: flex; justify-content: space-around; align-items: center; height: 60px; box-shadow: 0 -2px 6px rgba(0,0,0,0.1); z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.70rem; flex-grow: 1; }
+        .nav-item.active { color: #1a73e8; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <span>Lazer & Comunidade</span>
-</div>
+    <header class="header">
+        <img src="logo.jpeg" class="logo-img" onerror="this.style.display='none'">
+        <span>Lazer & Comunidade</span>
+        <img src="logo.jpeg" class="logo-img" onerror="this.style.display='none'">
+    </header>
 
-<!-- BLOCO DA RÁDIO -->
-<div class="section-box">
-    <div class="radio-box">
-        <h3 style="margin-top:0;">📻 Rádio Online</h3>
-        <p style="font-size: 13px; margin-bottom: 15px;">Transmissão Ao Vivo</p>
+    <!-- (Seu grid de botões continua aqui...) -->
+    <div class="grid-menu">
+        <button class="menu-item" onclick="mostrarSecao('radio', this)">📻 Rádio</button>
+        <button class="menu-item" onclick="mostrarSecao('horoscopo', this)">🔮 Horóscopo</button>
+    </div>
+
+    <!-- SEÇÃO RÁDIO (Corrigida para player direto) -->
+    <div id="radio" class="content-section">
+        <h2 class="section-title">📻 Rádio Online</h2>
         <audio controls style="width: 100%;">
             <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
-            Seu navegador não suporta áudio.
         </audio>
     </div>
-</div>
 
-<!-- BLOCO DO HORÓSCOPO -->
-<div class="section-box">
-    <h3 style="color: #1a73e8; margin-top:0; text-align:center;">🔮 Omikuji do Dia</h3>
-    <div class="omikuji-box">
-        <h3 id="resultado" style="color: #b78103; margin:0;">Sua sorte de hoje espera por você!</h3>
+    <!-- SEÇÃO HORÓSCOPO (Corrigida para 1x por dia) -->
+    <div id="horoscopo" class="content-section">
+        <h2 class="section-title">🔮 Horóscopo do Dia</h2>
+        <div id="resultadoOmikuji" style="font-weight: bold; color: #e65100; margin: 10px 0; text-align: center;">Sua sorte de hoje espera por você!</div>
+        <button id="btnSorte" class="btn-action" onclick="tirarSorte()">Tirar Sorte de Hoje</button>
     </div>
-    <button id="btnSorte" class="btn-action" onclick="sortear()">Revelar Sorte</button>
-</div>
 
-<script>
-    function sortear() {
-        const frases = [
-            "🌸 Daikichi (Ótimo dia! Muita sorte e alegria em tudo o que fizer.)", 
-            "🍀 Chukichi (Dia bom! Boas energias e surpresas agradáveis.)", 
-            "⭐ Shokichi (Dia leve! Paciência trará ótimos resultados.)", 
-            "☀️ Suekichi (Dia calmo! Siga firme e seu esforço dará frutos.)"
-        ];
-        const sorte = frases[Math.floor(Math.random() * frases.length)];
-        localStorage.setItem('sorte_data', new Date().toLocaleDateString());
-        localStorage.setItem('sorte_texto', sorte);
-        document.getElementById('resultado').innerText = sorte;
-        document.getElementById('btnSorte').disabled = true;
-        document.getElementById('btnSorte').innerText = "Já revelado hoje";
-    }
-
-    window.onload = () => {
-        if(localStorage.getItem('sorte_data') === new Date().toLocaleDateString()){
-            document.getElementById('resultado').innerText = localStorage.getItem('sorte_texto');
-            document.getElementById('btnSorte').disabled = true;
-            document.getElementById('btnSorte').innerText = "Já revelado hoje";
+    <script>
+        function mostrarSecao(id, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
         }
-    }
-</script>
+
+        function tirarSorte() {
+            const sorte = ["🌸 Daikichi", "🍀 Chukichi", "⭐ Shokichi", "☀️ Suekichi"][Math.floor(Math.random() * 4)];
+            localStorage.setItem('sorte_data', new Date().toLocaleDateString());
+            localStorage.setItem('sorte_texto', sorte);
+            document.getElementById("resultadoOmikuji").innerText = sorte;
+            document.getElementById("btnSorte").disabled = true;
+        }
+
+        window.onload = () => {
+            if(localStorage.getItem('sorte_data') === new Date().toLocaleDateString()){
+                document.getElementById("resultadoOmikuji").innerText = localStorage.getItem('sorte_texto');
+                document.getElementById("btnSorte").disabled = true;
+            }
+        }
+    </script>
 </body>
 </html>
