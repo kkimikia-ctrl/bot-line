@@ -13,20 +13,16 @@
         .menu-item.active { border-color: #1a73e8; background-color: #e8f0fe; }
         .content-section { display: none; background: white; padding: 18px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
         .content-section.active { display: block; }
-        .section-title { font-size: 1.1rem; color: #1a73e8; margin-top: 0; margin-bottom: 12px; }
         .btn-action { background-color: #1a73e8; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
         .btn-action:disabled { background-color: #ccc; cursor: not-allowed; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; display: flex; justify-content: space-around; align-items: center; height: 60px; box-shadow: 0 -2px 6px rgba(0,0,0,0.1); z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.70rem; flex-grow: 1; }
-        .nav-item.active { color: #1a73e8; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <img src="logo.jpeg" class="logo-img" onerror="this.style.display='none'">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
         <span>Lazer & Comunidade</span>
-        <img src="logo.jpeg" class="logo-img" onerror="this.style.display='none'">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
     </header>
 
     <div class="grid-menu">
@@ -34,16 +30,15 @@
         <button class="menu-item" onclick="mostrarSecao('horoscopo', this)">🔮 Horóscopo</button>
     </div>
 
-    <!-- SEÇÃO RÁDIO (Player Direto) -->
+    <!-- SEÇÃO RÁDIO (Corrigida: Áudio direto) -->
     <div id="radio" class="content-section active">
         <h2 class="section-title">📻 Rádio Online</h2>
         <audio controls style="width: 100%;">
             <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
-            Seu navegador não suporta áudio.
         </audio>
     </div>
 
-    <!-- SEÇÃO HORÓSCOPO (Com bloqueio de cliques duplos) -->
+    <!-- SEÇÃO HORÓSCOPO (Corrigida: Trava de clique) -->
     <div id="horoscopo" class="content-section">
         <h2 class="section-title">🔮 Horóscopo do Dia</h2>
         <div id="resultadoOmikuji" style="font-weight: bold; color: #e65100; margin: 10px 0; text-align: center;">Sua sorte de hoje espera por você!</div>
@@ -51,20 +46,19 @@
     </div>
 
     <script>
-        function mostrarSecao(id, btn) {
+        function mostrarSecao(idSecao, elementoBotao) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
+            document.getElementById(idSecao).classList.add('active');
+            elementoBotao.classList.add('active');
         }
 
         function tirarSorte() {
-            const botao = document.getElementById("btnSorte");
-            
-            // Trava imediata para evitar múltiplos cliques rápidos
-            botao.disabled = true;
+            const btn = document.getElementById("btnSorte");
+            btn.disabled = true; // Trava o botão instantaneamente
 
-            const sorte = ["🌸 Daikichi", "🍀 Chukichi", "⭐ Shokichi", "☀️ Suekichi"][Math.floor(Math.random() * 4)];
+            const sortes = ["🌸 Daikichi", "🍀 Chukichi", "⭐ Shokichi", "☀️ Suekichi"];
+            const sorte = sortes[Math.floor(Math.random() * sortes.length)];
             
             localStorage.setItem('sorte_data', new Date().toLocaleDateString());
             localStorage.setItem('sorte_texto', sorte);
