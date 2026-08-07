@@ -14,21 +14,24 @@
         .content-section { display: none; background: white; padding: 18px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
         .content-section.active { display: block; }
         .section-title { font-size: 1.1rem; color: #1a73e8; margin-top: 0; margin-bottom: 12px; }
-        .btn-action { background-color: #1a73e8; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-action { background-color: #1a73e8; color: white; border: none; padding: 12px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
         .btn-action:disabled { background-color: #ccc; cursor: not-allowed; }
+        .game-box { background: #e8f0fe; padding: 15px; border-radius: 8px; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <header class="header">
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
-        <span>Lazer & Comunidade (Atualizado)</span>
+        <span>Lazer & Comunidade</span>
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
     </header>
 
+    <!-- MENU DE BOTÕES -->
     <div class="grid-menu">
         <button class="menu-item active" onclick="mostrarSecao('radio', this)">📻 Rádio</button>
         <button class="menu-item" onclick="mostrarSecao('horoscopo', this)">🔮 Horóscopo</button>
+        <button class="menu-item" onclick="mostrarSecao('jogos', this)">🎮 Jogos</button>
     </div>
 
     <!-- SEÇÃO RÁDIO -->
@@ -47,6 +50,21 @@
         <button id="btnSorte" class="btn-action" onclick="tirarSorte()">Tirar Sorte de Hoje</button>
     </div>
 
+    <!-- SEÇÃO JOGOS -->
+    <div id="jogos" class="content-section">
+        <h2 class="section-title">🎮 Mini-Jogo / Sorteio</h2>
+        <p>Teste sua sorte no mini-game de adivinhação ou participe dos sorteios mensais!</p>
+        
+        <div class="game-box">
+            <p id="statusJogo" style="font-weight: bold; color: #1a73e8;">Adivinhe o número de 1 a 3:</p>
+            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 10px;">
+                <button class="btn-action" style="margin-top:0;" onclick="jogarAdivinhacao(1)">1</button>
+                <button class="btn-action" style="margin-top:0;" onclick="jogarAdivinhacao(2)">2</button>
+                <button class="btn-action" style="margin-top:0;" onclick="jogarAdivinhacao(3)">3</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function mostrarSecao(idSecao, elementoBotao) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -57,30 +75,34 @@
 
         function tirarSorte() {
             const btn = document.getElementById("btnSorte");
-            
-            // Trava imediata e segura
             btn.disabled = true;
             btn.style.backgroundColor = "#ccc";
 
             const sortes = ["🌸 Daikichi", "🍀 Chukichi", "⭐ Shokichi", "☀️ Suekichi"];
             const sorte = sortes[Math.floor(Math.random() * sortes.length)];
             
-            const hoje = new Date().toLocaleDateString();
-            localStorage.setItem('sorte_data', hoje);
+            localStorage.setItem('sorte_data', new Date().toLocaleDateString());
             localStorage.setItem('sorte_texto', sorte);
             
             document.getElementById("resultadoOmikuji").innerText = sorte;
         }
 
-        window.onload = function() {
-            const dataSalva = localStorage.getItem('sorte_data');
-            const hoje = new Date().toLocaleDateString();
+        function jogarAdivinhacao(escolha) {
+            const numeroSorteado = Math.floor(Math.random() * 3) + 1;
+            const status = document.getElementById("statusJogo");
             
-            if (dataSalva === hoje) {
-                const textoSalvo = localStorage.getItem('sorte_texto');
-                if (textoSalvo) {
-                    document.getElementById("resultadoOmikuji").innerText = textoSalvo;
-                }
+            if (escolha === numeroSorteado) {
+                status.innerHTML = `🎉 Parabéns! Você acertou o número ${numeroSorteado}!`;
+                status.style.color = "#2e7d32";
+            } else {
+                status.innerHTML = `❌ Quase! O número era ${numeroSorteado}. Tente de novo!`;
+                status.style.color = "#c62828";
+            }
+        }
+
+        window.onload = function() {
+            if(localStorage.getItem('sorte_data') === new Date().toLocaleDateString()){
+                document.getElementById("resultadoOmikuji").innerText = localStorage.getItem('sorte_texto');
                 const btn = document.getElementById("btnSorte");
                 btn.disabled = true;
                 btn.style.backgroundColor = "#ccc";
