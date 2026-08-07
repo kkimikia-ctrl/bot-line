@@ -13,6 +13,7 @@
         .menu-item.active { border-color: #1a73e8; background-color: #e8f0fe; }
         .content-section { display: none; background: white; padding: 18px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
         .content-section.active { display: block; }
+        .section-title { font-size: 1.1rem; color: #1a73e8; margin-top: 0; margin-bottom: 12px; }
         .btn-action { background-color: #1a73e8; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
         .btn-action:disabled { background-color: #ccc; cursor: not-allowed; }
     </style>
@@ -21,7 +22,7 @@
 
     <header class="header">
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
-        <span>Lazer & Comunidade</span>
+        <span>Lazer & Comunidade (Atualizado)</span>
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.style.display='none'">
     </header>
 
@@ -30,15 +31,16 @@
         <button class="menu-item" onclick="mostrarSecao('horoscopo', this)">🔮 Horóscopo</button>
     </div>
 
-    <!-- SEÇÃO RÁDIO (Corrigida: Áudio direto) -->
+    <!-- SEÇÃO RÁDIO -->
     <div id="radio" class="content-section active">
         <h2 class="section-title">📻 Rádio Online</h2>
         <audio controls style="width: 100%;">
             <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
+            Seu navegador não suporta áudio.
         </audio>
     </div>
 
-    <!-- SEÇÃO HORÓSCOPO (Corrigida: Trava de clique) -->
+    <!-- SEÇÃO HORÓSCOPO -->
     <div id="horoscopo" class="content-section">
         <h2 class="section-title">🔮 Horóscopo do Dia</h2>
         <div id="resultadoOmikuji" style="font-weight: bold; color: #e65100; margin: 10px 0; text-align: center;">Sua sorte de hoje espera por você!</div>
@@ -55,21 +57,33 @@
 
         function tirarSorte() {
             const btn = document.getElementById("btnSorte");
-            btn.disabled = true; // Trava o botão instantaneamente
+            
+            // Trava imediata e segura
+            btn.disabled = true;
+            btn.style.backgroundColor = "#ccc";
 
             const sortes = ["🌸 Daikichi", "🍀 Chukichi", "⭐ Shokichi", "☀️ Suekichi"];
             const sorte = sortes[Math.floor(Math.random() * sortes.length)];
             
-            localStorage.setItem('sorte_data', new Date().toLocaleDateString());
+            const hoje = new Date().toLocaleDateString();
+            localStorage.setItem('sorte_data', hoje);
             localStorage.setItem('sorte_texto', sorte);
             
             document.getElementById("resultadoOmikuji").innerText = sorte;
         }
 
-        window.onload = () => {
-            if(localStorage.getItem('sorte_data') === new Date().toLocaleDateString()){
-                document.getElementById("resultadoOmikuji").innerText = localStorage.getItem('sorte_texto');
-                document.getElementById("btnSorte").disabled = true;
+        window.onload = function() {
+            const dataSalva = localStorage.getItem('sorte_data');
+            const hoje = new Date().toLocaleDateString();
+            
+            if (dataSalva === hoje) {
+                const textoSalvo = localStorage.getItem('sorte_texto');
+                if (textoSalvo) {
+                    document.getElementById("resultadoOmikuji").innerText = textoSalvo;
+                }
+                const btn = document.getElementById("btnSorte");
+                btn.disabled = true;
+                btn.style.backgroundColor = "#ccc";
             }
         }
     </script>
