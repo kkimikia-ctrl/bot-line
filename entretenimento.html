@@ -3,33 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área de Entretenimento</title>
+    <title>Entretenimento e Lazer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             text-align: center;
+        }
+        .header {
+            background-color: #0d47a1;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+        .header img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            padding: 2px;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
+            padding: 15px;
+            padding-bottom: 80px;
         }
-        button {
-            background-color: #ff4757;
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .card-btn {
+            background: white;
+            border: none;
+            padding: 15px 10px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .card-btn .icon {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .card-btn .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0d47a1;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .card-btn .subtitle {
+            font-size: 11px;
+            color: #666;
+            display: block;
+        }
+        .section-box {
+            background: white;
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .section-box h3 {
+            font-size: 15px;
+            color: #0d47a1;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rule-card {
+            background: #e8f0fe;
+            border-left: 4px solid #1967d2;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #174ea6;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .action-btn {
+            background-color: #1976d2;
             color: white;
             border: none;
-            padding: 12px 20px;
-            margin: 10px;
-            font-size: 16px;
-            border-radius: 8px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
-            display: inline-block;
+            margin-top: 10px;
         }
-        button:hover {
-            background-color: #ff6b81;
+        .action-btn:hover {
+            background-color: #115293;
         }
         .modal {
             display: none;
@@ -41,11 +128,12 @@
             background: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 14px;
             width: 90%;
             max-width: 400px;
             text-align: center;
@@ -57,29 +145,93 @@
             background: #ccc;
             color: #333;
             margin-top: 15px;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Área de Entretenimento</h1>
-        <p>Escolha uma opção abaixo para curtir:</p>
+    <div class="header">
+        <img src="https://via.placeholder.com/35" alt="Logo">
+        <h1>Entretenimento e Lazer</h1>
+        <img src="https://via.placeholder.com/35" alt="Logo">
+    </div>
 
-        <!-- Botões principais na tela -->
-        <button onclick="abrirModalRadio()">🎵 Ouvir Rádios</button>
-        <button onclick="abrirModalOmikuji()">🔮 Omikuji (Sorte do Dia)</button>
+    <div class="container">
+        <!-- Grade de Botões Estilo Cards -->
+        <div class="grid-menu">
+            <button class="card-btn" onclick="abrirSecaoLives()">
+                <span class="icon">🔴</span>
+                <span class="title">Lives</span>
+                <span class="subtitle">Transmissões e Prêmios</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalRadio()">
+                <span class="icon">📻</span>
+                <span class="title">Rádios & Som</span>
+                <span class="subtitle">Todas as Opções</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Karaokê em breve!')">
+                <span class="icon">🎤</span>
+                <span class="title">Karaokê</span>
+                <span class="subtitle">Cante com a Gente</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalOmikuji()">
+                <span class="icon">🔮</span>
+                <span class="title">Horóscopo</span>
+                <span class="subtitle">Omikuji do Dia</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Chat em breve!')">
+                <span class="icon">💬</span>
+                <span class="title">Chat</span>
+                <span class="subtitle">Comunidade Online</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Ranking em breve!')">
+                <span class="icon">🏆</span>
+                <span class="title">Ranking</span>
+                <span class="subtitle">Usuários mais ativos</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Descontos em breve!')">
+                <span class="icon">🎟️</span>
+                <span class="title">Descontos</span>
+                <span class="subtitle">Cupons em Loja</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Jogos em breve!')">
+                <span class="icon">🎮</span>
+                <span class="title">Jogos</span>
+                <span class="subtitle">Sorteios e Diversão</span>
+            </button>
+        </div>
+
+        <!-- Seção de Lives da Comunidade -->
+        <div class="section-box" id="secaoLives">
+            <h3>🔴 Lives da Comunidade</h3>
+            <div class="rule-card">
+                🎁 <strong>Regra de Presentes:</strong> Os primeiros 300¥ doados vão inteiros para o criador! A partir daí, a divisão justa é de 70% para o criador e 30% para a plataforma.
+            </div>
+            <p style="font-size: 13px; color: #555;">Assista à transmissão ao vivo e apoie os criadores de conteúdo do Japão.</p>
+            <button class="action-btn" onclick="alert('Abrindo transmissão ao vivo...')">Assistir Live Ativa</button>
+        </div>
     </div>
 
     <!-- Modal da Rádio -->
     <div id="modalRadio" class="modal">
         <div class="modal-content">
             <h2>Rádios Ao Vivo</h2>
-            <button onclick="tocarRadio('https://sua-url-de-stream-aqui.com/stream', 'Rádio Pop')">Rádio Pop</button>
-            <button onclick="tocarRadio('https://sua-url-de-stream-aqui.com/stream2', 'Rádio Rock')">Rádio Rock</button>
+            <button class="action-btn" onclick="tocarRadio('https://sua-url-de-stream-aqui.com/stream', 'Rádio Pop')" style="margin-bottom: 8px;">Rádio Pop</button>
+            <button class="action-btn" onclick="tocarRadio('https://sua-url-de-stream-aqui.com/stream2', 'Rádio Rock')">Rádio Rock</button>
             
             <div id="containerPlayer" style="display:none; margin-top: 15px;">
-                <p id="nomeRadioTocando" style="font-weight: bold;"></p>
+                <p id="nomeRadioTocando" style="font-weight: bold; font-size: 14px;"></p>
                 <audio id="audioRadio" controls style="width: 100%;">
                     <source id="sourceAudio" src="" type="audio/mpeg">
                     Seu navegador não suporta áudio.
@@ -93,16 +245,21 @@
     <!-- Modal do Omikuji -->
     <div id="modalOmikuji" class="modal">
         <div class="modal-content">
-            <h2 id="omikujiTitulo">Sorte do Dia</h2>
-            <p id="omikujiTexto" style="line-height: 1.6; text-align: justify; margin: 15px 0;">Toque no botão abaixo para descobrir a sua mensagem de hoje.</p>
+            <h2 id="omikujiTitulo" style="font-size: 18px; color: #0d47a1;">Sorte do Dia</h2>
+            <p id="omikujiTexto" style="line-height: 1.5; font-size: 13px; text-align: justify; margin: 15px 0; color: #333;">Toque no botão abaixo para descobrir a sua mensagem de hoje.</p>
             
-            <button id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
+            <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
             <br>
             <button class="close-btn" onclick="fecharModalOmikuji()">Fechar</button>
         </div>
     </div>
 
     <script>
+        function abrirSecaoLives() {
+            const el = document.getElementById('secaoLives');
+            el.scrollIntoView({ behavior: 'smooth' });
+        }
+
         function abrirModalRadio() {
             document.getElementById('modalRadio').style.display = 'flex';
         }
@@ -163,185 +320,16 @@
             const hoje = new Date().toLocaleDateString();
             
             const resultados = [
-                { 
-                    titulo: "🌸 Dai-Kichi: Grande Renovação e Alegria", 
-                    texto: "Este dia traz uma onda maravilhosa de energias renovadas para a sua vida. É um momento perfeito para celebrar novas oportunidades, mentalizar grandes realizações e caminhar com total confiança rumo aos seus sonhos." 
-                },
-                { 
-                    titulo: "⭐ Kichi: Harmonia, Paz e União", 
-                    texto: "As energias do dia favorecem profundamente a união, o carinho e o convívio com pessoas queridas. Aproveite este momento de pura calmaria para estreitar laços especiais e cultivar um ambiente acolhedor em sua casa." 
-                },
-                { 
-                    titulo: "🍀 Sho-Kichi: Brilho e Sucesso Profissional", 
-                    texto: "Sua dedicação constante e seu talento natural começam a brilhar intensamente. Mantenha firme esse seu entusiasmo contagiante, pois o seu trabalho e esforço diário trarão recompensas lindas e muito merecidas." 
-                },
-                { 
-                    titulo: "☀️ Kin-Un Kichi: Abundância e Boas Novas", 
-                    texto: "O momento traz ventos extremamente auspiciosos para a sua vida financeira e material. Surpresas agradáveis ligadas a conquistas e prosperidade estão a caminho para trazer ainda mais tranquilidade ao seu coração." 
-                },
-                { 
-                    titulo: "🎯 Sue-Kichi: Surpresas Felizes e Encantos", 
-                    texto: "Prepare-se para vivenciar momentos de pura alegria e reencontros especiais que aquecerão a sua alma. O destino preparou detalhes carinhosos para colorir o seu dia de forma mágica e inesquecível." 
-                },
-                { 
-                    titulo: "🚀 Shōgyō Kichi: Energia Plena e Vitalidade", 
-                    texto: "Sua disposição física e mental está em um patamar excelente e radiante hoje. Aproveite essa super onda de vitalidade para realizar seus projetos com leveza, sorrisos e muita satisfação." 
-                },
-                { 
-                    titulo: "🍃 Nagomi Kichi: Descanso e Serenidade", 
-                    texto: "O dia convida você a desacelerar o passo e saborear a paz interior. Tire um momento precioso para relaxar, apreciar as pequenas belezas da vida e recarregar suas energias com tranquilidade." 
-                },
-                { 
-                    titulo: "🌟 Hoshi-Kichi: Sorte Brilhante e Fortuna", 
-                    texto: "A sorte caminha lado a lado com você hoje! O universo conspira a favor dos seus planos, tornando este um dia excelente para tomar decisões inspiradas e colher ótimos frutos." 
-                },
-                { 
-                    titulo: "💡 Kyo-Kichi: Inspiração e Criatividade Pura", 
-                    texto: "Sua mente estará iluminada por ideias fantásticas e soluções maravilhosas. Permita-se expressar sua criatividade com liberdade e encante a todos ao seu redor com o seu jeito único de ver o mundo." 
-                },
-                { 
-                    titulo: "🎉 Tokudai Kichi: Super Conquistas e Vitórias", 
-                    texto: "Os seus esforços sinceros desabrocham hoje em forma de grandes alegrias. Celebre com muito orgulho cada pequena e grande vitória, pois você merece viver momentos de puro reconhecimento." 
-                },
-                { 
-                    titulo: "🔮 Mirai Kichi: Intuição e Sabedoria", 
-                    texto: "Sua intuição está funcionando como um farol de luz maravilhoso. Confie plenamente na sua sabedoria interior, pois ela guiará você com precisão rumo a escolhas felizes e caminhos iluminados." 
-                },
-                { 
-                    titulo: "🤝 Yūjō Kichi: Amizades e Apoio Sincero", 
-                    texto: "O dia celebra a beleza do companheirismo e das conexões verdadeiras. Contar com o carinho de amigos leais trará sorrisos largos e uma sensação indescritível de bem-estar ao seu coração." 
-                },
-                { 
-                    titulo: "🍵 Anshin Kichi: Paz de Espírito e Leveza", 
-                    texto: "Uma onda de profunda tranquilidade e segurança abraçará o seu dia. Tudo flui de maneira suave, harmoniosa e perfeita, trazendo um sorriso constante ao seu rosto." 
-                },
-                { 
-                    titulo: "❤️ Ren-Ai Kichi: Amor, Carinho e Afeto", 
-                    texto: "O amor e a cumplicidade ocupam o lugar mais bonito do seu dia. Aproveite para espalhar carinho, trocar palavras doces e fortalecer laços afetuosos com quem faz a sua vida mais feliz." 
-                },
-                { 
-                    titulo: "🧭 Kōun Kichi: Equilíbrio e Caminhos Abertos", 
-                    texto: "Este é um momento de excelente equilíbrio e harmonia em todas as áreas da sua vida. Os caminhos estão abertos e repletos de oportunidades para você ser feliz e realizar o que deseja." 
-                },
-                { 
-                    titulo: "🛡️ Anzen Kichi: Proteção e Confiança", 
-                    texto: "Você está cercado por vibrações altamente protetoras e positivas. Sinta-se seguro, abraçado e confiante, pois a estabilidade e a serenidade preenchem cada espaço do seu dia." 
-                },
-                { 
-                    titulo: "🎨 Tanoshi Kichi: Diversão e Lazer Merecido", 
-                    texto: "O seu dia merece ser celebrado com momentos leves e divertidos. Busque atividades que tragam prazer, sorrisos e que colorem a sua rotina com muita descontração e alegria." 
-                },
-                { 
-                    titulo: "📈 Seichō Kichi: Evolução e Sabedoria Contínua", 
-                    texto: "Cada passo dado hoje é uma semente de sabedoria que floresce em sua jornada. Você está crescendo, aprendendo e acumulando experiências maravilhosas com muita graça." 
-                },
-                { 
-                    titulo: "🌙 Yasuragi Kichi: Noite Abençoada e Calma", 
-                    texto: "O dia transcorrerá com uma fluidez encantadora e culminará em uma noite de paz absoluta, com a gostosa sensação de dever cumprido e o coração repleto de gratidão." 
-                },
-                { 
-                    titulo: "🔥 Yūki Kichi: Força, Coragem e Inspiração", 
-                    texto: "Uma dose extra de ânimo e entusiasmo vai impulsionar os seus passos hoje. Siga em frente com determinação e otimismo, pois o sucesso e a alegria caminham junto com você." 
-                },
-                { 
-                    titulo: "🎁 Megumi Kichi: Presentes Surpresa da Vida", 
-                    texto: "O universo reservou mimos especiais e delicados para o seu dia. Esteja atento aos pequenos detalhes: um gesto gentil, um sorriso ou uma boa notícia vai alegrar profundamente o seu espírito." 
-                },
-                { 
-                    titulo: "🌊 Nagare Kichi: Harmonia e Fluidez Natural", 
-                    texto: "Tudo flui com uma leveza inspiradora na sua vida neste momento. Deixe-se levar pela correnteza do bem, confiando na beleza e na perfeição de cada instante." 
-                },
-                { 
-                    titulo: "🏆 Meiyo Kichi: Reconhecimento e Aplausos", 
-                    texto: "O seu valor inestimável será notado, elogiado e celebrado pelas pessoas ao seu redor. Sinta-se radiante e muito orgulhoso da pessoa incrível que você é." 
-                },
-                { 
-                    titulo: "🧩 Chie Kichi: Soluções Brilhantes e Clareza", 
-                    texto: "Sua inteligência e clareza mental trarão respostas fáceis e felizes para qualquer situação do dia. Tudo se encaixa de maneira perfeita, trazendo muita paz e satisfação." 
-                },
-                { 
-                    titulo: "✨ Miryoku Kichi: Brilho Pessoal e Carisma", 
-                    texto: "O seu carisma natural e sua energia acolhedora estarão radiantes hoje, atraindo olhares gentis, ótimas parcerias e momentos extremamente agradáveis por onde você passar." 
-                },
-                { 
-                    titulo: "📝 Keikaku Kichi: Planos Prósperos e Futuro Feliz", 
-                    texto: "Bom dia para sonhar alto e estruturar metas luminosas para o futuro! Suas ideias têm um potencial enorme de crescimento e trarão excelentes frutos muito em breve." 
-                },
-                { 
-                    titulo: "🌿 Fukkatsu Kichi: Renovação de Energias e Vigor", 
-                    texto: "Uma reviravolta revigorante e positiva renovará todas as suas forças. Sinta o entusiasmo preencher cada célula do seu corpo, trazendo disposição para viver o melhor de hoje." 
-                },
-                { 
-                    titulo: "🕊️ Kansa Kichi: Gratidão e Plenitude da Alma", 
-                    texto: "Um sentimento profundo de agradecimento e leveza preencherá o seu peito o dia todo. Aproveite essa serenidade indescritível para desfrutar da pura felicidade das coisas simples." 
-                },
-                { 
-                    titulo: "⚡ Sokudo Kichi: Rapidez, Sorte e Facilidade", 
-                    texto: "As coisas acontecerão com uma facilidade impressionante hoje! Questões práticas se resolverão num piscar de olhos, deixando seu dia livre para curtir o que realmente importa." 
-                },
-                { 
-                    titulo: "🎊 Kansei Kichi: Celebração e Conclusões Felizes", 
-                    texto: "O ciclo de hoje se encerra com um saldo espetacular de alegrias e realizações. Descanse com a certeza absoluta de que o seu dia foi abençoado e produtivo." 
-                },
-                { 
-                    titulo: "🌟 Dai-Tokudai Kichi: A Sorte Máxima e Radiante", 
-                    texto: "Um dia absolutamente mágico, iluminado e fora da curva! O destino preparou uma sequência generosíssima de surpresas felizes e energias altamente prósperas para coroar o seu dia com chave de ouro!" 
-                },
-                { titulo: "🌸 Inspiração Total", texto: "O dia está pintado com as cores da esperança. Tudo o que você tocar hoje florescerá com beleza, leveza e propósito." },
-                { titulo: "⭐ Brilho Próprio", texto: "Sua luz interior é forte e capaz de iluminar qualquer ambiente. Hoje, o seu sorriso será o motivo de alegria e inspiração para alguém." },
-                { titulo: "🍀 Sorte em Dobro", texto: "A sorte é como uma brisa suave que acompanha os seus passos. Caminhe com confiança, pois excelentes caminhos abertos esperam por você." },
-                { titulo: "☀️ Energia Solar", texto: "Sua vitalidade é contagiante e radiante! Hoje você terá toda a força necessária para realizar suas tarefas com um sorriso no rosto e muita disposição." },
-                { titulo: "🎯 Foco no Bem", texto: "Ao focar nas coisas boas, você atrai exatamente o que merece. O dia está repleto de oportunidades maravilhosas de crescimento." },
-                { titulo: "🚀 Voo Alto", texto: "Suas asas estão fortes e prontas. Não tenha medo de sonhar grande, pois as possibilidades de realização hoje são infinitas." },
-                { titulo: "🍃 Leveza", texto: "Respire fundo, solte o que passou e abrace o momento presente. O dia de hoje foi feito para ser vivido com total leveza e gratidão." },
-                { titulo: "🌟 Estrela Guia", texto: "Siga o que faz o seu coração vibrar de alegria. A resposta que você tanto busca está na sua intuição mais pura e cristalina." },
-                { titulo: "💡 Ideia Iluminada", texto: "Uma faísca de genialidade e clareza surgirá hoje. Use-a para transformar a sua rotina em algo extraordinário e muito prazeroso." },
-                { titulo: "🎉 Celebração", texto: "A vida é uma festa linda para quem sabe agradecer. Hoje, pequenas atitudes trarão grandes e inesquecíveis motivos para comemorar." },
-                { titulo: "🔮 Visão Positiva", texto: "O futuro se desenha de forma espetacular para você. Mantenha esse otimismo contagiante e veja a mágica acontecer ao seu redor." },
-                { titulo: "🤝 Laços Fortes", texto: "As pessoas ao seu redor admiram a sua essência bondosa. Hoje é um dia perfeito para cultivar amizades e sentir-se profundamente acolhido." },
-                { titulo: "🍵 Calma", texto: "A paz verdadeira mora no momento presente. Desfrute da serenidade de um dia construído com paciência, carinho e harmonia." },
-                { titulo: "❤️ Amor Incondicional", texto: "O amor é a força mais poderosa do universo. Sinta-o pulsar em cada detalhe, em cada gesto amigável e em cada pensamento bom." },
-                { titulo: "🧭 Rumo Certo", texto: "Você está exatamente no lugar onde deveria estar. O caminho à frente é pavimentado com muito sucesso, paz e alegria." },
-                { titulo: "🛡️ Proteção", texto: "Você está envolto por uma energia protetora e luminosa. Sinta-se totalmente seguro para ser quem você realmente é." },
-                { titulo: "🎨 Arte de Viver", texto: "Transforme o comum em extraordinário. A sua criatividade é o pincel mágico que colore a sua jornada ao longo do dia." },
-                { titulo: "📈 Crescimento", texto: "Cada pequeno passo dado hoje é um degrau a mais na sua escada rumo à realização e à felicidade plena." },
-                { titulo: "🌙 Paz Noturna", texto: "Descanse com a absoluta certeza de que o dia foi bem vivido. Amanhã será uma nova tela em branco para a sua felicidade." },
-                { titulo: "🔥 Determinação", texto: "Sua força de vontade é admirável e inabalável. Continue persistindo com otimismo, pois as suas metas estão cada vez mais perto." },
-                { titulo: "🎁 Presente Divino", texto: "A vida lhe reserva um presente especial hoje: pode ser um encontro feliz, uma palavra amiga ou uma descoberta agradável." },
-                { titulo: "🌊 Fluidez", texto: "Deixe que a vida traga o que há de melhor para você. Confie na sabedoria do universo e siga fluindo com tranquilidade." },
-                { titulo: "🏆 Mérito", texto: "Você merece tudo de maravilhoso que está para acontecer em sua vida. O seu esforço é celebrado pelas forças do bem." },
-                { titulo: "🧩 Encaixe Perfeito", texto: "As peças da sua vida estão se organizando da melhor maneira possível. Tenha fé no processo e sorria para o dia." },
-                { titulo: "✨ Magnetismo", texto: "Sua energia positiva atrai apenas o bem. Ative seu poder de atrair pessoas e situações que vibram na mesma frequência feliz." },
-                { titulo: "📝 Planejamento", texto: "Organize seus pensamentos com carinho e veja como a clareza traz paz e resultados impressionantes para a sua rotina." },
-                { titulo: "🌿 Renascimento", texto: "Sempre há uma linda chance de começar de novo. Hoje é esse dia especial para você renovar todas as suas esperanças." },
-                { titulo: "🕊️ Serenidade", texto: "A calma é uma escolha diária. Escolha a paz no seu coração e veja como o mundo ao redor se torna um lugar melhor." },
-                { titulo: "⚡ Ação Positiva", texto: "O dinamismo é o seu grande aliado hoje. Tome a iniciativa com otimismo e veja resultados surpreendentes surgirem." },
-                { titulo: "🎊 Vitória", texto: "O sucesso é construído através de bons dias. Você está construindo algo muito bonito e gratificante hoje." },
-                { titulo: "🌟 Plenitude", texto: "Sinta-se completo, realizado e abundante. A vida tem um monte de bênçãos para oferecer e você está pronto para recebê-las." },
-                { titulo: "🌸 Florir", texto: "Deixe o seu interior florescer com amor. O mundo precisa da sua essência única, bondosa e vibrante hoje." },
-                { titulo: "⭐ Estrela", texto: "Brilhe com toda a sua força! O seu brilho próprio ilumina o seu caminho e inspira quem caminha com você." },
-                { titulo: "🍀 Sorte Pura", texto: "O acaso se torna incrivelmente favorável quando você sorri para a vida. A sorte hoje está todinha ao seu lado." },
-                { titulo: "☀️ Raio de Sol", texto: "Seja a luz na vida de alguém hoje. O calor humano e a gentileza são o que nos mantêm conectados e felizes." },
-                { titulo: "🎯 Alvo Certo", texto: "Suas intenções de hoje são puras e certeiras. O universo entende o seu desejo e conspira para realizá-lo com carinho." },
-                { titulo: "🚀 Destino", texto: "Você está viajando em direção a um futuro glorioso e feliz. Aprecie a beleza e a paz dessa caminhada." },
-                { titulo: "🍃 Frescor", texto: "Novas ideias, novos ares e novas possibilidades. O dia de hoje renova a sua perspectiva de vida com muita esperança." },
-                { titulo: "🌟 Horizonte", texto: "O horizonte está aberto e as oportunidades de ser feliz são infinitas. Caminhe sempre com otimismo no coração." },
-                { titulo: "💡 Claridade", texto: "A dúvida desaparece quando a verdade e a franqueza são o seu norte. Seja transparente e veja a harmonia reinar." },
-                { titulo: "🎉 Alegria", texto: "A felicidade é contagiante e transformadora. Ao escolher ser feliz hoje, você ilumina todo o seu ambiente." },
-                { titulo: "🔮 Mistério", texto: "Deixe a vida te surpreender com maravilhas que você nem imagina agora. O melhor está reservado para você." },
-                { titulo: "🤝 Parceria", texto: "Unidos somos mais fortes e felizes. O dia favorece a colaboração sincera e o sucesso compartilhado com quem você ama." },
-                { titulo: "🍵 Sabedoria", texto: "Aprender sempre com leveza é o segredo da alma. Hoje você absorverá algo muito valioso para a sua evolução." },
-                { titulo: "❤️ Paixão", texto: "Coloque amor e paixão em tudo o que fizer hoje. A diferença entre o ordinário e o mágico é o coração." },
-                { titulo: "🧭 Direção", texto: "Sua bússola interna está perfeitamente calibrada para a felicidade. Confie plenamente nos seus passos." },
-                { titulo: "🛡️ Escudo", texto: "Sua positividade é o seu escudo protetor contra qualquer negatividade. Mantenha sua vibração sempre no alto." },
-                { titulo: "🎨 Criatividade", texto: "Pinte o seu dia com as cores mais vivas da esperança e da alegria. A sua vida é a sua obra de arte." },
-                { titulo: "📈 Sucesso", texto: "O sucesso é um destino maravilhoso, mas a alegria na jornada é onde a verdadeira felicidade reside." }
+                { titulo: "🌸 Dai-Kichi: Grande Renovação e Alegria", texto: "Este dia traz uma onda maravilhosa de energias renovadas para a sua vida. É um momento perfeito para celebrar novas oportunidades e caminhar com confiança." },
+                { titulo: "⭐ Kichi: Harmonia, Paz e União", texto: "As energias do dia favorecem profundamente a união, o carinho e o convívio com pessoas queridas. Aproveite para estreitar laços especiais." },
+                { titulo: "🍀 Sho-Kichi: Brilho e Sucesso Profissional", texto: "Sua dedicação constante e seu talento natural começam a brilhar intensamente. Seu esforço diário trará recompensas lindas e muito merecidas." },
+                { titulo: "☀️ Kin-Un Kichi: Abundância e Boas Novas", texto: "O momento traz ventos extremamente auspiciosos para a sua vida financeira. Surpresas agradáveis ligadas a conquistas estão a caminho." }
             ];
 
             const sorteado = resultados[Math.floor(Math.random() * resultados.length)];
             
             const tituloFinal = sorteado.titulo;
-            const textoFinal = sorteado.texto + "\n\n⏳ Você já retirou a sua sorte de hoje! Volte amanhã para abrir um novo Omikuji e receber mais uma mensagem cheia de luz.";
+            const textoFinal = sorteado.texto + "\n\n⏳ Você já retirou a sua sorte de hoje! Volte amanhã para abrir um novo Omikuji.";
 
             localStorage.setItem('omikuji_data', hoje);
             localStorage.setItem('omikuji_titulo_salvo', tituloFinal);
