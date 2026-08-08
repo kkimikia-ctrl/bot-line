@@ -119,9 +119,9 @@
         .radio-option {
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
             color: #1e3a8a;
@@ -129,7 +129,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .radio-option:hover {
             background-color: #eff6ff;
@@ -215,34 +216,32 @@
     <div id="modalRadio" class="modal">
         <div class="modal-content">
             <h3 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h3>
-            <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Toque em um canal para carregar o player:</p>
+            <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Toque em uma opção para abrir o player:</p>
             
             <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 5px 0;">🎵 MÚSICAS</p>
-            <div class="radio-option" onclick="carregarPlayer('https://www.radios.com.br/aovivo/player/13524', 'Rádio Sertaneja')">
+            <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/JOP_S1.mp3', 'Jovem Pan FM')">
+                📻 Jovem Pan FM <span>▶️ Ouvir</span>
+            </div>
+            <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SP_SC.mp3', 'CBN São Paulo')">
+                📰 CBN Notícias <span>▶️ Ouvir</span>
+            </div>
+            <div class="radio-option" onclick="tocarRadio('https://ice.fabricahost.com.br/sertanejobr', 'Rádio Sertaneja')">
                 🤠 Sertaneja <span>▶️ Ouvir</span>
             </div>
-            <div class="radio-option" onclick="carregarPlayer('https://www.radios.com.br/aovivo/player/3452', 'Rádio Romântica / Nativa')">
-                ❤️ Romântica <span>▶️ Ouvir</span>
-            </div>
-            <div class="radio-option" onclick="carregarPlayer('https://www.radios.com.br/aovivo/player/1179', 'Rádio Rock')">
-                🎸 Rock <span>▶️ Ouvir</span>
+            <div class="radio-option" onclick="tocarRadio('https://ice.fabricahost.com.br/rockclassics', 'Rádio Rock')">
+                🎸 Rock Classics <span>▶️ Ouvir</span>
             </div>
 
-            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">⚽ ESPORTES & JOGOS</p>
-            <div class="radio-option" onclick="carregarPlayer('https://www.radios.com.br/aovivo/player/4574', 'Futebol e Esportes')">
-                ⚽ Futebol / Esportes <span>▶️ Ouvir</span>
-            </div>
-            <div class="radio-option" onclick="carregarPlayer('https://www.radios.com.br/aovivo/player/25187', 'Games & Cultura Pop')">
-                🎮 Games <span>▶️ Ouvir</span>
-            </div>
-
-            <!-- Player Embutido Oficial -->
-            <div id="containerPlayer" style="display:none; margin-top: 15px; background: #f1f5f9; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                <p id="nomeRadioTocando" style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin: 0 0 8px 0;"></p>
-                <iframe id="iframePlayer" src="" width="100%" height="90" frameborder="0" scrolling="no" style="border-radius: 6px;"></iframe>
+            <!-- Player Direto e Visível -->
+            <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
+                <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
+                <audio id="audioRadio" controls style="width: 100%;">
+                    <source src="" id="sourceAudio" type="audio/mpeg">
+                    Seu navegador não suporta áudio.
+                </audio>
             </div>
 
-            <button class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="fecharModalRadio()">Fechar Janela</button>
+            <button class="btn-primary" style="background-color: #dc2626; margin-top: 20px;" onclick="fecharModalRadio()">Fechar Janela</button>
         </div>
     </div>
 
@@ -283,18 +282,24 @@
             document.getElementById('modalRadio').style.display = 'flex';
         }
 
-        function carregarPlayer(urlIframe, nomeEstilo) {
+        function tocarRadio(urlStream, nomeEstilo) {
             const container = document.getElementById('containerPlayer');
-            const iframe = document.getElementById('iframePlayer');
+            const player = document.getElementById('audioRadio');
+            const source = document.getElementById('sourceAudio');
             const titulo = document.getElementById('nomeRadioTocando');
 
             container.style.display = 'block';
             titulo.innerText = "Tocando: " + nomeEstilo;
-            iframe.src = urlIframe;
+            source.src = urlStream;
+            player.load();
+            player.play().catch(error => {
+                console.log("Aguardando play manual");
+            });
         }
 
         function fecharModalRadio() {
-            document.getElementById('iframePlayer').src = '';
+            const player = document.getElementById('audioRadio');
+            player.pause();
             document.getElementById('containerPlayer').style.display = 'none';
             document.getElementById('modalRadio').style.display = 'none';
         }
