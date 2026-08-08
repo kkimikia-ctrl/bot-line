@@ -247,17 +247,23 @@
             </div>
 
             <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">💖 MÚSICAS ROMÂNTICAS CANTADAS</p>
-            <div class="radio-option" onclick="tocarRadio('https://listen.181fm.com/181-love_128k.mp3', '181.fm The Love (Só Voz e Clássicos)')">
+            <div class="radio-option" onclick="abrirPlayerEmbed('https://www.radio.net/s/181fmlovesongs', 'Romântica / Love Songs')">
                 🎤 Romântica / Love Songs <span>▶️ Ouvir</span>
             </div>
 
-            <!-- Player Direto e Visível -->
+            <!-- Player Direto e Visível (para links normais) -->
             <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
                 <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
                 <audio id="audioRadio" controls style="width: 100%;">
                     <source src="" id="sourceAudio" type="audio/mpeg">
                     Seu navegador não suporta áudio.
                 </audio>
+            </div>
+
+            <!-- Container Embutido Seguro para Rádios Difíceis -->
+            <div id="containerEmbed" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 10px; border-radius: 12px; border: 2px solid #0284c7; text-align: center;">
+                <p id="nomeEmbedTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
+                <iframe id="iframePlayer" src="" width="100%" height="110" frameborder="0" scrolling="no" style="border-radius: 8px;"></iframe>
             </div>
 
             <button class="btn-primary" style="background-color: #dc2626; margin-top: 20px;" onclick="fecharModalRadio()">Fechar Janela</button>
@@ -302,6 +308,9 @@
         }
 
         function tocarRadio(urlStream, nomeEstilo) {
+            document.getElementById('containerEmbed').style.display = 'none';
+            document.getElementById('iframePlayer').src = '';
+            
             const container = document.getElementById('containerPlayer');
             const player = document.getElementById('audioRadio');
             const source = document.getElementById('sourceAudio');
@@ -316,10 +325,25 @@
             });
         }
 
+        function abrirPlayerEmbed(urlSite, nomeEstilo) {
+            document.getElementById('containerPlayer').style.display = 'none';
+            document.getElementById('audioRadio').pause();
+
+            const containerEmbed = document.getElementById('containerEmbed');
+            const tituloEmbed = document.getElementById('nomeEmbedTocando');
+            const iframe = document.getElementById('iframePlayer');
+
+            containerEmbed.style.display = 'block';
+            tituloEmbed.innerText = "Canal: " + nomeEstilo;
+            iframe.src = "https://www.radio.net/s/181fmlovesongs/embed";
+        }
+
         function fecharModalRadio() {
             const player = document.getElementById('audioRadio');
             player.pause();
+            document.getElementById('iframePlayer').src = '';
             document.getElementById('containerPlayer').style.display = 'none';
+            document.getElementById('containerEmbed').style.display = 'none';
             document.getElementById('modalRadio').style.display = 'none';
         }
     </script>
