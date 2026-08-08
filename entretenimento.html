@@ -130,7 +130,6 @@
             justify-content: space-between;
             align-items: center;
             font-size: 14px;
-            text-decoration: none;
         }
         .radio-option:hover {
             background-color: #eff6ff;
@@ -216,28 +215,37 @@
     <div id="modalRadio" class="modal">
         <div class="modal-content">
             <h3 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h3>
-            <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Toque em um canal para abrir o player oficial:</p>
+            <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Toque abaixo para tocar direto aqui:</p>
             
             <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 5px 0;">🎵 MÚSICAS</p>
-            <a href="https://onlineradiobox.com/br/sertaneja/" target="_blank" class="radio-option">
-                🤠 Sertaneja <span>▶️ Ouvir</span>
-            </a>
-            <a href="https://onlineradiobox.com/br/nativa/" target="_blank" class="radio-option">
-                ❤️ Romântica / Nativa <span>▶️ Ouvir</span>
-            </a>
-            <a href="https://onlineradiobox.com/br/rockclassics/" target="_blank" class="radio-option">
-                🎸 Rock <span>▶️ Ouvir</span>
-            </a>
+            <div class="radio-option" onclick="tocarSom('https://ice.fabricahost.com.br/sertanejobr', 'Rádio Sertaneja')">
+                🤠 Sertaneja <span>▶️ Tocar</span>
+            </div>
+            <div class="radio-option" onclick="tocarSom('https://ice.fabricahost.com.br/radionativa', 'Rádio Romântica / Nativa')">
+                ❤️ Romântica <span>▶️ Tocar</span>
+            </div>
+            <div class="radio-option" onclick="tocarSom('https://ice.fabricahost.com.br/rockclassics', 'Rádio Rock')">
+                🎸 Rock <span>▶️ Tocar</span>
+            </div>
 
             <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">⚽ ESPORTES & JOGOS</p>
-            <a href="https://onlineradiobox.com/br/gaucha/" target="_blank" class="radio-option">
-                ⚽ Futebol / Esportes <span>▶️ Ouvir</span>
-            </a>
-            <a href="https://onlineradiobox.com/br/gamer/" target="_blank" class="radio-option">
-                🎮 Games & Comunidade <span>▶️ Ouvir</span>
-            </a>
+            <div class="radio-option" onclick="tocarSom('https://ice.fabricahost.com.br/futebolraiz', 'Futebol e Esportes')">
+                ⚽ Futebol / Esportes <span>▶️ Tocar</span>
+            </div>
+            <div class="radio-option" onclick="tocarSom('https://ice.fabricahost.com.br/geekpop', 'Games & Cultura Pop')">
+                🎮 Games <span>▶️ Tocar</span>
+            </div>
 
-            <button class="btn-primary" style="background-color: #dc2626; margin-top: 20px;" onclick="fecharModalRadio()">Fechar Janela</button>
+            <!-- Player Embutido Direto na Tela -->
+            <div id="containerPlayer" style="margin-top: 15px; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <p id="nomeRadioTocando" style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin: 0 0 8px 0;">Nenhuma rádio selecionada</p>
+                <audio id="audioRadio" controls style="width: 100%;">
+                    <source src="" id="sourceAudio" type="audio/mpeg">
+                    Seu navegador não suporta áudio.
+                </audio>
+            </div>
+
+            <button class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="fecharModalRadio()">Fechar Janela</button>
         </div>
     </div>
 
@@ -245,7 +253,7 @@
     <div class="card">
         <h3 style="margin-top:0; color:#1e3a8a;">🔴 Lives da Comunidade</h3>
         <div class="rule-box">
-            🎁 <b>Regra de Presentes:</b> Os primeiros 300¥ doados vão inteiros para o criador! A partir daí, a divisão justa é de 70% para o criador e 30% para a plataforma.
+            🎁 <b>Regra de Presentes:</b> Os primeiros 300¥ doados vão inteiros para o criador! A partir daí, a divisão justa é de 70% para leitor/criador e 30% para a plataforma.
         </div>
         <p style="font-size: 14px; color: #555; margin-bottom: 12px;">
             Assista à transmissão ao vivo e apoie os criadores de conteúdo do Japão.
@@ -278,7 +286,22 @@
             document.getElementById('modalRadio').style.display = 'flex';
         }
 
+        function tocarSom(urlStream, nomeEstilo) {
+            const player = document.getElementById('audioRadio');
+            const source = document.getElementById('sourceAudio');
+            const titulo = document.getElementById('nomeRadioTocando');
+
+            titulo.innerText = "Tocando: " + nomeEstilo;
+            source.src = urlStream;
+            player.load();
+            player.play().catch(error => {
+                alert("Toque no botão 'Play' do player abaixo para iniciar o áudio.");
+            });
+        }
+
         function fecharModalRadio() {
+            const player = document.getElementById('audioRadio');
+            player.pause();
             document.getElementById('modalRadio').style.display = 'none';
         }
     </script>
