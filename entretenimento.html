@@ -134,26 +134,69 @@
             background: white;
             padding: 20px;
             border-radius: 14px;
-            width: 90%;
-            max-width: 400px;
+            width: 92%;
+            max-width: 450px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
         .close-btn {
-            background: #ccc;
-            color: #333;
+            background: #d32f2f;
+            color: white;
             margin-top: 15px;
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        .close-btn:hover {
+            background: #9a0007;
+        }
+        .radio-category {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            text-align: left;
+            margin: 15px 0 5px 5px;
+            text-transform: uppercase;
+        }
+        .radio-item {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .radio-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #0d47a1;
+            text-align: left;
+        }
+        .play-btn {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .play-btn:hover {
+            background-color: #115293;
         }
     </style>
 </head>
 <body>
 
+    <!-- Cabeçalho Principal -->
     <div class="header">
         <img src="https://via.placeholder.com/35" alt="Logo">
         <h1>Entretenimento e Lazer</h1>
@@ -223,22 +266,61 @@
         </div>
     </div>
 
-    <!-- Modal da Rádio -->
+    <!-- Modal da Rádio Completo -->
     <div id="modalRadio" class="modal">
         <div class="modal-content">
-            <h2>Rádios Ao Vivo</h2>
-            <button class="action-btn" onclick="tocarRadio('https://sua-url-de-stream-aqui.com/stream', 'Rádio Pop')" style="margin-bottom: 8px;">Rádio Pop</button>
-            <button class="action-btn" onclick="tocarRadio('https://sua-url-de-stream-aqui.com/stream2', 'Rádio Rock')">Rádio Rock</button>
+            <h2 style="color: #0d47a1; margin-top: 0;">🎧 Escolha o Canal</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Toque em uma opção para ouvir:</p>
             
-            <div id="containerPlayer" style="display:none; margin-top: 15px;">
-                <p id="nomeRadioTocando" style="font-weight: bold; font-size: 14px;"></p>
+            <!-- Notícias -->
+            <div class="radio-category">📰 Notícias</div>
+            <div class="radio-item">
+                <span class="radio-name">📻 CBN São Paulo</span>
+                <button class="play-btn" onclick="tocarRadio('https://link-stream-cbn.com/stream', 'CBN São Paulo')">▶ Ouvir</button>
+            </div>
+
+            <!-- Anos 80, 90 & Clássicos -->
+            <div class="radio-category">🎸 Anos 80, 90 & Clássicos</div>
+            <div class="radio-item">
+                <span class="radio-name">🎵 Classic Hits (70/80/90)</span>
+                <button class="play-btn" onclick="tocarRadio('https://link-stream-classichits.com/stream', 'Classic Hits')">▶ Ouvir</button>
+            </div>
+
+            <!-- Pop & Internacional -->
+            <div class="radio-category">🌍 Pop & Internacional</div>
+            <div class="radio-item">
+                <span class="radio-name">🎵 Pop & Rock Global</span>
+                <button class="play-btn" onclick="tocarRadio('https://link-stream-pop.com/stream', 'Pop & Rock Global')">▶ Ouvir</button>
+            </div>
+
+            <!-- Techno & Eletrônica -->
+            <div class="radio-category">⚡ Techno & Eletrônica</div>
+            <div class="radio-item">
+                <span class="radio-name">🎧 Techno / Club Beats</span>
+                <button class="play-btn" onclick="tocarRadio('https://link-stream-techno.com/stream', 'Techno / Club Beats')">▶ Ouvir</button>
+            </div>
+
+            <!-- Relax & Para Dormir -->
+            <div class="radio-category">🌙 Relax & Para Dormir</div>
+            <div class="radio-item">
+                <span class="radio-name">☕ Lofi & Study Beats</span>
+                <button class="play-btn" onclick="tocarRadio('https://link-stream-lofi.com/stream', 'Lofi & Study Beats')">▶ Ouvir</button>
+            </div>
+            <div class="radio-item">
+                <span class="radio-name">💤 Ambient Sleep Sounds</span>
+                <button class="play-btn" onclick="tocarRadio('https://link-stream-ambient.com/stream', 'Ambient Sleep')">▶ Ouvir</button>
+            </div>
+            
+            <!-- Player de Áudio Ativo -->
+            <div id="containerPlayer" style="display:none; margin-top: 15px; background: #e8f0fe; padding: 10px; border-radius: 8px;">
+                <p id="nomeRadioTocando" style="font-weight: bold; font-size: 13px; color: #174ea6; margin: 0 0 8px 0;"></p>
                 <audio id="audioRadio" controls style="width: 100%;">
                     <source id="sourceAudio" src="" type="audio/mpeg">
                     Seu navegador não suporta áudio.
                 </audio>
             </div>
 
-            <button class="close-btn" onclick="fecharModalRadio()">Fechar</button>
+            <button class="close-btn" onclick="fecharModalRadio()">Fechar Janela</button>
         </div>
     </div>
 
@@ -250,7 +332,7 @@
             
             <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
             <br>
-            <button class="close-btn" onclick="fecharModalOmikuji()">Fechar</button>
+            <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: auto; margin-top: 10px;">Fechar</button>
         </div>
     </div>
 
