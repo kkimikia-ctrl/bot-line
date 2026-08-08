@@ -5,95 +5,431 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entretenimento e Lazer</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; text-align: center; }
-        .header { background-color: #0d47a1; color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header h1 { font-size: 18px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .card-btn { background: white; border: none; padding: 15px 10px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; text-align: center; transition: transform 0.2s; }
-        .card-btn:active { transform: scale(0.98); }
-        .card-btn .icon { font-size: 24px; display: block; margin-bottom: 6px; }
-        .card-btn .title { font-size: 14px; font-weight: bold; color: #0d47a1; display: block; }
-        .card-btn .subtitle { font-size: 11px; color: #666; display: block; }
-        .section-box { background: white; border-radius: 14px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: left; margin-bottom: 20px; }
-        .section-box h3 { font-size: 15px; color: #0d47a1; margin-top: 0; display: flex; align-items: center; gap: 8px; }
-        .rule-card { background: #e8f0fe; border-left: 4px solid #1967d2; padding: 10px 12px; border-radius: 8px; font-size: 12px; color: #174ea6; margin-bottom: 12px; }
-        .action-btn { background-color: #1976d2; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 20px; border-radius: 14px; width: 92%; max-width: 450px; text-align: center; max-height: 85vh; overflow-y: auto; }
-        .close-btn { background: #d32f2f; color: white; margin-top: 15px; border: none; padding: 10px 20px; border-radius: 8px; width: 100%; font-weight: bold; }
-        .radio-category { font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0; text-transform: uppercase; }
-        .radio-option { background: #f8f9fa; border: 1px solid #ddd; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer; font-size: 13px; font-weight: bold; color: #0d47a1; text-align: left; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .header {
+            background-color: #0d47a1;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .card-btn {
+            background: white;
+            border: none;
+            padding: 15px 10px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .card-btn .icon {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .card-btn .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0d47a1;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .card-btn .subtitle {
+            font-size: 11px;
+            color: #666;
+            display: block;
+        }
+        .section-box {
+            background: white;
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .section-box h3 {
+            font-size: 15px;
+            color: #0d47a1;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rule-card {
+            background: #e8f0fe;
+            border-left: 4px solid #1967d2;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #174ea6;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .action-btn {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .action-btn:hover {
+            background-color: #115293;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            width: 92%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .close-btn {
+            background: #d32f2f;
+            color: white;
+            margin-top: 15px;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        .close-btn:hover {
+            background: #9a0007;
+        }
+        .radio-category {
+            font-size: 11px;
+            font-weight: bold;
+            color: #666;
+            text-align: left;
+            margin: 15px 0 5px 0;
+            text-transform: uppercase;
+        }
+        .radio-option {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            color: #0d47a1;
+            text-align: left;
+        }
+        .radio-option:hover {
+            background: #e2e8f0;
+        }
+        .radio-option span {
+            font-size: 12px;
+            color: #1976d2;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header"><h1>Entretenimento e Lazer</h1></div>
+    <div class="header">
+        <h1>Entretenimento e Lazer</h1>
+    </div>
 
     <div class="container">
+        <!-- Grade Completa com os 8 Botões -->
         <div class="grid-menu">
-            <button class="card-btn" onclick="abrirSecaoLives()">🔴<br><span class="title">Lives</span></button>
-            <button class="card-btn" onclick="abrirModalRadio()">📻<br><span class="title">Rádios</span></button>
-            <button class="card-btn" onclick="abrirModalKaraoke()">🎤<br><span class="title">Karaokê</span></button>
-            <button class="card-btn" onclick="abrirModalOmikuji()">🔮<br><span class="title">Horóscopo</span></button>
+            <button class="card-btn" onclick="abrirSecaoLives()">
+                <span class="icon">🔴</span>
+                <span class="title">Lives</span>
+                <span class="subtitle">Transmissões e Prêmios</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalRadio()">
+                <span class="icon">📻</span>
+                <span class="title">Rádios & Som</span>
+                <span class="subtitle">Todas as Opções</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalKaraoke()">
+                <span class="icon">🎤</span>
+                <span class="title">Karaokê</span>
+                <span class="subtitle">Cante com a Gente</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalOmikuji()">
+                <span class="icon">🔮</span>
+                <span class="title">Horóscopo</span>
+                <span class="subtitle">Omikuji do Dia</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Chat em breve!')">
+                <span class="icon">💬</span>
+                <span class="title">Chat</span>
+                <span class="subtitle">Comunidade Online</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Ranking em breve!')">
+                <span class="icon">🏆</span>
+                <span class="title">Ranking</span>
+                <span class="subtitle">Usuários mais ativos</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Descontos em breve!')">
+                <span class="icon">🎟️</span>
+                <span class="title">Descontos</span>
+                <span class="subtitle">Cupons em Loja</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Jogos em breve!')">
+                <span class="icon">🎮</span>
+                <span class="title">Jogos</span>
+                <span class="subtitle">Sorteios e Diversão</span>
+            </button>
         </div>
 
         <div class="section-box" id="secaoLives">
             <h3>🔴 Lives da Comunidade</h3>
-            <div class="rule-card">🎁 Regra de Presentes: Os primeiros 300¥ doados vão inteiros para o criador!</div>
-            <button class="action-btn">Assistir Live Ativa</button>
+            <div class="rule-card">
+                🎁 <strong>Regra de Presentes:</strong> Os primeiros 300¥ doados vão inteiros para o criador! A partir daí, a divisão justa é de 70% para o criador e 30% para a plataforma.
+            </div>
+            <p style="font-size: 13px; color: #555;">Assista à transmissão ao vivo e apoie os criadores de conteúdo do Japão.</p>
+            <button class="action-btn" onclick="alert('Abrindo transmissão ao vivo...')">Assistir Live Ativa</button>
         </div>
     </div>
 
-    <!-- Modal Karaokê -->
+    <!-- Modal da Rádio -->
+    <div id="modalRadio" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Toque em uma opção para ouvir:</p>
+            
+            <div class="radio-category">📰 Notícias & Informação</div>
+            <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SPAAC.aac', 'CBN São Paulo')">
+                📻 CBN São Paulo <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">🎸 Hits 90s, 2000s & 2010s</div>
+            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio5-bb-mp3', 'Hits 90 / 2000 / 2010')">
+                🎵 Hits 90 / 2000 / 2010 <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">🌍 Pop & Internacional</div>
+            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'Pop & Rock Global')">
+                🎵 Pop & Rock Global <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">⚡ Techno & Eletrônica</div>
+            <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'Techno / Club Beats')">
+                🎧 Techno / Club Beats <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">🌙 Relax & Para Dormir</div>
+            <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Lofi & Study Beats')">
+                ☕ Lofi & Study Beats <span>▶️ Ouvir</span>
+            </div>
+            
+            <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
+                <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
+                <audio id="audioRadio" controls style="width: 100%;">
+                    <source src="" id="sourceAudio" type="audio/mpeg">
+                    Seu navegador não suporta áudio.
+                </audio>
+            </div>
+
+            <button class="close-btn" onclick="fecharModalRadio()">Fechar Janela</button>
+        </div>
+    </div>
+
+    <!-- Modal do Omikuji -->
+    <div id="modalOmikuji" class="modal">
+        <div class="modal-content">
+            <h2 id="omikujiTitulo" style="font-size: 18px; color: #0d47a1;">Sorte do Dia</h2>
+            <p id="omikujiTexto" style="line-height: 1.5; font-size: 13px; text-align: justify; margin: 15px 0; color: #333;">Toque no botão abaixo para descobrir a sua mensagem de hoje.</p>
+            
+            <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
+            <br>
+            <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: auto; margin-top: 10px;">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal do Karaokê -->
     <div id="modalKaraoke" class="modal">
         <div class="modal-content">
-            <h2>🎤 Karaokê</h2>
+            <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
+            
             <div id="listaKaraokeHTML"></div>
-            <!-- AVISO DE SEGURANÇA ADICIONADO ABAIXO -->
-            <p style="font-size: 10px; color: #888; margin-top: 15px; padding: 5px; border: 1px dashed #ccc;">
-                *Se o vídeo não abrir, toque nos três pontinhos (...) no rodapé e escolha "Abrir no Safari".
-            </p>
-            <button class="close-btn" onclick="document.getElementById('modalKaraoke').style.display='none'">Fechar</button>
+
+            <button class="close-btn" onclick="fecharModalKaraoke()">Fechar Janela</button>
         </div>
     </div>
 
     <script>
-        function abrirSecaoLives() { document.getElementById('secaoLives').scrollIntoView({ behavior: 'smooth' }); }
-        
+        function abrirSecaoLives() {
+            const el = document.getElementById('secaoLives');
+            el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function abrirModalRadio() {
+            document.getElementById('modalRadio').style.display = 'flex';
+        }
+
+        function tocarRadio(urlStream, nomeEstilo) {
+            const container = document.getElementById('containerPlayer');
+            const player = document.getElementById('audioRadio');
+            const source = document.getElementById('sourceAudio');
+            const titulo = document.getElementById('nomeRadioTocando');
+
+            container.style.display = 'block';
+            titulo.innerText = "Tocando: " + nomeEstilo;
+            source.src = urlStream;
+            player.load();
+            player.play().catch(error => { console.log("Aguardando play manual"); });
+        }
+
+        function fecharModalRadio() {
+            const player = document.getElementById('audioRadio');
+            player.pause();
+            document.getElementById('containerPlayer').style.display = 'none';
+            document.getElementById('modalRadio').style.display = 'none';
+        }
+
+        function abrirModalOmikuji() {
+            document.getElementById('modalOmikuji').style.display = 'flex';
+            verificarOmikujiDiario();
+        }
+
+        function fecharModalOmikuji() {
+            document.getElementById('modalOmikuji').style.display = 'none';
+        }
+
+        function verificarOmikujiDiario() {
+            const hoje = new Date().toLocaleDateString();
+            const ultimoDiaSorteio = localStorage.getItem('omikuji_data');
+            const tituloEl = document.getElementById('omikujiTitulo');
+            const textoEl = document.getElementById('omikujiTexto');
+            const btnSortear = document.getElementById('btnSortearOmikuji');
+
+            if (ultimoDiaSorteio === hoje) {
+                tituloEl.innerText = localStorage.getItem('omikuji_titulo_salvo');
+                textoEl.innerText = localStorage.getItem('omikuji_texto_salvo');
+                if (btnSortear) btnSortear.style.display = 'none';
+            } else {
+                tituloEl.innerText = "Toque no botão para sua sorte!";
+                textoEl.innerText = "Descubra a mensagem detalhada e inspiradora que o destino reservou para o seu dia hoje.";
+                if (btnSortear) btnSortear.style.display = 'block';
+            }
+        }
+
+        function sortearOmikuji() {
+            const hoje = new Date().toLocaleDateString();
+            const sorteado = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
+            const tituloFinal = sorteado.titulo;
+            const textoFinal = sorteado.texto + "\n\n⏳ Você já retirou a sua sorte de hoje! Volte amanhã para abrir um novo Omikuji.";
+
+            localStorage.setItem('omikuji_data', hoje);
+            localStorage.setItem('omikuji_titulo_salvo', tituloFinal);
+            localStorage.setItem('omikuji_texto_salvo', textoFinal);
+
+            document.getElementById('omikujiTitulo').innerText = tituloFinal;
+            document.getElementById('omikujiTexto').innerText = textoFinal;
+            if (document.getElementById('btnSortearOmikuji')) {
+                document.getElementById('btnSortearOmikuji').style.display = 'none';
+            }
+        }
+
         function abrirModalKaraoke() {
             document.getElementById('modalKaraoke').style.display = 'flex';
             carregarListaKaraoke();
         }
 
+        function fecharModalKaraoke() {
+            document.getElementById('modalKaraoke').style.display = 'none';
+        }
+
         function carregarListaKaraoke() {
-            const container = document.getElementById('listaKaraokeHTML');
-            if(container.innerHTML.trim() !== "") return;
-            
-            // Exemplo de como percorrer a lista
+            const containerLista = document.getElementById('listaKaraokeHTML');
+            if(containerLista.innerHTML.trim() !== "") return;
+
+            let htmlFinal = "";
+            let categoriaAtual = "";
+
             if (typeof listaKaraoke !== 'undefined') {
                 listaKaraoke.forEach(musica => {
-                    container.innerHTML += `
+                    if (musica.categoria !== categoriaAtual) {
+                        htmlFinal += `<div class="radio-category" style="margin-top: 20px;">🎶 ${musica.categoria}</div>`;
+                        categoriaAtual = musica.categoria;
+                    }
+
+                    htmlFinal += `
                         <div class="radio-option" onclick="abrirLinkYouTube('${musica.link}')">
                             ${musica.titulo} <span>▶️ Cantar</span>
                         </div>
                     `;
                 });
+                containerLista.innerHTML = htmlFinal;
+            } else {
+                containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
             }
         }
 
         function abrirLinkYouTube(linkWeb) {
-            // A tentativa mais segura para iOS: abrir em uma nova janela de sistema
-            // O uso de 'confirm' ou 'window.open' em resposta ao clique direto do usuário
-            // costuma contornar o bloqueio de pop-up do Safari/WebView.
-            
-            const abrir = confirm("Deseja abrir este vídeo no YouTube?");
-            if (abrir) {
-                // Tenta abrir no sistema externo
-                window.open(linkWeb, '_blank'); 
-            }
+            // Abre o link web diretamente, contornando o erro de reprodução embutida
+            window.open(linkWeb, '_system');
         }
     </script>
+    <script src="omikuji-mensagens.js"></script>
     <script src="karaoke-musicas.js"></script>
 </body>
 </html>
