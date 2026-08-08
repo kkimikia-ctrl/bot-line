@@ -215,30 +215,42 @@
         </button>
     </div>
 
-    <!-- Modal de Escolha de Canais -->
+    <!-- Modal de Escolha de Canais (Com todas as rádios originais) -->
     <div id="modalRadio" class="modal">
         <div class="modal-content">
             <h3 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h3>
             <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Toque levemente em uma opção:</p>
             
-            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 5px 0;">🎵 MÚSICAS E HITS</p>
-            <div class="radio-option" onclick="tocarAudioSeguro('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 'Hit Internacional 1')">
-                🎶 Hit Musical 1 <span>▶️ Ouvir</span>
-            </div>
-            <div class="radio-option" onclick="tocarAudioSeguro('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 'Hit Internacional 2')">
-                🎶 Hit Musical 2 <span>▶️ Ouvir</span>
+            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 5px 0;">📰 NOTÍCIAS</p>
+            <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SP_SC.mp3', 'CBN São Paulo')">
+                📻 CBN São Paulo <span>▶️ Ouvir</span>
             </div>
 
-            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">💖 ROMÂNTICAS & SUAVES</p>
-            <div class="radio-option" onclick="tocarAudioSeguro('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', 'Love Songs Acústico')" style="background-color: #fdf2f8; border-color: #f472b6;">
-                🎤 Love Songs (Na Página) <span>▶️ Ouvir</span>
+            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">🎸 ANOS 80, 90 & CLÁSSICOS</p>
+            <div class="radio-option" onclick="tocarRadio('https://listen.181fm.com/181-goodtime_128k.mp3', '181.fm Classic Hits')">
+                🎶 Classic Hits (70/80/90) <span>▶️ Ouvir</span>
             </div>
 
-            <!-- Player Direto HTML5 Nativo Seguro -->
+            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">🌍 POP & INTERNACIONAL</p>
+            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'NPO Radio 2 Pop')">
+                🎵 Pop & Rock Global <span>▶️ Ouvir</span>
+            </div>
+
+            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">⚡ TECHNO & CLUB BEATS</p>
+            <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'RauteMusik Techno Club')">
+                🎧 Techno / Club Beats <span>▶️ Ouvir</span>
+            </div>
+
+            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">🌙 RELAX & PARA DORMIR</p>
+            <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Ambient / Para Dormir')">
+                💤 Ambient / Para Dormir <span>▶️ Ouvir</span>
+            </div>
+
+            <!-- Player Padrão Original -->
             <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
-                <p id="nomeAudioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
-                <audio id="audioNativo" controls style="width: 100%;">
-                    <source src="" id="sourceAudio" type="audio/mp3">
+                <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
+                <audio id="audioRadio" controls style="width: 100%;">
+                    <source src="" id="sourceAudio" type="audio/mpeg">
                     Seu navegador não suporta áudio.
                 </audio>
             </div>
@@ -284,23 +296,23 @@
             document.getElementById('modalRadio').style.display = 'flex';
         }
 
-        function tocarAudioSeguro(urlArquivo, nomeEstilo) {
+        function tocarRadio(urlStream, nomeEstilo) {
             const container = document.getElementById('containerPlayer');
-            const player = document.getElementById('audioNativo');
+            const player = document.getElementById('audioRadio');
             const source = document.getElementById('sourceAudio');
-            const titulo = document.getElementById('nomeAudioTocando');
+            const titulo = document.getElementById('nomeRadioTocando');
 
             container.style.display = 'block';
             titulo.innerText = "Tocando: " + nomeEstilo;
-            source.src = urlArquivo;
+            source.src = urlStream;
             player.load();
             player.play().catch(error => {
-                console.log("Toque no play do player abaixo para iniciar");
+                console.log("Aguardando play manual");
             });
         }
 
         function fecharModalRadio() {
-            const player = document.getElementById('audioNativo');
+            const player = document.getElementById('audioRadio');
             player.pause();
             document.getElementById('containerPlayer').style.display = 'none';
             document.getElementById('modalRadio').style.display = 'none';
