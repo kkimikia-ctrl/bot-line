@@ -178,6 +178,23 @@
             font-size: 12px;
             color: #1976d2;
         }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -202,7 +219,8 @@
                 <span class="subtitle">Todas as Opções</span>
             </button>
 
-            <button class="card-btn" onclick="alert('Karaokê em breve!')">
+            <!-- BOTÃO DO KARAOKÊ ATUALIZADO -->
+            <button class="card-btn" onclick="abrirModalKaraoke()">
                 <span class="icon">🎤</span>
                 <span class="title">Karaokê</span>
                 <span class="subtitle">Cante com a Gente</span>
@@ -311,6 +329,23 @@
         </div>
     </div>
 
+    <!-- MODAL DO KARAOKÊ -->
+    <div id="modalKaraoke" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
+            
+            <div id="containerYoutube" class="video-container">
+                <iframe id="iframeYoutube" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+            <p id="nomeMusicaTocando" style="font-size: 14px; font-weight: bold; color: #d32f2f; margin: 10px 0; display: none;"></p>
+
+            <div id="listaKaraokeHTML"></div>
+
+            <button class="close-btn" onclick="fecharModalKaraoke()">Fechar Janela</button>
+        </div>
+    </div>
+
     <script>
         function abrirSecaoLives() {
             const el = document.getElementById('secaoLives');
@@ -375,9 +410,7 @@
 
         function sortearOmikuji() {
             const hoje = new Date().toLocaleDateString();
-            
             const sorteado = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
-            
             const tituloFinal = sorteado.titulo;
             const textoFinal = sorteado.texto + "\n\n⏳ Você já retirou a sua sorte de hoje! Volte amanhã para abrir um novo Omikuji.";
 
@@ -390,7 +423,70 @@
             const btnSortear = document.getElementById('btnSortearOmikuji');
             if (btnSortear) btnSortear.style.display = 'none';
         }
+
+        // Funções do Karaokê
+        function abrirModalKaraoke() {
+            document.getElementById('modalKaraoke').style.display = 'flex';
+            carregarListaKaraoke();
+        }
+
+        function fecharModalKaraoke() {
+            document.getElementById('iframeYoutube').src = "";
+            document.getElementById('containerYoutube').style.display = 'none';
+            document.getElementById('nomeMusicaTocando').style.display = 'none';
+            document.getElementById('modalKaraoke').style.display = 'none';
+        }
+
+        function carregarListaKaraoke() {
+            const containerLista = document.getElementById('listaKaraokeHTML');
+            if(containerLista.innerHTML.trim() !== "") return;
+
+            let htmlFinal = "";
+            let categoriaAtual = "";
+
+            if (typeof listaKaraoke !== 'undefined') {
+                listaKaraoke.forEach(musica => {
+                    if (musica.categoria !== categoriaAtual) {
+                        htmlFinal += `<div class="radio-category" style="margin-top: 20px;">🎶 ${musica.categoria}</div>`;
+                        categoriaAtual = musica.categoria;
+                    }
+
+                    let youtubeID = "";
+                    if (musica.link && musica.link.includes("v=")) {
+                        youtubeID = musica.link.split("v=")[1].split("&")[0];
+                    }
+
+                    htmlFinal += `
+                        <div class="radio-option" onclick="tocarKaraoke('${youtubeID}', '${musica.titulo}')">
+                            ${musica.titulo} <span>▶️ Cantar</span>
+                        </div>
+                    `;
+                });
+                containerLista.innerHTML = htmlFinal;
+            } else {
+                containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
+            }
+        }
+
+        function tocarKaraoke(videoId, tituloMusica) {
+            if (!videoId || videoId.includes("watch_")) {
+                alert("Link de vídeo ainda não configurado para essa música!");
+                return;
+            }
+            
+            const containerYoutube = document.getElementById('containerYoutube');
+            const iframe = document.getElementById('iframeYoutube');
+            const nomeMusica = document.getElementById('nomeMusicaTocando');
+
+            containerYoutube.style.display = 'block';
+            nomeMusica.style.display = 'block';
+            nomeMusica.innerText = "🎤 Cantando: " + tituloMusica;
+
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            document.querySelector('#modalKaraoke .modal-content').scrollTop = 0;
+        }
     </script>
     <script src="omikuji-mensagens.js"></script>
+    <script src="karaoke-musicas.js"></script>
 </body>
 </html>
