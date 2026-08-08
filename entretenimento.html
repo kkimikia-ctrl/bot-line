@@ -412,17 +412,33 @@
                         categoriaAtual = musica.categoria;
                     }
 
+                    let videoId = "";
+                    if (musica.link.includes("watch?v=")) {
+                        videoId = musica.link.split("watch?v=")[1].split("&")[0];
+                    } else if (musica.link.includes("youtu.be/")) {
+                        videoId = musica.link.split("youtu.be/")[1].split("?")[0];
+                    }
+
                     htmlFinal += `
-                        <a href="${musica.link}" target="_blank" style="text-decoration: none;">
-                            <div class="radio-option">
-                                ${musica.titulo} <span>▶️ Cantar</span>
-                            </div>
-                        </a>
+                        <div class="radio-option" onclick="abrirLinkYouTube('${musica.link}', '${videoId}')">
+                            ${musica.titulo} <span>▶️ Cantar</span>
+                        </div>
                     `;
                 });
                 containerLista.innerHTML = htmlFinal;
             } else {
                 containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
+            }
+        }
+
+        function abrirLinkYouTube(linkWeb, videoId) {
+            if (videoId) {
+                window.location.href = `youtube://watch?v=${videoId}`;
+                setTimeout(function() {
+                    window.open(linkWeb, '_system');
+                }, 1500);
+            } else {
+                window.open(linkWeb, '_system');
             }
         }
     </script>
