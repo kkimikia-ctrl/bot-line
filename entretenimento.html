@@ -138,6 +138,14 @@
         .radio-option:hover {
             background-color: #eff6ff;
         }
+        .omikuji-card {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border: 2px dashed #d946ef;
+            padding: 18px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: center;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -193,7 +201,8 @@
             🎤 Karaokê
             <span>Cante com a Gente</span>
         </button>
-        <button class="menu-item" onclick="alert('Abrindo Horóscopo...')">
+        <!-- BOTÃO HORÓSCOPO ATUALIZADO -->
+        <button class="menu-item" onclick="abrirModalOmikuji()">
             🔮 Horóscopo
             <span>Omikuji do Dia</span>
         </button>
@@ -215,7 +224,7 @@
         </button>
     </div>
 
-    <!-- Modal de Escolha de Canais (Com todas as rádios originais) -->
+    <!-- Modal de Escolha de Canais (Rádios) -->
     <div id="modalRadio" class="modal">
         <div class="modal-content">
             <h3 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h3>
@@ -256,6 +265,22 @@
             </div>
 
             <button class="btn-primary" style="background-color: #dc2626; margin-top: 20px;" onclick="fecharModalRadio()">Fechar Janela</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE HORÓSCOPO / OMIKUJI -->
+    <div id="modalOmikuji" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #86198f; margin-top: 0;">🔮 Omikuji do Dia</h3>
+            <p style="font-size: 13px; color: #555; margin-bottom: 10px;">Sorteie sua mensagem da sorte e previsão de hoje no Japão:</p>
+            
+            <div class="omikuji-card">
+                <h4 id="omikujiTitulo" style="color: #a21caf; margin: 0 0 8px 0; font-size: 18px;">Toque no botão abaixo!</h4>
+                <p id="omikujiTexto" style="font-size: 14px; color: #4b5563; margin: 0; line-height: 1.4;">Descubra o que o destino reservou para o seu dia em termos de sorte, trabalho e finanças.</p>
+            </div>
+
+            <button class="btn-primary" style="background-color: #9333ea;" onclick="sortearOmikuji()">🎲 Sortear Mensagem</button>
+            <button class="btn-primary" style="background-color: #dc2626; margin-top: 10px;" onclick="fecharModalOmikuji()">Fechar Janela</button>
         </div>
     </div>
 
@@ -316,6 +341,40 @@
             player.pause();
             document.getElementById('containerPlayer').style.display = 'none';
             document.getElementById('modalRadio').style.display = 'none';
+        }
+
+        // Funções do Horóscopo / Omikuji
+        function abrirModalOmikuji() {
+            document.getElementById('modalOmikuji').style.display = 'flex';
+        }
+
+        function fecharModalOmikuji() {
+            document.getElementById('modalOmikuji').style.display = 'none';
+        }
+
+        function sortearOmikuji() {
+            const resultados = [
+                {
+                    titulo: "🌸 Dai-Kichi (Grande Sorte)",
+                    texto: "Excelente dia! Suas finanças e projetos no trabalho vão prosperar. Aproveite para fechar negócios ou tomar decisões importantes."
+                },
+                {
+                    titulo: "⭐ Kichi (Boa Sorte)",
+                    texto: "Um dia calmo e positivo. A harmonia em família trará ótimas energias. Ótimo momento para organizar suas tarefas diárias."
+                },
+                {
+                    titulo: "🍀 Chu-Kichi (Sorte Média)",
+                    texto: "Sorte moderada. Seja cauteloso com gastos por impulso, mas espere surpresas agradáveis nas amizades e conversas."
+                },
+                {
+                    titulo: "☀️ Sho-Kichi (Pequena Sorte)",
+                    texto: "Pequenos detalhes farão seu dia especial. Um café quente ou um reencontro simples trará grande alegria ao seu coração."
+                }
+            ];
+
+            const sorteado = resultados[Math.floor(Math.random() * resultados.length)];
+            document.getElementById('omikujiTitulo').innerText = sorteado.titulo;
+            document.getElementById('omikujiTexto').innerText = sorteado.texto;
         }
     </script>
 
