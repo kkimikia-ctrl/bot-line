@@ -412,18 +412,33 @@
                         categoriaAtual = musica.categoria;
                     }
 
+                    let videoId = "";
+                    if (musica.link.includes("watch?v=")) {
+                        videoId = musica.link.split("watch?v=")[1].split("&")[0];
+                    }
+
                     htmlFinal += `
-                        <a href="${musica.link}" target="_blank" style="text-decoration: none;">
-                            <div class="radio-option">
-                                ${musica.titulo} <span>▶️ Cantar</span>
-                            </div>
-                        </a>
+                        <div class="radio-option" onclick="abrirNoAppYouTube('${videoId}')">
+                            ${musica.titulo} <span>▶️ Cantar</span>
+                        </div>
                     `;
                 });
                 containerLista.innerHTML = htmlFinal;
             } else {
                 containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
             }
+        }
+
+        function abrirNoAppYouTube(videoId) {
+            if (!videoId) {
+                alert("Link de vídeo inválido!");
+                return;
+            }
+            window.location.href = `youtube://watch?v=${videoId}`;
+            
+            setTimeout(function() {
+                window.open(`https://www.youtube.com/watch?v=${videoId}`, '_system');
+            }, 1000);
         }
     </script>
     <script src="omikuji-mensagens.js"></script>
