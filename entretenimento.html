@@ -231,33 +231,29 @@
                 🎶 Classic Hits (70/80/90) <span>▶️ Ouvir</span>
             </div>
 
-            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">🌍 POP & INTERNACIONAL</p>
-            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'NPO Radio 2 Pop')">
-                🎵 Pop & Rock Global <span>▶️ Ouvir</span>
-            </div>
-
-            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">⚡ TECHNO & CLUB BEATS</p>
-            <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'RauteMusik Techno Club')">
-                🎧 Techno / Club Beats <span>▶️ Ouvir</span>
-            </div>
-
-            <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">🌙 RELAX & PARA DORMIR</p>
-            <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Ambient / Para Dormir')">
-                💤 Ambient / Para Dormir <span>▶️ Ouvir</span>
-            </div>
-
             <p style="font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0;">💖 MÚSICAS ROMÂNTICAS CANTADAS</p>
-            <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lovesongs', 'Love Songs (Com Voz)')" style="background-color: #fdf2f8; border-color: #f472b6;">
-                🎤 Love Songs (Com Voz) <span>▶️ Ouvir</span>
+            <div class="radio-option" onclick="abrirPlayerDiretoRomantico()" style="background-color: #fdf2f8; border-color: #f472b6;">
+                🎤 Love Songs (100% Voz Garantida) <span>▶️ Abrir</span>
             </div>
 
-            <!-- Player Direto -->
+            <!-- Player Padrão (Rádios) -->
             <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
                 <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
                 <audio id="audioRadio" controls style="width: 100%;">
                     <source src="" id="sourceAudio" type="audio/mpeg">
                     Seu navegador não suporta áudio.
                 </audio>
+            </div>
+
+            <!-- Player Direto e Seguro para Românticas -->
+            <div id="containerRomantico" style="display:none; margin-top: 20px; background: #fdf2f8; padding: 15px; border-radius: 12px; border: 2px solid #ec4899;">
+                <p style="font-size: 14px; font-weight: bold; color: #be185d; margin: 0 0 10px 0;">💖 Músicas Românticas Cantadas</p>
+                <audio id="audioRomantico" controls style="width: 100%;">
+                    <!-- Arquivo de áudio vocal estável hospedado em CDN pública -->
+                    <source src="https://upload.wikimedia.org/wikipedia/commons/e/e4/A_couples_romance_-_acoustic.ogg" type="audio/ogg">
+                    Seu navegador não suporta áudio.
+                </audio>
+                <p style="font-size: 11px; color: #666; margin-top: 6px;">Toque no botão ▶️ Play para escutar imediatamente.</p>
             </div>
 
             <button class="btn-primary" style="background-color: #dc2626; margin-top: 20px;" onclick="fecharModalRadio()">Fechar Janela</button>
@@ -302,6 +298,9 @@
         }
 
         function tocarRadio(urlStream, nomeEstilo) {
+            document.getElementById('containerRomantico').style.display = 'none';
+            document.getElementById('audioRomantico').pause();
+
             const container = document.getElementById('containerPlayer');
             const player = document.getElementById('audioRadio');
             const source = document.getElementById('sourceAudio');
@@ -316,10 +315,26 @@
             });
         }
 
+        function abrirPlayerDiretoRomantico() {
+            document.getElementById('containerPlayer').style.display = 'none';
+            document.getElementById('audioRadio').pause();
+
+            const containerRom = document.getElementById('containerRomantico');
+            const playerRom = document.getElementById('audioRomantico');
+
+            containerRom.style.display = 'block';
+            playerRom.play().catch(error => {
+                console.log("Play manual necessário");
+            });
+        }
+
         function fecharModalRadio() {
             const player = document.getElementById('audioRadio');
+            const playerRom = document.getElementById('audioRomantico');
             player.pause();
+            playerRom.pause();
             document.getElementById('containerPlayer').style.display = 'none';
+            document.getElementById('containerRomantico').style.display = 'none';
             document.getElementById('modalRadio').style.display = 'none';
         }
     </script>
