@@ -156,6 +156,7 @@
             margin: 15px 0 5px 0;
             text-transform: uppercase;
         }
+        /* Estilo transformado em tag <a> real para garantir o comportamento do iOS */
         .radio-option {
             background: #f8f9fa;
             border: 1px solid #ddd;
@@ -170,6 +171,7 @@
             font-weight: bold;
             color: #0d47a1;
             text-align: left;
+            text-decoration: none;
         }
         .radio-option:hover {
             background: #e2e8f0;
@@ -412,28 +414,17 @@
                         categoriaAtual = musica.categoria;
                     }
 
+                    // Renderiza como uma tag <a> nativa do HTML, forçando o comportamento de link puro do iOS
                     htmlFinal += `
-                        <div class="radio-option" onclick="abrirLinkYouTube('${musica.link}')">
+                        <a href="${musica.link}" target="_blank" rel="noopener noreferrer" class="radio-option">
                             ${musica.titulo} <span>▶️ Cantar</span>
-                        </div>
+                        </a>
                     `;
                 });
                 containerLista.innerHTML = htmlFinal;
             } else {
                 containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
             }
-        }
-
-        function abrirLinkYouTube(linkWeb) {
-            // Cria um link temporário invisível e força o clique, 
-            // abrindo perfeitamente no navegador padrão sem travar na tela preta.
-            const a = document.createElement('a');
-            a.href = linkWeb;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
         }
     </script>
     <script src="omikuji-mensagens.js"></script>
