@@ -425,8 +425,15 @@
         }
 
         function abrirLinkYouTube(linkWeb) {
-            // Abre o link web diretamente, contornando o erro de reprodução embutida
-            window.open(linkWeb, '_system');
+            // Cria um link temporário invisível e força o clique, 
+            // abrindo perfeitamente no navegador padrão sem travar na tela preta.
+            const a = document.createElement('a');
+            a.href = linkWeb;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     </script>
     <script src="omikuji-mensagens.js"></script>
