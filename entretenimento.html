@@ -95,6 +95,25 @@
         button.btn-primary:active {
             background-color: #1d4ed8;
         }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -136,26 +155,13 @@
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
     </div>
 
-    <!-- Card Especial da Rádio Online Funcional -->
-    <div class="card" style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white;">
-        <h3 style="margin-top:0; color: white;">📻 Rádio ao Vivo (Português)</h3>
-        <p style="font-size: 13px; opacity: 0.9; margin-bottom: 12px;">Ouça músicas e programações direto no seu app:</p>
-        
-        <!-- Player de Áudio Nativo do Navegador -->
-        <audio id="audioRadio" controls style="width: 100%; border-radius: 8px;">
-            <!-- Exemplo de link de stream de rádio pública em português -->
-            <source src="https://ice.fabricahost.com.br/radionativa" type="audio/mpeg">
-            Seu navegador não suporta áudio ao vivo.
-        </audio>
-    </div>
-
     <!-- Grade de Botões -->
     <div class="grid-menu">
         <button class="menu-item" onclick="alert('Abrindo Lives...')">
             🔴 Lives
             <span>Transmissões e Prêmios</span>
         </button>
-        <button class="menu-item" onclick="tocarRadioCard()">
+        <button class="menu-item" onclick="abrirModalRadio()">
             📻 Rádio
             <span>Músicas e Animação</span>
         </button>
@@ -165,7 +171,7 @@
         </button>
         <button class="menu-item" onclick="alert('Abrindo Horóscopo...')">
             🔮 Horóscopo
-            <span>Omikuji do Dia</span>
+            Omikuji do Dia
         </button>
         <button class="menu-item" onclick="alert('Abrindo Chat...')">
             💬 Chat
@@ -183,6 +189,21 @@
             🎮 Jogos
             <span>Sorteios e Diversão</span>
         </button>
+    </div>
+
+    <!-- Modal da Rádio (Abre apenas ao clicar no botão) -->
+    <div id="modalRadio" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #1e3a8a; margin-top: 0;">📻 Rádio ao Vivo (PT)</h3>
+            <p style="font-size: 14px; color: #555;">Ouça músicas e programas em português:</p>
+            
+            <audio id="audioRadio" controls style="width: 100%; margin: 15px 0;">
+                <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
+                Seu navegador não suporta áudio.
+            </audio>
+
+            <button class="btn-primary" style="background-color: #dc2626; margin-top: 10px;" onclick="fecharModalRadio()">Fechar / Parar Rádio</button>
+        </div>
     </div>
 
     <!-- Seção de Lives da Comunidade -->
@@ -218,15 +239,15 @@
     </nav>
 
     <script>
-        function tocarRadioCard() {
+        function abrirModalRadio() {
+            document.getElementById('modalRadio').style.display = 'flex';
+        }
+
+        function fecharModalRadio() {
             const player = document.getElementById('audioRadio');
-            if (player.paused) {
-                player.play();
-                alert('Conectando à Rádio ao Vivo!');
-            } else {
-                player.pause();
-                alert('Rádio pausada.');
-            }
+            player.pause(); // Para o som da rádio
+            player.currentTime = 0;
+            document.getElementById('modalRadio').style.display = 'none';
         }
     </script>
 
