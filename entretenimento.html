@@ -178,34 +178,15 @@
             font-size: 12px;
             color: #1976d2;
         }
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Cabeçalho Principal -->
     <div class="header" style="justify-content: center;">
         <h1>Entretenimento e Lazer</h1>
     </div>
 
     <div class="container">
-        <!-- Grade de Botões Estilo Cards -->
         <div class="grid-menu">
             <button class="card-btn" onclick="abrirSecaoLives()">
                 <span class="icon">🔴</span>
@@ -219,7 +200,6 @@
                 <span class="subtitle">Todas as Opções</span>
             </button>
 
-            <!-- BOTÃO DO KARAOKÊ ATUALIZADO -->
             <button class="card-btn" onclick="abrirModalKaraoke()">
                 <span class="icon">🎤</span>
                 <span class="title">Karaokê</span>
@@ -257,7 +237,6 @@
             </button>
         </div>
 
-        <!-- Seção de Lives da Comunidade -->
         <div class="section-box" id="secaoLives">
             <h3>🔴 Lives da Comunidade</h3>
             <div class="rule-card">
@@ -274,37 +253,31 @@
             <h2 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h2>
             <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Toque em uma opção para ouvir:</p>
             
-            <!-- Notícias (CBN) -->
             <div class="radio-category">📰 Notícias & Informação</div>
             <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SPAAC.aac', 'CBN São Paulo')">
                 📻 CBN São Paulo <span>▶️ Ouvir</span>
             </div>
 
-            <!-- Hits Anos 90, 2000 & 2010 -->
             <div class="radio-category">🎸 Hits 90s, 2000s & 2010s</div>
             <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio5-bb-mp3', 'Hits 90 / 2000 / 2010')">
                 🎵 Hits 90 / 2000 / 2010 <span>▶️ Ouvir</span>
             </div>
 
-            <!-- Pop & Internacional -->
             <div class="radio-category">🌍 Pop & Internacional</div>
             <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'Pop & Rock Global')">
                 🎵 Pop & Rock Global <span>▶️ Ouvir</span>
             </div>
 
-            <!-- Techno & Eletrônica -->
             <div class="radio-category">⚡ Techno & Eletrônica</div>
             <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'Techno / Club Beats')">
                 🎧 Techno / Club Beats <span>▶️ Ouvir</span>
             </div>
 
-            <!-- Relax & Lofi -->
             <div class="radio-category">🌙 Relax & Para Dormir</div>
             <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Lofi & Study Beats')">
                 ☕ Lofi & Study Beats <span>▶️ Ouvir</span>
             </div>
             
-            <!-- Player Direto e Visível -->
             <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
                 <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
                 <audio id="audioRadio" controls style="width: 100%;">
@@ -329,17 +302,12 @@
         </div>
     </div>
 
-    <!-- MODAL DO KARAOKÊ -->
+    <!-- MODAL DO KARAOKÊ (Abre direto no App do YouTube) -->
     <div id="modalKaraoke" class="modal">
         <div class="modal-content">
             <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar no YouTube:</p>
             
-            <div id="containerYoutube" class="video-container">
-                <iframe id="iframeYoutube" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            </div>
-            <p id="nomeMusicaTocando" style="font-size: 14px; font-weight: bold; color: #d32f2f; margin: 10px 0; display: none;"></p>
-
             <div id="listaKaraokeHTML"></div>
 
             <button class="close-btn" onclick="fecharModalKaraoke()">Fechar Janela</button>
@@ -424,16 +392,13 @@
             if (btnSortear) btnSortear.style.display = 'none';
         }
 
-        // Funções do Karaokê
+        // Funções do Karaokê (Abre o link direto do YouTube)
         function abrirModalKaraoke() {
             document.getElementById('modalKaraoke').style.display = 'flex';
             carregarListaKaraoke();
         }
 
         function fecharModalKaraoke() {
-            document.getElementById('iframeYoutube').src = "";
-            document.getElementById('containerYoutube').style.display = 'none';
-            document.getElementById('nomeMusicaTocando').style.display = 'none';
             document.getElementById('modalKaraoke').style.display = 'none';
         }
 
@@ -451,39 +416,20 @@
                         categoriaAtual = musica.categoria;
                     }
 
-                    let youtubeID = "";
-                    if (musica.link && musica.link.includes("v=")) {
-                        youtubeID = musica.link.split("v=")[1].split("&")[0];
+                    if (musica.link && !musica.link.includes("watch_")) {
+                        htmlFinal += `
+                            <a href="${musica.link}" target="_blank" style="text-decoration: none;">
+                                <div class="radio-option">
+                                    ${musica.titulo} <span>▶️ Cantar</span>
+                                </div>
+                            </a>
+                        `;
                     }
-
-                    htmlFinal += `
-                        <div class="radio-option" onclick="tocarKaraoke('${youtubeID}', '${musica.titulo}')">
-                            ${musica.titulo} <span>▶️ Cantar</span>
-                        </div>
-                    `;
                 });
                 containerLista.innerHTML = htmlFinal;
             } else {
                 containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
             }
-        }
-
-        function tocarKaraoke(videoId, tituloMusica) {
-            if (!videoId || videoId.includes("watch_")) {
-                alert("Link de vídeo ainda não configurado para essa música!");
-                return;
-            }
-            
-            const containerYoutube = document.getElementById('containerYoutube');
-            const iframe = document.getElementById('iframeYoutube');
-            const nomeMusica = document.getElementById('nomeMusicaTocando');
-
-            containerYoutube.style.display = 'block';
-            nomeMusica.style.display = 'block';
-            nomeMusica.innerText = "🎤 Cantando: " + tituloMusica;
-
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-            document.querySelector('#modalKaraoke .modal-content').scrollTop = 0;
         }
     </script>
     <script src="omikuji-mensagens.js"></script>
