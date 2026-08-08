@@ -114,6 +114,23 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.3);
             text-align: center;
         }
+        .radio-option {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #1e3a8a;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .radio-option:hover {
+            background-color: #eff6ff;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -163,7 +180,7 @@
         </button>
         <button class="menu-item" onclick="abrirModalRadio()">
             📻 Rádio
-            <span>Músicas e Animação</span>
+            <span>Sertaneja, Rock, Romântica</span>
         </button>
         <button class="menu-item" onclick="alert('Abrindo Karaokê...')">
             🎤 Karaokê
@@ -171,7 +188,7 @@
         </button>
         <button class="menu-item" onclick="alert('Abrindo Horóscopo...')">
             🔮 Horóscopo
-            Omikuji do Dia
+            <span>Omikuji do Dia</span>
         </button>
         <button class="menu-item" onclick="alert('Abrindo Chat...')">
             💬 Chat
@@ -191,18 +208,31 @@
         </button>
     </div>
 
-    <!-- Modal da Rádio (Abre apenas ao clicar no botão) -->
+    <!-- Modal de Escolha de Rádios -->
     <div id="modalRadio" class="modal">
         <div class="modal-content">
-            <h3 style="color: #1e3a8a; margin-top: 0;">📻 Rádio ao Vivo (PT)</h3>
-            <p style="font-size: 14px; color: #555;">Ouça músicas e programas em português:</p>
+            <h3 style="color: #1e3a8a; margin-top: 0;">📻 Escolha o Estilo</h3>
+            <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Selecione uma rádio para começar a tocar:</p>
             
-            <audio id="audioRadio" controls style="width: 100%; margin: 15px 0;">
-                <source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">
-                Seu navegador não suporta áudio.
-            </audio>
+            <div class="radio-option" onclick="trocarRadio('https://ice.fabricahost.com.br/radionativa', 'Rádio Sertaneja')">
+                🤠 Sertaneja / Popular <span>▶️ Ouvir</span>
+            </div>
+            <div class="radio-option" onclick="trocarRadio('https://stream.zeno.fm/f3wvbbqmdg8uv', 'Rádio Romântica / Flashback')">
+                ❤️ Romântica / Anos 80 <span>▶️ Ouvir</span>
+            </div>
+            <div class="radio-option" onclick="trocarRadio('https://node-29.zeno.fm/f3wvbbqmdg8uv', 'Rádio Rock / Pop')">
+                🎸 Rock / Pop <span>▶️ Ouvir</span>
+            </div>
 
-            <button class="btn-primary" style="background-color: #dc2626; margin-top: 10px;" onclick="fecharModalRadio()">Fechar / Parar Rádio</button>
+            <!-- Player Ativo -->
+            <div id="containerPlayer" style="display:none; margin-top: 15px; background: #f1f5f9; padding: 10px; border-radius: 8px;">
+                <p id="nomeRadioTocando" style="font-size: 12px; font-weight: bold; color: #1e3a8a; margin: 0 0 5px 0;"></p>
+                <audio id="audioRadio" controls style="width: 100%;">
+                    <source src="" id="sourceAudio" type="audio/mpeg">
+                </audio>
+            </div>
+
+            <button class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="fecharModalRadio()">Fechar / Parar Tudo</button>
         </div>
     </div>
 
@@ -243,10 +273,25 @@
             document.getElementById('modalRadio').style.display = 'flex';
         }
 
+        function trocarRadio(urlStream, nomeEstilo) {
+            const player = document.getElementById('audioRadio');
+            const source = document.getElementById('sourceAudio');
+            const container = document.getElementById('containerPlayer');
+            const titulo = document.getElementById('nomeRadioTocando');
+
+            container.style.display = 'block';
+            titulo.innerText = "Tocando: " + nomeEstilo;
+            
+            source.src = urlStream;
+            player.load();
+            player.play();
+        }
+
         function fecharModalRadio() {
             const player = document.getElementById('audioRadio');
-            player.pause(); // Para o som da rádio
+            player.pause();
             player.currentTime = 0;
+            document.getElementById('containerPlayer').style.display = 'none';
             document.getElementById('modalRadio').style.display = 'none';
         }
     </script>
