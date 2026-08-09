@@ -1,0 +1,126 @@
+<div id="painel-forca" style="max-width: 400px; margin: auto; padding: 20px; font-family: sans-serif; text-align: center;">
+    <h3>🎯 Jogo da Forca</h3>
+    <p id="dica-palavra" style="font-weight: bold; color: #555;"></p>
+    
+    <!-- Desenho simples da forca / status -->
+    <div id="status-forca" style="font-size: 24px; font-weight: bold; margin: 15px; color: #dc3545;">
+        Erros: <span id="contador-erros">0</span> / 6
+    </div>
+
+    <!-- Palavra oculta com tracinhos -->
+    <div id="palavra-secreta" style="font-size: 32px; letter-spacing: 8px; font-weight: bold; margin: 20px 0;">
+        _ _ _ _ _
+    </div>
+
+    <!-- Teclado virtual na tela para celular -->
+    <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 350px; margin: 0 auto;">
+        <!-- As letras serão geradas automaticamente pelo script -->
+    </div>
+
+    <br>
+    <button onclick="iniciarForca()" style="padding: 10px 20px; background: #06C755; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">Nova Palavra</button>
+</div>
+
+<script>
+    const listaDePalavras = [
+        { palavra: "PROGRAMACAO", dica: "Tecnologia / Computador" },
+        { palavra: "KARAOKE", dica: "Música / Diversão" },
+        { palavra: "JAPAO", dica: "País asiático" },
+        { palavra: "COMPUTADOR", dica: "Equipamento eletrônico" },
+        { palavra: "FUTEBOL", dica: "Esporte popular" }
+    ];
+
+    let palavraAtual = "";
+    let dicaAtual = "";
+    let letrasDescobertas = [];
+    let erros = 0;
+    const maxErros = 6;
+
+    function iniciarForca() {
+        // Escolhe uma palavra aleatória da lista
+        const sorteio = listaDePalavras[Math.floor(Math.random() * listaDePalavras.length)];
+        palavraAtual = sorteio.palavra;
+        dicaAtual = sorteio.dica;
+        letrasDescobertas = [];
+        erros = 0;
+
+        document.getElementById('dica-palavra').innerText = `Dica: ${dicaAtual}`;
+        document.getElementById('contador-erros').innerText = erros;
+        
+        atualizarTela();
+        criarTeclado();
+    }
+
+    function atualizarTela() {
+        let exibicao = "";
+        let jogoGanho = true;
+
+        for (let i = 0; i < palavraAtual.length; i++) {
+            let letra = palavraAtual[i];
+            if (letrasDescobertas.includes(letra)) {
+                exibicao += letra + " ";
+            } else {
+                exibicao += "_ ";
+                jogoGanho = false;
+            }
+        }
+
+        document.getElementById('palavra-secreta').innerText = exibicao.trim();
+
+        if (jogoGanho) {
+            document.getElementById('dica-palavra').innerText = "🎉 Parabéns, você venceu!";
+            desativarTeclado();
+        } else if (erros >= maxErros) {
+            document.getElementById('dica-palavra').innerText = `❌ Fim de jogo! A palavra era: ${palavraAtual}`;
+            desativarTeclado();
+        }
+    }
+
+    function escolherLetra(letra) {
+        if (erros >= maxErros) return;
+
+        if (!letrasDescobertas.includes(letra)) {
+            letrasDescobertas.push(letra);
+
+            if (!palavraAtual.includes(letra)) {
+                erros++;
+                document.getElementById('contador-erros').innerText = erros;
+            }
+        }
+
+        let btn = document.getElementById(`btn-${letra}`);
+        if (btn) {
+            btn.disabled = true;
+            btn.style.background = "#ccc";
+        }
+
+        atualizarTela();
+    }
+
+    function criarTeclado() {
+        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const container = document.getElementById('teclado-letras');
+        container.innerHTML = "";
+
+        for (let i = 0; i < alfabeto.length; i++) {
+            let letra = alfabeto[i];
+            let botao = document.createElement('button');
+            botao.innerText = letra;
+            botao.id = `btn-${letra}`;
+            botao.onclick = () => escolherLetra(letra);
+            botao.style.cssText = "padding: 10px 0; font-size: 16px; font-weight: bold; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;";
+            container.appendChild(botao);
+        }
+    }
+
+    function desativarTeclado() {
+        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let i = 0; i < alfabeto.length; i++) {
+            let btn = document.getElementById(`btn-${alfabeto[i]}`);
+            if (btn) btn.disabled = true;
+        }
+    }
+
+    // Inicia o jogo automaticamente ao carregar
+    iniciarForca();
+</script>
