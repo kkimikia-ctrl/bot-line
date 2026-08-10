@@ -3,180 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Jogos - Ajuda JP</title>
+    <title>Central de Jogos com Carrossel</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
-            padding: 0;
+            padding: 15px;
             color: #333;
             padding-bottom: 80px;
+            text-align: center;
         }
-        .app-header {
-            background-color: #1a73e8;
+
+        /* Estilos do Carrossel de Banners */
+        .carousel-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #000;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
             color: white;
-            padding: 12px 15px;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 16px;
+            z-index: 10;
+        }
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
+        
+        .carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .dot.active {
+            background: white;
+        }
+
+        /* Demais Estilos */
+        .header {
+            background-color: #0047ab;
+            color: white;
+            padding: 15px 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
-        .app-header h1 {
+        .header h1 {
+            font-size: 18px;
             margin: 0;
-            font-size: 1.1rem;
-            text-align: center;
-            flex-grow: 1;
         }
         .container {
             max-width: 600px;
-            margin: 15px auto;
-            padding: 0 15px;
+            margin: 0 auto;
+        }
+        .action-btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .action-btn:hover {
+            background-color: #1d4ed8;
+        }
+        .card-game {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
         .menu-jogos {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 20px;
         }
-        .btn-jogo {
-            background: #ffffff;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #1a73e8;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        .btn-jogo:active {
-            transform: scale(0.97);
-            background: #f0f4f8;
-        }
-        .game-card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: none;
-            text-align: center;
-        }
-        .game-card.active {
-            display: block;
-        }
-        .btn-voltar-menu {
-            background: #e4e6eb;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-bottom: 15px;
-            color: #333;
-            font-weight: bold;
-        }
-
-        /* Estilos específicos dos jogos */
-        .board-velha {
-            display: grid;
-            grid-template-columns: repeat(3, 80px);
-            gap: 8px;
-            justify-content: center;
-            margin: 15px auto;
-        }
-        .cell-velha {
-            width: 80px;
-            height: 80px;
-            background: #f0f4f8;
-            border: 2px solid #1a73e8;
-            font-size: 2rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 8px;
-            color: #1a73e8;
-        }
-
-        .palavra-forca {
-            font-size: 2rem;
-            letter-spacing: 8px;
-            margin: 20px 0;
-            font-weight: bold;
-            color: #1a73e8;
-        }
-
-        .grid-memoria {
-            display: grid;
-            grid-template-columns: repeat(4, 60px);
-            gap: 8px;
-            justify-content: center;
-            margin: 15px auto;
-        }
-        .card-memoria {
-            width: 60px;
-            height: 60px;
-            background: #1a73e8;
-            color: white;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .card-memoria.virado {
-            background: #fff;
-            border: 2px solid #1a73e8;
-        }
-
-        .jokenpo-botoes {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .btn-jk {
-            padding: 12px 18px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
-        }
-        .btn-pedra { background: #e74c3c; }
-        .btn-papel { background: #3498db; }
-        .btn-tesoura { background: #f1c40f; color: #333; }
-
-        #snakeCanvas {
-            background: #111;
-            display: block;
-            margin: 0 auto;
-            border-radius: 8px;
-            max-width: 100%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .controles-mobile {
-            display: grid;
-            grid-template-columns: repeat(3, 60px);
-            gap: 8px;
-            justify-content: center;
-            margin-top: 15px;
-        }
-        .btn-dir {
-            background: #1a73e8;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 1.2rem;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -188,7 +134,7 @@
             align-items: center;
             height: 60px;
             box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
+            z-index: 999;
         }
         .nav-item {
             display: flex;
@@ -200,88 +146,154 @@
             flex-grow: 1;
         }
         .nav-item.active {
-            color: #1a73e8;
+            color: #0047ab;
             font-weight: bold;
         }
         .nav-item span.icon {
             font-size: 1.2rem;
             margin-bottom: 2px;
         }
+        .control-btn {
+            background: #e2e8f0;
+            border: none;
+            font-size: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #0047ab;
+        }
+        .control-btn:active {
+            background: #cbd5e1;
+        }
     </style>
 </head>
 <body>
 
-    <header class="app-header">
-        <h1>Central de Lazer e Jogos</h1>
-    </header>
+    <!-- CARROSSEL DE BANNERS NO TOPO (8 Banners) -->
+    <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+            <!-- Insira os links das suas 8 imagens/banners abaixo -->
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/0047ab/ffffff?text=Banner+1" alt="Banner 1"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/00796b/ffffff?text=Banner+2" alt="Banner 2"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/7b1fa2/ffffff?text=Banner+3" alt="Banner 3"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/e65100/ffffff?text=Banner+4" alt="Banner 4"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/059669/ffffff?text=Banner+5" alt="Banner 5"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/dc2626/ffffff?text=Banner+6" alt="Banner 6"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/2563eb/ffffff?text=Banner+7" alt="Banner 7"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/4b5563/ffffff?text=Banner+8" alt="Banner 8"></div>
+        </div>
+        <button class="carousel-btn prev" onclick="mudarSlide(-1)">&#10094;</button>
+        <button class="carousel-btn next" onclick="mudarSlide(1)">&#10095;</button>
+        <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+
+    <div class="header">
+        <h1>🎮 Central de Jogos</h1>
+    </div>
 
     <div class="container">
-        <!-- MENU DE ESCOLHA DE JOGOS -->
-        <div id="menuJogos" class="menu-jogos">
-            <button class="btn-jogo" onclick="abrirJogo('velha')">❌ Jogo da Velha</button>
-            <button class="btn-jogo" onclick="abrirJogo('forca')">🔤 Jogo da Forca</button>
-            <button class="btn-jogo" onclick="abrirJogo('memoria')">🧠 Jogo da Memória</button>
-            <button class="btn-jogo" onclick="abrirJogo('jokenpo')">✊ Jokenpô</button>
-            <button class="btn-jogo" onclick="abrirJogo('cobrinha')" style="grid-column: span 2;">🐍 Jogo da Cobrinha</button>
+        <!-- Menu Principal de Jogos -->
+        <div id="menu-selecao-jogos" class="card-game menu-jogos" style="display: grid;">
+            <button onclick="abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
+            <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
+            <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
+            <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">✌️ Jokenpô</button>
+            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha (Níveis Infinitos)</button>
         </div>
 
-        <!-- 1. JOGO DA VELHA -->
-        <div id="card-velha" class="game-card">
-            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
-            <h3>Jogo da Velha</h3>
-            <p id="statusVelha">Vez do Jogador: X</p>
-            <div class="board-velha" id="boardVelha"></div>
-            <button class="btn-voltar-menu" onclick="reiniciarVelha()">Reiniciar Jogo</button>
-        </div>
-
-        <!-- 2. JOGO DA FORCA -->
-        <div id="card-forca" class="game-card">
-            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
-            <h3>Jogo da Forca</h3>
-            <div class="palavra-forca" id="palavraForca">_ _ _ _ _</div>
-            <p id="statusForca">Erros: 0 / 6</p>
-            <input type="text" id="letraInput" maxlength="1" placeholder="Letra" style="width: 60px; padding: 10px; font-size: 1.2rem; text-align:center;">
-            <button class="btn-voltar-menu" onclick="tentarLetra()" style="background:#1a73e8; color:white;">Tentar</button>
-        </div>
-
-        <!-- 3. JOGO DA MEMÓRIA -->
-        <div id="card-memoria" class="game-card">
-            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
-            <h3>Jogo da Memória</h3>
-            <div class="grid-memoria" id="gridMemoria"></div>
-            <button class="btn-voltar-menu" onclick="iniciarMemoria()">Reiniciar</button>
-        </div>
-
-        <!-- 4. JOKENPÔ -->
-        <div id="card-jokenpo" class="game-card">
-            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
-            <h3>Jokenpô</h3>
-            <p id="resultadoJk">Escolha sua jogada:</p>
-            <div class="jokenpo-botoes">
-                <button class="btn-jk btn-pedra" onclick="jogarJk('Pedra')">Pedra</button>
-                <button class="btn-jk btn-papel" onclick="jogarJk('Papel')">Papel</button>
-                <button class="btn-jk btn-tesoura" onclick="jogarJk('Tesoura')">Tesoura</button>
+        <!-- Jogo da Velha -->
+        <div id="container-jogo-velha" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both;"></div>
+            <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
+            <p id="status-jogo" style="font-weight: bold; font-size: 13px;">Vez do jogador: X</p>
+            <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
+                <button onclick="jogarVelha(0)" id="celula-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(1)" id="celula-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(2)" id="celula-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(3)" id="celula-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(4)" id="celula-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(5)" id="celula-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(6)" id="celula-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(7)" id="celula-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="jogarVelha(8)" id="celula-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
             </div>
+            <button onclick="reiniciarVelha()" class="action-btn" style="background-color: #dc2626; padding: 8px; margin-top: 0;">Reiniciar Jogo</button>
         </div>
 
-        <!-- 5. JOGO DA COBRINHA -->
-        <div id="card-cobrinha" class="game-card">
-            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
-            <h3>Jogo da Cobrinha</h3>
-            <p id="snakeStatus">Nível 1 | Pontos: 0</p>
-            <canvas id="snakeCanvas" width="300" height="300"></canvas>
-            <div class="controles-mobile">
-                <div></div>
-                <button class="btn-dir" onclick="mudarDirecao('UP')">⬆️</button>
-                <div></div>
-                <button class="btn-dir" onclick="mudarDirecao('LEFT')">⬅️</button>
-                <button class="btn-dir" onclick="mudarDirecao('DOWN')">⬇️</button>
-                <button class="btn-dir" onclick="mudarDirecao('RIGHT')">➡️</button>
+        <!-- Jogo da Forca -->
+        <div id="container-jogo-forca" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both;"></div>
+            <h3 style="color: #0047ab; margin: 5px 0;">🎯 Jogo da Forca</h3>
+            <p id="dica-palavra" style="font-weight: bold; color: #555; font-size: 13px;"></p>
+            <div id="status-forca" style="font-size: 16px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6</div>
+            <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
+            <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
+            <button onclick="iniciarForca()" class="action-btn" style="background-color: #00796b; padding: 8px; margin-top: 10px;">Nova Palavra</button>
+        </div>
+
+        <!-- Jogo da Memória com Níveis (1 a 8) e Progresso (X/3) -->
+        <div id="container-jogo-memoria" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both;"></div>
+            
+            <div style="background: #0047ab; color: white; padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                <h3 id="texto-nivel-fase" style="margin: 0; font-size: 16px;">Nível 1 ( 1 / 3 )</h3>
             </div>
+
+            <div id="tabuleiro-memoria" style="display: grid; gap: 6px; justify-content: center; margin-bottom: 15px;"></div>
+        </div>
+
+        <!-- Jokenpô Animado -->
+        <div id="container-jokenpo" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both;"></div>
+            <h3 style="color: #0047ab; margin: 5px 0;">✌️ Jokenpô</h3>
+            
+            <div style="margin: 15px auto; width: 70px; height: 70px; line-height: 70px; font-size: 35px; background: #e8f0fe; border: 2px dashed #0047ab; border-radius: 50%;">
+                <span id="computador-escolha">❓</span>
+            </div>
+
+            <div id="caixa-resultado-jokenpo" style="display: none; padding: 10px; border-radius: 8px; margin: 10px 0; font-weight: bold; font-size: 15px;">
+                <span id="resultado-jokenpo"></span>
+            </div>
+            <p id="instrucao-jokenpo" style="font-size: 14px; font-weight: bold; color: #333; margin: 10px 0;">Escolha sua jogada:</p>
+            
+            <div id="botoes-jokenpo" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                <button onclick="jogarJokenpo('pedra')" id="btn-pedra" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✊</button>
+                <button onclick="jogarJokenpo('papel')" id="btn-papel" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✋</button>
+                <button onclick="jogarJokenpo('tesoura')" id="btn-tesoura" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✌️</button>
+            </div>
+            <button id="btn-proxima-rodada" onclick="reiniciarJokenpo()" class="action-btn" style="display: none; background-color: #00796b; padding: 8px; margin-top: 10px;">Jogar Novamente</button>
+        </div>
+
+        <!-- Jogo da Cobrinha -->
+        <div id="container-jogo-cobrinha" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both;"></div>
+            
+            <div id="snake-status-box" style="background: #059669; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
+                <h3 id="snake-status" style="margin: 0; font-size: 14px;">🐍 Nível 1 (Paredes Livres) | Pontos: 0</h3>
+            </div>
+
+            <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 220px; margin: 0 auto 10px auto;">
+                <div></div>
+                <button class="control-btn" onclick="mudarDirecao('UP')">⬆️</button>
+                <div></div>
+                <button class="control-btn" onclick="mudarDirecao('LEFT')">⬅️</button>
+                <button class="control-btn" onclick="mudarDirecao('DOWN')">⬇️</button>
+                <button class="control-btn" onclick="mudarDirecao('RIGHT')">➡️</button>
+            </div>
+
+            <button onclick="iniciarCobrinha()" class="action-btn" style="background-color: #059669; padding: 8px; margin-top: 0;">Reiniciar Cobrinha</button>
         </div>
     </div>
 
-    <!-- RODAPÉ -->
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
             <span class="icon">🏠</span>
@@ -291,250 +303,385 @@
             <span class="icon">📋</span>
             <span>Serviços</span>
         </a>
+        <a href="entretenimento.html" class="nav-item active">
+            <span class="icon">🎬</span>
+            <span>Lazer</span>
+        </a>
         <a href="perfil.html" class="nav-item">
             <span class="icon">👤</span>
             <span>Perfil</span>
         </a>
-        <a href="index.html" class="nav-item">
-            <span class="icon">↩️</span>
-            <span>Voltar</span>
-        </a>
     </nav>
 
     <script>
-        function abrirJogo(nome) {
-            document.getElementById('menuJogos').style.display = 'none';
-            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
-            document.getElementById('card-' + nome).classList.add('active');
-            
-            if(nome === 'cobrinha') iniciarCobrinha();
-            if(nome === 'velha') reiniciarVelha();
-            if(nome === 'forca') iniciarForca();
-            if(nome === 'memoria') iniciarMemoria();
+        /* Lógica do Carrossel de Banners */
+        let currentSlide = 0;
+        const track = document.getElementById('carouselTrack');
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dotsContainer = document.getElementById('carouselDots');
+
+        // Criar as bolinhas (dots) de navegação automaticamente
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (index === 0) dot.classList.add('active');
+            dot.onclick = () => irParaSlide(index);
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function atualizarCarrossel() {
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
         }
 
-        function voltarMenu() {
-            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
-            document.getElementById('menuJogos').style.display = 'grid';
+        function mudarSlide(direcao) {
+            currentSlide = (currentSlide + direcao + slides.length) % slides.length;
+            atualizarCarrossel();
+        }
+
+        function irParaSlide(index) {
+            currentSlide = index;
+            atualizarCarrossel();
+        }
+
+        // Passar os slides automaticamente a cada 4 segundos
+        setInterval(() => {
+            mudarSlide(1);
+        }, 4000);
+
+
+        /* Navegação e Jogos */
+        function voltarMenuJogos() {
             pararCobrinha();
+            document.getElementById('menu-selecao-jogos').style.display = 'grid';
+            document.getElementById('container-jogo-velha').style.display = 'none';
+            document.getElementById('container-jogo-forca').style.display = 'none';
+            document.getElementById('container-jogo-memoria').style.display = 'none';
+            document.getElementById('container-jokenpo').style.display = 'none';
+            document.getElementById('container-jogo-cobrinha').style.display = 'none';
         }
 
-        /* --- 1. JOGO DA VELHA --- */
-        let velhaBoard = ['', '', '', '', '', '', '', '', ''];
-        let velhaTurn = 'X';
-        function reiniciarVelha() {
-            velhaBoard = ['', '', '', '', '', '', '', '', ''];
-            velhaTurn = 'X';
-            document.getElementById('statusVelha').innerText = "Vez do Jogador: X";
-            const board = document.getElementById('boardVelha');
-            board.innerHTML = '';
-            velhaBoard.forEach((val, idx) => {
-                const cell = document.createElement('div');
-                cell.className = 'cell-velha';
-                cell.innerText = val;
-                cell.onclick = () => jogarVelha(idx);
-                board.appendChild(cell);
-            });
-        }
-        function jogarVelha(idx) {
-            if(velhaBoard[idx] === '') {
-                velhaBoard[idx] = velhaTurn;
-                velhaTurn = velhaTurn === 'X' ? 'O' : 'X';
-                document.getElementById('statusVelha').innerText = "Vez do Jogador: " + velhaTurn;
-                reiniciarVelhaRender();
-                checarVelha();
+        function abrirJogoVelha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; reiniciarVelha(); }
+        function abrirJogoForca() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-forca').style.display = 'block'; iniciarForca(); }
+        function abrirJogoMemoria() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-memoria').style.display = 'block'; iniciarMemoria(); }
+        function abrirJokenpo() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; reiniciarJokenpo(); }
+        function abrirJogoCobrinha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
+
+        /* Jogo da Velha */
+        let tabuleiro = ['', '', '', '', '', '', '', '', ''];
+        let jogadorAtual = 'X';
+        let jogoAtivo = true;
+        function jogarVelha(pos) {
+            if (tabuleiro[pos] === '' && jogoAtivo) {
+                tabuleiro[pos] = jogadorAtual;
+                document.getElementById(`celula-${pos}`).innerText = jogadorAtual;
+                verificarVitoriaVelha();
+                if (jogoAtivo) { jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X'; document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`; }
             }
         }
-        function reiniciarVelhaRender() {
-            const cells = document.querySelectorAll('.cell-velha');
-            velhaBoard.forEach((val, idx) => {
-                cells[idx].innerText = val;
-            });
-        }
-        function checarVelha() {
+        function verificarVitoriaVelha() {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let w of wins) {
-                if(velhaBoard[w[0]] && velhaBoard[w[0]] === velhaBoard[w[1]] && velhaBoard[w[0]] === velhaBoard[w[2]]) {
-                    alert("Jogador " + velhaBoard[w[0]] + " venceu!");
-                    reiniciarVelha();
-                    return;
+            for (let w of wins) {
+                if (tabuleiro[w[0]] && tabuleiro[w[0]] === tabuleiro[w[1]] && tabuleiro[w[0]] === tabuleiro[w[2]]) {
+                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${tabuleiro[w[0]]} Venceu!`;
+                    jogoAtivo = false; return;
                 }
             }
-            if(!velhaBoard.includes('')) {
-                alert("Empate!");
-                reiniciarVelha();
+            if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate! Deu velha!`; jogoAtivo = false; }
+        }
+        function reiniciarVelha() {
+            tabuleiro = ['', '', '', '', '', '', '', '', ''];
+            jogadorAtual = 'X';
+            jogoAtivo = true;
+            document.getElementById('status-jogo').innerText = `Vez do jogador: X`;
+            for (let i = 0; i < 9; i++) document.getElementById(`celula-${i}`).innerText = '';
+        }
+
+        /* Jogo da Forca */
+        const listaPalavrasForca = [{p:"PROGRAMACAO", d:"Computador"}, {p:"KARAOKE", d:"Música"}, {p:"JAPAO", d:"País"}];
+        let palavraAtual = "", dicaAtual = "", letrasDescobertas = [], errosForca = 0;
+        function iniciarForca() {
+            let s = listaPalavrasForca[Math.floor(Math.random()*listaPalavrasForca.length)];
+            palavraAtual = s.p; dicaAtual = s.d; letrasDescobertas = []; errosForca = 0;
+            document.getElementById('dica-palavra').innerText = `Dica: ${dicaAtual}`;
+            document.getElementById('contador-erros').innerText = 0;
+            atualizarTelaForca(); criarTecladoForca();
+        }
+        function atualizarTelaForca() {
+            let ex = ""; let ganho = true;
+            for (let i = 0; i < palavraAtual.length; i++) {
+                let l = palavraAtual[i];
+                if (letrasDescobertas.includes(l)) { ex += l + " "; } else { ex += "_ "; ganho = false; }
+            }
+            document.getElementById('palavra-secreta').innerText = ex.trim();
+            if (ganho) document.getElementById('dica-palavra').innerText = "🎉 Você Venceu!";
+            else if (errosForca >= 6) document.getElementById('dica-palavra').innerText = `❌ Fim de jogo! Era: ${palavraAtual}`;
+        }
+        function escolherLetraForca(l) {
+            if (errosForca >= 6) return;
+            if (!letrasDescobertas.includes(l)) {
+                letrasDescobertas.push(l);
+                if (!palavraAtual.includes(l)) { errosForca++; document.getElementById('contador-erros').innerText = errosForca; }
+            }
+            let btn = document.getElementById(`btn-letra-${l}`);
+            if (btn) { btn.disabled = true; btn.style.background = "#ccc"; }
+            atualizarTelaForca();
+        }
+        function criarTecladoForca() {
+            let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cont = document.getElementById('teclado-letras');
+            cont.innerHTML = "";
+            for (let i = 0; i < alfabeto.length; i++) {
+                let l = alfabeto[i], btn = document.createElement('button');
+                btn.innerText = l; btn.id = `btn-letra-${l}`;
+                btn.onclick = () => escolherLetraForca(l);
+                btn.style.cssText = "padding: 6px 0; font-size: 13px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
+                cont.appendChild(btn);
             }
         }
 
-        /* --- 2. JOGO DA FORCA --- */
-        const palavrasForca = ["BRASIL", "JAPAO", "COMPUTADOR", "PROGRAMA", "INTERNET"];
-        let palavraSecreta = "", letrasReveladas = [], errosForca = 0;
-        function iniciarForca() {
-            palavraSecreta = palavrasForca[Math.floor(Math.random() * palavrasForca.length)];
-            letrasReveladas = Array(palavraSecreta.length).fill("_");
-            errosForca = 0;
-            atualizarForca();
+        /* Jogo da Memória */
+        let nivelMemoria = 1;
+        let faseNoNivel = 1;
+        let cartasMemoria = [];
+        let primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0;
+        const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🥑','🥥','🍋','🍊','🍐','🍑','🥕','🌽'];
+
+        function iniciarMemoria() {
+            document.getElementById('texto-nivel-fase').innerText = `Nível ${nivelMemoria} ( ${faseNoNivel} / 3 )`;
+            let qtdPares = 2 + nivelMemoria; 
+            let emojisSelecionados = emojisPool.slice(0, qtdPares);
+            cartasMemoria = [...emojisSelecionados, ...emojisSelecionados];
+            cartasMemoria.sort(() => Math.random() - 0.5);
+
+            paresRestantes = qtdPares;
+            primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
+
+            let cont = document.getElementById('tabuleiro-memoria');
+            let colunas = nivelMemoria <= 3 ? 4 : (nivelMemoria <= 6 ? 5 : 6);
+            cont.style.gridTemplateColumns = `repeat(${colunas}, 50px)`;
+            cont.innerHTML = "";
+
+            for (let i = 0; i < cartasMemoria.length; i++) {
+                let btn = document.createElement('button');
+                btn.style.cssText = "width: 48px; height: 48px; font-size: 18px; background: #0047ab; color: white; border: none; border-radius: 6px; cursor: pointer;";
+                btn.dataset.emoji = cartasMemoria[i];
+                btn.onclick = () => virarCartaMemoria(btn);
+                cont.appendChild(btn);
+            }
         }
-        function atualizarForca() {
-            document.getElementById('palavraForca').innerText = letrasReveladas.join(" ");
-            document.getElementById('statusForca').innerText = `Erros: ${errosForca} / 6`;
-        }
-        function tentarLetra() {
-            const input = document.getElementById('letraInput');
-            const letra = input.value.toUpperCase();
-            input.value = "";
-            if(!letra) return;
-            if(palavraSecreta.includes(letra)) {
-                for(let i=0; i<palavraSecreta.length; i++) {
-                    if(palavraSecreta[i] === letra) letrasReveladas[i] = letra;
-                }
-                atualizarForca();
-                if(!letrasReveladas.includes("_")) {
-                    alert("Parabéns, você venceu!");
-                    iniciarForca();
+
+        function virarCartaMemoria(btn) {
+            if (travadoMemoria || btn.innerText !== "" || btn === primeiraCarta) return;
+            btn.innerText = btn.dataset.emoji;
+            btn.style.background = "white";
+
+            if (!primeiraCarta) { primeiraCarta = btn; return; }
+            segundaCarta = btn; travadoMemoria = true;
+
+            if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
+                paresRestantes--;
+                primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
+                if (paresRestantes === 0) {
+                    setTimeout(() => {
+                        faseNoNivel++;
+                        if (faseNoNivel > 3) {
+                            faseNoNivel = 1; nivelMemoria++;
+                            if (nivelMemoria > 8) { alert("🏆 Parabéns! Concluiu todos os níveis!"); nivelMemoria = 1; }
+                            else { alert(`🎉 Avançou para o Nível ${nivelMemoria}!`); }
+                        }
+                        iniciarMemoria();
+                    }, 400);
                 }
             } else {
-                errosForca++;
-                atualizarForca();
-                if(errosForca >= 6) {
-                    alert("Fim de jogo! A palavra era: " + palavraSecreta);
-                    iniciarForca();
-                }
+                setTimeout(() => {
+                    primeiraCarta.innerText = ""; primeiraCarta.style.background = "#0047ab";
+                    segundaCarta.innerText = ""; segundaCarta.style.background = "#0047ab";
+                    primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
+                }, 800);
             }
         }
 
-        /* --- 3. JOGO DA MEMÓRIA --- */
-        let cartas = ['🍎', '🍎', '🍌', '🍌', '🍇', '🍇', '⭐', '⭐'];
-        let primeiraCarta = null, segundaCarta = null, bloqueioMemoria = false;
-        function iniciarMemoria() {
-            cartas.sort(() => Math.random() - 0.5);
-            const grid = document.getElementById('gridMemoria');
-            grid.innerHTML = '';
-            cartas.forEach(simbolo => {
-                const card = document.createElement('div');
-                card.className = 'card-memoria';
-                card.dataset.simbolo = simbolo;
-                card.onclick = () => virarCarta(card);
-                grid.appendChild(card);
+        /* Jokenpô */
+        function reiniciarJokenpo() {
+            document.getElementById('computador-escolha').innerText = "❓";
+            document.getElementById('caixa-resultado-jokenpo').style.display = 'none';
+            document.getElementById('instrucao-jokenpo').style.display = 'block';
+            document.getElementById('btn-proxima-rodada').style.display = 'none';
+            ['pedra', 'papel', 'tesoura'].forEach(op => {
+                let b = document.getElementById(`btn-${op}`);
+                b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#ccc"; b.style.background = "white";
             });
         }
-        function virarCarta(card) {
-            if(bloqueioMemoria || card.classList.contains('virado')) return;
-            card.innerText = card.dataset.simbolo;
-            card.classList.add('virado');
-            if(!primeiraCarta) {
-                primeiraCarta = card;
-            } else {
-                segundaCarta = card;
-                bloqueioMemoria = true;
-                if(primeiraCarta.dataset.simbolo === segundaCarta.dataset.simbolo) {
-                    primeiraCarta = null;
-                    segundaCarta = null;
-                    bloqueioMemoria = false;
+
+        function jogarJokenpo(escolhaUsuario) {
+            const opcoes = ['pedra', 'papel', 'tesoura'];
+            const emojis = { pedra: '✊', papel: '✋', tesoura: '✌️' };
+            opcoes.forEach(op => {
+                let b = document.getElementById(`btn-${op}`);
+                b.disabled = true;
+                if (op !== escolhaUsuario) b.style.opacity = "0.2";
+                else { b.style.borderColor = "#0047ab"; b.style.background = "#e8f0fe"; }
+            });
+            document.getElementById('instrucao-jokenpo').innerText = "Computador pensando...";
+            document.getElementById('computador-escolha').innerText = "❓";
+            setTimeout(() => {
+                const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
+                document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
+                let textoRes = "", corFundo = "", corTexto = "";
+
+                if (escolhaUsuario === escolhaMaquina) {
+                    textoRes = `Empate! Ambos escolheram ${emojis[escolhaUsuario]}.`;
+                    corFundo = "#e5e7eb"; corTexto = "#374151";
+                } else if (
+                    (escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') ||
+                    (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') ||
+                    (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')
+                ) {
+                    textoRes = `🎉 Você Ganhou! Você (${emojis[escolhaUsuario]}) venceu o computador (${emojis[escolhaMaquina]}).`;
+                    corFundo = "#fef08a"; corTexto = "#854d0e";
                 } else {
-                    setTimeout(() => {
-                        primeiraCarta.innerText = '';
-                        primeiraCarta.classList.remove('virado');
-                        segundaCarta.innerText = '';
-                        segundaCarta.classList.remove('virado');
-                        primeiraCarta = null;
-                        segundaCarta = null;
-                        bloqueioMemoria = false;
-                    }, 800);
+                    textoRes = `❌ Você Perdeu! O computador (${emojis[escolhaMaquina]}) venceu você (${emojis[escolhaUsuario]}).`;
+                    corFundo = "#fecaca"; corTexto = "#991b1b";
                 }
-            }
+
+                document.getElementById('instrucao-jokenpo').style.display = 'none';
+                let caixaRes = document.getElementById('caixa-resultado-jokenpo');
+                caixaRes.style.display = 'block';
+                caixaRes.style.backgroundColor = corFundo;
+                caixaRes.style.color = corTexto;
+                document.getElementById('resultado-jokenpo').innerText = textoRes;
+                document.getElementById('btn-proxima-rodada').style.display = 'block';
+            }, 2000);
         }
 
-        /* --- 4. JOKENPÔ --- */
-        function jogarJk(escolhaUsuario) {
-            const opcoes = ['Pedra', 'Papel', 'Tesoura'];
-            const escolhaPc = opcoes[Math.floor(Math.random() * 3)];
-            let res = `Você: ${escolhaUsuario} | Computador: ${escolhaPc}. `;
-            if(escolhaUsuario === escolhaPc) res += "Empate!";
-            else if((escolhaUsuario === 'Pedra' && escolhaPc === 'Tesoura') || (escolhaUsuario === 'Papel' && escolhaPc === 'Pedra') || (escolhaUsuario === 'Tesoura' && escolhaPc === 'Papel')) res += "Você Venceu! 🎉";
-            else res += "Computador Venceu! 😢";
-            document.getElementById('resultadoJk').innerText = res;
-        }
+        /* Jogo da Cobrinha */
+        let snakeInterval = null;
+        let snake = [];
+        let comida = {};
+        let direcao = 'RIGHT';
+        let proximaDirecao = 'RIGHT';
+        let pontosSnake = 0;
+        let nivelSnake = 1;
+        const gridTotal = 16;
 
-        /* --- 5. JOGO DA COBRINHA --- */
-        let snakeInterval;
         function iniciarCobrinha() {
-            const canvas = document.getElementById('snakeCanvas');
-            const ctx = canvas.getContext('2d');
-            let box = 15;
-            let snake = [{x: 9 * box, y: 9 * box}];
-            let food = {
-                x: Math.floor(Math.random() * 20) * box,
-                y: Math.floor(Math.random() * 20) * box
-            };
-            let score = 0;
-            let d = "RIGHT";
-
-            window.mudarDirecao = function(dir) {
-                if(dir == "UP" && d != "DOWN") d = "UP";
-                if(dir == "DOWN" && d != "UP") d = "DOWN";
-                if(dir == "LEFT" && d != "RIGHT") d = "LEFT";
-                if(dir == "RIGHT" && d != "LEFT") d = "RIGHT";
-            }
-
-            function draw() {
-                ctx.fillStyle = "#111";
-                ctx.fillRect(0, 0, 300, 300);
-
-                for(let i = 0; i < snake.length; i++) {
-                    ctx.fillStyle = (i == 0) ? "#00ffcc" : "#fff";
-                    ctx.fillRect(snake[i].x, snake[i].y, box, box);
-                }
-
-                ctx.fillStyle = "red";
-                ctx.fillRect(food.x, food.y, box, box);
-
-                let snakeX = snake[0].x;
-                let snakeY = snake[0].y;
-
-                if(d == "UP") snakeY -= box;
-                if(d == "DOWN") snakeY += box;
-                if(d == "LEFT") snakeX -= box;
-                if(d == "RIGHT") snakeX += box;
-
-                let nivel = Math.floor(score / 5) + 1;
-                
-                if(snakeX < 0 || snakeX >= 300 || snakeY < 0 || snakeY >= 300) {
-                    if (nivel >= 7) {
-                        clearInterval(snakeInterval);
-                        alert("Fim de jogo! Você bateu na parede letal.");
-                        voltarMenu();
-                        return;
-                    } else {
-                        if(snakeX < 0) snakeX = 285;
-                        if(snakeX >= 300) snakeX = 0;
-                        if(snakeY < 0) snakeY = 285;
-                        if(snakeY >= 300) snakeY = 0;
-                    }
-                }
-
-                if(snakeX == food.x && snakeY == food.y) {
-                    score++;
-                    food = {
-                        x: Math.floor(Math.random() * 20) * box,
-                        y: Math.floor(Math.random() * 20) * box
-                    };
-                } else {
-                    snake.pop();
-                }
-
-                let newHead = {x: snakeX, y: snakeY};
-                snake.unshift(newHead);
-
-                document.getElementById('snakeStatus').innerText = `Nível ${nivel} | Pontos: ${score}`;
-            }
-
-            clearInterval(snakeInterval);
-            snakeInterval = setInterval(draw, 120);
+            pararCobrinha();
+            snake = [{x: 8, y: 8}, {x: 7, y: 8}, {x: 6, y: 8}];
+            gerarComida();
+            direcao = 'RIGHT';
+            proximaDirecao = 'RIGHT';
+            pontosSnake = 0;
+            nivelSnake = 1;
+            atualizarStatusSnake();
+            
+            let velocidade = 140;
+            snakeInterval = setInterval(loopCobrinha, velocidade);
         }
 
         function pararCobrinha() {
-            clearInterval(snakeInterval);
+            if (snakeInterval) clearInterval(snakeInterval);
+        }
+
+        function gerarComida() {
+            comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) };
+        }
+
+        function mudarDirecao(novaDir) {
+            if (novaDir === 'UP' && direcao !== 'DOWN') proximaDirecao = 'UP';
+            if (novaDir === 'DOWN' && direcao !== 'UP') proximaDirecao = 'DOWN';
+            if (novaDir === 'LEFT' && direcao !== 'RIGHT') proximaDirecao = 'LEFT';
+            if (novaDir === 'RIGHT' && direcao !== 'LEFT') proximaDirecao = 'RIGHT';
+        }
+
+        function loopCobrinha() {
+            direcao = proximaDirecao;
+            let cabeca = { ...snake[0] };
+
+            if (direcao === 'UP') cabeca.y--;
+            if (direcao === 'DOWN') cabeca.y++;
+            if (direcao === 'LEFT') cabeca.x--;
+            if (direcao === 'RIGHT') cabeca.x++;
+
+            let jogoComParedesLetais = nivelSnake >= 7;
+
+            if (cabeca.x < 0 || cabeca.x >= gridTotal || cabeca.y < 0 || cabeca.y >= gridTotal) {
+                if (jogoComParedesLetais) {
+                    pararCobrinha();
+                    alert(`💥 Fim de jogo! Você bateu na parede no Nível ${nivelSnake} (Paredes Letais) com ${pontosSnake} pontos.`);
+                    return;
+                } else {
+                    if (cabeca.x < 0) cabeca.x = gridTotal - 1;
+                    if (cabeca.x >= gridTotal) cabeca.x = 0;
+                    if (cabeca.y < 0) cabeca.y = gridTotal - 1;
+                    if (cabeca.y >= gridTotal) cabeca.y = 0;
+                }
+            }
+
+            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
+                pararCobrinha();
+                alert(`💥 Fim de jogo! Você bateu em si mesmo no Nível ${nivelSnake} com ${pontosSnake} pontos.`);
+                return;
+            }
+
+            snake.unshift(cabeca);
+
+            if (cabeca.x === comida.x && cabeca.y === comida.y) {
+                pontosSnake += 10;
+                gerarComida();
+
+                let novoNivel = Math.floor(pontosSnake / 50) + 1;
+                if (novoNivel !== nivelSnake) {
+                    nivelSnake = novoNivel;
+                    ajustarVelocidadeNivel();
+                }
+            } else {
+                snake.pop();
+            }
+
+            atualizarStatusSnake();
+            desenharCobrinha();
+        }
+
+        function ajustarVelocidadeNivel() {
+            pararCobrinha();
+            let subNivelVel = ((nivelSnake - 1) % 6);
+            let velocidades = [140, 115, 95, 75, 60, 45];
+            let novaVel = velocidades[subNivelVel];
+            
+            snakeInterval = setInterval(loopCobrinha, novaVel);
+
+            if (nivelSnake === 7) {
+                document.getElementById('snake-status-box').style.backgroundColor = '#dc2626';
+                alert(`⚠️ ATENÇÃO! Nível 7 ATIVADO! Modo Hardcore: As paredes agora são LETAIS! Se tocar, MORRE!`);
+            } else {
+                alert(`🚀 Parabéns! Você avançou para o Nível ${nivelSnake}!`);
+            }
+        }
+
+        function atualizarStatusSnake() {
+            let tipoParedes = nivelSnake >= 7 ? "🔥 PAREDES LETAIS" : "🛡️ Paredes Livres";
+            document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} (${tipoParedes}) | Pontos: ${pontosSnake}`;
+        }
+
+        function desenharCobrinha() {
+            const canvas = document.getElementById('snakeCanvas');
+            const ctx = canvas.getContext('2d');
+            let tamanhoBloco = canvas.width / gridTotal;
+
+            ctx.fillStyle = nivelSnake >= 7 ? '#1a0505' : '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
+
+            snake.forEach((parte, index) => {
+                ctx.fillStyle = index === 0 ? (nivelSnake >= 7 ? '#f87171' : '#059669') : '#10b981';
+                ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
+            });
         }
     </script>
 </body>
