@@ -304,13 +304,16 @@
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             
-            <div id="snake-status-box" style="background: #059669; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 id="snake-status" style="margin: 0; font-size: 14px;">🐍 Nível 1 | Pontos: 0</h3>
+            <!-- Caixa de Status e Botão Reiniciar no Topo -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #059669; color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;">
+                <h3 id="snake-status" style="margin: 0; font-size: 13px; text-align: left;">🐍 Nível 1 | Pontos: 0</h3>
+                <button onclick="iniciarCobrinha()" style="background-color: #047857; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">🔄 Reiniciar</button>
             </div>
 
             <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 200px; margin: 0 auto 10px auto;">
+            <!-- Controles Direcionais Afastados -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 200px; margin: 0 auto 5px auto;">
                 <div></div>
                 <button class="control-btn" ontouchstart="mudarDirecao('UP'); event.preventDefault();" onclick="mudarDirecao('UP')">⬆️</button>
                 <div></div>
@@ -318,7 +321,6 @@
                 <button class="control-btn" ontouchstart="mudarDirecao('DOWN'); event.preventDefault();" onclick="mudarDirecao('DOWN')">⬇️</button>
                 <button class="control-btn" ontouchstart="mudarDirecao('RIGHT'); event.preventDefault();" onclick="mudarDirecao('RIGHT')">➡️</button>
             </div>
-            <button onclick="iniciarCobrinha()" class="action-btn" style="background-color: #059669; padding: 8px; margin-top: 0;">Reiniciar Cobrinha</button>
         </div>
     </div>
 
@@ -681,7 +683,6 @@
                 caixaRes.style.display = 'block'; caixaRes.style.backgroundColor = corFundo; caixaRes.style.color = corTexto;
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
                 
-                // Atualiza a pontuação imediatamente na tela
                 document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
 
                 if (venceu) {
@@ -702,7 +703,8 @@
             gerarComida();
             direcao = 'RIGHT'; proximaDirecao = 'RIGHT'; pontosSnake = 0; nivelSnake = 1;
             atualizarStatusSnake();
-            snakeInterval = setInterval(loopCobrinha, 120);
+            // Velocidade ajustada para 150ms (mais lento e fluido)
+            snakeInterval = setInterval(loopCobrinha, 150);
         }
         function pararCobrinha() { if (snakeInterval) clearInterval(snakeInterval); }
         function gerarComida() { comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) }; }
@@ -725,6 +727,7 @@
             if (cabeca.y < 0) cabeca.y = gridTotal - 1;
             if (cabeca.y >= gridTotal) cabeca.y = 0;
 
+            // Término do jogo baseado em colisão com o próprio corpo
             if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
                 pararCobrinha(); alert(`💥 Fim de jogo na Cobrinha! Pontos: ${pontosSnake}`); return;
             }
