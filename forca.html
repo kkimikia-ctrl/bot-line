@@ -1,126 +1,780 @@
-<div id="painel-forca" style="max-width: 400px; margin: auto; padding: 20px; font-family: sans-serif; text-align: center;">
-    <h3>🎯 Jogo da Forca</h3>
-    <p id="dica-palavra" style="font-weight: bold; color: #555;"></p>
-    
-    <!-- Desenho simples da forca / status -->
-    <div id="status-forca" style="font-size: 24px; font-weight: bold; margin: 15px; color: #dc3545;">
-        Erros: <span id="contador-erros">0</span> / 6
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entretenimento e Lazer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .header {
+            background-color: #0d47a1;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .card-btn {
+            background: white;
+            border: none;
+            padding: 15px 10px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .card-btn .icon {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .card-btn .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0d47a1;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .card-btn .subtitle {
+            font-size: 11px;
+            color: #666;
+            display: block;
+        }
+        .section-box {
+            background: white;
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .section-box h3 {
+            font-size: 15px;
+            color: #0d47a1;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rule-card {
+            background: #e8f0fe;
+            border-left: 4px solid #1967d2;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #174ea6;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .action-btn {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .action-btn:hover {
+            background-color: #115293;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            width: 92%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .close-btn {
+            background: #d32f2f;
+            color: white;
+            margin-top: 15px;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        .close-btn:hover {
+            background: #9a0007;
+        }
+        .radio-category {
+            font-size: 11px;
+            font-weight: bold;
+            color: #666;
+            text-align: left;
+            margin: 15px 0 5px 0;
+            text-transform: uppercase;
+        }
+        .radio-option {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            color: #0d47a1;
+            text-align: left;
+            text-decoration: none;
+        }
+        .radio-option:hover {
+            background: #e2e8f0;
+        }
+        .radio-option span {
+            font-size: 12px;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Entretenimento e Lazer</h1>
     </div>
 
-    <!-- Palavra oculta com tracinhos -->
-    <div id="palavra-secreta" style="font-size: 32px; letter-spacing: 8px; font-weight: bold; margin: 20px 0;">
-        _ _ _ _ _
+    <div class="container">
+        <!-- Grade Completa com os 8 Botões -->
+        <div class="grid-menu">
+            <button class="card-btn" onclick="abrirSecaoLives()">
+                <span class="icon">🔴</span>
+                <span class="title">Lives</span>
+                <span class="subtitle">Transmissões e Prêmios</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalRadio()">
+                <span class="icon">📻</span>
+                <span class="title">Rádios & Som</span>
+                <span class="subtitle">Todas as Opções</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalKaraoke()">
+                <span class="icon">🎤</span>
+                <span class="title">Karaokê</span>
+                <span class="subtitle">Cante com a Gente</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalOmikuji()">
+                <span class="icon">🔮</span>
+                <span class="title">Horóscopo</span>
+                <span class="subtitle">Omikuji do Dia</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Chat em breve!')">
+                <span class="icon">💬</span>
+                <span class="title">Chat</span>
+                <span class="subtitle">Comunidade Online</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Ranking em breve!')">
+                <span class="icon">🏆</span>
+                <span class="title">Ranking</span>
+                <span class="subtitle">Usuários mais ativos</span>
+            </button>
+
+            <button class="card-btn" onclick="alert('Descontos em breve!')">
+                <span class="icon">🎟️</span>
+                <span class="title">Descontos</span>
+                <span class="subtitle">Cupons em Loja</span>
+            </button>
+
+            <button class="card-btn" onclick="abrirModalJogos()">
+                <span class="icon">🎮</span>
+                <span class="title">Jogos</span>
+                <span class="subtitle">Sorteios e Diversão</span>
+            </button>
+        </div>
+
+        <div class="section-box" id="secaoLives">
+            <h3>🔴 Lives da Comunidade</h3>
+            <div class="rule-card">
+                🎁 <strong>Regra de Presentes:</strong> Os primeiros 300¥ doados vão inteiros para o criador! A partir daí, a divisão justa é de 70% para o criador e 30% para a plataforma.
+            </div>
+            <p style="font-size: 13px; color: #555;">Assista à transmissão ao vivo e apoie os criadores de conteúdo do Japão.</p>
+            <button class="action-btn" onclick="alert('Abrindo transmissão ao vivo...')">Assistir Live Ativa</button>
+        </div>
     </div>
 
-    <!-- Teclado virtual na tela para celular -->
-    <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 350px; margin: 0 auto;">
-        <!-- As letras serão geradas automaticamente pelo script -->
+    <!-- Modal da Rádio -->
+    <div id="modalRadio" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Toque em uma opção para ouvir:</p>
+            
+            <div class="radio-category">📰 Notícias & Informação</div>
+            <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SPAAC.aac', 'CBN São Paulo')">
+                📻 CBN São Paulo <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">🎸 Hits 90s, 2000s & 2010s</div>
+            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio5-bb-mp3', 'Hits 90 / 2000 / 2010')">
+                🎵 Hits 90 / 2000 / 2010 <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">🌍 Pop & Internacional</div>
+            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'Pop & Rock Global')">
+                🎵 Pop & Rock Global <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">⚡ Techno & Eletrônica</div>
+            <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'Techno / Club Beats')">
+                🎧 Techno / Club Beats <span>▶️ Ouvir</span>
+            </div>
+
+            <div class="radio-category">🌙 Relax & Para Dormir</div>
+            <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Lofi & Study Beats')">
+                ☕ Lofi & Study Beats <span>▶️ Ouvir</span>
+            </div>
+            
+            <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
+                <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
+                <audio id="audioRadio" controls style="width: 100%;">
+                    <source src="" id="sourceAudio" type="audio/mpeg">
+                    Seu navegador não suporta áudio.
+                </audio>
+            </div>
+
+            <button class="close-btn" onclick="fecharModalRadio()">Fechar Janela</button>
+        </div>
     </div>
 
-    <br>
-    <button onclick="iniciarForca()" style="padding: 10px 20px; background: #06C755; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px;">Nova Palavra</button>
-</div>
+    <!-- Modal do Omikuji -->
+    <div id="modalOmikuji" class="modal">
+        <div class="modal-content">
+            <h2 id="omikujiTitulo" style="font-size: 18px; color: #0d47a1;">Sorte do Dia</h2>
+            <p id="omikujiTexto" style="line-height: 1.5; font-size: 13px; text-align: justify; margin: 15px 0; color: #333;">Toque no botão abaixo para descobrir a sua mensagem de hoje.</p>
+            
+            <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
+            <br>
+            <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: auto; margin-top: 10px;">Fechar</button>
+        </div>
+    </div>
 
-<script>
-    const listaDePalavras = [
-        { palavra: "PROGRAMACAO", dica: "Tecnologia / Computador" },
-        { palavra: "KARAOKE", dica: "Música / Diversão" },
-        { palavra: "JAPAO", dica: "País asiático" },
-        { palavra: "COMPUTADOR", dica: "Equipamento eletrônico" },
-        { palavra: "FUTEBOL", dica: "Esporte popular" }
-    ];
+    <!-- Modal do Karaokê -->
+    <div id="modalKaraoke" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
+            
+            <div id="listaKaraokeHTML"></div>
 
-    let palavraAtual = "";
-    let dicaAtual = "";
-    let letrasDescobertas = [];
-    let erros = 0;
-    const maxErros = 6;
+            <button class="close-btn" onclick="fecharModalKaraoke()">Fechar Janela</button>
+        </div>
+    </div>
 
-    function iniciarForca() {
-        // Escolhe uma palavra aleatória da lista
-        const sorteio = listaDePalavras[Math.floor(Math.random() * listaDePalavras.length)];
-        palavraAtual = sorteio.palavra;
-        dicaAtual = sorteio.dica;
-        letrasDescobertas = [];
-        erros = 0;
+    <!-- Central de Jogos Atualizada -->
+    <div id="modalJogos" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 style="color: #1e3a8a; margin-top: 0;">🎮 Central de Jogos</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha um jogo para passar o tempo:</p>
+            
+            <!-- Menu com 4 Jogos -->
+            <div id="menu-selecao-jogos" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <button onclick="abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
+                <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
+                <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
+                <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">✌️ Jokenpô</button>
+            </div>
 
-        document.getElementById('dica-palavra').innerText = `Dica: ${dicaAtual}`;
-        document.getElementById('contador-erros').innerText = erros;
-        
-        atualizarTela();
-        criarTeclado();
-    }
+            <!-- Jogo da Velha -->
+            <div id="container-jogo-velha" style="display: none;">
+                <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+                <div style="clear: both;"></div>
+                <h3 style="color: #0d47a1; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
+                <p id="status-jogo" style="font-weight: bold; font-size: 13px;">Vez do jogador: X</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
+                    <button onclick="jogarVelha(0)" id="celula-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(1)" id="celula-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(2)" id="celula-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(3)" id="celula-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(4)" id="celula-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(5)" id="celula-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(6)" id="celula-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(7)" id="celula-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(8)" id="celula-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #007bff; border-radius: 8px; cursor: pointer;"></button>
+                </div>
+                <button onclick="reiniciarVelha()" class="action-btn" style="background-color: #dc3545; padding: 8px; margin-top: 0;">Reiniciar Jogo</button>
+            </div>
 
-    function atualizarTela() {
-        let exibicao = "";
-        let jogoGanho = true;
+            <!-- Jogo da Forca -->
+            <div id="container-jogo-forca" style="display: none;">
+                <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+                <div style="clear: both;"></div>
+                <h3 style="color: #0d47a1; margin: 5px 0;">🎯 Jogo da Forca</h3>
+                <p id="dica-palavra" style="font-weight: bold; color: #555; font-size: 13px;"></p>
+                <div id="status-forca" style="font-size: 16px; font-weight: bold; margin: 5px; color: #dc3545;">Erros: <span id="contador-erros">0</span> / 6</div>
+                <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
+                <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
+                <button onclick="iniciarForca()" class="action-btn" style="background-color: #00796b; padding: 8px; margin-top: 10px;">Nova Palavra</button>
+            </div>
 
-        for (let i = 0; i < palavraAtual.length; i++) {
-            let letra = palavraAtual[i];
-            if (letrasDescobertas.includes(letra)) {
-                exibicao += letra + " ";
+            <!-- Jogo da Memória -->
+            <div id="container-jogo-memoria" style="display: none;">
+                <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+                <div style="clear: both;"></div>
+                <h3 style="color: #0d47a1; margin: 5px 0;">🧠 Jogo da Memória</h3>
+                <p id="status-memoria" style="font-size: 12px; color: #555; margin-bottom: 10px;">Encontre os pares de emojis!</p>
+                <div id="tabuleiro-memoria" style="display: grid; grid-template-columns: repeat(4, 65px); gap: 6px; justify-content: center; margin-bottom: 15px;"></div>
+                <button onclick="iniciarMemoria()" class="action-btn" style="background-color: #7b1fa2; padding: 8px; margin-top: 0;">Embaralhar / Reiniciar</button>
+            </div>
+
+            <!-- Jokenpô (Pedra, Papel e Tesoura) -->
+            <div id="container-jokenpo" style="display: none;">
+                <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+                <div style="clear: both;"></div>
+                <h3 style="color: #0d47a1; margin: 5px 0;">✌️ Pedra, Papel e Tesoura</h3>
+                <p id="resultado-jokenpo" style="font-size: 14px; font-weight: bold; color: #333; margin: 15px 0;">Escolha uma opção abaixo:</p>
+                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                    <button onclick="jogarJokenpo('pedra')" style="font-size: 28px; padding: 12px 18px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✊</button>
+                    <button onclick="jogarJokenpo('papel')" style="font-size: 28px; padding: 12px 18px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✋</button>
+                    <button onclick="jogarJokenpo('tesoura')" style="font-size: 28px; padding: 12px 18px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✌️</button>
+                </div>
+            </div>
+
+            <button class="close-btn" onclick="fecharModalJogos()" style="margin-top: 20px;">Fechar Janela</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirSecaoLives() {
+            const el = document.getElementById('secaoLives');
+            el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function abrirModalRadio() {
+            document.getElementById('modalRadio').style.display = 'flex';
+        }
+
+        function tocarRadio(urlStream, nomeEstilo) {
+            const container = document.getElementById('containerPlayer');
+            const player = document.getElementById('audioRadio');
+            const source = document.getElementById('sourceAudio');
+            const titulo = document.getElementById('nomeRadioTocando');
+
+            container.style.display = 'block';
+            titulo.innerText = "Tocando: " + nomeEstilo;
+            source.src = urlStream;
+            player.load();
+            player.play().catch(error => { console.log("Aguardando play manual"); });
+        }
+
+        function fecharModalRadio() {
+            const player = document.getElementById('audioRadio');
+            player.pause();
+            document.getElementById('containerPlayer').style.display = 'none';
+            document.getElementById('modalRadio').style.display = 'none';
+        }
+
+        function abrirModalOmikuji() {
+            document.getElementById('modalOmikuji').style.display = 'flex';
+            verificarOmikujiDiario();
+        }
+
+        function fecharModalOmikuji() {
+            document.getElementById('modalOmikuji').style.display = 'none';
+        }
+
+        function verificarOmikujiDiario() {
+            const hoje = new Date().toLocaleDateString();
+            const ultimoDiaSorteio = localStorage.getItem('omikuji_data');
+            const tituloEl = document.getElementById('omikujiTitulo');
+            const textoEl = document.getElementById('omikujiTexto');
+            const btnSortear = document.getElementById('btnSortearOmikuji');
+
+            if (ultimoDiaSorteio === hoje) {
+                tituloEl.innerText = localStorage.getItem('omikuji_titulo_salvo');
+                textoEl.innerText = localStorage.getItem('omikuji_texto_salvo');
+                if (btnSortear) btnSortear.style.display = 'none';
             } else {
-                exibicao += "_ ";
-                jogoGanho = false;
+                tituloEl.innerText = "Toque no botão para sua sorte!";
+                textoEl.innerText = "Descubra a mensagem detalhada e inspiradora que o destino reservou para o seu dia hoje.";
+                if (btnSortear) btnSortear.style.display = 'block';
             }
         }
 
-        document.getElementById('palavra-secreta').innerText = exibicao.trim();
+        function sortearOmikuji() {
+            const hoje = new Date().toLocaleDateString();
+            const sorteado = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
+            const tituloFinal = sorteado.titulo;
+            const textoFinal = sorteado.texto + "\n\n⏳ Você já retirou a sua sorte de hoje! Volte amanhã para abrir um novo Omikuji.";
 
-        if (jogoGanho) {
-            document.getElementById('dica-palavra').innerText = "🎉 Parabéns, você venceu!";
-            desativarTeclado();
-        } else if (erros >= maxErros) {
-            document.getElementById('dica-palavra').innerText = `❌ Fim de jogo! A palavra era: ${palavraAtual}`;
-            desativarTeclado();
-        }
-    }
+            localStorage.setItem('omikuji_data', hoje);
+            localStorage.setItem('omikuji_titulo_salvo', tituloFinal);
+            localStorage.setItem('omikuji_texto_salvo', textoFinal);
 
-    function escolherLetra(letra) {
-        if (erros >= maxErros) return;
-
-        if (!letrasDescobertas.includes(letra)) {
-            letrasDescobertas.push(letra);
-
-            if (!palavraAtual.includes(letra)) {
-                erros++;
-                document.getElementById('contador-erros').innerText = erros;
+            document.getElementById('omikujiTitulo').innerText = tituloFinal;
+            document.getElementById('omikujiTexto').innerText = textoFinal;
+            if (document.getElementById('btnSortearOmikuji')) {
+                document.getElementById('btnSortearOmikuji').style.display = 'none';
             }
         }
 
-        let btn = document.getElementById(`btn-${letra}`);
-        if (btn) {
-            btn.disabled = true;
-            btn.style.background = "#ccc";
+        function abrirModalKaraoke() {
+            document.getElementById('modalKaraoke').style.display = 'flex';
+            carregarListaKaraoke();
         }
 
-        atualizarTela();
-    }
-
-    function criarTeclado() {
-        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const container = document.getElementById('teclado-letras');
-        container.innerHTML = "";
-
-        for (let i = 0; i < alfabeto.length; i++) {
-            let letra = alfabeto[i];
-            let botao = document.createElement('button');
-            botao.innerText = letra;
-            botao.id = `btn-${letra}`;
-            botao.onclick = () => escolherLetra(letra);
-            botao.style.cssText = "padding: 10px 0; font-size: 16px; font-weight: bold; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;";
-            container.appendChild(botao);
+        function fecharModalKaraoke() {
+            document.getElementById('modalKaraoke').style.display = 'none';
         }
-    }
 
-    function desativarTeclado() {
-        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for (let i = 0; i < alfabeto.length; i++) {
-            let btn = document.getElementById(`btn-${alfabeto[i]}`);
-            if (btn) btn.disabled = true;
+        function carregarListaKaraoke() {
+            const containerLista = document.getElementById('listaKaraokeHTML');
+            if(containerLista.innerHTML.trim() !== "") return;
+
+            let htmlFinal = "";
+            let categoriaAtual = "";
+
+            if (typeof listaKaraoke !== 'undefined') {
+                listaKaraoke.forEach(musica => {
+                    if (musica.categoria !== categoriaAtual) {
+                        htmlFinal += `<div class="radio-category" style="margin-top: 20px;">🎶 ${musica.categoria}</div>`;
+                        categoriaAtual = musica.categoria;
+                    }
+
+                    htmlFinal += `
+                        <a href="${musica.link}" target="_blank" rel="noopener noreferrer" class="radio-option">
+                            ${musica.titulo} <span>▶️ Cantar</span>
+                        </a>
+                    `;
+                });
+                containerLista.innerHTML = htmlFinal;
+            } else {
+                containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
+            }
         }
-    }
 
-    // Inicia o jogo automaticamente ao carregar
-    iniciarForca();
-</script>
+        // Funções da Central de Jogos
+        function abrirModalJogos() {
+            document.getElementById('modalJogos').style.display = 'flex';
+            voltarMenuJogos();
+        }
+
+        function fecharModalJogos() {
+            document.getElementById('modalJogos').style.display = 'none';
+        }
+
+        function voltarMenuJogos() {
+            document.getElementById('menu-selecao-jogos').style.display = 'grid';
+            document.getElementById('container-jogo-velha').style.display = 'none';
+            document.getElementById('container-jogo-forca').style.display = 'none';
+            document.getElementById('container-jogo-memoria').style.display = 'none';
+            document.getElementById('container-jokenpo').style.display = 'none';
+        }
+
+        function abrirJogoVelha() {
+            document.getElementById('menu-selecao-jogos').style.display = 'none';
+            document.getElementById('container-jogo-velha').style.display = 'block';
+            reiniciarVelha();
+        }
+
+        function abrirJogoForca() {
+            document.getElementById('menu-selecao-jogos').style.display = 'none';
+            document.getElementById('container-jogo-forca').style.display = 'block';
+            iniciarForca();
+        }
+
+        function abrirJogoMemoria() {
+            document.getElementById('menu-selecao-jogos').style.display = 'none';
+            document.getElementById('container-jogo-memoria').style.display = 'block';
+            iniciarMemoria();
+        }
+
+        function abrirJokenpo() {
+            document.getElementById('menu-selecao-jogos').style.display = 'none';
+            document.getElementById('container-jokenpo').style.display = 'block';
+            document.getElementById('resultado-jokenpo').innerText = "Escolha sua jogada:";
+        }
+
+        // Lógica do Jogo da Velha
+        let tabuleiro = ['', '', '', '', '', '', '', '', ''];
+        let jogadorAtual = 'X';
+        let jogoAtivo = true;
+
+        function jogarVelha(posicao) {
+            if (tabuleiro[posicao] === '' && jogoAtivo) {
+                tabuleiro[posicao] = jogadorAtual;
+                document.getElementById(`celula-${posicao}`).innerText = jogadorAtual;
+                
+                verificarVitoriaVelha();
+                
+                if (jogoAtivo) {
+                    jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X';
+                    document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`;
+                }
+            }
+        }
+
+        function verificarVitoriaVelha() {
+            const condicoesVitoria = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            let venceu = false;
+            for (let condicao of condicoesVitoria) {
+                let a = tabuleiro[condicao[0]];
+                let b = tabuleiro[condicao[1]];
+                let c = tabuleiro[condicao[2]];
+
+                if (a === '' || b === '' || c === '') continue;
+                if (a === b && b === c) {
+                    venceu = true;
+                    break;
+                }
+            }
+
+            if (venceu) {
+                document.getElementById('status-jogo').innerText = `🎉 Jogador ${jogadorAtual} Venceu!`;
+                jogoAtivo = false;
+                return;
+            }
+
+            if (!tabuleiro.includes('')) {
+                document.getElementById('status-jogo').innerText = `Empate! Deu velha!`;
+                jogoAtivo = false;
+            }
+        }
+
+        function reiniciarVelha() {
+            tabuleiro = ['', '', '', '', '', '', '', '', ''];
+            jogadorAtual = 'X';
+            jogoAtivo = true;
+            document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`;
+            for (let i = 0; i < 9; i++) {
+                document.getElementById(`celula-${i}`).innerText = '';
+            }
+        }
+
+        // Lógica do Jogo da Forca
+        const listaDePalavrasForca = [
+            { palavra: "PROGRAMACAO", dica: "Tecnologia / Computador" },
+            { palavra: "KARAOKE", dica: "Música / Diversão" },
+            { palavra: "JAPAO", dica: "País asiático" },
+            { palavra: "COMPUTADOR", dica: "Equipamento eletrônico" },
+            { palavra: "FUTEBOL", dica: "Esporte popular" }
+        ];
+
+        let palavraAtual = "";
+        let dicaAtual = "";
+        let letrasDescobertas = [];
+        let errosForca = 0;
+        const maxErros = 6;
+
+        function iniciarForca() {
+            const sorteio = listaDePalavrasForca[Math.floor(Math.random() * listaDePalavrasForca.length)];
+            palavraAtual = sorteio.palavra;
+            dicaAtual = sorteio.dica;
+            letrasDescobertas = [];
+            errosForca = 0;
+
+            document.getElementById('dica-palavra').innerText = `Dica: ${dicaAtual}`;
+            document.getElementById('contador-erros').innerText = errosForca;
+            
+            atualizarTelaForca();
+            criarTecladoForca();
+        }
+
+        function atualizarTelaForca() {
+            let exibicao = "";
+            let jogoGanho = true;
+
+            for (let i = 0; i < palavraAtual.length; i++) {
+                let letra = palavraAtual[i];
+                if (letrasDescobertas.includes(letra)) {
+                    exibicao += letra + " ";
+                } else {
+                    exibicao += "_ ";
+                    jogoGanho = false;
+                }
+            }
+
+            document.getElementById('palavra-secreta').innerText = exibicao.trim();
+
+            if (jogoGanho) {
+                document.getElementById('dica-palavra').innerText = "🎉 Parabéns, você venceu!";
+                desativarTecladoForca();
+            } else if (errosForca >= maxErros) {
+                document.getElementById('dica-palavra').innerText = `❌ Fim de jogo! A palavra era: ${palavraAtual}`;
+                desativarTecladoForca();
+            }
+        }
+
+        function escolherLetraForca(letra) {
+            if (errosForca >= maxErros) return;
+
+            if (!letrasDescobertas.includes(letra)) {
+                letrasDescobertas.push(letra);
+
+                if (!palavraAtual.includes(letra)) {
+                    errosForca++;
+                    document.getElementById('contador-erros').innerText = errosForca;
+                }
+            }
+
+            let btn = document.getElementById(`btn-letra-${letra}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.style.background = "#ccc";
+            }
+
+            atualizarTelaForca();
+        }
+
+        function criarTecladoForca() {
+            const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const container = document.getElementById('teclado-letras');
+            container.innerHTML = "";
+
+            for (let i = 0; i < alfabeto.length; i++) {
+                let letra = alfabeto[i];
+                let botao = document.createElement('button');
+                botao.innerText = letra;
+                botao.id = `btn-letra-${letra}`;
+                botao.onclick = () => escolherLetraForca(letra);
+                botao.style.cssText = "padding: 8px 0; font-size: 14px; font-weight: bold; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;";
+                container.appendChild(botao);
+            }
+        }
+
+        function desativarTecladoForca() {
+            const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for (let i = 0; i < alfabeto.length; i++) {
+                let btn = document.getElementById(`btn-letra-${alfabeto[i]}`);
+                if (btn) btn.disabled = true;
+            }
+        }
+
+        // Lógica do Jogo da Memória
+        let cartas = ['🍎','🍎','🍌','🍌','🍇','🍇','🍉','🍉'];
+        let primeiraCarta = null;
+        let segundaCarta = null;
+        let travado = false;
+
+        function iniciarMemoria() {
+            cartas.sort(() => Math.random() - 0.5);
+            const container = document.getElementById('tabuleiro-memoria');
+            container.innerHTML = "";
+            primeiraCarta = null;
+            segundaCarta = null;
+            travado = false;
+
+            for (let i = 0; i < cartas.length; i++) {
+                let btn = document.createElement('button');
+                btn.style.cssText = "width: 60px; height: 60px; font-size: 24px; background: #0d47a1; color: white; border: none; border-radius: 8px; cursor: pointer;";
+                btn.dataset.emoji = cartas[i];
+                btn.onclick = () => virarCarta(btn);
+                container.appendChild(btn);
+            }
+        }
+
+        function virarCarta(btn) {
+            if (travado || btn.innerText !== "" || btn === primeiraCarta) return;
+            btn.innerText = btn.dataset.emoji;
+            btn.style.background = "white";
+
+            if (!primeiraCarta) {
+                primeiraCarta = btn;
+                return;
+            }
+
+            segundaCarta = btn;
+            travado = true;
+
+            if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
+                primeiraCarta = null;
+                segundaCarta = null;
+                travado = false;
+            } else {
+                setTimeout(() => {
+                    primeiraCarta.innerText = "";
+                    primeiraCarta.style.background = "#0d47a1";
+                    segundaCarta.innerText = "";
+                    segundaCarta.style.background = "#0d47a1";
+                    primeiraCarta = null;
+                    segundaCarta = null;
+                    travado = false;
+                }, 800);
+            }
+        }
+
+        // Lógica do Jokenpô
+        function jogarJokenpo(escolhaUsuario) {
+            const opcoes = ['pedra', 'papel', 'tesoura'];
+            const emojis = { pedra: '✊', papel: '✋', tesoura: '✌️' };
+            const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
+            let resultado = "";
+
+            if (escolhaUsuario === escolhaMaquina) {
+                resultado = `Empate! Os dois escolheram ${emojis[escolhaUsuario]}.`;
+            } else if (
+                (escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') ||
+                (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') ||
+                (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')
+            ) {
+                resultado = `🎉 Você Venceu! Você (${emojis[escolhaUsuario]}) x (${emojis[escolhaMaquina]}) Computador`;
+            } else {
+                resultado = `❌ Você Perdeu! Você (${emojis[escolhaUsuario]}) x (${emojis[escolhaMaquina]}) Computador`;
+            }
+            document.getElementById('resultado-jokenpo').innerText = resultado;
+        }
+    </script>
+    <script src="omikuji-mensagens.js"></script>
+    <script src="karaoke-musicas.js"></script>
+</body>
+</html>
