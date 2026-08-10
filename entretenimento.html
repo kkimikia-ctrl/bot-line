@@ -232,7 +232,6 @@
                 <span class="subtitle">Cupons em Loja</span>
             </button>
 
-            <!-- Botão de Jogos redirecionando para a central separada (forca.html) -->
             <button class="card-btn" onclick="window.location.href='forca.html'">
                 <span class="icon">🎮</span>
                 <span class="title">Jogos</span>
@@ -309,7 +308,15 @@
     <div id="modalKaraoke" class="modal">
         <div class="modal-content">
             <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
+            
+            <!-- Player do Vídeo que aparece quando clica em uma música -->
+            <div id="containerPlayerKaraoke" style="display: none; margin-bottom: 15px;">
+                <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0;">
+                    <iframe id="youtubeKaraokeFrame" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; border: none;" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <p id="instrucaoKaraoke" style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
             
             <div id="listaKaraokeHTML"></div>
 
@@ -318,7 +325,6 @@
     </div>
 
     <script>
-        // Funções Originais da Página
         function abrirSecaoLives() {
             const el = document.getElementById('secaoLives');
             el.scrollIntoView({ behavior: 'smooth' });
@@ -398,7 +404,31 @@
         }
 
         function fecharModalKaraoke() {
+            // Para o vídeo do YouTube quando fechar a janela
+            document.getElementById('youtubeKaraokeFrame').src = "";
+            document.getElementById('containerPlayerKaraoke').style.display = 'none';
             document.getElementById('modalKaraoke').style.display = 'none';
+        }
+
+        // Função para converter links normais do YouTube (ex: youtu.be/ID ou watch?v=ID) para o formato embed correto
+        function converterParaEmbed(url) {
+            let videoId = "";
+            if (url.includes("youtu.be/")) {
+                videoId = url.split("youtu.be/")[1].split("?")[0];
+            } else if (url.includes("watch?v=")) {
+                videoId = url.split("watch?v=")[1].split("&")[0];
+            } else if (url.includes("/embed/")) {
+                return url;
+            }
+            return videoId ? "https://www.youtube.com/embed/" + videoId : url;
+        }
+
+        function tocarMusicaKaraoke(urlOriginal) {
+            const embedUrl = converterParaEmbed(urlOriginal);
+            document.getElementById('youtubeKaraokeFrame').src = embedUrl;
+            document.getElementById('containerPlayerKaraoke').style.display = 'block';
+            // Opcional: rolar a janela para o topo para ver o vídeo tocando
+            document.querySelector('#modalKaraoke .modal-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function carregarListaKaraoke() {
@@ -415,10 +445,11 @@
                         categoriaAtual = musica.categoria;
                     }
 
+                    // Agora chama a função interna em vez de abrir nova aba no Safari
                     htmlFinal += `
-                        <a href="${musica.link}" target="_blank" rel="noopener noreferrer" class="radio-option">
+                        <div class="radio-option" onclick="tocarMusicaKaraoke('${musica.link}')">
                             ${musica.titulo} <span>▶️ Cantar</span>
-                        </a>
+                        </div>
                     `;
                 });
                 containerLista.innerHTML = htmlFinal;
@@ -431,4 +462,3 @@
     <script src="karaoke-musicas.js"></script>
 </body>
 </html>
-
