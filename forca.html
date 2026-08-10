@@ -90,6 +90,19 @@
             font-size: 1.2rem;
             margin-bottom: 2px;
         }
+        .control-btn {
+            background: #e2e8f0;
+            border: none;
+            font-size: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #0047ab;
+        }
+        .control-btn:active {
+            background: #cbd5e1;
+        }
     </style>
 </head>
 <body>
@@ -105,6 +118,7 @@
             <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
             <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
             <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">✌️ Jokenpô</button>
+            <button onclick="abrirJogoCobrinha()" class="action-btn" style="margin-top:0; background-color: #059669; grid-column: span 2;">🐍 Jogo da Cobrinha (Níveis 1 a 6)</button>
         </div>
 
         <!-- Jogo da Velha -->
@@ -157,20 +171,41 @@
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">✌️ Jokenpô</h3>
             
-            <!-- Ponto de interrogação no meio -->
             <div style="margin: 15px auto; width: 70px; height: 70px; line-height: 70px; font-size: 35px; background: #e8f0fe; border: 2px dashed #0047ab; border-radius: 50%;">
                 <span id="computador-escolha">❓</span>
             </div>
 
             <p id="resultado-jokenpo" style="font-size: 14px; font-weight: bold; color: #333; margin: 10px 0;">Escolha sua jogada:</p>
             
-            <!-- 3 opções em baixo -->
             <div id="botoes-jokenpo" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
                 <button onclick="jogarJokenpo('pedra')" id="btn-pedra" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✊</button>
                 <button onclick="jogarJokenpo('papel')" id="btn-papel" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✋</button>
                 <button onclick="jogarJokenpo('tesoura')" id="btn-tesoura" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✌️</button>
             </div>
             <button id="btn-proxima-rodada" onclick="reiniciarJokenpo()" class="action-btn" style="display: none; background-color: #00796b; padding: 8px; margin-top: 10px;">Jogar Novamente</button>
+        </div>
+
+        <!-- Jogo da Cobrinha (Snake com 6 Níveis) -->
+        <div id="container-jogo-cobrinha" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both;"></div>
+            
+            <div style="background: #059669; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
+                <h3 id="snake-status" style="margin: 0; font-size: 15px;">🐍 Nível 1 | Pontos: 0</h3>
+            </div>
+
+            <canvas id="snakeCanvas" width="280" height="280" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 200px; margin: 0 auto 10px auto;">
+                <div></div>
+                <button class="control-btn" onclick="mudarDirecao('UP')">⬆️</button>
+                <div></div>
+                <button class="control-btn" onclick="mudarDirecao('LEFT')">⬅️</button>
+                <button class="control-btn" onclick="mudarDirecao('DOWN')">⬇️</button>
+                <button class="control-btn" onclick="mudarDirecao('RIGHT')">➡️</button>
+            </div>
+
+            <button onclick="iniciarCobrinha()" class="action-btn" style="background-color: #059669; padding: 8px; margin-top: 0;">Reiniciar Cobrinha</button>
         </div>
     </div>
 
@@ -196,17 +231,20 @@
 
     <script>
         function voltarMenuJogos() {
+            pararCobrinha();
             document.getElementById('menu-selecao-jogos').style.display = 'grid';
             document.getElementById('container-jogo-velha').style.display = 'none';
             document.getElementById('container-jogo-forca').style.display = 'none';
             document.getElementById('container-jogo-memoria').style.display = 'none';
             document.getElementById('container-jokenpo').style.display = 'none';
+            document.getElementById('container-jogo-cobrinha').style.display = 'none';
         }
 
         function abrirJogoVelha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; reiniciarVelha(); }
         function abrirJogoForca() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-forca').style.display = 'block'; iniciarForca(); }
         function abrirJogoMemoria() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-memoria').style.display = 'block'; iniciarMemoria(); }
         function abrirJokenpo() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; reiniciarJokenpo(); }
+        function abrirJogoCobrinha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
 
         // Jogo da Velha
         let tabuleiro = ['', '', '', '', '', '', '', '', ''];
@@ -287,16 +325,13 @@
 
         function iniciarMemoria() {
             document.getElementById('texto-nivel-fase').innerText = `Nível ${nivelMemoria} ( ${faseNoNivel} / 3 )`;
-
             let qtdPares = 2 + nivelMemoria; 
             let emojisSelecionados = emojisPool.slice(0, qtdPares);
             cartasMemoria = [...emojisSelecionados, ...emojisSelecionados];
             cartasMemoria.sort(() => Math.random() - 0.5);
 
             paresRestantes = qtdPares;
-            primeiraCarta = null;
-            segundaCarta = null;
-            travadoMemoria = false;
+            primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
 
             let cont = document.getElementById('tabuleiro-memoria');
             let colunas = nivelMemoria <= 3 ? 4 : (nivelMemoria <= 6 ? 5 : 6);
@@ -323,21 +358,13 @@
             if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
                 paresRestantes--;
                 primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
-                
                 if (paresRestantes === 0) {
                     setTimeout(() => {
                         faseNoNivel++;
                         if (faseNoNivel > 3) {
-                            faseNoNivel = 1;
-                            nivelMemoria++;
-                            if (nivelMemoria > 8) {
-                                alert("🏆 Parabéns! Você concluiu todos os 8 níveis do Jogo da Memória!");
-                                nivelMemoria = 1;
-                            } else {
-                                alert(`🎉 Incrível! Você avançou para o Nível ${nivelMemoria}!`);
-                            }
-                        } else {
-                            alert(`✨ Vitória na fase! Indo para o próximo jogo do Nível ${nivelMemoria}.`);
+                            faseNoNivel = 1; nivelMemoria++;
+                            if (nivelMemoria > 8) { alert("🏆 Parabéns! Concluiu todos os níveis!"); nivelMemoria = 1; }
+                            else { alert(`🎉 Avançou para o Nível ${nivelMemoria}!`); }
                         }
                         iniciarMemoria();
                     }, 400);
@@ -351,59 +378,140 @@
             }
         }
 
-        // Jokenpô Animado com Interrogação, Suspense e Cores
+        // Jokenpô
         function reiniciarJokenpo() {
             document.getElementById('computador-escolha').innerText = "❓";
             document.getElementById('resultado-jokenpo').innerText = "Escolha sua jogada:";
             document.getElementById('btn-proxima-rodada').style.display = 'none';
-
             ['pedra', 'papel', 'tesoura'].forEach(op => {
                 let b = document.getElementById(`btn-${op}`);
-                b.disabled = false;
-                b.style.opacity = "1";
-                b.style.borderColor = "#ccc";
-                b.style.background = "white";
+                b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#ccc"; b.style.background = "white";
             });
         }
 
         function jogarJokenpo(escolhaUsuario) {
             const opcoes = ['pedra', 'papel', 'tesoura'];
             const emojis = { pedra: '✊', papel: '✋', tesoura: '✌️' };
-
             opcoes.forEach(op => {
                 let b = document.getElementById(`btn-${op}`);
                 b.disabled = true;
-                if (op !== escolhaUsuario) {
-                    b.style.opacity = "0.2"; 
-                } else {
-                    b.style.borderColor = "#0047ab";
-                    b.style.background = "#e8f0fe";
-                }
+                if (op !== escolhaUsuario) b.style.opacity = "0.2";
+                else { b.style.borderColor = "#0047ab"; b.style.background = "#e8f0fe"; }
             });
-
             document.getElementById('resultado-jokenpo').innerText = "Computador pensando...";
             document.getElementById('computador-escolha').innerText = "❓";
-
             setTimeout(() => {
                 const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
                 document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
-
-                let resultadoTexto = "";
-                if (escolhaUsuario === escolhaMaquina) {
-                    resultadoTexto = `Empate! Ambos escolheram ${emojis[escolhaUsuario]}.`;
-                } else if (
-                    (escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') ||
-                    (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') ||
-                    (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')
-                ) {
-                    resultadoTexto = `🎉 YOU WIN! Você (${emojis[escolhaUsuario]}) venceu o computador (${emojis[escolhaMaquina]}).`;
-                } else {
-                    resultadoTexto = `❌ YOU LOST! O computador (${emojis[escolhaMaquina]}) venceu você (${emojis[escolhaUsuario]}).`;
-                }
-
-                document.getElementById('resultado-jokenpo').innerText = resultadoTexto;
+                let txt = "";
+                if (escolhaUsuario === escolhaMaquina) txt = `Empate!`;
+                else if ((escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') || (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') || (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')) txt = `🎉 YOU WIN!`;
+                else txt = `❌ YOU LOST!`;
+                document.getElementById('resultado-jokenpo').innerText = txt;
                 document.getElementById('btn-proxima-rodada').style.display = 'block';
             }, 2000);
+        }
+
+        // Jogo da Cobrinha com 6 Níveis de Dificuldade
+        let snakeInterval = null;
+        let snake = [];
+        let comida = {};
+        let direcao = 'RIGHT';
+        let proximaDirecao = 'RIGHT';
+        let pontosSnake = 0;
+        let nivelSnake = 1;
+
+        function iniciarCobrinha() {
+            pararCobrinha();
+            snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
+            gerarComida();
+            direcao = 'RIGHT';
+            proximaDirecao = 'RIGHT';
+            pontosSnake = 0;
+            nivelSnake = 1;
+            atualizarStatusSnake();
+            
+            let velocidade = 140;
+            snakeInterval = setInterval(loopCobrinha, velocidade);
+        }
+
+        function pararCobrinha() {
+            if (snakeInterval) clearInterval(snakeInterval);
+        }
+
+        function gerarComida() {
+            comida = { x: Math.floor(Math.random() * 14), y: Math.floor(Math.random() * 14) };
+        }
+
+        function mudarDirecao(novaDir) {
+            if (novaDir === 'UP' && direcao !== 'DOWN') proximaDirecao = 'UP';
+            if (novaDir === 'DOWN' && direcao !== 'UP') proximaDirecao = 'DOWN';
+            if (novaDir === 'LEFT' && direcao !== 'RIGHT') proximaDirecao = 'LEFT';
+            if (novaDir === 'RIGHT' && direcao !== 'LEFT') proximaDirecao = 'RIGHT';
+        }
+
+        function loopCobrinha() {
+            direcao = proximaDirecao;
+            let cabeca = { ...snake[0] };
+
+            if (direcao === 'UP') cabeca.y--;
+            if (direcao === 'DOWN') cabeca.y++;
+            if (direcao === 'LEFT') cabeca.x--;
+            if (direcao === 'RIGHT') cabeca.x++;
+
+            if (cabeca.x < 0 || cabeca.x >= 14 || cabeca.y < 0 || cabeca.y >= 14 || snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
+                pararCobrinha();
+                alert(`💥 Fim de jogo! Você fez ${pontosSnake} pontos no Nível ${nivelSnake}.`);
+                return;
+            }
+
+            snake.unshift(cabeca);
+
+            if (cabeca.x === comida.x && cabeca.y === comida.y) {
+                pontosSnake += 10;
+                gerarComida();
+
+                let novoNivel = Math.min(6, Math.floor(pontosSnake / 50) + 1);
+                if (novoNivel !== nivelSnake) {
+                    nivelSnake = novoNivel;
+                    ajustarVelocidadeNivel();
+                }
+            } else {
+                snake.pop();
+            }
+
+            atualizarStatusSnake();
+            desenharCobrinha();
+        }
+
+        function ajustarVelocidadeNivel() {
+            pararCobrinha();
+            let velocidades = [140, 115, 95, 75, 60, 45];
+            let novaVel = velocidades[nivelSnake - 1];
+            snakeInterval = setInterval(loopCobrinha, novaVel);
+            alert(`🚀 Parabéns! Você avançou para o Nível ${nivelSnake}! A cobrinha ficou mais rápida!`);
+        }
+
+        function atualizarStatusSnake() {
+            document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} (1-6) | Pontos: ${pontosSnake}`;
+        }
+
+        function desenharCobrinha() {
+            const canvas = document.getElementById('snakeCanvas');
+            const ctx = canvas.getContext('2d');
+            let tamanhoBloco = 20;
+
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
+
+            ctx.fillStyle = '#10b981';
+            snake.forEach((parte, index) => {
+                ctx.fillStyle = index === 0 ? '#059669' : '#10b981';
+                ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
+            });
         }
     </script>
 </body>
