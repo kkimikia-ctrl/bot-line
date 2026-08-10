@@ -3,167 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serviços e Anúncios - Ajuda JP</title>
+    <title>Central de Jogos - Ajuda JP</title>
     <style>
-        /* Configurações gerais da página */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
             color: #333;
-            /* Adiciona espaço embaixo para o rodapé fixo não cobrir o conteúdo */
-            padding-bottom: 70px;
+            padding-bottom: 80px;
         }
-
-        /* --- CABEÇALHO COM LOGOS NOS CANTOS --- */
         .app-header {
             background-color: #1a73e8;
             color: white;
-            padding: 10px 15px;
+            padding: 12px 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        .header-logo {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: #ffffff;
-        }
-
         .app-header h1 {
             margin: 0;
             font-size: 1.1rem;
-            font-weight: bold;
             text-align: center;
             flex-grow: 1;
         }
-
-        /* --- CARROSSEL INFINITO AUTOMÁTICO --- */
-        .carousel-container {
-            width: 100%;
-            overflow: hidden;
-            background: #ffffff;
-            padding: 12px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            position: relative;
+        .container {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 0 15px;
         }
-
-        .carousel-track {
-            display: flex;
+        .menu-jogos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            width: max-content;
-            animation: rolarInfinito 25s linear infinite;
-        }
-
-        .carousel-container:hover .carousel-track {
-            animation-play-state: paused;
-        }
-
-        .carousel-track a {
-            display: block;
-            flex-shrink: 0;
-            width: 140px;
-            height: 80px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #ddd;
-        }
-
-        .carousel-track img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        @keyframes rolarInfinito {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(calc(-50% - 6px));
-            }
-        }
-
-        /* --- FILTRO POR REGIÕES --- */
-        .region-filter {
-            display: flex;
-            overflow-x: auto;
-            gap: 8px;
-            padding: 10px 15px;
-            background: #ffffff;
-            white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
-
-        .region-filter::-webkit-scrollbar {
-            display: none;
-        }
-
-        .region-btn {
-            background-color: #e4e6eb;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: #333;
+        .btn-jogo {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #1a73e8;
             cursor: pointer;
-            transition: background 0.2s;
-            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            text-align: center;
         }
-
-        .region-btn.active {
-            background-color: #1a73e8;
-            color: white;
+        .btn-jogo:active {
+            transform: scale(0.97);
+            background: #f0f4f8;
+        }
+        .game-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: none;
+            text-align: center;
+        }
+        .game-card.active {
+            display: block;
+        }
+        .btn-voltar-menu {
+            background: #e4e6eb;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+            color: #333;
             font-weight: bold;
         }
-
-        /* --- FEED VERTICAL DE ANÚNCIOS --- */
-        .feed-container {
-            padding: 0 15px 30px 15px;
-            max-width: 600px;
+        /* Estilos do Jogo da Cobrinha */
+        #snakeCanvas {
+            background: #111;
+            display: block;
             margin: 0 auto;
+            border-radius: 8px;
+            max-width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-
-        .feed-container h2 {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            color: #444;
+        .controles-mobile {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 8px;
+            justify-content: center;
+            margin-top: 15px;
         }
-
-        .feed-banner-card {
-            margin-bottom: 15px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            background: #fff;
-            transition: transform 0.2s;
+        .btn-dir {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
         }
-
-        .feed-banner-card:active {
-            transform: scale(0.98);
-        }
-
-        .feed-banner-card a {
-            display: block;
-        }
-
-        .feed-banner-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-            max-height: 220px;
-            object-fit: cover;
-        }
-
-        /* --- BARRA DE NAVEGAÇÃO INFERIOR FIXA --- */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -177,7 +116,6 @@
             box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
             z-index: 1000;
         }
-
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -186,14 +124,11 @@
             color: #666;
             font-size: 0.75rem;
             flex-grow: 1;
-            transition: color 0.2s;
         }
-
         .nav-item.active {
             color: #1a73e8;
             font-weight: bold;
         }
-
         .nav-item span.icon {
             font-size: 1.2rem;
             margin-bottom: 2px;
@@ -202,71 +137,67 @@
 </head>
 <body>
 
-    <!-- CABEÇALHO COM A SUA LOGO NOS DOIS CANTOS -->
     <header class="app-header">
-        <img src="logo.jpeg" alt="Logo Esquerda" class="header-logo" onerror="this.style.display='none'">
-        <h1>Serviços e Anúncios</h1>
-        <img src="logo.jpeg" alt="Logo Direita" class="header-logo" onerror="this.style.display='none'">
+        <h1>Central de Lazer e Jogos</h1>
     </header>
 
-    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS -->
-    <section class="carousel-container">
-        <div class="carousel-track">
-            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
-
-            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+    <div class="container">
+        <!-- MENU DE ESCOLHA DE JOGOS -->
+        <div id="menuJogos" class="menu-jogos">
+            <button class="btn-jogo" onclick="abrirJogo('velha')">❌ Jogo da Velha</button>
+            <button class="btn-jogo" onclick="abrirJogo('forca')">🔤 Jogo da Forca</button>
+            <button class="btn-jogo" onclick="abrirJogo('memoria')">🧠 Jogo da Memória</button>
+            <button class="btn-jogo" onclick="abrirJogo('jokenpo')">✊ Jokenpô</button>
+            <button class="btn-jogo" onclick="abrirJogo('cobrinha')" style="grid-column: span 2;">🐍 Jogo da Cobrinha</button>
         </div>
-    </section>
 
-    <!-- FILTRO POR REGIÕES DO JAPÃO -->
-    <div class="region-filter">
-        <button class="region-btn active" onclick="filtrarRegiao('todas')">Todas</button>
-        <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai (Aichi/Shizuoka/Gifu)</button>
-        <button class="region-btn" onclick="filtrarRegiao('kanto')">Kanto (Tokyo/Gunma...)</button>
-        <button class="region-btn" onclick="filtrarRegiao('kansai')">Kansai (Osaka/Mie...)</button>
-        <button class="region-btn" onclick="filtrarRegiao('hokkaido-tohoku')">Hokkaido / Tohoku</button>
-        <button class="region-btn" onclick="filtrarRegiao('chugoku-shikoku')">Chugoku / Shikoku</button>
-        <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa')">Kyushu / Okinawa</button>
+        <!-- JOGO DA COBRINHA -->
+        <div id="card-cobrinha" class="game-card">
+            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
+            <h3>Jogo da Cobrinha</h3>
+            <p id="snakeStatus">Nível 1 | Pontos: 0</p>
+            <canvas id="snakeCanvas" width="300" height="300"></canvas>
+            
+            <div class="controles-mobile">
+                <div></div>
+                <button class="btn-dir" onclick="mudarDirecao('UP')">⬆️</button>
+                <div></div>
+                <button class="btn-dir" onclick="mudarDirecao('LEFT')">⬅️</button>
+                <button class="btn-dir" onclick="mudarDirecao('DOWN')">⬇️</button>
+                <button class="btn-dir" onclick="mudarDirecao('RIGHT')">➡️</button>
+            </div>
+        </div>
+
+        <!-- OUTROS JOGOS (EXEMPLO SIMPLIFICADO DE ESTRUTURA) -->
+        <div id="card-velha" class="game-card">
+            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
+            <h3>Jogo da Velha</h3>
+            <p>Em breve / Configurado aqui.</p>
+        </div>
+        <div id="card-forca" class="game-card">
+            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
+            <h3>Jogo da Forca</h3>
+            <p>Em breve / Configurado aqui.</p>
+        </div>
+        <div id="card-memoria" class="game-card">
+            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
+            <h3>Jogo da Memória</h3>
+            <p>Em breve / Configurado aqui.</p>
+        </div>
+        <div id="card-jokenpo" class="game-card">
+            <button class="btn-voltar-menu" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
+            <h3>Jokenpô</h3>
+            <p>Em breve / Configurado aqui.</p>
+        </div>
     </div>
 
-    <!-- CENTRO: FEED VERTICAL DE BANNERS -->
-    <section class="feed-container">
-        <h2>Todos os Serviços</h2>
-
-        <div class="feed-banner-card" data-regiao="tokai">
-            <a href="#" target="_blank"><img src="banner-grande-1.jpg" alt="Anúncio Tokai"></a>
-        </div>
-
-        <div class="feed-banner-card" data-regiao="kanto">
-            <a href="#" target="_blank"><img src="banner-grande-2.jpg" alt="Anúncio Kanto"></a>
-        </div>
-
-        <div class="feed-banner-card" data-regiao="kansai">
-            <a href="#" target="_blank"><img src="banner-grande-3.jpg" alt="Anúncio Kansai"></a>
-        </div>
-
-        <div class="feed-banner-card" data-regiao="kyushu-okinawa">
-            <a href="#" target="_blank"><img src="banner-grande-4.jpg" alt="Anúncio Kyushu"></a>
-        </div>
-    </section>
-
-    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <!-- RODAPÉ -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
             <span class="icon">🏠</span>
             <span>Home</span>
         </a>
-        <a href="servicos.html" class="nav-item active">
+        <a href="servicos.html" class="nav-item">
             <span class="icon">📋</span>
             <span>Serviços</span>
         </a>
@@ -274,25 +205,109 @@
             <span class="icon">👤</span>
             <span>Perfil</span>
         </a>
-        <a href="index.html" class="nav-item" onclick="history.back(); return false;">
+        <a href="index.html" class="nav-item">
             <span class="icon">↩️</span>
             <span>Voltar</span>
         </a>
     </nav>
 
     <script>
-        function filtrarRegiao(regiao) {
-            const clickedBtn = event.currentTarget || event.target;
-            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
-            clickedBtn.classList.add('active');
+        function abrirJogo(nome) {
+            document.getElementById('menuJogos').style.display = 'none';
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('card-' + nome).classList.add('active');
+            if(nome === 'cobrinha') iniciarCobrinha();
+        }
 
-            document.querySelectorAll('.feed-banner-card').forEach(card => {
-                if (regiao === 'todas' || card.getAttribute('data-regiao') === regiao) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+        function voltarMenu() {
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('menuJogos').style.display = 'grid';
+            pararCobrinha();
+        }
+
+        // Lógica simples da Cobrinha com Níveis e Paredes Letais no Nível 7+
+        let snakeInterval;
+        function iniciarCobrinha() {
+            const canvas = document.getElementById('snakeCanvas');
+            const ctx = canvas.getContext('2d');
+            let box = 15;
+            let snake = [{x: 9 * box, y: 9 * box}];
+            let food = {
+                x: Math.floor(Math.random() * 20) * box,
+                y: Math.floor(Math.random() * 20) * box
+            };
+            let score = 0;
+            let d = "RIGHT";
+
+            window.mudarDirecao = function(dir) {
+                if(dir == "UP" && d != "DOWN") d = "UP";
+                if(dir == "DOWN" && d != "UP") d = "DOWN";
+                if(dir == "LEFT" && d != "RIGHT") d = "LEFT";
+                if(dir == "RIGHT" && d != "LEFT") d = "RIGHT";
+            }
+
+            function draw() {
+                ctx.fillStyle = "#111";
+                ctx.fillRect(0, 0, 300, 300);
+
+                for(let i = 0; i < snake.length; i++) {
+                    ctx.fillStyle = (i == 0) ? "#00ffcc" : "#fff";
+                    ctx.fillRect(snake[i].x, snake[i].y, box, box);
                 }
-            });
+
+                ctx.fillStyle = "red";
+                ctx.fillRect(food.x, food.y, box, box);
+
+                let snakeX = snake[0].x;
+                let snakeY = snake[0].y;
+
+                if(d == "UP") snakeX -= box; // ajuste de direção simplificado
+                // Movimento real
+                if(d == "UP") snakeY -= box;
+                if(d == "DOWN") snakeY += box;
+                if(d == "LEFT") snakeX -= box;
+                if(d == "RIGHT") snakeX += box;
+
+                // Nível e verificação de borda (Modo Hardcore nível 7+)
+                let nivel = Math.floor(score / 5) + 1;
+                
+                if(snakeX < 0 || snakeX >= 300 || snakeY < 0 || snakeY >= 300) {
+                    if (nivel >= 7) {
+                        clearInterval(snakeInterval);
+                        alert("Fim de jogo! Você bateu na parede letal.");
+                        voltarMenu();
+                        return;
+                    } else {
+                        // Atravessa a parede nos níveis 1 a 6
+                        if(snakeX < 0) snakeX = 285;
+                        if(snakeX >= 300) snakeX = 0;
+                        if(snakeY < 0) snakeY = 285;
+                        if(snakeY >= 300) snakeY = 0;
+                    }
+                }
+
+                if(snakeX == food.x && snakeY == food.y) {
+                    score++;
+                    food = {
+                        x: Math.floor(Math.random() * 20) * box,
+                        y: Math.floor(Math.random() * 20) * box
+                    };
+                } else {
+                    snake.pop();
+                }
+
+                let newHead = {x: snakeX, y: snakeY};
+                snake.unshift(newHead);
+
+                document.getElementById('snakeStatus').innerText = `Nível ${nivel} | Pontos: ${score}`;
+            }
+
+            clearInterval(snakeInterval);
+            snakeInterval = setInterval(draw, 120);
+        }
+
+        function pararCobrinha() {
+            clearInterval(snakeInterval);
         }
     </script>
 </body>
