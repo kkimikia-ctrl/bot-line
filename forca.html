@@ -214,7 +214,7 @@
             <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha</button>
         </div>
 
-        <!-- Jogo da Velha (Sem pontos, com destaque verde na vitória) -->
+        <!-- Jogo da Velha -->
         <div id="container-jogo-velha" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
@@ -246,7 +246,7 @@
             </div>
         </div>
 
-        <!-- Jogo da Forca (Revela palavra antes da msg) -->
+        <!-- Jogo da Forca -->
         <div id="container-jogo-forca" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
@@ -299,7 +299,7 @@
             <button id="btn-proxima-rodada" onclick="proximaRodadaJokenpo()" class="action-btn" style="display: none; background-color: #009b3a; padding: 8px; margin-top: 8px;">Próxima Fase ➔</button>
         </div>
 
-        <!-- Jogo da Cobrinha (Inicia com 1 quadrado, comandos rápidos, correção de nível/pontos) -->
+        <!-- Jogo da Cobrinha -->
         <div id="container-jogo-cobrinha" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
@@ -374,7 +374,7 @@
         function abrirJokenpo() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; iniciarJokenpo(); }
         function abrirJogoCobrinha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
 
-        /* Jogo da Velha (Sem pontos, destaque verde nos 3 vencedores) */
+        /* Jogo da Velha */
         let modoVelha = 'amigo';
         let nivelVelha = 1;
         const adversariosVelha = ["🤖 Robô Iniciante", "🦾 Robô Ágil", "👾 Ciborgue", "🦊 Raposa Tática", "🐯 Mestre Feline", "🐲 Dragão", "🧙‍♂️ Mago", "👑 Rei dos Bots", "⚡ Super IA", "🌟 Supremo"];
@@ -482,7 +482,7 @@
             }
         }
 
-        /* Jogo da Forca (Completa a palavra visualmente antes da mensagem) */
+        /* Jogo da Forca */
         const niveisForca = [
             {nivel: 1, adv: "🐊 Jacaré", p: "SOL", d: "Brilha no céu"},
             {nivel: 2, adv: "🐺 Lobo", p: "GATO", d: "Animal doméstico"},
@@ -680,6 +680,9 @@
                 let caixaRes = document.getElementById('caixa-resultado-jokenpo');
                 caixaRes.style.display = 'block'; caixaRes.style.backgroundColor = corFundo; caixaRes.style.color = corTexto;
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
+                
+                // Atualiza a pontuação imediatamente na tela
+                document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
 
                 if (venceu) {
                     if (faseAtualJokenpo < 10) { faseAtualJokenpo++; document.getElementById('btn-proxima-rodada').style.display = 'block'; }
@@ -689,13 +692,13 @@
         }
         function proximaRodadaJokenpo() { atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
 
-        /* Jogo da Cobrinha (Começa com 1 quadrado, comandos ágeis, progressão corrigida) */
+        /* Jogo da Cobrinha */
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
         const gridTotal = 16;
 
         function iniciarCobrinha() {
             pararCobrinha();
-            snake = [{x: 8, y: 8}]; // Começa com apenas 1 quadrado
+            snake = [{x: 8, y: 8}];
             gerarComida();
             direcao = 'RIGHT'; proximaDirecao = 'RIGHT'; pontosSnake = 0; nivelSnake = 1;
             atualizarStatusSnake();
@@ -728,7 +731,7 @@
             snake.unshift(cabeca);
             if (cabeca.x === comida.x && cabeca.y === comida.y) {
                 pontosSnake += 10;
-                nivelSnake = Math.floor(pontosSnake / 50) + 1; // Avança de nível corretamente a cada 50 pontos
+                nivelSnake = Math.floor(pontosSnake / 50) + 1;
                 gerarComida();
             } else { snake.pop(); }
             atualizarStatusSnake(); desenharCobrinha();
