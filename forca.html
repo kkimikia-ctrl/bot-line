@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Jogos com Carrossel</title>
+    <title>Central de Jogos - Desafio Global</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -15,7 +15,7 @@
             text-align: center;
         }
 
-        /* Estilos do Carrossel de Banners */
+        /* Estilos do Carrossel de Banners (8 Banners) */
         .carousel-container {
             position: relative;
             max-width: 600px;
@@ -72,11 +72,9 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        .dot.active {
-            background: white;
-        }
+        .dot.active { background: white; }
 
-        /* Demais Estilos */
+        /* Estrutura Geral */
         .header {
             background-color: #0047ab;
             color: white;
@@ -88,14 +86,8 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-        .header h1 {
-            font-size: 18px;
-            margin: 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .header h1 { font-size: 18px; margin: 0; }
+        .container { max-width: 600px; margin: 0 auto; }
         .action-btn {
             background-color: #2563eb;
             color: white;
@@ -108,9 +100,7 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        .action-btn:hover {
-            background-color: #1d4ed8;
-        }
+        .action-btn:hover { background-color: #1d4ed8; }
         .card-game {
             background: white;
             padding: 20px;
@@ -123,6 +113,8 @@
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
+
+        /* Barra de Navegação Inferior */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -145,13 +137,33 @@
             font-size: 0.75rem;
             flex-grow: 1;
         }
-        .nav-item.active {
-            color: #0047ab;
-            font-weight: bold;
+        .nav-item.active { color: #0047ab; font-weight: bold; }
+        .nav-item span.icon { font-size: 1.2rem; margin-bottom: 2px; }
+
+        /* Estilização específica Jokenpô Brasil vs Mundo */
+        .jokenpo-arena {
+            background: linear-gradient(135deg, #009b3a 0%, #002776 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
         }
-        .nav-item span.icon {
-            font-size: 1.2rem;
-            margin-bottom: 2px;
+        .botoes-brasil {
+            background: #fedf00;
+            border: 2px solid #009b3a;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        .btn-jogada-br {
+            font-size: 28px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 2px solid #002776;
+            background: white;
+            cursor: pointer;
         }
         .control-btn {
             background: #e2e8f0;
@@ -163,9 +175,6 @@
             font-weight: bold;
             color: #0047ab;
         }
-        .control-btn:active {
-            background: #cbd5e1;
-        }
     </style>
 </head>
 <body>
@@ -173,7 +182,6 @@
     <!-- CARROSSEL DE BANNERS NO TOPO (8 Banners) -->
     <div class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
-            <!-- Insira os links das suas 8 imagens/banners abaixo -->
             <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/0047ab/ffffff?text=Banner+1" alt="Banner 1"></div>
             <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/00796b/ffffff?text=Banner+2" alt="Banner 2"></div>
             <div class="carousel-slide"><img src="https://via.placeholder.com/600x180/7b1fa2/ffffff?text=Banner+3" alt="Banner 3"></div>
@@ -189,84 +197,103 @@
     </div>
 
     <div class="header">
-        <h1>🎮 Central de Jogos</h1>
+        <h1>🎮 Central de Jogos - Desafio Global</h1>
     </div>
 
     <div class="container">
         <!-- Menu Principal de Jogos -->
         <div id="menu-selecao-jogos" class="card-game menu-jogos" style="display: grid;">
             <button onclick="abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
-            <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
+            <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca (Níveis 1-10)</button>
             <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
-            <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">✌️ Jokenpô</button>
-            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha (Níveis Infinitos)</button>
+            <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">🇧🇷 Jokenpô Brasil vs Mundo</button>
+            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha</button>
         </div>
 
-        <!-- Jogo da Velha -->
+        <!-- Jogo da Velha (Com Amigo ou PC com Níveis e Adversários) -->
         <div id="container-jogo-velha" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
-            <p id="status-jogo" style="font-weight: bold; font-size: 13px;">Vez do jogador: X</p>
-            <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
-                <button onclick="jogarVelha(0)" id="celula-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(1)" id="celula-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(2)" id="celula-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(3)" id="celula-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(4)" id="celula-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(5)" id="celula-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(6)" id="celula-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(7)" id="celula-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(8)" id="celula-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+            
+            <div id="velha-modo-escolha" style="margin: 15px 0;">
+                <p style="font-weight: bold;">Escolha o modo de jogo:</p>
+                <button onclick="iniciarVelhaModo('amigo')" class="action-btn" style="background-color: #00796b; margin-bottom: 8px;">👥 Jogar com Amigo / Namorada</button>
+                <button onclick="iniciarVelhaModo('pc')" class="action-btn" style="background-color: #2563eb;">🤖 Jogar contra PC (Níveis 1-10)</button>
             </div>
-            <button onclick="reiniciarVelha()" class="action-btn" style="background-color: #dc2626; padding: 8px; margin-top: 0;">Reiniciar Jogo</button>
+
+            <div id="velha-area-jogo" style="display: none;">
+                <div id="velha-info-pc" style="background: #2563eb; color: white; padding: 6px; border-radius: 6px; margin-bottom: 8px; display: none;">
+                    <span id="velha-nivel-texto" style="font-size: 13px; font-weight: bold;">Nível 1 | Oponente: 🤖 Robô Iniciante</span>
+                </div>
+                <p id="status-jogo" style="font-weight: bold; font-size: 13px;">Vez do jogador: X</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
+                    <button onclick="jogarVelha(0)" id="celula-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(1)" id="celula-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(2)" id="celula-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(3)" id="celula-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(4)" id="celula-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(5)" id="celula-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(6)" id="celula-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(7)" id="celula-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogarVelha(8)" id="celula-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                </div>
+                <button onclick="reiniciarVelha()" class="action-btn" style="background-color: #dc2626; padding: 8px; margin-top: 0;">Reiniciar Partida</button>
+            </div>
         </div>
 
-        <!-- Jogo da Forca -->
+        <!-- Jogo da Forca com 10 Níveis e Adversários (Animais) -->
         <div id="container-jogo-forca" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
-            <h3 style="color: #0047ab; margin: 5px 0;">🎯 Jogo da Forca</h3>
+            
+            <div style="background: #00796b; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
+                <h3 id="forca-nivel-info" style="margin: 0; font-size: 15px;">🎯 Nível 1 | Adversário: 🐊 Jacaré</h3>
+            </div>
+            
             <p id="dica-palavra" style="font-weight: bold; color: #555; font-size: 13px;"></p>
-            <div id="status-forca" style="font-size: 16px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6</div>
+            <div id="status-forca" style="font-size: 15px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6 | Pontos: <span id="pontos-forca">0</span></div>
             <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
             <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
-            <button onclick="iniciarForca()" class="action-btn" style="background-color: #00796b; padding: 8px; margin-top: 10px;">Nova Palavra</button>
         </div>
 
-        <!-- Jogo da Memória com Níveis (1 a 8) e Progresso (X/3) -->
+        <!-- Jogo da Memória com Níveis e Adversários -->
         <div id="container-jogo-memoria" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             
-            <div style="background: #0047ab; color: white; padding: 8px; border-radius: 8px; margin-bottom: 12px;">
-                <h3 id="texto-nivel-fase" style="margin: 0; font-size: 16px;">Nível 1 ( 1 / 3 )</h3>
+            <div style="background: #7b1fa2; color: white; padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                <h3 id="texto-nivel-memoria" style="margin: 0; font-size: 15px;">🧠 Nível 1 | Desafio da Memória</h3>
             </div>
 
             <div id="tabuleiro-memoria" style="display: grid; gap: 6px; justify-content: center; margin-bottom: 15px;"></div>
         </div>
 
-        <!-- Jokenpô Animado -->
+        <!-- Jokenpô Brasil vs Mundo (Até Rússia e EUA) -->
         <div id="container-jokenpo" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
-            <h3 style="color: #0047ab; margin: 5px 0;">✌️ Jokenpô</h3>
             
-            <div style="margin: 15px auto; width: 70px; height: 70px; line-height: 70px; font-size: 35px; background: #e8f0fe; border: 2px dashed #0047ab; border-radius: 50%;">
+            <div class="jokenpo-arena">
+                <h3 id="adversario-mundial" style="margin: 0 0 5px 0; font-size: 16px;">🇦🇷 Adversário: Argentina</h3>
+                <p style="margin: 0; font-size: 12px;">Fase <span id="fase-jokenpo">1</span> de 10 | Pontos: <span id="pontos-jokenpo">0</span></p>
+            </div>
+            
+            <div style="margin: 10px auto; width: 70px; height: 70px; line-height: 70px; font-size: 35px; background: #e8f0fe; border: 2px dashed #002776; border-radius: 50%;">
                 <span id="computador-escolha">❓</span>
             </div>
 
-            <div id="caixa-resultado-jokenpo" style="display: none; padding: 10px; border-radius: 8px; margin: 10px 0; font-weight: bold; font-size: 15px;">
+            <div id="caixa-resultado-jokenpo" style="display: none; padding: 10px; border-radius: 8px; margin: 10px 0; font-weight: bold; font-size: 14px;">
                 <span id="resultado-jokenpo"></span>
             </div>
-            <p id="instrucao-jokenpo" style="font-size: 14px; font-weight: bold; color: #333; margin: 10px 0;">Escolha sua jogada:</p>
+            <p id="instrucao-jokenpo" style="font-size: 14px; font-weight: bold; color: #333; margin: 10px 0;">🇧🇷 Faça sua escolha (Brasil):</p>
             
-            <div id="botoes-jokenpo" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
-                <button onclick="jogarJokenpo('pedra')" id="btn-pedra" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✊</button>
-                <button onclick="jogarJokenpo('papel')" id="btn-papel" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✋</button>
-                <button onclick="jogarJokenpo('tesoura')" id="btn-tesoura" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✌️</button>
+            <div class="botoes-brasil">
+                <button onclick="jogarJokenpo('pedra')" id="btn-pedra" class="btn-jogada-br">✊</button>
+                <button onclick="jogarJokenpo('papel')" id="btn-papel" class="btn-jogada-br">✋</button>
+                <button onclick="jogarJokenpo('tesoura')" id="btn-tesoura" class="btn-jogada-br">✌️</button>
             </div>
-            <button id="btn-proxima-rodada" onclick="reiniciarJokenpo()" class="action-btn" style="display: none; background-color: #00796b; padding: 8px; margin-top: 10px;">Jogar Novamente</button>
+            <button id="btn-proxima-rodada" onclick="proximaRodadaJokenpo()" class="action-btn" style="display: none; background-color: #009b3a; padding: 8px; margin-top: 10px;">Próxima Fase ➔</button>
         </div>
 
         <!-- Jogo da Cobrinha -->
@@ -275,7 +302,7 @@
             <div style="clear: both;"></div>
             
             <div id="snake-status-box" style="background: #059669; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 id="snake-status" style="margin: 0; font-size: 14px;">🐍 Nível 1 (Paredes Livres) | Pontos: 0</h3>
+                <h3 id="snake-status" style="margin: 0; font-size: 14px;">🐍 Nível 1 | Pontos: 0</h3>
             </div>
 
             <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
@@ -288,39 +315,25 @@
                 <button class="control-btn" onclick="mudarDirecao('DOWN')">⬇️</button>
                 <button class="control-btn" onclick="mudarDirecao('RIGHT')">➡️</button>
             </div>
-
             <button onclick="iniciarCobrinha()" class="action-btn" style="background-color: #059669; padding: 8px; margin-top: 0;">Reiniciar Cobrinha</button>
         </div>
     </div>
 
     <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <span class="icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="servicos.html" class="nav-item">
-            <span class="icon">📋</span>
-            <span>Serviços</span>
-        </a>
-        <a href="entretenimento.html" class="nav-item active">
-            <span class="icon">🎬</span>
-            <span>Lazer</span>
-        </a>
-        <a href="perfil.html" class="nav-item">
-            <span class="icon">👤</span>
-            <span>Perfil</span>
-        </a>
+        <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
+        <a href="servicos.html" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
+        <a href="entretenimento.html" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
+        <a href="perfil.html" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
     </nav>
 
     <script>
-        /* Lógica do Carrossel de Banners */
+        /* Carrossel de Banners */
         let currentSlide = 0;
         const track = document.getElementById('carouselTrack');
         const slides = document.querySelectorAll('.carousel-slide');
         const dotsContainer = document.getElementById('carouselDots');
 
-        // Criar as bolinhas (dots) de navegação automaticamente
         slides.forEach((_, index) => {
             const dot = document.createElement('div');
             dot.classList.add('dot');
@@ -328,33 +341,20 @@
             dot.onclick = () => irParaSlide(index);
             dotsContainer.appendChild(dot);
         });
-
         const dots = document.querySelectorAll('.dot');
 
         function atualizarCarrossel() {
             track.style.transform = `translateX(-${currentSlide * 100}%)`;
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
+            dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
         }
-
         function mudarSlide(direcao) {
             currentSlide = (currentSlide + direcao + slides.length) % slides.length;
             atualizarCarrossel();
         }
+        function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
+        setInterval(() => mudarSlide(1), 4000);
 
-        function irParaSlide(index) {
-            currentSlide = index;
-            atualizarCarrossel();
-        }
-
-        // Passar os slides automaticamente a cada 4 segundos
-        setInterval(() => {
-            mudarSlide(1);
-        }, 4000);
-
-
-        /* Navegação e Jogos */
+        /* Navegação Geral */
         function voltarMenuJogos() {
             pararCobrinha();
             document.getElementById('menu-selecao-jogos').style.display = 'grid';
@@ -365,34 +365,96 @@
             document.getElementById('container-jogo-cobrinha').style.display = 'none';
         }
 
-        function abrirJogoVelha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; reiniciarVelha(); }
+        function abrirJogoVelha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; document.getElementById('velha-modo-escolha').style.display = 'block'; document.getElementById('velha-area-jogo').style.display = 'none'; }
         function abrirJogoForca() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-forca').style.display = 'block'; iniciarForca(); }
         function abrirJogoMemoria() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-memoria').style.display = 'block'; iniciarMemoria(); }
-        function abrirJokenpo() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; reiniciarJokenpo(); }
+        function abrirJokenpo() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; iniciarJokenpo(); }
         function abrirJogoCobrinha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
 
-        /* Jogo da Velha */
+        /* Jogo da Velha (Com Amigo ou PC + Níveis e Adversários) */
+        let modoVelha = 'amigo';
+        let nivelVelha = 1;
+        let pontosVelha = 0;
+        const adversariosVelha = [
+            "🤖 Robô Iniciante", "🦾 Robô Ágil", "👾 Ciborgue", "🦊 Raposa Tática", 
+            "🐯 Mestre Feline", "🐲 Dragão da Velha", "🧙‍♂️ Mago dos Tabuleiros", 
+            "👑 Rei dos Bots", "⚡ Super IA", "🌟 Entidade Suprema"
+        ];
         let tabuleiro = ['', '', '', '', '', '', '', '', ''];
         let jogadorAtual = 'X';
         let jogoAtivo = true;
+
+        function iniciarVelhaModo(modo) {
+            modoVelha = modo;
+            document.getElementById('velha-modo-escolha').style.display = 'none';
+            document.getElementById('velha-area-jogo').style.display = 'block';
+            if (modo === 'pc') {
+                document.getElementById('velha-info-pc').style.display = 'block';
+                nivelVelha = 1; pontosVelha = 0;
+                atualizarNivelVelha();
+            } else {
+                document.getElementById('velha-info-pc').style.display = 'none';
+            }
+            reiniciarVelha();
+        }
+
+        function atualizarNivelVelha() {
+            document.getElementById('velha-nivel-texto').innerText = `Nível ${nivelVelha} | Oponente: ${adversariosVelha[nivelVelha - 1]} | Pontos: ${pontosVelha}`;
+        }
+
         function jogarVelha(pos) {
             if (tabuleiro[pos] === '' && jogoAtivo) {
                 tabuleiro[pos] = jogadorAtual;
                 document.getElementById(`celula-${pos}`).innerText = jogadorAtual;
                 verificarVitoriaVelha();
-                if (jogoAtivo) { jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X'; document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`; }
+                
+                if (jogoAtivo) {
+                    jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X';
+                    document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`;
+                    
+                    if (modoVelha === 'pc' && jogadorAtual === 'O' && jogoAtivo) {
+                        setTimeout(jogadaComputadorVelha, 500);
+                    }
+                }
             }
         }
+
+        function jogadaComputadorVelha() {
+            let vazias = [];
+            tabuleiro.forEach((val, idx) => { if (val === '') vazias.push(idx); });
+            if (vazias.length > 0 && jogoAtivo) {
+                let escolhaPc = vazias[Math.floor(Math.random() * vazias.length)];
+                jogarVelha(escolhaPc);
+            }
+        }
+
         function verificarVitoriaVelha() {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for (let w of wins) {
                 if (tabuleiro[w[0]] && tabuleiro[w[0]] === tabuleiro[w[1]] && tabuleiro[w[0]] === tabuleiro[w[2]]) {
-                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${tabuleiro[w[0]]} Venceu!`;
+                    let vencedor = tabuleiro[w[0]];
+                    if (modoVelha === 'pc') {
+                        if (vencedor === 'X') {
+                            pontosVelha += 50 * nivelVelha;
+                            alert(`🎉 Você venceu ${adversariosVelha[nivelVelha - 1]}! Subindo de nível.`);
+                            nivelVelha++;
+                            if (nivelVelha > 10) {
+                                alert("🏆 Parabéns! Você concluiu todos os níveis do Jogo da Velha contra o PC!");
+                                nivelVelha = 1;
+                            }
+                        } else {
+                            alert(`❌ ${adversariosVelha[nivelVelha - 1]} venceu! Tentando novamente o nível.`);
+                            pontosVelha = Math.max(0, pontosVelha - 20);
+                        }
+                        atualizarNivelVelha();
+                    }
+                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${vencedor} Venceu!`;
                     jogoAtivo = false; return;
                 }
             }
             if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate! Deu velha!`; jogoAtivo = false; }
         }
+
         function reiniciarVelha() {
             tabuleiro = ['', '', '', '', '', '', '', '', ''];
             jogadorAtual = 'X';
@@ -401,36 +463,63 @@
             for (let i = 0; i < 9; i++) document.getElementById(`celula-${i}`).innerText = '';
         }
 
-        /* Jogo da Forca */
-        const listaPalavrasForca = [{p:"PROGRAMACAO", d:"Computador"}, {p:"KARAOKE", d:"Música"}, {p:"JAPAO", d:"País"}];
-        let palavraAtual = "", dicaAtual = "", letrasDescobertas = [], errosForca = 0;
+        /* Jogo da Forca (10 Níveis + Adversários Animais) */
+        const niveisForca = [
+            {nivel: 1, adv: "🐊 Jacaré", p: "SOL", d: "Brilha no céu"},
+            {nivel: 2, adv: "🐺 Lobo", p: "GATO", d: "Animal doméstico"},
+            {nivel: 3, adv: "🐘 Elefante", p: "CARRO", d: "Meio de transporte"},
+            {nivel: 4, adv: "🐅 Tigre", p: "ESCOLA", d: "Lugar de estudar"},
+            {nivel: 5, adv: "🦁 Leão", p: "COMPUTADOR", d: "Máquina de trabalho"},
+            {nivel: 6, adv: "🦍 Gorila", p: "INTERNET", d: "Rede global"},
+            {nivel: 7, adv: "🦅 Águia", p: "TELEFONE", d: "Aparelho de chamada"},
+            {nivel: 8, adv: "🦈 Tubarão", p: "AVIAO", d: "Voa pelos ares"},
+            {nivel: 9, adv: "🐉 Dragão", p: "BRASIL", d: "Nosso país"},
+            {nivel: 10, adv: "👑 Rei Monstro", p: "PROGRAMACAO", d: "Criação de códigos"}
+        ];
+        let indiceForca = 0, letrasDescobertas = [], errosForca = 0, pontosForca = 0;
+
         function iniciarForca() {
-            let s = listaPalavrasForca[Math.floor(Math.random()*listaPalavrasForca.length)];
-            palavraAtual = s.p; dicaAtual = s.d; letrasDescobertas = []; errosForca = 0;
-            document.getElementById('dica-palavra').innerText = `Dica: ${dicaAtual}`;
+            if (indiceForca >= niveisForca.length) indiceForca = 0;
+            let atual = niveisForca[indiceForca];
+            letrasDescobertas = []; errosForca = 0;
+            document.getElementById('forca-nivel-info').innerText = `🎯 Nível ${atual.nivel} | Adversário: ${atual.adv}`;
+            document.getElementById('dica-palavra').innerText = `Dica: ${atual.d}`;
             document.getElementById('contador-erros').innerText = 0;
+            document.getElementById('pontos-forca').innerText = pontosForca;
             atualizarTelaForca(); criarTecladoForca();
         }
+
         function atualizarTelaForca() {
-            let ex = ""; let ganho = true;
-            for (let i = 0; i < palavraAtual.length; i++) {
-                let l = palavraAtual[i];
+            let atual = niveisForca[indiceForca];
+            let ex = "", ganho = true;
+            for (let i = 0; i < atual.p.length; i++) {
+                let l = atual.p[i];
                 if (letrasDescobertas.includes(l)) { ex += l + " "; } else { ex += "_ "; ganho = false; }
             }
             document.getElementById('palavra-secreta').innerText = ex.trim();
-            if (ganho) document.getElementById('dica-palavra').innerText = "🎉 Você Venceu!";
-            else if (errosForca >= 6) document.getElementById('dica-palavra').innerText = `❌ Fim de jogo! Era: ${palavraAtual}`;
+            if (ganho) {
+                pontosForca += (11 - errosForca) * 10 * atual.nivel;
+                alert(`🎉 Vitória contra o ${atual.adv}! Avançando de nível.`);
+                indiceForca++;
+                setTimeout(iniciarForca, 500);
+            } else if (errosForca >= 6) {
+                alert(`❌ Derrotado por ${atual.adv}! Reiniciando forca.`);
+                indiceForca = 0; pontosForca = 0;
+                iniciarForca();
+            }
         }
+
         function escolherLetraForca(l) {
-            if (errosForca >= 6) return;
+            let atual = niveisForca[indiceForca];
             if (!letrasDescobertas.includes(l)) {
                 letrasDescobertas.push(l);
-                if (!palavraAtual.includes(l)) { errosForca++; document.getElementById('contador-erros').innerText = errosForca; }
+                if (!atual.p.includes(l)) { errosForca++; document.getElementById('contador-erros').innerText = errosForca; }
             }
             let btn = document.getElementById(`btn-letra-${l}`);
             if (btn) { btn.disabled = true; btn.style.background = "#ccc"; }
             atualizarTelaForca();
         }
+
         function criarTecladoForca() {
             let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cont = document.getElementById('teclado-letras');
             cont.innerHTML = "";
@@ -443,16 +532,16 @@
             }
         }
 
-        /* Jogo da Memória */
+        /* Jogo da Memória com Níveis e Adversários */
         let nivelMemoria = 1;
-        let faseNoNivel = 1;
         let cartasMemoria = [];
         let primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0;
+        const adversariosMemoria = ["🐰 Coelho", "🦊 Raposa", "🐼 Panda", "🦁 Leão", "🐯 Tigre", "🦅 Águia", "🦈 Tubarão", "🐉 Dragão", "🤖 Robô Mestre", "👑 Rei Supremo"];
         const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🥑','🥥','🍋','🍊','🍐','🍑','🥕','🌽'];
 
         function iniciarMemoria() {
-            document.getElementById('texto-nivel-fase').innerText = `Nível ${nivelMemoria} ( ${faseNoNivel} / 3 )`;
-            let qtdPares = 2 + nivelMemoria; 
+            document.getElementById('texto-nivel-memoria').innerText = `🧠 Nível ${nivelMemoria} | Oponente: ${adversariosMemoria[nivelMemoria - 1]}`;
+            let qtdPares = 1 + nivelMemoria; 
             let emojisSelecionados = emojisPool.slice(0, qtdPares);
             cartasMemoria = [...emojisSelecionados, ...emojisSelecionados];
             cartasMemoria.sort(() => Math.random() - 0.5);
@@ -462,16 +551,16 @@
 
             let cont = document.getElementById('tabuleiro-memoria');
             let colunas = nivelMemoria <= 3 ? 4 : (nivelMemoria <= 6 ? 5 : 6);
-            cont.style.gridTemplateColumns = `repeat(${colunas}, 50px)`;
+            cont.style.gridTemplateColumns = `repeat(${colunas}, 45px)`;
             cont.innerHTML = "";
 
-            for (let i = 0; i < cartasMemoria.length; i++) {
+            cartasMemoria.forEach(emoji => {
                 let btn = document.createElement('button');
-                btn.style.cssText = "width: 48px; height: 48px; font-size: 18px; background: #0047ab; color: white; border: none; border-radius: 6px; cursor: pointer;";
-                btn.dataset.emoji = cartasMemoria[i];
+                btn.style.cssText = "width: 44px; height: 44px; font-size: 16px; background: #7b1fa2; color: white; border: none; border-radius: 6px; cursor: pointer;";
+                btn.dataset.emoji = emoji;
                 btn.onclick = () => virarCartaMemoria(btn);
                 cont.appendChild(btn);
-            }
+            });
         }
 
         function virarCartaMemoria(btn) {
@@ -487,33 +576,60 @@
                 primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
                 if (paresRestantes === 0) {
                     setTimeout(() => {
-                        faseNoNivel++;
-                        if (faseNoNivel > 3) {
-                            faseNoNivel = 1; nivelMemoria++;
-                            if (nivelMemoria > 8) { alert("🏆 Parabéns! Concluiu todos os níveis!"); nivelMemoria = 1; }
-                            else { alert(`🎉 Avançou para o Nível ${nivelMemoria}!`); }
-                        }
+                        nivelMemoria++;
+                        if (nivelMemoria > 10) { alert("🏆 Parabéns! Você concluiu todos os 10 níveis da Memória!"); nivelMemoria = 1; }
+                        else { alert(`🎉 Derrotou ${adversariosMemoria[nivelMemoria-2]}! Avançando para o Nível ${nivelMemoria}!`); }
                         iniciarMemoria();
                     }, 400);
                 }
             } else {
                 setTimeout(() => {
-                    primeiraCarta.innerText = ""; primeiraCarta.style.background = "#0047ab";
-                    segundaCarta.innerText = ""; segundaCarta.style.background = "#0047ab";
+                    primeiraCarta.innerText = ""; primeiraCarta.style.background = "#7b1fa2";
+                    segundaCarta.innerText = ""; segundaCarta.style.background = "#7b1fa2";
                     primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
                 }, 800);
             }
         }
 
-        /* Jokenpô */
-        function reiniciarJokenpo() {
+        /* Jokenpô Brasil vs Mundo (Fluxo Corrigido) */
+        const paisesJokenpo = [
+            {fase: 1, nome: "🇦🇷 Argentina"},
+            {fase: 2, nome: "🇺🇾 Uruguai"},
+            {fase: 3, nome: "🇲🇽 México"},
+            {fase: 4, nome: "🇪🇸 Espanha"},
+            {fase: 5, nome: "🇮🇹 Itália"},
+            {fase: 6, nome: "🇫🇷 França"},
+            {fase: 7, nome: "🇩🇪 Alemanha"},
+            {fase: 8, nome: "🇬🇧 Reino Unido"},
+            {fase: 9, nome: "🇷🇺 Rússia"},
+            {fase: 10, nome: "🇺🇸 Estados Unidos (Super Chefão)"}
+        ];
+        let faseAtualJokenpo = 1;
+        let pontosJokenpo = 0;
+
+        function iniciarJokenpo() {
+            faseAtualJokenpo = 1;
+            pontosJokenpo = 0;
+            atualizarTelaJokenpo();
+            reiniciarRodadaJokenpo();
+        }
+
+        function atualizarTelaJokenpo() {
+            let p = paisesJokenpo[faseAtualJokenpo - 1];
+            document.getElementById('adversario-mundial').innerText = `Adversário: ${p.nome}`;
+            document.getElementById('fase-jokenpo').innerText = faseAtualJokenpo;
+            document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
+        }
+
+        function reiniciarRodadaJokenpo() {
             document.getElementById('computador-escolha').innerText = "❓";
             document.getElementById('caixa-resultado-jokenpo').style.display = 'none';
+            document.getElementById('instrucao-jokenpo').innerText = "🇧🇷 Faça sua escolha (Brasil):";
             document.getElementById('instrucao-jokenpo').style.display = 'block';
             document.getElementById('btn-proxima-rodada').style.display = 'none';
             ['pedra', 'papel', 'tesoura'].forEach(op => {
                 let b = document.getElementById(`btn-${op}`);
-                b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#ccc"; b.style.background = "white";
+                b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#002776"; b.style.background = "white";
             });
         }
 
@@ -524,28 +640,33 @@
                 let b = document.getElementById(`btn-${op}`);
                 b.disabled = true;
                 if (op !== escolhaUsuario) b.style.opacity = "0.2";
-                else { b.style.borderColor = "#0047ab"; b.style.background = "#e8f0fe"; }
+                else { b.style.borderColor = "#fedf00"; b.style.background = "#fffbcc"; }
             });
-            document.getElementById('instrucao-jokenpo').innerText = "Computador pensando...";
+            
+            // Agora a mensagem de aguardando aparece APÓS a escolha do usuário
+            document.getElementById('instrucao-jokenpo').innerText = "O adversário está escolhendo...";
             document.getElementById('computador-escolha').innerText = "❓";
+            
             setTimeout(() => {
                 const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
                 document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
-                let textoRes = "", corFundo = "", corTexto = "";
+                let textoRes = "", corFundo = "", corTexto = "", venceu = false;
 
                 if (escolhaUsuario === escolhaMaquina) {
-                    textoRes = `Empate! Ambos escolheram ${emojis[escolhaUsuario]}.`;
+                    textoRes = `Empate! Jogue novamente contra ${paisesJokenpo[faseAtualJokenpo-1].nome}.`;
                     corFundo = "#e5e7eb"; corTexto = "#374151";
                 } else if (
                     (escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') ||
                     (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') ||
                     (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')
                 ) {
-                    textoRes = `🎉 Você Ganhou! Você (${emojis[escolhaUsuario]}) venceu o computador (${emojis[escolhaMaquina]}).`;
-                    corFundo = "#fef08a"; corTexto = "#854d0e";
+                    venceu = true;
+                    pontosJokenpo += 100 * faseAtualJokenpo;
+                    textoRes = `🎉 Brasil Venceu! Derrotou ${paisesJokenpo[faseAtualJokenpo-1].nome}!`;
+                    corFundo = "#d1fae5"; corTexto = "#065f46";
                 } else {
-                    textoRes = `❌ Você Perdeu! O computador (${emojis[escolhaMaquina]}) venceu você (${emojis[escolhaUsuario]}).`;
-                    corFundo = "#fecaca"; corTexto = "#991b1b";
+                    textoRes = `❌ Brasil Perdeu para ${paisesJokenpo[faseAtualJokenpo-1].nome}! Fim da linha.`;
+                    corFundo = "#fee2e2"; corTexto = "#991b1b";
                 }
 
                 document.getElementById('instrucao-jokenpo').style.display = 'none';
@@ -554,132 +675,77 @@
                 caixaRes.style.backgroundColor = corFundo;
                 caixaRes.style.color = corTexto;
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
-                document.getElementById('btn-proxima-rodada').style.display = 'block';
-            }, 2000);
+
+                if (venceu) {
+                    if (faseAtualJokenpo < 10) {
+                        faseAtualJokenpo++;
+                        document.getElementById('btn-proxima-rodada').style.display = 'block';
+                    } else {
+                        alert("🏆 INCRÍVEL! O Brasil conquistou o mundo e venceu as superpotências Rússia e EUA!");
+                        iniciarJokenpo();
+                    }
+                } else {
+                    setTimeout(() => iniciarJokenpo(), 3000);
+                }
+            }, 1500);
+        }
+
+        function proximaRodadaJokenpo() {
+            atualizarTelaJokenpo();
+            reiniciarRodadaJokenpo();
         }
 
         /* Jogo da Cobrinha */
-        let snakeInterval = null;
-        let snake = [];
-        let comida = {};
-        let direcao = 'RIGHT';
-        let proximaDirecao = 'RIGHT';
-        let pontosSnake = 0;
-        let nivelSnake = 1;
+        let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
         const gridTotal = 16;
 
         function iniciarCobrinha() {
             pararCobrinha();
             snake = [{x: 8, y: 8}, {x: 7, y: 8}, {x: 6, y: 8}];
             gerarComida();
-            direcao = 'RIGHT';
-            proximaDirecao = 'RIGHT';
-            pontosSnake = 0;
-            nivelSnake = 1;
+            direcao = 'RIGHT'; proximaDirecao = 'RIGHT'; pontosSnake = 0; nivelSnake = 1;
             atualizarStatusSnake();
-            
-            let velocidade = 140;
-            snakeInterval = setInterval(loopCobrinha, velocidade);
+            snakeInterval = setInterval(loopCobrinha, 140);
         }
-
-        function pararCobrinha() {
-            if (snakeInterval) clearInterval(snakeInterval);
-        }
-
-        function gerarComida() {
-            comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) };
-        }
-
+        function pararCobrinha() { if (snakeInterval) clearInterval(snakeInterval); }
+        function gerarComida() { comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) }; }
         function mudarDirecao(novaDir) {
             if (novaDir === 'UP' && direcao !== 'DOWN') proximaDirecao = 'UP';
             if (novaDir === 'DOWN' && direcao !== 'UP') proximaDirecao = 'DOWN';
             if (novaDir === 'LEFT' && direcao !== 'RIGHT') proximaDirecao = 'LEFT';
             if (novaDir === 'RIGHT' && direcao !== 'LEFT') proximaDirecao = 'RIGHT';
         }
-
         function loopCobrinha() {
             direcao = proximaDirecao;
             let cabeca = { ...snake[0] };
-
             if (direcao === 'UP') cabeca.y--;
             if (direcao === 'DOWN') cabeca.y++;
             if (direcao === 'LEFT') cabeca.x--;
             if (direcao === 'RIGHT') cabeca.x++;
 
-            let jogoComParedesLetais = nivelSnake >= 7;
-
-            if (cabeca.x < 0 || cabeca.x >= gridTotal || cabeca.y < 0 || cabeca.y >= gridTotal) {
-                if (jogoComParedesLetais) {
-                    pararCobrinha();
-                    alert(`💥 Fim de jogo! Você bateu na parede no Nível ${nivelSnake} (Paredes Letais) com ${pontosSnake} pontos.`);
-                    return;
-                } else {
-                    if (cabeca.x < 0) cabeca.x = gridTotal - 1;
-                    if (cabeca.x >= gridTotal) cabeca.x = 0;
-                    if (cabeca.y < 0) cabeca.y = gridTotal - 1;
-                    if (cabeca.y >= gridTotal) cabeca.y = 0;
-                }
-            }
+            if (cabeca.x < 0) cabeca.x = gridTotal - 1;
+            if (cabeca.x >= gridTotal) cabeca.x = 0;
+            if (cabeca.y < 0) cabeca.y = gridTotal - 1;
+            if (cabeca.y >= gridTotal) cabeca.y = 0;
 
             if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
-                pararCobrinha();
-                alert(`💥 Fim de jogo! Você bateu em si mesmo no Nível ${nivelSnake} com ${pontosSnake} pontos.`);
-                return;
+                pararCobrinha(); alert(`💥 Fim de jogo na Cobrinha! Pontos: ${pontosSnake}`); return;
             }
-
             snake.unshift(cabeca);
-
             if (cabeca.x === comida.x && cabeca.y === comida.y) {
-                pontosSnake += 10;
-                gerarComida();
-
-                let novoNivel = Math.floor(pontosSnake / 50) + 1;
-                if (novoNivel !== nivelSnake) {
-                    nivelSnake = novoNivel;
-                    ajustarVelocidadeNivel();
-                }
-            } else {
-                snake.pop();
-            }
-
-            atualizarStatusSnake();
-            desenharCobrinha();
+                pontosSnake += 10; gerarComida();
+            } else { snake.pop(); }
+            atualizarStatusSnake(); desenharCobrinha();
         }
-
-        function ajustarVelocidadeNivel() {
-            pararCobrinha();
-            let subNivelVel = ((nivelSnake - 1) % 6);
-            let velocidades = [140, 115, 95, 75, 60, 45];
-            let novaVel = velocidades[subNivelVel];
-            
-            snakeInterval = setInterval(loopCobrinha, novaVel);
-
-            if (nivelSnake === 7) {
-                document.getElementById('snake-status-box').style.backgroundColor = '#dc2626';
-                alert(`⚠️ ATENÇÃO! Nível 7 ATIVADO! Modo Hardcore: As paredes agora são LETAIS! Se tocar, MORRE!`);
-            } else {
-                alert(`🚀 Parabéns! Você avançou para o Nível ${nivelSnake}!`);
-            }
-        }
-
-        function atualizarStatusSnake() {
-            let tipoParedes = nivelSnake >= 7 ? "🔥 PAREDES LETAIS" : "🛡️ Paredes Livres";
-            document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} (${tipoParedes}) | Pontos: ${pontosSnake}`;
-        }
-
+        function atualizarStatusSnake() { document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} | Pontos: ${pontosSnake}`; }
         function desenharCobrinha() {
             const canvas = document.getElementById('snakeCanvas');
             const ctx = canvas.getContext('2d');
             let tamanhoBloco = canvas.width / gridTotal;
-
-            ctx.fillStyle = nivelSnake >= 7 ? '#1a0505' : '#111';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
-
+            ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
             snake.forEach((parte, index) => {
-                ctx.fillStyle = index === 0 ? (nivelSnake >= 7 ? '#f87171' : '#059669') : '#10b981';
+                ctx.fillStyle = index === 0 ? '#059669' : '#10b981';
                 ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
             });
         }
