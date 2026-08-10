@@ -3,63 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Jogos</title>
+    <title>Serviços e Anúncios - Ajuda JP</title>
     <style>
+        /* Configurações gerais da página */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
-            padding: 15px;
+            padding: 0;
             color: #333;
-            padding-bottom: 80px;
-            text-align: center;
+            /* Adiciona espaço embaixo para o rodapé fixo não cobrir o conteúdo */
+            padding-bottom: 70px;
         }
-        .header {
-            background-color: #0047ab;
+
+        /* --- CABEÇALHO COM LOGOS NOS CANTOS --- */
+        .app-header {
+            background-color: #1a73e8;
             color: white;
-            padding: 15px 20px;
+            padding: 10px 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #ffffff;
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* --- CARROSSEL INFINITO AUTOMÁTICO --- */
+        .carousel-container {
+            width: 100%;
+            overflow: hidden;
+            background: #ffffff;
+            padding: 12px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            animation: rolarInfinito 25s linear infinite;
+        }
+
+        .carousel-container:hover .carousel-track {
+            animation-play-state: paused;
+        }
+
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 140px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #ddd;
+        }
+
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes rolarInfinito {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-50% - 6px));
+            }
+        }
+
+        /* --- FILTRO POR REGIÕES --- */
+        .region-filter {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #ffffff;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
-        .header h1 {
-            font-size: 18px;
-            margin: 0;
+
+        .region-filter::-webkit-scrollbar {
+            display: none;
         }
-        .container {
+
+        .region-btn {
+            background-color: #e4e6eb;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .region-btn.active {
+            background-color: #1a73e8;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* --- FEED VERTICAL DE ANÚNCIOS --- */
+        .feed-container {
+            padding: 0 15px 30px 15px;
             max-width: 600px;
             margin: 0 auto;
         }
-        .action-btn {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
+
+        .feed-container h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .feed-banner-card {
+            margin-bottom: 15px;
             border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            transition: transform 0.2s;
         }
-        .action-btn:hover {
-            background-color: #1d4ed8;
+
+        .feed-banner-card:active {
+            transform: scale(0.98);
         }
-        .card-game {
-            background: white;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+
+        .feed-banner-card a {
+            display: block;
         }
-        .menu-jogos {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+
+        .feed-banner-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 220px;
+            object-fit: cover;
         }
+
+        /* --- BARRA DE NAVEGAÇÃO INFERIOR FIXA --- */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -71,8 +175,9 @@
             align-items: center;
             height: 60px;
             box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
+            z-index: 1000;
         }
+
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -81,496 +186,114 @@
             color: #666;
             font-size: 0.75rem;
             flex-grow: 1;
+            transition: color 0.2s;
         }
+
         .nav-item.active {
-            color: #0047ab;
+            color: #1a73e8;
             font-weight: bold;
         }
+
         .nav-item span.icon {
             font-size: 1.2rem;
             margin-bottom: 2px;
-        }
-        .control-btn {
-            background: #e2e8f0;
-            border: none;
-            font-size: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #0047ab;
-        }
-        .control-btn:active {
-            background: #cbd5e1;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>🎮 Central de Jogos</h1>
+    <!-- CABEÇALHO COM A SUA LOGO NOS DOIS CANTOS -->
+    <header class="app-header">
+        <img src="logo.jpeg" alt="Logo Esquerda" class="header-logo" onerror="this.style.display='none'">
+        <h1>Serviços e Anúncios</h1>
+        <img src="logo.jpeg" alt="Logo Direita" class="header-logo" onerror="this.style.display='none'">
+    </header>
+
+    <!-- TOPO FIXO: CARROSSEL DE MINI BANNERS -->
+    <section class="carousel-container">
+        <div class="carousel-track">
+            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+
+            <a href="#" target="_blank"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="#" target="_blank"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="#" target="_blank"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="#" target="_blank"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="#" target="_blank"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="#" target="_blank"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+        </div>
+    </section>
+
+    <!-- FILTRO POR REGIÕES DO JAPÃO -->
+    <div class="region-filter">
+        <button class="region-btn active" onclick="filtrarRegiao('todas')">Todas</button>
+        <button class="region-btn" onclick="filtrarRegiao('tokai')">Tokai (Aichi/Shizuoka/Gifu)</button>
+        <button class="region-btn" onclick="filtrarRegiao('kanto')">Kanto (Tokyo/Gunma...)</button>
+        <button class="region-btn" onclick="filtrarRegiao('kansai')">Kansai (Osaka/Mie...)</button>
+        <button class="region-btn" onclick="filtrarRegiao('hokkaido-tohoku')">Hokkaido / Tohoku</button>
+        <button class="region-btn" onclick="filtrarRegiao('chugoku-shikoku')">Chugoku / Shikoku</button>
+        <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa')">Kyushu / Okinawa</button>
     </div>
 
-    <div class="container">
-        <!-- Menu Principal de Jogos -->
-        <div id="menu-selecao-jogos" class="card-game menu-jogos" style="display: grid;">
-            <button onclick="abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
-            <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
-            <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
-            <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">✌️ Jokenpô</button>
-            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha (Níveis Infinitos)</button>
+    <!-- CENTRO: FEED VERTICAL DE BANNERS -->
+    <section class="feed-container">
+        <h2>Todos os Serviços</h2>
+
+        <div class="feed-banner-card" data-regiao="tokai">
+            <a href="#" target="_blank"><img src="banner-grande-1.jpg" alt="Anúncio Tokai"></a>
         </div>
 
-        <!-- Jogo da Velha -->
-        <div id="container-jogo-velha" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <div style="clear: both;"></div>
-            <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
-            <p id="status-jogo" style="font-weight: bold; font-size: 13px;">Vez do jogador: X</p>
-            <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
-                <button onclick="jogarVelha(0)" id="celula-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(1)" id="celula-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(2)" id="celula-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(3)" id="celula-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(4)" id="celula-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(5)" id="celula-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(6)" id="celula-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(7)" id="celula-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                <button onclick="jogarVelha(8)" id="celula-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-            </div>
-            <button onclick="reiniciarVelha()" class="action-btn" style="background-color: #dc2626; padding: 8px; margin-top: 0;">Reiniciar Jogo</button>
+        <div class="feed-banner-card" data-regiao="kanto">
+            <a href="#" target="_blank"><img src="banner-grande-2.jpg" alt="Anúncio Kanto"></a>
         </div>
 
-        <!-- Jogo da Forca -->
-        <div id="container-jogo-forca" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <div style="clear: both;"></div>
-            <h3 style="color: #0047ab; margin: 5px 0;">🎯 Jogo da Forca</h3>
-            <p id="dica-palavra" style="font-weight: bold; color: #555; font-size: 13px;"></p>
-            <div id="status-forca" style="font-size: 16px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6</div>
-            <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
-            <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
-            <button onclick="iniciarForca()" class="action-btn" style="background-color: #00796b; padding: 8px; margin-top: 10px;">Nova Palavra</button>
+        <div class="feed-banner-card" data-regiao="kansai">
+            <a href="#" target="_blank"><img src="banner-grande-3.jpg" alt="Anúncio Kansai"></a>
         </div>
 
-        <!-- Jogo da Memória com Níveis (1 a 8) e Progresso (X/3) -->
-        <div id="container-jogo-memoria" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <div style="clear: both;"></div>
-            
-            <div style="background: #0047ab; color: white; padding: 8px; border-radius: 8px; margin-bottom: 12px;">
-                <h3 id="texto-nivel-fase" style="margin: 0; font-size: 16px;">Nível 1 ( 1 / 3 )</h3>
-            </div>
-
-            <div id="tabuleiro-memoria" style="display: grid; gap: 6px; justify-content: center; margin-bottom: 15px;"></div>
+        <div class="feed-banner-card" data-regiao="kyushu-okinawa">
+            <a href="#" target="_blank"><img src="banner-grande-4.jpg" alt="Anúncio Kyushu"></a>
         </div>
+    </section>
 
-        <!-- Jokenpô Animado com Interrogação, Retângulo Estilizado e Português -->
-        <div id="container-jokenpo" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <div style="clear: both;"></div>
-            <h3 style="color: #0047ab; margin: 5px 0;">✌️ Jokenpô</h3>
-            
-            <div style="margin: 15px auto; width: 70px; height: 70px; line-height: 70px; font-size: 35px; background: #e8f0fe; border: 2px dashed #0047ab; border-radius: 50%;">
-                <span id="computador-escolha">❓</span>
-            </div>
-
-            <!-- Retângulo de Resultado em Destaque -->
-            <div id="caixa-resultado-jokenpo" style="display: none; padding: 10px; border-radius: 8px; margin: 10px 0; font-weight: bold; font-size: 15px;">
-                <span id="resultado-jokenpo"></span>
-            </div>
-            <p id="instrucao-jokenpo" style="font-size: 14px; font-weight: bold; color: #333; margin: 10px 0;">Escolha sua jogada:</p>
-            
-            <div id="botoes-jokenpo" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
-                <button onclick="jogarJokenpo('pedra')" id="btn-pedra" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✊</button>
-                <button onclick="jogarJokenpo('papel')" id="btn-papel" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✋</button>
-                <button onclick="jogarJokenpo('tesoura')" id="btn-tesoura" style="font-size: 26px; padding: 12px 16px; border-radius: 12px; border: 2px solid #ccc; background: white; cursor: pointer;">✌️</button>
-            </div>
-            <button id="btn-proxima-rodada" onclick="reiniciarJokenpo()" class="action-btn" style="display: none; background-color: #00796b; padding: 8px; margin-top: 10px;">Jogar Novamente</button>
-        </div>
-
-        <!-- Jogo da Cobrinha (Snake com ciclo de parede livre e parede letal) -->
-        <div id="container-jogo-cobrinha" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <div style="clear: both;"></div>
-            
-            <div id="snake-status-box" style="background: #059669; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 id="snake-status" style="margin: 0; font-size: 14px;">🐍 Nível 1 (Paredes Livres) | Pontos: 0</h3>
-            </div>
-
-            <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
-
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 220px; margin: 0 auto 10px auto;">
-                <div></div>
-                <button class="control-btn" onclick="mudarDirecao('UP')">⬆️</button>
-                <div></div>
-                <button class="control-btn" onclick="mudarDirecao('LEFT')">⬅️</button>
-                <button class="control-btn" onclick="mudarDirecao('DOWN')">⬇️</button>
-                <button class="control-btn" onclick="mudarDirecao('RIGHT')">➡️</button>
-            </div>
-
-            <button onclick="iniciarCobrinha()" class="action-btn" style="background-color: #059669; padding: 8px; margin-top: 0;">Reiniciar Cobrinha</button>
-        </div>
-    </div>
-
-    <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA -->
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item">
             <span class="icon">🏠</span>
             <span>Home</span>
         </a>
-        <a href="servicos.html" class="nav-item">
+        <a href="servicos.html" class="nav-item active">
             <span class="icon">📋</span>
             <span>Serviços</span>
-        </a>
-        <a href="entretenimento.html" class="nav-item">
-            <span class="icon">🎬</span>
-            <span>Lazer</span>
         </a>
         <a href="perfil.html" class="nav-item">
             <span class="icon">👤</span>
             <span>Perfil</span>
         </a>
+        <a href="index.html" class="nav-item" onclick="history.back(); return false;">
+            <span class="icon">↩️</span>
+            <span>Voltar</span>
+        </a>
     </nav>
 
     <script>
-        function voltarMenuJogos() {
-            pararCobrinha();
-            document.getElementById('menu-selecao-jogos').style.display = 'grid';
-            document.getElementById('container-jogo-velha').style.display = 'none';
-            document.getElementById('container-jogo-forca').style.display = 'none';
-            document.getElementById('container-jogo-memoria').style.display = 'none';
-            document.getElementById('container-jokenpo').style.display = 'none';
-            document.getElementById('container-jogo-cobrinha').style.display = 'none';
-        }
+        function filtrarRegiao(regiao) {
+            const clickedBtn = event.currentTarget || event.target;
+            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+            clickedBtn.classList.add('active');
 
-        function abrirJogoVelha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; reiniciarVelha(); }
-        function abrirJogoForca() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-forca').style.display = 'block'; iniciarForca(); }
-        function abrirJogoMemoria() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-memoria').style.display = 'block'; iniciarMemoria(); }
-        function abrirJokenpo() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; reiniciarJokenpo(); }
-        function abrirJogoCobrinha() { document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
-
-        // Jogo da Velha
-        let tabuleiro = ['', '', '', '', '', '', '', '', ''];
-        let jogadorAtual = 'X';
-        let jogoAtivo = true;
-        function jogarVelha(pos) {
-            if (tabuleiro[pos] === '' && jogoAtivo) {
-                tabuleiro[pos] = jogadorAtual;
-                document.getElementById(`celula-${pos}`).innerText = jogadorAtual;
-                verificarVitoriaVelha();
-                if (jogoAtivo) { jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X'; document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`; }
-            }
-        }
-        function verificarVitoriaVelha() {
-            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for (let w of wins) {
-                if (tabuleiro[w[0]] && tabuleiro[w[0]] === tabuleiro[w[1]] && tabuleiro[w[0]] === tabuleiro[w[2]]) {
-                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${tabuleiro[w[0]]} Venceu!`;
-                    jogoAtivo = false; return;
-                }
-            }
-            if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate! Deu velha!`; jogoAtivo = false; }
-        }
-        function reiniciarVelha() {
-            tabuleiro = ['', '', '', '', '', '', '', '', ''];
-            jogadorAtual = 'X';
-            jogoAtivo = true;
-            document.getElementById('status-jogo').innerText = `Vez do jogador: X`;
-            for (let i = 0; i < 9; i++) document.getElementById(`celula-${i}`).innerText = '';
-        }
-
-        // Jogo da Forca
-        const listaPalavrasForca = [{p:"PROGRAMACAO", d:"Computador"}, {p:"KARAOKE", d:"Música"}, {p:"JAPAO", d:"País"}];
-        let palavraAtual = "", dicaAtual = "", letrasDescobertas = [], errosForca = 0;
-        function iniciarForca() {
-            let s = listaPalavrasForca[Math.floor(Math.random()*listaPalavrasForca.length)];
-            palavraAtual = s.p; dicaAtual = s.d; letrasDescobertas = []; errosForca = 0;
-            document.getElementById('dica-palavra').innerText = `Dica: ${dicaAtual}`;
-            document.getElementById('contador-erros').innerText = 0;
-            atualizarTelaForca(); criarTecladoForca();
-        }
-        function atualizarTelaForca() {
-            let ex = ""; let ganho = true;
-            for (let i = 0; i < palavraAtual.length; i++) {
-                let l = palavraAtual[i];
-                if (letrasDescobertas.includes(l)) { ex += l + " "; } else { ex += "_ "; ganho = false; }
-            }
-            document.getElementById('palavra-secreta').innerText = ex.trim();
-            if (ganho) document.getElementById('dica-palavra').innerText = "🎉 Você Venceu!";
-            else if (errosForca >= 6) document.getElementById('dica-palavra').innerText = `❌ Fim de jogo! Era: ${palavraAtual}`;
-        }
-        function escolherLetraForca(l) {
-            if (errosForca >= 6) return;
-            if (!letrasDescobertas.includes(l)) {
-                letrasDescobertas.push(l);
-                if (!palavraAtual.includes(l)) { errosForca++; document.getElementById('contador-erros').innerText = errosForca; }
-            }
-            let btn = document.getElementById(`btn-letra-${l}`);
-            if (btn) { btn.disabled = true; btn.style.background = "#ccc"; }
-            atualizarTelaForca();
-        }
-        function criarTecladoForca() {
-            let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cont = document.getElementById('teclado-letras');
-            cont.innerHTML = "";
-            for (let i = 0; i < alfabeto.length; i++) {
-                let l = alfabeto[i], btn = document.createElement('button');
-                btn.innerText = l; btn.id = `btn-letra-${l}`;
-                btn.onclick = () => escolherLetraForca(l);
-                btn.style.cssText = "padding: 6px 0; font-size: 13px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
-                cont.appendChild(btn);
-            }
-        }
-
-        // Jogo da Memória com Níveis (1 a 8) e Progressão (X/3)
-        let nivelMemoria = 1;
-        let faseNoNivel = 1;
-        let cartasMemoria = [];
-        let primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0;
-        const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🥑','🥥','🍋','🍊','🍐','🍑','🥕','🌽'];
-
-        function iniciarMemoria() {
-            document.getElementById('texto-nivel-fase').innerText = `Nível ${nivelMemoria} ( ${faseNoNivel} / 3 )`;
-            let qtdPares = 2 + nivelMemoria; 
-            let emojisSelecionados = emojisPool.slice(0, qtdPares);
-            cartasMemoria = [...emojisSelecionados, ...emojisSelecionados];
-            cartasMemoria.sort(() => Math.random() - 0.5);
-
-            paresRestantes = qtdPares;
-            primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
-
-            let cont = document.getElementById('tabuleiro-memoria');
-            let colunas = nivelMemoria <= 3 ? 4 : (nivelMemoria <= 6 ? 5 : 6);
-            cont.style.gridTemplateColumns = `repeat(${colunas}, 50px)`;
-            cont.innerHTML = "";
-
-            for (let i = 0; i < cartasMemoria.length; i++) {
-                let btn = document.createElement('button');
-                btn.style.cssText = "width: 48px; height: 48px; font-size: 18px; background: #0047ab; color: white; border: none; border-radius: 6px; cursor: pointer;";
-                btn.dataset.emoji = cartasMemoria[i];
-                btn.onclick = () => virarCartaMemoria(btn);
-                cont.appendChild(btn);
-            }
-        }
-
-        function virarCartaMemoria(btn) {
-            if (travadoMemoria || btn.innerText !== "" || btn === primeiraCarta) return;
-            btn.innerText = btn.dataset.emoji;
-            btn.style.background = "white";
-
-            if (!primeiraCarta) { primeiraCarta = btn; return; }
-            segundaCarta = btn; travadoMemoria = true;
-
-            if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
-                paresRestantes--;
-                primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
-                if (paresRestantes === 0) {
-                    setTimeout(() => {
-                        faseNoNivel++;
-                        if (faseNoNivel > 3) {
-                            faseNoNivel = 1; nivelMemoria++;
-                            if (nivelMemoria > 8) { alert("🏆 Parabéns! Concluiu todos os níveis!"); nivelMemoria = 1; }
-                            else { alert(`🎉 Avançou para o Nível ${nivelMemoria}!`); }
-                        }
-                        iniciarMemoria();
-                    }, 400);
-                }
-            } else {
-                setTimeout(() => {
-                    primeiraCarta.innerText = ""; primeiraCarta.style.background = "#0047ab";
-                    segundaCarta.innerText = ""; segundaCarta.style.background = "#0047ab";
-                    primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
-                }, 800);
-            }
-        }
-
-        // Jokenpô
-        function reiniciarJokenpo() {
-            document.getElementById('computador-escolha').innerText = "❓";
-            document.getElementById('caixa-resultado-jokenpo').style.display = 'none';
-            document.getElementById('instrucao-jokenpo').style.display = 'block';
-            document.getElementById('btn-proxima-rodada').style.display = 'none';
-            ['pedra', 'papel', 'tesoura'].forEach(op => {
-                let b = document.getElementById(`btn-${op}`);
-                b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#ccc"; b.style.background = "white";
-            });
-        }
-
-        function jogarJokenpo(escolhaUsuario) {
-            const opcoes = ['pedra', 'papel', 'tesoura'];
-            const emojis = { pedra: '✊', papel: '✋', tesoura: '✌️' };
-            opcoes.forEach(op => {
-                let b = document.getElementById(`btn-${op}`);
-                b.disabled = true;
-                if (op !== escolhaUsuario) b.style.opacity = "0.2";
-                else { b.style.borderColor = "#0047ab"; b.style.background = "#e8f0fe"; }
-            });
-            document.getElementById('instrucao-jokenpo').innerText = "Computador pensando...";
-            document.getElementById('computador-escolha').innerText = "❓";
-            setTimeout(() => {
-                const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
-                document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
-                let textoRes = "", corFundo = "", corTexto = "";
-
-                if (escolhaUsuario === escolhaMaquina) {
-                    textoRes = `Empate! Ambos escolheram ${emojis[escolhaUsuario]}.`;
-                    corFundo = "#e5e7eb"; corTexto = "#374151";
-                } else if (
-                    (escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') ||
-                    (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') ||
-                    (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')
-                ) {
-                    textoRes = `🎉 Você Ganhou! Você (${emojis[escolhaUsuario]}) venceu o computador (${emojis[escolhaMaquina]}).`;
-                    corFundo = "#fef08a"; corTexto = "#854d0e";
+            document.querySelectorAll('.feed-banner-card').forEach(card => {
+                if (regiao === 'todas' || card.getAttribute('data-regiao') === regiao) {
+                    card.style.display = 'block';
                 } else {
-                    textoRes = `❌ Você Perdeu! O computador (${emojis[escolhaMaquina]}) venceu você (${emojis[escolhaUsuario]}).`;
-                    corFundo = "#fecaca"; corTexto = "#991b1b";
+                    card.style.display = 'none';
                 }
-
-                document.getElementById('instrucao-jokenpo').style.display = 'none';
-                let caixaRes = document.getElementById('caixa-resultado-jokenpo');
-                caixaRes.style.display = 'block';
-                caixaRes.style.backgroundColor = corFundo;
-                caixaRes.style.color = corTexto;
-                document.getElementById('resultado-jokenpo').innerText = textoRes;
-                document.getElementById('btn-proxima-rodada').style.display = 'block';
-            }, 2000);
-        }
-
-        // Jogo da Cobrinha: Níveis 1 a 6 (Atravessa Paredes), Níveis 7+ (Paredes Letais em loop 1-6 com dificuldade alta)
-        let snakeInterval = null;
-        let snake = [];
-        let comida = {};
-        let direcao = 'RIGHT';
-        let proximaDirecao = 'RIGHT';
-        let pontosSnake = 0;
-        let nivelSnake = 1;
-        const gridTotal = 16;
-
-        function iniciarCobrinha() {
-            pararCobrinha();
-            snake = [{x: 8, y: 8}, {x: 7, y: 8}, {x: 6, y: 8}];
-            gerarComida();
-            direcao = 'RIGHT';
-            proximaDirecao = 'RIGHT';
-            pontosSnake = 0;
-            nivelSnake = 1;
-            atualizarStatusSnake();
-            
-            let velocidade = 140;
-            snakeInterval = setInterval(loopCobrinha, velocidade);
-        }
-
-        function pararCobrinha() {
-            if (snakeInterval) clearInterval(snakeInterval);
-        }
-
-        function gerarComida() {
-            comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) };
-        }
-
-        function mudarDirecao(novaDir) {
-            if (novaDir === 'UP' && direcao !== 'DOWN') proximaDirecao = 'UP';
-            if (novaDir === 'DOWN' && direcao !== 'UP') proximaDirecao = 'DOWN';
-            if (novaDir === 'LEFT' && direcao !== 'RIGHT') proximaDirecao = 'LEFT';
-            if (novaDir === 'RIGHT' && direcao !== 'LEFT') proximaDirecao = 'RIGHT';
-        }
-
-        function loopCobrinha() {
-            direcao = proximaDirecao;
-            let cabeca = { ...snake[0] };
-
-            if (direcao === 'UP') cabeca.y--;
-            if (direcao === 'DOWN') cabeca.y++;
-            if (direcao === 'LEFT') cabeca.x--;
-            if (direcao === 'RIGHT') cabeca.x++;
-
-            // MODO DE PAREDES (Níveis 1 a 6 = Atravessa | Níveis 7+ = Paredes Letais)
-            let jogoComParedesLetais = nivelSnake >= 7;
-
-            if (cabeca.x < 0 || cabeca.x >= gridTotal || cabeca.y < 0 || cabeca.y >= gridTotal) {
-                if (jogoComParedesLetais) {
-                    pararCobrinha();
-                    alert(`💥 Fim de jogo! Você bateu na parede no Nível ${nivelSnake} (Paredes Letais) com ${pontosSnake} pontos.`);
-                    return;
-                } else {
-                    // Atravessar paredes nos níveis 1 a 6
-                    if (cabeca.x < 0) cabeca.x = gridTotal - 1;
-                    if (cabeca.x >= gridTotal) cabeca.x = 0;
-                    if (cabeca.y < 0) cabeca.y = gridTotal - 1;
-                    if (cabeca.y >= gridTotal) cabeca.y = 0;
-                }
-            }
-
-            // Colisão com o próprio corpo
-            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
-                pararCobrinha();
-                alert(`💥 Fim de jogo! Você bateu em si mesmo no Nível ${nivelSnake} com ${pontosSnake} pontos.`);
-                return;
-            }
-
-            snake.unshift(cabeca);
-
-            if (cabeca.x === comida.x && cabeca.y === comida.y) {
-                pontosSnake += 10;
-                gerarComida();
-
-                // Cada 50 pontos sobe de nível (Nível 1, 2, 3, 4, 5, 6 e depois entra no Nível 7 com paredes letais)
-                let novoNivel = Math.floor(pontosSnake / 50) + 1;
-                if (novoNivel !== nivelSnake) {
-                    nivelSnake = novoNivel;
-                    ajustarVelocidadeNivel();
-                }
-            } else {
-                snake.pop();
-            }
-
-            atualizarStatusSnake();
-            desenharCobrinha();
-        }
-
-        function ajustarVelocidadeNivel() {
-            pararCobrinha();
-            // Velocidades para os níveis: loop entre 1 e 6 com velocidades ajustadas, mas se for >= 7 fica ultra rápido com paredes letais!
-            let subNivelVel = ((nivelSnake - 1) % 6);
-            let velocidades = [140, 115, 95, 75, 60, 45];
-            let novaVel = velocidades[subNivelVel];
-            
-            snakeInterval = setInterval(loopCobrinha, novaVel);
-
-            if (nivelSnake === 7) {
-                document.getElementById('snake-status-box').style.backgroundColor = '#dc2626'; // Fica vermelho para avisar o Modo Hardcore
-                alert(`⚠️ ATENÇÃO! Nível 7 ATIVADO! Modo Hardcore: As paredes agora são LETAIS! Se tocar, MORRE!`);
-            } else {
-                alert(`🚀 Parabéns! Você avançou para o Nível ${nivelSnake}!`);
-            }
-        }
-
-        function atualizarStatusSnake() {
-            let tipoParedes = nivelSnake >= 7 ? "🔥 PAREDES LETAIS" : "🛡️ Paredes Livres";
-            document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} (${tipoParedes}) | Pontos: ${pontosSnake}`;
-        }
-
-        function desenharCobrinha() {
-            const canvas = document.getElementById('snakeCanvas');
-            const ctx = canvas.getContext('2d');
-            let tamanhoBloco = canvas.width / gridTotal;
-
-            // Cor de fundo do canvas muda para vermelho escuro leve no modo Hardcore (Nível 7+)
-            ctx.fillStyle = nivelSnake >= 7 ? '#1a0505' : '#111';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Desenhar Comida
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
-
-            // Desenhar Cobrinha
-            snake.forEach((parte, index) => {
-                ctx.fillStyle = index === 0 ? (nivelSnake >= 7 ? '#f87171' : '#059669') : '#10b981';
-                ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
             });
         }
     </script>
 </body>
 </html>
-
