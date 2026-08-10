@@ -118,7 +118,7 @@
             <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
             <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
             <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">✌️ Jokenpô</button>
-            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha (Níveis 1 a 6)</button>
+            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha (Níveis Infinitos)</button>
         </div>
 
         <!-- Jogo da Velha -->
@@ -189,18 +189,18 @@
             <button id="btn-proxima-rodada" onclick="reiniciarJokenpo()" class="action-btn" style="display: none; background-color: #00796b; padding: 8px; margin-top: 10px;">Jogar Novamente</button>
         </div>
 
-        <!-- Jogo da Cobrinha (Snake com 6 Níveis) Corrigido -->
+        <!-- Jogo da Cobrinha (Snake com ciclo de parede livre e parede letal) -->
         <div id="container-jogo-cobrinha" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             
-            <div style="background: #059669; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 id="snake-status" style="margin: 0; font-size: 15px;">🐍 Nível 1 | Pontos: 0</h3>
+            <div id="snake-status-box" style="background: #059669; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
+                <h3 id="snake-status" style="margin: 0; font-size: 14px;">🐍 Nível 1 (Paredes Livres) | Pontos: 0</h3>
             </div>
 
-            <canvas id="snakeCanvas" width="280" height="280" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
+            <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 200px; margin: 0 auto 10px auto;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 220px; margin: 0 auto 10px auto;">
                 <div></div>
                 <button class="control-btn" onclick="mudarDirecao('UP')">⬆️</button>
                 <div></div>
@@ -437,7 +437,7 @@
             }, 2000);
         }
 
-        // Jogo da Cobrinha (Corrigido o posicionamento inicial no centro)
+        // Jogo da Cobrinha: Níveis 1 a 6 (Atravessa Paredes), Níveis 7+ (Paredes Letais em loop 1-6 com dificuldade alta)
         let snakeInterval = null;
         let snake = [];
         let comida = {};
@@ -445,11 +445,11 @@
         let proximaDirecao = 'RIGHT';
         let pontosSnake = 0;
         let nivelSnake = 1;
+        const gridTotal = 16;
 
         function iniciarCobrinha() {
             pararCobrinha();
-            // Posicionada com segurança no centro do grid (x: 7, y: 7)
-            snake = [{x: 7, y: 7}, {x: 6, y: 7}, {x: 5, y: 7}];
+            snake = [{x: 8, y: 8}, {x: 7, y: 8}, {x: 6, y: 8}];
             gerarComida();
             direcao = 'RIGHT';
             proximaDirecao = 'RIGHT';
@@ -466,7 +466,7 @@
         }
 
         function gerarComida() {
-            comida = { x: Math.floor(Math.random() * 14), y: Math.floor(Math.random() * 14) };
+            comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) };
         }
 
         function mudarDirecao(novaDir) {
@@ -485,9 +485,27 @@
             if (direcao === 'LEFT') cabeca.x--;
             if (direcao === 'RIGHT') cabeca.x++;
 
-            if (cabeca.x < 0 || cabeca.x >= 14 || cabeca.y < 0 || cabeca.y >= 14 || snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
+            // MODO DE PAREDES (Níveis 1 a 6 = Atravessa | Níveis 7+ = Paredes Letais)
+            let jogoComParedesLetais = nivelSnake >= 7;
+
+            if (cabeca.x < 0 || cabeca.x >= gridTotal || cabeca.y < 0 || cabeca.y >= gridTotal) {
+                if (jogoComParedesLetais) {
+                    pararCobrinha();
+                    alert(`💥 Fim de jogo! Você bateu na parede no Nível ${nivelSnake} (Paredes Letais) com ${pontosSnake} pontos.`);
+                    return;
+                } else {
+                    // Atravessar paredes nos níveis 1 a 6
+                    if (cabeca.x < 0) cabeca.x = gridTotal - 1;
+                    if (cabeca.x >= gridTotal) cabeca.x = 0;
+                    if (cabeca.y < 0) cabeca.y = gridTotal - 1;
+                    if (cabeca.y >= gridTotal) cabeca.y = 0;
+                }
+            }
+
+            // Colisão com o próprio corpo
+            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
                 pararCobrinha();
-                alert(`💥 Fim de jogo! Você fez ${pontosSnake} pontos no Nível ${nivelSnake}.`);
+                alert(`💥 Fim de jogo! Você bateu em si mesmo no Nível ${nivelSnake} com ${pontosSnake} pontos.`);
                 return;
             }
 
@@ -497,7 +515,8 @@
                 pontosSnake += 10;
                 gerarComida();
 
-                let novoNivel = Math.min(6, Math.floor(pontosSnake / 50) + 1);
+                // Cada 50 pontos sobe de nível (Nível 1, 2, 3, 4, 5, 6 e depois entra no Nível 7 com paredes letais)
+                let novoNivel = Math.floor(pontosSnake / 50) + 1;
                 if (novoNivel !== nivelSnake) {
                     nivelSnake = novoNivel;
                     ajustarVelocidadeNivel();
@@ -512,30 +531,42 @@
 
         function ajustarVelocidadeNivel() {
             pararCobrinha();
+            // Velocidades para os níveis: loop entre 1 e 6 com velocidades ajustadas, mas se for >= 7 fica ultra rápido com paredes letais!
+            let subNivelVel = ((nivelSnake - 1) % 6);
             let velocidades = [140, 115, 95, 75, 60, 45];
-            let novaVel = velocidades[nivelSnake - 1];
+            let novaVel = velocidades[subNivelVel];
+            
             snakeInterval = setInterval(loopCobrinha, novaVel);
-            alert(`🚀 Parabéns! Você avançou para o Nível ${nivelSnake}! A cobrinha ficou mais rápida!`);
+
+            if (nivelSnake === 7) {
+                document.getElementById('snake-status-box').style.backgroundColor = '#dc2626'; // Fica vermelho para avisar o Modo Hardcore
+                alert(`⚠️ ATENÇÃO! Nível 7 ATIVADO! Modo Hardcore: As paredes agora são LETAIS! Se tocar, MORRE!`);
+            } else {
+                alert(`🚀 Parabéns! Você avançou para o Nível ${nivelSnake}!`);
+            }
         }
 
         function atualizarStatusSnake() {
-            document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} (1-6) | Pontos: ${pontosSnake}`;
+            let tipoParedes = nivelSnake >= 7 ? "🔥 PAREDES LETAIS" : "🛡️ Paredes Livres";
+            document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} (${tipoParedes}) | Pontos: ${pontosSnake}`;
         }
 
         function desenharCobrinha() {
             const canvas = document.getElementById('snakeCanvas');
             const ctx = canvas.getContext('2d');
-            let tamanhoBloco = 20;
+            let tamanhoBloco = canvas.width / gridTotal;
 
-            ctx.fillStyle = '#111';
+            // Cor de fundo do canvas muda para vermelho escuro leve no modo Hardcore (Nível 7+)
+            ctx.fillStyle = nivelSnake >= 7 ? '#1a0505' : '#111';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Desenhar Comida
             ctx.fillStyle = '#ef4444';
             ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
 
-            ctx.fillStyle = '#10b981';
+            // Desenhar Cobrinha
             snake.forEach((parte, index) => {
-                ctx.fillStyle = index === 0 ? '#059669' : '#10b981';
+                ctx.fillStyle = index === 0 ? (nivelSnake >= 7 ? '#f87171' : '#059669') : '#10b981';
                 ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
             });
         }
