@@ -246,16 +246,17 @@
             </div>
         </div>
 
-        <!-- Jogo da Forca Atualizado -->
+        <!-- Jogo da Forca com Cronômetro e Pontuação -->
         <div id="container-jogo-forca" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             
-            <div style="background: #00796b; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 id="forca-nivel-info" style="margin: 0; font-size: 14px;">🎯 Jogo da Forca</h3>
+            <div style="background: #00796b; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <h3 id="forca-nivel-info" style="margin: 0; font-size: 13px;">🎯 Jogo da Forca</h3>
+                <span>⏱️ <span id="forca-tempo">30</span>s</span>
             </div>
             
-            <div id="status-forca" style="font-size: 14px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6 | Pontos: <span id="pontos-forca">0</span></div>
+            <div id="status-forca" style="font-size: 13px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6 | Pontos: <span id="pontos-forca">0</span></div>
             <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
             
             <!-- Botão de Dica Opcional -->
@@ -370,6 +371,7 @@
         /* Navegação Geral */
         function voltarMenuJogos() {
             if (intervaloTempoMemoria) clearInterval(intervaloTempoMemoria);
+            if (intervaloTempoForca) clearInterval(intervaloTempoForca);
             pararCobrinha();
             document.getElementById('menu-selecao-jogos').style.display = 'grid';
             document.getElementById('container-jogo-velha').style.display = 'none';
@@ -493,7 +495,7 @@
             }
         }
 
-        /* Jogo da Forca Atualizado com Lista Rica, Embaralhamento e Dica Opcional */
+        /* Jogo da Forca Atualizado com Cronômetro Regressivo, Lista Embaralhada e Dica */
         const bancoPalavrasForca = [
             {p: "COMPUTADOR", d: "Máquina eletrônica para processar dados"},
             {p: "PROGRAMACAO", d: "Ato de criar códigos e softwares"},
@@ -518,13 +520,31 @@
         let listaForcaEmbaralhada = [];
         let indiceForcaAtual = 0;
         let letrasDescobertas = [], errosForca = 0, pontosForca = 0;
+        let tempoRestanteForca = 30, intervaloTempoForca = null;
 
         function iniciarForca() {
-            // Embaralhar as palavras para que nunca venham na mesma ordem
             listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5);
             indiceForcaAtual = 0;
             pontosForca = 0;
             carregarProximaPalavraForca();
+        }
+
+        function iniciarCronometroForca() {
+            if (intervaloTempoForca) clearInterval(intervaloTempoForca);
+            tempoRestanteForca = 30;
+            document.getElementById('forca-tempo').innerText = tempoRestanteForca;
+            
+            intervaloTempoForca = setInterval(() => {
+                tempoRestanteForca--;
+                document.getElementById('forca-tempo').innerText = tempoRestanteForca;
+                if (tempoRestanteForca <= 0) {
+                    clearInterval(intervaloTempoForca);
+                    let atual = listaForcaEmbaralhada[indiceForcaAtual];
+                    alert(`⏰ O tempo esgotou! A palavra era "${atual.p}". Vamos para a próxima.`);
+                    indiceForcaAtual++;
+                    carregarProximaPalavraForca();
+                }
+            }, 1000);
         }
 
         function carregarProximaPalavraForca() {
@@ -541,6 +561,8 @@
             document.getElementById('dica-palavra').style.display = 'none';
             document.getElementById('contador-erros').innerText = 0;
             document.getElementById('pontos-forca').innerText = pontosForca;
+            
+            iniciarCronometroForca();
             atualizarTelaForca(); 
             criarTecladoForca();
         }
@@ -559,16 +581,19 @@
             document.getElementById('palavra-secreta').innerText = ex.trim();
             
             if (ganho) {
-                pontosForca += (7 - errosForca) * 15;
+                if (intervaloTempoForca) clearInterval(intervaloTempoForca);
+                // Pontuação bonifica velocidade (tempo restante) e precisão (erros)
+                pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
                 document.getElementById('pontos-forca').innerText = pontosForca;
                 setTimeout(() => {
-                    alert(`🎉 Acertou a palavra "${atual.p}"! Vamos para a próxima.`);
+                    alert(`🎉 Acertou a palavra "${atual.p}"! Ganhou pontos extras por velocidade.`);
                     indiceForcaAtual++;
                     carregarProximaPalavraForca();
                 }, 200);
             } else if (errosForca >= 6) {
+                if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 setTimeout(() => {
-                    alert(`❌ Errou! A palavra era "${atual.p}". Tentando nova palavra.`);
+                    alert(`❌ Muitos erros! A palavra era "${atual.p}". Tentando nova palavra.`);
                     indiceForcaAtual++;
                     carregarProximaPalavraForca();
                 }, 200);
@@ -587,7 +612,6 @@
             let btn = document.getElementById(`btn-letra-${l}`);
             if (btn) { 
                 btn.disabled = true; 
-                // Mudança de cor da letra selecionada
                 btn.style.background = "#94a3b8"; 
                 btn.style.color = "#f1f5f9";
             }
@@ -677,8 +701,8 @@
                 if (paresRestantes === 0) {
                     setTimeout(() => {
                         nivelMemoria++;
-                        pontosMemoria += 50; // Bônus por concluir o nível
-                        salvarPontuacaoRankingMemoria(true); // Salva automaticamente com qualquer ponto acumulado
+                        pontosMemoria += 50; 
+                        salvarPontuacaoRankingMemoria(true); 
                         alert(`🎉 Nível Concluído! Pontuação atual: ${pontosMemoria} pts. Avançando!`);
                         iniciarMemoria();
                     }, 300);
@@ -715,7 +739,7 @@
             localStorage.setItem('rankingMemoria', JSON.stringify(ranking));
         }
 
-        /* Jokenpô Brasil vs Mundo (Mais equilibrado e gratificante) */
+        /* Jokenpô Brasil vs Mundo */
         const paisesJokenpo = [
             {fase: 1, nome: "🇦🇷 Argentina"}, {fase: 2, nome: "🇺🇾 Uruguai"}, {fase: 3, nome: "🇲🇽 México"},
             {fase: 4, nome: "🇪🇸 Espanha"}, {fase: 5, nome: "🇮🇹 Itália"}, {fase: 6, nome: "🇫🇷 França"},
@@ -756,7 +780,6 @@
             document.getElementById('instrucao-jokenpo').innerText = "O adversário está escolhendo...";
             
             setTimeout(() => {
-                // Inteligência equilibrada: dá um pouco mais de chance de vitória ao jogador
                 const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
                 document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
                 let textoRes = "", corFundo = "", corTexto = "", venceu = false;
@@ -764,7 +787,7 @@
                 if (escolhaUsuario === escolhaMaquina) {
                     textoRes = `Empate! Jogue novamente.`;
                     corFundo = "#e5e7eb"; corTexto = "#374151";
-                    pontosJokenpo += 10; // Pontua mesmo no empate para incentivar
+                    pontosJokenpo += 10;
                 } else if (
                     (escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') ||
                     (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') ||
@@ -774,7 +797,6 @@
                     textoRes = `🎉 Brasil Venceu ${paisesJokenpo[faseAtualJokenpo-1].nome}!`;
                     corFundo = "#d1fae5"; corTexto = "#065f46";
                 } else {
-                    // Ao invés de reiniciar tudo na derrota, agora pontua o que conseguiu e avança ou permite tentar de novo
                     pontosJokenpo = Math.max(0, pontosJokenpo - 20);
                     textoRes = `❌ Brasil Perdeu esta rodada, mas continue tentando!`;
                     corFundo = "#fee2e2"; corTexto = "#991b1b";
@@ -796,7 +818,6 @@
                         iniciarJokenpo(); 
                     }
                 } else { 
-                    // Permite jogar a próxima rodada após perder sem zerar tudo
                     setTimeout(() => reiniciarRodadaJokenpo(), 2000); 
                 }
             }, 1000);
