@@ -357,7 +357,7 @@
     </nav>
 
     <script>
-        /* SISTEMA DE ÁUDIO E MÚSICA DE FUNDO INSTRUMENTAL MELHORADA */
+        /* SISTEMA DE ÁUDIO COM TRILHAS SONORAS DIFERENCIADAS PARA CADA JOGO */
         let audioCtx = null;
         let musicaFundoLoop = null;
 
@@ -384,11 +384,11 @@
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.15);
                 } else if (tipo === 'cobrinha_ponto') {
-                    // Som mais energético, rápido e agudo para a cobrinha
+                    // Som agudo e enérgico ao comer
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(700, audioCtx.currentTime);
-                    osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.05); // Nota Dó mais alta
-                    osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);  // Nota Mi agudo
+                    osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.05);
+                    osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);
                     gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.18);
                 } else if (tipo === 'erro') {
@@ -407,41 +407,87 @@
             } catch (e) { console.log("Áudio aguardando interação."); }
         }
 
-        function tocarMusicaFundo() {
-            if (musicaFundoLoop) return;
-            iniciarAudioContext();
-
-            function tocarNota(freq, tempo, duracao) {
-                try {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + tempo);
-                    gain.gain.setValueAtTime(0.025, audioCtx.currentTime + tempo);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + tempo + duracao);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(audioCtx.currentTime + tempo);
-                    osc.stop(audioCtx.currentTime + tempo + duracao);
-                } catch(e){}
-            }
-
-            // Melodia instrumental de fundo mais rica, variada e harmoniosa
-            musicaFundoLoop = setInterval(() => {
-                tocarNota(329.63, 0.0, 0.4); // Mi
-                tocarNota(392.00, 0.3, 0.4); // Sol
-                tocarNota(493.88, 0.6, 0.4); // Si
-                tocarNota(587.33, 0.9, 0.6); // Ré agudo
-                tocarNota(523.25, 1.5, 0.5); // Dó agudo
-                tocarNota(392.00, 2.0, 0.5); // Sol
-            }, 3000);
-        }
-
         function pararMusicaFundo() {
             if (musicaFundoLoop) {
                 clearInterval(musicaFundoLoop);
                 musicaFundoLoop = null;
             }
+        }
+
+        function tocarNotaHelper(freq, tempo, duracao, tipoOnda = 'sine') {
+            try {
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = tipoOnda;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + tempo);
+                gain.gain.setValueAtTime(0.025, audioCtx.currentTime + tempo);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + tempo + duracao);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + tempo);
+                osc.stop(audioCtx.currentTime + tempo + duracao);
+            } catch(e){}
+        }
+
+        // 1. Trilha do Jogo da Velha (Calma e Estratégica)
+        function tocarMusicaVelha() {
+            pararMusicaFundo();
+            iniciarAudioContext();
+            musicaFundoLoop = setInterval(() => {
+                tocarNotaHelper(261.63, 0.0, 0.5); // Dó
+                tocarNotaHelper(329.63, 0.5, 0.5); // Mi
+                tocarNotaHelper(392.00, 1.0, 0.5); // Sol
+                tocarNotaHelper(523.25, 1.5, 0.8); // Dó agudo
+            }, 2500);
+        }
+
+        // 2. Trilha do Jogo da Forca (Misteriosa e cadenciada)
+        function tocarMusicaForca() {
+            pararMusicaFundo();
+            iniciarAudioContext();
+            musicaFundoLoop = setInterval(() => {
+                tocarNotaHelper(220.00, 0.0, 0.4); // Lá grave
+                tocarNotaHelper(246.94, 0.4, 0.4); // Si
+                tocarNotaHelper(329.63, 0.8, 0.4); // Mi
+                tocarNotaHelper(293.66, 1.2, 0.6); // Ré
+            }, 2200);
+        }
+
+        // 3. Trilha do Jogo da Memória (Suave e lúdica)
+        function tocarMusicaMemoria() {
+            pararMusicaFundo();
+            iniciarAudioContext();
+            musicaFundoLoop = setInterval(() => {
+                tocarNotaHelper(440.00, 0.0, 0.3); // Lá
+                tocarNotaHelper(554.37, 0.3, 0.3); // Dó#
+                tocarNotaHelper(659.25, 0.6, 0.3); // Mi
+                tocarNotaHelper(830.61, 0.9, 0.5); // Lá agudo
+            }, 2000);
+        }
+
+        // 4. Trilha do Jokenpô Brasil (Ritmo alegre e vibrante)
+        function tocarMusicaJokenpo() {
+            pararMusicaFundo();
+            iniciarAudioContext();
+            musicaFundoLoop = setInterval(() => {
+                tocarNotaHelper(349.23, 0.0, 0.25); // Fá
+                tocarNotaHelper(440.00, 0.25, 0.25); // Lá
+                tocarNotaHelper(523.25, 0.5, 0.25);  // Dó
+                tocarNotaHelper(698.46, 0.75, 0.4); // Fá agudo
+            }, 1800);
+        }
+
+        // 5. Trilha do Jogo da Cobrinha (SUPER RÁPIDA E ENERGÉTICA ⚡)
+        function tocarMusicaCobrinha() {
+            pararMusicaFundo();
+            iniciarAudioContext();
+            musicaFundoLoop = setInterval(() => {
+                tocarNotaHelper(587.33, 0.0, 0.12, 'square'); // Ré rápido
+                tocarNotaHelper(659.25, 0.12, 0.12, 'square'); // Mi rápido
+                tocarNotaHelper(880.00, 0.24, 0.12, 'square'); // Lá rápido
+                tocarNotaHelper(1046.50, 0.36, 0.2, 'square'); // Dó agudo forte
+            }, 750); // Ciclo ultra rápido de 0.75 segundo!
         }
 
         /* Carrossel */
@@ -496,7 +542,7 @@
             corpoTabela.innerHTML = html;
         }
 
-        /* Navegação e Jogos com Som de Fundo Ativado */
+        /* Navegação e Jogos com Melodias Exclusivas */
         function voltarMenuJogos() {
             pararMusicaFundo();
             if (typeof intervaloTempoMemoria !== 'undefined' && intervaloTempoMemoria) clearInterval(intervaloTempoMemoria);
@@ -510,11 +556,11 @@
             document.getElementById('container-jogo-cobrinha').style.display = 'none';
         }
 
-        function abrirJogoVelha() { tocarMusicaFundo(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; document.getElementById('velha-modo-escolha').style.display = 'block'; document.getElementById('velha-area-jogo').style.display = 'none'; }
-        function abrirJogoForca() { tocarMusicaFundo(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-forca').style.display = 'block'; iniciarForca(); }
-        function abrirJogoMemoria() { tocarMusicaFundo(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-memoria').style.display = 'block'; abrirJogoMemoriaExec(); }
-        function abrirJokenpo() { tocarMusicaFundo(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; iniciarJokenpo(); }
-        function abrirJogoCobrinha() { tocarMusicaFundo(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
+        function abrirJogoVelha() { tocarMusicaVelha(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; document.getElementById('velha-modo-escolha').style.display = 'block'; document.getElementById('velha-area-jogo').style.display = 'none'; }
+        function abrirJogoForca() { tocarMusicaForca(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-forca').style.display = 'block'; iniciarForca(); }
+        function abrirJogoMemoria() { tocarMusicaMemoria(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-memoria').style.display = 'block'; abrirJogoMemoriaExec(); }
+        function abrirJokenpo() { tocarMusicaJokenpo(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; iniciarJokenpo(); }
+        function abrirJogoCobrinha() { tocarMusicaCobrinha(); document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
 
         /* Jogo da Velha */
         let modoVelha = 'amigo', nivelVelha = 1;
@@ -781,7 +827,7 @@
                 pontosSnake += 10; 
                 nivelSnake = Math.floor(pontosSnake / 50) + 1; 
                 gerarComida(); 
-                tocarSom('cobrinha_ponto'); // Som energético exclusivo ao comer na cobrinha!
+                tocarSom('cobrinha_ponto'); // Som rápido e energético ao comer
             } else { 
                 snake.pop(); 
             }
@@ -797,7 +843,7 @@
     </script>
 
     <!-- Botão para forçar a ativação do som -->
-    <button onclick="iniciarAudioContext(); tocarMusicaFundo();" style="position:fixed; top:70px; right:10px; z-index:9999; padding:10px 15px; background:red; color:white; border:none; border-radius:50px; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+    <button onclick="iniciarAudioContext(); tocarMusicaVelha();" style="position:fixed; top:70px; right:10px; z-index:9999; padding:10px 15px; background:red; color:white; border:none; border-radius:50px; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
         🔊 Ativar Som
     </button>
 
