@@ -357,7 +357,7 @@
     </nav>
 
     <script>
-        /* SISTEMA DE ÁUDIO COM MELODIAS E TIMBRES EXCLUSIVOS POR JOGO */
+        /* SISTEMA DE ÁUDIO COM MELODIAS E TIMBRES EXCLUSIVOS POR JOGO (VOLUME REDUZIDO) */
         let audioCtx = null;
         let musicaFundoLoop = null;
 
@@ -378,29 +378,30 @@
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 
+                // Volume global consideravelmente mais baixo (suave)
                 if (tipo === 'acerto') {
                     osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
                     osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.15);
                 } else if (tipo === 'cobrinha_ponto') {
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(700, audioCtx.currentTime);
                     osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.05);
                     osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.18);
                 } else if (tipo === 'erro') {
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                     osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.025, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.25);
                 } else if (tipo === 'vitoria') {
                     osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
                     osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
                     osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.35);
                 }
             } catch (e) { console.log("Áudio aguardando interação."); }
@@ -413,7 +414,7 @@
             }
         }
 
-        // Toca uma nota específica com tipo de onda configurável (sine, square, triangle, sawtooth)
+        // Toca uma nota específica com volume reduzido
         function tocarNotaMelodia(freq, offsetTempo, duracao, tipoOnda = 'sine') {
             try {
                 if (!audioCtx) return;
@@ -421,7 +422,7 @@
                 const gain = audioCtx.createGain();
                 osc.type = tipoOnda;
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime + offsetTempo);
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime + offsetTempo);
+                gain.gain.setValueAtTime(0.01, audioCtx.currentTime + offsetTempo); // Volume suave de fundo
                 gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + offsetTempo + duracao);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -430,65 +431,60 @@
             } catch(e){}
         }
 
-        // 1. Jogo da Velha: Melodia calma e progressiva (Acordes suaves em triângulo)
         function tocarMusicaVelha() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaMelodia(261.63, 0.0, 0.4, 'triangle'); // Dó
-                tocarNotaMelodia(329.63, 0.4, 0.4, 'triangle'); // Mi
-                tocarNotaMelodia(392.00, 0.8, 0.4, 'triangle'); // Sol
-                tocarNotaMelodia(523.25, 1.2, 0.6, 'triangle'); // Dó agudo
+                tocarNotaMelodia(261.63, 0.0, 0.4, 'triangle');
+                tocarNotaMelodia(329.63, 0.4, 0.4, 'triangle');
+                tocarNotaMelodia(392.00, 0.8, 0.4, 'triangle');
+                tocarNotaMelodia(523.25, 1.2, 0.6, 'triangle');
             }, 2400);
         }
 
-        // 2. Jogo da Forca: Melodia misteriosa e cadenciada (Onda senoide)
         function tocarMusicaForca() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaMelodia(220.00, 0.0, 0.35, 'sine'); // Lá grave
-                tocarNotaMelodia(277.18, 0.35, 0.35, 'sine'); // Dó#
-                tocarNotaMelodia(329.63, 0.7, 0.35, 'sine'); // Mi
-                tocarNotaMelodia(440.00, 1.05, 0.5, 'sine'); // Lá
+                tocarNotaMelodia(220.00, 0.0, 0.35, 'sine');
+                tocarNotaMelodia(277.18, 0.35, 0.35, 'sine');
+                tocarNotaMelodia(329.63, 0.7, 0.35, 'sine');
+                tocarNotaMelodia(440.00, 1.05, 0.5, 'sine');
             }, 2200);
         }
 
-        // 3. Jogo da Memória: Melodia lúdica e saltitante
         function tocarMusicaMemoria() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaMelodia(392.00, 0.0, 0.25, 'sine'); // Sol
-                tocarNotaMelodia(493.88, 0.25, 0.25, 'sine'); // Si
-                tocarNotaMelodia(587.33, 0.5, 0.25, 'sine'); // Ré
-                tocarNotaMelodia(659.25, 0.75, 0.4, 'sine'); // Mi
+                tocarNotaMelodia(392.00, 0.0, 0.25, 'sine');
+                tocarNotaMelodia(493.88, 0.25, 0.25, 'sine');
+                tocarNotaMelodia(587.33, 0.5, 0.25, 'sine');
+                tocarNotaMelodia(659.25, 0.75, 0.4, 'sine');
             }, 1800);
         }
 
-        // 4. Jokenpô Brasil: Ritmo animado e festivo
         function tocarMusicaJokenpo() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaMelodia(349.23, 0.0, 0.2, 'triangle'); // Fá
-                tocarNotaMelodia(440.00, 0.2, 0.2, 'triangle'); // Lá
-                tocarNotaMelodia(523.25, 0.4, 0.2, 'triangle'); // Dó
-                tocarNotaMelodia(698.46, 0.6, 0.3, 'triangle'); // Fá agudo
+                tocarNotaMelodia(349.23, 0.0, 0.2, 'triangle');
+                tocarNotaMelodia(440.00, 0.2, 0.2, 'triangle');
+                tocarNotaMelodia(523.25, 0.4, 0.2, 'triangle');
+                tocarNotaMelodia(698.46, 0.6, 0.3, 'triangle');
             }, 1500);
         }
 
-        // 5. Jogo da Cobrinha: MELODIA SUPER RÁPIDA, ENERGÉTICA E ESTILO RETRÔ (Square Wave)
         function tocarMusicaCobrinha() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaMelodia(587.33, 0.0, 0.08, 'square');  // Ré
-                tocarNotaMelodia(659.25, 0.08, 0.08, 'square'); // Mi
-                tocarNotaMelodia(783.99, 0.16, 0.08, 'square');// Sol
-                tocarNotaMelodia(880.00, 0.24, 0.08, 'square'); // Lá
-                tocarNotaMelodia(1046.5, 0.32, 0.12, 'square');// Dó agudo
-            }, 550); // Ciclo hiper-rápido de meio segundo!
+                tocarNotaMelodia(587.33, 0.0, 0.08, 'square');
+                tocarNotaMelodia(659.25, 0.08, 0.08, 'square');
+                tocarNotaMelodia(783.99, 0.16, 0.08, 'square');
+                tocarNotaMelodia(880.00, 0.24, 0.08, 'square');
+                tocarNotaMelodia(1046.5, 0.32, 0.12, 'square');
+            }, 550);
         }
 
         /* Carrossel */
@@ -701,7 +697,7 @@
             }
         }
 
-        /* Jogo da Memória */
+        /* Jogo da Memória - Corrigido para salvar e atualizar o ranking perfeitamente */
         let nivelMemoria = 1, cartasMemoria = [], primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0, pontosMemoria = 0, tempoMemoria = 0, intervaloTempoMemoria = null;
         const adversariosMemoria = ["🐰 Coelho", "🦊 Raposa", "🐼 Panda", "🦁 Leão", "🐯 Tigre", "🦅 Águia", "🦈 Tubarão", "🐉 Dragão", "🤖 Robô Mestre", "👑 Rei Supremo"];
         const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🥑','🥥','🍋','🍊','🍐','🍑','🥕','🌽'];
@@ -737,21 +733,37 @@
                 primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
                 if (paresRestantes === 0) {
                     tocarSom('vitoria');
-                    setTimeout(() => { nivelMemoria++; pontosMemoria += 50; salvarPontuacaoRankingMemoria(true); alert(`🎉 Nível Concluído! Avançando!`); iniciarMemoria(); }, 300);
+                    setTimeout(() => { 
+                        nivelMemoria++; 
+                        pontosMemoria += 50; 
+                        document.getElementById('pontos-memoria').innerText = pontosMemoria;
+                        salvarPontuacaoRankingMemoria(true); 
+                        alert(`🎉 Nível Concluído! Pontos salvos automaticamente.`); 
+                        iniciarMemoria(); 
+                    }, 300);
                 }
             } else {
                 tocarSom('erro'); pontosMemoria = Math.max(0, pontosMemoria - 5); document.getElementById('pontos-memoria').innerText = pontosMemoria;
                 setTimeout(() => { primeiraCarta.innerText = ""; primeiraCarta.style.background = "#7b1fa2"; segundaCarta.innerText = ""; segundaCarta.style.background = "#7b1fa2"; primeiraCarta = null; segundaCarta = null; travadoMemoria = false; }, 700);
             }
         }
-        function salvarPontuacaoRankingMemoriaManual() { salvarPontuacaoRankingMemoria(false); alert("✅ Pontuação salva!"); }
+        function salvarPontuacaoRankingMemoriaManual() { 
+            salvarPontuacaoRankingMemoria(false); 
+        }
         function salvarPontuacaoRankingMemoria(silencioso = false) {
-            if (pontosMemoria <= 0) { if (!silencioso) alert("Jogue para acumular pontos!"); return; }
-            let nome = prompt("🏆 Digite seu nome para o Ranking:") || "Jogador";
+            if (pontosMemoria <= 0) { 
+                if (!silencioso) alert("Jogue para acumular pontos!"); 
+                return; 
+            }
+            let nome = prompt("🏆 Digite seu nome para o Ranking:", "Jogador") || "Jogador";
             let ranking = JSON.parse(localStorage.getItem('rankingMemoria') || "[]");
             ranking.push({ nome: nome, pontos: pontosMemoria, tempo: tempoMemoria });
             ranking.sort((a, b) => b.pontos - a.pontos);
             localStorage.setItem('rankingMemoria', JSON.stringify(ranking.slice(0, 5)));
+            if (!silencioso) {
+                alert("✅ Pontuação salva com sucesso no Ranking Global!");
+                abrirModalRanking();
+            }
         }
 
         /* Jokenpô Brasil */
