@@ -357,7 +357,7 @@
     </nav>
 
     <script>
-        /* SISTEMA DE ÁUDIO COM TRILHAS SONORAS DIFERENCIADAS PARA CADA JOGO */
+        /* SISTEMA DE ÁUDIO COM MELODIAS E TIMBRES EXCLUSIVOS POR JOGO */
         let audioCtx = null;
         let musicaFundoLoop = null;
 
@@ -384,7 +384,6 @@
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.15);
                 } else if (tipo === 'cobrinha_ponto') {
-                    // Som agudo e enérgico ao comer
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(700, audioCtx.currentTime);
                     osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.05);
@@ -414,80 +413,82 @@
             }
         }
 
-        function tocarNotaHelper(freq, tempo, duracao, tipoOnda = 'sine') {
+        // Toca uma nota específica com tipo de onda configurável (sine, square, triangle, sawtooth)
+        function tocarNotaMelodia(freq, offsetTempo, duracao, tipoOnda = 'sine') {
             try {
                 if (!audioCtx) return;
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = tipoOnda;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + tempo);
-                gain.gain.setValueAtTime(0.025, audioCtx.currentTime + tempo);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + tempo + duracao);
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + offsetTempo);
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime + offsetTempo);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + offsetTempo + duracao);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                osc.start(audioCtx.currentTime + tempo);
-                osc.stop(audioCtx.currentTime + tempo + duracao);
+                osc.start(audioCtx.currentTime + offsetTempo);
+                osc.stop(audioCtx.currentTime + offsetTempo + duracao);
             } catch(e){}
         }
 
-        // 1. Trilha do Jogo da Velha (Calma e Estratégica)
+        // 1. Jogo da Velha: Melodia calma e progressiva (Acordes suaves em triângulo)
         function tocarMusicaVelha() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaHelper(261.63, 0.0, 0.5); // Dó
-                tocarNotaHelper(329.63, 0.5, 0.5); // Mi
-                tocarNotaHelper(392.00, 1.0, 0.5); // Sol
-                tocarNotaHelper(523.25, 1.5, 0.8); // Dó agudo
-            }, 2500);
+                tocarNotaMelodia(261.63, 0.0, 0.4, 'triangle'); // Dó
+                tocarNotaMelodia(329.63, 0.4, 0.4, 'triangle'); // Mi
+                tocarNotaMelodia(392.00, 0.8, 0.4, 'triangle'); // Sol
+                tocarNotaMelodia(523.25, 1.2, 0.6, 'triangle'); // Dó agudo
+            }, 2400);
         }
 
-        // 2. Trilha do Jogo da Forca (Misteriosa e cadenciada)
+        // 2. Jogo da Forca: Melodia misteriosa e cadenciada (Onda senoide)
         function tocarMusicaForca() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaHelper(220.00, 0.0, 0.4); // Lá grave
-                tocarNotaHelper(246.94, 0.4, 0.4); // Si
-                tocarNotaHelper(329.63, 0.8, 0.4); // Mi
-                tocarNotaHelper(293.66, 1.2, 0.6); // Ré
+                tocarNotaMelodia(220.00, 0.0, 0.35, 'sine'); // Lá grave
+                tocarNotaMelodia(277.18, 0.35, 0.35, 'sine'); // Dó#
+                tocarNotaMelodia(329.63, 0.7, 0.35, 'sine'); // Mi
+                tocarNotaMelodia(440.00, 1.05, 0.5, 'sine'); // Lá
             }, 2200);
         }
 
-        // 3. Trilha do Jogo da Memória (Suave e lúdica)
+        // 3. Jogo da Memória: Melodia lúdica e saltitante
         function tocarMusicaMemoria() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaHelper(440.00, 0.0, 0.3); // Lá
-                tocarNotaHelper(554.37, 0.3, 0.3); // Dó#
-                tocarNotaHelper(659.25, 0.6, 0.3); // Mi
-                tocarNotaHelper(830.61, 0.9, 0.5); // Lá agudo
-            }, 2000);
+                tocarNotaMelodia(392.00, 0.0, 0.25, 'sine'); // Sol
+                tocarNotaMelodia(493.88, 0.25, 0.25, 'sine'); // Si
+                tocarNotaMelodia(587.33, 0.5, 0.25, 'sine'); // Ré
+                tocarNotaMelodia(659.25, 0.75, 0.4, 'sine'); // Mi
+            }, 1800);
         }
 
-        // 4. Trilha do Jokenpô Brasil (Ritmo alegre e vibrante)
+        // 4. Jokenpô Brasil: Ritmo animado e festivo
         function tocarMusicaJokenpo() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaHelper(349.23, 0.0, 0.25); // Fá
-                tocarNotaHelper(440.00, 0.25, 0.25); // Lá
-                tocarNotaHelper(523.25, 0.5, 0.25);  // Dó
-                tocarNotaHelper(698.46, 0.75, 0.4); // Fá agudo
-            }, 1800);
+                tocarNotaMelodia(349.23, 0.0, 0.2, 'triangle'); // Fá
+                tocarNotaMelodia(440.00, 0.2, 0.2, 'triangle'); // Lá
+                tocarNotaMelodia(523.25, 0.4, 0.2, 'triangle'); // Dó
+                tocarNotaMelodia(698.46, 0.6, 0.3, 'triangle'); // Fá agudo
+            }, 1500);
         }
 
-        // 5. Trilha do Jogo da Cobrinha (SUPER RÁPIDA E ENERGÉTICA ⚡)
+        // 5. Jogo da Cobrinha: MELODIA SUPER RÁPIDA, ENERGÉTICA E ESTILO RETRÔ (Square Wave)
         function tocarMusicaCobrinha() {
             pararMusicaFundo();
             iniciarAudioContext();
             musicaFundoLoop = setInterval(() => {
-                tocarNotaHelper(587.33, 0.0, 0.12, 'square'); // Ré rápido
-                tocarNotaHelper(659.25, 0.12, 0.12, 'square'); // Mi rápido
-                tocarNotaHelper(880.00, 0.24, 0.12, 'square'); // Lá rápido
-                tocarNotaHelper(1046.50, 0.36, 0.2, 'square'); // Dó agudo forte
-            }, 750); // Ciclo ultra rápido de 0.75 segundo!
+                tocarNotaMelodia(587.33, 0.0, 0.08, 'square');  // Ré
+                tocarNotaMelodia(659.25, 0.08, 0.08, 'square'); // Mi
+                tocarNotaMelodia(783.99, 0.16, 0.08, 'square');// Sol
+                tocarNotaMelodia(880.00, 0.24, 0.08, 'square'); // Lá
+                tocarNotaMelodia(1046.5, 0.32, 0.12, 'square');// Dó agudo
+            }, 550); // Ciclo hiper-rápido de meio segundo!
         }
 
         /* Carrossel */
@@ -827,7 +828,7 @@
                 pontosSnake += 10; 
                 nivelSnake = Math.floor(pontosSnake / 50) + 1; 
                 gerarComida(); 
-                tocarSom('cobrinha_ponto'); // Som rápido e energético ao comer
+                tocarSom('cobrinha_ponto'); 
             } else { 
                 snake.pop(); 
             }
