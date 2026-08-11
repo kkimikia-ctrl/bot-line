@@ -179,6 +179,22 @@
             font-size: 12px;
             color: #1976d2;
         }
+        /* Estilos da Tabela de Ranking */
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+            text-align: left;
+        }
+        .ranking-table th, .ranking-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .ranking-table th {
+            background-color: #f1f5f9;
+            color: #0d47a1;
+        }
     </style>
 </head>
 <body>
@@ -220,10 +236,10 @@
                 <span class="subtitle">Comunidade Online</span>
             </button>
 
-            <button class="card-btn" onclick="alert('Ranking em breve!')">
+            <button class="card-btn" onclick="abrirModalRanking()">
                 <span class="icon">🏆</span>
                 <span class="title">Ranking</span>
-                <span class="subtitle">Usuários mais ativos</span>
+                <span class="subtitle">Melhores Pontuações</span>
             </button>
 
             <button class="card-btn" onclick="alert('Descontos em breve!')">
@@ -300,7 +316,7 @@
             
             <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
             <br>
-            <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: auto; margin-top: 10px;">Fechar</button>
+            <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: 100%; margin-top: 10px;">Fechar</button>
         </div>
     </div>
 
@@ -309,7 +325,6 @@
         <div class="modal-content">
             <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
             
-            <!-- Player do Vídeo que aparece quando clica em uma música -->
             <div id="containerPlayerKaraoke" style="display: none; margin-bottom: 15px;">
                 <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0;">
                     <iframe id="youtubeKaraokeFrame" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; border: none;" allowfullscreen></iframe>
@@ -321,6 +336,31 @@
             <div id="listaKaraokeHTML"></div>
 
             <button class="close-btn" onclick="fecharModalKaraoke()">Fechar Janela</button>
+        </div>
+    </div>
+
+    <!-- Modal do Ranking -->
+    <div id="modalRanking" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #1e3a8a; margin-top: 0;">🏆 Ranking de Jogadores</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Veja os melhores pontuadores dos jogos:</p>
+            
+            <div id="conteudoRanking">
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Nome</th>
+                            <th>Pontos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaRankingCorpo">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="close-btn" onclick="fecharModalRanking()">Fechar Janela</button>
         </div>
     </div>
 
@@ -404,13 +444,11 @@
         }
 
         function fecharModalKaraoke() {
-            // Para o vídeo do YouTube quando fechar a janela
             document.getElementById('youtubeKaraokeFrame').src = "";
             document.getElementById('containerPlayerKaraoke').style.display = 'none';
             document.getElementById('modalKaraoke').style.display = 'none';
         }
 
-        // Função para converter links normais do YouTube (ex: youtu.be/ID ou watch?v=ID) para o formato embed correto
         function converterParaEmbed(url) {
             let videoId = "";
             if (url.includes("youtu.be/")) {
@@ -427,7 +465,6 @@
             const embedUrl = converterParaEmbed(urlOriginal);
             document.getElementById('youtubeKaraokeFrame').src = embedUrl;
             document.getElementById('containerPlayerKaraoke').style.display = 'block';
-            // Opcional: rolar a janela para o topo para ver o vídeo tocando
             document.querySelector('#modalKaraoke .modal-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -445,7 +482,6 @@
                         categoriaAtual = musica.categoria;
                     }
 
-                    // Agora chama a função interna em vez de abrir nova aba no Safari
                     htmlFinal += `
                         <div class="radio-option" onclick="tocarMusicaKaraoke('${musica.link}')">
                             ${musica.titulo} <span>▶️ Cantar</span>
@@ -456,6 +492,43 @@
             } else {
                 containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
             }
+        }
+
+        // Funções do Ranking
+        function abrirModalRanking() {
+            document.getElementById('modalRanking').style.display = 'flex';
+            carregarDadosRanking();
+        }
+
+        function fecharModalRanking() {
+            document.getElementById('modalRanking').style.display = 'none';
+        }
+
+        function carregarDadosRanking() {
+            const corpoTabela = document.getElementById('tabelaRankingCorpo');
+            // Busca do localStorage (os jogos podem salvar em 'ranking_jogos')
+            let rankingSalvo = JSON.parse(localStorage.getItem('ranking_jogos')) || [];
+
+            if (rankingSalvo.length === 0) {
+                corpoTabela.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding: 15px;">Nenhum recorde salvo ainda. Jogue para aparecer aqui!</td></tr>`;
+                return;
+            }
+
+            // Ordena por pontos (maior para menor)
+            rankingSalvo.sort((a, b) => b.pontos - a.pontos);
+
+            let html = "";
+            rankingSalvo.forEach((item, index) => {
+                let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
+                html += `
+                    <tr>
+                        <td style="font-weight:bold; text-align:center;">${medalha}</td>
+                        <td>${item.nome}</td>
+                        <td style="font-weight:bold; color:#1976d2;">${item.pontos} pts</td>
+                    </tr>
+                `;
+            });
+            corpoTabela.innerHTML = html;
         }
     </script>
     <script src="omikuji-mensagens.js"></script>
