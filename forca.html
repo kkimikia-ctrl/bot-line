@@ -357,7 +357,7 @@
     </nav>
 
     <script>
-        /* SISTEMA DE ÁUDIO E MÚSICA DE FUNDO INSTRUMENTAL */
+        /* SISTEMA DE ÁUDIO E MÚSICA DE FUNDO INSTRUMENTAL MELHORADA */
         let audioCtx = null;
         let musicaFundoLoop = null;
 
@@ -383,6 +383,14 @@
                     osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08);
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+                } else if (tipo === 'cobrinha_ponto') {
+                    // Som mais energético, rápido e agudo para a cobrinha
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.05); // Nota Dó mais alta
+                    osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);  // Nota Mi agudo
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.18);
                 } else if (tipo === 'erro') {
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(150, audioCtx.currentTime);
@@ -407,9 +415,9 @@
                 try {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
-                    osc.type = 'triangle';
+                    osc.type = 'sine';
                     osc.frequency.setValueAtTime(freq, audioCtx.currentTime + tempo);
-                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime + tempo);
+                    gain.gain.setValueAtTime(0.025, audioCtx.currentTime + tempo);
                     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + tempo + duracao);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
@@ -418,13 +426,15 @@
                 } catch(e){}
             }
 
-            // Melodia instrumental contínua de fundo
+            // Melodia instrumental de fundo mais rica, variada e harmoniosa
             musicaFundoLoop = setInterval(() => {
-                tocarNota(261.63, 0, 0.8); // Dó
-                tocarNota(329.63, 0.4, 0.8); // Mi
-                tocarNota(392.00, 0.8, 0.8); // Sol
-                tocarNota(523.25, 1.2, 1.0); // Dó agudo
-            }, 2500);
+                tocarNota(329.63, 0.0, 0.4); // Mi
+                tocarNota(392.00, 0.3, 0.4); // Sol
+                tocarNota(493.88, 0.6, 0.4); // Si
+                tocarNota(587.33, 0.9, 0.6); // Ré agudo
+                tocarNota(523.25, 1.5, 0.5); // Dó agudo
+                tocarNota(392.00, 2.0, 0.5); // Sol
+            }, 3000);
         }
 
         function pararMusicaFundo() {
@@ -767,12 +777,17 @@
             if (cabeca.y < 0) cabeca.y = gridTotal - 1; if (cabeca.y >= gridTotal) cabeca.y = 0;
             if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarSom('erro'); alert(`💥 Fim de jogo na Cobrinha!`); return; }
             snake.unshift(cabeca);
-            if (cabeca.x === comida.x && cabeca.y === comida.y) { pontosSnake += 10; nivelSnake = Math.floor(pontosSnake / 50) + 1; gerarComida(); tocarSom('acerto'); }
-            else { snake.pop(); }
+            if (cabeca.x === comida.x && cabeca.y === comida.y) { 
+                pontosSnake += 10; 
+                nivelSnake = Math.floor(pontosSnake / 50) + 1; 
+                gerarComida(); 
+                tocarSom('cobrinha_ponto'); // Som energético exclusivo ao comer na cobrinha!
+            } else { 
+                snake.pop(); 
+            }
             atualizarStatusSnake(); desenharCobrinha();
         }
         function atualizarStatusSnake() { document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} | Pontos: ${pontosSnake}`; }
-                function atualizarStatusSnake() { document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} | Pontos: ${pontosSnake}`; }
         function desenharCobrinha() {
             const canvas = document.getElementById('snakeCanvas'), ctx = canvas.getContext('2d'), tamanhoBloco = canvas.width / gridTotal;
             ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -785,10 +800,6 @@
     <button onclick="iniciarAudioContext(); tocarMusicaFundo();" style="position:fixed; top:70px; right:10px; z-index:9999; padding:10px 15px; background:red; color:white; border:none; border-radius:50px; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
         🔊 Ativar Som
     </button>
-
-</body>
-</html>
-
 
 </body>
 </html>
