@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entretenimento e Lazer</title>
+    <title>Lives da Comunidade</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,10 +15,10 @@
         .header {
             background-color: #0d47a1;
             color: white;
-            padding: 15px 20px;
+            padding: 18px 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -26,470 +26,125 @@
         .header h1 {
             font-size: 18px;
             margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+        .btn-voltar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 15px;
-            padding-bottom: 80px;
-        }
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-        .card-btn {
-            background: white;
-            border: none;
-            padding: 15px 10px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            cursor: pointer;
-            text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .card-btn .icon {
-            font-size: 24px;
-            display: block;
-            margin-bottom: 6px;
-        }
-        .card-btn .title {
-            font-size: 14px;
-            font-weight: bold;
-            color: #0d47a1;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .card-btn .subtitle {
-            font-size: 11px;
-            color: #666;
-            display: block;
-        }
-        .action-btn {
-            background-color: #1976d2;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .action-btn:hover {
-            background-color: #115293;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: white;
             padding: 20px;
-            border-radius: 14px;
-            width: 92%;
-            max-width: 450px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        .close-btn {
-            background: #d32f2f;
-            color: white;
-            margin-top: 15px;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-        }
-        .close-btn:hover {
-            background: #9a0007;
-        }
-        .radio-category {
-            font-size: 11px;
-            font-weight: bold;
-            color: #666;
+            padding-bottom: 80px;
             text-align: left;
-            margin: 15px 0 5px 0;
-            text-transform: uppercase;
         }
-        .radio-option {
-            background: #f8f9fa;
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        /* Estilo dos cards de live grandes e fáceis de enxergar */
+        .live-card {
+            background: white;
             border: 1px solid #ddd;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .live-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .live-info .live-titulo {
+            font-size: 16px;
             font-weight: bold;
             color: #0d47a1;
-            text-align: left;
-            text-decoration: none;
+            margin-bottom: 4px;
         }
-        .radio-option:hover {
-            background: #e2e8f0;
-        }
-        .radio-option span {
-            font-size: 12px;
-            color: #1976d2;
-        }
-        /* Estilos da Tabela de Ranking */
-        .ranking-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .live-info .live-detalhes {
             font-size: 13px;
-            text-align: left;
+            color: #666;
         }
-        .ranking-table th, .ranking-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #eee;
+        .badge-aovivo {
+            background-color: #ef4444;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
         }
-        .ranking-table th {
-            background-color: #f1f5f9;
-            color: #0d47a1;
+        .action-btn {
+            background-color: #059669;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 3px 10px rgba(5, 150, 105, 0.2);
+        }
+        .action-btn:hover {
+            background-color: #047857;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Entretenimento e Lazer</h1>
+        <button class="btn-voltar" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
+        <h1>🔴 Lives da Comunidade</h1>
+        <div style="width: 50px;"></div> <!-- Para centralizar o título perfeitamente -->
     </div>
 
     <div class="container">
-        <!-- Grade Completa com os 8 Botões -->
-        <div class="grid-menu">
-            <button class="card-btn" onclick="window.location.href='lives.html'">
-                <span class="icon">🔴</span>
-                <span class="title">Lives</span>
-                <span class="subtitle">Transmissões e Prêmios</span>
-            </button>
-
-            <button class="card-btn" onclick="abrirModalRadio()">
-                <span class="icon">📻</span>
-                <span class="title">Rádios & Som</span>
-                <span class="subtitle">Todas as Opções</span>
-            </button>
-
-            <button class="card-btn" onclick="abrirModalKaraoke()">
-                <span class="icon">🎤</span>
-                <span class="title">Karaokê</span>
-                <span class="subtitle">Cante com a Gente</span>
-            </button>
-
-            <button class="card-btn" onclick="abrirModalOmikuji()">
-                <span class="icon">🔮</span>
-                <span class="title">Horóscopo</span>
-                <span class="subtitle">Omikuji do Dia</span>
-            </button>
-
-            <button class="card-btn" onclick="alert('Chat em breve!')">
-                <span class="icon">💬</span>
-                <span class="title">Chat</span>
-                <span class="subtitle">Comunidade Online</span>
-            </button>
-
-            <button class="card-btn" onclick="abrirModalRanking()">
-                <span class="icon">🏆</span>
-                <span class="title">Ranking</span>
-                <span class="subtitle">Melhores Pontuações</span>
-            </button>
-
-            <button class="card-btn" onclick="alert('Descontos em breve!')">
-                <span class="icon">🎟️</span>
-                <span class="title">Descontos</span>
-                <span class="subtitle">Cupons em Loja</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='forca.html'">
-                <span class="icon">🎮</span>
-                <span class="title">Jogos</span>
-                <span class="subtitle">Sorteios e Diversão</span>
-            </button>
+        <div class="section-title">Transmissões acontecendo agora:</div>
+        
+        <!-- Live 1 -->
+        <div class="live-card" onclick="alert('Conectando à Live: Receitas de Bolos Japoneses')">
+            <div class="live-info">
+                <div class="live-titulo">🍰 Receitas de Bolos Japoneses</div>
+                <div class="live-detalhes">Ana Silva • 45 assistindo</div>
+            </div>
+            <div class="badge-aovivo">AO VIVO</div>
         </div>
+
+        <!-- Live 2 -->
+        <div class="live-card" onclick="alert('Conectando à Live: Truques de Mágica')">
+            <div class="live-info">
+                <div class="live-titulo">🎩 Truques de Mágica</div>
+                <div class="live-detalhes">Mágico Hiro • 120 assistindo</div>
+            </div>
+            <div class="badge-aovivo">AO VIVO</div>
+        </div>
+
+        <!-- Live 3 -->
+        <div class="live-card" onclick="alert('Conectando à Live: Dicas de Moradia no Japão')">
+            <div class="live-info">
+                <div class="live-titulo">🏠 Dicas de Moradia no Japão</div>
+                <div class="live-detalhes">Pedro Santos • 85 assistindo</div>
+            </div>
+            <div class="badge-aovivo">AO VIVO</div>
+        </div>
+
+        <button class="action-btn" onclick="alert('Abrindo tela para iniciar transmissão...')">🎥 Iniciar Minha Própria Live</button>
     </div>
 
-    <!-- Modal da Rádio -->
-    <div id="modalRadio" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Toque em uma opção para ouvir:</p>
-            
-            <div class="radio-category">📰 Notícias & Informação</div>
-            <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SPAAC.aac', 'CBN São Paulo')">
-                📻 CBN São Paulo <span>▶️ Ouvir</span>
-            </div>
-
-            <div class="radio-category">🎸 Hits 90s, 2000s & 2010s</div>
-            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio5-bb-mp3', 'Hits 90 / 2000 / 2010')">
-                🎵 Hits 90 / 2000 / 2010 <span>▶️ Ouvir</span>
-            </div>
-
-            <div class="radio-category">🌍 Pop & Internacional</div>
-            <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'Pop & Rock Global')">
-                🎵 Pop & Rock Global <span>▶️ Ouvir</span>
-            </div>
-
-            <div class="radio-category">⚡ Techno & Eletrônica</div>
-            <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'Techno / Club Beats')">
-                🎧 Techno / Club Beats <span>▶️ Ouvir</span>
-            </div>
-
-            <div class="radio-category">🌙 Relax & Para Dormir</div>
-            <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Lofi & Study Beats')">
-                ☕ Lofi & Study Beats <span>▶️ Ouvir</span>
-            </div>
-            
-            <div id="containerPlayer" style="display:none; margin-top: 20px; background: #e0f2fe; padding: 15px; border-radius: 12px; border: 2px solid #0284c7;">
-                <p id="nomeRadioTocando" style="font-size: 14px; font-weight: bold; color: #0369a1; margin: 0 0 10px 0;"></p>
-                <audio id="audioRadio" controls style="width: 100%;">
-                    <source src="" id="sourceAudio" type="audio/mpeg">
-                    Seu navegador não suporta áudio.
-                </audio>
-            </div>
-
-            <button class="close-btn" onclick="fecharModalRadio()">Fechar Janela</button>
-        </div>
-    </div>
-
-    <!-- Modal do Omikuji -->
-    <div id="modalOmikuji" class="modal">
-        <div class="modal-content">
-            <h2 id="omikujiTitulo" style="font-size: 18px; color: #0d47a1;">Sorte do Dia</h2>
-            <p id="omikujiTexto" style="line-height: 1.5; font-size: 13px; text-align: justify; margin: 15px 0; color: #333;">Toque no botão abaixo para descobrir a sua mensagem de hoje.</p>
-            
-            <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
-            <br>
-            <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: 100%; margin-top: 10px;">Fechar</button>
-        </div>
-    </div>
-
-    <!-- Modal do Karaokê -->
-    <div id="modalKaraoke" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
-            
-            <div id="containerPlayerKaraoke" style="display: none; margin-bottom: 15px;">
-                <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0;">
-                    <iframe id="youtubeKaraokeFrame" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; border: none;" allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <p id="instrucaoKaraoke" style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
-            
-            <div id="listaKaraokeHTML"></div>
-
-            <button class="close-btn" onclick="fecharModalKaraoke()">Fechar Janela</button>
-        </div>
-    </div>
-
-    <!-- Modal do Ranking -->
-    <div id="modalRanking" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #1e3a8a; margin-top: 0;">🏆 Ranking de Jogadores</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Veja os melhores pontuadores dos jogos:</p>
-            
-            <div id="conteudoRanking">
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>Pos</th>
-                            <th>Nome</th>
-                            <th>Pontos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaRankingCorpo">
-                        <!-- Preenchido via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <button class="close-btn" onclick="fecharModalRanking()">Fechar Janela</button>
-        </div>
-    </div>
-
-    <script>
-        function abrirModalRadio() {
-            document.getElementById('modalRadio').style.display = 'flex';
-        }
-
-        function tocarRadio(urlStream, nomeEstilo) {
-            const container = document.getElementById('containerPlayer');
-            const player = document.getElementById('audioRadio');
-            const source = document.getElementById('sourceAudio');
-            const titulo = document.getElementById('nomeRadioTocando');
-
-            container.style.display = 'block';
-            titulo.innerText = "Tocando: " + nomeEstilo;
-            source.src = urlStream;
-            player.load();
-            player.play().catch(error => { console.log("Aguardando play manual"); });
-        }
-
-        function fecharModalRadio() {
-            const player = document.getElementById('audioRadio');
-            player.pause();
-            document.getElementById('containerPlayer').style.display = 'none';
-            document.getElementById('modalRadio').style.display = 'none';
-        }
-
-        function abrirModalOmikuji() {
-            document.getElementById('modalOmikuji').style.display = 'flex';
-            verificarOmikujiDiario();
-        }
-
-        function fecharModalOmikuji() {
-            document.getElementById('modalOmikuji').style.display = 'none';
-        }
-
-        function verificarOmikujiDiario() {
-            const hoje = new Date().toLocaleDateString();
-            const ultimoDiaSorteio = localStorage.getItem('omikuji_data');
-            const tituloEl = document.getElementById('omikujiTitulo');
-            const textoEl = document.getElementById('omikujiTexto');
-            const btnSortear = document.getElementById('btnSortearOmikuji');
-
-            if (ultimoDiaSorteio === hoje) {
-                tituloEl.innerText = localStorage.getItem('omikuji_titulo_salvo');
-                textoEl.innerText = localStorage.getItem('omikuji_texto_salvo');
-                if (btnSortear) btnSortear.style.display = 'none';
-            } else {
-                tituloEl.innerText = "Toque no botão para sua sorte!";
-                textoEl.innerText = "Descubra a mensagem detalhada e inspiradora que o destino reservou para o seu dia hoje.";
-                if (btnSortear) btnSortear.style.display = 'block';
-            }
-        }
-
-        function sortearOmikuji() {
-            const hoje = new Date().toLocaleDateString();
-            const sorteado = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
-            const tituloFinal = sorteado.titulo;
-            const textoFinal = sorteado.texto + "\n\n⏳ Você já retirou a sua sorte de hoje! Volte amanhã para abrir um novo Omikuji.";
-
-            localStorage.setItem('omikuji_data', hoje);
-            localStorage.setItem('omikuji_titulo_salvo', tituloFinal);
-            localStorage.setItem('omikuji_texto_salvo', textoFinal);
-
-            document.getElementById('omikujiTitulo').innerText = tituloFinal;
-            document.getElementById('omikujiTexto').innerText = textoFinal;
-            if (document.getElementById('btnSortearOmikuji')) {
-                document.getElementById('btnSortearOmikuji').style.display = 'none';
-            }
-        }
-
-        function abrirModalKaraoke() {
-            document.getElementById('modalKaraoke').style.display = 'flex';
-            carregarListaKaraoke();
-        }
-
-        function fecharModalKaraoke() {
-            document.getElementById('youtubeKaraokeFrame').src = "";
-            document.getElementById('containerPlayerKaraoke').style.display = 'none';
-            document.getElementById('modalKaraoke').style.display = 'none';
-        }
-
-        function converterParaEmbed(url) {
-            let videoId = "";
-            if (url.includes("youtu.be/")) {
-                videoId = url.split("youtu.be/")[1].split("?")[0];
-            } else if (url.includes("watch?v=")) {
-                videoId = url.split("watch?v=")[1].split("&")[0];
-            } else if (url.includes("/embed/")) {
-                return url;
-            }
-            return videoId ? "https://www.youtube.com/embed/" + videoId : url;
-        }
-
-        function tocarMusicaKaraoke(urlOriginal) {
-            const embedUrl = converterParaEmbed(urlOriginal);
-            document.getElementById('youtubeKaraokeFrame').src = embedUrl;
-            document.getElementById('containerPlayerKaraoke').style.display = 'block';
-            document.querySelector('#modalKaraoke .modal-content').scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function carregarListaKaraoke() {
-            const containerLista = document.getElementById('listaKaraokeHTML');
-            if(containerLista.innerHTML.trim() !== "") return;
-
-            let htmlFinal = "";
-            let categoriaAtual = "";
-
-            if (typeof listaKaraoke !== 'undefined') {
-                listaKaraoke.forEach(musica => {
-                    if (musica.categoria !== categoriaAtual) {
-                        htmlFinal += `<div class="radio-category" style="margin-top: 20px;">🎶 ${musica.categoria}</div>`;
-                        categoriaAtual = musica.categoria;
-                    }
-
-                    htmlFinal += `
-                        <div class="radio-option" onclick="tocarMusicaKaraoke('${musica.link}')">
-                            ${musica.titulo} <span>▶️ Cantar</span>
-                        </div>
-                    `;
-                });
-                containerLista.innerHTML = htmlFinal;
-            } else {
-                containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
-            }
-        }
-
-        // Funções do Ranking
-        function abrirModalRanking() {
-            document.getElementById('modalRanking').style.display = 'flex';
-            carregarDadosRanking();
-        }
-
-        function fecharModalRanking() {
-            document.getElementById('modalRanking').style.display = 'none';
-        }
-
-        function carregarDadosRanking() {
-            const corpoTabela = document.getElementById('tabelaRankingCorpo');
-            let rankingSalvo = JSON.parse(localStorage.getItem('ranking_jogos')) || [];
-
-            if (rankingSalvo.length === 0) {
-                corpoTabela.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding: 15px;">Nenhum recorde salvo ainda. Jogue para aparecer aqui!</td></tr>`;
-                return;
-            }
-
-            rankingSalvo.sort((a, b) => b.pontos - a.pontos);
-
-            let html = "";
-            rankingSalvo.forEach((item, index) => {
-                let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
-                html += `
-                    <tr>
-                        <td style="font-weight:bold; text-align:center;">${medalha}</td>
-                        <td>${item.nome}</td>
-                        <td style="font-weight:bold; color:#1976d2;">${item.pontos} pts</td>
-                    </tr>
-                `;
-            });
-            corpoTabela.innerHTML = html;
-        }
-    </script>
-    <script src="omikuji-mensagens.js"></script>
-    <script src="karaoke-musicas.js"></script>
 </body>
 </html>
