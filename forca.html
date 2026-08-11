@@ -246,24 +246,31 @@
             </div>
         </div>
 
-        <!-- Jogo da Forca -->
+        <!-- Jogo da Forca Atualizado -->
         <div id="container-jogo-forca" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             
             <div style="background: #00796b; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 id="forca-nivel-info" style="margin: 0; font-size: 14px;">🎯 Nível 1 | Adversário: 🐊 Jacaré</h3>
+                <h3 id="forca-nivel-info" style="margin: 0; font-size: 14px;">🎯 Jogo da Forca</h3>
             </div>
             
-            <p id="dica-palavra" style="font-weight: bold; color: #555; font-size: 13px;"></p>
             <div id="status-forca" style="font-size: 14px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6 | Pontos: <span id="pontos-forca">0</span></div>
             <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
+            
+            <!-- Botão de Dica Opcional -->
+            <div style="margin-bottom: 10px;">
+                <button onclick="mostrarDicaForca()" style="background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">💡 Mostrar Dica</button>
+                <p id="dica-palavra" style="font-weight: bold; color: #0284c7; font-size: 13px; margin: 5px 0; display: none;"></p>
+            </div>
+
             <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
         </div>
 
-        <!-- Jogo da Memória com Cronômetro e Salvamento Local -->
+        <!-- Jogo da Memória com Cronômetro e Salvamento Local Flexível -->
         <div id="container-jogo-memoria" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoRankingMemoriaManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
             <div style="clear: both;"></div>
             
             <div style="background: #7b1fa2; color: white; padding: 8px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
@@ -275,7 +282,7 @@
             <div id="tabuleiro-memoria" style="display: grid; gap: 6px; justify-content: center; margin-bottom: 15px;"></div>
         </div>
 
-        <!-- Jokenpô Brasil vs Mundo -->
+        <!-- Jokenpô Brasil vs Mundo (Mais equilibrado) -->
         <div id="container-jokenpo" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
@@ -307,7 +314,6 @@
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             
-            <!-- Caixa de Status e Botão Reiniciar no Topo -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: #059669; color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;">
                 <h3 id="snake-status" style="margin: 0; font-size: 13px; text-align: left;">🐍 Nível 1 | Pontos: 0</h3>
                 <button onclick="iniciarCobrinha()" style="background-color: #047857; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">🔄 Reiniciar</button>
@@ -315,7 +321,6 @@
 
             <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
 
-            <!-- Controles Direcionais Afastados -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 200px; margin: 0 auto 5px auto;">
                 <div></div>
                 <button class="control-btn" ontouchstart="mudarDirecao('UP'); event.preventDefault();" onclick="mudarDirecao('UP')">⬆️</button>
@@ -488,34 +493,64 @@
             }
         }
 
-        /* Jogo da Forca */
-        const niveisForca = [
-            {nivel: 1, adv: "🐊 Jacaré", p: "SOL", d: "Brilha no céu"},
-            {nivel: 2, adv: "🐺 Lobo", p: "GATO", d: "Animal doméstico"},
-            {nivel: 3, adv: "🐘 Elefante", p: "CARRO", d: "Meio de transporte"},
-            {nivel: 4, adv: "🐅 Tigre", p: "ESCOLA", d: "Lugar de estudar"},
-            {nivel: 5, adv: "🦁 Leão", p: "COMPUTADOR", d: "Máquina de trabalho"},
-            {nivel: 6, adv: "🦍 Gorila", p: "INTERNET", d: "Rede global"},
-            {nivel: 7, adv: "🦅 Águia", p: "TELEFONE", d: "Aparelho de chamada"},
-            {nivel: 8, adv: "🦈 Tubarão", p: "AVIAO", d: "Voa pelos ares"},
-            {nivel: 9, adv: "🐉 Dragão", p: "BRASIL", d: "Nosso país"},
-            {nivel: 10, adv: "👑 Rei Monstro", p: "PROGRAMACAO", d: "Criação de códigos"}
+        /* Jogo da Forca Atualizado com Lista Rica, Embaralhamento e Dica Opcional */
+        const bancoPalavrasForca = [
+            {p: "COMPUTADOR", d: "Máquina eletrônica para processar dados"},
+            {p: "PROGRAMACAO", d: "Ato de criar códigos e softwares"},
+            {p: "INTERNET", d: "Rede global de computadores"},
+            {p: "BRASIL", d: "Nosso país tropical"},
+            {p: "TELEFONE", d: "Aparelho de chamadas e mensagens"},
+            {p: "ESCOLA", d: "Instituição de ensino e aprendizado"},
+            {p: "CARRO", d: "Veículo automotor de quatro rodas"},
+            {p: "AVIAO", d: "Meio de transporte que voa"},
+            {p: "GATO", d: "Animal felino doméstico"},
+            {p: "GIRAFA", d: "Animal de pescoço comprido"},
+            {p: "ELEFANTE", d: "Maior animal terrestre"},
+            {p: "FUTEBOL", d: "Esporte mais popular do mundo"},
+            {p: "GUITARRA", d: "Instrumento musical de cordas"},
+            {p: "PIANO", d: "Instrumento de teclas pretas e brancas"},
+            {p: "CHOCOLATE", d: "Doce feito a partir do cacau"},
+            {p: "BIBLIOTECA", d: "Lugar repleto de livros"},
+            {p: "MONTANHA", d: "Grande elevação natural do terreno"},
+            {p: "GELADEIRA", d: "Eletrodoméstico para conservar alimentos"}
         ];
-        let indiceForca = 0, letrasDescobertas = [], errosForca = 0, pontosForca = 0;
+        
+        let listaForcaEmbaralhada = [];
+        let indiceForcaAtual = 0;
+        let letrasDescobertas = [], errosForca = 0, pontosForca = 0;
 
         function iniciarForca() {
-            if (indiceForca >= niveisForca.length) indiceForca = 0;
-            let atual = niveisForca[indiceForca];
-            letrasDescobertas = []; errosForca = 0;
-            document.getElementById('forca-nivel-info').innerText = `🎯 Nível ${atual.nivel} | Adversário: ${atual.adv}`;
+            // Embaralhar as palavras para que nunca venham na mesma ordem
+            listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5);
+            indiceForcaAtual = 0;
+            pontosForca = 0;
+            carregarProximaPalavraForca();
+        }
+
+        function carregarProximaPalavraForca() {
+            if (indiceForcaAtual >= listaForcaEmbaralhada.length) {
+                listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5);
+                indiceForcaAtual = 0;
+            }
+            let atual = listaForcaEmbaralhada[indiceForcaAtual];
+            letrasDescobertas = []; 
+            errosForca = 0;
+            
+            document.getElementById('forca-nivel-info').innerText = `🎯 Palavra ${indiceForcaAtual + 1} de ${listaForcaEmbaralhada.length}`;
             document.getElementById('dica-palavra').innerText = `Dica: ${atual.d}`;
+            document.getElementById('dica-palavra').style.display = 'none';
             document.getElementById('contador-erros').innerText = 0;
             document.getElementById('pontos-forca').innerText = pontosForca;
-            atualizarTelaForca(); criarTecladoForca();
+            atualizarTelaForca(); 
+            criarTecladoForca();
+        }
+
+        function mostrarDicaForca() {
+            document.getElementById('dica-palavra').style.display = 'block';
         }
 
         function atualizarTelaForca() {
-            let atual = niveisForca[indiceForca];
+            let atual = listaForcaEmbaralhada[indiceForcaAtual];
             let ex = "", ganho = true;
             for (let i = 0; i < atual.p.length; i++) {
                 let l = atual.p[i];
@@ -524,29 +559,38 @@
             document.getElementById('palavra-secreta').innerText = ex.trim();
             
             if (ganho) {
-                pontosForca += (11 - errosForca) * 10 * atual.nivel;
+                pontosForca += (7 - errosForca) * 15;
+                document.getElementById('pontos-forca').innerText = pontosForca;
                 setTimeout(() => {
-                    alert(`🎉 Vitória contra o ${atual.adv}! Avançando de nível.`);
-                    indiceForca++;
-                    iniciarForca();
+                    alert(`🎉 Acertou a palavra "${atual.p}"! Vamos para a próxima.`);
+                    indiceForcaAtual++;
+                    carregarProximaPalavraForca();
                 }, 200);
             } else if (errosForca >= 6) {
                 setTimeout(() => {
-                    alert(`❌ Derrotado por ${atual.adv}! Reiniciando forca.`);
-                    indiceForca = 0; pontosForca = 0;
-                    iniciarForca();
+                    alert(`❌ Errou! A palavra era "${atual.p}". Tentando nova palavra.`);
+                    indiceForcaAtual++;
+                    carregarProximaPalavraForca();
                 }, 200);
             }
         }
 
         function escolherLetraForca(l) {
-            let atual = niveisForca[indiceForca];
+            let atual = listaForcaEmbaralhada[indiceForcaAtual];
             if (!letrasDescobertas.includes(l)) {
                 letrasDescobertas.push(l);
-                if (!atual.p.includes(l)) { errosForca++; document.getElementById('contador-erros').innerText = errosForca; }
+                if (!atual.p.includes(l)) { 
+                    errosForca++; 
+                    document.getElementById('contador-erros').innerText = errosForca; 
+                }
             }
             let btn = document.getElementById(`btn-letra-${l}`);
-            if (btn) { btn.disabled = true; btn.style.background = "#ccc"; }
+            if (btn) { 
+                btn.disabled = true; 
+                // Mudança de cor da letra selecionada
+                btn.style.background = "#94a3b8"; 
+                btn.style.color = "#f1f5f9";
+            }
             atualizarTelaForca();
         }
 
@@ -557,16 +601,16 @@
                 let l = alfabeto[i], btn = document.createElement('button');
                 btn.innerText = l; btn.id = `btn-letra-${l}`;
                 btn.onclick = () => escolherLetraForca(l);
-                btn.style.cssText = "padding: 5px 0; font-size: 12px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
+                btn.style.cssText = "padding: 8px 0; font-size: 12px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
                 cont.appendChild(btn);
             }
         }
 
-        /* Jogo da Memória com Cronômetro e Salvamento Local */
+        /* Jogo da Memória com Salvamento Automático e Manual para Qualquer Pontuação */
         let nivelMemoria = 1;
         let cartasMemoria = [];
         let primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0;
-        let pontosMemoria = 0, errosMemoriaMemoria = 0;
+        let pontosMemoria = 0;
         let tempoMemoria = 0, intervaloTempoMemoria = null;
         const adversariosMemoria = ["🐰 Coelho", "🦊 Raposa", "🐼 Panda", "🦁 Leão", "🐯 Tigre", "🦅 Águia", "🦈 Tubarão", "🐉 Dragão", "🤖 Robô Mestre", "👑 Rei Supremo"];
         const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🥑','🥥','🍋','🍊','🍐','🍑','🥕','🌽'];
@@ -590,19 +634,19 @@
         }
 
         function iniciarMemoria() {
-            document.getElementById('texto-nivel-memoria').innerText = `🧠 Nível ${nivelMemoria} | ${adversariosMemoria[nivelMemoria - 1]}`;
+            document.getElementById('texto-nivel-memoria').innerText = `🧠 Nível ${nivelMemoria} | ${adversariosMemoria[(nivelMemoria - 1) % adversariosMemoria.length]}`;
             document.getElementById('pontos-memoria').innerText = pontosMemoria;
             
-            let qtdPares = 1 + nivelMemoria; 
+            let qtdPares = Math.min(8, 2 + Math.floor(nivelMemoria / 2)); 
             let emojisSelecionados = emojisPool.slice(0, qtdPares);
             cartasMemoria = [...emojisSelecionados, ...emojisSelecionados];
             cartasMemoria.sort(() => Math.random() - 0.5);
 
             paresRestantes = qtdPares;
-            primeiraCarta = null; segundaCarta = null; travadoMemoria = false; errosMemoriaMemoria = 0;
+            primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
 
             let cont = document.getElementById('tabuleiro-memoria');
-            let colunas = nivelMemoria <= 3 ? 4 : (nivelMemoria <= 6 ? 5 : 6);
+            let colunas = 4;
             cont.style.gridTemplateColumns = `repeat(${colunas}, 42px)`;
             cont.innerHTML = "";
 
@@ -625,33 +669,21 @@
 
             if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
                 paresRestantes--;
-                pontosMemoria += 20 * nivelMemoria; 
+                pontosMemoria += 25; 
                 document.getElementById('pontos-memoria').innerText = pontosMemoria;
 
                 primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
                 
                 if (paresRestantes === 0) {
                     setTimeout(() => {
-                        if (nivelMemoria >= 10) {
-                            clearInterval(intervaloTempoMemoria);
-                            let bonusTempo = Math.max(0, 500 - (tempoMemoria * 2));
-                            pontosMemoria += bonusTempo;
-                            
-                            salvarPontuacaoRankingMemoria();
-                            alert(`🏆 Jogo Concluído!\nTempo: ${tempoMemoria}s\nBônus de Velocidade: +${bonusTempo} pts\nPontuação Final: ${pontosMemoria} pts`);
-                            
-                            nivelMemoria = 1;
-                            pontosMemoria = 0;
-                            iniciarCronometroMemoria();
-                        } else {
-                            nivelMemoria++;
-                            alert(`🎉 Derrotou ${adversariosMemoria[nivelMemoria-2]}! Subindo para o Nível ${nivelMemoria}!`);
-                        }
+                        nivelMemoria++;
+                        pontosMemoria += 50; // Bônus por concluir o nível
+                        salvarPontuacaoRankingMemoria(true); // Salva automaticamente com qualquer ponto acumulado
+                        alert(`🎉 Nível Concluído! Pontuação atual: ${pontosMemoria} pts. Avançando!`);
                         iniciarMemoria();
                     }, 300);
                 }
             } else {
-                errosMemoriaMemoria++;
                 pontosMemoria = Math.max(0, pontosMemoria - 5); 
                 document.getElementById('pontos-memoria').innerText = pontosMemoria;
 
@@ -663,8 +695,17 @@
             }
         }
 
-        function salvarPontuacaoRankingMemoria() {
-            let nome = prompt("🏆 Parabéns! Digite seu nome para salvar no Ranking:") || "Jogador";
+        function salvarPontuacaoRankingMemoriaManual() {
+            salvarPontuacaoRankingMemoria(false);
+            alert("✅ Pontuação salva no ranking com sucesso!");
+        }
+
+        function salvarPontuacaoRankingMemoria(silencioso = false) {
+            if (pontosMemoria <= 0) {
+                if (!silencioso) alert("Jogue um pouco mais para acumular pontos antes de salvar!");
+                return;
+            }
+            let nome = prompt("🏆 Digite seu nome para salvar no Ranking:") || "Jogador";
             let ranking = JSON.parse(localStorage.getItem('rankingMemoria') || "[]");
             
             ranking.push({ nome: nome, pontos: pontosMemoria, tempo: tempoMemoria });
@@ -674,7 +715,7 @@
             localStorage.setItem('rankingMemoria', JSON.stringify(ranking));
         }
 
-        /* Jokenpô Brasil vs Mundo */
+        /* Jokenpô Brasil vs Mundo (Mais equilibrado e gratificante) */
         const paisesJokenpo = [
             {fase: 1, nome: "🇦🇷 Argentina"}, {fase: 2, nome: "🇺🇾 Uruguai"}, {fase: 3, nome: "🇲🇽 México"},
             {fase: 4, nome: "🇪🇸 Espanha"}, {fase: 5, nome: "🇮🇹 Itália"}, {fase: 6, nome: "🇫🇷 França"},
@@ -715,6 +756,7 @@
             document.getElementById('instrucao-jokenpo').innerText = "O adversário está escolhendo...";
             
             setTimeout(() => {
+                // Inteligência equilibrada: dá um pouco mais de chance de vitória ao jogador
                 const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
                 document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
                 let textoRes = "", corFundo = "", corTexto = "", venceu = false;
@@ -722,6 +764,7 @@
                 if (escolhaUsuario === escolhaMaquina) {
                     textoRes = `Empate! Jogue novamente.`;
                     corFundo = "#e5e7eb"; corTexto = "#374151";
+                    pontosJokenpo += 10; // Pontua mesmo no empate para incentivar
                 } else if (
                     (escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') ||
                     (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') ||
@@ -731,7 +774,9 @@
                     textoRes = `🎉 Brasil Venceu ${paisesJokenpo[faseAtualJokenpo-1].nome}!`;
                     corFundo = "#d1fae5"; corTexto = "#065f46";
                 } else {
-                    textoRes = `❌ Brasil Perdeu! Fim da linha.`;
+                    // Ao invés de reiniciar tudo na derrota, agora pontua o que conseguiu e avança ou permite tentar de novo
+                    pontosJokenpo = Math.max(0, pontosJokenpo - 20);
+                    textoRes = `❌ Brasil Perdeu esta rodada, mas continue tentando!`;
                     corFundo = "#fee2e2"; corTexto = "#991b1b";
                 }
 
@@ -743,9 +788,17 @@
                 document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
 
                 if (venceu) {
-                    if (faseAtualJokenpo < 10) { faseAtualJokenpo++; document.getElementById('btn-proxima-rodada').style.display = 'block'; }
-                    else { alert("🏆 INCRÍVEL! O Brasil conquistou o mundo!"); iniciarJokenpo(); }
-                } else { setTimeout(() => iniciarJokenpo(), 2500); }
+                    if (faseAtualJokenpo < 10) { 
+                        faseAtualJokenpo++; 
+                        document.getElementById('btn-proxima-rodada').style.display = 'block'; 
+                    } else { 
+                        alert("🏆 INCRÍVEL! O Brasil conquistou o mundo!"); 
+                        iniciarJokenpo(); 
+                    }
+                } else { 
+                    // Permite jogar a próxima rodada após perder sem zerar tudo
+                    setTimeout(() => reiniciarRodadaJokenpo(), 2000); 
+                }
             }, 1000);
         }
         function proximaRodadaJokenpo() { atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
@@ -784,7 +837,7 @@
             if (cabeca.y >= gridTotal) cabeca.y = 0;
 
             if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
-                pararCobrinha(); alert(`💥 Fim de jogo na Cobrinha! Pontos: ${pontosSnake}`); return;
+                pararCobrinha(); alert(`💥 Fim de jogo na Cobrinha! Pontos finais: ${pontosSnake}`); return;
             }
             snake.unshift(cabeca);
             if (cabeca.x === comida.x && cabeca.y === comida.y) {
