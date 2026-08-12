@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karaokê da Comunidade</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f2f2f7;
+            margin: 0;
+            padding: 20px;
+            padding-top: 60px;
+        }
+        .app-header {
+            background-color: #0056b3;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .music-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .music-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+            color: #003366;
+        }
+        .music-info span {
+            font-size: 11px;
+            color: #666;
+            background: #eef2f5;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .sing-btn {
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .sing-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <button class="back-btn" onclick="location.href='entretenimento.html'">⬅ Voltar</button>
+        Karaokê
+    </div>
+
+    <!-- Container onde as músicas do seu arquivo JS vão aparecer automaticamente -->
+    <div id="container-musicas"></div>
+
+    <!-- Puxa o seu arquivo karaoke-musicas.js que já está pronto no GitHub -->
+    <script src="karaoke-musicas.js"></script>
+    <script>
+        const wrapper = document.getElementById('container-musicas');
+
+        if (typeof listaKaraoke !== 'undefined') {
+            listaKaraoke.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'music-card';
+                card.innerHTML = `
+                    <div class="music-info">
+                        <span>${item.categoria}</span>
+                        <h3>${item.titulo}</h3>
+                    </div>
+                    <a href="${item.link}" target="_blank" class="sing-btn">🎤 Cantar</a>
+                `;
+                wrapper.appendChild(card);
+            });
+        } else {
+            wrapper.innerHTML = '<p style="text-align:center; color:#666;">Erro ao carregar as músicas.</p>';
+        }
+    </script>
+
+</body>
+</html>
