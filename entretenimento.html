@@ -48,6 +48,7 @@
             cursor: pointer;
             text-align: center;
             transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
         }
         .card-btn:hover {
             transform: translateY(-2px);
@@ -202,7 +203,8 @@
                 <span class="subtitle">Todas as Opções</span>
             </button>
 
-            <button class="card-btn" onclick="abrirModalKaraoke()">
+            <!-- Botão do Karaokê corrigido para abrir a página inteira karaoke.html -->
+            <button class="card-btn" onclick="window.location.href='karaoke.html'">
                 <span class="icon">🎤</span>
                 <span class="title">Karaokê</span>
                 <span class="subtitle">Cante com a Gente</span>
@@ -214,13 +216,15 @@
                 <span class="subtitle">Omikuji do Dia</span>
             </button>
 
-            <button class="card-btn" onclick="alert('Chat em breve!')">
+            <!-- Botão de Chat redirecionando para chat.html -->
+            <button class="card-btn" onclick="window.location.href='chat.html'">
                 <span class="icon">💬</span>
                 <span class="title">Chat</span>
                 <span class="subtitle">Comunidade Online</span>
             </button>
 
-            <button class="card-btn" onclick="alert('Ranking em breve!')">
+            <!-- Botão de Ranking redirecionando para ranking.html -->
+            <button class="card-btn" onclick="window.location.href='ranking.html'">
                 <span class="icon">🏆</span>
                 <span class="title">Ranking</span>
                 <span class="subtitle">Usuários mais ativos</span>
@@ -232,7 +236,7 @@
                 <span class="subtitle">Cupons em Loja</span>
             </button>
 
-            <!-- Botão de Jogos redirecionando para a central separada (forca.html) -->
+            <!-- Botão de Jogos redirecionando para forca.html -->
             <button class="card-btn" onclick="window.location.href='forca.html'">
                 <span class="icon">🎮</span>
                 <span class="title">Jogos</span>
@@ -250,7 +254,7 @@
         </div>
     </div>
 
-    <!-- Modal da Rádio (Com as suas 6 rádios originais recuperadas) -->
+    <!-- Modal da Rádio (Com as 6 rádios originais) -->
     <div id="modalRadio" class="modal">
         <div class="modal-content">
             <h2 style="color: #1e3a8a; margin-top: 0;">🎧 Escolha o Canal</h2>
@@ -293,7 +297,7 @@
         </div>
     </div>
 
-    <!-- Modal do Omikuji (Travado perfeitamente em 1x por dia) -->
+    <!-- Modal do Omikuji (Travado em 1x por dia) -->
     <div id="modalOmikuji" class="modal">
         <div class="modal-content">
             <h2 id="omikujiTitulo" style="font-size: 18px; color: #0d47a1;">Sorte do Dia</h2>
@@ -302,18 +306,6 @@
             <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
             <br>
             <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: auto; margin-top: 10px;">Fechar</button>
-        </div>
-    </div>
-
-    <!-- Modal do Karaokê -->
-    <div id="modalKaraoke" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #1e3a8a; margin-top: 0;">🎤 Karaokê</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Escolha uma música para cantar:</p>
-            
-            <div id="listaKaraokeHTML"></div>
-
-            <button class="close-btn" onclick="fecharModalKaraoke()">Fechar Janela</button>
         </div>
     </div>
 
@@ -394,43 +386,7 @@
                 alert("O arquivo de mensagens do Omikuji não carregou.");
             }
         }
-
-        function abrirModalKaraoke() {
-            document.getElementById('modalKaraoke').style.display = 'flex';
-            carregarListaKaraoke();
-        }
-
-        function fecharModalKaraoke() {
-            document.getElementById('modalKaraoke').style.display = 'none';
-        }
-
-        function carregarListaKaraoke() {
-            const containerLista = document.getElementById('listaKaraokeHTML');
-            if(containerLista.innerHTML.trim() !== "") return;
-
-            let htmlFinal = "";
-            let categoriaAtual = "";
-
-            if (typeof listaKaraoke !== 'undefined') {
-                listaKaraoke.forEach(musica => {
-                    if (musica.categoria !== categoriaAtual) {
-                        htmlFinal += `<div class="radio-category" style="margin-top: 20px;">🎶 ${musica.categoria}</div>`;
-                        categoriaAtual = musica.categoria;
-                    }
-
-                    htmlFinal += `
-                        <a href="${musica.link}" target="_blank" rel="noopener noreferrer" class="radio-option">
-                            ${musica.titulo} <span>▶️ Cantar</span>
-                        </a>
-                    `;
-                });
-                containerLista.innerHTML = htmlFinal;
-            } else {
-                containerLista.innerHTML = "<p style='color:red;'>Erro ao carregar o arquivo de músicas.</p>";
-            }
-        }
     </script>
     <script src="omikuji-mensagens.js"></script>
-    <script src="karaoke-musicas.js"></script>
 </body>
 </html>
