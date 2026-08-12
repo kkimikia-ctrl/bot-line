@@ -10,7 +10,7 @@
             background-color: #f2f2f7;
             margin: 0;
             padding: 20px;
-            padding-top: 70px; /* Espaço para o header */
+            padding-top: 70px;
         }
         .app-header {
             background-color: #0056b3;
@@ -36,7 +36,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        /* Ajuste do card para dar destaque ao retângulo */
         .music-card {
             background: white;
             padding: 18px;
@@ -60,7 +59,6 @@
             border-radius: 20px;
             text-transform: uppercase;
         }
-        /* Botão Cantar em formato de retângulo */
         .sing-btn {
             display: block;
             width: 100%;
@@ -77,6 +75,26 @@
         }
         .sing-btn:hover {
             background-color: #d32f2f;
+        }
+        /* Estilo da área onde o vídeo vai tocar dentro da página */
+        .player-container {
+            margin-top: 15px;
+            display: none;
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Proporção 16:9 */
+            height: 0;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .player-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
@@ -95,7 +113,17 @@
         const wrapper = document.getElementById('container-musicas');
 
         if (typeof listaKaraoke !== 'undefined') {
-            listaKaraoke.forEach(item => {
+            listaKaraoke.forEach((item, index) => {
+                // Transforma o link normal do YouTube em link embutido (embed)
+                let videoId = "";
+                if (item.link.includes("youtu.be/")) {
+                    videoId = item.link.split("youtu.be/")[1].split("?")[0];
+                } else if (item.link.includes("watch?v=")) {
+                    videoId = item.link.split("watch?v=")[1].split("&")[0];
+                }
+
+                const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : item.link;
+
                 const card = document.createElement('div');
                 card.className = 'music-card';
                 card.innerHTML = `
@@ -103,12 +131,26 @@
                         <span>${item.categoria}</span>
                         <h3>${item.titulo}</h3>
                     </div>
-                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="sing-btn">🎤 Cantar esta música</a>
+                    <button class="sing-btn" onclick="tocarVideo('${embedUrl}', 'player-${index}')">🎤 Cantar esta música</button>
+                    <div id="player-${index}" class="player-container"></div>
                 `;
                 wrapper.appendChild(card);
             });
         } else {
             wrapper.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">Nenhuma música encontrada no seu arquivo karaoke-musicas.js.</p>';
+        }
+
+        function tocarVideo(url, playerId) {
+            // Fecha todos os outros players abertos antes de abrir o novo
+            document.querySelectorAll('.player-container').forEach(container => {
+                container.style.display = 'none';
+                container.innerHTML = '';
+            });
+
+            // Abre o player da música clicada
+            const containerAtual = document.getElementById(playerId);
+            containerAtual.style.display = 'block';
+            containerAtual.innerHTML = `<iframe src="${url}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         }
     </script>
 
