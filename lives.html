@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lives da Comunidade</title>
     <style>
+        * { box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; }
-        .header { background-color: #0d47a1; color: white; padding: 15px; display: flex; align-items: center; }
-        .btn-voltar { background: none; border: none; color: white; font-size: 16px; cursor: pointer; font-weight: bold; margin-right: 15px; }
+        .header { background-color: #0d47a1; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .btn-voltar { background: none; border: none; color: white; font-size: 16px; cursor: pointer; font-weight: bold; }
         .container { max-width: 600px; margin: 0 auto; padding: 15px; }
         
         /* Carrossel de Anúncios */
@@ -17,39 +18,147 @@
         .live-card { background: white; border: 1px solid #ddd; padding: 16px; border-radius: 14px; margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left; }
         .badge-aovivo { background-color: #ef4444; color: white; padding: 5px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; }
         .action-btn { background-color: #059669; color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+
+        /* TELA DA SALA DE LIVE (Oculta por padrão, abre por cima ao clicar) */
+        #salaLiveContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #111;
+            z-index: 9999;
+            flex-direction: column;
+            color: white;
+        }
+        .live-header-sala {
+            background-color: #1a1a1a;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+        }
+        .video-box {
+            width: 100%;
+            background-color: #222;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-height: 50vh;
+            color: #aaa;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+        .interaction-box {
+            background: #18181b;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            height: 40vh;
+        }
+        .chat-view {
+            flex-grow: 1;
+            background: #111;
+            border-radius: 8px;
+            padding: 8px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #ccc;
+            text-align: left;
+        }
+        .chat-msg { margin-bottom: 6px; }
+        .chat-msg span { color: #60a5fa; font-weight: bold; }
+        .btns-acao-sala { display: flex; gap: 8px; }
+        .btn-acao-sala { flex: 1; background-color: #059669; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-acao-sala.presente { background-color: #d97706; }
+
+        /* Responsivo para celular deitado (Paisagem) */
+        @media (min-aspect-ratio: 4/3) {
+            #salaLiveContainer { flex-direction: row; }
+            .live-header-sala { position: absolute; top: 0; left: 0; width: 100%; background: rgba(0,0,0,0.6); border: none; }
+            .video-box { max-height: 100vh; height: 100vh; width: 70%; }
+            .interaction-box { width: 30%; height: 100vh; padding-top: 60px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <button class="btn-voltar" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
-        <span style="font-weight: bold; font-size: 18px;">🔴 Lives da Comunidade</span>
+    <!-- TELA PRINCIPAL (LISTA DE LIVES) -->
+    <div id="listaLivesContainer">
+        <div class="header">
+            <button class="btn-voltar" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
+            <span style="font-weight: bold; font-size: 18px;">🔴 Lives da Comunidade</span>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="container">
+            <!-- Banner Carrossel -->
+            <div class="carousel">Espaço para Carrossel de Anúncios</div>
+
+            <div class="section-title">Transmissões acontecendo agora:</div>
+            
+            <div class="live-card" onclick="entrarNaLive('Receitas de Bolos Japoneses')">
+                <div><strong>🍰 Receitas de Bolos Japoneses</strong><br><small>Ana Silva • 45 assistindo</small></div>
+                <div class="badge-aovivo">AO VIVO</div>
+            </div>
+
+            <div class="live-card" onclick="entrarNaLive('Truques de Mágica')">
+                <div><strong>🎩 Truques de Mágica</strong><br><small>Mágico Hiro • 120 assistindo</small></div>
+                <div class="badge-aovivo">AO VIVO</div>
+            </div>
+
+            <div class="live-card" onclick="entrarNaLive('Dicas de Moradia no Japão')">
+                <div><strong>🏠 Dicas de Moradia no Japão</strong><br><small>Pedro Santos • 85 assistindo</small></div>
+                <div class="badge-aovivo">AO VIVO</div>
+            </div>
+
+            <button class="action-btn" onclick="alert('Abrindo tela para iniciar transmissão...')">🎥 Iniciar Minha Própria Live</button>
+        </div>
     </div>
 
-    <div class="container">
-        <!-- Banner Carrossel -->
-        <div class="carousel">Espaço para Carrossel de Anúncios</div>
 
-        <div class="section-title">Transmissões acontecendo agora:</div>
-        
-        <!-- Links atualizados para abrir a sala-live.html -->
-        <div class="live-card" onclick="window.location.href='sala-live.html?tema=Receitas%20de%20Bolos%20Japoneses'">
-            <div><strong>🍰 Receitas de Bolos Japoneses</strong><br><small>Ana Silva • 45 assistindo</small></div>
+    <!-- TELA DA SALA DE LIVE (ABRE EM TELA CHEIA E GIRA NO CELULAR) -->
+    <div id="salaLiveContainer">
+        <div class="live-header-sala">
+            <button class="btn-voltar" onclick="sairDaLive()">⬅ Sair</button>
+            <h2 id="tituloSalaLive" style="font-size: 14px; margin:0; max-width: 60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Live</h2>
             <div class="badge-aovivo">AO VIVO</div>
         </div>
 
-        <div class="live-card" onclick="window.location.href='sala-live.html?tema=Truques%20de%20Mágica'">
-            <div><strong>🎩 Truques de Mágica</strong><br><small>Mágico Hiro • 120 assistindo</small></div>
-            <div class="badge-aovivo">AO VIVO</div>
+        <div class="video-box">
+            🎥 Transmissão ao Vivo em Tela Cheia<br><br><small style="color: #666;">(Gire o celular para modo paisagem)</small>
         </div>
 
-        <div class="live-card" onclick="window.location.href='sala-live.html?tema=Dicas%20de%20Moradia%20no%20Japão'">
-            <div><strong>🏠 Dicas de Moradia no Japão</strong><br><small>Pedro Santos • 85 assistindo</small></div>
-            <div class="badge-aovivo">AO VIVO</div>
+        <div class="interaction-box">
+            <div class="chat-view">
+                <div class="chat-msg"><span>Sistema:</span> Bem-vindo à live!</div>
+                <div class="chat-msg"><span>Carlos_JP:</span> Boa noite a todos!</div>
+                <div class="chat-msg"><span>Mariana:</span> Muito legal! 👏</div>
+            </div>
+            <div class="btns-acao-sala">
+                <button class="btn-acao-sala presente" onclick="alert('Enviando presente...')">🎁 Presente</button>
+                <button class="btn-acao-sala" onclick="alert('Comentar...')">💬 Comentar</button>
+            </div>
         </div>
-
-        <button class="action-btn" onclick="alert('Abrindo tela para iniciar transmissão...')">🎥 Iniciar Minha Própria Live</button>
     </div>
 
+    <script>
+        function entrarNaLive(nomeTema) {
+            document.getElementById('tituloSalaLive').innerText = nomeTema;
+            document.getElementById('listaLivesContainer').style.display = 'none';
+            document.getElementById('salaLiveContainer').style.display = 'flex';
+        }
+
+        function sairDaLive() {
+            document.getElementById('salaLiveContainer').style.display = 'none';
+            document.getElementById('listaLivesContainer').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
