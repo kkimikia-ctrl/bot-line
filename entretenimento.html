@@ -137,6 +137,44 @@
         .watch-btn:hover {
             background-color: #004494;
         }
+
+        /* Estilo do Modal de Karaokê (Vídeo dentro do Mini App) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .music-list-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+        }
+        .play-btn {
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -145,58 +183,51 @@
         Entretenimento e Lazer
     </div>
 
-    <!-- Grade de Botões 100% Funcionais -->
+    <!-- Grade de Botões -->
     <div class="icon-grid">
-        <!-- Lives -->
         <button class="icon-btn" onclick="location.href='lives.html'">
             <span class="icon-emoji">🔴</span>
             <span class="btn-title">Lives</span>
             <span class="btn-subtitle">Transmissões e Prêmios</span>
         </button>
 
-        <!-- Rádios & Som -->
-        <button class="icon-btn" onclick="location.href='radios.html'">
+        <button class="icon-btn" onclick="abrirRadios()">
             <span class="icon-emoji">📻</span>
             <span class="btn-title">Rádios & Som</span>
             <span class="btn-subtitle">Todas as Opções</span>
         </button>
 
-        <!-- Karaokê (Agora abrindo o arquivo correto do Karaokê que puxa o seu JS) -->
-        <button class="icon-btn" onclick="location.href='karaoke.html'">
+        <!-- Botão Karaokê que abre o player/lista direto no Mini App -->
+        <button class="icon-btn" onclick="abrirKaraokeModal()">
             <span class="icon-emoji">🎤</span>
             <span class="btn-title">Karaokê</span>
             <span class="btn-subtitle">Cante com a Gente</span>
         </button>
 
-        <!-- Horóscopo -->
-        <button class="icon-btn" onclick="location.href='horoscopo.html'">
+        <button class="icon-btn" onclick="abrirHoroscopo()">
             <span class="icon-emoji">🔮</span>
             <span class="btn-title">Horóscopo</span>
             <span class="btn-subtitle">Omikuji do Dia</span>
         </button>
 
-        <!-- Chat -->
-        <button class="icon-btn" onclick="location.href='chat.html'">
+        <button class="icon-btn" onclick="abrirChat()">
             <span class="icon-emoji">💬</span>
             <span class="btn-title">Chat</span>
             <span class="btn-subtitle">Comunidade Online</span>
         </button>
 
-        <!-- Ranking -->
-        <button class="icon-btn" onclick="location.href='ranking.html'">
+        <button class="icon-btn" onclick="abrirRanking()">
             <span class="icon-emoji">🏆</span>
             <span class="btn-title">Ranking</span>
             <span class="btn-subtitle">Melhores Pontuações</span>
         </button>
 
-        <!-- Descontos -->
         <button class="icon-btn" onclick="location.href='anunciar.html'">
             <span class="icon-emoji">🎟️</span>
             <span class="btn-title">Descontos</span>
             <span class="btn-subtitle">Cupons em Loja</span>
         </button>
 
-        <!-- Jogos -->
         <button class="icon-btn" onclick="location.href='forca.html'">
             <span class="icon-emoji">🎮</span>
             <span class="btn-title">Jogos</span>
@@ -222,5 +253,80 @@
         </button>
     </div>
 
+    <!-- Modal do Karaokê (Abre o vídeo/músicas dentro do Mini App) -->
+    <div id="modalKaraoke" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #003366; margin-top:0;">🎤 Karaokê da Comunidade</h3>
+            <div id="listaMusicasMiniApp" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
+                <!-- Carregado via JS do karaoke-musicas.js -->
+            </div>
+            <div id="playerContainer" style="display:none; margin-bottom: 15px;">
+                <iframe id="videoFrame" width="100%" height="220" src="" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+            </div>
+            <button class="watch-btn" style="background-color: #6b7280;" onclick="fecharKaraokeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Puxa o seu arquivo de músicas para alimentar o player interno -->
+    <script src="karaoke-musicas.js"></script>
+    <script>
+        function abrirKaraokeModal() {
+            const modal = document.getElementById('modalKaraoke');
+            const container = document.getElementById('listaMusicasMiniApp');
+            container.innerHTML = '';
+            document.getElementById('playerContainer').style.display = 'none';
+
+            if (typeof listaKaraoke !== 'undefined') {
+                listaKaraoke.forEach(musica => {
+                    // Transforma o link do youtube em formato embutido (embed) para rodar dentro do app
+                    let embedUrl = musica.link.replace("youtu.be/", "www.youtube.com/embed/").replace("watch?v=", "embed/");
+                    
+                    const item = document.createElement('div');
+                    item.className = 'music-list-item';
+                    item.innerHTML = `
+                        <div>
+                            <strong style="font-size: 13px; color: #003366; display: block;">${musica.titulo}</strong>
+                            <span style="font-size: 11px; color: #666;">${musica.categoria}</span>
+                        </div>
+                        <button class="play-btn" onclick="tocarVideo('${embedUrl}')">▶ Tocar</button>
+                    `;
+                    container.appendChild(item);
+                });
+            } else {
+                container.innerHTML = '<p>Nenhuma música encontrada no arquivo karaoke-musicas.js</p>';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function tocarVideo(url) {
+            const iframe = document.getElementById('videoFrame');
+            iframe.src = url;
+            document.getElementById('playerContainer').style.display = 'block';
+        }
+
+        function fecharKaraokeModal() {
+            document.getElementById('modalKaraoke').style.display = 'none';
+            document.getElementById('videoFrame').src = ''; // Para o vídeo ao fechar
+        }
+
+        function abrirRadios() {
+            alert("Abrindo painel de Rádios & Som...");
+            // Insira aqui a lógica ou redirecionamento correto da rádio se houver arquivo próprio
+        }
+
+        function abrirHoroscopo() {
+            alert("Carregando Omikuji / Horóscopo do Dia...");
+            // Se houver arquivo específico, ajuste para location.href='horoscopo.html'
+        }
+
+        function abrirChat() {
+            alert("Conectando ao Chat da Comunidade...");
+        }
+
+        function abrirRanking() {
+            alert("Carregando Ranking de Pontuações...");
+        }
+    </script>
 </body>
 </html>
