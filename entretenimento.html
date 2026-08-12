@@ -138,7 +138,7 @@
             background-color: #004494;
         }
 
-        /* Modal Genérico para exibir conteúdos sem sair da tela */
+        /* Janela Modal */
         .modal {
             display: none;
             position: fixed;
@@ -155,7 +155,7 @@
             padding: 20px;
             border-radius: 15px;
             text-align: center;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
         .music-list-item {
@@ -185,7 +185,7 @@
         Entretenimento e Lazer
     </div>
 
-    <!-- Grade de Botões com funções seguras que não mandam para o menu inicial -->
+    <!-- Grade de Botões -->
     <div class="icon-grid">
         <button class="icon-btn" onclick="location.href='lives.html'">
             <span class="icon-emoji">🔴</span>
@@ -254,7 +254,7 @@
         </button>
     </div>
 
-    <!-- Janela Modal Única para exibir as funções -->
+    <!-- Modal Dinâmico Único -->
     <div id="modalGenerico" class="modal">
         <div class="modal-content">
             <h3 id="modalTitulo" style="color: #003366; margin-top:0;">Título</h3>
@@ -263,7 +263,7 @@
         </div>
     </div>
 
-    <!-- Puxa os seus arquivos de dados (.js) -->
+    <!-- Puxa os arquivos de dados -->
     <script src="karaoke-musicas.js"></script>
     <script src="omikuji-mensagens.js"></script>
     <script>
@@ -273,16 +273,16 @@
 
         function fecharModal() {
             modal.style.display = 'none';
-            corpo.innerHTML = ''; // Limpa conteúdos pesados (como vídeos) ao fechar
+            corpo.innerHTML = ''; 
         }
 
-        // 1. Karaokê (Lê do seu karaoke-musicas.js)
+        // 1. Karaokê
         function abrirKaraokeModal() {
             titulo.innerText = "🎤 Karaokê da Comunidade";
             corpo.innerHTML = '';
             
             if (typeof listaKaraoke !== 'undefined') {
-                let html = '<div style="max-height: 250px; overflow-y: auto;">';
+                let html = '<div style="max-height: 220px; overflow-y: auto;">';
                 listaKaraoke.forEach(musica => {
                     let embedUrl = musica.link.replace("youtu.be/", "www.youtube.com/embed/").replace("watch?v=", "embed/");
                     html += `
@@ -308,18 +308,22 @@
             document.getElementById('videoFrame').src = url;
         }
 
-        // 2. Horóscopo / Omikuji (Lê do seu omikuji-mensagens.js se disponível)
+        // 2. Horóscopo / Omikuji (Puxa do seu omikuji-mensagens.js)
         function abrirHoroscopoModal() {
-            titulo.innerText = "🔮 Horóscopo / Omikuji do Dia";
-            let mensagemSorte = "Sorte do dia: Grandes realizações estão por vir!";
+            titulo.innerText = "🔮 Omikuji do Dia (Horóscopo)";
             
             if (typeof listaOmikuji !== 'undefined' && listaOmikuji.length > 0) {
                 let sorteio = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
-                mensagemSorte = `<div style="background: #eef2f5; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; color: #003366;">${sorteio}</div>`;
+                corpo.innerHTML = `
+                    <div style="background: #eef2f5; padding: 15px; border-radius: 10px; text-align: left;">
+                        <h4 style="color: #003366; margin-top: 0; margin-bottom: 8px; font-size: 16px;">${sorteio.titulo}</h4>
+                        <p style="margin: 0; line-height: 1.5; color: #444; font-size: 13px;">${sorteio.texto}</p>
+                    </div>
+                    <button class="watch-btn" style="margin-top: 15px; background-color: #28a745;" onclick="abrirHoroscopoModal()">🎲 Sortear Outro</button>
+                `;
             } else {
-                mensagemSorte = `<p>Abra sua mensagem da sorte e confira as previsões de hoje!</p>`;
+                corpo.innerHTML = '<p>Arquivo omikuji-mensagens.js não foi carregado corretamente.</p>';
             }
-            corpo.innerHTML = mensagemSorte;
             modal.style.display = 'flex';
         }
 
@@ -327,10 +331,13 @@
         function abrirRadiosModal() {
             titulo.innerText = "📻 Rádios & Som";
             corpo.innerHTML = `
-                <p>Escolha sua estação ou som favorito para ouvir enquanto navega:</p>
+                <p>Ouça suas estações favoritas:</p>
                 <div class="music-list-item">
-                    <span>📡 Rádio Comunidade JP</span>
-                    <button class="play-btn" onclick="alert('Tocando rádio ao vivo!')">Ouvir</button>
+                    <div>
+                        <strong style="font-size: 13px; color: #003366; display: block;">Rádio Comunidade JP</strong>
+                        <span style="font-size: 11px; color: #666;">Transmissão ao vivo</span>
+                    </div>
+                    <button class="play-btn" onclick="alert('Tocando rádio ao vivo!')">▶ Ouvir</button>
                 </div>
             `;
             modal.style.display = 'flex';
@@ -340,7 +347,7 @@
         function abrirRankingModal() {
             titulo.innerText = "🏆 Ranking da Comunidade";
             corpo.innerHTML = `
-                <ol style="padding-left: 20px; margin: 0;">
+                <ol style="padding-left: 20px; margin: 0; text-align: left;">
                     <li style="margin-bottom: 8px;"><strong>1º</strong> - Participante Ativo (500 pts)</li>
                     <li style="margin-bottom: 8px;"><strong>2º</strong> - Colaborador (350 pts)</li>
                     <li style="margin-bottom: 8px;"><strong>3º</strong> - Usuário (200 pts)</li>
@@ -352,7 +359,7 @@
         // 5. Chat
         function abrirChatModal() {
             titulo.innerText = "💬 Chat Online";
-            corpo.innerHTML = `<p>Bem-vindo ao chat da comunidade! O sistema de mensagens está ativo.</p>`;
+            corpo.innerHTML = `<p style="text-align: center;">Bem-vindo ao chat da comunidade! Conectado com sucesso.</p>`;
             modal.style.display = 'flex';
         }
     </script>
