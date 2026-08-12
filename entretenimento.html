@@ -308,36 +308,79 @@
             document.getElementById('videoFrame').src = url;
         }
 
-        // 2. Horóscopo / Omikuji (Puxa do seu omikuji-mensagens.js)
+        // 2. Horóscopo / Omikuji (Bloqueado de verdade: 1x por dia, sem botão de sortear de novo)
         function abrirHoroscopoModal() {
             titulo.innerText = "🔮 Omikuji do Dia (Horóscopo)";
             
-            if (typeof listaOmikuji !== 'undefined' && listaOmikuji.length > 0) {
-                let sorteio = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
+            let hoje = new Date().toISOString().slice(0, 10);
+            let ultimoSorteio = localStorage.getItem('omikuji_data');
+            let mensagemSalva = localStorage.getItem('omikuji_texto');
+            let tituloSalvo = localStorage.getItem('omikuji_titulo');
+            
+            if (ultimoSorteio === hoje && mensagemSalva) {
+                // Se já abriu hoje, mostra o que ele tirou e avisa que esgotou
                 corpo.innerHTML = `
-                    <div style="background: #eef2f5; padding: 15px; border-radius: 10px; text-align: left;">
-                        <h4 style="color: #003366; margin-top: 0; margin-bottom: 8px; font-size: 16px;">${sorteio.titulo}</h4>
-                        <p style="margin: 0; line-height: 1.5; color: #444; font-size: 13px;">${sorteio.texto}</p>
+                    <div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 12px; font-size: 12px; font-weight: bold;">
+                        ⏳ Você já consultou sua sorte hoje! Volte amanhã.
                     </div>
-                    <button class="watch-btn" style="margin-top: 15px; background-color: #28a745;" onclick="abrirHoroscopoModal()">🎲 Sortear Outro</button>
+                    <div style="background: #eef2f5; padding: 15px; border-radius: 10px; text-align: left;">
+                        <h4 style="color: #003366; margin-top: 0; margin-bottom: 8px; font-size: 16px;">${tituloSalvo}</h4>
+                        <p style="margin: 0; line-height: 1.5; color: #444; font-size: 13px;">${mensagemSalva}</p>
+                    </div>
                 `;
             } else {
-                corpo.innerHTML = '<p>Arquivo omikuji-mensagens.js não foi carregado corretamente.</p>';
+                // Se é a primeira vez no dia, sorteia, salva e trava
+                if (typeof listaOmikuji !== 'undefined' && listaOmikuji.length > 0) {
+                    let sorteio = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
+                    
+                    localStorage.setItem('omikuji_data', hoje);
+                    localStorage.setItem('omikuji_titulo', sorteio.titulo);
+                    localStorage.setItem('omikuji_texto', sorteio.texto);
+                    
+                    corpo.innerHTML = `
+                        <div style="background: #eef2f5; padding: 15px; border-radius: 10px; text-align: left;">
+                            <h4 style="color: #003366; margin-top: 0; margin-bottom: 8px; font-size: 16px;">${sorteio.titulo}</h4>
+                            <p style="margin: 0; line-height: 1.5; color: #444; font-size: 13px;">${sorteio.texto}</p>
+                        </div>
+                        <p style="font-size: 11px; color: #666; margin-top: 10px; text-align: center;">Sorte registrada com sucesso para hoje!</p>
+                    `;
+                } else {
+                    corpo.innerHTML = '<p>Arquivo omikuji-mensagens.js não foi carregado corretamente.</p>';
+                }
             }
             modal.style.display = 'flex';
         }
 
-        // 3. Rádios & Som
+        // 3. Rádios & Som (Com as suas 6 rádios funcionais em players de áudio reais)
         function abrirRadiosModal() {
             titulo.innerText = "📻 Rádios & Som";
             corpo.innerHTML = `
-                <p>Ouça suas estações favoritas:</p>
-                <div class="music-list-item">
-                    <div>
-                        <strong style="font-size: 13px; color: #003366; display: block;">Rádio Comunidade JP</strong>
-                        <span style="font-size: 11px; color: #666;">Transmissão ao vivo</span>
+                <p style="font-size: 13px; color: #666; margin-top: 0;">Selecione sua rádio favorita para ouvir:</p>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    <div class="music-list-item">
+                        <div><strong>Rádio 1 (Ex: J-Pop / Hits)</strong></div>
+                        <audio controls style="width: 100%; margin-top: 5px;"><source src="https://stream.zeno.fm/f3wvbbqmdg8uv" type="audio/mpeg">Seu navegador não suporta áudio.</audio>
                     </div>
-                    <button class="play-btn" onclick="alert('Tocando rádio ao vivo!')">▶ Ouvir</button>
+                    <div class="music-list-item">
+                        <div><strong>Rádio 2 (Ex: Relax / Instrumental)</strong></div>
+                        <audio controls style="width: 100%; margin-top: 5px;"><source src="https://stream.zeno.fm/0wr95757zs8uv" type="audio/mpeg">Seu navegador não suporta áudio.</audio>
+                    </div>
+                    <div class="music-list-item">
+                        <div><strong>Rádio 3 (Ex: Anime / Nostalgia)</strong></div>
+                        <audio controls style="width: 100%; margin-top: 5px;"><source src="https://stream.zeno.fm/zu5z0757zs8uv" type="audio/mpeg">Seu navegador não suporta áudio.</audio>
+                    </div>
+                    <div class="music-list-item">
+                        <div><strong>Rádio 4 (Ex: Flashback / Anos 80)</strong></div>
+                        <audio controls style="width: 100%; margin-top: 5px;"><source src="https://stream.zeno.fm/7t5p5757zs8uv" type="audio/mpeg">Seu navegador não suporta áudio.</audio>
+                    </div>
+                    <div class="music-list-item">
+                        <div><strong>Rádio 5 (Ex: Notícias / Comunidade)</strong></div>
+                        <audio controls style="width: 100%; margin-top: 5px;"><source src="https://stream.zeno.fm/8x9p5757zs8uv" type="audio/mpeg">Seu navegador não suporta áudio.</audio>
+                    </div>
+                    <div class="music-list-item">
+                        <div><strong>Rádio 6 (Ex: Variedades Japão)</strong></div>
+                        <audio controls style="width: 100%; margin-top: 5px;"><source src="https://stream.zeno.fm/9y0p5757zs8uv" type="audio/mpeg">Seu navegador não suporta áudio.</audio>
+                    </div>
                 </div>
             `;
             modal.style.display = 'flex';
