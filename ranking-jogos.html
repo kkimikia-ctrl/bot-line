@@ -14,7 +14,36 @@
             text-align: center;
         }
         h1 { color: #38bdf8; margin-bottom: 5px; font-size: 24px; }
-        p.sub { color: #94a3b8; font-size: 13px; margin-top: 0; margin-bottom: 25px; }
+        p.sub { color: #94a3b8; font-size: 13px; margin-top: 0; margin-bottom: 20px; }
+        
+        /* Estilos do Carrossel de Banners Pequenos no Topo */
+        .carousel-container {
+            max-width: 600px;
+            height: 90px;
+            margin: 0 auto 20px auto;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            background: #1e293b;
+            position: relative;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         .grid-rankings {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -46,7 +75,7 @@
             font-size: 13px;
         }
         th, td {
-            padding: 8px 10px;
+            padding: 6px 10px;
             border-bottom: 1px solid #334155;
         }
         tr:hover { background: rgba(255,255,255,0.02); }
@@ -70,10 +99,21 @@
         .btn-voltar:hover { background: #7dd3fc; }
     </style>
 </head>
-<body>
+<body onscroll="pausarCarrosselAoRolar()">
 
     <h1>🏆 Painel Moderno de Ranking Geral</h1>
     <p class="sub">Os 30 melhores competidores separados por modalidade de jogo</p>
+    
+    <!-- CARROSSEL DE BANNERS PEQUENOS NO TOPO -->
+    <div class="carousel-container" id="carouselContainer">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x90/0047ab/ffffff?text=Banner+Promocional+1" alt="Banner 1"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x90/00796b/ffffff?text=Banner+Promocional+2" alt="Banner 2"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x90/7b1fa2/ffffff?text=Banner+Promocional+3" alt="Banner 3"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x90/e65100/ffffff?text=Banner+Promocional+4" alt="Banner 4"></div>
+        </div>
+    </div>
+
     <button class="btn-voltar" onclick="window.close()">✖ Fechar Página</button>
     
     <div class="grid-rankings" id="gridRankings">
@@ -81,14 +121,33 @@
     </div>
 
     <script>
+        // Lógica do Carrossel Pequeno com pausa automática ao rolar a página
+        let currentSlide = 0;
+        const track = document.getElementById('carouselTrack');
+        const slides = document.querySelectorAll('.carousel-slide');
+        let intervaloCarrossel = setInterval(mudarSlideAutomatico, 3500);
+        let timeoutRetomada = null;
+
+        function mudarSlideAutomatico() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        // Para o carrossel quando rolar a página para cima/baixo
+        function pausarCarrosselAoRolar() {
+            clearInterval(intervaloCarrossel);
+            clearTimeout(timeoutRetomada);
+            timeoutRetomada = setTimeout(() => {
+                intervaloCarrossel = setInterval(mudarSlideAutomatico, 3500);
+            }, 1000);
+        }
+
         function carregarRankingGeralPagina() {
-            // Mapeia o nome do jogo exibido para a chave correspondente salva no localStorage
             const modalidadeJogos = [
                 { nome: "Jogo da Velha", chave: "ranking_jogo_da_velha" },
                 { nome: "Jogo da Forca", chave: "ranking_jogo_da_forca" },
                 { nome: "Jogo da Memória", chave: "ranking_jogo_da_memoria" },
-                { nome: "Jokenpô Brasil", chave: "ranking_jokenp_brasil" },
-                { nome: "Jogo da Cobrinha", chave: "ranking_jogo_da_cobrinha" }
+                { nome: "Jankeipo", chave: "ranking_jankeipo" }
             ];
 
             const nomesBase = ["Lucas", "Mariana", "Gabriel", "Beatriz", "Matheus", "Ana", "Rafael", "Larissa", "Bruno", "Camila", "Diego", "Juliana", "Thiago", "Fernanda", "Rodrigo", "Patrícia", "Alexandre", "Vanessa", "Carlos", "Renata", "Felipe", "Tatiane", "Eduardo", "Carolina", "Marcelo", "Sabrina", "Vinicius", "Letícia", "Leonardo", "Bianca"];
@@ -100,23 +159,20 @@
                 let card = document.createElement('div');
                 card.className = 'card-rank';
                 
-                // Busca os pontos reais salvos no navegador para cada jogo específico
                 let lista = JSON.parse(localStorage.getItem(modalidade.chave) || "[]");
 
-                // Se não houver dados suficientes salvos pelo usuário, preenche o restante com a base padrão para completar o Top 30
+                // Preenche com pontuações baixas progressivas até atingir o Top 30 caso faltem dados
                 if (lista.length < 30) {
                     nomesBase.forEach((nome, idx) => {
                         if (lista.length < 30) {
-                            let ptsMock = (30 - idx) * 25 + Math.floor(Math.random() * 15);
-                            // Evita duplicar nomes caso já existam registros parciais
+                            let ptsBaixos = Math.max(1, (30 - idx));
                             if (!lista.some(item => item.nome === nome)) {
-                                lista.push({ nome: `${nome}`, pontos: ptsMock });
+                                lista.push({ nome: `${nome}`, pontos: ptsBaixos });
                             }
                         }
                     });
                 }
 
-                // Ordena do maior para o menor
                 lista.sort((a, b) => b.pontos - a.pontos);
 
                 let htmlCard = `
@@ -125,7 +181,6 @@
                         <table>
                 `;
 
-                // Exibe estritamente até 30 posições
                 lista.slice(0, 30).forEach((item, index) => {
                     let posClass = index === 0 ? "gold" : index === 1 ? "silver" : index === 2 ? "bronze" : "";
                     let posSimbolo = index === 0 ? "🥇 1º" : index === 1 ? "🥈 2º" : index === 2 ? "🥉 3º" : `${index + 1}º`;
