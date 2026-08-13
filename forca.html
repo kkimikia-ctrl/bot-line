@@ -407,10 +407,9 @@
         let audioCtx = null;
         let somLigado = true;
         let musicaIntervalo = null;
-        let jogoAtualAtivo = 'menu'; // 'menu', 'velha', 'forca', 'memoria', 'jokenpo', 'cobrinha'
+        let jogoAtualAtivo = 'menu';
         let passoMusica = 0;
 
-        // Frequências das notas musicais (Hz)
         const notas = { C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99 };
 
         function inicializarAudioContext() {
@@ -443,7 +442,6 @@
             }
         }
 
-        // Toca um bipe/som específico para cada ação ou botão apertado
         function tocarEfeito(tipo) {
             if (!somLigado) return;
             inicializarAudioContext();
@@ -456,7 +454,7 @@
 
                 if (tipo === 'clique') {
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, agora); // D5
+                    osc.frequency.setValueAtTime(587.33, agora);
                     gain.gain.setValueAtTime(0.1, agora);
                     gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.1);
                     osc.start(agora);
@@ -507,7 +505,6 @@
                     osc.start(agora);
                     osc.stop(agora + 0.09);
                 } else if (tipo === 'vitoria') {
-                    // Acorde feliz de vitória
                     [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
                         let o = audioCtx.createOscillator();
                         let g = audioCtx.createGain();
@@ -524,7 +521,6 @@
             }
         }
 
-        // Músicas instrumentais de fundo diferentes para cada jogo/menu
         function tocarNotaFundo(freq, tipoOnda = 'sine', duracao = 0.25) {
             if (!somLigado || !audioCtx) return;
             try {
@@ -532,7 +528,7 @@
                 let gain = audioCtx.createGain();
                 osc.type = tipoOnda;
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime); // volume baixo e agradável para fundo
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -548,34 +544,27 @@
             musicaIntervalo = setInterval(() => {
                 if (!somLigado) return;
 
-                // Melodias diferentes para cada local do site
                 if (jogoAtualAtivo === 'menu') {
-                    // Música alegre de menu principal
                     const melodiaMenu = [notas.C4, notas.E4, notas.G4, notas.C5, notas.G4, notas.E4];
                     tocarNotaFundo(melodiaMenu[passoMusica % melodiaMenu.length], 'sine', 0.3);
                 } 
                 else if (jogoAtualAtivo === 'velha') {
-                    // Trilha de suspense estilo arcade clássico
                     const melodiaVelha = [notas.A4, notas.C5, notas.E4, notas.D5];
                     tocarNotaFundo(melodiaVelha[passoMusica % melodiaVelha.length], 'triangle', 0.25);
                 } 
                 else if (jogoAtualAtivo === 'forca') {
-                    // Trilha misteriosa/pensativa
                     const melodiaForca = [notas.D4, notas.F4, notas.A4, notas.F4];
                     tocarNotaFundo(melodiaForca[passoMusica % melodiaForca.length], 'sine', 0.3);
                 } 
                 else if (jogoAtualAtivo === 'memoria') {
-                    // Trilha calma e relaxante
                     const melodiaMemoria = [notas.C4, notas.G4, notas.B4, notas.C5];
                     tocarNotaFundo(melodiaMemoria[passoMusica % melodiaMemoria.length], 'sine', 0.35);
                 } 
                 else if (jogoAtualAtivo === 'jokenpo') {
-                    // Trilha marcial / competitiva
                     const melodiaJokenpo = [notas.G4, notas.C5, notas.D5, notas.C5];
                     tocarNotaFundo(melodiaJokenpo[passoMusica % melodiaJokenpo.length], 'sawtooth', 0.2);
                 } 
                 else if (jogoAtualAtivo === 'cobrinha') {
-                    // Trilha rápida estilo retro 8-bit
                     const melodiaSnake = [notas.E4, notas.G4, notas.A4, notas.B4];
                     tocarNotaFundo(melodiaSnake[passoMusica % melodiaSnake.length], 'square', 0.15);
                 }
@@ -782,7 +771,7 @@
         }
         function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoGlobal("Jogo da Velha", pontosVelha); }
 
-        /* Jogo da Forca */
+        /* Jogo da Forca - Totalmente Funcional e Ajustado */
         const bancoPalavrasForca = [
             {p: "COMPUTADOR", d: "Máquina eletrônica para processar dados"},
             {p: "PROGRAMACAO", d: "Ato de criar códigos e softwares"},
@@ -798,67 +787,114 @@
 
         function iniciarForca() {
             listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5);
-            indiceForcaAtual = 0; pontosForca = 0; carregarProximaPalavraForca();
+            indiceForcaAtual = 0; 
+            pontosForca = 0; 
+            carregarProximaPalavraForca();
         }
+
         function iniciarCronometroForca() {
             if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-            tempoRestanteForca = 30; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
+            tempoRestanteForca = 30; 
+            document.getElementById('forca-tempo').innerText = tempoRestanteForca;
             intervaloTempoForca = setInterval(() => {
-                tempoRestanteForca--; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
+                tempoRestanteForca--; 
+                document.getElementById('forca-tempo').innerText = tempoRestanteForca;
                 if (tempoRestanteForca <= 0) {
-                    clearInterval(intervaloTempoForca); tocarEfeito('clique');
+                    clearInterval(intervaloTempoForca); 
+                    tocarEfeito('clique');
                     let atual = listaForcaEmbaralhada[indiceForcaAtual];
                     alert(`⏰ O tempo esgotou! A palavra era "${atual.p}".`);
-                    indiceForcaAtual++; carregarProximaPalavraForca();
+                    indiceForcaAtual++; 
+                    carregarProximaPalavraForca();
                 }
             }, 1000);
         }
+
         function carregarProximaPalavraForca() {
-            if (indiceForcaAtual >= listaForcaEmbaralhada.length) { listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); indiceForcaAtual = 0; }
+            if (indiceForcaAtual >= listaForcaEmbaralhada.length) { 
+                listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); 
+                indiceForcaAtual = 0; 
+            }
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
-            letrasDescobertas = []; errosForca = 0;
+            letrasDescobertas = []; 
+            errosForca = 0;
             document.getElementById('forca-nivel-info').innerText = `🎯 Palavra ${indiceForcaAtual + 1} de ${listaForcaEmbaralhada.length}`;
             document.getElementById('dica-palavra').innerText = `Dica: ${atual.d}`;
             document.getElementById('dica-palavra').style.display = 'none';
             document.getElementById('contador-erros').innerText = 0;
             document.getElementById('pontos-forca').innerText = pontosForca;
-            iniciarCronometroForca(); atualizarTelaForca(); criarTecladoForca();
+            iniciarCronometroForca(); 
+            atualizarTelaForca(); 
+            criarTecladoForca();
         }
-        function mostrarDicaForca() { document.getElementById('dica-palavra').style.display = 'block'; }
+
+        function mostrarDicaForca() { 
+            document.getElementById('dica-palavra').style.display = 'block'; 
+        }
+
         function atualizarTelaForca() {
             let atual = listaForcaEmbaralhada[indiceForcaAtual], ex = "", ganho = true;
             for (let i = 0; i < atual.p.length; i++) {
                 let l = atual.p[i];
-                if (letrasDescobertas.includes(l)) { ex += l + " "; } else { ex += "_ "; ganho = false; }
+                if (letrasDescobertas.includes(l)) { 
+                    ex += l + " "; 
+                } else { 
+                    ex += "_ "; 
+                    ganho = false; 
+                }
             }
             document.getElementById('palavra-secreta').innerText = ex.trim();
+            
             if (ganho) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-                tocarEfeito('vitoria'); pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
+                tocarEfeito('vitoria'); 
+                pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
                 document.getElementById('pontos-forca').innerText = pontosForca;
-                setTimeout(() => { alert(`🎉 Acertou a palavra "${atual.p}"!`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
+                setTimeout(() => { 
+                    alert(`🎉 Acertou a palavra "${atual.p}"!`); 
+                    indiceForcaAtual++; 
+                    carregarProximaPalavraForca(); 
+                }, 200);
             } else if (errosForca >= 6) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 tocarEfeito('clique');
-                setTimeout(() => { alert(`❌ Muitos erros! A palavra era "${atual.p}".`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
+                setTimeout(() => { 
+                    alert(`❌ Muitos erros! A palavra era "${atual.p}".`); 
+                    indiceForcaAtual++; 
+                    carregarProximaPalavraForca(); 
+                }, 200);
             }
         }
+
         function escolherLetraForca(l) {
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
             if (!letrasDescobertas.includes(l)) {
                 letrasDescobertas.push(l);
-                if (atual.p.includes(l)) { tocarEfeito('forca-letra'); } else { errosForca++; tocarEfeito('clique'); document.getElementById('contador-erros').innerText = errosForca; }
+                if (atual.p.includes(l)) { 
+                    tocarEfeito('forca-letra'); 
+                } else { 
+                    errosForca++; 
+                    tocarEfeito('clique'); 
+                    document.getElementById('contador-erros').innerText = errosForca; 
+                }
             }
             let btn = document.getElementById(`btn-letra-${l}`);
-            if (btn) { btn.disabled = true; btn.style.background = "#94a3b8"; btn.style.color = "#f1f5f9"; }
+            if (btn) { 
+                btn.disabled = true; 
+                btn.style.background = "#94a3b8"; 
+                btn.style.color = "#f1f5f9"; 
+            }
             atualizarTelaForca();
         }
+
         function criarTecladoForca() {
             let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cont = document.getElementById('teclado-letras');
             cont.innerHTML = "";
             for (let i = 0; i < alfabeto.length; i++) {
                 let l = alfabeto[i], btn = document.createElement('button');
-                btn.innerText = l; btn.id = `btn-letra-${l}`; btn.onclick = () => escolherLetraForca(l);
+                btn.innerText = l; 
+                btn.id = `btn-letra-${l}`; 
+                btn.onclick = () => escolherLetraForca(l);
                 btn.style.cssText = "padding: 8px 0; font-size: 12px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
                 cont.appendChild(btn);
             }
