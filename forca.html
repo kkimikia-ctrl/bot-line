@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Central - Completo</title>
+    <title>Arcade Central</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 10px; text-align: center; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { margin-top: 5px; color: #333; font-size: 1.5rem; }
-        .menu-jogos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-        .btn-jogo { background: #3498db; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; font-size: 1.6rem; margin-bottom: 20px; }
+        
+        /* Estilo exato dos seus botões do menu */
+        .menu-jogos { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .btn-jogo { background: #3498db; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .btn-jogo:hover { background: #2980b9; }
-        .btn-voltar { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-bottom: 10px; }
-        .btn-acao { background: #2ecc71; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin: 5px; font-weight: bold; }
+        
+        .btn-voltar { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-bottom: 10px; font-weight: bold; }
+        .btn-acao { background: #2ecc71; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; margin: 5px; font-weight: bold; }
         .painel-jogo { border: 2px dashed #ddd; padding: 15px; border-radius: 8px; margin-top: 10px; background: #fafafa; }
         .timer { font-size: 1.1rem; font-weight: bold; color: #e67e22; margin-bottom: 10px; }
         
@@ -21,8 +24,8 @@
         .cell-velha { width: 60px; height: 60px; background: #fff; border: 2px solid #34495e; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; }
         
         /* Ranking */
-        .ranking-box { margin-top: 20px; text-align: left; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-        .ranking-item { padding: 4px 8px; margin: 4px 0; border-radius: 4px; font-size: 0.9rem; font-weight: bold; }
+        .ranking-box { text-align: left; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        .ranking-item { padding: 6px 10px; margin: 5px 0; border-radius: 4px; font-size: 0.9rem; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -30,7 +33,7 @@
     <div class="container">
         <h1>🎮 Arcade Central</h1>
         
-        <!-- Menu Principal -->
+        <!-- Menu Principal (Idêntico ao seu print) -->
         <div id="menu-principal">
             <div class="menu-jogos">
                 <button class="btn-jogo" onclick="iniciarJogo('velha')">❌ Jogo da Velha</button>
@@ -39,10 +42,14 @@
                 <button class="btn-jogo" onclick="iniciarJogo('forca')">🔤 Jogo da Forca</button>
                 <button class="btn-jogo" onclick="iniciarJogo('quiz')">❓ Quiz Rápido</button>
             </div>
-            <div id="ranking-zone" class="ranking-box"></div>
+            
+            <div id="ranking-zone" class="ranking-box">
+                <h3>🏆 Ranking Global</h3>
+                <p style='font-size:0.9rem; color:#666;'>Nenhuma pontuação registrada ainda.</p>
+            </div>
         </div>
 
-        <!-- Área Dinâmica dos Jogos -->
+        <!-- Área Dinâmica do Jogo (Aparece ao clicar em um jogo) -->
         <div id="area-jogo" style="display: none;">
             <button class="btn-voltar" onclick="voltarMenu()">⬅ Voltar ao Menu</button>
             <div id="conteudo-jogo" class="painel-jogo"></div>
@@ -75,7 +82,7 @@
             } catch(e) { console.log(e); }
         }
 
-        // --- SISTEMA DE CRONÔMETRO E TIMER ---
+        // --- CRONÔMETRO ---
         let tempoSegundos = 0;
         let intervaloTimer = null;
 
@@ -111,7 +118,7 @@
             let r = JSON.parse(localStorage.getItem('arcade_ranking') || "[]");
             let html = "<h3>🏆 Ranking Global</h3>";
             if (r.length === 0) {
-                html += "<p style='font-size:0.85rem; color:#666;'>Nenhuma pontuação registrada ainda.</p>";
+                html += "<p style='font-size:0.9rem; color:#666;'>Nenhuma pontuação registrada ainda.</p>";
             } else {
                 r.forEach((item, i) => {
                     let cor = i < 10 ? "#e74c3c" : (i < 20 ? "#3498db" : "#2ecc71");
@@ -161,8 +168,8 @@
                 container.innerHTML = `
                     <div class="timer">Tempo: <span id="contador-tempo">0</span>s</div>
                     <h3>Jogo da Memória Rápido</h3>
-                    <p>Clique em finalizar para computar seus pontos baseados no tempo!</p>
-                    <button class="btn-acao" onclick="concluirMemoria()">Finalizar Jogo</button>
+                    <p>Encontre os pares (simulador ativo).</p>
+                    <button class="btn-acao" onclick="concluirMemoria()">Concluir Jogo</button>
                 `;
             } else if (tipo === 'forca') {
                 container.innerHTML = `
@@ -182,7 +189,7 @@
             }
         }
 
-        // --- LÓGICA DOS JOGOS ESPECÍFICOS ---
+        // --- LÓGICA DO JOGO DA VELHA ---
         let velhaBoard = ['', '', '', '', '', '', '', '', ''];
         let velhaTurno = 'X';
         let velhaAtivo = true;
@@ -212,7 +219,6 @@
             let cells = document.querySelectorAll('.cell-velha');
             cells[idx].innerText = velhaTurno;
 
-            // Checar vitória simples
             let vitorias = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             let ganhou = vitorias.some(c => velhaBoard[c[0]] && velhaBoard[c[0]] === velhaBoard[c[1]] && velhaBoard[c[0]] === velhaBoard[c[2]]);
 
@@ -228,6 +234,7 @@
             velhaTurno = velhaTurno === 'X' ? 'O' : 'X';
         }
 
+        // --- LÓGICA DO JOKENPÔ ---
         function jogarJokenpo(escolha) {
             let opcoes = ['pedra', 'papel', 'tesoura'];
             let cpu = opcoes[Math.floor(Math.random() * 3)];
@@ -266,7 +273,7 @@
             salvarPontuacao('Memória', pontos);
         }
 
-        // Executa a exibição inicial do ranking ao carregar a página
+        // Carrega o ranking ao iniciar a página
         exibirRanking();
     </script>
 </body>
