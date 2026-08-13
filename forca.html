@@ -83,12 +83,22 @@
             padding: 8px 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             margin-bottom: 15px;
         }
-        .header h1 { font-size: 15px; margin: 0; }
+        .header h1 { font-size: 14px; margin: 0; }
+        .btn-audio-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+        }
         
         .container { max-width: 600px; margin: 0 auto; }
         .action-btn {
@@ -128,9 +138,7 @@
             margin-top: 0;
         }
         .btn-blue { background-color: #2563eb; }
-        .btn-blue:hover { background-color: #1d4ed8; }
         .btn-orange { background-color: #d97706; }
-        .btn-orange:hover { background-color: #b45309; }
 
         .card-game {
             background: white;
@@ -207,7 +215,7 @@
         }
     </style>
 </head>
-<body>
+<body onclick="ativarAudioGlobal()">
 
     <!-- CARROSSEL DE BANNERS -->
     <div class="carousel-container">
@@ -221,21 +229,22 @@
             <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/2563eb/ffffff?text=Banner+7" alt="Banner 7"></div>
             <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/4b5563/ffffff?text=Banner+8" alt="Banner 8"></div>
         </div>
-        <button class="carousel-btn prev" onclick="mudarSlide(-1)">&#10094;</button>
-        <button class="carousel-btn next" onclick="mudarSlide(1)">&#10095;</button>
+        <button class="carousel-btn prev" onclick="mudarSlide(-1); event.stopPropagation();">&#10094;</button>
+        <button class="carousel-btn next" onclick="mudarSlide(1); event.stopPropagation();">&#10095;</button>
         <div class="carousel-dots" id="carouselDots"></div>
     </div>
 
     <!-- CABEÇALHO -->
     <div class="header">
-        <h1>🎮 Central de Jogos - Desafio Global</h1>
+        <h1>🎮 Central de Jogos</h1>
+        <button id="btnAudioToggle" class="btn-audio-toggle" onclick="alternarAudio(event)">🔊 Som: Ligado</button>
     </div>
 
     <div class="container">
         <!-- Botões Azul e Laranja lado a lado -->
         <div class="buttons-row" id="container-botoes-topo">
-            <button onclick="tocarSom(); alert('Central de Jogos - Desafio Global Ativa!')" class="top-action-btn btn-blue">🎮 Desafio</button>
-            <button onclick="tocarSom(); abrirModalRanking()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
+            <button onclick="tocarEfeito('clique'); alert('Central de Jogos Ativa!')" class="top-action-btn btn-blue">🎮 Desafio</button>
+            <button onclick="tocarEfeito('clique'); abrirModalRanking()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
         </div>
 
         <!-- Menu Principal -->
@@ -298,7 +307,7 @@
             <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
             
             <div style="margin-bottom: 10px;">
-                <button onclick="tocarSom(); mostrarDicaForca()" style="background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">💡 Mostrar Dica</button>
+                <button onclick="tocarEfeito('clique'); mostrarDicaForca()" style="background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">💡 Mostrar Dica</button>
                 <p id="dica-palavra" style="font-weight: bold; color: #0284c7; font-size: 13px; margin: 5px 0; display: none;"></p>
             </div>
 
@@ -356,7 +365,7 @@
             
             <div style="display: flex; justify-content: space-between; align-items: center; background: #059669; color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;">
                 <h3 id="snake-status" style="margin: 0; font-size: 13px; text-align: left;">🐍 Nível 1 | Pontos: 0</h3>
-                <button onclick="tocarSom(); iniciarCobrinha()" style="background-color: #047857; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">🔄 Reiniciar</button>
+                <button onclick="tocarEfeito('clique'); iniciarCobrinha()" style="background-color: #047857; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">🔄 Reiniciar</button>
             </div>
 
             <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
@@ -381,7 +390,7 @@
                     <tbody id="tabelaRankingCorpo"></tbody>
                 </table>
             </div>
-            <button onclick="tocarSom(); fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">Fechar</button>
+            <button onclick="tocarEfeito('clique'); fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">Fechar</button>
         </div>
     </div>
 
@@ -394,18 +403,191 @@
     </nav>
 
     <script>
-        /* SISTEMA DE ÁUDIO EMBUTIDO (BASE64) */
-        // Pequeno arquivo de áudio WAV codificado direto no código para evitar bloqueio de rede ou de API
-        const somAudio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YUcvT19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18=");
+        /* SISTEMA DE ÁUDIO E MÚSICA INSTRUMENTAL DINÂMICA */
+        let audioCtx = null;
+        let somLigado = true;
+        let musicaIntervalo = null;
+        let jogoAtualAtivo = 'menu'; // 'menu', 'velha', 'forca', 'memoria', 'jokenpo', 'cobrinha'
+        let passoMusica = 0;
 
-        function tocarSom() {
+        // Frequências das notas musicais (Hz)
+        const notas = { C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99 };
+
+        function inicializarAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function ativarAudioGlobal() {
+            inicializarAudioContext();
+            if (!musicaIntervalo && somLigado) {
+                iniciarMusicaDeFundo();
+            }
+        }
+
+        function alternarAudio(e) {
+            e.stopPropagation();
+            somLigado = !somLigado;
+            let btn = document.getElementById('btnAudioToggle');
+            if (somLigado) {
+                btn.innerText = "🔊 Som: Ligado";
+                inicializarAudioContext();
+                iniciarMusicaDeFundo();
+            } else {
+                btn.innerText = "🔇 Som: Desligado";
+                pararMusicaDeFundo();
+            }
+        }
+
+        // Toca um bipe/som específico para cada ação ou botão apertado
+        function tocarEfeito(tipo) {
+            if (!somLigado) return;
+            inicializarAudioContext();
             try {
-                somAudio.currentTime = 0;
-                somAudio.play().catch(e => {
-                    console.log("Reprodução bloqueada pelo navegador até haver interação.");
-                });
-            } catch (e) {
-                console.log("Erro ao reproduzir som.");
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                let agora = audioCtx.currentTime;
+
+                if (tipo === 'clique') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, agora); // D5
+                    gain.gain.setValueAtTime(0.1, agora);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.1);
+                    osc.start(agora);
+                    osc.stop(agora + 0.1);
+                } else if (tipo === 'velha-x') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, agora);
+                    osc.frequency.exponentialRampToValueAtTime(880, agora + 0.15);
+                    gain.gain.setValueAtTime(0.15, agora);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.15);
+                    osc.start(agora);
+                    osc.stop(agora + 0.15);
+                } else if (tipo === 'velha-o') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(330, agora);
+                    osc.frequency.exponentialRampToValueAtTime(220, agora + 0.15);
+                    gain.gain.setValueAtTime(0.15, agora);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.15);
+                    osc.start(agora);
+                    osc.stop(agora + 0.15);
+                } else if (tipo === 'forca-letra') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, agora);
+                    gain.gain.setValueAtTime(0.08, agora);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.08);
+                    osc.start(agora);
+                    osc.stop(agora + 0.08);
+                } else if (tipo === 'memoria-virar') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(659.25, agora);
+                    gain.gain.setValueAtTime(0.1, agora);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.12);
+                    osc.start(agora);
+                    osc.stop(agora + 0.12);
+                } else if (tipo === 'jokenpo-jogada') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(349.23, agora);
+                    osc.frequency.exponentialRampToValueAtTime(523.25, agora + 0.2);
+                    gain.gain.setValueAtTime(0.1, agora);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.2);
+                    osc.start(agora);
+                    osc.stop(agora + 0.2);
+                } else if (tipo === 'cobra-comer') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(783.99, agora);
+                    gain.gain.setValueAtTime(0.1, agora);
+                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.09);
+                    osc.start(agora);
+                    osc.stop(agora + 0.09);
+                } else if (tipo === 'vitoria') {
+                    // Acorde feliz de vitória
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        let o = audioCtx.createOscillator();
+                        let g = audioCtx.createGain();
+                        o.connect(g); g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, agora + (idx * 0.1));
+                        g.gain.setValueAtTime(0.12, agora + (idx * 0.1));
+                        g.gain.exponentialRampToValueAtTime(0.001, agora + (idx * 0.1) + 0.2);
+                        o.start(agora + (idx * 0.1));
+                        o.stop(agora + (idx * 0.1) + 0.2);
+                    });
+                }
+            } catch (err) {
+                console.log("Erro ao tocar efeito sonoro.");
+            }
+        }
+
+        // Músicas instrumentais de fundo diferentes para cada jogo/menu
+        function tocarNotaFundo(freq, tipoOnda = 'sine', duracao = 0.25) {
+            if (!somLigado || !audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = tipoOnda;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime); // volume baixo e agradável para fundo
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duracao);
+            } catch(e) {}
+        }
+
+        function iniciarMusicaDeFundo() {
+            pararMusicaDeFundo();
+            passoMusica = 0;
+
+            musicaIntervalo = setInterval(() => {
+                if (!somLigado) return;
+
+                // Melodias diferentes para cada local do site
+                if (jogoAtualAtivo === 'menu') {
+                    // Música alegre de menu principal
+                    const melodiaMenu = [notas.C4, notas.E4, notas.G4, notas.C5, notas.G4, notas.E4];
+                    tocarNotaFundo(melodiaMenu[passoMusica % melodiaMenu.length], 'sine', 0.3);
+                } 
+                else if (jogoAtualAtivo === 'velha') {
+                    // Trilha de suspense estilo arcade clássico
+                    const melodiaVelha = [notas.A4, notas.C5, notas.E4, notas.D5];
+                    tocarNotaFundo(melodiaVelha[passoMusica % melodiaVelha.length], 'triangle', 0.25);
+                } 
+                else if (jogoAtualAtivo === 'forca') {
+                    // Trilha misteriosa/pensativa
+                    const melodiaForca = [notas.D4, notas.F4, notas.A4, notas.F4];
+                    tocarNotaFundo(melodiaForca[passoMusica % melodiaForca.length], 'sine', 0.3);
+                } 
+                else if (jogoAtualAtivo === 'memoria') {
+                    // Trilha calma e relaxante
+                    const melodiaMemoria = [notas.C4, notas.G4, notas.B4, notas.C5];
+                    tocarNotaFundo(melodiaMemoria[passoMusica % melodiaMemoria.length], 'sine', 0.35);
+                } 
+                else if (jogoAtualAtivo === 'jokenpo') {
+                    // Trilha marcial / competitiva
+                    const melodiaJokenpo = [notas.G4, notas.C5, notas.D5, notas.C5];
+                    tocarNotaFundo(melodiaJokenpo[passoMusica % melodiaJokenpo.length], 'sawtooth', 0.2);
+                } 
+                else if (jogoAtualAtivo === 'cobrinha') {
+                    // Trilha rápida estilo retro 8-bit
+                    const melodiaSnake = [notas.E4, notas.G4, notas.A4, notas.B4];
+                    tocarNotaFundo(melodiaSnake[passoMusica % melodiaSnake.length], 'square', 0.15);
+                }
+
+                passoMusica++;
+            }, 350);
+        }
+
+        function pararMusicaDeFundo() {
+            if (musicaIntervalo) {
+                clearInterval(musicaIntervalo);
+                musicaIntervalo = null;
             }
         }
 
@@ -445,7 +627,7 @@
             ranking.push({ nome: `${nome} (${nomeJogo})`, pontos: pontos });
             ranking.sort((a, b) => b.pontos - a.pontos);
             localStorage.setItem('rankingGlobalCentral', JSON.stringify(ranking.slice(0, 30)));
-            tocarSom();
+            tocarEfeito('vitoria');
             alert("✅ Pontuação salva com sucesso no Ranking Global!");
             abrirModalRanking();
         }
@@ -479,7 +661,11 @@
             if (typeof intervaloTempoMemoria !== 'undefined' && intervaloTempoMemoria) clearInterval(intervaloTempoMemoria);
             if (typeof intervaloTempoForca !== 'undefined' && intervaloTempoForca) clearInterval(intervaloTempoForca);
             pararCobrinha();
-            tocarSom();
+            
+            jogoAtualAtivo = 'menu';
+            iniciarMusicaDeFundo();
+            tocarEfeito('clique');
+
             document.getElementById('container-botoes-topo').style.display = 'flex';
             document.getElementById('menu-selecao-jogos').style.display = 'grid';
             document.getElementById('container-jogo-velha').style.display = 'none';
@@ -489,11 +675,42 @@
             document.getElementById('container-jogo-cobrinha').style.display = 'none';
         }
 
-        function abrirJogoVelha() { tocarSom(); document.getElementById('container-botoes-topo').style.display = 'none'; document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-velha').style.display = 'block'; document.getElementById('velha-modo-escolha').style.display = 'block'; document.getElementById('velha-area-jogo').style.display = 'none'; }
-        function abrirJogoForca() { tocarSom(); document.getElementById('container-botoes-topo').style.display = 'none'; document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-forca').style.display = 'block'; iniciarForca(); }
-        function abrirJogoMemoria() { tocarSom(); document.getElementById('container-botoes-topo').style.display = 'none'; document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-memoria').style.display = 'block'; abrirJogoMemoriaExec(); }
-        function abrirJokenpo() { tocarSom(); document.getElementById('container-botoes-topo').style.display = 'none'; document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jokenpo').style.display = 'block'; iniciarJokenpo(); }
-        function abrirJogoCobrinha() { tocarSom(); document.getElementById('container-botoes-topo').style.display = 'none'; document.getElementById('menu-selecao-jogos').style.display = 'none'; document.getElementById('container-jogo-cobrinha').style.display = 'block'; iniciarCobrinha(); }
+        function abrirJogoVelha() { 
+            jogoAtualAtivo = 'velha'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
+            document.getElementById('container-botoes-topo').style.display = 'none'; 
+            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
+            document.getElementById('container-jogo-velha').style.display = 'block'; 
+            document.getElementById('velha-modo-escolha').style.display = 'block'; 
+            document.getElementById('velha-area-jogo').style.display = 'none'; 
+        }
+        function abrirJogoForca() { 
+            jogoAtualAtivo = 'forca'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
+            document.getElementById('container-botoes-topo').style.display = 'none'; 
+            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
+            document.getElementById('container-jogo-forca').style.display = 'block'; 
+            iniciarForca(); 
+        }
+        function abrirJogoMemoria() { 
+            jogoAtualAtivo = 'memoria'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
+            document.getElementById('container-botoes-topo').style.display = 'none'; 
+            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
+            document.getElementById('container-jogo-memoria').style.display = 'block'; 
+            abrirJogoMemoriaExec(); 
+        }
+        function abrirJokenpo() { 
+            jogoAtualAtivo = 'jokenpo'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
+            document.getElementById('container-botoes-topo').style.display = 'none'; 
+            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
+            document.getElementById('container-jokenpo').style.display = 'block'; 
+            iniciarJokenpo(); 
+        }
+        function abrirJogoCobrinha() { 
+            jogoAtualAtivo = 'cobrinha'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
+            document.getElementById('container-botoes-topo').style.display = 'none'; 
+            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
+            document.getElementById('container-jogo-cobrinha').style.display = 'block'; 
+            iniciarCobrinha(); 
+        }
 
         /* Jogo da Velha */
         let modoVelha = 'amigo', nivelVelha = 1;
@@ -501,7 +718,7 @@
         let tabuleiro = ['', '', '', '', '', '', '', '', ''], jogadorAtual = 'X', jogoAtivo = true, pontosVelha = 0;
 
         function iniciarVelhaModo(modo) {
-            tocarSom();
+            tocarEfeito('clique');
             modoVelha = modo;
             document.getElementById('velha-modo-escolha').style.display = 'none';
             document.getElementById('velha-area-jogo').style.display = 'block';
@@ -517,13 +734,16 @@
                 tabuleiro[pos] = jogadorAtual;
                 let btn = document.getElementById(`celula-${pos}`);
                 btn.innerText = jogadorAtual;
-                tocarSom();
+                
+                if (jogadorAtual === 'X') tocarEfeito('velha-x');
+                else tocarEfeito('velha-o');
+
                 let vitoriaCheck = checarVitoriaDetalhadaVelha();
                 if (vitoriaCheck) {
                     let vencedor = tabuleiro[vitoriaCheck[0]];
                     vitoriaCheck.forEach(idx => { document.getElementById(`celula-${idx}`).style.background = "#d1fae5"; document.getElementById(`celula-${idx}`).style.color = "#059669"; });
                     document.getElementById('status-jogo').innerText = `🎉 Jogador ${vencedor} Venceu!`;
-                    jogoAtivo = false; tocarSom();
+                    jogoAtivo = false; tocarEfeito('vitoria');
                     
                     if (vencedor === 'X') {
                         pontosVelha += 50 + (nivelVelha * 10);
@@ -539,7 +759,7 @@
                     }
                     return;
                 }
-                if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate! Deu velha!`; jogoAtivo = false; tocarSom(); return; }
+                if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate! Deu velha!`; jogoAtivo = false; tocarEfeito('clique'); return; }
                 jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X';
                 document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`;
                 if (modoVelha === 'pc' && jogadorAtual === 'O' && jogoAtivo) { setTimeout(jogadaComputadorVelha, 400); }
@@ -555,7 +775,7 @@
             return null;
         }
         function reiniciarVelha() {
-            tocarSom();
+            tocarEfeito('clique');
             tabuleiro = ['', '', '', '', '', '', '', '', '']; jogadorAtual = 'X'; jogoAtivo = true;
             document.getElementById('status-jogo').innerText = `Vez do jogador: X`;
             for (let i = 0; i < 9; i++) { let b = document.getElementById(`celula-${i}`); b.innerText = ''; b.style.background = '#fff'; b.style.color = '#2563eb'; }
@@ -586,7 +806,7 @@
             intervaloTempoForca = setInterval(() => {
                 tempoRestanteForca--; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
                 if (tempoRestanteForca <= 0) {
-                    clearInterval(intervaloTempoForca); tocarSom();
+                    clearInterval(intervaloTempoForca); tocarEfeito('clique');
                     let atual = listaForcaEmbaralhada[indiceForcaAtual];
                     alert(`⏰ O tempo esgotou! A palavra era "${atual.p}".`);
                     indiceForcaAtual++; carregarProximaPalavraForca();
@@ -614,12 +834,12 @@
             document.getElementById('palavra-secreta').innerText = ex.trim();
             if (ganho) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-                tocarSom(); pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
+                tocarEfeito('vitoria'); pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
                 document.getElementById('pontos-forca').innerText = pontosForca;
                 setTimeout(() => { alert(`🎉 Acertou a palavra "${atual.p}"!`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
             } else if (errosForca >= 6) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-                tocarSom();
+                tocarEfeito('clique');
                 setTimeout(() => { alert(`❌ Muitos erros! A palavra era "${atual.p}".`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
             }
         }
@@ -627,7 +847,7 @@
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
             if (!letrasDescobertas.includes(l)) {
                 letrasDescobertas.push(l);
-                if (atual.p.includes(l)) { tocarSom(); } else { errosForca++; tocarSom(); document.getElementById('contador-erros').innerText = errosForca; }
+                if (atual.p.includes(l)) { tocarEfeito('forca-letra'); } else { errosForca++; tocarEfeito('clique'); document.getElementById('contador-erros').innerText = errosForca; }
             }
             let btn = document.getElementById(`btn-letra-${l}`);
             if (btn) { btn.disabled = true; btn.style.background = "#94a3b8"; btn.style.color = "#f1f5f9"; }
@@ -673,14 +893,14 @@
         }
         function virarCartaMemoria(btn) {
             if (travadoMemoria || btn.innerText !== "" || btn === primeiraCarta) return;
-            btn.innerText = btn.dataset.emoji; btn.style.background = "white"; tocarSom();
+            btn.innerText = btn.dataset.emoji; btn.style.background = "white"; tocarEfeito('memoria-virar');
             if (!primeiraCarta) { primeiraCarta = btn; return; }
             segundaCarta = btn; travadoMemoria = true;
             if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
                 paresRestantes--; pontosMemoria += 25; document.getElementById('pontos-memoria').innerText = pontosMemoria;
                 primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
                 if (paresRestantes === 0) {
-                    tocarSom();
+                    tocarEfeito('vitoria');
                     setTimeout(() => { 
                         nivelMemoria++; 
                         pontosMemoria += 50; 
@@ -690,7 +910,7 @@
                     }, 300);
                 }
             } else {
-                tocarSom(); pontosMemoria = Math.max(0, pontosMemoria - 5); document.getElementById('pontos-memoria').innerText = pontosMemoria;
+                tocarEfeito('clique'); pontosMemoria = Math.max(0, pontosMemoria - 5); document.getElementById('pontos-memoria').innerText = pontosMemoria;
                 setTimeout(() => { primeiraCarta.innerText = ""; primeiraCarta.style.background = "#7b1fa2"; segundaCarta.innerText = ""; segundaCarta.style.background = "#7b1fa2"; primeiraCarta = null; segundaCarta = null; travadoMemoria = false; }, 700);
             }
         }
@@ -715,7 +935,7 @@
             ['pedra', 'papel', 'tesoura'].forEach(op => { let b = document.getElementById(`btn-${op}`); b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#002776"; b.style.background = "white"; });
         }
         function jogarJokenpo(escolhaUsuario) {
-            tocarSom();
+            tocarEfeito('jokenpo-jogada');
             const opcoes = ['pedra', 'papel', 'tesoura'], emojis = { pedra: '✊', papel: '✋', tesoura: '✌️' };
             opcoes.forEach(op => { let b = document.getElementById(`btn-${op}`); b.disabled = true; if (op !== escolhaUsuario) b.style.opacity = "0.2"; else { b.style.borderColor = "#fedf00"; b.style.background = "#fffbcc"; } });
             document.getElementById('instrucao-jokenpo').innerText = "O adversário está escolhendo...";
@@ -724,11 +944,11 @@
                 document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
                 let textoRes = "", corFundo = "", corTexto = "", venceu = false;
                 if (escolhaUsuario === escolhaMaquina) {
-                    textoRes = `Empate! Jogue novamente.`; corFundo = "#e5e7eb"; corTexto = "#374151"; pontosJokenpo += 10; tocarSom();
+                    textoRes = `Empate! Jogue novamente.`; corFundo = "#e5e7eb"; corTexto = "#374151"; pontosJokenpo += 10; tocarEfeito('clique');
                 } else if ((escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') || (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') || (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')) {
-                    venceu = true; pontosJokenpo += 100 * faseAtualJokenpo; textoRes = `🎉 Brasil Venceu!`; corFundo = "#d1fae5"; corTexto = "#065f46"; tocarSom();
+                    venceu = true; pontosJokenpo += 100 * faseAtualJokenpo; textoRes = `🎉 Brasil Venceu!`; corFundo = "#d1fae5"; corTexto = "#065f46"; tocarEfeito('vitoria');
                 } else {
-                    pontosJokenpo = Math.max(0, pontosJokenpo - 20); textoRes = `❌ Brasil Perdeu! Reiniciando do começo...`; corFundo = "#fee2e2"; corTexto = "#991b1b"; tocarSom();
+                    pontosJokenpo = Math.max(0, pontosJokenpo - 20); textoRes = `❌ Brasil Perdeu! Reiniciando do começo...`; corFundo = "#fee2e2"; corTexto = "#991b1b"; tocarEfeito('clique');
                 }
                 document.getElementById('instrucao-jokenpo').style.display = 'none';
                 let caixaRes = document.getElementById('caixa-resultado-jokenpo');
@@ -743,7 +963,7 @@
                 }
             }, 1000);
         }
-        function proximaRodadaJokenpo() { tocarSom(); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
+        function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
         function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo); }
 
         /* Jogo da Cobrinha */
@@ -758,7 +978,7 @@
         function pararCobrinha() { if (snakeInterval) clearInterval(snakeInterval); }
         function gerarComida() { comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) }; }
         function mudarDirecao(novaDir) {
-            tocarSom();
+            tocarEfeito('clique');
             if (novaDir === 'UP' && direcao !== 'DOWN') proximaDirecao = 'UP';
             if (novaDir === 'DOWN' && direcao !== 'UP') proximaDirecao = 'DOWN';
             if (novaDir === 'LEFT' && direcao !== 'RIGHT') proximaDirecao = 'LEFT';
@@ -769,13 +989,13 @@
             if (direcao === 'UP') cabeca.y--; if (direcao === 'DOWN') cabeca.y++; if (direcao === 'LEFT') cabeca.x--; if (direcao === 'RIGHT') cabeca.x++;
             if (cabeca.x < 0) cabeca.x = gridTotal - 1; if (cabeca.x >= gridTotal) cabeca.x = 0;
             if (cabeca.y < 0) cabeca.y = gridTotal - 1; if (cabeca.y >= gridTotal) cabeca.y = 0;
-            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarSom(); alert(`💥 Fim de jogo na Cobrinha! Clique em Salvar Pontos se desejar registrar.`); return; }
+            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarEfeito('clique'); alert(`💥 Fim de jogo na Cobrinha! Clique em Salvar Pontos se desejar registrar.`); return; }
             snake.unshift(cabeca);
             if (cabeca.x === comida.x && cabeca.y === comida.y) { 
                 pontosSnake += 10; 
                 nivelSnake = Math.floor(pontosSnake / 50) + 1; 
                 gerarComida(); 
-                tocarSom(); 
+                tocarEfeito('cobra-comer'); 
             } else { 
                 snake.pop(); 
             }
