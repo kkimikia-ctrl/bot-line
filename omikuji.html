@@ -10,7 +10,8 @@
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #70b7ff 100%);
             margin: 0;
             padding: 10px;
-            padding-top: 65px;
+            /* Espaço para o cabeçalho fixo e os banners menores */
+            padding-top: 130px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -40,16 +41,31 @@
             cursor: pointer;
             font-weight: bold;
         }
-        /* Estilo do Carrossel de Banners no Topo */
-        .banner-carrossel {
-            max-width: 400px;
-            width: 90%;
-            height: 90px;
-            border-radius: 12px;
+        /* Contêiner fixo no topo para os dois banners lado a lado */
+        .banners-top-container {
+            position: fixed;
+            top: 48px;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 60, 114, 0.95);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 6px 10px;
+            z-index: 999;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+        }
+        /* Estilo dos dois retângulos menores divididos ao meio */
+        .banner-retangulo {
+            width: 48%;
+            max-width: 190px;
+            height: 55px;
+            border-radius: 8px;
             overflow: hidden;
             position: relative;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             background: #fff;
         }
         .banner-slide {
@@ -153,11 +169,18 @@
         Omikuji do Dia ⛩️
     </div>
 
-    <!-- Carrossel de Banners no Topo -->
-    <div class="banner-carrossel">
-        <img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=600&auto=format&fit=crop&q=60" class="banner-slide active" alt="Banner 1">
-        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&auto=format&fit=crop&q=60" class="banner-slide" alt="Banner 2">
-        <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60" class="banner-slide" alt="Banner 3">
+    <!-- Dois Banners Retangulares Fixos no Topo (divididos ao meio) -->
+    <div class="banners-top-container">
+        <!-- Retângulo Esquerdo (Carrossel 1) -->
+        <div class="banner-retangulo">
+            <img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide active" alt="Banner Esquerda 1">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="Banner Esquerda 2">
+        </div>
+        <!-- Retângulo Direito (Carrossel 2) -->
+        <div class="banner-retangulo">
+            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide active" alt="Banner Direita 1">
+            <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="Banner Direita 2">
+        </div>
     </div>
 
     <div class="omikuji-container">
@@ -184,15 +207,24 @@
     <!-- Puxa as mensagens do arquivo omikuji-mensagens.js -->
     <script src="omikuji-mensagens.js"></script>
     <script>
-        // Lógica do Carrossel de Banners
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.banner-slide');
-        function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
+        // Lógica dos Carrosseles dos Banners Fixos
+        let currentLeft = 0;
+        const leftSlides = document.querySelectorAll('.left-slide');
+        function nextLeftSlide() {
+            leftSlides[currentLeft].classList.remove('active');
+            currentLeft = (currentLeft + 1) % leftSlides.length;
+            leftSlides[currentLeft].classList.add('active');
         }
-        setInterval(nextSlide, 3500);
+        setInterval(nextLeftSlide, 3500);
+
+        let currentRight = 0;
+        const rightSlides = document.querySelectorAll('.right-slide');
+        function nextRightSlide() {
+            rightSlides[currentRight].classList.remove('active');
+            currentRight = (currentRight + 1) % rightSlides.length;
+            rightSlides[currentRight].classList.add('active');
+        }
+        setInterval(nextRightSlide, 4000);
 
         // Verificar se já tirou a sorte hoje ao carregar a página
         window.onload = function() {
