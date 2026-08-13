@@ -40,14 +40,25 @@
             cursor: pointer;
             font-weight: bold;
         }
-        /* Contêiner fixo no topo para os dois banners lado a lado */
+
+        /* Animações */
+        @keyframes pulse-move {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        @keyframes wave-move {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* Banners Fixos no Topo */
         .banners-top-container {
             position: fixed;
             top: 48px;
             left: 0;
             width: 100%;
             background: rgba(13, 71, 161, 0.95);
-            backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
             gap: 8px;
@@ -63,115 +74,44 @@
             border-radius: 8px;
             overflow: hidden;
             position: relative;
+            /* Efeito de movimento nos banners */
+            animation: pulse-move 3s infinite ease-in-out;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            background: #fff;
         }
         .banner-slide {
-            width: 100%;
-            height: 100%;
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            object-fit: cover;
+            width: 100%; height: 100%; display: none; position: absolute; object-fit: cover;
         }
-        .banner-slide.active {
-            display: block;
-        }
+        .banner-slide.active { display: block; }
+
         .radio-main-container {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             max-width: 400px;
             width: 90%;
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        /* Cabeçalho com o título centralizado e as figuras de cada lado */
         .header-title-area {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            margin-top: 5px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
         .radio-icon {
             width: 35px;
             height: 35px;
             object-fit: contain;
+            /* Animações aplicadas nas figuras do lado */
+            animation: pulse-move 1.5s infinite alternate;
         }
-        .animate-beat {
-            animation: beat 1.2s infinite alternate;
-            transform-origin: center;
-        }
-        @keyframes beat {
-            to { transform: scale(1.15); }
-        }
-        .animate-wave {
-            animation: wave 1.5s infinite;
-        }
-        @keyframes wave {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-
-        .radio-category {
-            font-size: 11px;
-            font-weight: bold;
-            color: #666;
-            text-align: left;
-            margin: 15px 0 5px 0;
-            text-transform: uppercase;
-        }
-        .radio-option {
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 12px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            color: #0d47a1;
-            text-align: left;
-            text-decoration: none;
-            transition: background 0.2s;
-        }
-        .radio-option:hover {
-            background: #e2e8f0;
-        }
-        .radio-option span {
-            font-size: 12px;
-            color: #1976d2;
-        }
-
-        /* Player logo abaixo do título */
-        #containerPlayer {
-            display: none;
-            margin: 15px 0;
-            background: #e3f2fd;
-            padding: 12px;
-            border-radius: 12px;
-            border: 2px solid #90caf9;
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        #nomeRadioTocando {
-            font-size: 13px;
-            font-weight: bold;
-            color: #1565c0;
-            margin: 0 0 8px 0;
-        }
+        
+        .radio-category { font-size: 11px; font-weight: bold; color: #666; text-align: left; margin: 15px 0 5px 0; text-transform: uppercase; }
+        .radio-option { background: #f8f9fa; border: 1px solid #ddd; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer; font-size: 13px; font-weight: bold; color: #0d47a1; transition: background 0.2s; }
+        
+        #containerPlayer { display: none; margin: 15px 0; background: #e3f2fd; padding: 12px; border-radius: 12px; border: 2px solid #90caf9; }
     </style>
 </head>
 <body>
@@ -181,105 +121,59 @@
         Rádios & Som 🎧
     </div>
 
-    <!-- Dois Banners Retangulares Fixos no Topo (10 imagens total) -->
     <div class="banners-top-container">
-        <!-- Retângulo Esquerdo (5 imagens) -->
         <div class="banner-retangulo">
-            <img src="https://images.unsplash.com/photo-1516280440614-37939bbd805c?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide active" alt="L1">
-            <img src="https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L2">
-            <img src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L3">
-            <img src="https://images.unsplash.com/photo-1487180144351-b847077d2533?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L4">
-            <img src="https://images.unsplash.com/photo-1509391764847-d988872ee7fc?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L5">
+            <img src="https://images.unsplash.com/photo-1516280440614-37939bbd805c?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide active">
+            <img src="https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide">
         </div>
-        <!-- Retângulo Direito (5 imagens) -->
         <div class="banner-retangulo">
-            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide active" alt="R1">
-            <img src="https://images.unsplash.com/photo-1495423706813-131c703d622e?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R2">
-            <img src="https://images.unsplash.com/photo-1520607162513-771142aa1945?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R3">
-            <img src="https://images.unsplash.com/photo-1524368535928-5b5e00ddc81b?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R4">
-            <img src="https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R5">
+            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide active">
+            <img src="https://images.unsplash.com/photo-1495423706813-131c703d622e?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide">
         </div>
     </div>
 
     <div class="radio-main-container">
-        <!-- Título com uma figura animada de cada lado -->
         <div class="header-title-area">
-            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067614.png" alt="Som" class="radio-icon animate-beat">
+            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067614.png" class="radio-icon">
             <h2 style="color: #0d47a1; margin: 0; font-size: 20px;">🎧 Escolha o Canal</h2>
-            <img src="https://cdn-icons-png.flaticon.com/512/885/885063.png" alt="Fone" class="radio-icon animate-wave">
+            <img src="https://cdn-icons-png.flaticon.com/512/885/885063.png" class="radio-icon">
         </div>
 
-        <p style="font-size: 12px; color: #666; margin-top: 5px; margin-bottom: 10px;">Toque em uma opção para ouvir:</p>
-        
-        <!-- Player de Áudio Integrado logo abaixo do título -->
         <div id="containerPlayer">
-            <p id="nomeRadioTocando"></p>
-            <audio id="audioRadio" controls style="width: 100%;" autoplay>
-                <source src="" id="sourceAudio" type="audio/mpeg">
-                Seu navegador não suporta áudio.
-            </audio>
+            <p id="nomeRadioTocando" style="font-weight:bold; color:#1565c0;"></p>
+            <audio id="audioRadio" controls style="width: 100%;" autoplay></audio>
         </div>
 
         <div class="radio-category">📰 Notícias & Informação</div>
-        <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SPAAC.aac', 'CBN São Paulo')">
-            📻 CBN São Paulo <span>▶️ Ouvir</span>
-        </div>
-
-        <div class="radio-category">🎸 Hits 90s, 2000s & 2010s</div>
-        <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio5-bb-mp3', 'Hits 90 / 2000 / 2010')">
-            🎵 Hits 90 / 2000 / 2010 <span>▶️ Ouvir</span>
-        </div>
-
+        <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SPAAC.aac', 'CBN São Paulo')">CBN São Paulo <span>▶️ Ouvir</span></div>
+        
         <div class="radio-category">🌍 Pop & Internacional</div>
-        <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'Pop & Rock Global')">
-            🎵 Pop & Rock Global <span>▶️ Ouvir</span>
-        </div>
-
-        <div class="radio-category">⚡ Techno & Eletrônica</div>
-        <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'Techno / Club Beats')">
-            🎧 Techno / Club Beats <span>▶️ Ouvir</span>
-        </div>
-
-        <div class="radio-category">🌙 Relax & Para Dormir</div>
-        <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Lofi & Study Beats')">
-            ☕ Lofi & Study Beats <span>▶️ Ouvir</span>
-        </div>
+        <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'Pop & Rock Global')">Pop & Rock Global <span>▶️ Ouvir</span></div>
     </div>
 
     <script>
-        // Lógica dos Carrosseles dos Banners Fixos
-        let currentLeft = 0;
-        const leftSlides = document.querySelectorAll('.left-slide');
-        function nextLeftSlide() {
-            leftSlides[currentLeft].classList.remove('active');
-            currentLeft = (currentLeft + 1) % leftSlides.length;
-            leftSlides[currentLeft].classList.add('active');
-        }
-        setInterval(nextLeftSlide, 3500);
+        // Função dos Banners
+        setInterval(() => {
+            const left = document.querySelectorAll('.left-slide');
+            const activeL = document.querySelector('.left-slide.active');
+            activeL.classList.remove('active');
+            let nextL = activeL.nextElementSibling || left[0];
+            nextL.classList.add('active');
 
-        let currentRight = 0;
-        const rightSlides = document.querySelectorAll('.right-slide');
-        function nextRightSlide() {
-            rightSlides[currentRight].classList.remove('active');
-            currentRight = (currentRight + 1) % rightSlides.length;
-            rightSlides[currentRight].classList.add('active');
-        }
-        setInterval(nextRightSlide, 4000);
+            const right = document.querySelectorAll('.right-slide');
+            const activeR = document.querySelector('.right-slide.active');
+            activeR.classList.remove('active');
+            let nextR = activeR.nextElementSibling || right[0];
+            nextR.classList.add('active');
+        }, 3000);
 
-        // Lógica do Player de Rádio
-        function tocarRadio(urlStream, nomeEstilo) {
-            const container = document.getElementById('containerPlayer');
-            const player = document.getElementById('audioRadio');
-            const source = document.getElementById('sourceAudio');
-            const titulo = document.getElementById('nomeRadioTocando');
-
-            container.style.display = 'block';
-            titulo.innerText = "Tocando: " + nomeEstilo;
-            source.src = urlStream;
-            player.load();
-            player.play().catch(error => { console.log("Aguardando play manual"); });
+        function tocarRadio(url, nome) {
+            document.getElementById('containerPlayer').style.display = 'block';
+            document.getElementById('nomeRadioTocando').innerText = "Tocando: " + nome;
+            const audio = document.getElementById('audioRadio');
+            audio.src = url;
+            audio.play();
         }
     </script>
-
 </body>
 </html>
