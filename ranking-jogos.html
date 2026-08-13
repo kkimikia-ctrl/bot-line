@@ -82,45 +82,50 @@
 
     <script>
         function carregarRankingGeralPagina() {
-            const jogos = ["Jogo da Velha", "Jogo da Forca", "Jogo da Memória", "Jokenpô Brasil", "Jogo da Cobrinha"];
-            const nomesBase = ["Lucas", "Mariana", "Gabriel", "Beatriz", "Matheus", "Ana", "Rafael", "Larissa", "Bruno", "Camila", "Diego", "Juliana", "Thiago", "Fernanda", "Rodrigo", "Patrícia", "Alexandre", "Vanessa", "Carlos", "Renata", "Felipe", "Tatiane", "Eduardo", "Carolina", "Marcelo", "Sabrina", "Vinicius", "Letícia", "Leonardo", "Bianca"];
+            // Mapeia o nome do jogo exibido para a chave correspondente salva no localStorage
+            const modalidadeJogos = [
+                { nome: "Jogo da Velha", chave: "ranking_jogo_da_velha" },
+                { nome: "Jogo da Forca", chave: "ranking_jogo_da_forca" },
+                { nome: "Jogo da Memória", chave: "ranking_jogo_da_memoria" },
+                { nome: "Jokenpô Brasil", chave: "ranking_jokenp_brasil" },
+                { nome: "Jogo da Cobrinha", chave: "ranking_jogo_da_cobrinha" }
+            ];
 
-            let rankingPorJogo = JSON.parse(localStorage.getItem('rankingGlobalCentralPorJogo'));
-            
-            // Se não existir dados salvos, gera os 30 nomes padrão para cada jogo
-            if (!rankingPorJogo) {
-                rankingPorJogo = {};
-                jogos.forEach(jogo => {
-                    rankingPorJogo[jogo] = [];
-                    nomesBase.forEach((nome, idx) => {
-                        let pts = (30 - idx) * 35 + Math.floor(Math.random() * 20);
-                        rankingPorJogo[jogo].push({ nome: `${nome} (Global)`, pontos: pts });
-                    });
-                });
-                localStorage.setItem('rankingGlobalCentralPorJogo', JSON.stringify(rankingPorJogo));
-            }
+            const nomesBase = ["Lucas", "Mariana", "Gabriel", "Beatriz", "Matheus", "Ana", "Rafael", "Larissa", "Bruno", "Camila", "Diego", "Juliana", "Thiago", "Fernanda", "Rodrigo", "Patrícia", "Alexandre", "Vanessa", "Carlos", "Renata", "Felipe", "Tatiane", "Eduardo", "Carolina", "Marcelo", "Sabrina", "Vinicius", "Letícia", "Leonardo", "Bianca"];
 
             let containerGrid = document.getElementById('gridRankings');
             containerGrid.innerHTML = "";
 
-            jogos.forEach(jogo => {
+            modalidadeJogos.forEach(modalidade => {
                 let card = document.createElement('div');
                 card.className = 'card-rank';
                 
+                // Busca os pontos reais salvos no navegador para cada jogo específico
+                let lista = JSON.parse(localStorage.getItem(modalidade.chave) || "[]");
+
+                // Se não houver dados suficientes salvos pelo usuário, preenche o restante com a base padrão para completar o Top 30
+                if (lista.length < 30) {
+                    nomesBase.forEach((nome, idx) => {
+                        if (lista.length < 30) {
+                            let ptsMock = (30 - idx) * 25 + Math.floor(Math.random() * 15);
+                            // Evita duplicar nomes caso já existam registros parciais
+                            if (!lista.some(item => item.nome === nome)) {
+                                lista.push({ nome: `${nome}`, pontos: ptsMock });
+                            }
+                        }
+                    });
+                }
+
+                // Ordena do maior para o menor
+                lista.sort((a, b) => b.pontos - a.pontos);
+
                 let htmlCard = `
-                    <h2><span>🎮 ${jogo}</span> <span style="font-size:11px; color:#94a3b8; font-weight:normal;">Top 30</span></h2>
+                    <h2><span>🎮 ${modalidade.nome}</span> <span style="font-size:11px; color:#94a3b8; font-weight:normal;">Top 30</span></h2>
                     <div style="max-height: 400px; overflow-y: auto;">
                         <table>
                 `;
 
-                let lista = rankingPorJogo[jogo] || [];
-                
-                // Garante que tenha exatamente 30 nomes listados
-                while(lista.length < 30) {
-                    lista.push({ nome: `Concorrente ${lista.length + 1}`, pontos: (30 - lista.length) * 10 });
-                }
-                lista.sort((a, b) => b.pontos - a.pontos);
-
+                // Exibe estritamente até 30 posições
                 lista.slice(0, 30).forEach((item, index) => {
                     let posClass = index === 0 ? "gold" : index === 1 ? "silver" : index === 2 ? "bronze" : "";
                     let posSimbolo = index === 0 ? "🥇 1º" : index === 1 ? "🥈 2º" : index === 2 ? "🥉 3º" : `${index + 1}º`;
