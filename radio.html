@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rádios & Som - Canais Ao Vivo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 10px;
+            /* Espaço para o cabeçalho fixo e os banners menores */
+            padding-top: 130px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .app-header {
+            background-color: #0d47a1;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .back-btn {
+            position: absolute;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* Contêiner fixo no topo para os dois banners lado a lado */
+        .banners-top-container {
+            position: fixed;
+            top: 48px;
+            left: 0;
+            width: 100%;
+            background: rgba(13, 71, 161, 0.95);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 6px 10px;
+            z-index: 999;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+        }
+        /* Estilo dos dois retângulos menores divididos ao meio */
+        .banner-retangulo {
+            width: 48%;
+            max-width: 190px;
+            height: 55px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            background: #fff;
+        }
+        .banner-slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            object-fit: cover;
+        }
+        .banner-slide.active {
+            display: block;
+        }
+        .radio-main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 90%;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Área das figuras animadas */
+        .animated-icons-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin: 15px 0 25px 0;
+            height: 80px;
+        }
+        .radio-icon {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+        /* Animação de batimento cardíaco nas caixas de som */
+        .animate-beat {
+            animation: beat 1.2s infinite alternate;
+            transform-origin: center;
+        }
+        @keyframes beat {
+            to { transform: scale(1.1); }
+        }
+        /* Animação de ondas sonoras no fone */
+        .animate-wave {
+            animation: wave 1.5s infinite;
+        }
+        @keyframes wave {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .radio-category {
+            font-size: 11px;
+            font-weight: bold;
+            color: #666;
+            text-align: left;
+            margin: 15px 0 5px 0;
+            text-transform: uppercase;
+        }
+        .radio-option {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            color: #0d47a1;
+            text-align: left;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .radio-option:hover {
+            background: #e2e8f0;
+        }
+        .radio-option span {
+            font-size: 12px;
+            color: #1976d2;
+        }
+        #containerPlayer {
+            display:none;
+            margin-top: 20px;
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #90caf9;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        #nomeRadioTocando {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1565c0;
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <button class="back-btn" onclick="location.href='entretenimento.html'">⬅ Voltar</button>
+        Rádios & Som 🎧
+    </div>
+
+    <!-- Dois Banners Retangulares Fixos no Topo (divididos ao meio, 10 imagens total) -->
+    <div class="banners-top-container">
+        <!-- Retângulo Esquerdo (5 imagens) -->
+        <div class="banner-retangulo">
+            <img src="https://images.unsplash.com/photo-1516280440614-37939bbd805c?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide active" alt="L1">
+            <img src="https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L2">
+            <img src="https://images.unsplash.com/photo-1511735111819-9a3f7709049c?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L3">
+            <img src="https://images.unsplash.com/photo-1487180144351-b847077d2533?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L4">
+            <img src="https://images.unsplash.com/photo-1509391764847-d988872ee7fc?w=400&h=110&auto=format&fit=crop" class="banner-slide left-slide" alt="L5">
+        </div>
+        <!-- Retângulo Direito (5 imagens) -->
+        <div class="banner-retangulo">
+            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide active" alt="R1">
+            <img src="https://images.unsplash.com/photo-1495423706813-131c703d622e?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R2">
+            <img src="https://images.unsplash.com/photo-1520607162513-771142aa1945?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R3">
+            <img src="https://images.unsplash.com/photo-1524368535928-5b5e00ddc81b?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R4">
+            <img src="https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?w=400&h=110&auto=format&fit=crop" class="banner-slide right-slide" alt="R5">
+        </div>
+    </div>
+
+    <div class="radio-main-container">
+        <!-- Figuras animadas relacionadas a rádio/música -->
+        <div class="animated-icons-area">
+            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067614.png" alt="Caixa de Som 1" class="radio-icon animate-beat">
+            <img src="https://cdn-icons-png.flaticon.com/512/885/885063.png" alt="Fone de Ouvido" class="radio-icon animate-wave">
+            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067629.png" alt="Caixa de Som 2" class="radio-icon animate-beat" style="animation-delay: 0.3s;">
+        </div>
+
+        <h2 style="color: #0d47a1; margin-top: 0;">🎧 Escolha o Canal</h2>
+        <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Toque em uma opção para ouvir:</p>
+        
+        <div class="radio-category">📰 Notícias & Informação</div>
+        <div class="radio-option" onclick="tocarRadio('https://playerservices.streamtheworld.com/api/livestream-redirect/CBN_SPAAC.aac', 'CBN São Paulo')">
+            📻 CBN São Paulo <span>▶️ Ouvir</span>
+        </div>
+
+        <div class="radio-category">🎸 Hits 90s, 2000s & 2010s</div>
+        <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio5-bb-mp3', 'Hits 90 / 2000 / 2010')">
+            🎵 Hits 90 / 2000 / 2010 <span>▶️ Ouvir</span>
+        </div>
+
+        <div class="radio-category">🌍 Pop & Internacional</div>
+        <div class="radio-option" onclick="tocarRadio('https://icecast.omroep.nl/radio2-bb-mp3', 'Pop & Rock Global')">
+            🎵 Pop & Rock Global <span>▶️ Ouvir</span>
+        </div>
+
+        <div class="radio-category">⚡ Techno & Eletrônica</div>
+        <div class="radio-option" onclick="tocarRadio('https://rautemusik-de-hz-fal-stream12.radiohost.de/tecclub', 'Techno / Club Beats')">
+            🎧 Techno / Club Beats <span>▶️ Ouvir</span>
+        </div>
+
+        <div class="radio-category">🌙 Relax & Para Dormir</div>
+        <div class="radio-option" onclick="tocarRadio('https://live.hunter.fm/lofi_high', 'Lofi & Study Beats')">
+            ☕ Lofi & Study Beats <span>▶️ Ouvir</span>
+        </div>
+        
+        <!-- Player de Áudio Integrado -->
+        <div id="containerPlayer">
+            <p id="nomeRadioTocando"></p>
+            <audio id="audioRadio" controls style="width: 100%;" autoplay>
+                <source src="" id="sourceAudio" type="audio/mpeg">
+                Seu navegador não suporta áudio.
+            </audio>
+        </div>
+    </div>
+
+    <script>
+        // Lógica dos Carrosseles dos Banners Fixos
+        let currentLeft = 0;
+        const leftSlides = document.querySelectorAll('.left-slide');
+        function nextLeftSlide() {
+            leftSlides[currentLeft].classList.remove('active');
+            currentLeft = (currentLeft + 1) % leftSlides.length;
+            leftSlides[currentLeft].classList.add('active');
+        }
+        setInterval(nextLeftSlide, 3500);
+
+        let currentRight = 0;
+        const rightSlides = document.querySelectorAll('.right-slide');
+        function nextRightSlide() {
+            rightSlides[currentRight].classList.remove('active');
+            currentRight = (currentRight + 1) % rightSlides.length;
+            rightSlides[currentRight].classList.add('active');
+        }
+        setInterval(nextRightSlide, 4000);
+
+        // Lógica do Player de Rádio
+        function tocarRadio(urlStream, nomeEstilo) {
+            const container = document.getElementById('containerPlayer');
+            const player = document.getElementById('audioRadio');
+            const source = document.getElementById('sourceAudio');
+            const titulo = document.getElementById('nomeRadioTocando');
+
+            container.style.display = 'block';
+            titulo.innerText = "Tocando: " + nomeEstilo;
+            source.src = urlStream;
+            player.load();
+            player.play().catch(error => { console.log("Aguardando play manual"); });
+        }
+    </script>
+
+</body>
+</html>
