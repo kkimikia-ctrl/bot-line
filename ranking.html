@@ -209,7 +209,7 @@
     </div>
 
     <script>
-        // Lógica dos dois carrosseles independentes
+        // Lógica dos dois carrosseles independentes com pausa ao rolar
         let slide1 = 0, slide2 = 0;
         const t1 = document.getElementById('track1');
         const t2 = document.getElementById('track2');
@@ -246,31 +246,22 @@
         let modalidadeAtual = 'Cobrinha';
 
         function obterDadosJogo(modalidade) {
-            // Mapeia rigidamente as chaves exclusivas para evitar mistura de pontuação
-            let chavesPossiveis = [];
+            let chaveStorage = "";
+            
+            // Mapeamento estrito e isolado para cada jogo não misturar os pontos
             if (modalidade === 'Memória') {
-                chavesPossiveis = ['ranking_memoria', 'ranking_memoria.html', 'memoria_ranking', 'ranking_jogo_memoria', 'memoria'];
+                chaveStorage = 'ranking_memoria';
             } else if (modalidade === 'Jankeipo') {
-                chavesPossiveis = ['ranking_jankeipo', 'ranking_jokenpo', 'ranking_jokenp_brasil', 'jankeipo', 'jokenpo'];
+                chaveStorage = 'ranking_jankeipo';
             } else if (modalidade === 'Cobrinha') {
-                chavesPossiveis = ['ranking_cobrinha', 'ranking_snake', 'cobrinha', 'snake'];
+                chaveStorage = 'ranking_cobrinha';
             } else if (modalidade === 'Forca') {
-                chavesPossiveis = ['ranking_forca', 'forca'];
-            } else {
-                chavesPossiveis = [`ranking_${modalidade.toLowerCase()}`];
+                chaveStorage = 'ranking_forca';
             }
 
-            let lista = [];
-            for (let chave of chavesPossiveis) {
-                let dadosSalvos = JSON.parse(localStorage.getItem(chave) || "[]");
-                if (Array.isArray(dadosSalvos) && dadosSalvos.length > 0) {
-                    lista = dadosSalvos;
-                    break;
-                }
-            }
+            let lista = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
 
-            // Se o jogo de memória (ou qualquer outro) salvou a pontuação de forma isolada, garante a leitura correta
-            // Preenche o restante até 30 com pontuações padrão caso precise
+            // Se houver menos de 30 registros, completa com a base padrão para preencher a tabela
             if (lista.length < 30) {
                 nomesBase.forEach((nome, idx) => {
                     if (lista.length < 30) {
@@ -282,7 +273,7 @@
                 });
             }
 
-            // Ordena estritamente do maior para o menor e retorna os 30 primeiros
+            // Ordena estritamente do maior para o menor ponto convertendo para número
             lista.sort((a, b) => Number(b.pontos) - Number(a.pontos));
             return lista.slice(0, 30);
         }
@@ -312,7 +303,7 @@
             corpo.innerHTML = html;
         }
 
-        // Atualização em tempo real caso jogue e salve na mesma aba aberta
+        // Atualização automática a cada 2 segundos para refletir novas pontuações instantaneamente
         setInterval(() => {
             mudarAba(modalidadeAtual, document.querySelector('.aba-btn.active'));
         }, 2000);
