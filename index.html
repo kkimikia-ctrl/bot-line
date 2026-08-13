@@ -330,6 +330,25 @@
         let usuarioTemSaldo = true; 
         let temCreditoParaContinuar = false; 
 
+        // Função Global Auxiliar de Salvamento e Integração com o Ranking de Jogos
+        function salvarPontuacaoPorJogo(nomeJogo, pontos) {
+            if (pontos <= 0) {
+                alert("Jogue e acumule pontos antes de salvar!");
+                return;
+            }
+            let nome = prompt(`🏆 Digite seu nome para o Ranking de ${nomeJogo}:`, "Jogador") || "Jogador";
+            let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+            let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
+            
+            ranking.push({ nome: nome, pontos: Number(pontos) });
+            ranking.sort((a, b) => Number(b.pontos) - Number(a.pontos));
+            
+            // Mantém rigorosamente até o 30º lugar
+            localStorage.setItem(chaveStorage, JSON.stringify(ranking.slice(0, 30)));
+            alert(`✅ Pontuação salva com sucesso no ranking de ${nomeJogo}!`);
+            window.location.href = "ranking.html";
+        }
+
         function verificarSaldoEChamar() {
             usuarioTemSaldo = true; 
             abrirModalTradutor();
