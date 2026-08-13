@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omikuji do Dia - Sorte & Fortuna</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 10px;
+            padding-top: 70px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .app-header {
+            background-color: #0056b3;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .back-btn {
+            position: absolute;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .omikuji-container {
+            background: white;
+            max-width: 400px;
+            width: 90%;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-top: 20px;
+        }
+        .omikuji-container h1 {
+            color: #d32f2f;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .omikuji-container p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .box-image {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            margin: 10px auto;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .draw-btn {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+            transition: transform 0.2s;
+            margin-top: 15px;
+        }
+        .draw-btn:active {
+            transform: scale(0.95);
+        }
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #fff8e1;
+            border: 2px dashed #ffb300;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .result-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 8px;
+        }
+        .result-text {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <button class="back-btn" onclick="location.href='entretenimento.html'">⬅ Voltar</button>
+        Omikuji do Dia ⛩️
+    </div>
+
+    <div class="omikuji-container">
+        <h1>Sorte Sagrada</h1>
+        <p>Tire a sua sorte de hoje e descubra o que o destino te reserva!</p>
+        
+        <img src="https://cdn-icons-png.flaticon.com/512/3245/3245012.png" alt="Omikuji" class="box-image">
+
+        <br>
+        <button class="draw-btn" onclick="tirarSorte()">✨ Sortear Agora</button>
+
+        <div id="resultado" class="result-box">
+            <div id="tituloSorte" class="result-title"></div>
+            <div id="textoSorte" class="result-text"></div>
+        </div>
+    </div>
+
+    <!-- Puxa as mensagens do seu arquivo omikuji-mensagens.js -->
+    <script src="omikuji-mensagens.js"></script>
+    <script>
+        function tirarSorte() {
+            // Verifica se o arquivo externo foi carregado corretamente
+            if (typeof listaOmikuji === 'undefined' || listaOmikuji.length === 0) {
+                alert("Erro: As mensagens do Omikuji não foram encontradas no arquivo JS.");
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * listaOmikuji.length);
+            const sorteEscolhida = listaOmikuji[randomIndex];
+
+            document.getElementById('tituloSorte').innerText = sorteEscolhida.titulo;
+            document.getElementById('textoSorte').innerText = sorteEscolhida.texto;
+            
+            const box = document.getElementById('resultado');
+            box.style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
