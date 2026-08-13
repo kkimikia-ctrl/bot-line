@@ -190,8 +190,21 @@
         ];
 
         function obterDadosJogo(modalidade) {
-            let chave = `ranking_${modalidade.toLowerCase()}`;
-            let lista = JSON.parse(localStorage.getItem(chave) || "[]");
+            let chavesPossiveis = [];
+            if (modalidade === 'Jankeipo') {
+                chavesPossiveis = ['ranking_jankeipo', 'ranking_jokenpo', 'ranking_jokenp_brasil', 'ranking_jokenpô'];
+            } else {
+                chavesPossiveis = [`ranking_${modalidade.toLowerCase()}`];
+            }
+
+            let lista = [];
+            for (let chave of chavesPossiveis) {
+                let dadosSalvos = JSON.parse(localStorage.getItem(chave) || "[]");
+                if (dadosSalvos.length > 0) {
+                    lista = dadosSalvos;
+                    break;
+                }
+            }
 
             // Se não houver 30 registros reais, preenche com pontuações baixas progressivas
             if (lista.length < 30) {
