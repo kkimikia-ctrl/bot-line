@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Ranking Geral - Jogos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 { color: #38bdf8; margin-bottom: 5px; font-size: 24px; }
+        p.sub { color: #94a3b8; font-size: 13px; margin-top: 0; margin-bottom: 25px; }
+        .grid-rankings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .card-rank {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card-rank h2 {
+            font-size: 16px;
+            color: #38bdf8;
+            margin-top: 0;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #334155;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        .pos { font-weight: bold; text-align: center; width: 45px; }
+        .gold { color: #facc15; }
+        .silver { color: #cbd5e1; }
+        .bronze { color: #d97706; }
+        .pts { text-align: right; font-weight: bold; color: #38bdf8; }
+        .btn-voltar {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 25px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .btn-voltar:hover { background: #7dd3fc; }
+    </style>
+</head>
+<body>
+
+    <h1>🏆 Painel Moderno de Ranking Geral</h1>
+    <p class="sub">Os 30 melhores competidores separados por modalidade de jogo</p>
+    <button class="btn-voltar" onclick="window.close()">✖ Fechar Página</button>
+    
+    <div class="grid-rankings" id="gridRankings">
+        <!-- Os rankings por jogo serão injetados dinamicamente aqui -->
+    </div>
+
+    <script>
+        function carregarRankingGeralPagina() {
+            const jogos = ["Jogo da Velha", "Jogo da Forca", "Jogo da Memória", "Jokenpô Brasil", "Jogo da Cobrinha"];
+            const nomesBase = ["Lucas", "Mariana", "Gabriel", "Beatriz", "Matheus", "Ana", "Rafael", "Larissa", "Bruno", "Camila", "Diego", "Juliana", "Thiago", "Fernanda", "Rodrigo", "Patrícia", "Alexandre", "Vanessa", "Carlos", "Renata", "Felipe", "Tatiane", "Eduardo", "Carolina", "Marcelo", "Sabrina", "Vinicius", "Letícia", "Leonardo", "Bianca"];
+
+            let rankingPorJogo = JSON.parse(localStorage.getItem('rankingGlobalCentralPorJogo'));
+            
+            // Se não existir dados salvos, gera os 30 nomes padrão para cada jogo
+            if (!rankingPorJogo) {
+                rankingPorJogo = {};
+                jogos.forEach(jogo => {
+                    rankingPorJogo[jogo] = [];
+                    nomesBase.forEach((nome, idx) => {
+                        let pts = (30 - idx) * 35 + Math.floor(Math.random() * 20);
+                        rankingPorJogo[jogo].push({ nome: `${nome} (Global)`, pontos: pts });
+                    });
+                });
+                localStorage.setItem('rankingGlobalCentralPorJogo', JSON.stringify(rankingPorJogo));
+            }
+
+            let containerGrid = document.getElementById('gridRankings');
+            containerGrid.innerHTML = "";
+
+            jogos.forEach(jogo => {
+                let card = document.createElement('div');
+                card.className = 'card-rank';
+                
+                let htmlCard = `
+                    <h2><span>🎮 ${jogo}</span> <span style="font-size:11px; color:#94a3b8; font-weight:normal;">Top 30</span></h2>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                `;
+
+                let lista = rankingPorJogo[jogo] || [];
+                
+                // Garante que tenha exatamente 30 nomes listados
+                while(lista.length < 30) {
+                    lista.push({ nome: `Concorrente ${lista.length + 1}`, pontos: (30 - lista.length) * 10 });
+                }
+                lista.sort((a, b) => b.pontos - a.pontos);
+
+                lista.slice(0, 30).forEach((item, index) => {
+                    let posClass = index === 0 ? "gold" : index === 1 ? "silver" : index === 2 ? "bronze" : "";
+                    let posSimbolo = index === 0 ? "🥇 1º" : index === 1 ? "🥈 2º" : index === 2 ? "🥉 3º" : `${index + 1}º`;
+                    
+                    htmlCard += `
+                        <tr>
+                            <td class="pos ${posClass}">${posSimbolo}</td>
+                            <td>${item.nome}</td>
+                            <td class="pts">${item.pontos} pts</td>
+                        </tr>
+                    `;
+                });
+
+                htmlCard += `
+                        </table>
+                    </div>
+                `;
+                
+                card.innerHTML = htmlCard;
+                containerGrid.appendChild(card);
+            });
+        }
+
+        carregarRankingGeralPagina();
+    </script>
+</body>
+</html>
