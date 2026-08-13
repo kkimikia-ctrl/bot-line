@@ -3,187 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking Geral de Jogos</title>
+    <title>Ranking dos Jogos</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #70b7ff 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1e3a8a;
+            color: #f8fafc;
             margin: 0;
             padding: 10px;
-            padding-top: 70px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .app-header {
-            background-color: #003366;
-            color: white;
-            padding: 12px;
             text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-            position: fixed;
-            top: 0;
-            left: 0;
+            padding-bottom: 40px;
+        }
+        h1 { color: #f8fafc; font-size: 20px; margin: 10px 0 15px 0; }
+        
+        /* Carrossel de Banners Pequenos no Topo */
+        .carousel-container {
+            max-width: 450px;
+            height: 80px;
+            margin: 0 auto 15px auto;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: #0f172a;
+            position: relative;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-slide img {
             width: 100%;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
-        .back-btn {
-            position: absolute;
-            left: 10px;
-            background: none;
-            border: none;
+
+        .btn-voltar {
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            font-size: 14px;
-            cursor: pointer;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
             font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+            float: left;
+            margin-bottom: 10px;
         }
-        .ranking-container {
-            background: rgba(255, 255, 255, 0.95);
-            max-width: 420px;
-            width: 90%;
-            border-radius: 20px;
-            padding: 20px;
+
+        .container-card {
+            background: white;
+            color: #333;
+            max-width: 450px;
+            margin: 0 auto;
+            border-radius: 16px;
+            padding: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
+            text-align: left;
         }
-        .game-tabs {
+
+        h2.titulo-secao {
+            text-align: center;
+            color: #1e3a8a;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        /* Abas de Modalidade */
+        .abas-container {
             display: flex;
             gap: 5px;
             overflow-x: auto;
             margin-bottom: 15px;
             padding-bottom: 5px;
         }
-        .tab-btn {
-            background: #e2e8f0;
+        .aba-btn {
+            background: #f1f5f9;
             border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
-            color: #333;
             white-space: nowrap;
+            color: #64748b;
         }
-        .tab-btn.active {
-            background: #0d47a1;
+        .aba-btn.active {
+            background: #1e3a8a;
             color: white;
         }
-        .ranking-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 350px;
-            overflow-y: auto;
-        }
-        .ranking-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 10px;
-            border-bottom: 1px solid #eee;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 13px;
         }
-        .ranking-item:nth-child(-n+3) {
-            font-weight: bold;
-            background: #fff8e1;
-            border-radius: 6px;
-            margin-bottom: 4px;
+        th, td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .pos { font-weight: bold; text-align: center; width: 40px; }
+        .gold { color: #d97706; }
+        .silver { color: #64748b; }
+        .bronze { color: #b45309; }
+        .pts { text-align: right; font-weight: bold; color: #1e3a8a; }
+        
+        .tabela-wrapper {
+            max-height: 420px;
+            overflow-y: auto;
         }
     </style>
 </head>
-<body>
+<body onscroll="pausarCarrosselAoRolar()">
 
-    <div class="app-header">
-        <button class="back-btn" onclick="location.href='forca.html'">⬅ Voltar</button>
-        Ranking dos Jogos 🏆
+    <div style="max-width: 450px; margin: 0 auto;">
+        <button class="btn-voltar" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
+        <div style="clear: both;"></div>
+        <h1>Ranking dos Jogos 🏆</h1>
     </div>
 
-    <div class="ranking-container">
-        <h2 style="color: #0d47a1; font-size: 18px; text-align: center; margin-top: 0;">Top 15 por Modalidade</h2>
+    <!-- CARROSSEL DE BANNERS PEQUENOS NO TOPO -->
+    <div class="carousel-container" id="carouselContainer">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide"><img src="https://via.placeholder.com/450x80/1e3a8a/ffffff?text=Destaque+Semanal+1" alt="Banner 1"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/450x80/0f172a/ffffff?text=Novos+Recordes+2" alt="Banner 2"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/450x80/3b82f6/ffffff?text=Desafio+Global+3" alt="Banner 3"></div>
+        </div>
+    </div>
+
+    <div class="container-card">
+        <h2 class="titulo-secao">Top 30 por Modalidade</h2>
         
-        <!-- Abas dos 5 Jogos -->
-        <div class="game-tabs">
-            <button class="tab-btn active" onclick="mudarJogo('jogo1', this)">🐍 Cobrinha</button>
-            <button class="tab-btn" onclick="mudarJogo('jogo2', this)">❌ Forca</button>
-            <button class="tab-btn" onclick="mudarJogo('jogo3', this)">🧠 Memória</button>
-            <button class="tab-btn" onclick="mudarJogo('jogo4', this)">🎯 Alvo</button>
-            <button class="tab-btn" onclick="mudarJogo('jogo5', this)">🧩 Puzzle</button>
+        <!-- Abas de Navegação dos Jogos (Incluindo Jankeipo) -->
+        <div class="abas-container">
+            <button class="aba-btn active" onclick="mudarAba('Cobrinha', this)">🐍 Cobrinha</button>
+            <button class="aba-btn" onclick="mudarAba('Forca', this)">❌ Forca</button>
+            <button class="aba-btn" onclick="mudarAba('Memória', this)">🧠 Memória</button>
+            <button class="aba-btn" onclick="mudarAba('Jankeipo', this)">✌️ Jankeipo</button>
         </div>
 
-        <div id="listaRanking" class="ranking-list">
-            <!-- Os 15 colocados serão inseridos aqui via JavaScript -->
+        <div class="tabela-wrapper">
+            <table>
+                <tbody id="corpoTabela">
+                    <!-- Preenchido via JavaScript -->
+                </tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        // Dados simulados dos 15 melhores para cada um dos 5 jogos
-        const dadosRanking = {
-            jogo1: [
-                {nome: "Carlos Silva", pontos: 1450}, {nome: "Ana Souza", pontos: 1320}, {nome: "Marcos Lima", pontos: 1200},
-                {nome: "Juliana Mendes", pontos: 1100}, {nome: "Roberto Santos", pontos: 950}, {nome: "Fernanda Costa", pontos: 900},
-                {nome: "Lucas Oliveira", pontos: 850}, {nome: "Mariana Rocha", pontos: 800}, {nome: "Paulo Ribeiro", points: 750},
-                {nome: "Camila Duarte", pontos: 700}, {nome: "Bruno Carvalho", pontos: 650}, {nome: "Larissa Azevedo", pontos: 600},
-                {nome: "Diego Martins", pontos: 550}, {nome: "Beatriz Freitas", pontos: 500}, {nome: "Gabriel Ramos", pontos: 450}
-            ],
-            jogo2: [
-                {nome: "Ana Souza", pontos: 980}, {nome: "Carlos Silva", pontos: 910}, {nome: "Gabriel Ramos", pontos: 880},
-                {nome: "Fernanda Costa", pontos: 820}, {nome: "Juliana Mendes", pontos: 790}, {nome: "Roberto Santos", points: 740},
-                {nome: "Lucas Oliveira", pontos: 700}, {nome: "Marcos Lima", pontos: 660}, {nome: "Paulo Ribeiro", points: 620},
-                {nome: "Camila Duarte", pontos: 590}, {nome: "Bruno Carvalho", pontos: 550}, {nome: "Larissa Azevedo", pontos: 510},
-                {nome: "Diego Martins", pontos: 480}, {nome: "Beatriz Freitas", pontos: 430}, {nome: "Mariana Rocha", pontos: 400}
-            ],
-            jogo3: [
-                {nome: "Juliana Mendes", pontos: 2000}, {nome: "Carlos Silva", pontos: 1850}, {nome: "Ana Souza", pontos: 1720},
-                {nome: "Marcos Lima", pontos: 1600}, {nome: "Roberto Santos", points: 1500}, {nome: "Fernanda Costa", pontos: 1400},
-                {nome: "Lucas Oliveira", pontos: 1300}, {nome: "Mariana Rocha", pontos: 1200}, {nome: "Paulo Ribeiro", points: 1100},
-                {nome: "Camila Duarte", pontos: 1000}, {nome: "Bruno Carvalho", pontos: 900}, {nome: "Larissa Azevedo", pontos: 800},
-                {nome: "Diego Martins", pontos: 700}, {nome: "Beatriz Freitas", pontos: 600}, {nome: "Gabriel Ramos", pontos: 500}
-            ],
-            jogo4: [
-                {nome: "Fernanda Costa", pontos: 3100}, {nome: "Carlos Silva", pontos: 2950}, {nome: "Ana Souza", pontos: 2800},
-                {nome: "Juliana Mendes", pontos: 2650}, {nome: "Marcos Lima", pontos: 2500}, {nome: "Roberto Santos", points: 2350},
-                {nome: "Lucas Oliveira", pontos: 2200}, {nome: "Mariana Rocha", pontos: 2050}, {nome: "Paulo Ribeiro", points: 1900},
-                {nome: "Camila Duarte", pontos: 1750}, {nome: "Bruno Carvalho", pontos: 1600}, {nome: "Larissa Azevedo", pontos: 1450},
-                {nome: "Diego Martins", pontos: 1300}, {nome: "Beatriz Freitas", pontos: 1150}, {nome: "Gabriel Ramos", pontos: 1000}
-            ],
-            jogo5: [
-                {nome: "Marcos Lima", pontos: 1250}, {nome: "Carlos Silva", pontos: 1190}, {nome: "Ana Souza", pontos: 1120},
-                {nome: "Juliana Mendes", pontos: 1050}, {nome: "Fernanda Costa", pontos: 980}, {nome: "Roberto Santos", points: 910},
-                {nome: "Lucas Oliveira", pontos: 850}, {nome: "Mariana Rocha", pontos: 790}, {nome: "Paulo Ribeiro", points: 730},
-                {nome: "Camila Duarte", pontos: 670}, {nome: "Bruno Carvalho", pontos: 610}, {nome: "Larissa Azevedo", pontos: 550},
-                {nome: "Diego Martins", pontos: 490}, {nome: "Beatriz Freitas", pontos: 430}, {nome: "Gabriel Ramos", pontos: 370}
-            ]
-        };
+        // Lógica do Carrossel Pequeno com pausa automática ao rolar a página
+        let currentSlide = 0;
+        const track = document.getElementById('carouselTrack');
+        const slides = document.querySelectorAll('.carousel-slide');
+        let intervaloCarrossel = setInterval(mudarSlideAutomatico, 3500);
+        let timeoutRetomada = null;
 
-        function carregarRanking(jogo) {
-            const lista = document.getElementById('listaRanking');
-            lista.innerHTML = '';
-            
-            dadosRanking[jogo].forEach((item, index) => {
-                let medalha = '';
-                if(index === 0) medalha = '🥇 ';
-                else if(index === 1) medalha = '🥈 ';
-                else if(index === 2) medalha = '🥉 ';
-                else medalha = (index + 1) + '. ';
+        function mudarSlideAutomatico() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
 
-                const li = document.createElement('li');
-                li.className = 'ranking-item';
-                li.innerHTML = `<span>${medalha}${item.nome}</span> <strong style="color: #0d47a1;">${item.pontos} pts</strong>`;
-                lista.appendChild(li);
+        function pausarCarrosselAoRolar() {
+            clearInterval(intervaloCarrossel);
+            clearTimeout(timeoutRetomada);
+            timeoutRetomada = setTimeout(() => {
+                intervaloCarrossel = setInterval(mudarSlideAutomatico, 3500);
+            }, 1000);
+        }
+
+        // Dados e Renderização do Ranking com Top 30 e Pontuações Baixas
+        const nomesBase = [
+            "Carlos Silva", "Ana Souza", "Marcos Lima", "Juliana Mendes", "Roberto Santos", 
+            "Fernanda Costa", "Lucas Oliveira", "Mariana Rocha", "Paulo Ribeiro", "Camila Duarte",
+            "Bruno Souza", "Beatriz Lima", "Gabriel Alves", "Larissa Dias", "Matheus Pinto",
+            "Tatiane Rocha", "Rodrigo Mendes", "Vanessa Costa", "Felipe Santos", "Renata Oliveira",
+            "Eduardo Lima", "Sabrina Souza", "Marcelo Dias", "Letícia Alves", "Vinicius Pinto",
+            "Bianca Rocha", "Thiago Mendes", "Patrícia Costa", "Alexandre Santos", "Amanda Oliveira"
+        ];
+
+        function obterDadosJogo(modalidade) {
+            let chavesPossiveis = [];
+            if (modalidade === 'Jankeipo') {
+                chavesPossiveis = ['ranking_jankeipo', 'ranking_jokenpo', 'ranking_jokenp_brasil', 'ranking_jokenpô'];
+            } else {
+                chavesPossiveis = [`ranking_${modalidade.toLowerCase()}`];
+            }
+
+            let lista = [];
+            for (let chave of chavesPossiveis) {
+                let dadosSalvos = JSON.parse(localStorage.getItem(chave) || "[]");
+                if (dadosSalvos.length > 0) {
+                    lista = dadosSalvos;
+                    break;
+                }
+            }
+
+            // Se não houver 30 registros reais, preenche com pontuações baixas progressivas
+            if (lista.length < 30) {
+                nomesBase.forEach((nome, idx) => {
+                    if (lista.length < 30) {
+                        let ptsBaixos = Math.max(5, (30 - idx) * 3); // Pontuações baixas
+                        if (!lista.some(item => item.nome === nome)) {
+                            lista.push({ nome: nome, pontos: ptsBaixos });
+                        }
+                    }
+                });
+            }
+
+            lista.sort((a, b) => b.pontos - a.pontos);
+            return lista.slice(0, 30); // Garante exatamente o Top 30
+        }
+
+        function mudarAba(modalidade, elementoBtn) {
+            // Atualiza botões ativos
+            document.querySelectorAll('.aba-btn').forEach(btn => btn.classList.remove('active'));
+            elementoBtn.classList.add('active');
+
+            let dados = obterDadosJogo(modalidade);
+            let corpo = document.getElementById('corpoTabela');
+            let html = "";
+
+            dados.forEach((item, index) => {
+                let posClass = index === 0 ? "gold" : index === 1 ? "silver" : index === 2 ? "bronze" : "";
+                let posSimbolo = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
+                
+                html += `
+                    <tr>
+                        <td class="pos ${posClass}">${posSimbolo}</td>
+                        <td>${item.nome}</td>
+                        <td class="pts">${item.pontos} pts</td>
+                    </tr>
+                `;
             });
+
+            corpo.innerHTML = html;
         }
 
-        function mudarJogo(jogo, btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            carregarRanking(jogo);
-        }
-
-        // Carrega o primeiro jogo por padrão ao abrir a página
-        carregarRanking('jogo1');
+        // Inicializa abrindo a aba da Cobrinha por padrão
+        window.onload = function() {
+            mudarAba('Cobrinha', document.querySelector('.aba-btn'));
+        };
     </script>
 </body>
 </html>
