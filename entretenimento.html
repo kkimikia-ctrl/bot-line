@@ -203,14 +203,15 @@
                 <span class="subtitle">Todas as Opções</span>
             </button>
 
-            <!-- Botão do Karaokê corrigido para abrir a página inteira karaoke.html -->
+            <!-- Botão do Karaokê abrindo karaoke.html -->
             <button class="card-btn" onclick="window.location.href='karaoke.html'">
                 <span class="icon">🎤</span>
                 <span class="title">Karaokê</span>
                 <span class="subtitle">Cante com a Gente</span>
             </button>
 
-            <button class="card-btn" onclick="abrirModalOmikuji()">
+            <!-- Botão do Horóscopo redirecionando para a nova página omikuji.html -->
+            <button class="card-btn" onclick="window.location.href='omikuji.html'">
                 <span class="icon">🔮</span>
                 <span class="title">Horóscopo</span>
                 <span class="subtitle">Omikuji do Dia</span>
@@ -297,18 +298,6 @@
         </div>
     </div>
 
-    <!-- Modal do Omikuji (Travado em 1x por dia) -->
-    <div id="modalOmikuji" class="modal">
-        <div class="modal-content">
-            <h2 id="omikujiTitulo" style="font-size: 18px; color: #0d47a1;">Sorte do Dia</h2>
-            <p id="omikujiTexto" style="line-height: 1.5; font-size: 13px; text-align: justify; margin: 15px 0; color: #333;">Toque no botão abaixo para descobrir a sua mensagem de hoje.</p>
-            
-            <button class="action-btn" id="btnSortearOmikuji" onclick="sortearOmikuji()">Tirar Sorte</button>
-            <br>
-            <button class="close-btn" onclick="fecharModalOmikuji()" style="background: #ccc; color: #333; width: auto; margin-top: 10px;">Fechar</button>
-        </div>
-    </div>
-
     <script>
         function abrirSecaoLives() {
             const el = document.getElementById('secaoLives');
@@ -338,55 +327,6 @@
             document.getElementById('containerPlayer').style.display = 'none';
             document.getElementById('modalRadio').style.display = 'none';
         }
-
-        function abrirModalOmikuji() {
-            document.getElementById('modalOmikuji').style.display = 'flex';
-            verificarOmikujiDiario();
-        }
-
-        function fecharModalOmikuji() {
-            document.getElementById('modalOmikuji').style.display = 'none';
-        }
-
-        function verificarOmikujiDiario() {
-            const hoje = new Date().toLocaleDateString();
-            const ultimoDiaSorteio = localStorage.getItem('omikuji_data');
-            const tituloEl = document.getElementById('omikujiTitulo');
-            const textoEl = document.getElementById('omikujiTexto');
-            const btnSortear = document.getElementById('btnSortearOmikuji');
-
-            if (ultimoDiaSorteio === hoje) {
-                tituloEl.innerText = localStorage.getItem('omikuji_titulo_salvo');
-                textoEl.innerText = localStorage.getItem('omikuji_texto_salvo');
-                if (btnSortear) btnSortear.style.display = 'none';
-            } else {
-                tituloEl.innerText = "Toque no botão para sua sorte!";
-                textoEl.innerText = "Descubra a mensagem detalhada e inspiradora que o destino reservou para o seu dia hoje.";
-                if (btnSortear) btnSortear.style.display = 'block';
-            }
-        }
-
-        function sortearOmikuji() {
-            const hoje = new Date().toLocaleDateString();
-            if (typeof listaOmikuji !== 'undefined' && listaOmikuji.length > 0) {
-                const sorteado = listaOmikuji[Math.floor(Math.random() * listaOmikuji.length)];
-                const tituloFinal = sorteado.titulo;
-                const textoFinal = sorteado.texto + "\n\n⏳ Você já retirou a sua sorte de hoje! Volte amanhã para abrir um novo Omikuji.";
-
-                localStorage.setItem('omikuji_data', hoje);
-                localStorage.setItem('omikuji_titulo_salvo', tituloFinal);
-                localStorage.setItem('omikuji_texto_salvo', textoFinal);
-
-                document.getElementById('omikujiTitulo').innerText = tituloFinal;
-                document.getElementById('omikujiTexto').innerText = textoFinal;
-                if (document.getElementById('btnSortearOmikuji')) {
-                    document.getElementById('btnSortearOmikuji').style.display = 'none';
-                }
-            } else {
-                alert("O arquivo de mensagens do Omikuji não carregou.");
-            }
-        }
     </script>
-    <script src="omikuji-mensagens.js"></script>
 </body>
 </html>
