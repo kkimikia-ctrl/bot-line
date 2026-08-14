@@ -1045,7 +1045,8 @@
                 } else if ((escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') || (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') || (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')) {
                     venceu = true; pontosJokenpo += 100 * faseAtualJokenpo; textoRes = `🎉 Brasil Venceu!`; corFundo = "#d1fae5"; corTexto = "#065f46"; tocarEfeito('vitoria');
                 } else {
-                    pontosJokenpo = Math.max(0, pontosJokenpo - 20); textoRes = `❌ Brasil Perdeu!`; corFundo = "#fee2e2"; corTexto = "#991b1b"; tocarEfeito('clique');
+                    // CORREÇÃO APLICADA AQUI: Na derrota, o jogo reinicia sem descontar pontos acumulados (mantém o placar atual)
+                    textoRes = `❌ Derrota! O jogo será reiniciado.`; corFundo = "#fee2e2"; corTexto = "#991b1b"; tocarEfeito('clique');
                 }
                 document.getElementById('instrucao-jokenpo').style.display = 'none';
                 let caixaRes = document.getElementById('caixa-resultado-jokenpo');
@@ -1057,10 +1058,14 @@
                     faseAtualJokenpo++; 
                     document.getElementById('btn-proxima-rodada').style.display = 'block';
                 } else if (empatou) {
-                    // No empate, destrava os botões para jogar novamente na mesma fase sem resetar os pontos
                     setTimeout(() => { reiniciarRodadaJokenpo(); }, 1500);
                 } else { 
-                    setTimeout(() => { iniciarJokenpo(); }, 2000); 
+                    // Reinicia a fase mantendo os pontos que já foram acumulados
+                    setTimeout(() => { 
+                        faseAtualJokenpo = 1; 
+                        atualizarTelaJokenpo(); 
+                        reiniciarRodadaJokenpo(); 
+                    }, 2000); 
                 }
             }, 1000);
         }
