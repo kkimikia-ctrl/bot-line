@@ -1,5 +1,3 @@
-Forca html 2026/8/13
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -509,7 +507,6 @@ Forca html 2026/8/13
                     osc.start(agora);
                     osc.stop(agora + 0.09);
                 } else if (tipo === 'vitoria') {
-                    // Acorde feliz de vitória
                     [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
                         let o = audioCtx.createOscillator();
                         let g = audioCtx.createGain();
@@ -526,7 +523,6 @@ Forca html 2026/8/13
             }
         }
 
-        // Músicas instrumentais de fundo diferentes para cada jogo/menu
         function tocarNotaFundo(freq, tipoOnda = 'sine', duracao = 0.25) {
             if (!somLigado || !audioCtx) return;
             try {
@@ -534,7 +530,7 @@ Forca html 2026/8/13
                 let gain = audioCtx.createGain();
                 osc.type = tipoOnda;
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime); // volume baixo e agradável para fundo
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -550,34 +546,27 @@ Forca html 2026/8/13
             musicaIntervalo = setInterval(() => {
                 if (!somLigado) return;
 
-                // Melodias diferentes para cada local do site
                 if (jogoAtualAtivo === 'menu') {
-                    // Música alegre de menu principal
                     const melodiaMenu = [notas.C4, notas.E4, notas.G4, notas.C5, notas.G4, notas.E4];
                     tocarNotaFundo(melodiaMenu[passoMusica % melodiaMenu.length], 'sine', 0.3);
                 } 
                 else if (jogoAtualAtivo === 'velha') {
-                    // Trilha de suspense estilo arcade clássico
                     const melodiaVelha = [notas.A4, notas.C5, notas.E4, notas.D5];
                     tocarNotaFundo(melodiaVelha[passoMusica % melodiaVelha.length], 'triangle', 0.25);
                 } 
                 else if (jogoAtualAtivo === 'forca') {
-                    // Trilha misteriosa/pensativa
                     const melodiaForca = [notas.D4, notas.F4, notas.A4, notas.F4];
                     tocarNotaFundo(melodiaForca[passoMusica % melodiaForca.length], 'sine', 0.3);
                 } 
                 else if (jogoAtualAtivo === 'memoria') {
-                    // Trilha calma e relaxante
                     const melodiaMemoria = [notas.C4, notas.G4, notas.B4, notas.C5];
                     tocarNotaFundo(melodiaMemoria[passoMusica % melodiaMemoria.length], 'sine', 0.35);
                 } 
                 else if (jogoAtualAtivo === 'jokenpo') {
-                    // Trilha marcial / competitiva
                     const melodiaJokenpo = [notas.G4, notas.C5, notas.D5, notas.C5];
                     tocarNotaFundo(melodiaJokenpo[passoMusica % melodiaJokenpo.length], 'sawtooth', 0.2);
                 } 
                 else if (jogoAtualAtivo === 'cobrinha') {
-                    // Trilha rápida estilo retro 8-bit
                     const melodiaSnake = [notas.E4, notas.G4, notas.A4, notas.B4];
                     tocarNotaFundo(melodiaSnake[passoMusica % melodiaSnake.length], 'square', 0.15);
                 }
