@@ -176,6 +176,7 @@
             color: #666;
             font-size: 0.75rem;
             flex-grow: 1;
+            cursor: pointer;
         }
         .nav-item.active { color: #0047ab; font-weight: bold; }
         .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
@@ -245,7 +246,7 @@
         <!-- Botões Azul e Laranja -->
         <div class="buttons-row" id="container-botoes-topo">
             <button onclick="tocarEfeito('clique'); alert('Central de Jogos Ativa!')" class="top-action-btn btn-blue">🎮 Desafio</button>
-            <a href="ranking.html" onclick="tocarEfeito('clique')" class="top-action-btn btn-orange">🏆 Ranking Geral</a>
+            <button onclick="abrirRankingGeral()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
         </div>
 
         <!-- Menu Principal -->
@@ -256,6 +257,14 @@
             <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
             <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; margin-top:0;">🐍 Jogo da Cobrinha</button>
             <button onclick="abrirJogoFutebol()" class="action-btn" style="background-color: #1b4d3e; margin-top:0;">⚽ Mini Craque</button>
+        </div>
+
+        <!-- Tabela de Ranking Geral -->
+        <div id="container-ranking-geral" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both;"></div>
+            <h3 style="color: #d97706; margin: 5px 0 15px 0;">🏆 Ranking Geral dos Jogos</h3>
+            <div id="lista-ranking-geral" style="text-align: left; font-size: 13px;"></div>
         </div>
 
         <!-- Jogo da Velha -->
@@ -382,7 +391,7 @@
             </div>
         </div>
 
-        <!-- Jogo de Futebol (Mini Craque) -->
+        <!-- Jogo de Futebol (Mini Craque com Seta de Mira) -->
         <div id="container-jogo-futebol" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <button onclick="salvarPontuacaoRankingFutebolManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
@@ -393,22 +402,28 @@
                 <span>Gols: <strong id="score-futebol">0</strong> | Vidas: <strong id="chances-futebol">3</strong></span>
             </div>
 
-            <div class="game-container" id="gameAreaFutebol" style="position: relative; width: 100%; max-width: 360px; height: 420px; background: linear-gradient(to bottom, #4CAF50, #2E7D32); border: 4px solid #fff; border-radius: 12px; overflow: hidden; margin: 0 auto 10px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+            <div class="game-container" id="gameAreaFutebol" style="position: relative; width: 100%; max-width: 360px; height: 420px; background: linear-gradient(to bottom, #4CAF50, #2E7D32); border: 4px solid #fff; border-radius: 12px; overflow: hidden; margin: 0 auto 10px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.15); touch-action: none;">
                 <div class="goal" style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); width: 220px; height: 80px; border: 5px solid #fff; border-bottom: none; background: rgba(255, 255, 255, 0.1);"></div>
                 <div class="keeper" id="keeperFutebol" style="position: absolute; top: 35px; left: 50%; transform: translateX(-50%); width: 36px; height: 36px; background: #ff5722; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 3px 5px rgba(0,0,0,0.3);">🤖</div>
-                <div class="ball" id="ballFutebol" style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 32px; height: 32px; background: #fff; border-radius: 50%; box-shadow: inset -3px -3px 0px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; touch-action: manipulation;">⚽</div>
-                <div class="message" id="messageFutebol" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 22px; font-weight: bold; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); color: #fff; pointer-events: none; transition: opacity 0.3s; z-index: 20;">Toque para chutar!</div>
+                
+                <!-- Seta de Direção/Mira -->
+                <div id="aimArrowFutebol" style="position: absolute; display: none; width: 4px; background: #ffeb3b; transform-origin: bottom center; z-index: 15; pointer-events: none; border-radius: 2px;">
+                    <div style="position: absolute; top: -8px; left: -6px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 12px solid #ffeb3b;"></div>
+                </div>
+
+                <div class="ball" id="ballFutebol" style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 32px; height: 32px; background: #fff; border-radius: 50%; box-shadow: inset -3px -3px 0px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; font-size: 16px; z-index: 16;">⚽</div>
+                <div class="message" id="messageFutebol" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: bold; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); color: #fff; pointer-events: none; transition: opacity 0.3s; z-index: 20;">Arraste na bola para mirar!</div>
             </div>
-            <p style="font-size: 12px; color: #666; margin: 0;">Toque na parte superior da tela do jogo para definir a direção do chute.</p>
+            <p style="font-size: 12px; color: #666; margin: 0;">Arraste o dedo na bola para ajustar a direção e solte para chutar.</p>
         </div>
     </div>
 
     <!-- NAVEGAÇÃO INFERIOR -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
-        <a href="servicos.html" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
-        <a href="entretenimento.html" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
-        <a href="perfil.html" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
+        <a onclick="irParaAba('home')" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
+        <a onclick="irParaAba('servicos')" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
+        <a onclick="irParaAba('entretenimento')" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
+        <a onclick="irParaAba('perfil')" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
     </nav>
 
     <script>
@@ -548,7 +563,7 @@
             passoMusica = 0;
             musicaIntervalo = setInterval(() => {
                 if (!somLigado) return;
-                if (jogoAtualAtivo === 'menu') {
+                if (jogoAtualAtivo === 'menu' || jogoAtualAtivo === 'ranking') {
                     const melodiaMenu = [notas.C4, notas.E4, notas.G4, notas.C5, notas.G4, notas.E4];
                     tocarNotaFundo(melodiaMenu[passoMusica % melodiaMenu.length], 'sine', 0.3);
                 } else if (jogoAtualAtivo === 'velha') {
@@ -606,6 +621,45 @@
         function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
         setInterval(() => mudarSlide(1), 4000);
 
+        function irParaAba(aba) {
+            tocarEfeito('clique');
+            if (aba === 'entretenimento') {
+                voltarMenuJogos();
+            } else {
+                alert(`Navegando para a aba: ${aba.toUpperCase()}`);
+            }
+        }
+
+        function abrirRankingGeral() {
+            jogoAtualAtivo = 'ranking';
+            iniciarMusicaDeFundo();
+            tocarEfeito('clique');
+            document.getElementById('container-botoes-topo').style.display = 'none';
+            document.getElementById('menu-selecao-jogos').style.display = 'none';
+            document.getElementById('container-ranking-geral').style.display = 'block';
+            
+            let listaHtml = "";
+            const jogosLista = ["Jogo da Velha", "Jogo da Forca", "Jogo da Memória", "Jokenpô Brasil", "Jogo da Cobrinha", "Mini Craque"];
+            
+            jogosLista.forEach(nomeJogo => {
+                let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+                let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
+                listaHtml += `<div style="background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #2563eb;">`;
+                listaHtml += `<strong style="color: #1e3a8a;">${nomeJogo}</strong>`;
+                if (ranking.length === 0) {
+                    listaHtml += `<p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Nenhuma pontuação salva ainda.</p>`;
+                } else {
+                    listaHtml += `<ol style="margin: 5px 0 0 15px; padding: 0;">`;
+                    ranking.slice(0, 5).forEach((item, idx) => {
+                        listaHtml += `<li>${item.nome} - <strong>${item.pontos} pts</strong></li>`;
+                    });
+                    listaHtml += `</ol>`;
+                }
+                listaHtml += `</div>`;
+            });
+            document.getElementById('lista-ranking-geral').innerHTML = listaHtml;
+        }
+
         function salvarPontuacaoPorJogo(nomeJogo, pontos) {
             if (pontos <= 0) {
                 alert("Você ainda não possui pontos para salvar nesta partida!");
@@ -616,7 +670,7 @@
             let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
             let nomePadrao = localStorage.getItem('ultimo_nome_jogador') || "Jogador";
             
-            let nome = prompt(`🏆 Deseja salvar seus ${pontos} pontos em ${nomeJogo}?\nDigite seu nome para o Ranking (Top 30):`, nomePadrao);
+            let nome = prompt(`🏆 Deseja salvar seus ${pontos} pontos em ${nomeJogo}?\nDigite seu nome para o Ranking:`, nomePadrao);
             
             if (!nome) return; 
             
@@ -629,8 +683,8 @@
             localStorage.setItem(chaveStorage, JSON.stringify(ranking));
             tocarEfeito('vitoria');
             
-            if (confirm(`✅ Pontuação salva com sucesso no ranking de ${nomeJogo}! Deseja ver a tabela do Ranking Geral agora?`)) {
-                window.location.href = "ranking.html";
+            if (confirm(`✅ Pontuação salva com sucesso! Deseja ver o Ranking Geral agora?`)) {
+                abrirRankingGeral();
             }
         }
 
@@ -646,6 +700,7 @@
 
             document.getElementById('container-botoes-topo').style.display = 'flex';
             document.getElementById('menu-selecao-jogos').style.display = 'grid';
+            document.getElementById('container-ranking-geral').style.display = 'none';
             document.getElementById('container-jogo-velha').style.display = 'none';
             document.getElementById('container-jogo-forca').style.display = 'none';
             document.getElementById('container-jogo-memoria').style.display = 'none';
@@ -1017,20 +1072,23 @@
         }
         function salvarPontuacaoRankingSnakeManual() { salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake); }
 
-        // JOGO DE FUTEBOL (MINI CRAQUE)
+        // JOGO DE FUTEBOL (MINI CRAQUE - COM SETA DE MIRA POR ARRASTE)
         let scoreFutebol = 0;
         let chancesFutebol = 3;
         let isMovingFutebol = false;
         let keeperXFutebol = 50;
-        let keeperSpeedFutebol = 1.5;
+        let keeperSpeedFutebol = 1.2;
         let keeperDirectionFutebol = 1;
         let gameIntervalFutebol = null;
+        
+        let isAimingFutebol = false;
+        let startTouchX = 0, startTouchY = 0;
 
         function iniciarFutebol() {
             pararFutebol();
             scoreFutebol = 0;
             chancesFutebol = 3;
-            keeperSpeedFutebol = 1.5;
+            keeperSpeedFutebol = 1.2;
             document.getElementById('score-futebol').textContent = scoreFutebol;
             document.getElementById('chances-futebol').textContent = chancesFutebol;
             resetRoundFutebol();
@@ -1056,12 +1114,69 @@
             gameIntervalFutebol = requestAnimationFrame(moveKeeperFutebol);
         }
 
+        const gameAreaFutebolEl = document.getElementById('gameAreaFutebol');
+        
+        if (gameAreaFutebolEl) {
+            gameAreaFutebolEl.addEventListener('pointerdown', (e) => {
+                if (isMovingFutebol || chancesFutebol <= 0) return;
+                isAimingFutebol = true;
+                const rect = gameAreaFutebolEl.getBoundingClientRect();
+                startTouchX = e.clientX - rect.left;
+                startTouchY = e.clientY - rect.top;
+            });
+
+            gameAreaFutebolEl.addEventListener('pointermove', (e) => {
+                if (!isAimingFutebol) return;
+                const rect = gameAreaFutebolEl.getBoundingClientRect();
+                let currentX = e.clientX - rect.left;
+                let currentY = e.clientY - rect.top;
+
+                let dx = currentX - startTouchX;
+                let dy = currentY - startTouchY;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+
+                const arrow = document.getElementById('aimArrowFutebol');
+                const ball = document.getElementById('ballFutebol');
+                const ballRect = ball.getBoundingClientRect();
+                const areaRect = gameAreaFutebolEl.getBoundingClientRect();
+
+                let ballCenterX = (ballRect.left + ballRect.right) / 2 - areaRect.left;
+                let ballCenterY = (ballRect.top + ballRect.bottom) / 2 - areaRect.top;
+
+                arrow.style.display = 'block';
+                arrow.style.height = Math.min(distance, 120) + 'px';
+                arrow.style.left = ballCenterX + 'px';
+                arrow.style.top = ballCenterY + 'px';
+                arrow.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
+            });
+
+            gameAreaFutebolEl.addEventListener('pointerup', (e) => {
+                if (!isAimingFutebol) return;
+                isAimingFutebol = false;
+                const arrow = document.getElementById('aimArrowFutebol');
+                arrow.style.display = 'none';
+
+                const rect = gameAreaFutebolEl.getBoundingClientRect();
+                let endX = e.clientX - rect.left;
+                let endY = e.clientY - rect.top;
+
+                let dx = endX - startTouchX;
+                let dy = endY - startTouchY;
+                
+                // Vetor de tiro invertido para simular o impulso do arraste
+                let targetX = startTouchX - dx * 1.5;
+                let targetY = startTouchY - dy * 1.5;
+
+                shootFutebol(targetX, targetY);
+            });
+        }
+
         function shootFutebol(targetX, targetY) {
             const ball = document.getElementById('ballFutebol');
             const gameArea = document.getElementById('gameAreaFutebol');
             const messageElem = document.getElementById('messageFutebol');
 
-            if (isMovingFutebol || chancesFutebol <= 0) return;
             isMovingFutebol = true;
             messageElem.style.opacity = '0';
             tocarEfeito('clique');
@@ -1071,7 +1186,7 @@
             const startY = gameRect.height - 40;
 
             let startTime = null;
-            const duration = 400;
+            const duration = 350;
 
             function animateBall(timestamp) {
                 if (!startTime) startTime = timestamp;
@@ -1099,7 +1214,6 @@
             const keeper = document.getElementById('keeperFutebol');
             const ball = document.getElementById('ballFutebol');
             const goal = document.querySelector('#container-jogo-futebol .goal');
-            const messageElem = document.getElementById('messageFutebol');
 
             const keeperRect = keeper.getBoundingClientRect();
             const ballRect = ball.getBoundingClientRect();
@@ -1122,7 +1236,7 @@
             } else if (insideGoalX && insideGoalY) {
                 scoreFutebol++;
                 showMsgFutebol("GOOOOL! ⚽", "#4CAF50");
-                keeperSpeedFutebol += 0.3;
+                keeperSpeedFutebol += 0.25;
                 tocarEfeito('vitoria');
             } else {
                 showMsgFutebol("FORA! ❌", "#ff9800");
@@ -1160,31 +1274,17 @@
             ball.style.bottom = '30px';
             ball.style.transform = 'translateX(-50%) scale(1)';
             isMovingFutebol = false;
-            messageElem.textContent = "Toque para chutar!";
+            messageElem.textContent = "Arraste na bola para mirar!";
             messageElem.style.opacity = '1';
         }
 
         function restartGameFutebol() {
             scoreFutebol = 0;
             chancesFutebol = 3;
-            keeperSpeedFutebol = 1.5;
+            keeperSpeedFutebol = 1.2;
             document.getElementById('score-futebol').textContent = scoreFutebol;
             document.getElementById('chances-futebol').textContent = chancesFutebol;
             resetRoundFutebol();
-        }
-
-        const gameAreaFutebolEl = document.getElementById('gameAreaFutebol');
-        if (gameAreaFutebolEl) {
-            gameAreaFutebolEl.addEventListener('click', (e) => {
-                if (isMovingFutebol) return;
-                const rect = gameAreaFutebolEl.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                if (y < gameAreaFutebolEl.clientHeight - 80) {
-                    shootFutebol(x, y);
-                }
-            });
         }
 
         function salvarPontuacaoRankingFutebolManual() {
