@@ -3,22 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Craque - Jogo de Futebol</title>
+    <title>Central de Jogos</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #111;
+            background-color: #f0f2f5;
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            color: #fff;
-            overflow: hidden;
+            min-height: 100vh;
+            color: #333;
         }
 
+        .main-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            box-sizing: border-box;
+            padding-bottom: 70px;
+        }
+
+        /* Carrossel do Topo */
+        .carousel {
+            width: 100%;
+            height: 140px;
+            background: #111;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 5;
+        }
+        .carousel-prev { left: 5px; }
+        .carousel-next { right: 5px; }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 8px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+        }
+
+        .dot.active {
+            background: white;
+        }
+
+        /* Cabeçalho da Central */
+        .central-header {
+            background: #1976D2;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .sound-badge {
+            background: rgba(0,0,0,0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* Botões Superiores (Desafios e Ranking) */
+        .top-action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-desafios { background: #2979FF; }
+        .btn-ranking { background: #F57C00; }
+
+        /* Grid / Lista de Jogos Exatos que você tinha */
+        .game-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .game-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            transition: 0.1s;
+        }
+
+        .game-btn:active { transform: scale(0.98); }
+
+        .btn-velha { background: #303F9F; }
+        .btn-forca { background: #00796B; }
+        .btn-memoria { background: #7B1FA2; }
+        .btn-jokenpo { background: #E64A19; }
+        .btn-cobrinha { background: #00897B; }
+        .btn-minicraque { background: #2E7D32; } /* Novo botão do Mini Craque */
+
+        /* Container da Tela do Jogo Mini Craque */
         #game-container {
             width: 100%;
             max-width: 400px;
@@ -29,12 +158,14 @@
             border: 4px solid #fff;
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.5);
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
+            margin: 10px auto;
+            box-sizing: border-box;
         }
 
-        .top-bar {
+        .top-bar-game {
             width: 100%;
             background: rgba(0, 0, 0, 0.7);
             padding: 8px 0;
@@ -43,10 +174,11 @@
             align-items: center;
             font-size: 12px;
             font-weight: bold;
+            color: white;
             z-index: 10;
         }
 
-        .btn {
+        .btn-game-ctrl {
             background: #555;
             color: white;
             border: 2px solid #fff;
@@ -57,9 +189,6 @@
             font-weight: bold;
         }
 
-        .btn-save { background: #4CAF50; }
-        .btn-back { background: #f44336; }
-
         .hud {
             width: 100%;
             background: rgba(0, 0, 0, 0.4);
@@ -68,6 +197,7 @@
             justify-content: space-around;
             font-size: 13px;
             font-weight: bold;
+            color: white;
             z-index: 10;
         }
 
@@ -130,6 +260,7 @@
             text-align: center;
             font-size: 16px;
             font-weight: bold;
+            color: white;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             pointer-events: none;
         }
@@ -142,7 +273,7 @@
             display: none;
         }
 
-        /* Janela (Modal) para inserir o nome e salvar no Game Over */
+        /* Modal de Fim de Jogo com salvamento por nome */
         #game-over-modal {
             position: absolute;
             top: 0;
@@ -158,17 +289,7 @@
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
-        }
-
-        #game-over-modal h2 {
-            color: #ff5722;
-            margin-bottom: 5px;
-            font-size: 24px;
-        }
-
-        #game-over-modal p {
-            font-size: 14px;
-            margin: 5px 0 15px 0;
+            color: white;
         }
 
         .input-name {
@@ -184,30 +305,58 @@
             margin-bottom: 15px;
             outline: none;
         }
-
-        .modal-btns {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-modal {
-            padding: 8px 14px;
-            font-size: 13px;
-            border-radius: 6px;
-            border: 2px solid #fff;
-            cursor: pointer;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
 
+    <!-- Central de Jogos Principal -->
+    <div class="main-container" id="hub-container">
+        <!-- Carrossel -->
+        <div class="carousel">
+            <button class="carousel-nav carousel-prev">&#10094;</button>
+            <button class="carousel-nav carousel-next">&#10095;</button>
+            <div class="carousel-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Cabeçalho -->
+        <div class="central-header">
+            <span>🎮 Central de Jogos</span>
+            <span class="sound-badge" id="sound-status" onclick="toggleGlobalSound()">Som: Ligado</span>
+        </div>
+
+        <!-- Botões de Ação Superior -->
+        <div class="top-action-buttons">
+            <button class="action-btn btn-desafios" onclick="alert('Área de Desafios!')">🎮 Desafios</button>
+            <button class="action-btn btn-ranking" onclick="alert('Ranking Geral!')">🏆 Ranking Geral</button>
+        </div>
+
+        <!-- Lista de Jogos Originais + Mini Craque -->
+        <div class="game-grid">
+            <button class="game-btn btn-velha" onclick="alert('Abrindo Jogo da Velha...')">❌ Jogo da Velha</button>
+            <button class="game-btn btn-forca" onclick="alert('Abrindo Jogo da Forca...')">🎯 Jogo da Forca</button>
+            <button class="game-btn btn-memoria" onclick="alert('Abrindo Jogo da Memória...')">🧠 Jogo da Memória</button>
+            <button class="game-btn btn-jokenpo" onclick="alert('Abrindo Jokenpô Brasil...')">🇧🇷 Jokenpô Brasil</button>
+            <button class="game-btn btn-cobrinha" onclick="alert('Abrindo Jogo da Cobrinha...')">🐍 Jogo da Cobrinha</button>
+            <button class="game-btn btn-minicraque" onclick="abrirMiniCraque()">⚽ Mini Craque (Novo!)</button>
+        </div>
+    </div>
+
+    <!-- Tela do Jogo Mini Craque (Integrado na Central) -->
     <div id="game-container">
-        <!-- Barra Superior -->
-        <div class="top-bar">
-            <button class="btn btn-back" onclick="voltarJogo()">Voltar</button>
-            <span id="title-game">⚽ Mini Craque</span>
-            <button class="btn btn-save" onclick="salvarJogoManual()">Salvar</button>
+        <div class="top-bar-game">
+            <button class="btn-game-ctrl" style="background:#f44336;" onclick="voltarParaHub()">Voltar</button>
+            <span>⚽ Mini Craque</span>
+            <button class="btn-game-ctrl" style="background:#4CAF50;" onclick="salvarJogoManual()">Salvar</button>
         </div>
 
         <div class="hud">
@@ -218,10 +367,8 @@
         </div>
 
         <div id="message">Arraste para trás e solte!</div>
-
         <div class="goal"></div>
 
-        <!-- Elementos -->
         <div id="goalkeeper" class="element">🤖</div>
         <div id="def-blue" class="element defender" style="display: none;">🛡️</div>
         <div id="def-green" class="element defender" style="display: none;">🛡️</div>
@@ -230,32 +377,58 @@
         
         <div id="trajectory"></div>
 
-        <!-- Janela de Fim de Jogo para Salvar com o Nome -->
         <div id="game-over-modal">
-            <h2>FIM DE JOGO! ❌</h2>
-            <p id="final-stats">Pontuação: 0 | Gols: 0</p>
+            <h2 style="color: #ff5722; margin-bottom: 5px;">FIM DE JOGO! ❌</h2>
+            <p id="final-stats" style="font-size: 14px; margin: 5px 0 15px 0;">Pontuação: 0 | Gols: 0</p>
             <input type="text" id="player-name" class="input-name" placeholder="Digite seu nome..." maxlength="15">
-            <div class="modal-btns">
-                <button class="btn-modal btn-save" onclick="salvarComNome()">Salvar</button>
-                <button class="btn-modal" style="background:#2196F3;" onclick="reiniciarJogoModal()">Jogar de Novo</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-game-ctrl" style="background:#4CAF50; padding: 8px 14px;" onclick="salvarComNome()">Salvar</button>
+                <button class="btn-game-ctrl" style="background:#2196F3; padding: 8px 14px;" onclick="reiniciarJogoModal()">Jogar de Novo</button>
             </div>
         </div>
     </div>
 
     <script>
+        const hubContainer = document.getElementById('hub-container');
+        const gameContainer = document.getElementById('game-container');
+        let gameActive = false;
+
+        function abrirMiniCraque() {
+            hubContainer.style.display = 'none';
+            gameContainer.style.display = 'flex';
+            gameActive = true;
+            resetGame();
+        }
+
+        function voltarParaHub() {
+            if(confirm("Deseja voltar para a Central de Jogos?")) {
+                gameActive = false;
+                gameContainer.style.display = 'none';
+                hubContainer.style.display = 'block';
+                if(bgmInterval) clearInterval(bgmInterval);
+                bgmInterval = null;
+            }
+        }
+
         let audioCtx = null;
+        let soundEnabled = true;
+
+        function toggleGlobalSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-status').textContent = soundEnabled ? "Som: Ligado" : "Som: Desligado";
+        }
 
         function initAudio() {
-            if (!audioCtx) {
+            if (!audioCtx && soundEnabled) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
         }
 
         let bgmInterval = null;
         function startBGM() {
-            if (bgmInterval) return;
+            if (bgmInterval || !soundEnabled) return;
             bgmInterval = setInterval(() => {
-                if (!audioCtx) return;
+                if (!audioCtx || !soundEnabled) return;
                 let notes = [261.63, 329.63, 392.00, 523.25];
                 let note = notes[Math.floor(Math.random() * notes.length)];
                 playTone(note, 0.1, 'sine', 0.05);
@@ -263,7 +436,7 @@
         }
 
         function playTone(frequency, duration, type = 'sine', volume = 0.1) {
-            if (!audioCtx) return;
+            if (!audioCtx || !soundEnabled) return;
             try {
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
@@ -306,34 +479,16 @@
         const goalText = document.getElementById('goal-text');
         const levelText = document.getElementById('level-text');
         const livesText = document.getElementById('lives-text');
-        const container = document.getElementById('game-container');
 
-        let score = 0;
-        let goals = 0;
-        let lives = 3;
-        let level = 1;
-        let gameOver = false;
-
-        let ballX = container.clientWidth / 2 - 20;
-        let ballY = container.clientHeight - 80;
-        let ballVX = 0;
-        let ballVY = 0;
-        let isMoving = false;
-
-        let isDragging = false;
-        let startX = 0, startY = 0;
-        let currentX = 0, currentY = 0;
-
-        let gkX = container.clientWidth / 2 - 22.5;
-        let gkDir = 2;
-        let blueX = 50, blueDir = 2.5;
-        let greenX = 150, greenDir = -2.5;
-        let yellowX = 100, yellowDir = 3;
+        let score = 0, goals = 0, lives = 3, level = 1, gameOver = false;
+        let ballX = 180, ballY = 520, ballVX = 0, ballVY = 0, isMoving = false;
+        let isDragging = false, startX = 0, startY = 0, currentX = 0, currentY = 0;
+        let gkX = 177, gkDir = 2, blueX = 50, blueDir = 2.5, greenX = 150, greenDir = -2.5, yellowX = 100, yellowDir = 3;
         let speedMultiplier = 1;
 
         function updatePositions() {
             ball.style.left = ballX + 'px';
-            ball.style.bottom = (container.clientHeight - ballY - 40) + 'px';
+            ball.style.bottom = (600 - ballY - 40) + 'px';
             goalkeeper.style.left = gkX + 'px';
             defBlue.style.left = blueX + 'px';
             defGreen.style.left = greenX + 'px';
@@ -341,24 +496,21 @@
         }
 
         function startDrag(e) {
-            if (isMoving || gameOver) return;
+            if (isMoving || gameOver || !gameActive) return;
             initAudio();
             startBGM();
             isDragging = true;
             const clientX = e.clientX || e.touches[0].clientX;
             const clientY = e.clientY || e.touches[0].clientY;
-            startX = clientX;
-            startY = clientY;
-            currentX = clientX;
-            currentY = clientY;
+            startX = clientX; startY = clientY;
+            currentX = clientX; currentY = clientY;
         }
 
         function onDrag(e) {
-            if (!isDragging || gameOver) return;
+            if (!isDragging || gameOver || !gameActive) return;
             const clientX = e.clientX || e.touches[0].clientX;
             const clientY = e.clientY || e.touches[0].clientY;
-            currentX = clientX;
-            currentY = clientY;
+            currentX = clientX; currentY = clientY;
 
             let pullX = startX - currentX;
             let pullY = startY - currentY;
@@ -366,7 +518,6 @@
             if (pullY < 0) {
                 let dist = Math.sqrt(pullX * pullX + pullY * pullY);
                 let angle = Math.atan2(pullX, -pullY);
-                
                 trajectory.style.display = 'block';
                 trajectory.style.width = '6px';
                 trajectory.style.height = Math.min(dist, 120) + 'px';
@@ -379,7 +530,7 @@
         }
 
         function endDrag() {
-            if (!isDragging || gameOver) return;
+            if (!isDragging || gameOver || !gameActive) return;
             isDragging = false;
             trajectory.style.display = 'none';
 
@@ -403,22 +554,19 @@
         window.addEventListener('touchend', endDrag);
 
         function gameLoop() {
-            if (!gameOver) {
+            if (gameActive && !gameOver) {
                 if (isMoving) {
                     ballX += ballVX;
                     ballY += ballVY;
 
-                    if (ballX < 0 || ballX > container.clientWidth - 40) {
-                        ballVX *= -1;
-                    }
+                    if (ballX < 0 || ballX > 360) ballVX *= -1;
 
                     let gkRect = goalkeeper.getBoundingClientRect();
-                    let containerRect = container.getBoundingClientRect();
+                    let containerRect = gameContainer.getBoundingClientRect();
                     let relGkX = gkRect.left - containerRect.left;
                     let relGkY = gkRect.top - containerRect.top;
 
-                    if (ballX + 40 > relGkX && ballX < relGkX + 45 &&
-                        ballY + 40 > relGkY && ballY < relGkY + 45) {
+                    if (ballX + 40 > relGkX && ballX < relGkX + 45 && ballY + 40 > relGkY && ballY < relGkY + 45) {
                         defenderHit("Defendido pelo Goleiro!");
                     }
 
@@ -427,7 +575,7 @@
                     if (level >= 4 && checkCollision(defYellow)) defenderHit("Bloqueado pela Defesa Amarela!");
 
                     if (ballY <= 70) {
-                        if (ballX >= container.clientWidth / 2 - 110 && ballX <= container.clientWidth / 2 + 90) {
+                        if (ballX >= 90 && ballX <= 290) {
                             score += 10 * level;
                             goals++;
                             successGoal();
@@ -435,27 +583,24 @@
                             defenderHit("Fora!");
                         }
                     }
-
-                    if (ballY > container.clientHeight) {
-                        resetBall();
-                    }
+                    if (ballY > 600) resetBall();
                 }
 
                 let currentSpeed = speedMultiplier;
                 gkX += gkDir * currentSpeed;
-                if (gkX < 40 || gkX > container.clientWidth - 85) gkDir *= -1;
+                if (gkX < 40 || gkX > 315) gkDir *= -1;
 
                 if (level >= 2) {
                     blueX += blueDir * currentSpeed;
-                    if (blueX < 10 || blueX > container.clientWidth - 45) blueDir *= -1;
+                    if (blueX < 10 || blueX > 355) blueDir *= -1;
                 }
                 if (level >= 3) {
                     greenX += greenDir * currentSpeed;
-                    if (greenX < 10 || greenX > container.clientWidth - 45) greenDir *= -1;
+                    if (greenX < 10 || greenX > 355) greenDir *= -1;
                 }
                 if (level >= 4) {
                     yellowX += yellowDir * currentSpeed;
-                    if (yellowX < 10 || yellowX > container.clientWidth - 45) yellowDir *= -1;
+                    if (yellowX < 10 || yellowX > 355) yellowDir *= -1;
                 }
 
                 updatePositions();
@@ -465,12 +610,10 @@
 
         function checkCollision(defElement) {
             let defRect = defElement.getBoundingClientRect();
-            let containerRect = container.getBoundingClientRect();
+            let containerRect = gameContainer.getBoundingClientRect();
             let relDefX = defRect.left - containerRect.left;
             let relDefY = defRect.top - containerRect.top;
-
-            return (ballX + 40 > relDefX && ballX < relDefX + 35 &&
-                    ballY + 40 > relDefY && ballY < relDefY + 35);
+            return (ballX + 40 > relDefX && ballX < relDefX + 35 && ballY + 40 > relDefY && ballY < relDefY + 35);
         }
 
         function successGoal() {
@@ -486,39 +629,20 @@
             message.textContent = text;
             message.style.color = "#FF5722";
             lives--;
-            
             if (lives <= 0) {
-                triggerGameOver();
+                gameOver = true;
+                finalStats.textContent = `Pontuação: ${score} | Gols: ${goals}`;
+                gameOverModal.style.display = 'flex';
             } else {
                 resetBall();
             }
         }
 
-        function triggerGameOver() {
-            gameOver = true;
-            finalStats.textContent = `Pontuação: ${score} | Gols: ${goals}`;
-            gameOverModal.style.display = 'flex';
-        }
-
         function checkLevelProgression() {
-            if (goals === 3) {
-                level = 2;
-                defBlue.style.display = 'flex';
-                message.textContent = "LEVEL 2 - Defesa Azul!";
-            } else if (goals === 6) {
-                level = 3;
-                defGreen.style.display = 'flex';
-                message.textContent = "LEVEL 3 - Defesa Verde!";
-            } else if (goals >= 9) {
-                level = 4;
-                defYellow.style.display = 'flex';
-                message.textContent = `LEVEL ${level} - Dificuldade Máxima!`;
-            }
-
-            if (goals % 3 === 0) {
-                speedMultiplier += 0.4;
-            }
-
+            if (goals === 3) { level = 2; defBlue.style.display = 'flex'; message.textContent = "LEVEL 2 - Defesa Azul!"; }
+            else if (goals === 6) { level = 3; defGreen.style.display = 'flex'; message.textContent = "LEVEL 3 - Defesa Verde!"; }
+            else if (goals >= 9) { level = 4; defYellow.style.display = 'flex'; message.textContent = `LEVEL ${level} - Dificuldade Máxima!`; }
+            if (goals % 3 === 0) speedMultiplier += 0.4;
             updateHUD();
         }
 
@@ -531,42 +655,34 @@
 
         function resetBall() {
             isMoving = false;
-            ballX = container.clientWidth / 2 - 20;
-            ballY = container.clientHeight - 80;
-            ballVX = 0;
-            ballVY = 0;
+            ballX = 180; ballY = 520; ballVX = 0; ballVY = 0;
             updateHUD();
         }
 
         function salvarJogoManual() {
             let name = prompt("Digite seu nome para salvar o jogo:", "Craque");
             if (name) {
-                let saveData = { name, score, goals, level, lives, date: new Date().toLocaleString() };
-                localStorage.setItem("miniCraqueSave", JSON.stringify(saveData));
+                localStorage.setItem("miniCraqueSave", JSON.stringify({ name, score, goals, level, lives, date: new Date().toLocaleString() }));
                 alert("Progresso salvo com sucesso! 💾");
             }
         }
 
         function salvarComNome() {
             let name = playerNameInput.value.trim();
-            if (!name) {
-                alert("Por favor, digite seu nome antes de salvar!");
-                return;
-            }
-            let saveData = { name, score, goals, level, date: new Date().toLocaleString() };
-            localStorage.setItem("miniCraqueSave", JSON.stringify(saveData));
+            if (!name) { alert("Por favor, digite seu nome antes de salvar!"); return; }
+            localStorage.setItem("miniCraqueSave", JSON.stringify({ name, score, goals, level, date: new Date().toLocaleString() }));
             alert(`Parabéns ${name}! Sua pontuação foi salva com sucesso! 💾⚽`);
-            window.history.back();
+            voltarParaHub();
+            gameOverModal.style.display = 'none';
         }
 
         function reiniciarJogoModal() {
             gameOverModal.style.display = 'none';
-            score = 0;
-            goals = 0;
-            lives = 3;
-            level = 1;
-            speedMultiplier = 1;
-            gameOver = false;
+            resetGame();
+        }
+
+        function resetGame() {
+            score = 0; goals = 0; lives = 3; level = 1; speedMultiplier = 1; gameOver = false;
             playerNameInput.value = '';
             defBlue.style.display = 'none';
             defGreen.style.display = 'none';
@@ -575,14 +691,9 @@
             message.textContent = "Arraste para trás e solte!";
         }
 
-        function voltarJogo() {
-            if(confirm("Deseja voltar para a Central de Jogos?")) {
-                window.history.back();
-            }
-        }
-
         updateHUD();
         gameLoop();
     </script>
 </body>
 </html>
+
