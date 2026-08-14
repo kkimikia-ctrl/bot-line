@@ -582,14 +582,12 @@
         function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
         setInterval(() => mudarSlide(1), 4000);
 
-        // AGORA O SALVAMENTO SÓ OCORRE SE CHAMADO MANUALMENTE PELO BOTÃO (AUTOMATICO = FALSE)
-        function salvarPontuacaoPorJogo(nomeJogo, pontos, automatico = false) {
+        // FUNÇÃO CENTRALIZADA DE SALVAMENTO MANUAL
+        function salvarPontuacaoPorJogo(nomeJogo, pontos) {
             if (pontos <= 0) {
-                if (!automatico) alert("Você ainda não possui pontos para salvar nesta partida!");
+                alert("Você ainda não possui pontos para salvar nesta partida!");
                 return;
             }
-            
-            if (automatico) return; // Bloqueia salvamentos automáticos ao vencer/perder partidas.
             
             let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
             let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
@@ -763,7 +761,7 @@
             for (let i = 0; i < 9; i++) { let b = document.getElementById(`celula-${i}`); b.innerText = ''; b.style.background = '#fff'; b.style.color = '#2563eb'; }
         }
 
-        function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, false); }
+        function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha); }
 
         const bancoPalavrasForca = [
             {p: "COMPUTADOR", d: "Máquina eletrônica"}, {p: "PROGRAMACAO", d: "Ato de criar códigos"},
@@ -840,7 +838,7 @@
                 cont.appendChild(btn);
             }
         }
-        function salvarPontuacaoRankingForcaManual() { salvarPontuacaoPorJogo("Jogo da Forca", pontosForca, false); }
+        function salvarPontuacaoRankingForcaManual() { salvarPontuacaoPorJogo("Jogo da Forca", pontosForca); }
 
         let nivelMemoria = 1, cartasMemoria = [], primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0, pontosMemoria = 0, tempoMemoria = 0, intervaloTempoMemoria = null;
         const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝'];
@@ -888,7 +886,7 @@
                 setTimeout(() => { primeiraCarta.innerText = ""; primeiraCarta.style.background = "#7b1fa2"; segundaCarta.innerText = ""; segundaCarta.style.background = "#7b1fa2"; primeiraCarta = null; segundaCarta = null; travadoMemoria = false; }, 700);
             }
         }
-        function salvarPontuacaoRankingMemoriaManual() { salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria, false); }
+        function salvarPontuacaoRankingMemoriaManual() { salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria); }
 
         const paisesJokenpo = [{fase: 1, nome: "🇦🇷 Argentina"}, {fase: 2, nome: "🇺🇾 Uruguai"}, {fase: 3, nome: "🇲🇽 México"}];
         let faseAtualJokenpo = 1, pontosJokenpo = 0;
@@ -937,7 +935,7 @@
             }, 1000);
         }
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
-        function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, false); }
+        function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo); }
 
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
         const gridTotal = 16;
@@ -985,7 +983,7 @@
             ctx.fillStyle = '#ef4444'; ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
             snake.forEach((parte, index) => { ctx.fillStyle = index === 0 ? '#059669' : '#10b981'; ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1); });
         }
-        function salvarPontuacaoRankingSnakeManual() { salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake, false); }
+        function salvarPontuacaoRankingSnakeManual() { salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake); }
     </script>
 </body>
 </html>
