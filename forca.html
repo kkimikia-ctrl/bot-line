@@ -582,24 +582,39 @@
         function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
         setInterval(() => mudarSlide(1), 4000);
 
-        // Salva separadamente no LocalStorage por jogo garantindo até 30 posições
-        function salvarPontuacaoPorJogo(nomeJogo, pontos) {
-            if (pontos <= 0) {
-                alert("Jogue e acumule pontos antes de salvar!");
-                return;
-            }
-            let nome = prompt(`🏆 Digite seu nome para o Ranking de ${nomeJogo}:`, "Jogador") || "Jogador";
+        // FUNÇÃO DE SALVAMENTO AUTOMÁTICO / MANUAL (Limitada estritamente aos 30 melhores)
+        function salvarPontuacaoPorJogo(nomeJogo, pontos, automatico = false) {
+            if (pontos <= 0) return;
+            
             let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
             let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
+            
+            // Verifica se a pontuação entra no Top 30 (se houver menos de 30, ou se for maior que o pior colocado)
+            let entraNoTop = ranking.length < 30 || pontos > Number(ranking[ranking.length - 1].pontos);
+            
+            if (!entraNoTop && automatico) {
+                return; // Se jogou automaticamente e a pontuação é baixa demais para o Top 30, ignora
+            }
+
+            let nomePadrao = localStorage.getItem('ultimo_nome_jogador') || "Jogador";
+            let nome = prompt(`🏆 Excelente! Você fez ${pontos} pontos em ${nomeJogo}!\nDigite seu nome para o Ranking (Top 30):`, nomePadrao);
+            
+            if (!nome) return; // Se cancelar, não salva
+            
+            localStorage.setItem('ultimo_nome_jogador', nome);
             
             ranking.push({ nome: nome, pontos: Number(pontos) });
             ranking.sort((a, b) => Number(b.pontos) - Number(a.pontos));
             
-            // Mantém rigorosamente até o 30º lugar
-            localStorage.setItem(chaveStorage, JSON.stringify(ranking.slice(0, 30)));
+            // Corta estritamente para manter apenas os 30 melhores
+            ranking = ranking.slice(0, 30);
+            
+            localStorage.setItem(chaveStorage, JSON.stringify(ranking));
             tocarEfeito('vitoria');
-            alert(`✅ Pontuação salva com sucesso no ranking de ${nomeJogo}!`);
-            window.location.href = "ranking.html";
+            
+            if (confirm(`✅ Pontuação salva no ranking de ${nomeJogo}! Deseja ver a tabela do Ranking Geral agora?`)) {
+                window.location.href = "ranking.html";
+            }
         }
 
         function voltarMenuJogos() {
@@ -690,6 +705,7 @@
                     if (vencedor === 'X') {
                         pontosVelha += 50 + (nivelVelha * 10);
                         document.getElementById('pontos-velha').innerText = pontosVelha;
+                        salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, true); // Salvamento Automático
                     }
                     if (modoVelha === 'pc') {
                         if (vencedor === 'X') {
@@ -721,7 +737,7 @@
             document.getElementById('status-jogo').innerText = `Vez do jogador: X`;
             for (let i = 0; i < 9; i++) { let b = document.getElementById(`celula-${i}`); b.innerText = ''; b.style.background = '#fff'; b.style.color = '#2563eb'; }
         }
-        function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha); }
+        function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, false); }
 
         // --- Jogo da Forca ---
         const bancoPalavrasForca = [
@@ -747,7 +763,12 @@
             }, 1000);
         }
         function carregarProximaPalavraForca() {
-            if (indiceForcaAtual >= listaForcaEmbaralhada.length) { listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); indiceForcaAtual = 0; }
+            if (indiceForcaAtual >= listaForcaEmbaralhada.length) { 
+                // Fim do ciclo de palavras da Forca: Salva automaticamente
+                salvarPontuacaoPorJogo("Jogo da Forca", pontosForca, true);
+                listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); 
+                indiceForcaAtual = 0; 
+            }
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
             letrasDescobertas = []; errosForca = 0;
             document.getElementById('forca-nivel-info').innerText = `🎯 Palavra ${indiceForcaAtual + 1}`;
@@ -796,11 +817,10 @@
                 cont.appendChild(btn);
             }
         }
-        function salvarPontuacaoRankingForcaManual() { salvarPontuacaoPorJogo("Jogo da Forca", pontosForca); }
+        function salvarPontuacaoRankingForcaManual() { salvarPontuacaoPorJogo("Jogo da Forca", pontosForca, false); }
 
         // --- Jogo da Memória ---
         let nivelMemoria = 1, cartasMemoria = [], primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0, pontosMemoria = 0, tempoMemoria = 0, intervaloTempoMemoria = null;
-        const adversariosMemoria = ["🐰 Coelho", "🦊 Raposa", "🐼 Panda", "🦁 Leão", "🐯 Tigre"];
         const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝'];
 
         function abrirJogoMemoriaExec() { nivelMemoria = 1; pontosMemoria = 0; tempoMemoria = 0; iniciarCronometroMemoria(); iniciarMemoria(); }
@@ -834,14 +854,20 @@
                 primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
                 if (paresRestantes === 0) {
                     tocarEfeito('vitoria');
-                    setTimeout(() => { nivelMemoria++; pontosMemoria += 50; document.getElementById('pontos-memoria').innerText = pontosMemoria; iniciarMemoria(); }, 300);
+                    setTimeout(() => { 
+                        nivelMemoria++; 
+                        pontosMemoria += 50; 
+                        document.getElementById('pontos-memoria').innerText = pontosMemoria; 
+                        salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria, true); // Salvamento Automático
+                        iniciarMemoria(); 
+                    }, 300);
                 }
             } else {
                 tocarEfeito('clique'); pontosMemoria = Math.max(0, pontosMemoria - 5); document.getElementById('pontos-memoria').innerText = pontosMemoria;
                 setTimeout(() => { primeiraCarta.innerText = ""; primeiraCarta.style.background = "#7b1fa2"; segundaCarta.innerText = ""; segundaCarta.style.background = "#7b1fa2"; primeiraCarta = null; segundaCarta = null; travadoMemoria = false; }, 700);
             }
         }
-        function salvarPontuacaoRankingMemoriaManual() { salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria); }
+        function salvarPontuacaoRankingMemoriaManual() { salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria, false); }
 
         // --- Jokenpô Brasil ---
         const paisesJokenpo = [{fase: 1, nome: "🇦🇷 Argentina"}, {fase: 2, nome: "🇺🇾 Uruguai"}, {fase: 3, nome: "🇲🇽 México"}];
@@ -883,14 +909,17 @@
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
                 document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
                 if (venceu) {
-                    faseAtualJokenpo++; document.getElementById('btn-proxima-rodada').style.display = 'block';
+                    faseAtualJokenpo++; 
+                    document.getElementById('btn-proxima-rodada').style.display = 'block';
+                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); // Salvamento Automático
                 } else { 
+                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); // Salva ao perder também se for alto
                     setTimeout(() => { iniciarJokenpo(); }, 1800); 
                 }
             }, 1000);
         }
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
-        function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo); }
+        function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, false); }
 
         // --- Jogo da Cobrinha ---
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
@@ -915,7 +944,13 @@
             if (direcao === 'UP') cabeca.y--; if (direcao === 'DOWN') cabeca.y++; if (direcao === 'LEFT') cabeca.x--; if (direcao === 'RIGHT') cabeca.x++;
             if (cabeca.x < 0) cabeca.x = gridTotal - 1; if (cabeca.x >= gridTotal) cabeca.x = 0;
             if (cabeca.y < 0) cabeca.y = gridTotal - 1; if (cabeca.y >= gridTotal) cabeca.y = 0;
-            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarEfeito('clique'); alert(`💥 Fim de jogo na Cobrinha!`); return; }
+            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { 
+                pararCobrinha(); 
+                tocarEfeito('clique'); 
+                salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake, true); // Salvamento Automático ao bater
+                alert(`💥 Fim de jogo na Cobrinha! Pontos finais: ${pontosSnake}`); 
+                return; 
+            }
             snake.unshift(cabeca);
             if (cabeca.x === comida.x && cabeca.y === comida.y) { 
                 pontosSnake += 10; 
@@ -934,7 +969,7 @@
             ctx.fillStyle = '#ef4444'; ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
             snake.forEach((parte, index) => { ctx.fillStyle = index === 0 ? '#059669' : '#10b981'; ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1); });
         }
-        function salvarPontuacaoRankingSnakeManual() { salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake); }
+        function salvarPontuacaoRankingSnakeManual() { salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake, false); }
     </script>
 </body>
 </html>
