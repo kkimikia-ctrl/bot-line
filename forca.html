@@ -242,7 +242,7 @@
     </div>
 
     <div class="container">
-        <!-- Botões Azul e Laranja redirecionando para a página separada de ranking -->
+        <!-- Botões Azul e Laranja -->
         <div class="buttons-row" id="container-botoes-topo">
             <button onclick="tocarEfeito('clique'); alert('Central de Jogos Ativa!')" class="top-action-btn btn-blue">🎮 Desafio</button>
             <a href="ranking.html" onclick="tocarEfeito('clique')" class="top-action-btn btn-orange">🏆 Ranking Geral</a>
@@ -582,20 +582,20 @@
         function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
         setInterval(() => mudarSlide(1), 4000);
 
+        // AGORA O SALVAMENTO SÓ OCORRE SE CHAMADO MANUALMENTE PELO BOTÃO (AUTOMATICO = FALSE)
         function salvarPontuacaoPorJogo(nomeJogo, pontos, automatico = false) {
-            if (pontos <= 0) return;
+            if (pontos <= 0) {
+                if (!automatico) alert("Você ainda não possui pontos para salvar nesta partida!");
+                return;
+            }
+            
+            if (automatico) return; // Bloqueia salvamentos automáticos ao vencer/perder partidas.
             
             let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
             let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
-            
-            let entraNoTop = ranking.length < 30 || pontos > Number(ranking[ranking.length - 1].pontos);
-            
-            if (!entraNoTop && automatico) {
-                return; 
-            }
-
             let nomePadrao = localStorage.getItem('ultimo_nome_jogador') || "Jogador";
-            let nome = prompt(`🏆 Excelente! Você fez ${pontos} pontos em ${nomeJogo}!\nDigite seu nome para o Ranking (Top 30):`, nomePadrao);
+            
+            let nome = prompt(`🏆 Deseja salvar seus ${pontos} pontos em ${nomeJogo}?\nDigite seu nome para o Ranking (Top 30):`, nomePadrao);
             
             if (!nome) return; 
             
@@ -603,13 +603,12 @@
             
             ranking.push({ nome: nome, pontos: Number(pontos) });
             ranking.sort((a, b) => Number(b.pontos) - Number(a.pontos));
-            
             ranking = ranking.slice(0, 30);
             
             localStorage.setItem(chaveStorage, JSON.stringify(ranking));
             tocarEfeito('vitoria');
             
-            if (confirm(`✅ Pontuação salva no ranking de ${nomeJogo}! Deseja ver a tabela do Ranking Geral agora?`)) {
+            if (confirm(`✅ Pontuação salva com sucesso no ranking de ${nomeJogo}! Deseja ver a tabela do Ranking Geral agora?`)) {
                 window.location.href = "ranking.html";
             }
         }
@@ -702,8 +701,7 @@
                     if (vencedor === 'X') {
                         pontosVelha += 50 + (nivelVelha * 10);
                         document.getElementById('pontos-velha').innerText = pontosVelha;
-                        document.getElementById('status-jogo').innerText = `🎉 Vitória! Pontos salvos!`;
-                        salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, true);
+                        document.getElementById('status-jogo').innerText = `🎉 Vitória! Clique em 'Salvar Pontos'.`;
                         
                         if (modoVelha === 'pc') {
                             setTimeout(() => { 
@@ -711,30 +709,30 @@
                                 if (nivelVelha > 10) nivelVelha = 10; 
                                 atualizarNivelVelha(); 
                                 reiniciarVelha(); 
-                            }, 1200);
+                            }, 2000);
                         } else {
-                            setTimeout(() => { reiniciarVelha(); }, 1500);
+                            setTimeout(() => { reiniciarVelha(); }, 2000);
                         }
                     } else {
                         pontosVelha = 0;
                         document.getElementById('pontos-velha').innerText = pontosVelha;
-                        document.getElementById('status-jogo').innerText = `❌ Derrota! Pontos zerados.`;
+                        document.getElementById('status-jogo').innerText = `❌ Derrota! Tente novamente.`;
                         
                         if (modoVelha === 'pc') {
                             setTimeout(() => { 
                                 nivelVelha = 1; 
                                 atualizarNivelVelha(); 
                                 reiniciarVelha(); 
-                            }, 1500);
+                            }, 2000);
                         } else {
-                            setTimeout(() => { reiniciarVelha(); }, 1500);
+                            setTimeout(() => { reiniciarVelha(); }, 2000);
                         }
                     }
                     return;
                 }
 
                 if (!tabuleiro.includes('')) { 
-                    document.getElementById('status-jogo').innerText = `Empate! Jogo continua...`; 
+                    document.getElementById('status-jogo').innerText = `Empate! Jogo reiniciando...`; 
                     jogoAtivo = false; 
                     tocarEfeito('clique'); 
                     setTimeout(() => { reiniciarVelha(); }, 1500);
@@ -791,7 +789,6 @@
         }
         function carregarProximaPalavraForca() {
             if (indiceForcaAtual >= listaForcaEmbaralhada.length) { 
-                salvarPontuacaoPorJogo("Jogo da Forca", pontosForca, true);
                 listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); 
                 indiceForcaAtual = 0; 
             }
@@ -816,11 +813,11 @@
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 tocarEfeito('vitoria'); pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
                 document.getElementById('pontos-forca').innerText = pontosForca;
-                setTimeout(() => { indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
+                setTimeout(() => { indiceForcaAtual++; carregarProximaPalavraForca(); }, 500);
             } else if (errosForca >= 6) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 tocarEfeito('clique');
-                setTimeout(() => { indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
+                setTimeout(() => { indiceForcaAtual++; carregarProximaPalavraForca(); }, 500);
             }
         }
         function escolherLetraForca(l) {
@@ -883,9 +880,8 @@
                         nivelMemoria++; 
                         pontosMemoria += 50; 
                         document.getElementById('pontos-memoria').innerText = pontosMemoria; 
-                        salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria, true); 
                         iniciarMemoria(); 
-                    }, 300);
+                    }, 500);
                 }
             } else {
                 tocarEfeito('clique'); pontosMemoria = Math.max(0, pontosMemoria - 5); document.getElementById('pontos-memoria').innerText = pontosMemoria;
@@ -935,10 +931,8 @@
                 if (venceu) {
                     faseAtualJokenpo++; 
                     document.getElementById('btn-proxima-rodada').style.display = 'block';
-                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); 
                 } else { 
-                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); 
-                    setTimeout(() => { iniciarJokenpo(); }, 1800); 
+                    setTimeout(() => { iniciarJokenpo(); }, 2000); 
                 }
             }, 1000);
         }
@@ -970,8 +964,7 @@
             if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { 
                 pararCobrinha(); 
                 tocarEfeito('clique'); 
-                salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake, true); 
-                alert(`💥 Fim de jogo na Cobrinha! Pontos finais: ${pontosSnake}`); 
+                alert(`💥 Fim de jogo na Cobrinha! Pontos finais: ${pontosSnake}. Clique em 'Salvar Pontos' se desejar registrar.`); 
                 return; 
             }
             snake.unshift(cabeca);
