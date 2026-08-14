@@ -6,14 +6,13 @@
     <title>Central de Jogos</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --accent: #ec4899;
-            --text-color: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary-blue: #1d4ed8;
+            --accent-blue: #2563eb;
+            --text-color: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
         }
 
         * {
@@ -30,176 +29,204 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 10px 10px 80px 10px;
         }
 
-        header {
+        .main-wrapper {
             width: 100%;
-            max-width: 900px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            color: var(--primary);
-        }
-
-        .audio-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 900px;
+            max-width: 480px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
         }
 
         /* Carrossel */
         .carousel {
-            background-color: var(--card-bg);
+            background-color: #000000;
             border-radius: 12px;
             overflow: hidden;
             position: relative;
-            height: 180px;
-            border: 1px solid var(--border-color);
+            height: 150px;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 20px;
+            color: white;
         }
+
+        .carousel-btn {
+            position: absolute;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 10px;
+            z-index: 2;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .carousel-btn.prev { left: 5px; }
+        .carousel-btn.next { right: 5px; }
 
         .banner-slide {
             display: none;
             flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px 40px;
+            width: 100%;
+            height: 100%;
         }
 
         .banner-slide.active {
             display: flex;
         }
 
-        .banner-slide h2 {
-            color: var(--accent);
-            font-size: 1.5rem;
+        .carousel-dots {
+            position: absolute;
+            bottom: 8px;
+            display: flex;
+            gap: 5px;
         }
 
-        /* Menu de Jogos */
-        .game-menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
         }
 
-        .game-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+        .dot.active {
+            background-color: white;
+        }
+
+        /* Top Bar do Jogo */
+        .top-bar {
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .sound-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
+            font-size: 0.85rem;
         }
 
-        .game-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary);
+        /* Menu Principal */
+        .menu-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        /* Área do Jogo */
-        .game-container {
+        .menu-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .menu-btn {
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
+        }
+
+        .menu-btn:active { opacity: 0.85; }
+
+        .btn-desafios { background-color: #2563eb; }
+        .btn-ranking { background-color: #d97706; }
+        .btn-velha { background-color: #2563eb; }
+        .btn-forca { background-color: #059669; }
+        .btn-memoria { background-color: #7c3aed; }
+        .btn-jokenpo { background-color: #ea580c; }
+        .btn-cobrinha { background-color: #059669; grid-column: span 2; }
+
+        /* Container do Jogo Ativo */
+        .game-area {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 25px;
+            padding: 15px;
             display: none;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .game-header {
+        .game-nav-header {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* Estilos específicos dos minigames */
+        .action-btn {
+            background-color: #e2e8f0;
+            color: var(--text-color);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .save-btn {
+            background-color: #059669;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .game-status-banner {
+            width: 100%;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Estilos dos Jogos */
         .tic-tac-toe {
             display: grid;
-            grid-template-columns: repeat(3, 80px);
-            grid-gap: 8px;
+            grid-template-columns: repeat(3, 70px);
+            grid-gap: 6px;
         }
 
         .ttt-cell {
-            width: 80px;
-            height: 80px;
-            background-color: var(--bg-color);
-            border: 2px solid var(--border-color);
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 8px;
-            color: var(--text-color);
-        }
-
-        .snake-board {
-            width: 300px;
-            height: 300px;
-            background-color: var(--bg-color);
-            border: 2px solid var(--border-color);
-            position: relative;
-            display: grid;
-            grid-template-columns: repeat(15, 1fr);
-            grid-template-rows: repeat(15, 1fr);
-        }
-
-        .snake-dot {
-            background-color: var(--primary);
-            border-radius: 2px;
-        }
-
-        .snake-food {
-            background-color: var(--accent);
-            border-radius: 50%;
-        }
-
-        .memory-board {
-            display: grid;
-            grid-template-columns: repeat(4, 70px);
-            gap: 10px;
-        }
-
-        .memory-card {
             width: 70px;
             height: 70px;
-            background-color: var(--bg-color);
+            background-color: #f1f5f9;
             border: 2px solid var(--border-color);
             font-size: 1.8rem;
             display: flex;
@@ -207,112 +234,255 @@
             justify-content: center;
             cursor: pointer;
             border-radius: 8px;
+            font-weight: bold;
         }
 
-        .hangman-letters {
+        .snake-board {
+            width: 260px;
+            height: 260px;
+            background-color: #0f172a;
+            border: 2px solid var(--border-color);
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            border-radius: 6px;
+        }
+
+        .snake-dot {
+            background-color: #10b981;
+            border-radius: 2px;
+        }
+
+        .snake-food {
+            background-color: #ef4444;
+            border-radius: 50%;
+        }
+
+        .memory-board {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            gap: 8px;
+        }
+
+        .memory-card {
+            width: 60px;
+            height: 60px;
+            background-color: #f1f5f9;
+            border: 2px solid var(--border-color);
+            font-size: 1.5rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            max-width: 350px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .jokenpo-options {
+            display: flex;
+            gap: 10px;
+            background-color: #fde047;
+            padding: 15px;
+            border-radius: 10px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .jokenpo-btn {
+            background: white;
+            border: 1px solid #ca8a04;
+            font-size: 1.8rem;
+            width: 55px;
+            height: 55px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
             justify-content: center;
         }
 
-        /* Ranking Global */
-        .ranking-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
+        .hangman-keys {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+            max-width: 320px;
         }
 
-        .ranking-section h3 {
-            margin-bottom: 10px;
-            color: var(--primary);
+        .hangman-key {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
 
-        ol {
-            padding-left: 20px;
+        .hangman-key:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Rodapé de Navegação do App (Fixo embaixo) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
             color: var(--text-secondary);
+            font-size: 0.75rem;
+            gap: 2px;
         }
 
-        li {
-            margin-bottom: 5px;
+        .nav-item.active {
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .nav-item span:first-child {
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>🎮 Central de Jogos</h1>
-        <div class="audio-controls">
-            <button id="toggle-music">🎵 Música: OFF</button>
-        </div>
-    </header>
-
-    <div class="container">
+    <div class="main-wrapper">
         <!-- Carrossel de Banners -->
         <div class="carousel" id="carousel">
+            <button class="carousel-btn prev" onclick="changeSlide(-1)">❮</button>
             <div class="banner-slide active">
-                <h2>Bem-vindo à Central de Jogos!</h2>
-                <p>Divirta-se com nossos minigames clássicos atualizados.</p>
+                <h3>Banner 1</h3>
+                <p>Bem-vindo à Central de Jogos!</p>
             </div>
             <div class="banner-slide">
-                <h2>Novo Jogo da Cobrinha!</h2>
-                <p>Teste seus reflexos e tente entrar no Ranking Global.</p>
+                <h3>Banner 2</h3>
+                <p>Divirta-se com os clássicos.</p>
             </div>
             <div class="banner-slide">
-                <h2>Desafie seus amigos</h2>
-                <p>Jogue Jogo da Velha, Forca, Memória e Jokenpô!</p>
+                <h3>Banner 3</h3>
+                <p>Jogue Jogo da Cobrinha!</p>
+            </div>
+            <div class="banner-slide">
+                <h3>Banner 4</h3>
+                <p>Bata recordes no Ranking.</p>
+            </div>
+            <div class="banner-slide">
+                <h3>Banner 5</h3>
+                <p>Desafie seus amigos agora!</p>
+            </div>
+            <button class="carousel-btn next" onclick="changeSlide(1)">❯</button>
+            <div class="carousel-dots" id="carousel-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
             </div>
         </div>
 
-        <!-- Menu Principal de Jogos -->
-        <div class="game-menu" id="game-menu">
-            <div class="game-card" onclick="loadGame('tictactoe')">❌ Jogo da Velha</div>
-            <div class="game-card" onclick="loadGame('hangman')">🔤 Jogo da Forca</div>
-            <div class="game-card" onclick="loadGame('memory')">🧠 Jogo da Memória</div>
-            <div class="game-card" onclick="loadGame('rps')">✌️ Jokenpô</div>
-            <div class="game-card" onclick="loadGame('snake')">🐍 Jogo da Cobrinha</div>
+        <!-- Barra Superior da Central -->
+        <div class="top-bar">
+            <span>🎮 Central de Jogos</span>
+            <button class="sound-btn" id="toggle-music" onclick="toggleSound()">🔊 Som: Ligado</button>
         </div>
 
-        <!-- Container dinâmico do Jogo Ativo -->
-        <div class="game-container" id="game-container">
-            <div class="game-header">
-                <h3 id="active-game-title">Nome do Jogo</h3>
-                <button onclick="closeGame()">Voltar ao Menu</button>
+        <!-- Menu Principal -->
+        <div class="menu-section" id="menu-section">
+            <div class="menu-row">
+                <button class="menu-btn btn-desafios" onclick="alert('Modo Desafios selecionado!')">🎮 Desafios</button>
+                <button class="menu-btn btn-ranking" onclick="showRankingModal()">🏆 Ranking Geral</button>
             </div>
-            <div id="game-content" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-                <!-- Conteúdo injetado via JS -->
+            <div class="menu-row">
+                <button class="menu-btn btn-velha" onclick="loadGame('tictactoe')">❌ Jogo da Velha</button>
+                <button class="menu-btn btn-forca" onclick="loadGame('hangman')">🎯 Jogo da Forca</button>
             </div>
+            <div class="menu-row">
+                <button class="menu-btn btn-memoria" onclick="loadGame('memory')">🧠 Jogo da Memória</button>
+                <button class="menu-btn btn-jokenpo" onclick="loadGame('jokenpo')">🇧🇷 Jokenpô Brasil</button>
+            </div>
+            <button class="menu-btn btn-cobrinha" onclick="loadGame('snake')">🐍 Jogo da Cobrinha</button>
         </div>
 
-        <!-- Ranking Global -->
-        <div class="ranking-section">
-            <h3>🏆 Ranking Global (Local)</h3>
-            <ol id="ranking-list">
-                <!-- Populado via JS -->
-            </ol>
+        <!-- Área Dinâmica do Jogo -->
+        <div class="game-area" id="game-area">
+            <div class="game-nav-header">
+                <button class="action-btn" onclick="closeGame()">⬅ Voltar</button>
+                <button class="save-btn" onclick="saveCurrentScore()">💾 Salvar Pontos</button>
+            </div>
+            <div class="game-status-banner" id="game-status-banner">
+                Fase 1 de 10 | Pontos: 0
+            </div>
+            <div id="game-content" style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+                <!-- Conteúdo injetado via JavaScript -->
+            </div>
         </div>
     </div>
 
-    <script>
-        // --- Sistema de Áudio (Sintetizador Web Audio API) ---
-        let audioCtx = null;
-        let musicInterval = null;
-        let isMusicPlaying = false;
+    <!-- Barra de Navegação Inferior do App -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span>🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>📋</span>
+            <span>Serviços</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <span>🎬</span>
+            <span>Lazer</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>👤</span>
+            <span>Perfil</span>
+        </a>
+    </nav>
 
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+    <script>
+        // --- Carrossel ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.banner-slide');
+        const dots = document.querySelectorAll('.dot');
+
+        function changeSlide(direction) {
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + direction + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
         }
 
-        function playSound(freq, type = 'sine', duration = 0.1) {
-            if (!audioCtx) return;
+        setInterval(() => { changeSlide(1); }, 4000);
+
+        // --- Áudio ---
+        let soundOn = true;
+        let audioCtx = null;
+
+        function toggleSound() {
+            soundOn = !soundOn;
+            document.getElementById('toggle-music').textContent = soundOn ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
+        }
+
+        function playTone(freq, duration = 0.1) {
+            if (!soundOn) return;
             try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
-                osc.type = type;
                 osc.frequency.value = freq;
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -323,90 +493,75 @@
             } catch(e) {}
         }
 
-        document.getElementById('toggle-music').addEventListener('click', () => {
-            initAudio();
-            isMusicPlaying = !isMusicPlaying;
-            const btn = document.getElementById('toggle-music');
-            if (isMusicPlaying) {
-                btn.textContent = "🎵 Música: ON";
-                const notes = [261.63, 293.66, 329.63, 349.23, 392.00];
-                let index = 0;
-                musicInterval = setInterval(() => {
-                    playSound(notes[index], 'triangle', 0.2);
-                    index = (index + 1) % notes.length;
-                }, 400);
-            } else {
-                btn.textContent = "🎵 Música: OFF";
-                clearInterval(musicInterval);
-            }
-        });
-
-        // --- Carrossel de Banners ---
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.banner-slide');
-        setInterval(() => {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }, 4000);
-
-        // --- Gerenciamento de Jogos ---
-        const menuEl = document.getElementById('game-menu');
-        const containerEl = document.getElementById('game-container');
-        const contentEl = document.getElementById('game-content');
-        const titleEl = document.getElementById('active-game-title');
+        // --- Gerenciamento de Telas ---
+        const menuSection = document.getElementById('menu-section');
+        const gameArea = document.getElementById('game-area');
+        const gameContent = document.getElementById('game-content');
+        const statusBanner = document.getElementById('game-status-banner');
+        let currentGameScore = 0;
+        let currentGameName = '';
 
         function loadGame(gameKey) {
-            menuEl.style.display = 'none';
-            containerEl.style.display = 'flex';
-            if (gameKey === 'tictactoe') initTicTacToe();
-            if (gameKey === 'snake') initSnake();
-            if (gameKey === 'rps') initRPS();
-            if (gameKey === 'memory') initMemory();
-            if (gameKey === 'hangman') initHangman();
+            menuSection.style.display = 'none';
+            gameArea.style.display = 'flex';
+            currentGameScore = 0;
+            
+            if (gameKey === 'tictactoe') { currentGameName = 'Jogo da Velha'; initTicTacToe(); }
+            if (gameKey === 'snake') { currentGameName = 'Jogo da Cobrinha'; initSnake(); }
+            if (gameKey === 'jokenpo') { currentGameName = 'Jokenpô Brasil'; initJokenpo(); }
+            if (gameKey === 'memory') { currentGameName = 'Jogo da Memória'; initMemory(); }
+            if (gameKey === 'hangman') { currentGameName = 'Jogo da Forca'; initHangman(); }
         }
 
         function closeGame() {
-            containerEl.style.display = 'none';
-            menuEl.style.display = 'grid';
-            if (snakeInterval) clearInterval(snakeInterval);
+            if (window.snakeInterval) clearInterval(window.snakeInterval);
+            gameArea.style.display = 'none';
+            menuSection.style.display = 'flex';
+        }
+
+        function saveCurrentScore() {
+            alert(`Pontuação de ${currentGameScore} salva com sucesso para ${currentGameName}!`);
+        }
+
+        function showRankingModal() {
+            alert("Ranking Geral:\n1. Jogador - 150 pts\n2. Você - ${currentGameScore} pts");
         }
 
         // --- 1. Jogo da Velha ---
         let tttBoard = ['', '', '', '', '', '', '', '', ''];
         let tttTurn = 'X';
         function initTicTacToe() {
-            titleEl.textContent = "Jogo da Velha";
+            statusBanner.textContent = "Jogo da Velha | Vez de: X";
             tttBoard = ['', '', '', '', '', '', '', '', ''];
             tttTurn = 'X';
             renderTTT();
         }
         function renderTTT() {
-            contentEl.innerHTML = `<div class="tic-tac-toe" id="ttt-grid"></div><p id="ttt-status">Vez do jogador: ${tttTurn}</p>`;
+            gameContent.innerHTML = `<div class="tic-tac-toe" id="ttt-grid"></div>`;
             const grid = document.getElementById('ttt-grid');
             tttBoard.forEach((val, idx) => {
                 const cell = document.createElement('div');
                 cell.className = 'ttt-cell';
                 cell.textContent = val;
-                cell.onclick = () => makeTTTMove(idx);
+                cell.onclick = () => {
+                    if (tttBoard[idx] === '') {
+                        tttBoard[idx] = tttTurn;
+                        playTone(400);
+                        if (checkTTTwin(tttTurn)) return;
+                        tttTurn = tttTurn === 'X' ? 'O' : 'X';
+                        statusBanner.textContent = `Jogo da Velha | Vez de: ${tttTurn}`;
+                        renderTTT();
+                    }
+                };
                 grid.appendChild(cell);
             });
         }
-        function makeTTTMove(idx) {
-            if (tttBoard[idx] === '') {
-                tttBoard[idx] = tttTurn;
-                playSound(400, 'sine', 0.1);
-                if (checkTTTWinner(tttTurn)) return;
-                tttTurn = tttTurn === 'X' ? 'O' : 'X';
-                renderTTT();
-            }
-        }
-        function checkTTTWinner(player) {
+        function checkTTTwin(p) {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for (let w of wins) {
-                if (tttBoard[w[0]] === player && tttBoard[w[1]] === player && tttBoard[w[2]] === player) {
-                    alert(`Jogador ${player} venceu!`);
-                    saveScore('Jogo da Velha', 10);
+                if (tttBoard[w[0]] === p && tttBoard[w[1]] === p && tttBoard[w[2]] === p) {
+                    alert(`Jogador ${p} venceu!`);
+                    currentGameScore += 10;
                     initTicTacToe();
                     return true;
                 }
@@ -419,88 +574,49 @@
             return false;
         }
 
-        // --- 2. Jokenpô ---
-        function initRPS() {
-            titleEl.textContent = "Jokenpô Brasil";
-            contentEl.innerHTML = `
-                <p>Escolha sua jogada:</p>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="playRPS('Pedra')">✊ Pedra</button>
-                    <button onclick="playRPS('Papel')">✋ Papel</button>
-                    <button onclick="playRPS('Tesoura')">✌️ Tesoura</button>
-                </div>
-                <p id="rps-result" style="margin-top: 10px; font-weight: bold;"></p>
-            `;
-        }
-        function playRPS(playerChoice) {
-            const choices = ['Pedra', 'Papel', 'Tesoura'];
-            const computerChoice = choices[Math.floor(Math.random() * 3)];
-            let res = '';
-            if (playerChoice === computerChoice) res = `Empate! Computador escolheu ${computerChoice}.`;
-            else if (
-                (playerChoice === 'Pedra' && computerChoice === 'Tesoura') ||
-                (playerChoice === 'Papel' && computerChoice === 'Pedra') ||
-                (playerChoice === 'Tesoura' && computerChoice === 'Papel')
-            ) {
-                res = `Você venceu! Computador escolheu ${computerChoice}.`;
-                saveScore('Jokenpô', 5);
-                playSound(600, 'sine', 0.2);
-            } else {
-                res = `Você perdeu! Computador escolheu ${computerChoice}.`;
-                playSound(200, 'sawtooth', 0.2);
-            }
-            document.getElementById('rps-result').textContent = res;
-        }
-
-        // --- 3. Jogo da Cobrinha ---
-        let snakeInterval;
+        // --- 2. Jogo da Cobrinha ---
         function initSnake() {
-            titleEl.textContent = "Jogo da Cobrinha";
-            contentEl.innerHTML = `<div class="snake-board" id="snake-board"></div><p>Use as setas do teclado para jogar. Pontos: <span id="snake-score">0</span></p>`;
-            
+            statusBanner.textContent = "Nível 1 | Pontos: 0";
+            gameContent.innerHTML = `<div class="snake-board" id="snake-board"></div>`;
             let snake = [{x: 7, y: 7}];
-            let food = {x: 5, y: 5};
+            let food = {x: 4, y: 4};
             let dx = 1, dy = 0;
             let score = 0;
-
             const board = document.getElementById('snake-board');
 
-            function updateSnake() {
-                const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            if (window.snakeInterval) clearInterval(window.snakeInterval);
+
+            window.snakeInterval = setInterval(() => {
+                let head = {x: snake[0].x + dx, y: snake[0].y + dy};
                 if (head.x < 0 || head.x >= 15 || head.y < 0 || head.y >= 15 || snake.some(s => s.x === head.x && s.y === head.y)) {
-                    clearInterval(snakeInterval);
+                    clearInterval(window.snakeInterval);
                     alert('Fim de jogo!');
-                    saveScore('Cobrinha', score);
-                    initSnake();
                     return;
                 }
                 snake.unshift(head);
                 if (head.x === food.x && head.y === food.y) {
                     score += 10;
-                    document.getElementById('snake-score').textContent = score;
+                    currentGameScore = score;
+                    statusBanner.textContent = `Nível 1 | Pontos: ${score}`;
                     food = {x: Math.floor(Math.random() * 15), y: Math.floor(Math.random() * 15)};
-                    playSound(500, 'sine', 0.1);
+                    playTone(600);
                 } else {
                     snake.pop();
                 }
-                renderBoard();
-            }
-
-            function renderBoard() {
                 board.innerHTML = '';
-                snake.forEach(part => {
-                    const dot = document.createElement('div');
-                    dot.style.gridColumn = part.x + 1;
-                    dot.style.gridRow = part.y + 1;
-                    dot.className = 'snake-dot';
-                    board.appendChild(dot);
+                snake.forEach(s => {
+                    let d = document.createElement('div');
+                    d.className = 'snake-dot';
+                    d.style.gridColumn = s.x + 1;
+                    d.style.gridRow = s.y + 1;
+                    board.appendChild(d);
                 });
-                const f = document.createElement('div');
+                let f = document.createElement('div');
+                f.className = 'snake-food';
                 f.style.gridColumn = food.x + 1;
                 f.style.gridRow = food.y + 1;
-                f.className = 'snake-food';
                 board.appendChild(f);
-            }
+            }, 150);
 
             window.onkeydown = (e) => {
                 if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
@@ -508,49 +624,66 @@
                 if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
                 if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
             };
+        }
 
-            if (snakeInterval) clearInterval(snakeInterval);
-            snakeInterval = setInterval(updateSnake, 150);
+        // --- 3. Jokenpô Brasil ---
+        function initJokenpo() {
+            statusBanner.textContent = "Adversário: 🇦🇷 Argentina | Pontos: 0";
+            gameContent.innerHTML = `
+                <p>Escolha sua jogada:</p>
+                <div class="jokenpo-options">
+                    <button class="jokenpo-btn" onclick="playJokenpo('Pedra')">✊</button>
+                    <button class="jokenpo-btn" onclick="playJokenpo('Papel')">✋</button>
+                    <button class="jokenpo-btn" onclick="playJokenpo('Tesoura')">✌️</button>
+                </div>
+                <p id="jkn-res" style="font-weight: bold;"></p>
+            `;
+        }
+        function playJokenpo(player) {
+            const opts = ['Pedra', 'Papel', 'Tesoura'];
+            const comp = opts[Math.floor(Math.random() * 3)];
+            let resText = `Computador escolheu ${comp}. `;
+            if (player === comp) {
+                resText += "Empate!";
+            } else if ((player==='Pedra'&&comp==='Tesoura') || (player==='Papel'&&comp==='Pedra') || (player==='Tesoura'&&comp==='Papel')) {
+                resText += "Você venceu!";
+                currentGameScore += 5;
+                playTone(700);
+            } else {
+                resText += "Derrota!";
+                playTone(200);
+            }
+            statusBanner.textContent = `Pontos: ${currentGameScore}`;
+            document.getElementById('jkn-res').textContent = resText;
         }
 
         // --- 4. Jogo da Memória ---
         function initMemory() {
-            titleEl.textContent = "Jogo da Memória";
+            statusBanner.textContent = "Jogo da Memória | Encontre os pares";
             const emojis = ['🍎', '🍌', '🍇', '🍉', '🍎', '🍌', '🍇', '🍉'].sort(() => Math.random() - 0.5);
             let flipped = [];
-            let matched = 0;
-
-            contentEl.innerHTML = `
-                <div class="memory-board" id="memory-board"></div>
-                <p id="memory-status">Encontre os pares!</p>
-            `;
-
-            const board = document.getElementById('memory-board');
-            emojis.forEach((emoji, idx) => {
+            let matches = 0;
+            gameContent.innerHTML = `<div class="memory-board" id="mem-board"></div>`;
+            const board = document.getElementById('mem-board');
+            emojis.forEach(em => {
                 const card = document.createElement('div');
                 card.className = 'memory-card';
-                card.dataset.emoji = emoji;
                 card.onclick = () => {
                     if (card.textContent !== '' || flipped.length >= 2) return;
-                    card.textContent = emoji;
+                    card.textContent = em;
                     flipped.push(card);
-                    playSound(450, 'sine', 0.08);
-
                     if (flipped.length === 2) {
-                        if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
-                            matched++;
+                        if (flipped[0].textContent === flipped[1].textContent) {
+                            matches++;
+                            currentGameScore += 10;
                             flipped = [];
-                            playSound(600, 'sine', 0.15);
-                            if (matched === 4) {
-                                document.getElementById('memory-status').textContent = 'Você venceu!';
-                                saveScore('Jogo da Memória', 15);
-                            }
+                            if (matches === 4) alert('Parabéns, você encontrou todos os pares!');
                         } else {
                             setTimeout(() => {
                                 flipped[0].textContent = '';
                                 flipped[1].textContent = '';
                                 flipped = [];
-                            }, 800);
+                            }, 600);
                         }
                     }
                 };
@@ -560,78 +693,35 @@
 
         // --- 5. Jogo da Forca ---
         function initHangman() {
-            titleEl.textContent = "Jogo da Forca";
-            const words = ["JAVASCRIPT", "PROGRAMACAO", "COMPUTADOR", "INTERNET", "TECNOLOGIA"];
-            const secretWord = words[Math.floor(Math.random() * words.length)];
-            let guessedLetters = [];
+            statusBanner.textContent = "Jogo da Forca | Tente adivinhar";
+            const word = "JAVASCRIPT";
+            let guessed = [];
             let errors = 0;
-            const maxErrors = 6;
 
-            function renderHangman() {
-                let displayed = secretWord.split('').map(letter => guessedLetters.includes(letter) ? letter : '_').join(' ');
-                let won = !displayed.includes('_');
-
-                contentEl.innerHTML = `
-                    <p style="font-size: 1.5rem; letter-spacing: 5px; font-weight: bold;">${displayed}</p>
-                    <p>Erros: ${errors} / ${maxErrors}</p>
-                    <div class="hangman-letters" id="hangman-btns"></div>
+            function renderHangmanUI() {
+                let displayWord = word.split('').map(l => guessed.includes(l) ? l : '_').join(' ');
+                gameContent.innerHTML = `
+                    <p style="font-size: 1.4rem; font-weight: bold; letter-spacing: 3px;">${displayWord}</p>
+                    <p>Erros: ${errors} / 6</p>
+                    <div class="hangman-keys" id="h-keys"></div>
                 `;
-
-                if (won) {
-                    alert('Parabéns, você venceu a Forca!');
-                    saveScore('Jogo da Forca', 20);
-                    initHangman();
-                    return;
-                }
-                if (errors >= maxErrors) {
-                    alert(`Fim de jogo! A palavra era: ${secretWord}`);
-                    initHangman();
-                    return;
-                }
-
-                const btnsContainer = document.getElementById('hangman-btns');
+                const keysDiv = document.getElementById('h-keys');
                 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(char => {
                     const btn = document.createElement('button');
+                    btn.className = 'hangman-key';
                     btn.textContent = char;
-                    btn.disabled = guessedLetters.includes(char);
+                    btn.disabled = guessed.includes(char);
                     btn.onclick = () => {
-                        guessedLetters.push(char);
-                        if (!secretWord.includes(char)) {
-                            errors++;
-                            playSound(200, 'sawtooth', 0.15);
-                        } else {
-                            playSound(550, 'sine', 0.1);
-                        }
-                        renderHangman();
+                        guessed.push(char);
+                        if (!word.includes(char)) errors++;
+                        else currentGameScore += 5;
+                        renderHangmanUI();
                     };
-                    btnsContainer.appendChild(btn);
+                    keysDiv.appendChild(btn);
                 });
             }
-            renderHangman();
+            renderHangmanUI();
         }
-
-        // --- Sistema de Ranking Global (Local Storage) ---
-        function saveScore(game, score) {
-            let ranking = JSON.parse(localStorage.getItem('game_ranking') || '[]');
-            ranking.push({ game, score, date: new Date().toLocaleDateString() });
-            ranking.sort((a, b) => b.score - a.score);
-            ranking = ranking.slice(0, 5); // Top 5
-            localStorage.setItem('game_ranking', JSON.stringify(ranking));
-            updateRankingUI();
-        }
-
-        function updateRankingUI() {
-            let ranking = JSON.parse(localStorage.getItem('game_ranking') || '[]');
-            const list = document.getElementById('ranking-list');
-            list.innerHTML = ranking.length ? '' : '<li>Nenhuma pontuação registrada ainda.</li>';
-            ranking.forEach(r => {
-                const li = document.createElement('li');
-                li.textContent = `${r.game}: ${r.score} pts (${r.date})`;
-                list.appendChild(li);
-            });
-        }
-
-        updateRankingUI();
     </script>
 </body>
 </html>
