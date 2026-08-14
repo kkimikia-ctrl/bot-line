@@ -582,7 +582,6 @@
         function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
         setInterval(() => mudarSlide(1), 4000);
 
-        // FUNÇÃO DE SALVAMENTO AUTOMÁTICO / MANUAL (Limitada estritamente aos 30 melhores)
         function salvarPontuacaoPorJogo(nomeJogo, pontos, automatico = false) {
             if (pontos <= 0) return;
             
@@ -670,7 +669,6 @@
             iniciarCobrinha(); 
         }
 
-        // --- Jogo da Velha (Regra: Perdeu zera, Empatou continua) ---
         let modoVelha = 'amigo', nivelVelha = 1;
         const adversariosVelha = ["🤖 Robô Iniciante", "🦾 Robô Ágil", "👾 Ciborgue", "🦊 Raposa Tática", "🐯 Mestre Feline", "🐲 Dragão", "🧙‍♂️ Mago", "👑 Rei Bots", "⚡ Super IA", "🌟 Supremo"];
         let tabuleiro = ['', '', '', '', '', '', '', '', ''], jogadorAtual = 'X', jogoAtivo = true, pontosVelha = 0;
@@ -702,7 +700,6 @@
                     jogoAtivo = false; tocarEfeito('vitoria');
                     
                     if (vencedor === 'X') {
-                        // Vitória: Soma pontos, avança nível e salva automaticamente
                         pontosVelha += 50 + (nivelVelha * 10);
                         document.getElementById('pontos-velha').innerText = pontosVelha;
                         document.getElementById('status-jogo').innerText = `🎉 Vitória! Pontos salvos!`;
@@ -719,7 +716,6 @@
                             setTimeout(() => { reiniciarVelha(); }, 1500);
                         }
                     } else {
-                        // Derrota do Jogador X (Robô ou Jogador O venceu): Zera a pontuação!
                         pontosVelha = 0;
                         document.getElementById('pontos-velha').innerText = pontosVelha;
                         document.getElementById('status-jogo').innerText = `❌ Derrota! Pontos zerados.`;
@@ -737,7 +733,6 @@
                     return;
                 }
 
-                // Empate: Continua sem zerar e sem somar pontos extras
                 if (!tabuleiro.includes('')) { 
                     document.getElementById('status-jogo').innerText = `Empate! Jogo continua...`; 
                     jogoAtivo = false; 
@@ -772,7 +767,6 @@
 
         function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, false); }
 
-        // --- Jogo da Forca ---
         const bancoPalavrasForca = [
             {p: "COMPUTADOR", d: "Máquina eletrônica"}, {p: "PROGRAMACAO", d: "Ato de criar códigos"},
             {p: "INTERNET", d: "Rede global"}, {p: "BRASIL", d: "Nosso país"},
@@ -851,7 +845,6 @@
         }
         function salvarPontuacaoRankingForcaManual() { salvarPontuacaoPorJogo("Jogo da Forca", pontosForca, false); }
 
-        // --- Jogo da Memória ---
         let nivelMemoria = 1, cartasMemoria = [], primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0, pontosMemoria = 0, tempoMemoria = 0, intervaloTempoMemoria = null;
         const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝'];
 
@@ -901,7 +894,6 @@
         }
         function salvarPontuacaoRankingMemoriaManual() { salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria, false); }
 
-        // --- Jokenpô Brasil ---
         const paisesJokenpo = [{fase: 1, nome: "🇦🇷 Argentina"}, {fase: 2, nome: "🇺🇾 Uruguai"}, {fase: 3, nome: "🇲🇽 México"}];
         let faseAtualJokenpo = 1, pontosJokenpo = 0;
 
@@ -953,7 +945,6 @@
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
         function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, false); }
 
-        // --- Jogo da Cobrinha ---
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
         const gridTotal = 16;
 
