@@ -310,7 +310,7 @@
                 <button class="btn-mod active" onclick="mudarModalidadeRanking('ranking_jogo_da_memoria', this)">🧠 Memória</button>
                 <button class="btn-mod" onclick="mudarModalidadeRanking('ranking_jogo_da_velha', this)">❌ Velha</button>
                 <button class="btn-mod" onclick="mudarModalidadeRanking('ranking_jogo_da_forca', this)">🎯 Forca</button>
-                <button class="btn-mod" onclick="mudarModalidadeRanking('ranking_jokenp___brasil', this)">🇧🇷 Jokenpô</button>
+                <button class="btn-mod" onclick="mudarModalidadeRanking('ranking_jokenpo_brasil', this)">🇧🇷 Jokenpô</button>
                 <button class="btn-mod" onclick="mudarModalidadeRanking('ranking_jogo_da_cobrinha', this)">🐍 Cobrinha</button>
             </div>
 
@@ -705,7 +705,6 @@
             document.getElementById('menu-selecao-jogos').style.display = 'none';
             document.getElementById('container-ranking-geral').style.display = 'block';
             
-            // Encontra o botão correspondente para ativar
             let botoesMod = document.querySelectorAll('.btn-mod');
             botoesMod.forEach(btn => {
                 btn.classList.remove('active');
@@ -1039,9 +1038,10 @@
             setTimeout(() => {
                 const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
                 document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
-                let textoRes = "", corFundo = "", corTexto = "", venceu = false;
+                let textoRes = "", corFundo = "", corTexto = "", venceu = false, empatou = false;
                 if (escolhaUsuario === escolhaMaquina) {
-                    textoRes = `Empate!`; corFundo = "#e5e7eb"; corTexto = "#374151"; pontosJokenpo += 10; tocarEfeito('clique');
+                    empatou = true;
+                    textoRes = `Empate! Escolha novamente nesta fase.`; corFundo = "#e5e7eb"; corTexto = "#374151"; pontosJokenpo += 10; tocarEfeito('clique');
                 } else if ((escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') || (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') || (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')) {
                     venceu = true; pontosJokenpo += 100 * faseAtualJokenpo; textoRes = `🎉 Brasil Venceu!`; corFundo = "#d1fae5"; corTexto = "#065f46"; tocarEfeito('vitoria');
                 } else {
@@ -1052,16 +1052,20 @@
                 caixaRes.style.display = 'block'; caixaRes.style.backgroundColor = corFundo; caixaRes.style.color = corTexto;
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
                 document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
+                
                 if (venceu) {
                     faseAtualJokenpo++; 
                     document.getElementById('btn-proxima-rodada').style.display = 'block';
+                } else if (empatou) {
+                    // No empate, destrava os botões para jogar novamente na mesma fase sem resetar os pontos
+                    setTimeout(() => { reiniciarRodadaJokenpo(); }, 1500);
                 } else { 
                     setTimeout(() => { iniciarJokenpo(); }, 2000); 
                 }
             }, 1000);
         }
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
-        function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo); }
+        function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpo Brasil", pontosJokenpo); }
 
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
         const gridTotal = 16;
