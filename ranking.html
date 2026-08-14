@@ -425,6 +425,7 @@
                 <button onclick="jogarJokenpo('tesoura')" id="btn-tesoura" class="btn-jogada-br">✌️</button>
             </div>
             <button id="btn-proxima-rodada" onclick="proximaRodadaJokenpo()" class="action-btn" style="display: none; background-color: #009b3a; padding: 8px; margin-top: 8px;">Próxima Fase ➔</button>
+            <button id="btn-reiniciar-jokenpo" onclick="reiniciarJogoJokenpoTotal()" class="action-btn" style="display: none; background-color: #dc2626; padding: 8px; margin-top: 8px;">🔄 Jogar Novamente</button>
         </div>
 
         <!-- Jogo da Cobrinha -->
@@ -939,7 +940,7 @@
             } else if (errosForca >= 6) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 tocarEfeito('clique');
-                pontosForca = 0; // Zera pontos na derrota da forca também
+                pontosForca = 0; 
                 document.getElementById('pontos-forca').innerText = pontosForca;
                 setTimeout(() => { indiceForcaAtual++; carregarProximaPalavraForca(); }, 500);
             }
@@ -1029,6 +1030,7 @@
             document.getElementById('instrucao-jokenpo').innerText = "🇧🇷 Faça sua escolha (Brasil):";
             document.getElementById('instrucao-jokenpo').style.display = 'block';
             document.getElementById('btn-proxima-rodada').style.display = 'none';
+            document.getElementById('btn-reiniciar-jokenpo').style.display = 'none';
             ['pedra', 'papel', 'tesoura'].forEach(op => { let b = document.getElementById(`btn-${op}`); b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#002776"; b.style.background = "white"; });
         }
         function jogarJokenpo(escolhaUsuario) {
@@ -1046,12 +1048,17 @@
                 } else if ((escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') || (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') || (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')) {
                     venceu = true; pontosJokenpo += 100 * faseAtualJokenpo; textoRes = `🎉 Brasil Venceu!`; corFundo = "#d1fae5"; corTexto = "#065f46"; tocarEfeito('vitoria');
                 } else {
-                    textoRes = `❌ Derrota! O jogo será reiniciado.`; corFundo = "#fee2e2"; corTexto = "#991b1b"; tocarEfeito('clique');
+                    textoRes = `❌ Derrota! Clique em 'Salvar Pontos' ou jogue novamente.`; corFundo = "#fee2e2"; corTexto = "#991b1b"; tocarEfeito('clique');
                 }
                 document.getElementById('instrucao-jokenpo').style.display = 'none';
                 let caixaRes = document.getElementById('caixa-resultado-jokenpo');
                 caixaRes.style.display = 'block'; caixaRes.style.backgroundColor = corFundo; caixaRes.style.color = corTexto;
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
+                
+                // Zera os pontos imediatamente após a derrota para que fiquem visíveis para salvar antes de reiniciar
+                if (!venceu && !empatou) {
+                    pontosJokenpo = 0;
+                }
                 document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
                 
                 if (venceu) {
@@ -1060,17 +1067,13 @@
                 } else if (empatou) {
                     setTimeout(() => { reiniciarRodadaJokenpo(); }, 1500);
                 } else { 
-                    // CORREÇÃO APLICADA AQUI: Zera os pontos corretamente ao perder e reiniciar do zero
-                    pontosJokenpo = 0;
-                    setTimeout(() => { 
-                        faseAtualJokenpo = 1; 
-                        atualizarTelaJokenpo(); 
-                        reiniciarRodadaJokenpo(); 
-                    }, 2000); 
+                    // Mostra o botão para reiniciar manualmente em vez de resetar sozinho
+                    document.getElementById('btn-reiniciar-jokenpo').style.display = 'block';
                 }
             }, 1000);
         }
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
+        function reiniciarJogoJokenpoTotal() { tocarEfeito('clique'); iniciarJokenpo(); }
         function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoPorJogo("Jokenpo Brasil", pontosJokenpo); }
 
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
