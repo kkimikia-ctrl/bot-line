@@ -253,7 +253,7 @@
             <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
             <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
             <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
-            <button onclick="abrirJogoFutebol()" class="action-btn" style="margin-top:0; background-color: #1e3a8a;">⚽ Pênaltis de Futebol</button>
+            <button onclick="abrirJogoFutebol()" class="action-btn" style="margin-top:0; background-color: #1e3a8a;">⚽ Mini Craque (Futebol)</button>
             <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; margin-top:0;">🐍 Jogo da Cobrinha</button>
         </div>
 
@@ -358,29 +358,41 @@
             <button id="btn-proxima-rodada" onclick="proximaRodadaJokenpo()" class="action-btn" style="display: none; background-color: #009b3a; padding: 8px; margin-top: 8px;">Próxima Fase ➔</button>
         </div>
 
-        <!-- Jogo de Futebol (Pênaltis) -->
+        <!-- Jogo de Futebol ("Mini Craque" Atualizado com Arraste) -->
         <div id="container-jogo-futebol" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <button onclick="salvarPontuacaoRankingFutebolManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
-            <div style="clear: both;"></div>
-            
-            <div style="background: #1e3a8a; color: white; padding: 8px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
-                <h3 style="margin: 0; font-size: 13px;">⚽ Disputa de Pênaltis</h3>
-                <span>⭐ Pontos: <span id="pontos-futebol">0</span></span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">⬅ Voltar</button>
+                <div style="background: #1e5631; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 13px;">
+                    ⚽ Mini Craque | Gols: <span id="mc-gols">0</span> | Vidas: <span id="mc-vidas">3</span>
+                </div>
+                <button onclick="salvarPontuacaoRankingFutebolManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; cursor: pointer;">💾 Salvar</button>
             </div>
 
-            <div style="background: #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; position: relative;">
-                <div id="goleiro-status" style="font-size: 28px; margin-bottom: 10px;">🥅 🤖 ⚽</div>
-                <p id="futebol-msg" style="font-weight: bold; font-size: 13px; color: #1e3a8a; margin: 0;">Escolha onde chutar a bola:</p>
+            <!-- Campo de Futebol -->
+            <div id="mc-field" style="position: relative; width: 100%; max-width: 380px; height: 380px; background: linear-gradient(to bottom, #2e7d32, #4caf50); margin: 0 auto; border-radius: 12px; border: 3px solid white; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3); touch-action: none;">
+                
+                <!-- Traves / Gol -->
+                <div style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 200px; height: 100px; border: 4px solid white; border-bottom: none; background: rgba(255,255,255,0.15); border-radius: 6px 6px 0 0;"></div>
+                
+                <!-- Goleiro / Robô -->
+                <div id="mc-keeper" style="position: absolute; top: 35px; left: calc(50% - 20px); width: 40px; height: 40px; background: #ff5722; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 3px 6px rgba(0,0,0,0.4); transition: left 0.3s ease;">🤖</div>
+
+                <!-- Instruções na Tela -->
+                <div id="mc-instruction" style="position: absolute; top: 140px; width: 100%; color: #fff; font-weight: 800; font-size: 16px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); pointer-events: none;">
+                    Arraste na bola para mirar!
+                </div>
+
+                <!-- Linha de Trajetória / Mira -->
+                <svg id="mc-guide" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></svg>
+
+                <!-- Bola -->
+                <div id="mc-ball" style="position: absolute; bottom: 25px; left: calc(50% - 20px); width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.4); user-select: none;">
+                    ⚽
+                </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 320px; margin: 0 auto;">
-                <button onclick="chutarPenalti('esquerda-alto')" class="action-btn" style="background-color: #2563eb; margin: 0; font-size: 12px; padding: 10px;">↖️ Alto Esquerda</button>
-                <button onclick="chutarPenalti('centro-alto')" class="action-btn" style="background-color: #2563eb; margin: 0; font-size: 12px; padding: 10px;">⬆️ Alto Centro</button>
-                <button onclick="chutarPenalti('direita-alto')" class="action-btn" style="background-color: #2563eb; margin: 0; font-size: 12px; padding: 10px;">↗️ Alto Direita</button>
-                <button onclick="chutarPenalti('esquerda-baixo')" class="action-btn" style="background-color: #1e40af; margin: 0; font-size: 12px; padding: 10px;">↙️ Baixo Esquerda</button>
-                <button onclick="chutarPenalti('centro-baixo')" class="action-btn" style="background-color: #1e40af; margin: 0; font-size: 12px; padding: 10px;">⬇️ Baixo Centro</button>
-                <button onclick="chutarPenalti('direita-baixo')" class="action-btn" style="background-color: #1e40af; margin: 0; font-size: 12px; padding: 10px;">↘️ Baixo Direita</button>
+            <div style="margin-top: 8px; font-size: 12px; color: #555;">
+                Arraste o dedo na bola para ajustar a direção e solte para chutar.
             </div>
         </div>
 
@@ -732,7 +744,7 @@
             document.getElementById('container-botoes-topo').style.display = 'none'; 
             document.getElementById('menu-selecao-jogos').style.display = 'none'; 
             document.getElementById('container-jogo-futebol').style.display = 'block'; 
-            iniciarFutebol(); 
+            initMiniCraque(); 
         }
         function abrirJogoCobrinha() { 
             jogoAtualAtivo = 'cobrinha'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
@@ -978,7 +990,6 @@
                 let caixaRes = document.getElementById('caixa-resultado-jokenpo');
                 caixaRes.style.display = 'block'; caixaRes.style.backgroundColor = corFundo; caixaRes.style.color = corTexto;
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
-                document.getElementById('pontos-futebol').innerText = pontosFutebol; // mantido sincronia
                 if (venceu) {
                     if (faseAtualJokenpo < 10) { faseAtualJokenpo++; document.getElementById('btn-proxima-rodada').style.display = 'block'; }
                     else { alert("🏆 INCRÍVEL! O Brasil conquistou o mundo!"); iniciarJokenpo(); }
@@ -988,38 +999,130 @@
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
         function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo); }
 
-        /* Jogo de Futebol (Pênaltis) */
-        let pontosFutebol = 0;
-        const cantosPossiveis = ['esquerda-alto', 'centro-alto', 'direita-alto', 'esquerda-baixo', 'centro-baixo', 'direita-baixo'];
+        /* Jogo de Futebol ("Mini Craque" - Arraste e Solte) */
+        let mcGols = 0;
+        let mcVidas = 3;
+        let mcEmChute = false;
 
-        function iniciarFutebol() {
-            pontosFutebol = 0;
-            document.getElementById('pontos-futebol').innerText = pontosFutebol;
-            document.getElementById('goleiro-status').innerText = "🥅 🤖 ⚽";
-            document.getElementById('futebol-msg').innerText = "Escolha onde chutar a bola:";
+        const ball = document.getElementById('mc-ball');
+        const field = document.getElementById('mc-field');
+        const keeper = document.getElementById('mc-keeper');
+        const instruction = document.getElementById('mc-instruction');
+        const guide = document.getElementById('mc-guide');
+
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+
+        function initMiniCraque() {
+            mcGols = 0;
+            mcVidas = 3;
+            atualizarPlacarMC();
+            reposicionarBola();
         }
-        function chutarPenalti(cantoUsuario) {
-            tocarEfeito('chute-bola');
-            let cantoGoleiro = cantosPossiveis[Math.floor(Math.random() * cantosPossiveis.length)];
-            let msg = document.getElementById('futebol-msg');
-            let iconeGoleiro = document.getElementById('goleiro-status');
 
-            if (cantoUsuario === cantoGoleiro) {
-                iconeGoleiro.innerText = "🥅 🧤 ❌";
-                msg.innerText = "❌ Defesa espetacular do goleiro!";
-                msg.style.color = "#dc2626";
-                pontosFutebol = Math.max(0, pontosFutebol - 10);
+        function atualizarPlacarMC() {
+            document.getElementById('mc-gols').innerText = mcGols;
+            document.getElementById('mc-vidas').innerText = mcVidas;
+        }
+
+        function reposicionarBola() {
+            mcEmChute = false;
+            ball.style.transition = 'none';
+            ball.style.bottom = '25px';
+            ball.style.left = 'calc(50% - 20px)';
+            ball.style.transform = 'translate(0px, 0px)';
+            guide.innerHTML = '';
+            instruction.style.display = 'block';
+            
+            let randomPos = Math.random() * 120 - 60;
+            keeper.style.left = `calc(50% - 20px + ${randomPos}px)`;
+        }
+
+        function getEventCoors(e) {
+            let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            let clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return { x: clientX, y: clientY };
+        }
+
+        if (ball) {
+            ball.addEventListener('pointerdown', (e) => {
+                if (mcEmChute || mcVidas <= 0) return;
+                mcEmChute = true;
+                instruction.style.display = 'none';
+                
+                let coords = getEventCoors(e);
+                startX = coords.x;
+                startY = coords.y;
+                
+                ball.setPointerCapture(e.pointerId);
+            });
+
+            ball.addEventListener('pointermove', (e) => {
+                if (!mcEmChute) return;
+                let coords = getEventCoors(e);
+                let diffX = coords.x - startX;
+                let diffY = coords.y - startY;
+                
+                currentX = Math.max(-90, Math.min(90, diffX));
+                currentY = Math.min(0, Math.max(-130, diffY));
+                
+                ball.style.transform = `translate(${currentX}px, ${currentY}px) scale(1.1)`;
+                
+                let ballRect = ball.getBoundingClientRect();
+                let fieldRect = field.getBoundingClientRect();
+                let startPosX = ballRect.left - fieldRect.left + 20;
+                let startPosY = ballRect.top - fieldRect.top + 20;
+                
+                let endXPos = startPosX - currentX * 1.5;
+                let endYPos = startPosY + currentY * 1.5;
+                
+                guide.innerHTML = `<line x1="${startPosX}" y1="${startPosY}" x2="${endXPos}" y2="${endYPos}" stroke="yellow" stroke-width="3" stroke-dasharray="6,6"/>`;
+            });
+
+            ball.addEventListener('pointerup', (e) => {
+                if (!mcEmChute) return;
+                guide.innerHTML = '';
+                tocarEfeito('chute-bola');
+                
+                ball.style.transition = 'transform 0.4s ease-out';
+                let targetX = -currentX * 2.2;
+                let targetY = currentY * 3.0 - 130;
+                ball.style.transform = `translate(${targetX}px, ${targetY}px)`;
+                
+                setTimeout(() => {
+                    verificarResultadoChute(targetX);
+                }, 400);
+            });
+        }
+
+        function verificarResultadoChute(finalX) {
+            let keeperRect = keeper.getBoundingClientRect();
+            let ballRect = ball.getBoundingClientRect();
+            
+            let acertouNoGoleiro = Math.abs(ballRect.left - keeperRect.left) < 35 && Math.abs(ballRect.top - keeperRect.top) < 35;
+            
+            if (acertouNoGoleiro || Math.abs(finalX) > 120) {
+                mcVidas--;
                 tocarEfeito('clique');
             } else {
-                iconeGoleiro.innerText = "🥅 ⚽ 🥅";
-                msg.innerText = "⚽ GOOOOOL! Bela cobrança!";
-                msg.style.color = "#059669";
-                pontosFutebol += 50;
+                mcGols++;
                 tocarEfeito('vitoria');
             }
-            document.getElementById('pontos-futebol').innerText = pontosFutebol;
+            
+            atualizarPlacarMC();
+            
+            if (mcVidas > 0) {
+                setTimeout(reposicionarBola, 1000);
+            } else {
+                instruction.style.display = 'block';
+                instruction.innerHTML = 'Fim de Jogo! 🎮';
+                setTimeout(() => {
+                    alert(`Fim de jogo! Você marcou ${mcGols} gols.`);
+                    voltarMenuJogos();
+                }, 400);
+            }
         }
-        function salvarPontuacaoRankingFutebolManual() { salvarPontuacaoGlobal("Pênaltis de Futebol", pontosFutebol); }
+        function salvarPontuacaoRankingFutebolManual() { salvarPontuacaoGlobal("Mini Craque", mcGols * 50); }
 
         /* Jogo da Cobrinha */
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
