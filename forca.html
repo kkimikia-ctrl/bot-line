@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking Geral - Central de Jogos</title>
+    <title>Jogo da Forca - Central de Jogos</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -27,36 +27,66 @@
         }
         .card {
             background: white;
-            padding: 15px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             margin-bottom: 15px;
-            text-align: left;
         }
-        .select-jogo {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid #d97706;
-            font-size: 14px;
+        .palavra {
+            font-size: 32px;
+            letter-spacing: 8px;
             font-weight: bold;
-            background: #fffbeb;
-            color: #92400e;
-            margin-bottom: 15px;
+            margin: 20px 0;
+            color: #1f2937;
         }
-        table {
+        .dica {
+            font-size: 15px;
+            color: #4b5563;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .teclado {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .letra-btn {
+            background-color: #e5e7eb;
+            border: none;
+            border-radius: 6px;
+            width: 35px;
+            height: 40px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #1f2937;
+            transition: background 0.2s;
+        }
+        .letra-btn:hover:not(:disabled) {
+            background-color: #d97706;
+            color: white;
+        }
+        .letra-btn:disabled {
+            background-color: #9ca3af;
+            color: #fff;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .btn-acao {
+            background-color: #059669;
+            color: white;
+            border: none;
             width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            box-sizing: border-box;
         }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
-        }
-        th { color: #d97706; font-weight: bold; }
-        tr:nth-child(1) td { font-weight: bold; color: #b45309; }
-        
         .btn-voltar {
             background-color: #2563eb;
             color: white;
@@ -72,6 +102,12 @@
             display: block;
             box-sizing: border-box;
             text-align: center;
+        }
+        .stats {
+            font-size: 15px;
+            font-weight: bold;
+            color: #d97706;
+            margin-bottom: 10px;
         }
 
         /* Barra de Navegação Inferior */
@@ -104,36 +140,21 @@
 <body>
 
     <div class="container">
-        <div class="header">🏆 Ranking Geral dos Jogadores</div>
+        <div class="header">🎯 Jogo da Forca</div>
 
-        <!-- Alterado para apontar corretamente para a página de Lazer/Jogos -->
         <a href="entretenimento.html" class="btn-voltar">🎮 Voltar para a Central de Jogos</a>
 
         <div class="card">
-            <label for="seletorRanking" style="font-size: 13px; font-weight: bold; color: #555; display: block; margin-bottom: 5px;">Selecione o Jogo:</label>
-            <select id="seletorRanking" class="select-jogo" onchange="mudarRanking(this.value)">
-                <option value="ranking_mini_craque">⚽ Mini Craque</option>
-                <option value="ranking_jogo_da_velha">❌ Jogo da Velha</option>
-                <option value="ranking_jogo_da_forca">🎯 Jogo da Forca</option>
-                <option value="ranking_jogo_da_memoria">🧠 Jogo da Memória</option>
-                <option value="ranking_jokenpo_brasil">🇧🇷 Jokenpô Brasil</option>
-                <option value="ranking_jogo_da_cobrinha">🐍 Jogo da Cobrinha</option>
-            </select>
-
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">Pos</th>
-                            <th>Jogador</th>
-                            <th style="text-align: right;">Pontos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaRankingCorpo">
-                        <!-- Dados injetados via JavaScript -->
-                    </tbody>
-                </table>
+            <div class="stats">Pontos: <span id="pontos">0</span> | Erros: <span id="erros">0</span> / 6</div>
+            <div class="dica" id="dica">Dica: Carregando...</div>
+            <div class="palavra" id="palavraContainer">_ _ _ _ _</div>
+            
+            <div class="teclado" id="teclado">
+                <!-- Gerado via JavaScript -->
             </div>
+
+            <button class="btn-acao" id="btnSalvar" onclick="salvarPontos()" style="display:none;">💾 Salvar Pontos no Ranking</button>
+            <button class="btn-acao" id="btnProxima" onclick="proximaPalavra()" style="display:none; background-color: #d97706;">🔄 Próxima Palavra</button>
         </div>
     </div>
 
@@ -146,34 +167,124 @@
     </nav>
 
     <script>
-        function mudarRanking(chaveStorage) {
-            const corpoTabela = document.getElementById('tabelaRankingCorpo');
-            corpoTabela.innerHTML = "";
-            
-            let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
-            
-            // Ordena o ranking do maior para o menor ponto caso venha desordenado
-            ranking.sort((a, b) => b.pontos - a.pontos);
-            
-            if (ranking.length === 0) {
-                corpoTabela.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #888; padding: 20px;">Nenhuma pontuação salva ainda neste jogo. Jogue e clique em 'Salvar Pontos'!</td></tr>`;
-                return;
-            }
+        const palavras = [
+            { palavra: "COMPUTADOR", dica: "Equipamento eletrônico" },
+            { palavra: "FUTEBOL", dica: "Esporte popular no Brasil" },
+            { palavra: "PROGRAMACAO", dica: "Criação de códigos e sistemas" },
+            { palavra: "JAVASCRIPT", dica: "Linguagem de programação web" },
+            { palavra: "BICICLETA", dica: "Meio de transporte de duas rodas" },
+            { palavra: "TELEFONE", dica: "Aparelho de comunicação" },
+            { palavra: "GATO", dica: "Animal de estimação felino" }
+        ];
 
-            ranking.forEach((item, index) => {
-                let iconePos = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `${index + 1}º`;
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: bold;">${iconePos}</td>
-                    <td>${item.nome}</td>
-                    <td style="text-align: right; font-weight: bold; color: #d97706;">${item.pontos} pts</td>
-                `;
-                corpoTabela.appendChild(tr);
-            });
+        let palavraAtual = {};
+        let letrasDescobertas = [];
+        let erros = 0;
+        let pontos = 0;
+        let jogoEncerrado = false;
+
+        function iniciarJogo() {
+            jogoEncerrado = false;
+            erros = 0;
+            document.getElementById('erros').innerText = erros;
+            document.getElementById('btnSalvar').style.display = 'none';
+            document.getElementById('btnProxima').style.display = 'none';
+
+            // Sorteia uma palavra aleatória
+            palavraAtual = palavras[Math.floor(Math.random() * palavras.length)];
+            letrasDescobertas = Array(palavraAtual.palavra.length).fill('_');
+            
+            document.getElementById('dica').innerText = "Dica: " + palavraAtual.dica;
+            atualizarTela();
+            criarTeclado();
         }
 
-        // Carrega o ranking do Mini Craque por padrão ao abrir a página
-        mudarRanking('ranking_mini_craque');
+        function criarTeclado() {
+            const tecladoDiv = document.getElementById('teclado');
+            tecladoDiv.innerHTML = '';
+            const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            for (let letra of alfabeto) {
+                let btn = document.createElement('button');
+                btn.innerText = letra;
+                btn.className = 'letra-btn';
+                btn.id = 'btn-' + letra;
+                btn.onclick = () => escolherLetra(letra);
+                tecladoDiv.appendChild(btn);
+            }
+        }
+
+        function escolherLetra(letra) {
+            if (jogoEncerrado) return;
+
+            const btn = document.getElementById('btn-' + letra);
+            btn.disabled = true;
+
+            if (palavraAtual.palavra.includes(letra)) {
+                for (let i = 0; i < palavraAtual.palavra.length; i++) {
+                    if (palavraAtual.palavra[i] === letra) {
+                        letrasDescobertas[i] = letra;
+                    }
+                }
+                atualizarTela();
+
+                if (!letrasDescobertas.includes('_')) {
+                    pontos += 10;
+                    document.getElementById('pontos').innerText = pontos;
+                    fimDeJogo(true);
+                }
+            } else {
+                erros++;
+                document.getElementById('erros').innerText = erros;
+                if (erros >= 6) {
+                    fimDeJogo(false);
+                }
+            }
+        }
+
+        function atualizarTela() {
+            document.getElementById('palavraContainer').innerText = letrasDescobertas.join(' ');
+        }
+
+        function fimDeJogo(vitoria) {
+            jogoEncerrado = true;
+            if (vitoria) {
+                document.getElementById('dica').innerText = "🎉 Parabéns! Você acertou a palavra!";
+            } else {
+                document.getElementById('dica').innerText = `❌ Game Over! A palavra era: ${palavraAtual.palavra}`;
+                letrasDescobertas = palavraAtual.palavra.split('');
+                atualizarTela();
+            }
+
+            // Desativa todos os botões restantes do teclado
+            const botoes = document.querySelectorAll('.letra-btn');
+            botoes.forEach(b => b.disabled = true);
+
+            document.getElementById('btnSalvar').style.display = 'block';
+            document.getElementById('btnProxima').style.display = 'block';
+        }
+
+        function proximaPalavra() {
+            iniciarJogo();
+        }
+
+        function salvarPontos() {
+            let nomeJogador = prompt("Digite seu nome para o Ranking da Forca:", "Jogador");
+            if (!nomeJogador) return;
+
+            let ranking = JSON.parse(localStorage.getItem('ranking_jogo_da_forca') || "[]");
+            ranking.push({ nome: nomeJogador, pontos: pontos });
+            
+            // Ordena e mantém os melhores
+            ranking.sort((a, b) => b.pontos - a.pontos);
+            localStorage.setItem('ranking_jogo_da_forca', JSON.stringify(ranking));
+
+            alert("Pontos salvos com sucesso no Ranking!");
+            document.getElementById('btnSalvar').style.display = 'none';
+        }
+
+        // Inicializa o jogo ao carregar a página
+        iniciarJogo();
     </script>
 </body>
 </html>
