@@ -651,7 +651,6 @@
         function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
         setInterval(() => mudarSlide(1), 4000);
 
-        // FUNÇÃO CENTRALIZADA DE SALVAMENTO MANUAL COM RANKING INTEGRADO
         function salvarPontuacaoPorJogo(nomeJogo, pontos) {
             if (pontos <= 0) {
                 alert("Você ainda não possui pontos para salvar nesta partida!");
@@ -940,6 +939,8 @@
             } else if (errosForca >= 6) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 tocarEfeito('clique');
+                pontosForca = 0; // Zera pontos na derrota da forca também
+                document.getElementById('pontos-forca').innerText = pontosForca;
                 setTimeout(() => { indiceForcaAtual++; carregarProximaPalavraForca(); }, 500);
             }
         }
@@ -1041,7 +1042,7 @@
                 let textoRes = "", corFundo = "", corTexto = "", venceu = false, empatou = false;
                 if (escolhaUsuario === escolhaMaquina) {
                     empatou = true;
-                    textoRes = `Empate! Escolha novamente nesta fase.`; corFundo = "#e5e7eb"; corTexto = "#374151"; pontosJokenpo += 10; tocarEfeito('clique');
+                    textoRes = `Empate! Escolha novamente nesta fase.`; corFundo = "#e5e7eb"; corTexto = "#374151"; tocarEfeito('clique');
                 } else if ((escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') || (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') || (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')) {
                     venceu = true; pontosJokenpo += 100 * faseAtualJokenpo; textoRes = `🎉 Brasil Venceu!`; corFundo = "#d1fae5"; corTexto = "#065f46"; tocarEfeito('vitoria');
                 } else {
@@ -1059,6 +1060,8 @@
                 } else if (empatou) {
                     setTimeout(() => { reiniciarRodadaJokenpo(); }, 1500);
                 } else { 
+                    // CORREÇÃO APLICADA AQUI: Zera os pontos corretamente ao perder e reiniciar do zero
+                    pontosJokenpo = 0;
                     setTimeout(() => { 
                         faseAtualJokenpo = 1; 
                         atualizarTelaJokenpo(); 
