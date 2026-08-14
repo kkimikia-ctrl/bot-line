@@ -589,24 +589,22 @@
             let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
             let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
             
-            // Verifica se a pontuação entra no Top 30 (se houver menos de 30, ou se for maior que o pior colocado)
             let entraNoTop = ranking.length < 30 || pontos > Number(ranking[ranking.length - 1].pontos);
             
             if (!entraNoTop && automatico) {
-                return; // Se jogou automaticamente e a pontuação é baixa demais para o Top 30, ignora
+                return; 
             }
 
             let nomePadrao = localStorage.getItem('ultimo_nome_jogador') || "Jogador";
             let nome = prompt(`🏆 Excelente! Você fez ${pontos} pontos em ${nomeJogo}!\nDigite seu nome para o Ranking (Top 30):`, nomePadrao);
             
-            if (!nome) return; // Se cancelar, não salva
+            if (!nome) return; 
             
             localStorage.setItem('ultimo_nome_jogador', nome);
             
             ranking.push({ nome: nome, pontos: Number(pontos) });
             ranking.sort((a, b) => Number(b.pontos) - Number(a.pontos));
             
-            // Corta estritamente para manter apenas os 30 melhores
             ranking = ranking.slice(0, 30);
             
             localStorage.setItem(chaveStorage, JSON.stringify(ranking));
@@ -672,7 +670,7 @@
             iniciarCobrinha(); 
         }
 
-        // --- Jogo da Velha ---
+        // --- Jogo da Velha (Regra: Perdeu zera, Empatou continua) ---
         let modoVelha = 'amigo', nivelVelha = 1;
         const adversariosVelha = ["🤖 Robô Iniciante", "🦾 Robô Ágil", "👾 Ciborgue", "🦊 Raposa Tática", "🐯 Mestre Feline", "🐲 Dragão", "🧙‍♂️ Mago", "👑 Rei Bots", "⚡ Super IA", "🌟 Supremo"];
         let tabuleiro = ['', '', '', '', '', '', '', '', ''], jogadorAtual = 'X', jogoAtivo = true, pontosVelha = 0;
@@ -689,6 +687,7 @@
             reiniciarVelha();
         }
         function atualizarNivelVelha() { document.getElementById('velha-nivel-texto').innerText = `Nível ${nivelVelha} | Oponente: ${adversariosVelha[nivelVelha - 1]}`; }
+        
         function jogarVelha(pos) {
             if (tabuleiro[pos] === '' && jogoAtivo) {
                 tabuleiro[pos] = jogadorAtual;
@@ -700,43 +699,77 @@
                 if (vitoriaCheck) {
                     let vencedor = tabuleiro[vitoriaCheck[0]];
                     vitoriaCheck.forEach(idx => { document.getElementById(`celula-${idx}`).style.background = "#d1fae5"; document.getElementById(`celula-${idx}`).style.color = "#059669"; });
-                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${vencedor} Venceu!`;
                     jogoAtivo = false; tocarEfeito('vitoria');
+                    
                     if (vencedor === 'X') {
+                        // Vitória: Soma pontos, avança nível e salva automaticamente
                         pontosVelha += 50 + (nivelVelha * 10);
                         document.getElementById('pontos-velha').innerText = pontosVelha;
-                        salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, true); // Salvamento Automático
-                    }
-                    if (modoVelha === 'pc') {
-                        if (vencedor === 'X') {
-                            setTimeout(() => { nivelVelha++; if (nivelVelha > 10) nivelVelha = 1; atualizarNivelVelha(); reiniciarVelha(); }, 300);
+                        document.getElementById('status-jogo').innerText = `🎉 Vitória! Pontos salvos!`;
+                        salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, true);
+                        
+                        if (modoVelha === 'pc') {
+                            setTimeout(() => { 
+                                nivelVelha++; 
+                                if (nivelVelha > 10) nivelVelha = 10; 
+                                atualizarNivelVelha(); 
+                                reiniciarVelha(); 
+                            }, 1200);
                         } else {
-                            setTimeout(() => { reiniciarVelha(); }, 300);
+                            setTimeout(() => { reiniciarVelha(); }, 1500);
+                        }
+                    } else {
+                        // Derrota do Jogador X (Robô ou Jogador O venceu): Zera a pontuação!
+                        pontosVelha = 0;
+                        document.getElementById('pontos-velha').innerText = pontosVelha;
+                        document.getElementById('status-jogo').innerText = `❌ Derrota! Pontos zerados.`;
+                        
+                        if (modoVelha === 'pc') {
+                            setTimeout(() => { 
+                                nivelVelha = 1; 
+                                atualizarNivelVelha(); 
+                                reiniciarVelha(); 
+                            }, 1500);
+                        } else {
+                            setTimeout(() => { reiniciarVelha(); }, 1500);
                         }
                     }
                     return;
                 }
-                if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate!`; jogoAtivo = false; tocarEfeito('clique'); return; }
+
+                // Empate: Continua sem zerar e sem somar pontos extras
+                if (!tabuleiro.includes('')) { 
+                    document.getElementById('status-jogo').innerText = `Empate! Jogo continua...`; 
+                    jogoAtivo = false; 
+                    tocarEfeito('clique'); 
+                    setTimeout(() => { reiniciarVelha(); }, 1500);
+                    return; 
+                }
+
                 jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X';
                 document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`;
                 if (modoVelha === 'pc' && jogadorAtual === 'O' && jogoAtivo) { setTimeout(jogadaComputadorVelha, 400); }
             }
         }
+
         function jogadaComputadorVelha() {
             let vazias = []; tabuleiro.forEach((val, idx) => { if (val === '') vazias.push(idx); });
             if (vazias.length > 0 && jogoAtivo) { jogarVelha(vazias[Math.floor(Math.random() * vazias.length)]); }
         }
+
         function checarVitoriaDetalhadaVelha() {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for (let w of wins) { if (tabuleiro[w[0]] && tabuleiro[w[0]] === tabuleiro[w[1]] && tabuleiro[w[0]] === tabuleiro[w[2]]) return w; }
             return null;
         }
+
         function reiniciarVelha() {
             tocarEfeito('clique');
             tabuleiro = ['', '', '', '', '', '', '', '', '']; jogadorAtual = 'X'; jogoAtivo = true;
             document.getElementById('status-jogo').innerText = `Vez do jogador: X`;
             for (let i = 0; i < 9; i++) { let b = document.getElementById(`celula-${i}`); b.innerText = ''; b.style.background = '#fff'; b.style.color = '#2563eb'; }
         }
+
         function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoPorJogo("Jogo da Velha", pontosVelha, false); }
 
         // --- Jogo da Forca ---
@@ -764,7 +797,6 @@
         }
         function carregarProximaPalavraForca() {
             if (indiceForcaAtual >= listaForcaEmbaralhada.length) { 
-                // Fim do ciclo de palavras da Forca: Salva automaticamente
                 salvarPontuacaoPorJogo("Jogo da Forca", pontosForca, true);
                 listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); 
                 indiceForcaAtual = 0; 
@@ -858,7 +890,7 @@
                         nivelMemoria++; 
                         pontosMemoria += 50; 
                         document.getElementById('pontos-memoria').innerText = pontosMemoria; 
-                        salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria, true); // Salvamento Automático
+                        salvarPontuacaoPorJogo("Jogo da Memória", pontosMemoria, true); 
                         iniciarMemoria(); 
                     }, 300);
                 }
@@ -911,9 +943,9 @@
                 if (venceu) {
                     faseAtualJokenpo++; 
                     document.getElementById('btn-proxima-rodada').style.display = 'block';
-                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); // Salvamento Automático
+                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); 
                 } else { 
-                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); // Salva ao perder também se for alto
+                    salvarPontuacaoPorJogo("Jokenpô Brasil", pontosJokenpo, true); 
                     setTimeout(() => { iniciarJokenpo(); }, 1800); 
                 }
             }, 1000);
@@ -947,7 +979,7 @@
             if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { 
                 pararCobrinha(); 
                 tocarEfeito('clique'); 
-                salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake, true); // Salvamento Automático ao bater
+                salvarPontuacaoPorJogo("Jogo da Cobrinha", pontosSnake, true); 
                 alert(`💥 Fim de jogo na Cobrinha! Pontos finais: ${pontosSnake}`); 
                 return; 
             }
