@@ -190,6 +190,33 @@
             border-radius: 50%;
         }
 
+        .memory-board {
+            display: grid;
+            grid-template-columns: repeat(4, 70px);
+            gap: 10px;
+        }
+
+        .memory-card {
+            width: 70px;
+            height: 70px;
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .hangman-letters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-width: 350px;
+            justify-content: center;
+        }
+
         /* Ranking Global */
         .ranking-section {
             background-color: var(--card-bg);
@@ -369,20 +396,27 @@
             if (tttBoard[idx] === '') {
                 tttBoard[idx] = tttTurn;
                 playSound(400, 'sine', 0.1);
-                checkTTTWinner();
+                if (checkTTTWinner(tttTurn)) return;
                 tttTurn = tttTurn === 'X' ? 'O' : 'X';
                 renderTTT();
             }
         }
-        function checkTTTWinner() {
+        function checkTTTWinner(player) {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for (let w of wins) {
-                if (tttBoard[w[0]] && tttBoard[w[0]] === tttBoard[w[1]] && tttBoard[w[0]] === tttBoard[w[2]]) {
-                    alert(`Jogador ${tttBoard[w[0]]} venceu!`);
+                if (tttBoard[w[0]] === player && tttBoard[w[1]] === player && tttBoard[w[2]] === player) {
+                    alert(`Jogador ${player} venceu!`);
                     saveScore('Jogo da Velha', 10);
                     initTicTacToe();
+                    return true;
                 }
             }
+            if (!tttBoard.includes('')) {
+                alert('Empate!');
+                initTicTacToe();
+                return true;
+            }
+            return false;
         }
 
         // --- 2. Jokenpô ---
@@ -479,14 +513,101 @@
             snakeInterval = setInterval(updateSnake, 150);
         }
 
-        // --- 4. Jogo da Memória & 5. Forca (Placeholders simplificados) ---
+        // --- 4. Jogo da Memória ---
         function initMemory() {
             titleEl.textContent = "Jogo da Memória";
-            contentEl.innerHTML = `<p>Funcionalidade em desenvolvimento na Central.</p>`;
+            const emojis = ['🍎', '🍌', '🍇', '🍉', '🍎', '🍌', '🍇', '🍉'].sort(() => Math.random() - 0.5);
+            let flipped = [];
+            let matched = 0;
+
+            contentEl.innerHTML = `
+                <div class="memory-board" id="memory-board"></div>
+                <p id="memory-status">Encontre os pares!</p>
+            `;
+
+            const board = document.getElementById('memory-board');
+            emojis.forEach((emoji, idx) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.emoji = emoji;
+                card.onclick = () => {
+                    if (card.textContent !== '' || flipped.length >= 2) return;
+                    card.textContent = emoji;
+                    flipped.push(card);
+                    playSound(450, 'sine', 0.08);
+
+                    if (flipped.length === 2) {
+                        if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
+                            matched++;
+                            flipped = [];
+                            playSound(600, 'sine', 0.15);
+                            if (matched === 4) {
+                                document.getElementById('memory-status').textContent = 'Você venceu!';
+                                saveScore('Jogo da Memória', 15);
+                            }
+                        } else {
+                            setTimeout(() => {
+                                flipped[0].textContent = '';
+                                flipped[1].textContent = '';
+                                flipped = [];
+                            }, 800);
+                        }
+                    }
+                };
+                board.appendChild(card);
+            });
         }
+
+        // --- 5. Jogo da Forca ---
         function initHangman() {
             titleEl.textContent = "Jogo da Forca";
-            contentEl.innerHTML = `<p>Palavra secreta: J _ G O</p>`;
+            const words = ["JAVASCRIPT", "PROGRAMACAO", "COMPUTADOR", "INTERNET", "TECNOLOGIA"];
+            const secretWord = words[Math.floor(Math.random() * words.length)];
+            let guessedLetters = [];
+            let errors = 0;
+            const maxErrors = 6;
+
+            function renderHangman() {
+                let displayed = secretWord.split('').map(letter => guessedLetters.includes(letter) ? letter : '_').join(' ');
+                let won = !displayed.includes('_');
+
+                contentEl.innerHTML = `
+                    <p style="font-size: 1.5rem; letter-spacing: 5px; font-weight: bold;">${displayed}</p>
+                    <p>Erros: ${errors} / ${maxErrors}</p>
+                    <div class="hangman-letters" id="hangman-btns"></div>
+                `;
+
+                if (won) {
+                    alert('Parabéns, você venceu a Forca!');
+                    saveScore('Jogo da Forca', 20);
+                    initHangman();
+                    return;
+                }
+                if (errors >= maxErrors) {
+                    alert(`Fim de jogo! A palavra era: ${secretWord}`);
+                    initHangman();
+                    return;
+                }
+
+                const btnsContainer = document.getElementById('hangman-btns');
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(char => {
+                    const btn = document.createElement('button');
+                    btn.textContent = char;
+                    btn.disabled = guessedLetters.includes(char);
+                    btn.onclick = () => {
+                        guessedLetters.push(char);
+                        if (!secretWord.includes(char)) {
+                            errors++;
+                            playSound(200, 'sawtooth', 0.15);
+                        } else {
+                            playSound(550, 'sine', 0.1);
+                        }
+                        renderHangman();
+                    };
+                    btnsContainer.appendChild(btn);
+                });
+            }
+            renderHangman();
         }
 
         // --- Sistema de Ranking Global (Local Storage) ---
