@@ -177,6 +177,7 @@
             color: #666;
             font-size: 0.75rem;
             flex-grow: 1;
+            cursor: pointer;
         }
         .nav-item.active { color: #0047ab; font-weight: bold; }
         .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
@@ -210,22 +211,22 @@
     <div class="container">
         <!-- Botões do Topo -->
         <div class="buttons-row" id="container-botoes-topo">
-            <button onclick="alert('Central de Jogos Ativa!')" class="top-action-btn btn-blue">🎮 Desafio</button>
+            <button onclick="clicarDesafio()" class="top-action-btn btn-blue">🎮 Desafio</button>
             <button onclick="abrirModalRanking()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
         </div>
 
-        <!-- Menu Principal (Com Jogo de Futebol no lugar do Super Velha e Campo Minado) -->
+        <!-- Menu Principal (Sem Super Velha e Campo Minado, com Jogo de Futebol) -->
         <div id="menu-selecao-jogos" class="card-game menu-jogos">
-            <button onclick="abrirJogoVelha()" class="action-btn" style="background-color: #2563eb;">❌ Jogo da Velha</button>
-            <button onclick="abrirJogoForca()" class="action-btn" style="background-color: #00796b;">🎯 Jogo da Forca</button>
-            <button onclick="abrirJogoMemoria()" class="action-btn" style="background-color: #7b1fa2;">🧠 Jogo da Memória</button>
-            <button onclick="abrirJokenpo()" class="action-btn" style="background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
-            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669;">🐍 Jogo da Cobrinha</button>
+            <button onclick="abrirJogo('Jogo da Velha')" class="action-btn" style="background-color: #2563eb;">❌ Jogo da Velha</button>
+            <button onclick="abrirJogo('Jogo da Forca')" class="action-btn" style="background-color: #00796b;">🎯 Jogo da Forca</button>
+            <button onclick="abrirJogo('Jogo da Memória')" class="action-btn" style="background-color: #7b1fa2;">🧠 Jogo da Memória</button>
+            <button onclick="abrirJogo('Jokenpô Brasil')" class="action-btn" style="background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
+            <button onclick="abrirJogo('Jogo da Cobrinha')" class="action-btn" style="background-color: #059669;">🐍 Jogo da Cobrinha</button>
             
-            <!-- Jogo de Futebol adicionado -->
-            <button onclick="abrirJogoFutebol()" class="action-btn" style="background-color: #16a34a;">⚽ Jogo de Futebol</button>
+            <!-- Jogo de Futebol -->
+            <button onclick="abrirJogo('Jogo de Futebol')" class="action-btn" style="background-color: #16a34a;">⚽ Jogo de Futebol</button>
 
-            <button onclick="abrirPongClassico()" class="action-btn" style="background-color: #ea580c; grid-column: span 2;">🏓 Pong Clássico</button>
+            <button onclick="abrirJogo('Pong Clássico')" class="action-btn" style="background-color: #ea580c; grid-column: span 2;">🏓 Pong Clássico</button>
         </div>
     </div>
 
@@ -233,16 +234,17 @@
     <div id="modalRanking" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
         <div style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
             <h3 style="color: #0047ab; margin-top: 0;">🏆 Ranking Global</h3>
+            <p>Carregando pontuações...</p>
             <button onclick="fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px;">Fechar</button>
         </div>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR -->
+    <!-- NAVEGAÇÃO INFERIOR FUNCIONAL -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
-        <a href="#" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
-        <a href="#" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
-        <a href="#" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
+        <div class="nav-item" onclick="navegar('Home')"><span class="icon">🏠</span><span>Home</span></div>
+        <div class="nav-item" onclick="navegar('Serviços')"><span class="icon">📋</span><span>Serviços</span></div>
+        <div class="nav-item active" onclick="navegar('Lazer')"><span class="icon">🎬</span><span>Lazer</span></div>
+        <div class="nav-item" onclick="navegar('Perfil')"><span class="icon">👤</span><span>Perfil</span></div>
     </nav>
     
     <script>
@@ -280,18 +282,41 @@
 
         setInterval(() => { mudarSlide(1); }, 4000);
 
-        // Funções de Modal e Jogos
+        // Ações dos Botões e Navegação
         function abrirModalRanking() { document.getElementById('modalRanking').style.display = 'flex'; }
         function fecharModalRanking() { document.getElementById('modalRanking').style.display = 'none'; }
         
-        function abrirJogoVelha() { alert("Abrindo Jogo da Velha..."); }
-        function abrirJogoForca() { alert("Abrindo Jogo da Forca..."); }
-        function abrirJogoMemoria() { alert("Abrindo Jogo da Memória..."); }
-        function abrirJokenpo() { alert("Abrindo Jokenpô Brasil..."); }
-        function abrirJogoCobrinha() { alert("Abrindo Jogo da Cobrinha..."); }
-        function abrirJogoFutebol() { alert("⚽ Iniciando Jogo de Futebol (Pênaltis)!"); }
-        function abrirPongClassico() { alert("Abrindo Pong Clássico..."); }
-        function alternarAudio(e) { e.stopPropagation(); alert("Áudio alternado."); }
+        function clicarDesafio() {
+            alert("Modo Desafio ativado!");
+        }
+
+        function abrirJogo(nomeDoJogo) {
+            // Aqui você pode redirecionar para a página do jogo ou carregar a tela dele
+            alert("Abrindo " + nomeDoJogo + "...");
+        }
+
+        function navegar(secao) {
+            // Atualiza a classe ativa na barra inferior
+            const itens = document.querySelectorAll('.nav-item');
+            itens.forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if (secao === 'Home') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                alert("Navegando para a seção: " + secao);
+            }
+        }
+
+        function alternarAudio(e) { 
+            e.stopPropagation(); 
+            const btn = document.getElementById('btnAudioToggle');
+            if(btn.innerText.includes("Ligado")) {
+                btn.innerText = "🔇 Som: Desligado";
+            } else {
+                btn.innerText = "🔊 Som: Ligado";
+            }
+        }
     </script>
 </body>
 </html>
