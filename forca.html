@@ -1056,30 +1056,100 @@
         }
         function salvarPontuacaoCampoMinado() { salvarPontuacaoGlobal("Campo Minado", pontosMinado); }
 
-        /* Jogo 8: Pong Clássico */
-        let pongInterval = null, paddleY = 80, ballX = 150, ballY = 100, ballVelX = 2, ballVelY = 2, pontosPong = 0;
+        /* Jogo 8: Pong Clássico (Atualizado com aumento progressivo de velocidade e diminuição da barra) */
+        let pongInterval = null;
+        let paddleY = 80;
+        let paddleHeight = 60;
+        let ballX = 150, ballY = 100;
+        let ballVelX = 2, ballVelY = 2;
+        let pontosPong = 0;
+        let rebatidasCount = 0;
+
         function iniciarPong() {
-            pararPong(); paddleY = 80; ballX = 150; ballY = 100; ballVelX = 2; ballVelY = 2; pontosPong = 0;
+            pararPong();
+            paddleY = 80;
+            paddleHeight = 60;
+            ballX = 150;
+            ballY = 100;
+            ballVelX = 2;
+            ballVelY = 2;
+            pontosPong = 0;
+            rebatidasCount = 0;
             document.getElementById('pontos-pong').innerText = pontosPong;
             pongInterval = setInterval(loopPong, 30);
         }
-        function pararPong() { if (pongInterval) clearInterval(pongInterval); }
-        function moverPong(valor) { paddleY = Math.max(0, Math.min(140, paddleY + valor)); tocarEfeito('clique'); }
-        function loopPong() {
-            ballX += ballVelX; ballY += ballVelY;
-            if (ballY <= 0 || ballY >= 190) ballVelY *= -1;
-            if (ballX >= 290) ballVelX *= -1;
-            if (ballX <= 15 && ballY >= paddleY && ballY <= paddleY + 60) {
-                ballVelX *= -1; pontosPong += 10; document.getElementById('pontos-pong').innerText = pontosPong;
-                tocarEfeito('cobra-comer');
-            }
-            if (ballX <= 0) { pararPong(); tocarEfeito('clique'); return; }
-            let canvas = document.getElementById('pongCanvas'), ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ea580c'; ctx.fillRect(10, paddleY, 8, 60);
-            ctx.fillStyle = '#fff'; ctx.fillRect(ballX, ballY, 8, 8);
+
+        function pararPong() {
+            if (pongInterval) clearInterval(pongInterval);
         }
-        function salvarPontuacaoPong() { salvarPontuacaoGlobal("Pong Clássico", pontosPong); }
+
+        function moverPong(valor) {
+            paddleY = Math.max(0, Math.min(200 - paddleHeight, paddleY + valor));
+            tocarEfeito('clique');
+        }
+
+        function loopPong() {
+            ballX += ballVelX;
+            ballY += ballVelY;
+
+            // Colisão com as paredes superior e inferior
+            if (ballY <= 0 || ballY >= 192) {
+                ballVelY *= -1;
+            }
+
+            // Colisão com a parede direita
+            if (ballX >= 292) {
+                ballVelX *= -1;
+            }
+
+            // Colisão com a raquete do jogador (à esquerda)
+            if (ballX <= 18 && ballY >= paddleY && ballY <= paddleY + paddleHeight) {
+                ballVelX *= -1;
+                pontosPong += 10;
+                document.getElementById('pontos-pong').innerText = pontosPong;
+                tocarEfeito('cobra-comer');
+
+                // Aumenta a velocidade progressivamente a cada rebatida
+                rebatidasCount++;
+                let fatorVelocidade = 1 + (rebatidasCount * 0.08);
+                let direcaoX = ballVelX > 0 ? 1 : -1;
+                let direcaoY = ballVelY > 0 ? 1 : -1;
+                ballVelX = (2 + rebatidasCount * 0.3) * direcaoX;
+                ballVelY = (2 + rebatidasCount * 0.3) * direcaoY;
+
+                // Diminui o tamanho da barra aos poucos após já estar bem rápido
+                if (rebatidasCount >= 5 && paddleHeight > 25) {
+                    paddleHeight -= 3;
+                    // Garante que a raquete não ultrapasse os limites inferiores da tela ao encolher
+                    paddleY = Math.max(0, Math.min(200 - paddleHeight, paddleY));
+                }
+            }
+
+            // Game over se a bola passar da raquete esquerda
+            if (ballX <= 0) {
+                pararPong();
+                tocarEfeito('clique');
+                alert("Fim de Jogo! A bola passou.");
+                return;
+            }
+
+            let canvas = document.getElementById('pongCanvas');
+            let ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Desenha a raquete com o tamanho dinâmico atual
+            ctx.fillStyle = '#ea580c';
+            ctx.fillRect(10, paddleY, 8, paddleHeight);
+            
+            // Desenha a bola
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(ballX, ballY, 8, 8);
+        }
+
+        function salvarPontuacaoPong() { 
+            salvarPontuacaoGlobal("Pong Clássico", pontosPong); 
+        }
 
         /* Jogo 9: Blocos Tetris Simples */
         let tetrisInterval = null, tetrisBlocoX = 4, tetrisBlocoY = 0, pontosTetris = 0;
