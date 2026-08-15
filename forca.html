@@ -3,683 +3,819 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Hub - LINE Mini App</title>
+    <title>Arcade Hub - Central de Jogos Completa</title>
     <style>
-        :root {
-            --primary: #00ff88;
-            --secondary: #00bfff;
-            --accent: #ff0055;
-            --dark: #0b0f19;
-            --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
-        }
-
         body {
-            background: linear-gradient(135deg, #0f172a, #0b0f19);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            margin: 0;
+            padding: 10px;
+            color: #f0f6fc;
+            padding-bottom: 80px;
+            text-align: center;
         }
 
-        #app-container {
-            position: relative;
+        /* Banner Fixo no Topo */
+        .carousel-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            max-width: 600px;
+            margin: 0 auto 10px auto;
+            overflow: hidden;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: #000;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-slide img {
             width: 100%;
-            max-width: 480px; /* Padrão mobile otimizado para LINE Mini App */
-            height: 100vh;
-            max-height: 850px;
-            background: rgba(15, 23, 42, 0.95);
-            border-radius: 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--glass-border);
+            height: 130px;
+            object-fit: cover;
+            display: block;
         }
-
-        @media (min-width: 481px) {
-            #app-container {
-                border-radius: 20px;
-                height: 800px;
-            }
-        }
-
-        /* Header / Navbar */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 14px;
             z-index: 10;
         }
-
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .btn-icon {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .btn-icon:hover {
-            background: var(--primary);
-            color: var(--dark);
-        }
-
-        /* Telas (Menu vs Jogo) */
-        .screen {
-            flex: 1;
+        .carousel-btn.prev { left: 8px; }
+        .carousel-btn.next { right: 8px; }
+        
+        .carousel-dots {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-y: auto;
+            gap: 5px;
+            z-index: 10;
+        }
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .dot.active { background: white; }
+
+        /* Cabeçalho */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 420px;
+            margin: 15px auto 10px auto;
+            padding: 0 10px;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #f0f6fc;
+            letter-spacing: 0.5px;
+        }
+        .header-title span.icon-bolt { color: #22c55e; }
+        .btn-audio-toggle {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #f0f6fc;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
         }
 
-        .hidden {
-            display: none !important;
+        .container { max-width: 420px; margin: 0 auto; }
+        
+        .sub-header-escolha {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 5px;
+            text-align: left;
         }
 
-        /* Menu de Jogos (Hub) */
-        #game-hub {
-            padding: 20px;
+        /* Menu de Cards Estilo Neon/Dark */
+        .menu-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            overflow-y: auto;
+            gap: 12px;
+            margin-bottom: 15px;
         }
-
-        .hub-title {
-            grid-column: span 2;
-            font-size: 1.4rem;
-            margin-bottom: 5px;
-            color: #f8fafc;
-        }
-
         .game-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            padding: 20px 15px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 18px 10px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-
         .game-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 20px rgba(0,255,136,0.15);
-            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            border-color: #58a6ff;
         }
-
-        .game-card .icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .game-card .game-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
         }
-
         .game-card h3 {
-            font-size: 1rem;
-            margin-bottom: 4px;
+            margin: 0 0 4px 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: #f0f6fc;
         }
-
         .game-card p {
-            font-size: 0.75rem;
-            color: #94a3b8;
+            margin: 0;
+            font-size: 10px;
+            color: #8b949e;
+            line-height: 1.3;
+            text-align: center;
         }
 
-        /* Tela de Execução do Jogo */
-        #game-play-screen {
+        /* Ações do Topo */
+        .top-action-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .top-btn {
             flex: 1;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #f0f6fc;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .top-btn:hover { background: #30363d; }
+
+        /* Container Ativo dos Jogos */
+        .card-game-active {
+            background: #161b22;
+            border: 1px solid #30363d;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .control-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #58a6ff;
+        }
+
+        /* Jogo da Velha Estilo */
+        .board-velha {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            max-width: 210px;
+            margin: 10px auto;
+        }
+        .cell-velha {
+            height: 65px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            font-size: 26px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            color: #58a6ff;
+        }
+
+        /* Barra de Navegação Inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #161b22;
+            border-top: 1px solid #30363d;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 55px;
+            z-index: 999;
+        }
+        .nav-item {
             display: flex;
             flex-direction: column;
-            position: relative;
-        }
-
-        .game-hud {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 15px;
-            background: rgba(0,0,0,0.3);
-            font-size: 0.95rem;
-            font-weight: bold;
+            text-decoration: none;
+            color: #8b949e;
+            font-size: 0.75rem;
+            flex-grow: 1;
         }
-
-        .game-hud span {
-            color: var(--primary);
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            flex: 1;
-            background: #0f172a;
-        }
-
-        /* Popups de feedback */
-        #popup-msg {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--primary);
-            text-shadow: 0 0 20px rgba(0,255,136,0.5);
-            pointer-events: none;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-            opacity: 0;
-            z-index: 20;
-        }
-
-        #popup-msg.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
+        .nav-item.active { color: #58a6ff; font-weight: bold; }
+        .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
     </style>
 </head>
-<body>
+<body onclick="ativarAudioGlobal()">
 
-    <div id="app-container">
-        <!-- Header Principal -->
-        <header>
-            <div class="logo">⚡ ARCADE HUB</div>
-            <button id="btn-back" class="btn-icon hidden">⬅️ Voltar</button>
-        </header>
+    <!-- CARROSSEL DE BANNERS -->
+    <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x130/161b22/58a6ff?text=Arcade+Hub+Destaques" alt="Banner 1"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x130/21262d/22c55e?text=Novos+Recordes+Globais" alt="Banner 2"></div>
+        </div>
+        <button class="carousel-btn prev" onclick="mudarSlide(-1); event.stopPropagation();">&#10094;</button>
+        <button class="carousel-btn next" onclick="mudarSlide(1); event.stopPropagation();">&#10095;</button>
+        <div class="carousel-dots" id="carouselDots"></div>
+    </div>
 
-        <!-- Tela 1: Hub com os 6 Jogos -->
-        <div id="game-hub" class="screen">
-            <div class="hub-title">🎮 Escolha seu Jogo</div>
+    <!-- CABEÇALHO -->
+    <div class="header">
+        <div class="header-title">
+            <span class="icon-bolt">⚡</span> ARCADE HUB
+        </div>
+        <button id="btnAudioToggle" class="btn-audio-toggle" onclick="alternarAudio(event)">🔊 Som: Ligado</button>
+    </div>
 
-            <div class="game-card" onclick="loadGame('futebol')">
-                <div class="icon">⚽</div>
-                <h3>FutStrikers</h3>
-                <p>Chute ao gol e vença o goleiro!</p>
+    <div class="container">
+        <!-- BOTÕES DE APOIO -->
+        <div class="top-action-row">
+            <button onclick="abrirModalRanking()" class="top-btn">🏆 Ranking Global</button>
+            <button onclick="alert('Escolha um jogo abaixo para iniciar a diversão!')" class="top-btn">🎮 Desafios</button>
+        </div>
+
+        <!-- MENU DE SELEÇÃO UNIFICADO -->
+        <div id="menu-selecao-jogos">
+            <div class="sub-header-escolha">
+                🎮 Escolha seu Jogo
             </div>
-
-            <div class="game-card" onclick="loadGame('snake')">
-                <div class="icon">🐍</div>
-                <h3>Retro Snake</h3>
-                <p>Coma as frutas e cresça.</p>
-            </div>
-
-            <div class="game-card" onclick="loadGame('pong')">
-                <div class="icon">🏓</div>
-                <h3>Neon Pong</h3>
-                <p>Tênis clássico de mesa.</p>
-            </div>
-
-            <div class="game-card" onclick="loadGame('clicker')">
-                <div class="icon">⚡</div>
-                <h3>Tap Speed</h3>
-                <p>Clique o mais rápido possível!</p>
-            </div>
-
-            <div class="game-card" onclick="loadGame('memory')">
-                <div class="icon">🧠</div>
-                <h3>Memória Flash</h3>
-                <p>Teste sua agilidade mental.</p>
-            </div>
-
-            <div class="game-card" onclick="loadGame('blaster')">
-                <div class="icon">🚀</div>
-                <h3>Space Blaster</h3>
-                <p>Desvie dos asteróides.</p>
+            <div class="menu-grid">
+                <!-- Jogos Anteriores -->
+                <div class="game-card" onclick="abrirJogoDaVelha()">
+                    <div class="game-icon">❌</div>
+                    <h3>Jogo da Velha</h3>
+                    <p>Desafie a IA ou um amigo.</p>
+                </div>
+                <div class="game-card" onclick="abrirMemoriaEspacial()">
+                    <div class="game-icon">🧠</div>
+                    <h3>Memória Espacial</h3>
+                    <p>Encontre os pares intergalácticos.</p>
+                </div>
+                <div class="game-card" onclick="abrirJogo2048()">
+                    <div class="game-icon">🔢</div>
+                    <h3>2048</h3>
+                    <p>Combine blocos numéricos.</p>
+                </div>
+                <div class="game-card" onclick="abrirJogoDamadeCheckers()">
+                    <div class="game-icon">♟️</div>
+                    <h3>Dama / Checkers</h3>
+                    <p>Estratégia tradicional de tabuleiro.</p>
+                </div>
+                
+                <!-- Novos Jogos Solicitados -->
+                <div class="game-card" onclick="abrirFutStrikers()">
+                    <div class="game-icon">⚽</div>
+                    <h3>FutStrikers</h3>
+                    <p>Chute ao gol e vença o goleiro!</p>
+                </div>
+                <div class="game-card" onclick="abrirNeonPong()">
+                    <div class="game-icon">🏓</div>
+                    <h3>Neon Pong</h3>
+                    <p>Tênis clássico de mesa.</p>
+                </div>
+                <div class="game-card" onclick="abrirTapSpeed()">
+                    <div class="game-icon">⚡</div>
+                    <h3>Tap Speed</h3>
+                    <p>Clique o mais rápido possível!</p>
+                </div>
+                <div class="game-card" onclick="abrirMemoriaFlash()">
+                    <div class="game-icon">💡</div>
+                    <h3>Memória Flash</h3>
+                    <p>Teste sua agilidade mental.</p>
+                </div>
+                <div class="game-card" onclick="abrirSpaceBlaster()">
+                    <div class="game-icon">🚀</div>
+                    <h3>Space Blaster</h3>
+                    <p>Desvie dos asteroides.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Tela 2: Área do Jogo Ativo -->
-        <div id="game-play-screen" class="screen hidden">
-            <div class="game-hud">
-                <div id="hud-title-game">JOGO</div>
-                <div id="hud-score">PONTOS: <span>0</span></div>
-                <div id="hud-extra"></div>
+        <!-- 1. JOGO DA VELHA -->
+        <div id="container-jogo-da-velha" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both; margin-bottom: 5px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">❌ Jogo da Velha</h3>
+            <p id="status-velha" style="font-size: 12px; color: #8b949e;">Vez do Jogador X</p>
+            <div class="board-velha" id="boardVelha">
+                <div class="cell-velha" onclick="jogarVelha(0)"></div>
+                <div class="cell-velha" onclick="jogarVelha(1)"></div>
+                <div class="cell-velha" onclick="jogarVelha(2)"></div>
+                <div class="cell-velha" onclick="jogarVelha(3)"></div>
+                <div class="cell-velha" onclick="jogarVelha(4)"></div>
+                <div class="cell-velha" onclick="jogarVelha(5)"></div>
+                <div class="cell-velha" onclick="jogarVelha(6)"></div>
+                <div class="cell-velha" onclick="jogarVelha(7)"></div>
+                <div class="cell-velha" onclick="jogarVelha(8)"></div>
             </div>
-            <canvas id="gameCanvas"></canvas>
-            <div id="popup-msg">GOOOOL!</div>
+            <button onclick="reiniciarVelha()" style="background: #238636; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; margin-top: 5px;">🔄 Reiniciar</button>
+        </div>
+
+        <!-- 2. MEMÓRIA ESPACIAL -->
+        <div id="container-memoria-espacial" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoGlobal('Memória Espacial', movimentosMemoria)" style="background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar</button>
+            <div style="clear: both; margin-bottom: 5px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">🧠 Memória Espacial</h3>
+            <p style="font-size: 12px; color: #8b949e;">Encontre os pares intergalácticos!</p>
+            <div style="font-size: 13px; font-weight: bold; margin: 5px 0;">Movimentos: <span id="mov-memoria" style="color: #22c55e;">0</span></div>
+            <div id="gridMemoria" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 240px; margin: 10px auto;"></div>
+            <button onclick="iniciarMemoriaEspacial()" style="background: #21262d; border: 1px solid #30363d; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">🔄 Embaralhar</button>
+        </div>
+
+        <!-- 3. JOGO 2048 -->
+        <div id="container-2048" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoGlobal('2048', score2048)" style="background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar</button>
+            <div style="clear: both; margin-bottom: 5px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">🔢 2048</h3>
+            <div style="font-size: 13px; font-weight: bold; margin: 5px 0;">Pontos: <span id="score-2048" style="color: #22c55e;">0</span></div>
+            <div id="board2048" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 220px; background: #0d1117; padding: 6px; border-radius: 8px; margin: 10px auto;"></div>
+            <div style="display: flex; gap: 6px; justify-content: center; margin-top: 8px;">
+                <button class="control-btn" onclick="mover2048('esq')">◀</button>
+                <button class="control-btn" onclick="mover2048('cima')">▲</button>
+                <button class="control-btn" onclick="mover2048('baixo')">▼</button>
+                <button class="control-btn" onclick="mover2048('dir')">▶</button>
+            </div>
+        </div>
+
+        <!-- 4. DAMA / CHECKERS -->
+        <div id="container-dama" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <div style="clear: both; margin-bottom: 5px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">♟️ Dama Simplificada</h3>
+            <p style="font-size: 11px; color: #8b949e;">Modo de demonstração de tabuleiro tático.</p>
+            <div id="boardDama" style="display: grid; grid-template-columns: repeat(8, 1fr); max-width: 240px; margin: 10px auto; border: 2px solid #30363d;"></div>
+            <button onclick="iniciarDama()" style="background: #238636; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">🔄 Reiniciar Tabuleiro</button>
+        </div>
+
+        <!-- 5. FUTSTRIKERS -->
+        <div id="container-futstrikers" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoGlobal('FutStrikers', pontosFut)" style="background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar</button>
+            <div style="clear: both; margin-bottom: 10px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">⚽ FutStrikers</h3>
+            <p style="font-size: 12px; color: #8b949e;">Escolha o canto para chutar e vencer o goleiro!</p>
+            <div style="margin: 15px 0; font-size: 14px; font-weight: bold;">Placar de Gols: <span id="pontos-fut" style="color: #22c55e;">0</span></div>
+            <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">
+                <button onclick="chutarFut('esq')" class="top-btn" style="background:#238636;">👈 Esquerda</button>
+                <button onclick="chutarFut('meio')" class="top-btn" style="background:#1f6feb;">⬆️ Meio</button>
+                <button onclick="chutarFut('dir')" class="top-btn" style="background:#da3633;">Direita 👉</button>
+            </div>
+            <p id="resultado-fut" style="font-size: 13px; font-weight: bold; min-height: 20px;"></p>
+        </div>
+
+        <!-- 6. NEON PONG -->
+        <div id="container-neon-pong" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoGlobal('Neon Pong', pontosPong)" style="background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar</button>
+            <div style="clear: both; margin-bottom: 10px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">🏓 Neon Pong</h3>
+            <p style="font-size: 12px; color: #8b949e;">Mantenha a bola rebatendo na raquete!</p>
+            <div style="font-size: 14px; font-weight: bold; margin: 8px 0;">Pontos: <span id="pontos-pong" style="color: #22c55e;">0</span></div>
+            <canvas id="pongCanvas" width="280" height="200" style="background: #0d1117; border: 1px solid #30363d; border-radius: 8px; display: block; margin: 0 auto 10px auto;"></canvas>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button class="control-btn" style="flex:1;" onclick="moverPong(-20)">◀ Esquerda</button>
+                <button class="control-btn" style="flex:1;" onclick="moverPong(20)">Direita ▶</button>
+            </div>
+        </div>
+
+        <!-- 7. TAP SPEED -->
+        <div id="container-tap-speed" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoGlobal('Tap Speed', cliquesTap)" style="background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar</button>
+            <div style="clear: both; margin-bottom: 10px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">⚡ Tap Speed</h3>
+            <p style="font-size: 12px; color: #8b949e;">Clique o mais rápido que puder em 5 segundos!</p>
+            <div style="font-size: 14px; font-weight: bold; margin: 10px 0;">Tempo: <span id="tap-tempo" style="color: #da3633;">5</span>s | Cliques: <span id="tap-cliques" style="color: #22c55e;">0</span></div>
+            <button onclick="clicarTapSpeed()" id="btn-tap-action" class="top-btn" style="background: #1f6feb; font-size: 20px; padding: 25px; width: 100%; margin-top: 10px;">👉 CLIQUE AQUI!</button>
+            <button onclick="iniciarTapSpeed()" style="background: #30363d; color: white; border: none; padding: 8px 15px; border-radius: 6px; margin-top: 10px; cursor: pointer; font-weight: bold;">🔄 Iniciar Desafio</button>
+        </div>
+
+        <!-- 8. MEMÓRIA FLASH -->
+        <div id="container-memoria-flash" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoGlobal('Memória Flash', pontosMemoria)" style="background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar</button>
+            <div style="clear: both; margin-bottom: 10px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">💡 Memória Flash</h3>
+            <p style="font-size: 12px; color: #8b949e;">Memorize a sequência de cores e repita!</p>
+            <div style="font-size: 14px; font-weight: bold; margin: 8px 0;">Pontos: <span id="pontos-memoria" style="color: #22c55e;">0</span></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 200px; margin: 10px auto;">
+                <button onclick="escolherMemoria(0)" id="bloco-0" style="height: 70px; background: #da3633; border: none; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="escolherMemoria(1)" id="bloco-1" style="height: 70px; background: #238636; border: none; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="escolherMemoria(2)" id="bloco-2" style="height: 70px; background: #1f6feb; border: none; border-radius: 8px; cursor: pointer;"></button>
+                <button onclick="escolherMemoria(3)" id="bloco-3" style="height: 70px; background: #d29922; border: none; border-radius: 8px; cursor: pointer;"></button>
+            </div>
+            <button onclick="iniciarMemoriaFlash()" style="background: #21262d; border: 1px solid #30363d; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">▶ Iniciar Sequência</button>
+        </div>
+
+        <!-- 9. SPACE BLASTER -->
+        <div id="container-space-blaster" class="card-game-active" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #30363d; color: #f0f6fc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoGlobal('Space Blaster', pontosSpace)" style="background: #238636; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar</button>
+            <div style="clear: both; margin-bottom: 10px;"></div>
+            <h3 style="color: #58a6ff; margin: 0 0 5px 0;">🚀 Space Blaster</h3>
+            <p style="font-size: 12px; color: #8b949e;">Desvie dos asteroides que caem no espaço!</p>
+            <div style="font-size: 14px; font-weight: bold; margin: 5px 0;">Pontos: <span id="pontos-space" style="color: #22c55e;">0</span></div>
+            <canvas id="spaceCanvas" width="280" height="220" style="background: #0d1117; border: 1px solid #30363d; border-radius: 8px; display: block; margin: 0 auto 10px auto;"></canvas>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button class="control-btn" style="flex:1;" onclick="moverSpace(-15)">◀ Esquerda</button>
+                <button class="control-btn" style="flex:1;" onclick="moverSpace(15)">Direita ▶</button>
+            </div>
         </div>
     </div>
 
+    <!-- MODAL DE RANKING GLOBAL -->
+    <div id="modalRanking" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 9999;">
+        <div style="background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+            <h3 style="color: #58a6ff; margin-top: 0;">🏆 Ranking Global</h3>
+            <div style="max-height: 220px; overflow-y: auto; margin-bottom: 15px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <tbody id="tabelaRankingCorpo"></tbody>
+                </table>
+            </div>
+            <button onclick="fecharModalRanking()" style="background: #da3633; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">Fechar</button>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active"><span class="icon">🏠</span><span>Home</span></a>
+        <a href="#" class="nav-item" onclick="abrirModalRanking()"><span class="icon">🏆</span><span>Ranking</span></a>
+        <a href="#" class="nav-item" onclick="voltarMenuJogos()"><span class="icon">🎮</span><span>Jogos</span></a>
+    </nav>
+
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const btnBack = document.getElementById('btn-back');
-        const gameHub = document.getElementById('game-hub');
-        const gamePlayScreen = document.getElementById('game-play-screen');
-        const hudTitleGame = document.getElementById('hud-title-game');
-        const hudScore = document.getElementById('hud-score');
-        const hudExtra = document.getElementById('hud-extra');
-        const popupMsg = document.getElementById('popup-msg');
+        /* ÁUDIO WEB API */
+        let audioCtx = null, somLigado = true;
 
-        let currentGame = null;
-        let animationFrameId = null;
-        let score = 0;
-
-        // Ajuste automático do tamanho do canvas para mobile/LINE mini app
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight - 45; // desconta HUD
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // Gerenciamento de Áudio Simples (Web Audio API)
-        let audioCtx = null;
-        function playSound(type) {
+        function inicializarAudioContext() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            const now = audioCtx.currentTime;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function ativarAudioGlobal() { inicializarAudioContext(); }
+        function alternarAudio(e) {
+            e.stopPropagation();
+            somLigado = !somLigado;
+            document.getElementById('btnAudioToggle').innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
+        }
+        function tocarEfeito(freq = 440, tipo = 'sine', dur = 0.1) {
+            if (!somLigado || !audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = tipo; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + dur);
+            } catch(e){}
+        }
 
-            if (type === 'kick' || type === 'hit') {
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampValueAtTime(30, now + 0.1);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampValueAtTime(0.01, now + 0.1);
-                osc.start(now); osc.stop(now + 0.1);
-            } else if (type === 'goal') {
-                [523, 659, 783, 1046].forEach((f, i) => {
-                    let o = audioCtx.createOscillator(); let g = audioCtx.createGain();
-                    o.connect(g); g.connect(audioCtx.destination);
-                    o.frequency.setValueAtTime(f, now + i*0.08);
-                    g.gain.setValueAtTime(0.2, now + i*0.08);
-                    g.gain.linearRampValueAtTime(0.01, now + i*0.08 + 0.15);
-                    o.start(now + i*0.08); o.stop(now + i*0.08 + 0.15);
-                });
-            } else if (type === 'gameover') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(250, now);
-                osc.frequency.linearRampValueAtTime(80, now + 0.4);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampValueAtTime(0.01, now + 0.4);
-                osc.start(now); osc.stop(now + 0.4);
+        /* CARROSSEL */
+        let currentSlide = 0;
+        const track = document.getElementById('carouselTrack'), slides = document.querySelectorAll('.carousel-slide');
+        function mudarSlide(direcao) {
+            currentSlide = (currentSlide + direcao + slides.length) % slides.length;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+        setInterval(() => mudarSlide(1), 4000);
+
+        /* RANKING GLOBAL */
+        function salvarPontuacaoGlobal(nomeJogo, pontos) {
+            if (pontos <= 0) { alert("Jogue e pontue antes de salvar!"); return; }
+            let nome = prompt("🏆 Digite seu nome:", "Jogador") || "Jogador";
+            let ranking = JSON.parse(localStorage.getItem('rankingArcadeHub') || "[]");
+            ranking.push({ nome: `${nome} (${nomeJogo})`, pontos: pontos });
+            ranking.sort((a, b) => b.pontos - a.pontos);
+            localStorage.setItem('rankingArcadeHub', JSON.stringify(ranking.slice(0, 25)));
+            tocarEfeito(880, 'sine', 0.2);
+            alert("✅ Pontuação salva com sucesso!");
+            abrirModalRanking();
+        }
+        function abrirModalRanking() {
+            document.getElementById('modalRanking').style.display = 'flex';
+            let corpo = document.getElementById('tabelaRankingCorpo'), ranking = JSON.parse(localStorage.getItem('rankingArcadeHub') || "[]");
+            if (ranking.length === 0) { corpo.innerHTML = `<tr><td colspan="3" style="color:#8b949e; padding: 15px;">Nenhum recorde salvo.</td></tr>`; return; }
+            let html = "";
+            ranking.forEach((r, i) => {
+                let med = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i+1}º`;
+                html += `<tr><td style="padding:6px; font-weight:bold;">${med}</td><td style="padding:6px; text-align:left;">${r.nome}</td><td style="padding:6px; font-weight:bold; color:#58a6ff; text-align:right;">${r.pontos} pts</td></tr>`;
+            });
+            corpo.innerHTML = html;
+        }
+        function fecharModalRanking() { document.getElementById('modalRanking').style.display = 'none'; }
+
+        /* NAVEGAÇÃO ENTRE TELAS */
+        function esconderTodosJogos() {
+            ['jogo-da-velha', 'memoria-espacial', '2048', 'dama', 'futstrikers', 'neon-pong', 'tap-speed', 'memoria-flash', 'space-blaster'].forEach(j => {
+                document.getElementById(`container-${j}`).style.display = 'none';
+            });
+            document.getElementById('menu-selecao-jogos').style.display = 'none';
+        }
+        function voltarMenuJogos() {
+            pararPong(); pararSpace();
+            esconderTodosJogos();
+            document.getElementById('menu-selecao-jogos').style.display = 'block';
+        }
+
+        /* 1. JOGO DA VELHA */
+        let tabuleiroVelha = ['', '', '', '', '', '', '', '', ''], turnoVelha = 'X';
+        function abrirJogoDaVelha() { esconderTodosJogos(); document.getElementById('container-jogo-da-velha').style.display = 'block'; reiniciarVelha(); }
+        function jogarVelha(i) {
+            if (tabuleiroVelha[i] !== '') return;
+            tabuleiroVelha[i] = turnoVelha;
+            tocarEfeito(400, 'sine', 0.1);
+            atualizarVelha();
+            if (checarVitoriaVelha(turnoVelha)) {
+                alert(`🎉 Jogador ${turnoVelha} venceu!`);
+                reiniciarVelha();
+                return;
+            }
+            if (!tabuleiroVelha.includes('')) {
+                alert("Empate!");
+                reiniciarVelha();
+                return;
+            }
+            turnoVelha = turnoVelha === 'X' ? 'O' : 'X';
+            document.getElementById('status-velha').innerText = `Vez do Jogador ${turnoVelha}`;
+        }
+        function atualizarVelha() {
+            let cells = document.querySelectorAll('.cell-velha');
+            cells.forEach((c, idx) => c.innerText = tabuleiroVelha[idx]);
+        }
+        function reiniciarVelha() {
+            tabuleiroVelha = ['', '', '', '', '', '', '', '', ''];
+            turnoVelha = 'X';
+            atualizarVelha();
+            document.getElementById('status-velha').innerText = "Vez do Jogador X";
+        }
+        function checarVitoriaVelha(t) {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            return wins.some(w => tabuleiroVelha[w[0]] === t && tabuleiroVelha[w[1]] === t && tabuleiroVelha[w[2]] === t);
+        }
+
+        /* 2. MEMÓRIA ESPACIAL */
+        let movimentosMemoria = 0, cartasMemoria = ['🚀','🚀','👽','👽','⭐','⭐','🪐','🪐','🛸','🛸','☄️','☄️'], primeiraCarta = null, segundaCarta = null, bloqueioMemoria = false;
+        function abrirMemoriaEspacial() { esconderTodosJogos(); document.getElementById('container-memoria-espacial').style.display = 'block'; iniciarMemoriaEspacial(); }
+        function iniciarMemoriaEspacial() {
+            movimentosMemoria = 0; document.getElementById('mov-memoria').innerText = 0;
+            cartasMemoria.sort(() => Math.random() - 0.5);
+            let grid = document.getElementById('gridMemoria'); grid.innerHTML = '';
+            cartasMemoria.forEach((emoji, idx) => {
+                let div = document.createElement('div');
+                div.style.cssText = "height: 50px; background: #21262d; border: 1px solid #30363d; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer;";
+                div.dataset.emoji = emoji; div.dataset.idx = idx;
+                div.onclick = () => virarCartaMemoria(div);
+                grid.appendChild(div);
+            });
+        }
+        function virarCartaMemoria(el) {
+            if (bloqueioMemoria || el.innerText !== '' || el === primeiraCarta) return;
+            el.innerText = el.dataset.emoji;
+            tocarEfeito(500, 'sine', 0.1);
+            if (!primeiraCarta) { primeiraCarta = el; return; }
+            segundaCarta = el; movimentosMemoria++;
+            document.getElementById('mov-memoria').innerText = movimentosMemoria;
+            if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
+                primeiraCarta = null; segundaCarta = null;
+                tocarEfeito(700, 'sine', 0.2);
+            } else {
+                bloqueioMemoria = true;
+                setTimeout(() => { primeiraCarta.innerText = ''; segundaCarta.innerText = ''; primeiraCarta = null; segundaCarta = null; bloqueioMemoria = false; }, 700);
             }
         }
 
-        function showPopup(text, color = '#00ff88') {
-            popupMsg.textContent = text;
-            popupMsg.style.color = color;
-            popupMsg.classList.add('show');
-            setTimeout(() => popupMsg.classList.remove('show'), 900);
+        /* 3. JOGO 2048 */
+        let grid2048 = Array(4).fill().map(() => Array(4).fill(0)), score2048 = 0;
+        function abrirJogo2048() { esconderTodosJogos(); document.getElementById('container-2048').style.display = 'block'; reiniciar2048(); }
+        function reiniciar2048() {
+            grid2048 = Array(4).fill().map(() => Array(4).fill(0)); score2048 = 0;
+            adicionarNumero2048(); adicionarNumero2048(); atualizarBoard2048();
+        }
+        function adicionarNumero2048() {
+            let livres = [];
+            grid2048.forEach((r, y) => r.forEach((v, x) => { if(v === 0) livres.push({y, x}); }));
+            if (livres.length === 0) return;
+            let l = livres[Math.floor(Math.random() * livres.length)];
+            grid2048[l.y][l.x] = Math.random() < 0.9 ? 2 : 4;
+        }
+        function atualizarBoard2048() {
+            document.getElementById('score-2048').innerText = score2048;
+            let board = document.getElementById('board2048'); board.innerHTML = '';
+            grid2048.forEach(r => r.forEach(v => {
+                let cell = document.createElement('div');
+                cell.style.cssText = `height: 45px; background: ${v === 0 ? '#161b22' : '#238636'}; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: white;`;
+                cell.innerText = v === 0 ? '' : v;
+                board.appendChild(cell);
+            }));
+        }
+        function mover2048(dir) {
+            tocarEfeito(450, 'sine', 0.1);
+            adicionarNumero2048();
+            score2048 += 10;
+            atualizarBoard2048();
         }
 
-        function loadGame(gameId) {
-            gameHub.classList.add('hidden');
-            gamePlayScreen.classList.remove('hidden');
-            btnBack.classList.remove('hidden');
-            resizeCanvas();
-            currentGame = gameId;
-            score = 0;
-
-            if (gameId === 'futebol') initFutebol();
-            else if (gameId === 'snake') initSnake();
-            else if (gameId === 'pong') initPong();
-            else if (gameId === 'clicker') initClicker();
-            else if (gameId === 'memory') initMemory();
-            else if (gameId === 'blaster') initBlaster();
-        }
-
-        btnBack.addEventListener('click', () => {
-            cancelAnimationFrame(animationFrameId);
-            gamePlayScreen.classList.add('hidden');
-            btnBack.classList.add('hidden');
-            gameHub.classList.remove('hidden');
-            currentGame = null;
-        });
-
-        // ==========================================
-        // 1. JOGO DE FUTEBOL (Sua solicitação principal)
-        // ==========================================
-        function initFutebol() {
-            hudTitleGame.textContent = "⚽ FUTCRAQUE";
-            let lives = 3;
-            let goals = 0;
-            let gkSpeed = 2;
-            let gkDir = 1;
-            let defs = [];
-
-            const goalArea = { x: canvas.width/2 - 120, y: 50, width: 240, height: 110 };
-            const ball = { x: canvas.width/2, y: canvas.height - 80, radius: 12, vx: 0, vy: 0, state: 'waiting' };
-            const gk = { x: canvas.width/2, y: 90, w: 45, h: 22 };
-
-            let isDragging = false, startX = 0, startY = 0;
-
-            canvas.onmousedown = (e) => {
-                if(ball.state !== 'waiting') return;
-                const rect = canvas.getBoundingClientRect();
-                const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-                if(Math.hypot(mx - ball.x, my - ball.y) < 40) { isDragging = true; startX = mx; startY = my; }
-            };
-            canvas.onmousemove = (e) => {
-                if(!isDragging) return;
-                const rect = canvas.getBoundingClientRect();
-                startX = e.clientX - rect.left; startY = e.clientY - rect.top;
-            };
-            canvas.onmouseup = () => {
-                if(!isDragging) return;
-                isDragging = false;
-                const dx = ball.x - startX, dy = ball.y - startY;
-                if(Math.hypot(dx, dy) > 10) {
-                    playSound('kick');
-                    ball.vx = dx * 0.15; ball.vy = dy * 0.15; ball.state = 'flying';
+        /* 4. DAMA */
+        function abrirJogoDamadeCheckers() { esconderTodosJogos(); document.getElementById('container-dama').style.display = 'block'; iniciarDama(); }
+        function iniciarDama() {
+            let board = document.getElementById('boardDama'); board.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    let cell = document.createElement('div');
+                    let escuro = (r + c) % 2 === 1;
+                    cell.style.cssText = `height: 28px; background: ${escuro ? '#21262d' : '#0d1117'}; display: flex; align-items: center; justify-content: center; font-size: 14px;`;
+                    if (escuro && r < 3) cell.innerText = '🔴';
+                    if (escuro && r > 4) cell.innerText = '⚪';
+                    board.appendChild(cell);
                 }
-            };
-
-            function loop() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Campo
-                ctx.fillStyle = '#065f46'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.strokeStyle = '#fff'; ctx.lineWidth = 4;
-                ctx.strokeRect(goalArea.x, goalArea.y, goalArea.width, goalArea.height);
-
-                // Goleiro Movendo
-                gk.x += gkSpeed * gkDir;
-                if(gk.x - gk/2 < goalArea.x || gk.x + gk/2 > goalArea.x + goalArea.width) gkDir *= -1;
-
-                ctx.fillStyle = '#eab308'; ctx.fillRect(gk.x - gk.w/2, gk.y - gk.h/2, gk.w, gk.h);
-
-                // Defensores extras se gols > 2
-                defs.forEach(d => {
-                    d.x += d.speed * d.dir;
-                    if(d.x < goalArea.x || d.x > goalArea.x + goalArea.width) d.dir *= -1;
-                    ctx.fillStyle = '#ef4444'; ctx.fillRect(d.x - 20, d.y - 10, 40, 18);
-                });
-
-                // Atualizar Bola
-                if(ball.state === 'flying') {
-                    ball.x += ball.vx; ball.y += ball.vy;
-
-                    // Colisão Goleiro / Defesa
-                    if(Math.abs(ball.x - gk.x) < gk.w/2 && Math.abs(ball.y - gk.y) < gk.h/2) {
-                        playSound('hit'); lives--; showPopup("DEFENDIDO!", "#ff0055"); resetBall();
-                    }
-                    // Gol
-                    if(ball.y <= goalArea.y + goalArea.height && ball.x >= goalArea.x && ball.x <= goalArea.x + goalArea.width) {
-                        playSound('goal'); score += 10; goals++; showPopup("GOOOOOL!");
-                        gkSpeed = 2 + (goals * 0.3);
-                        if(goals === 2) defs.push({x: canvas.width/2, y: 200, speed: 2, dir: 1});
-                        if(goals === 4) defs.push({x: canvas.width/3, y: 280, speed: 2.5, dir: -1});
-                        resetBall();
-                    }
-                    // Fora
-                    if(ball.y < 20 || ball.x < 20 || ball.x > canvas.width - 20) {
-                        lives--; showPopup("FORA!", "#ff0055"); resetBall();
-                    }
-                }
-
-                function resetBall() {
-                    ball.x = canvas.width/2; ball.y = canvas.height - 80; ball.vx = 0; ball.vy = 0; ball.state = 'waiting';
-                    if(lives <= 0) { playSound('gameover'); alert("Game Over! Pontos: " + score); btnBack.click(); }
-                }
-
-                // Desenhar Bola e Linha Guia
-                if(isDragging) {
-                    ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 3; ctx.setLineDash([4,4]);
-                    ctx.beginPath(); ctx.moveTo(ball.x, ball.y); ctx.lineTo(ball.x + (ball.x - startX), ball.y + (ball.y - startY)); ctx.stroke(); ctx.setLineDash([]);
-                }
-                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2); ctx.fill();
-
-                hudScore.innerHTML = `PONTOS: <span>${score}</span>`;
-                hudExtra.innerHTML = `VIDAS: ${'❤️'.repeat(Math.max(0, lives))}`;
-                if(currentGame === 'futebol') animationFrameId = requestAnimationFrame(loop);
             }
-            loop();
         }
 
-        // ==========================================
-        // 2. RETRO SNAKE
-        // ==========================================
-        function initSnake() {
-            hudTitleGame.textContent = "🐍 RETRO SNAKE";
-            let box = 20;
-            let snake = [{x: 10*box, y: 10*box}];
-            let food = {x: Math.floor(Math.random()*15)*box, y: Math.floor(Math.random()*15)*box};
-            let d = 'RIGHT';
-
-            document.onkeydown = (e) => {
-                if(e.key === 'ArrowLeft' && d !== 'RIGHT') d = 'LEFT';
-                else if(e.key === 'ArrowUp' && d !== 'DOWN') d = 'UP';
-                else if(e.key === 'ArrowRight' && d !== 'LEFT') d = 'RIGHT';
-                else if(e.key === 'ArrowDown' && d !== 'UP') d = 'DOWN';
-            };
-
-            let interval = setInterval(() => {
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,canvas.width, canvas.height);
-                // Desenhar comida
-                ctx.fillStyle = '#ff0055'; ctx.fillRect(food.x, food.y, box, box);
-                // Desenhar cobra
-                for(let i=0; i<snake.length; i++) {
-                    ctx.fillStyle = i === 0 ? '#00ff88' : '#ffffff';
-                    ctx.fillRect(snake[i].x, snake[i].y, box-2, box-2);
-                }
-                let snakeX = snake[0].x; let snakeY = snake[0].y;
-                if(d === 'LEFT') snakeX -= box;
-                if(d === 'UP') snakeY -= box;
-                if(d === 'RIGHT') snakeX += box;
-                if(d === 'DOWN') snakeY += box;
-
-                if(snakeX === food.x && snakeY === food.y) {
-                    score += 10; playSound('goal');
-                    food = {x: Math.floor(Math.random()*(canvas.width/box))*box, y: Math.floor(Math.random()*(canvas.height/box))*box};
-                } else { snake.pop(); }
-
-                let newHead = {x: snakeX, y: snakeY};
-                if(snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || snake.some(s => s.x === newHead.x && s.y === newHead.y)) {
-                    clearInterval(interval); playSound('gameover'); alert("Fim de jogo! Pontos: " + score); btnBack.click();
-                }
-                snake.unshift(newHead);
-                hudScore.innerHTML = `PONTOS: <span>${score}</span>`;
-                hudExtra.innerHTML = "";
-            }, 120);
-        }
-
-        // ==========================================
-        // 3. NEON PONG
-        // ==========================================
-        function initPong() {
-            hudTitleGame.textContent = "🏓 NEON PONG";
-            let paddleY = canvas.height/2 - 40;
-            let ball = {x: canvas.width/2, y: canvas.height/2, vx: 4, vy: 4, r: 8};
-
-            canvas.onmousemove = (e) => {
-                const rect = canvas.getBoundingClientRect();
-                paddleY = (e.clientY - rect.top) - 40;
-            };
-
-            function loop() {
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,canvas.width,canvas.height);
-                // Raquete
-                ctx.fillStyle = '#00ff88'; ctx.fillRect(20, paddleY, 12, 80);
-                // Bola
-                ball.x += ball.vx; ball.y += ball.vy;
-                if(ball.y < 0 || ball.y > canvas.height) ball.vy *= -1;
-                if(ball.x > canvas.width) ball.vx *= -1;
-                if(ball.x < 32 && ball.y >= paddleY && ball.y <= paddleY + 80) {
-                    ball.vx *= -1; score += 5; playSound('hit');
-                }
-                if(ball.x < 0) { playSound('gameover'); alert("Fim de Jogo! Pontos: " + score); btnBack.click(); return; }
-
-                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
-                hudScore.innerHTML = `PONTOS: <span>${score}</span>`;
-                hudExtra.innerHTML = "";
-                if(currentGame === 'pong') animationFrameId = requestAnimationFrame(loop);
+        /* 5. FUTSTRIKERS */
+        let pontosFut = 0;
+        function abrirFutStrikers() { esconderTodosJogos(); document.getElementById('container-futstrikers').style.display = 'block'; pontosFut = 0; document.getElementById('pontos-fut').innerText = 0; document.getElementById('resultado-fut').innerText = ""; }
+        function chutarFut(canto) {
+            tocarEfeito(500, 'triangle', 0.15);
+            let defesas = ['esq', 'meio', 'dir'], defesaMaq = defesas[Math.floor(Math.random() * 3)];
+            let res = document.getElementById('resultado-fut');
+            if (canto !== defesaMaq) {
+                pontosFut += 100;
+                res.style.color = "#22c55e"; res.innerText = "⚽ GOOOOL! O goleiro pulou pro outro lado!";
+            } else {
+                res.style.color = "#da3633"; res.innerText = "❌ DEFESÃO! O goleiro pegou!";
             }
-            loop();
+            document.getElementById('pontos-fut').innerText = pontosFut;
         }
 
-        // ==========================================
-        // 4. TAP SPEED (Clique Rápido)
-        // ==========================================
-        function initClicker() {
-            hudTitleGame.textContent = "⚡ TAP SPEED";
-            let timeLeft = 10;
-            let active = true;
+        /* 6. NEON PONG */
+        let pongInterval = null, posXRaquete = 100, bolaX = 140, bolaY = 50, velX = 2, velY = 2, pontosPong = 0;
+        function abrirNeonPong() { esconderTodosJogos(); document.getElementById('container-neon-pong').style.display = 'block'; iniciarPong(); }
+        function iniciarPong() {
+            pararPong(); posXRaquete = 100; bolaX = 140; bolaY = 50; velX = 2; velY = 2; pontosPong = 0;
+            document.getElementById('pontos-pong').innerText = 0;
+            pongInterval = setInterval(loopPong, 30);
+        }
+        function pararPong() { if (pongInterval) clearInterval(pongInterval); }
+        function moverPong(val) { posXRaquete = Math.max(0, Math.min(200, posXRaquete + val)); }
+        function loopPong() {
+            let canvas = document.getElementById('pongCanvas'), ctx = canvas.getContext('2d');
+            bolaX += velX; bolaY += velY;
+            if (bolaX <= 0 || bolaX >= 270) velX *= -1;
+            if (bolaY <= 0) velY *= -1;
+            if (bolaY >= 180) {
+                if (bolaX >= posXRaquete && bolaX <= posXRaquete + 80) {
+                    velY *= -1; pontosPong += 10; tocarEfeito(600, 'sine', 0.08);
+                    document.getElementById('pontos-pong').innerText = pontosPong;
+                } else {
+                    pararPong(); tocarEfeito(150, 'sawtooth', 0.3); alert("💥 Bola perdida no Pong!"); return;
+                }
+            }
+            ctx.fillStyle = '#0d1117'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#58a6ff'; ctx.fillRect(bolaX, bolaY, 10, 10);
+            ctx.fillStyle = '#238636'; ctx.fillRect(posXRaquete, 185, 80, 10);
+        }
 
-            canvas.onclick = () => {
-                if(!active) return;
-                score++; playSound('hit');
-                target.x = Math.random()*(canvas.width - 60) + 30;
-                target.y = Math.random()*(canvas.height - 60) + 30;
-            };
-
-            let target = {x: canvas.width/2, y: canvas.height/2, r: 30};
-            let timer = setInterval(() => {
-                timeLeft--;
-                if(timeLeft <= 0) {
-                    active = false; clearInterval(timer);
-                    playSound('gameover'); alert("Tempo esgotado! Seus cliques: " + score); btnBack.click();
+        /* 7. TAP SPEED */
+        let tempoTap = 5, cliquesTap = 0, tapAtivo = false, tapIntervalo = null;
+        function abrirTapSpeed() { esconderTodosJogos(); document.getElementById('container-tap-speed').style.display = 'block'; cliquesTap = 0; tempoTap = 5; tapAtivo = false; document.getElementById('tap-cliques').innerText = 0; document.getElementById('tap-tempo').innerText = 5; }
+        function iniciarTapSpeed() {
+            cliquesTap = 0; tempoTap = 5; tapAtivo = true;
+            document.getElementById('tap-cliques').innerText = 0; document.getElementById('tap-tempo').innerText = 5;
+            if (tapIntervalo) clearInterval(tapIntervalo);
+            tapIntervalo = setInterval(() => {
+                tempoTap--;
+                document.getElementById('tap-tempo').innerText = tempoTap;
+                if (tempoTap <= 0) {
+                    clearInterval(tapIntervalo); tapAtivo = false;
+                    tocarEfeito(800, 'sine', 0.2); alert(`⏰ Fim! Você fez ${cliquesTap} cliques!`);
                 }
             }, 1000);
-
-            function loop() {
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,canvas.width,canvas.height);
-                if(active) {
-                    ctx.fillStyle = '#ff0055'; ctx.beginPath(); ctx.arc(target.x, target.y, target.r, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle = '#fff'; ctx.font = '16px sans-serif'; ctx.fillText("CLIQUE!", target.x - 25, target.y + 5);
-                }
-                hudScore.innerHTML = `CLICKS: <span>${score}</span>`;
-                hudExtra.innerHTML = `TEMPO: <span>${timeLeft}s</span>`;
-                if(currentGame === 'clicker') animationFrameId = requestAnimationFrame(loop);
-            }
-            loop();
+        }
+        function clicarTapSpeed() {
+            if (!tapAtivo) return;
+            cliquesTap++;
+            document.getElementById('tap-cliques').innerText = cliquesTap;
+            tocarEfeito(700, 'sine', 0.05);
         }
 
-        // ==========================================
-        // 5. MEMÓRIA FLASH
-        // ==========================================
-        function initMemory() {
-            hudTitleGame.textContent = "🧠 MEMÓRIA FLASH";
-            let seq = [Math.floor(Math.random()*4)], playerSeq = [], showing = true;
-            let colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
-
-            function flash() {
-                showing = true; let i = 0;
-                let interval = setInterval(() => {
-                    drawBoard(seq[i]); playSound('hit');
-                    setTimeout(() => drawBoard(-1), 400);
+        /* 8. MEMÓRIA FLASH */
+        let seqMemoria = [], userSeqMemoria = [], pontosMemoria = 0;
+        function abrirMemoriaFlash() { esconderTodosJogos(); document.getElementById('container-memoria-flash').style.display = 'block'; pontosMemoria = 0; document.getElementById('pontos-memoria').innerText = 0; seqMemoria = []; }
+        function iniciarMemoriaFlash() {
+            userSeqMemoria = []; seqMemoria.push(Math.floor(Math.random() * 4));
+            piscarSequenciaMemoria();
+        }
+        function piscarSequenciaMemoria() {
+            let i = 0;
+            let interval = setInterval(() => {
+                if (i < seqMemoria.length) {
+                    let idx = seqMemoria[i];
+                    destacarBlocoMemoria(idx);
                     i++;
-                    if(i >= seq.length) { clearInterval(interval); showing = false; }
-                }, 800);
-            }
-
-            function drawBoard(lit = -1) {
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,canvas.width,canvas.height);
-                let w = canvas.width/2 - 20, h = canvas.height/2 - 20;
-                let coords = [{x: 10, y: 10}, {x: canvas.width/2 + 10, y: 10}, {x: 10, y: canvas.height/2 + 10}, {x: canvas.width/2 + 10, y: canvas.height/2 + 10}];
-                coords.forEach((c, idx) => {
-                    ctx.fillStyle = idx === lit ? '#ffffff' : colors[idx];
-                    ctx.fillRect(c.x, c.y, w, h);
-                });
-            }
-
-            canvas.onclick = (e) => {
-                if(showing) return;
-                const rect = canvas.getBoundingClientRect();
-                let mx = e.clientX - rect.left, my = e.clientY - rect.top;
-                let idx = (mx > canvas.width/2 ? 1 : 0) + (my > canvas.height/2 ? 2 : 0);
-                
-                playerSeq.push(idx);
-                playSound('hit');
-
-                if(playerSeq[playerSeq.length - 1] !== seq[playerSeq.length - 1]) {
-                    playSound('gameover'); alert("Errou! Pontos: " + score); btnBack.click();
-                    return;
+                } else {
+                    clearInterval(interval);
                 }
-                if(playerSeq.length === seq.length) {
-                    score += 10; playerSeq = [];
-                    seq.push(Math.floor(Math.random()*4));
-                    setTimeout(flash, 1000);
-                }
-            };
-
-            flash();
-            function loop() {
-                if(!showing) drawBoard();
-                hudScore.innerHTML = `PONTOS: <span>${score}</span>`;
-                hudExtra.innerHTML = "";
-                if(currentGame === 'memory') animationFrameId = requestAnimationFrame(loop);
+            }, 600);
+        }
+        function destacarBlocoMemoria(idx) {
+            tocarEfeito(300 + (idx * 150), 'sine', 0.2);
+            let btn = document.getElementById(`bloco-${idx}`);
+            btn.style.filter = "brightness(1.8)";
+            setTimeout(() => { btn.style.filter = "brightness(1)"; }, 350);
+        }
+        function escolherMemoria(idx) {
+            destacarBlocoMemoria(idx);
+            userSeqMemoria.push(idx);
+            let corres = userSeqMemoria.length - 1;
+            if (userSeqMemoria[corres] !== seqMemoria[corres]) {
+                tocarEfeito(180, 'sawtooth', 0.3);
+                alert("❌ Sequência errada! Tente novamente.");
+                seqMemoria = []; pontosMemoria = 0; document.getElementById('pontos-memoria').innerText = 0;
+                return;
             }
-            loop();
+            if (userSeqMemoria.length === seqMemoria.length) {
+                pontosMemoria += 25;
+                document.getElementById('pontos-memoria').innerText = pontosMemoria;
+                setTimeout(iniciarMemoriaFlash, 1000);
+            }
         }
 
-        // ==========================================
-        // 6. SPACE BLASTER (Desvio de Asteroides)
-        // ==========================================
-        let shipX = 200;
-        function initBlaster() {
-            hudTitleGame.textContent = "🚀 SPACE BLASTER";
-            let obstacles = [];
-            shipX = canvas.width / 2;
-
-            canvas.onmousemove = (e) => {
-                const rect = canvas.getBoundingClientRect();
-                shipX = e.clientX - rect.left;
-            };
-
-            function loop() {
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(0,0,canvas.width,canvas.height);
-
-                if(Math.random() < 0.04) {
-                    obstacles.push({x: Math.random()*(canvas.width - 30), y: -30, size: 25, speed: 3 + Math.random()*3});
+        /* 9. SPACE BLASTER */
+        let spaceInterval = null, naveX = 120, asteroides = [], pontosSpace = 0;
+        function abrirSpaceBlaster() { esconderTodosJogos(); document.getElementById('container-space-blaster').style.display = 'block'; iniciarSpace(); }
+        function iniciarSpace() {
+            pararSpace(); naveX = 120; asteroides = []; pontosSpace = 0;
+            document.getElementById('pontos-space').innerText = 0;
+            spaceInterval = setInterval(loopSpace, 30);
+        }
+        function pararSpace() { if (spaceInterval) clearInterval(spaceInterval); }
+        function moverSpace(val) { naveX = Math.max(0, Math.min(240, naveX + val)); }
+        function loopSpace() {
+            let canvas = document.getElementById('spaceCanvas'), ctx = canvas.getContext('2d');
+            if (Math.random() < 0.08) { asteroides.push({ x: Math.floor(Math.random() * 250), y: 0, v: 3 + Math.random() * 2 }); }
+            asteroides.forEach(a => a.y += a.v);
+            asteroides = asteroides.filter(a => a.y < 230);
+            
+            for (let a of asteroides) {
+                if (a.y >= 180 && a.y <= 210 && a.x >= naveX - 10 && a.x <= naveX + 30) {
+                    pararSpace(); tocarEfeito(140, 'sawtooth', 0.4); alert("💥 Colisão no Space Blaster!"); return;
                 }
-
-                obstacles.forEach((obs, index) => {
-                    obs.y += obs.speed;
-                    ctx.fillStyle = '#ef4444'; ctx.fillRect(obs.x, obs.y, obs.size, obs.size);
-
-                    // Colisão
-                    if(Math.abs(obs.x + obs.size/2 - shipX) < 25 && Math.abs(obs.y - (canvas.height - 60)) < 25) {
-                        playSound('gameover'); alert("Fim de Jogo! Pontos: " + score); btnBack.click();
-                    }
-                    if(obs.y > canvas.height) { obstacles.splice(index, 1); score += 5; }
-                });
-
-                // Desenhar Nave
-                ctx.fillStyle = '#00ff88';
-                ctx.beginPath();
-                ctx.moveTo(shipX, canvas.height - 70);
-                ctx.lineTo(shipX - 15, canvas.height - 40);
-                ctx.lineTo(shipX + 15, canvas.height - 40);
-                ctx.fill();
-
-                hudScore.innerHTML = `PONTOS: <span>${score}</span>`;
-                hudExtra.innerHTML = "";
-                if(currentGame === 'blaster') animationFrameId = requestAnimationFrame(loop);
             }
-            loop();
+            pontosSpace += 1;
+            document.getElementById('pontos-space').innerText = pontosSpace;
+
+            ctx.fillStyle = '#0d1117'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#da3633';
+            asteroides.forEach(a => { ctx.fillRect(a.x, a.y, 12, 12); });
+            ctx.fillStyle = '#58a6ff'; ctx.fillRect(naveX, 190, 30, 15);
         }
     </script>
 </body>
