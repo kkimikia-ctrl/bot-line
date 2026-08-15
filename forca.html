@@ -421,10 +421,12 @@
                 <span>⭐ <span id="pontos-pong">0</span></span>
             </div>
             <canvas id="pongCanvas" width="300" height="200" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 10px auto;"></canvas>
-            <div style="display: flex; justify-content: center; gap: 10px;">
-                <button class="control-btn" ontouchstart="moverPong(-15); event.preventDefault();" onclick="moverPong(-15)">⬆️ Subir</button>
-                <button class="control-btn" ontouchstart="moverPong(15); event.preventDefault();" onclick="moverPong(15)">⬇️ Descer</button>
+            
+            <div id="pong-controles" style="display: flex; justify-content: center; gap: 10px;">
+                <button class="control-btn" ontouchstart="moverPong(-22); event.preventDefault();" onclick="moverPong(-22)">⬆️ Subir</button>
+                <button class="control-btn" ontouchstart="moverPong(22); event.preventDefault();" onclick="moverPong(22)">⬇️ Descer</button>
             </div>
+            <button id="btn-jogar-novamente-pong" onclick="iniciarPong()" class="action-btn" style="display: none; background-color: #059669; margin-top: 10px;">🔄 Jogar de Novo</button>
         </div>
 
         <!-- 9. Blocos Tetris Simples -->
@@ -1056,7 +1058,7 @@
         }
         function salvarPontuacaoCampoMinado() { salvarPontuacaoGlobal("Campo Minado", pontosMinado); }
 
-        /* Jogo 8: Pong Clássico (Atualizado com aumento progressivo de velocidade e diminuição da barra) */
+        /* Jogo 8: Pong Clássico (Atualizado com aumento progressivo de velocidade, comandos mais rápidos, barra verde claro e botão Jogar de Novo) */
         let pongInterval = null;
         let paddleY = 80;
         let paddleHeight = 60;
@@ -1064,6 +1066,7 @@
         let ballVelX = 2, ballVelY = 2;
         let pontosPong = 0;
         let rebatidasCount = 0;
+        let pongGameOver = false;
 
         function iniciarPong() {
             pararPong();
@@ -1075,7 +1078,10 @@
             ballVelY = 2;
             pontosPong = 0;
             rebatidasCount = 0;
+            pongGameOver = false;
             document.getElementById('pontos-pong').innerText = pontosPong;
+            document.getElementById('btn-jogar-novamente-pong').style.display = 'none';
+            document.getElementById('pong-controles').style.display = 'flex';
             pongInterval = setInterval(loopPong, 30);
         }
 
@@ -1084,11 +1090,14 @@
         }
 
         function moverPong(valor) {
+            if (pongGameOver) return;
             paddleY = Math.max(0, Math.min(200 - paddleHeight, paddleY + valor));
             tocarEfeito('clique');
         }
 
         function loopPong() {
+            if (pongGameOver) return;
+
             ballX += ballVelX;
             ballY += ballVelY;
 
@@ -1111,15 +1120,14 @@
 
                 // Aumenta a velocidade progressivamente a cada rebatida
                 rebatidasCount++;
-                let fatorVelocidade = 1 + (rebatidasCount * 0.08);
                 let direcaoX = ballVelX > 0 ? 1 : -1;
                 let direcaoY = ballVelY > 0 ? 1 : -1;
-                ballVelX = (2 + rebatidasCount * 0.3) * direcaoX;
-                ballVelY = (2 + rebatidasCount * 0.3) * direcaoY;
+                ballVelX = (2.2 + rebatidasCount * 0.35) * direcaoX;
+                ballVelY = (2.2 + rebatidasCount * 0.35) * direcaoY;
 
                 // Diminui o tamanho da barra aos poucos após já estar bem rápido
-                if (rebatidasCount >= 5 && paddleHeight > 25) {
-                    paddleHeight -= 3;
+                if (rebatidasCount >= 4 && paddleHeight > 22) {
+                    paddleHeight -= 4;
                     // Garante que a raquete não ultrapasse os limites inferiores da tela ao encolher
                     paddleY = Math.max(0, Math.min(200 - paddleHeight, paddleY));
                 }
@@ -1128,8 +1136,12 @@
             // Game over se a bola passar da raquete esquerda
             if (ballX <= 0) {
                 pararPong();
+                pongGameOver = true;
                 tocarEfeito('clique');
-                alert("Fim de Jogo! A bola passou.");
+                
+                // Exibe o botão "Jogar de Novo" e esconde os controles temporariamente
+                document.getElementById('btn-jogar-novamente-pong').style.display = 'block';
+                document.getElementById('pong-controles').style.display = 'none';
                 return;
             }
 
@@ -1138,8 +1150,8 @@
             ctx.fillStyle = '#111';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Desenha a raquete com o tamanho dinâmico atual
-            ctx.fillStyle = '#ea580c';
+            // Desenha a raquete com a cor verde claro (#86efac) e tamanho dinâmico atual
+            ctx.fillStyle = '#86efac';
             ctx.fillRect(10, paddleY, 8, paddleHeight);
             
             // Desenha a bola
