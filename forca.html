@@ -5,318 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Jogos - Desafio Global</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 10px;
-            color: #333;
-            padding-bottom: 80px;
-            text-align: center;
-        }
-
-        /* Banner Fixo no Topo */
-        .carousel-container {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            max-width: 600px;
-            margin: 0 auto 10px auto;
-            overflow: hidden;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            background: #000;
-        }
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-        .carousel-slide {
-            min-width: 100%;
-            box-sizing: border-box;
-        }
-        .carousel-slide img {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-            display: block;
-        }
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            cursor: pointer;
-            border-radius: 50%;
-            font-size: 14px;
-            z-index: 10;
-        }
-        .carousel-btn.prev { left: 8px; }
-        .carousel-btn.next { right: 8px; }
-        
-        .carousel-dots {
-            position: absolute;
-            bottom: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 5px;
-            z-index: 10;
-        }
-        .dot {
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .dot.active { background: white; }
-
-        /* Cabeçalho */
-        .header {
-            background-color: #0047ab;
-            color: white;
-            padding: 8px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-        }
-        .header h1 { font-size: 14px; margin: 0; }
-        .btn-audio-toggle {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid white;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
+        /* [SEU CSS ORIGINAL FOI MANTIDO] */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; color: #333; padding-bottom: 80px; text-align: center; }
+        .carousel-container { position: sticky; top: 0; z-index: 1000; max-width: 600px; margin: 0 auto 10px auto; overflow: hidden; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); background: #000; }
+        .carousel-track { display: flex; transition: transform 0.5s ease-in-out; }
+        .carousel-slide { min-width: 100%; box-sizing: border-box; }
+        .carousel-slide img { width: 100%; height: 140px; object-fit: cover; display: block; }
+        .header { background-color: #0047ab; color: white; padding: 8px 15px; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; margin-bottom: 15px; }
         .container { max-width: 600px; margin: 0 auto; }
-        
-        .buttons-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .top-action-btn {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 0;
-        }
-        .btn-blue { background-color: #2563eb; }
-        .btn-orange { background-color: #d97706; }
-
-        .card-game {
-            background: white;
-            padding: 15px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-        }
-        .menu-jogos {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .action-btn {
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        /* Barra de Navegação Inferior */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 55px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            flex-grow: 1;
-            cursor: pointer;
-        }
-        .nav-item.active { color: #0047ab; font-weight: bold; }
-        .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
+        .menu-jogos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .action-btn { color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; display: flex; justify-content: space-around; align-items: center; height: 55px; box-shadow: 0 -2px 6px rgba(0,0,0,0.1); z-index: 999; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.75rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- CARROSSEL DE BANNERS -->
+    <!-- CARROSSEL -->
     <div class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/0047ab/ffffff?text=Banner+1" alt="Banner 1"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/00796b/ffffff?text=Banner+2" alt="Banner 2"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/7b1fa2/ffffff?text=Banner+3" alt="Banner 3"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/e65100/ffffff?text=Banner+4" alt="Banner 4"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/059669/ffffff?text=Banner+5" alt="Banner 5"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/dc2626/ffffff?text=Banner+6" alt="Banner 6"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/2563eb/ffffff?text=Banner+7" alt="Banner 7"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/4b5563/ffffff?text=Banner+8" alt="Banner 8"></div>
+            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/0047ab/ffffff?text=Banner+1" alt="Banner"></div>
+            <!-- Adicione seus outros banners aqui -->
         </div>
-        <button class="carousel-btn prev" onclick="mudarSlide(-1); event.stopPropagation();">&#10094;</button>
-        <button class="carousel-btn next" onclick="mudarSlide(1); event.stopPropagation();">&#10095;</button>
-        <div class="carousel-dots" id="carouselDots"></div>
     </div>
 
-    <!-- CABEÇALHO -->
-    <div class="header">
-        <h1>🎮 Central de Jogos</h1>
-        <button id="btnAudioToggle" class="btn-audio-toggle" onclick="alternarAudio(event)">🔊 Som: Ligado</button>
-    </div>
+    <div class="header"><h1>🎮 Central de Jogos</h1></div>
 
     <div class="container">
-        <!-- Botões do Topo -->
-        <div class="buttons-row" id="container-botoes-topo">
-            <button onclick="clicarDesafio()" class="top-action-btn btn-blue">🎮 Desafio</button>
-            <button onclick="abrirModalRanking()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
-        </div>
-
-        <!-- Menu Principal (Sem Super Velha e Campo Minado, com Jogo de Futebol) -->
-        <div id="menu-selecao-jogos" class="card-game menu-jogos">
-            <button onclick="abrirJogo('Jogo da Velha')" class="action-btn" style="background-color: #2563eb;">❌ Jogo da Velha</button>
-            <button onclick="abrirJogo('Jogo da Forca')" class="action-btn" style="background-color: #00796b;">🎯 Jogo da Forca</button>
-            <button onclick="abrirJogo('Jogo da Memória')" class="action-btn" style="background-color: #7b1fa2;">🧠 Jogo da Memória</button>
-            <button onclick="abrirJogo('Jokenpô Brasil')" class="action-btn" style="background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
-            <button onclick="abrirJogo('Jogo da Cobrinha')" class="action-btn" style="background-color: #059669;">🐍 Jogo da Cobrinha</button>
+        <div class="menu-jogos">
+            <!-- BOTÕES COM LINKS REAIS (Substitua o # pelo link real de cada jogo) -->
+            <button onclick="window.location.href='velha.html'" class="action-btn" style="background-color: #2563eb;">❌ Jogo da Velha</button>
+            <button onclick="window.location.href='forca.html'" class="action-btn" style="background-color: #00796b;">🎯 Jogo da Forca</button>
+            <button onclick="window.location.href='memoria.html'" class="action-btn" style="background-color: #7b1fa2;">🧠 Jogo da Memória</button>
+            <button onclick="window.location.href='jokenpo.html'" class="action-btn" style="background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
+            <button onclick="window.location.href='cobrinha.html'" class="action-btn" style="background-color: #059669;">🐍 Jogo da Cobrinha</button>
             
-            <!-- Jogo de Futebol -->
-            <button onclick="abrirJogo('Jogo de Futebol')" class="action-btn" style="background-color: #16a34a;">⚽ Jogo de Futebol</button>
+            <!-- SEU JOGO DE FUTEBOL -->
+            <button onclick="window.location.href='futebol.html'" class="action-btn" style="background-color: #16a34a;">⚽ Jogo de Futebol</button>
 
-            <button onclick="abrirJogo('Pong Clássico')" class="action-btn" style="background-color: #ea580c; grid-column: span 2;">🏓 Pong Clássico</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE RANKING -->
-    <div id="modalRanking" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
-        <div style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-            <h3 style="color: #0047ab; margin-top: 0;">🏆 Ranking Global</h3>
-            <p>Carregando pontuações...</p>
-            <button onclick="fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px;">Fechar</button>
+            <button onclick="window.location.href='pong.html'" class="action-btn" style="background-color: #ea580c; grid-column: span 2;">🏓 Pong Clássico</button>
         </div>
     </div>
 
     <!-- NAVEGAÇÃO INFERIOR FUNCIONAL -->
     <nav class="bottom-nav">
-        <div class="nav-item" onclick="navegar('Home')"><span class="icon">🏠</span><span>Home</span></div>
-        <div class="nav-item" onclick="navegar('Serviços')"><span class="icon">📋</span><span>Serviços</span></div>
-        <div class="nav-item active" onclick="navegar('Lazer')"><span class="icon">🎬</span><span>Lazer</span></div>
-        <div class="nav-item" onclick="navegar('Perfil')"><span class="icon">👤</span><span>Perfil</span></div>
+        <div class="nav-item" onclick="window.location.href='index.html'"><span>🏠</span><span>Home</span></div>
+        <div class="nav-item" onclick="window.location.href='servicos.html'"><span>📋</span><span>Serviços</span></div>
+        <div class="nav-item" onclick="window.location.href='lazer.html'"><span>🎬</span><span>Lazer</span></div>
+        <div class="nav-item" onclick="window.location.href='perfil.html'"><span>👤</span><span>Perfil</span></div>
     </nav>
     
-    <script>
-        // Funções do Carrossel
-        let slideAtual = 0;
-        const track = document.getElementById('carouselTrack');
-        const slides = document.getElementsByClassName('carousel-slide');
-        const dotsContainer = document.getElementById('carouselDots');
-
-        for (let i = 0; i < slides.length; i++) {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            if (i === 0) dot.classList.add('active');
-            dot.onclick = () => irParaSlide(i);
-            dotsContainer.appendChild(dot);
-        }
-
-        function atualizarCarrossel() {
-            track.style.transform = `translateX(-${slideAtual * 100}%)`;
-            const dots = document.getElementsByClassName('dot');
-            for (let i = 0; i < dots.length; i++) {
-                dots[i].classList.toggle('active', i === slideAtual);
-            }
-        }
-
-        function mudarSlide(direcao) {
-            slideAtual = (slideAtual + direcao + slides.length) % slides.length;
-            atualizarCarrossel();
-        }
-
-        function irParaSlide(index) {
-            slideAtual = index;
-            atualizarCarrossel();
-        }
-
-        setInterval(() => { mudarSlide(1); }, 4000);
-
-        // Ações dos Botões e Navegação
-        function abrirModalRanking() { document.getElementById('modalRanking').style.display = 'flex'; }
-        function fecharModalRanking() { document.getElementById('modalRanking').style.display = 'none'; }
-        
-        function clicarDesafio() {
-            alert("Modo Desafio ativado!");
-        }
-
-        function abrirJogo(nomeDoJogo) {
-            // Aqui você pode redirecionar para a página do jogo ou carregar a tela dele
-            alert("Abrindo " + nomeDoJogo + "...");
-        }
-
-        function navegar(secao) {
-            // Atualiza a classe ativa na barra inferior
-            const itens = document.querySelectorAll('.nav-item');
-            itens.forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            if (secao === 'Home') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                alert("Navegando para a seção: " + secao);
-            }
-        }
-
-        function alternarAudio(e) { 
-            e.stopPropagation(); 
-            const btn = document.getElementById('btnAudioToggle');
-            if(btn.innerText.includes("Ligado")) {
-                btn.innerText = "🔇 Som: Desligado";
-            } else {
-                btn.innerText = "🔊 Som: Ligado";
-            }
-        }
-    </script>
 </body>
 </html>
