@@ -2,69 +2,85 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Jogos - Mini Craque</title>
+    <title>Central de Jogos - Versão Final</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .header-jogo { width: 100%; background-color: #1a365d; color: white; padding: 10px; text-align: center; }
-        .campo-container { 
-            position: relative; width: 95%; max-width: 400px; height: 500px; 
-            background-color: #2e8540; border: 4px solid white; border-radius: 8px; 
-            margin-top: 20px; overflow: hidden; touch-action: none; 
-        }
-        /* Gol posicionado no topo da tela para dar espaço abaixo */
-        .gol { 
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%); 
-            width: 200px; height: 80px; border: 3px solid white; border-bottom: none; 
-        }
-        .jogador-campo { position: absolute; font-size: 24px; width: 30px; height: 30px; }
-        .bola { 
-            position: absolute; width: 40px; height: 40px; background: white; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            cursor: grab; z-index: 10; bottom: 50px; left: 50%; transform: translateX(-50%);
-        }
+        body { background-color: #f0f2f5; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .tela { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .tela.ativa { display: flex; }
+        .menu-container { width: 95%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .card-jogo { background: white; padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: bold; border: 1px solid #ccc; }
+        
+        /* Mini Craque - Estilo Estilingue */
+        .campo-container { position: relative; width: 350px; height: 500px; background-color: #2e8540; border: 4px solid white; margin-top: 10px; overflow: hidden; touch-action: none; }
+        .gol { position: absolute; bottom: 350px; left: 50%; transform: translateX(-50%); width: 160px; height: 60px; border: 3px solid white; border-bottom: none; }
+        .bola { position: absolute; width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: grab; z-index: 10; bottom: 50px; left: 50%; transform: translateX(-50%); }
+        .zagueiro { position: absolute; font-size: 24px; }
     </style>
 </head>
 <body>
-    <div class="header-jogo">🎮 Mini Craque</div>
-    <div class="campo-container" id="gameArea">
-        <div class="gol" id="gol">
-            <div class="jogador-campo" id="gk" style="top: 10px; left: 85px;">🤖</div>
+
+    <!-- Menu Principal -->
+    <div id="telaMenu" class="tela ativa">
+        <div class="menu-container">
+            <div class="card-jogo" onclick="abrirJogo('futebol')">⚽ Mini Craque</div>
+            <div class="card-jogo" onclick="abrirJogo('cobrinha')">🐍 Jogo da Cobrinha</div>
+            <div class="card-jogo" onclick="abrirJogo('jogo3')">🎯 Jogo 3</div>
+            <div class="card-jogo" onclick="abrirJogo('jogo4')">🧠 Jogo 4</div>
+            <div class="card-jogo" onclick="abrirJogo('jogo5')">🏓 Jogo 5</div>
+            <div class="card-jogo" onclick="abrirJogo('jogo6')">🎲 Jogo 6</div>
         </div>
-        <!-- Zagueiros em linhas Y diferentes -->
-        <div class="jogador-campo" id="def1" style="top: 120px; left: 50px;">🛡️</div>
-        <div class="jogador-campo" id="def2" style="top: 200px; left: 200px;">🛡️</div>
-        <div class="jogador-campo" id="def3" style="top: 280px; left: 100px;">🛡️</div>
-        
-        <div class="bola" id="bola">⚽</div>
+    </div>
+
+    <!-- Mini Craque -->
+    <div id="telaFutebol" class="tela">
+        <button onclick="voltarMenu()">Voltar ao Menu</button>
+        <div class="campo-container" id="gameArea">
+            <div class="gol"></div>
+            <!-- Zagueiros em linhas Y distintas -->
+            <div class="zagueiro" style="top: 150px; left: 50px;">🛡️</div>
+            <div class="zagueiro" style="top: 250px; left: 250px;">🛡️</div>
+            <div class="zagueiro" style="top: 100px; left: 150px;">🛡️</div>
+            <div class="bola" id="bola">⚽</div>
+        </div>
+    </div>
+
+    <!-- Estrutura das outras telas simplificada -->
+    <div id="telaOutros" class="tela">
+        <button onclick="voltarMenu()">Voltar ao Menu</button>
+        <h2 id="tituloJogo">Jogo</h2>
     </div>
 
     <script>
-        const bola = document.getElementById('bola');
-        let isDragging = false;
-
-        // Lógica: A bola deve ficar parada e o usuário clica e arrasta para chutar
-        bola.addEventListener('mousedown', (e) => { isDragging = true; });
-        
-        document.addEventListener('mouseup', (e) => {
-            if (isDragging) {
-                isDragging = false;
-                chutarBola();
+        function abrirJogo(tipo) {
+            document.getElementById('telaMenu').classList.remove('ativa');
+            if (tipo === 'futebol') {
+                document.getElementById('telaFutebol').classList.add('ativa');
+            } else {
+                document.getElementById('telaOutros').classList.add('ativa');
+                document.getElementById('tituloJogo').innerText = tipo;
             }
-        });
-
-        function chutarBola() {
-            // Lógica de chute simplificada mantendo a bola parada inicialmente
-            bola.style.transition = "bottom 0.5s ease-out";
-            bola.style.bottom = "400px"; 
-            
-            setTimeout(() => {
-                bola.style.transition = "none";
-                bola.style.bottom = "50px";
-                bola.style.left = "50%";
-            }, 600);
         }
+        function voltarMenu() {
+            document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+            document.getElementById('telaMenu').classList.add('ativa');
+        }
+
+        // Lógica Mini Craque (Puxar para trás e soltar)
+        const bola = document.getElementById('bola');
+        let isDragging = false, startX, startY;
+
+        bola.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX; startY = e.clientY; });
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            bola.style.transform = `translate(${e.clientX - startX}px, ${e.clientY - startY}px)`;
+        });
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            bola.style.transition = "all 0.5s ease-out";
+            bola.style.transform = `translate(0, -350px)`; // Chute para o gol
+            setTimeout(() => { bola.style.transition = "none"; bola.style.transform = "translate(0, 0)"; }, 500);
+        });
     </script>
 </body>
 </html>
