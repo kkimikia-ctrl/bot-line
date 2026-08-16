@@ -336,9 +336,9 @@
         const txtInstrucao = document.getElementById('txtInstrucao');
 
         let ballBaseX = 0;
-        let ballBaseY = 30;
+        let ballBaseY = 25;
         let ballCraqueX = 0;
-        let ballCraqueY = 30;
+        let ballCraqueY = 25;
         let isDraggingCraque = false;
         let startCraqueX, startCraqueY;
 
@@ -365,7 +365,7 @@
         }
 
         function resetBallCraque() {
-            ballBaseX = (gameAreaCraque.clientWidth / 2) - 21;
+            ballBaseX = gameAreaCraque.clientWidth / 2 - 21;
             ballCraqueX = ballBaseX;
             ballCraqueY = ballBaseY;
             ballCraque.style.bottom = ballCraqueY + 'px';
@@ -399,25 +399,26 @@
             let dx = clientX - startCraqueX;
             let dy = clientY - startCraqueY;
 
-            if (dy > 0) dy = 0;
+            if (dy > 0) dy = 0; 
             
-            ballCraqueX = ballBaseX + dx;
+            ballCraqueX = (gameAreaCraque.clientWidth / 2 - 21) + dx;
             ballCraqueY = ballBaseY - dy;
-
-            ballCraqueX = Math.max(10, Math.min(ballCraqueX, gameAreaCraque.clientWidth - 50));
-            ballCraqueY = Math.max(20, Math.min(ballCraqueY, gameAreaCraque.clientHeight - 60));
 
             ballCraque.style.left = ballCraqueX + 'px';
             ballCraque.style.bottom = ballCraqueY + 'px';
 
+            let ballRect = ballCraque.getBoundingClientRect();
             let areaRect = gameAreaCraque.getBoundingClientRect();
-            let currentX = ballCraqueX + 21;
-            let currentY = ballCraqueY + 21;
+            let currentX = ballRect.left - areaRect.left + 21;
+            let currentY = areaRect.height - (ballRect.top - areaRect.top) - 21;
             
+            let aimX = currentX - dx * 1.5;
+            let aimY = currentY + dy * 1.5;
+
             trajectoryCraque.setAttribute('x1', currentX);
             trajectoryCraque.setAttribute('y1', areaRect.height - currentY);
-            trajectoryCraque.setAttribute('x2', currentX - (dx * 0.8));
-            trajectoryCraque.setAttribute('y2', areaRect.height - (currentY + (dy * 0.8)));
+            trajectoryCraque.setAttribute('x2', aimX);
+            trajectoryCraque.setAttribute('y2', areaRect.height - aimY);
         }
 
         function endDragCraque(e) {
@@ -428,14 +429,8 @@
             trajectoryCraque.setAttribute('x2', 0);
             trajectoryCraque.setAttribute('y2', 0);
 
-            if (ballCraqueY > 180) {
-                let targetX = ballCraqueX;
-                animateShotCraque(targetX);
-            } else {
-                txtInstrucao.innerText = "Bola posicionada! Arraste mais para cima para chutar.";
-                ballBaseX = ballCraqueX;
-                ballBaseY = ballCraqueY;
-            }
+            let targetX = ballCraqueX;
+            animateShotCraque(targetX);
         }
 
         function animateShotCraque(targetX) {
@@ -474,7 +469,7 @@
                     return;
                 }
 
-                if (currentBottom >= gameAreaCraque.clientHeight - 80) {
+                if (currentBottom >= gameAreaCraque.clientHeight - 70) {
                     clearInterval(flight);
                     handleGoalCraque();
                     return;
@@ -530,28 +525,24 @@
 
         function craqueGameLoop() {
             if (jogoAtualAtivo === 'futebol') {
-                // Limites rigorosos para manter goleiro e defesas estritamente dentro da largura da trave (240px)
+                // Limites exatos dentro da largura do gol (240px menos o tamanho do boneco)
                 let minLimit = 5;
-                let maxLimit = 200; // 240px da trave - 32px do boneco + margem
+                let maxLimit = 200; 
                 
-                // Movimento do Goleiro (Linha de Fundo)
                 gkCraqueX += gkCraqueDir * (1.6 * craqueSpeedMultiplier);
                 if (gkCraqueX <= minLimit || gkCraqueX >= maxLimit) gkCraqueDir *= -1;
                 goalkeeperCraque.style.left = gkCraqueX + 'px';
 
-                // Movimento da Defesa 1
                 if (defsCraqueActive >= 1) {
                     def1CraqueX += def1CraqueDir * (1.3 * craqueSpeedMultiplier);
                     if (def1CraqueX <= minLimit || def1CraqueX >= maxLimit) def1CraqueDir *= -1;
                     defCraque1.style.left = def1CraqueX + 'px';
                 }
-                // Movimento da Defesa 2
                 if (defsCraqueActive >= 2) {
                     def2CraqueX += def2CraqueDir * (1.5 * craqueSpeedMultiplier);
                     if (def2CraqueX <= minLimit || def2CraqueX >= maxLimit) def2CraqueDir *= -1;
                     defCraque2.style.left = def2CraqueX + 'px';
                 }
-                // Movimento da Defesa 3
                 if (defsCraqueActive >= 3) {
                     def3CraqueX += def3CraqueDir * (1.7 * craqueSpeedMultiplier);
                     if (def3CraqueX <= minLimit || def3CraqueX >= maxLimit) def3CraqueDir *= -1;
@@ -595,12 +586,13 @@
             if (direcao === 'UP') cabeca.y--; if (direcao === 'DOWN') cabeca.y++; if (direcao === 'LEFT') cabeca.x--; if (direcao === 'RIGHT') cabeca.x++;
             if (cabeca.x < 0) cabeca.x = gridTotal - 1; if (cabeca.x >= gridTotal) cabeca.x = 0;
             if (cabeca.y < 0) cabeca.y = gridTotal - 1; if (cabeca.y >= gridTotal) cabeca.y = 0;
-            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarEfeito('clique'); alert(`💥 Fim de jogo na Cobrinha!`); return; }
+            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarEfeito('clique'); alert(`💥 Fim de jogo na Cobrinha! Clique em Salvar Pontos se desejar registrar.`); return; }
             snake.unshift(cabeca);
             if (cabeca.x === comida.x && cabeca.y === comida.y) { 
                 pontosSnake += 10; 
                 nivelSnake = Math.floor(pontosSnake / 50) + 1; 
                 gerarComida(); 
+                tocarEfeito('cobra-comer'); 
             } else { 
                 snake.pop(); 
             }
@@ -608,7 +600,7 @@
         }
         function atualizarStatusSnake() { 
             const statusEl = document.getElementById('snake-status');
-            if(statusEl) statusEl.innerText = `🐍 Nível ${nivelSnake} | Pontos: ${pontosSnake}`; 
+            if (statusEl) statusEl.innerText = `🐍 Nível ${nivelSnake} | Pontos: ${pontosSnake}`; 
         }
         function desenharCobrinha() {
             const canvas = document.getElementById('snakeCanvas');
