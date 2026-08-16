@@ -162,6 +162,7 @@
             display: block;
             margin: 0 auto 10px auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            touch-action: none;
         }
 
         .jokenpo-arena {
@@ -254,7 +255,7 @@
             </div>
 
             <canvas id="gameCanvas" width="360" height="500"></canvas>
-            <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">Arraste e puxe a bola para chutar em direção ao gol!</p>
+            <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">Puxe a bola para trás (estilo arco e flecha) e solte para chutar!</p>
         </div>
 
         <!-- Jogo da Velha -->
@@ -696,7 +697,7 @@
             iniciarCobrinha(); 
         }
 
-        /* ==================== LÓGICA DO MINI CRAQUE ==================== */
+        /* ==================== LÓGICA ATUALIZADA DO MINI CRAQUE ==================== */
         const canvasCraque = document.getElementById('gameCanvas');
         const ctxCraque = canvasCraque.getContext('2d');
         let minicraqueInterval = null;
@@ -711,8 +712,9 @@
         };
 
         const goalKeeper = {
-            x: 150, y: 60, width: 60, height: 18,
-            baseSpeed: 2.2, speed: 2.2, direction: 1
+            x: 140, y: 60, width: 80, height: 18,
+            baseSpeed: 2.2, speed: 2.2, direction: 1,
+            minX: 60, maxX: 220
         };
 
         const defenders = [
@@ -748,32 +750,33 @@
             });
         }
 
+        function getMousePos(e) {
+            const rect = canvasCraque.getBoundingClientRect();
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
         canvasCraque.addEventListener('mousedown', (e) => {
             if (ball.isMoving) return;
-            const rect = canvasCraque.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-            if (Math.hypot(mouseX - ball.x, mouseY - ball.y) < ball.radius * 2) {
+            const pos = getMousePos(e);
+            if (Math.hypot(pos.x - ball.x, pos.y - ball.y) < ball.radius * 2.5) {
                 ball.isDragging = true;
             }
         });
 
         canvasCraque.addEventListener('mousemove', (e) => {
             if (!ball.isDragging) return;
-            const rect = canvasCraque.getBoundingClientRect();
-            let pullX = e.clientX - rect.left;
-            let pullY = e.clientY - rect.top;
-            
-            const maxPull = 70;
-            const dist = Math.hypot(pullX - ball.startX, pullY - ball.startY);
-            if (dist > maxPull) {
-                pullX = ball.startX + (pullX - ball.startX) * (maxPull / dist);
-                pullY = ball.startY + (pullY - ball.startY) * (maxPull / dist);
-            }
-            if (pullY < ball.startY) pullY = ball.startY;
-
-            ball.x = pullX;
-            ball.y = pullY;
+            const pos = getMousePos(e);
+            ball.x = pos.x;
+            ball.y = pos.y;
         });
 
         canvasCraque.addEventListener('mouseup', () => {
@@ -781,10 +784,42 @@
             ball.isDragging = false;
             ball.isMoving = true;
             tocarEfeito('jokenpo-jogada');
-            const forceMultiplier = 0.15;
+            const forceMultiplier = 0.18;
             ball.vx = (ball.startX - ball.x) * forceMultiplier;
             ball.vy = (ball.startY - ball.y) * forceMultiplier;
+            ball.x = ball.startX;
+            ball.y = ball.startY;
         });
+
+        canvasCraque.addEventListener('touchstart', (e) => {
+            if (ball.isMoving) return;
+            const pos = getMousePos(e);
+            if (Math.hypot(pos.x - ball.x, pos.y - ball.y) < ball.radius * 2.5) {
+                ball.isDragging = true;
+            }
+            e.preventDefault();
+        }, {passive: false});
+
+        canvasCraque.addEventListener('touchmove', (e) => {
+            if (!ball.isDragging) return;
+            const pos = getMousePos(e);
+            ball.x = pos.x;
+            ball.y = pos.y;
+            e.preventDefault();
+        }, {passive: false});
+
+        canvasCraque.addEventListener('touchend', (e) => {
+            if (!ball.isDragging) return;
+            ball.isDragging = false;
+            ball.isMoving = true;
+            tocarEfeito('jokenpo-jogada');
+            const forceMultiplier = 0.18;
+            ball.vx = (ball.startX - ball.x) * forceMultiplier;
+            ball.vy = (ball.startY - ball.y) * forceMultiplier;
+            ball.x = ball.startX;
+            ball.y = ball.startY;
+            e.preventDefault();
+        }, {passive: false});
 
         function updateMiniCraque() {
             if (ball.isMoving) {
@@ -796,7 +831,7 @@
                     ball.vx *= -1;
                 }
 
-                if (ball.y <= 45 && ball.x >= 110 && ball.x <= 250) {
+                if (ball.y <= 45 && ball.x >= 90 && ball.x <= 270) {
                     scoreCraque += 10;
                     document.getElementById('minicraque-score').innerText = scoreCraque;
                     atualizarDificuldadeCraque();
@@ -809,12 +844,14 @@
                     missShotCraque();
                 }
 
-                defenders.forEach(def => {
+                let numDefendersAtivos = Math.min(3, Math.floor(scoreCraque / 30) + 1);
+                for (let i = 0; i < numDefendersAtivos; i++) {
+                    let def = defenders[i];
                     if (ball.x > def.x && ball.x < def.x + def.width &&
                         ball.y - ball.radius < def.y + def.height && ball.y + ball.radius > def.y) {
                         missShotCraque();
                     }
-                });
+                }
 
                 if (ball.y < 0 || ball.y > 500 || ball.x < 0 || ball.x > 360) {
                     if (ball.y > 0) missShotCraque();
@@ -823,12 +860,16 @@
             }
 
             goalKeeper.x += goalKeeper.speed * goalKeeper.direction;
-            if (goalKeeper.x <= 110 || goalKeeper.x + goalKeeper.width >= 250) goalKeeper.direction *= -1;
+            if (goalKeeper.x <= goalKeeper.minX || goalKeeper.x + goalKeeper.width >= goalKeeper.maxX) {
+                goalKeeper.direction *= -1;
+            }
 
-            defenders.forEach(def => {
+            let numDefendersAtivos = Math.min(3, Math.floor(scoreCraque / 30) + 1);
+            for (let i = 0; i < numDefendersAtivos; i++) {
+                let def = defenders[i];
                 def.x += def.speed * def.direction;
                 if (def.x <= 40 || def.x + def.width >= 320) def.direction *= -1;
-            });
+            }
         }
 
         function missShotCraque() {
@@ -862,24 +903,32 @@
             ctxCraque.strokeStyle = '#ffffff';
             ctxCraque.lineWidth = 3;
             ctxCraque.strokeRect(30, 30, 300, 440);
-            ctxCraque.strokeRect(110, 30, 140, 60);
+            ctxCraque.strokeRect(90, 30, 180, 70); // Gol mais largo
 
             ctxCraque.fillStyle = '#64748b';
             ctxCraque.fillRect(goalKeeper.x, goalKeeper.y, goalKeeper.width, goalKeeper.height);
 
-            ctxCraque.fillStyle = '#ef4444';
-            ctxCraque.fillRect(defenders[0].x, defenders[0].y, defenders[0].width, defenders[0].height);
-
-            ctxCraque.fillStyle = '#3b82f6';
-            ctxCraque.fillRect(defenders[1].x, defenders[1].y, defenders[1].width, defenders[1].height);
-
-            ctxCraque.fillStyle = '#10b981';
-            ctxCraque.fillRect(defenders[2].x, defenders[2].y, defenders[2].width, defenders[2].height);
+            let numDefendersAtivos = Math.min(3, Math.floor(scoreCraque / 30) + 1);
+            
+            if (numDefendersAtivos >= 1) {
+                ctxCraque.fillStyle = '#ef4444';
+                ctxCraque.fillRect(defenders[0].x, defenders[0].y, defenders[0].width, defenders[0].height);
+            }
+            if (numDefendersAtivos >= 2) {
+                ctxCraque.fillStyle = '#3b82f6';
+                ctxCraque.fillRect(defenders[1].x, defenders[1].y, defenders[1].width, defenders[1].height);
+            }
+            if (numDefendersAtivos >= 3) {
+                ctxCraque.fillStyle = '#10b981';
+                ctxCraque.fillRect(defenders[2].x, defenders[2].y, defenders[2].width, defenders[2].height);
+            }
 
             if (ball.isDragging) {
                 ctxCraque.beginPath();
                 ctxCraque.moveTo(ball.startX, ball.startY);
-                ctxCraque.lineTo(ball.x, ball.y);
+                let aimX = ball.startX + (ball.startX - ball.x);
+                let aimY = ball.startY + (ball.startY - ball.y);
+                ctxCraque.lineTo(aimX, aimY);
                 ctxCraque.strokeStyle = '#ffeb3b';
                 ctxCraque.lineWidth = 3;
                 ctxCraque.stroke();
