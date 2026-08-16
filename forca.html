@@ -11,7 +11,7 @@
             margin: 0;
             padding: 10px;
             color: #333;
-            padding-bottom: 80px;
+            padding-bottom: 20px;
             text-align: center;
         }
 
@@ -163,32 +163,6 @@
             margin: 0 auto 10px auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-
-        /* Barra de Navegação Inferior */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 55px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            flex-grow: 1;
-        }
-        .nav-item.active { color: #0047ab; font-weight: bold; }
-        .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
 
         .jokenpo-arena {
             background: linear-gradient(135deg, #009b3a 0%, #002776 100%);
@@ -420,14 +394,6 @@
             <button onclick="tocarEfeito('clique'); fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">Fechar</button>
         </div>
     </div>
-
-    <!-- NAVEGAÇÃO INFERIOR -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
-        <a href="servicos.html" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
-        <a href="entretenimento.html" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
-        <a href="perfil.html" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
-    </nav>
 
     <script>
         /* SISTEMA DE ÁUDIO E MÚSICA INSTRUMENTAL DINÂMICA */
@@ -746,12 +712,13 @@
 
         const goalKeeper = {
             x: 150, y: 60, width: 60, height: 18,
-            speed: 2.2, direction: 1
+            baseSpeed: 2.2, speed: 2.2, direction: 1
         };
 
         const defenders = [
-            { x: 90, y: 200, width: 65, height: 14, speed: 1.8, direction: 1 },
-            { x: 180, y: 320, width: 65, height: 14, speed: -2, direction: -1 }
+            { x: 100, y: 180, width: 65, height: 14, baseSpeed: 1.8, speed: 1.8, direction: 1 },
+            { x: 140, y: 280, width: 65, height: 14, baseSpeed: 2.2, speed: 2.2, direction: -1 },
+            { x: 120, y: 380, width: 65, height: 14, baseSpeed: 2.6, speed: 2.6, direction: 1 }
         ];
 
         function iniciarMiniCraque() {
@@ -759,6 +726,7 @@
             attemptsCraque = 3;
             document.getElementById('minicraque-score').innerText = scoreCraque;
             document.getElementById('minicraque-attempts').innerText = attemptsCraque;
+            atualizarDificuldadeCraque();
             resetBall();
             if (!minicraqueInterval) {
                 minicraqueInterval = requestAnimationFrame(loopMiniCraque);
@@ -772,7 +740,14 @@
             }
         }
 
-        // Eventos de Toque e Mouse para o Estilingue
+        function atualizarDificuldadeCraque() {
+            let fatorVelocidade = 1 + Math.floor(scoreCraque / 30) * 0.35;
+            goalKeeper.speed = goalKeeper.baseSpeed * fatorVelocidade;
+            defenders.forEach((def, idx) => {
+                def.speed = (def.baseSpeed + (idx * 0.2)) * fatorVelocidade;
+            });
+        }
+
         canvasCraque.addEventListener('mousedown', (e) => {
             if (ball.isMoving) return;
             const rect = canvasCraque.getBoundingClientRect();
@@ -821,21 +796,19 @@
                     ball.vx *= -1;
                 }
 
-                // GOL (Linha do topo entre x: 110 e 250)
                 if (ball.y <= 45 && ball.x >= 110 && ball.x <= 250) {
                     scoreCraque += 10;
                     document.getElementById('minicraque-score').innerText = scoreCraque;
+                    atualizarDificuldadeCraque();
                     tocarEfeito('vitoria');
                     resetBall();
                 }
 
-                // Colisão Goleiro
                 if (ball.x > goalKeeper.x && ball.x < goalKeeper.x + goalKeeper.width &&
                     ball.y - ball.radius < goalKeeper.y + goalKeeper.height && ball.y + ball.radius > goalKeeper.y) {
                     missShotCraque();
                 }
 
-                // Colisão Defensores
                 defenders.forEach(def => {
                     if (ball.x > def.x && ball.x < def.x + def.width &&
                         ball.y - ball.radius < def.y + def.height && ball.y + ball.radius > def.y) {
@@ -868,6 +841,7 @@
                 attemptsCraque = 3;
                 document.getElementById('minicraque-score').innerText = scoreCraque;
                 document.getElementById('minicraque-attempts').innerText = attemptsCraque;
+                atualizarDificuldadeCraque();
             }
             resetBall();
         }
@@ -890,17 +864,18 @@
             ctxCraque.strokeRect(30, 30, 300, 440);
             ctxCraque.strokeRect(110, 30, 140, 60);
 
-            // Goleiro
-            ctxCraque.fillStyle = '#ff9800';
+            ctxCraque.fillStyle = '#64748b';
             ctxCraque.fillRect(goalKeeper.x, goalKeeper.y, goalKeeper.width, goalKeeper.height);
 
-            // Defensores
-            ctxCraque.fillStyle = '#e91e63';
-            defenders.forEach(def => {
-                ctxCraque.fillRect(def.x, def.y, def.width, def.height);
-            });
+            ctxCraque.fillStyle = '#ef4444';
+            ctxCraque.fillRect(defenders[0].x, defenders[0].y, defenders[0].width, defenders[0].height);
 
-            // Linha do Estilingue
+            ctxCraque.fillStyle = '#3b82f6';
+            ctxCraque.fillRect(defenders[1].x, defenders[1].y, defenders[1].width, defenders[1].height);
+
+            ctxCraque.fillStyle = '#10b981';
+            ctxCraque.fillRect(defenders[2].x, defenders[2].y, defenders[2].width, defenders[2].height);
+
             if (ball.isDragging) {
                 ctxCraque.beginPath();
                 ctxCraque.moveTo(ball.startX, ball.startY);
@@ -910,7 +885,6 @@
                 ctxCraque.stroke();
             }
 
-            // Bola
             ctxCraque.beginPath();
             ctxCraque.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
             ctxCraque.fillStyle = '#ffffff';
