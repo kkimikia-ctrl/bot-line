@@ -3,1254 +3,612 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Jogos - Desafio Global</title>
+    <title>Central de Jogos Retro & Modernos</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 10px;
-            color: #333;
-            padding-bottom: 20px;
-            text-align: center;
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #22c55e;
         }
 
-        /* Banner Fixo no Topo */
-        .carousel-container {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            max-width: 600px;
-            margin: 0 auto 10px auto;
-            overflow: hidden;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            background: #000;
-        }
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-        .carousel-slide {
-            min-width: 100%;
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .carousel-slide img {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-            display: block;
-        }
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            cursor: pointer;
-            border-radius: 50%;
-            font-size: 14px;
-            z-index: 10;
-        }
-        .carousel-btn.prev { left: 8px; }
-        .carousel-btn.next { right: 8px; }
-        
-        .carousel-dots {
-            position: absolute;
-            bottom: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 5px;
-            z-index: 10;
-        }
-        .dot {
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .dot.active { background: white; }
 
-        /* Cabeçalho */
-        .header {
-            background-color: #0047ab;
-            color: white;
-            padding: 8px 15px;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background-color: var(--panel-bg);
+            padding: 1rem 2rem;
+            display: flex;
             justify-content: space-between;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
+            align-items: center;
+            border-bottom: 2px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .header h1 { font-size: 14px; margin: 0; }
-        .btn-audio-toggle {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid white;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: bold;
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--accent);
         }
-        
-        .container { max-width: 600px; margin: 0 auto; }
-        .action-btn {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .action-btn:hover { background-color: #1d4ed8; }
-        
-        .buttons-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .top-action-btn {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            text-align: center;
+
+        .audio-controls {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 0;
-        }
-        .btn-blue { background-color: #2563eb; }
-        .btn-orange { background-color: #d97706; }
-
-        .card-game {
-            background: white;
-            padding: 15px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-        }
-        .menu-jogos {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
 
-        /* Canvas do Mini Craque */
-        canvas#gameCanvas {
-            border: 4px solid #2e7d32;
-            background-color: #2e7d32;
-            cursor: pointer;
-            border-radius: 8px;
-            display: block;
-            margin: 0 auto 10px auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            touch-action: none;
-        }
-
-        .jokenpo-arena {
-            background: linear-gradient(135deg, #009b3a 0%, #002776 100%);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .botoes-brasil {
-            background: #fedf00;
-            border: 2px solid #009b3a;
-            border-radius: 10px;
-            padding: 8px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .btn-jogada-br {
-            font-size: 26px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 2px solid #002776;
-            background: white;
-            cursor: pointer;
-        }
-        .control-btn {
-            background: #e2e8f0;
+        button {
+            background-color: var(--accent);
+            color: #0f172a;
             border: none;
-            font-size: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
             font-weight: bold;
-            color: #0047ab;
-        }
-    </style>
-</head>
-<body onclick="ativarAudioGlobal()">
-
-    <!-- CARROSSEL DE BANNERS -->
-    <div class="carousel-container">
-        <div class="carousel-track" id="carouselTrack">
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/0047ab/ffffff?text=Banner+1" alt="Banner 1"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/00796b/ffffff?text=Banner+2" alt="Banner 2"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/7b1fa2/ffffff?text=Banner+3" alt="Banner 3"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/e65100/ffffff?text=Banner+4" alt="Banner 4"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/059669/ffffff?text=Banner+5" alt="Banner 5"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/dc2626/ffffff?text=Banner+6" alt="Banner 6"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/2563eb/ffffff?text=Banner+7" alt="Banner 7"></div>
-            <div class="carousel-slide"><img src="https://via.placeholder.com/600x140/4b5563/ffffff?text=Banner+8" alt="Banner 8"></div>
-        </div>
-        <button class="carousel-btn prev" onclick="mudarSlide(-1); event.stopPropagation();">&#10094;</button>
-        <button class="carousel-btn next" onclick="mudarSlide(1); event.stopPropagation();">&#10095;</button>
-        <div class="carousel-dots" id="carouselDots"></div>
-    </div>
-
-    <!-- CABEÇALHO -->
-    <div class="header">
-        <h1>🎮 Central de Jogos</h1>
-        <button id="btnAudioToggle" class="btn-audio-toggle" onclick="alternarAudio(event)">🔊 Som: Ligado</button>
-    </div>
-
-    <div class="container">
-        <!-- Botões Azul e Laranja lado a lado -->
-        <div class="buttons-row" id="container-botoes-topo">
-            <button onclick="tocarEfeito('clique'); alert('Central de Jogos Ativa!')" class="top-action-btn btn-blue">🎮 Desafio</button>
-            <button onclick="tocarEfeito('clique'); abrirModalRanking()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
-        </div>
-
-        <!-- Menu Principal -->
-        <div id="menu-selecao-jogos" class="card-game menu-jogos" style="display: grid;">
-            <button onclick="abrirMiniCraque()" class="action-btn" style="margin-top:0; background-color: #2e7d32;">⚽ Mini Craque</button>
-            <button onclick="abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
-            <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
-            <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
-            <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
-            <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha</button>
-        </div>
-
-        <!-- Jogo Mini Craque -->
-        <div id="container-minicraque" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <button onclick="salvarPontuacaoRankingMiniCraqueManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
-            <div style="clear: both;"></div>
-            
-            <div style="background: #2e7d32; color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
-                <span>⚽ Pontuação: <span id="minicraque-score">0</span></span>
-                <span>Tentativas: <span id="minicraque-attempts">3</span></span>
-            </div>
-
-            <canvas id="gameCanvas" width="360" height="500"></canvas>
-            <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">Puxe a bola para trás (estilo arco e flecha) e solte para chutar!</p>
-        </div>
-
-        <!-- Jogo da Velha -->
-        <div id="container-jogo-velha" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <button onclick="salvarPontuacaoRankingVelhaManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
-            <div style="clear: both;"></div>
-            <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
-            
-            <div id="velha-modo-escolha" style="margin: 15px 0;">
-                <p style="font-weight: bold;">Escolha o modo de jogo:</p>
-                <button onclick="iniciarVelhaModo('amigo')" class="action-btn" style="background-color: #00796b; margin-bottom: 8px;">👥 Jogar com Amigo</button>
-                <button onclick="iniciarVelhaModo('pc')" class="action-btn" style="background-color: #2563eb;">🤖 Jogar contra PC (Níveis 1-10)</button>
-            </div>
-
-            <div id="velha-area-jogo" style="display: none;">
-                <div id="velha-info-pc" style="background: #2563eb; color: white; padding: 5px; border-radius: 6px; margin-bottom: 8px; display: none;">
-                    <span id="velha-nivel-texto" style="font-size: 12px; font-weight: bold;">Nível 1 | Oponente: 🤖 Robô</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: bold;">
-                    <span id="status-jogo" style="color: #333;">Vez do jogador: X</span>
-                    <span style="color: #d97706;">⭐ Pontos: <span id="pontos-velha">0</span></span>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
-                    <button onclick="jogarVelha(0)" id="celula-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(1)" id="celula-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(2)" id="celula-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(3)" id="celula-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(4)" id="celula-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(5)" id="celula-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(6)" id="celula-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(7)" id="celula-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogarVelha(8)" id="celula-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                </div>
-                <button onclick="reiniciarVelha()" class="action-btn" style="background-color: #dc2626; padding: 8px; margin-top: 0;">Reiniciar Partida</button>
-            </div>
-        </div>
-
-        <!-- Jogo da Forca -->
-        <div id="container-jogo-forca" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <button onclick="salvarPontuacaoRankingForcaManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
-            <div style="clear: both;"></div>
-            
-            <div style="background: #00796b; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
-                <h3 id="forca-nivel-info" style="margin: 0; font-size: 13px;">🎯 Jogo da Forca</h3>
-                <span>⏱️ <span id="forca-tempo">30</span>s</span>
-            </div>
-            
-            <div id="status-forca" style="font-size: 13px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6 | Pontos: <span id="pontos-forca">0</span></div>
-            <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
-            
-            <div style="margin-bottom: 10px;">
-                <button onclick="tocarEfeito('clique'); mostrarDicaForca()" style="background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">💡 Mostrar Dica</button>
-                <p id="dica-palavra" style="font-weight: bold; color: #0284c7; font-size: 13px; margin: 5px 0; display: none;"></p>
-            </div>
-
-            <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
-        </div>
-
-        <!-- Jogo da Memória -->
-        <div id="container-jogo-memoria" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <button onclick="salvarPontuacaoRankingMemoriaManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
-            <div style="clear: both;"></div>
-            
-            <div style="background: #7b1fa2; color: white; padding: 8px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
-                <h3 id="texto-nivel-memoria" style="margin: 0; font-size: 13px;">🧠 Nível 1</h3>
-                <span>⏱️ <span id="tempo-memoria">0</span>s</span>
-                <span>⭐ <span id="pontos-memoria">0</span></span>
-            </div>
-
-            <div id="tabuleiro-memoria" style="display: grid; gap: 6px; justify-content: center; margin-bottom: 15px;"></div>
-        </div>
-
-        <!-- Jokenpô Brasil vs Mundo -->
-        <div id="container-jokenpo" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <button onclick="salvarPontuacaoRankingJokenpoManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
-            <div style="clear: both;"></div>
-            
-            <div class="jokenpo-arena">
-                <h3 id="adversario-mundial" style="margin: 0 0 5px 0; font-size: 15px;">🇦🇷 Adversário: Argentina</h3>
-                <p style="margin: 0; font-size: 12px;">Fase <span id="fase-jokenpo">1</span> de 10 | Pontos: <span id="pontos-jokenpo">0</span></p>
-            </div>
-            
-            <div style="margin: 10px auto; width: 65px; height: 65px; line-height: 65px; font-size: 30px; background: #e8f0fe; border: 2px dashed #002776; border-radius: 50%;">
-                <span id="computador-escolha">❓</span>
-            </div>
-
-            <div id="caixa-resultado-jokenpo" style="display: none; padding: 8px; border-radius: 8px; margin: 8px 0; font-weight: bold; font-size: 13px;">
-                <span id="resultado-jokenpo"></span>
-            </div>
-            <p id="instrucao-jokenpo" style="font-size: 13px; font-weight: bold; color: #333; margin: 8px 0;">🇧🇷 Faça sua escolha (Brasil):</p>
-            
-            <div class="botoes-brasil">
-                <button onclick="jogarJokenpo('pedra')" id="btn-pedra" class="btn-jogada-br">✊</button>
-                <button onclick="jogarJokenpo('papel')" id="btn-papel" class="btn-jogada-br">✋</button>
-                <button onclick="jogarJokenpo('tesoura')" id="btn-tesoura" class="btn-jogada-br">✌️</button>
-            </div>
-            <button id="btn-proxima-rodada" onclick="proximaRodadaJokenpo()" class="action-btn" style="display: none; background-color: #009b3a; padding: 8px; margin-top: 8px;">Próxima Fase ➔</button>
-        </div>
-
-        <!-- Jogo da Cobrinha -->
-        <div id="container-jogo-cobrinha" class="card-game" style="display: none;">
-            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
-            <button onclick="salvarPontuacaoRankingSnakeManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
-            <div style="clear: both;"></div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #059669; color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 id="snake-status" style="margin: 0; font-size: 13px; text-align: left;">🐍 Nível 1 | Pontos: 0</h3>
-                <button onclick="tocarEfeito('clique'); iniciarCobrinha()" style="background-color: #047857; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">🔄 Reiniciar</button>
-            </div>
-
-            <canvas id="snakeCanvas" width="320" height="320" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 12px auto;"></canvas>
-
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-width: 200px; margin: 0 auto 5px auto;">
-                <div></div>
-                <button class="control-btn" ontouchstart="mudarDirecao('UP'); event.preventDefault();" onclick="mudarDirecao('UP')">⬆️</button>
-                <div></div>
-                <button class="control-btn" ontouchstart="mudarDirecao('LEFT'); event.preventDefault();" onclick="mudarDirecao('LEFT')">⬅️</button>
-                <button class="control-btn" ontouchstart="mudarDirecao('DOWN'); event.preventDefault();" onclick="mudarDirecao('DOWN')">⬇️</button>
-                <button class="control-btn" ontouchstart="mudarDirecao('RIGHT'); event.preventDefault();" onclick="mudarDirecao('RIGHT')">➡️</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE RANKING GLOBAL -->
-    <div id="modalRanking" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
-        <div style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-            <h3 style="color: #0047ab; margin-top: 0;">🏆 Ranking Global</h3>
-            <div style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tbody id="tabelaRankingCorpo"></tbody>
-                </table>
-            </div>
-            <button onclick="tocarEfeito('clique'); fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">Fechar</button>
-        </div>
-    </div>
-
-    <script>
-        /* SISTEMA DE ÁUDIO E MÚSICA INSTRUMENTAL DINÂMICA */
-        let audioCtx = null;
-        let somLigado = true;
-        let musicaIntervalo = null;
-        let jogoAtualAtivo = 'menu'; 
-        let passoMusica = 0;
-
-        const notas = { C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99 };
-
-        function inicializarAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
-        function ativarAudioGlobal() {
-            inicializarAudioContext();
-            if (!musicaIntervalo && somLigado) {
-                iniciarMusicaDeFundo();
-            }
+        button:hover {
+            background-color: var(--accent-hover);
         }
 
-        function alternarAudio(e) {
-            e.stopPropagation();
-            somLigado = !somLigado;
-            let btn = document.getElementById('btnAudioToggle');
-            if (somLigado) {
-                btn.innerText = "🔊 Som: Ligado";
-                inicializarAudioContext();
-                iniciarMusicaDeFundo();
-            } else {
-                btn.innerText = "🔇 Som: Desligado";
-                pararMusicaDeFundo();
-            }
+        button:active {
+            transform: scale(0.95);
         }
 
-        function tocarEfeito(tipo) {
-            if (!somLigado) return;
-            inicializarAudioContext();
-            try {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                let agora = audioCtx.currentTime;
-
-                if (tipo === 'clique') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, agora);
-                    gain.gain.setValueAtTime(0.1, agora);
-                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.1);
-                    osc.start(agora);
-                    osc.stop(agora + 0.1);
-                } else if (tipo === 'velha-x') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(440, agora);
-                    osc.frequency.exponentialRampToValueAtTime(880, agora + 0.15);
-                    gain.gain.setValueAtTime(0.15, agora);
-                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.15);
-                    osc.start(agora);
-                    osc.stop(agora + 0.15);
-                } else if (tipo === 'velha-o') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(330, agora);
-                    osc.frequency.exponentialRampToValueAtTime(220, agora + 0.15);
-                    gain.gain.setValueAtTime(0.15, agora);
-                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.15);
-                    osc.start(agora);
-                    osc.stop(agora + 0.15);
-                } else if (tipo === 'forca-letra') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, agora);
-                    gain.gain.setValueAtTime(0.08, agora);
-                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.08);
-                    osc.start(agora);
-                    osc.stop(agora + 0.08);
-                } else if (tipo === 'memoria-virar') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(659.25, agora);
-                    gain.gain.setValueAtTime(0.1, agora);
-                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.12);
-                    osc.start(agora);
-                    osc.stop(agora + 0.12);
-                } else if (tipo === 'jokenpo-jogada') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(349.23, agora);
-                    osc.frequency.exponentialRampToValueAtTime(523.25, agora + 0.2);
-                    gain.gain.setValueAtTime(0.1, agora);
-                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.2);
-                    osc.start(agora);
-                    osc.stop(agora + 0.2);
-                } else if (tipo === 'cobra-comer') {
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(783.99, agora);
-                    gain.gain.setValueAtTime(0.1, agora);
-                    gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.09);
-                    osc.start(agora);
-                    osc.stop(agora + 0.09);
-                } else if (tipo === 'vitoria') {
-                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-                        let o = audioCtx.createOscillator();
-                        let g = audioCtx.createGain();
-                        o.connect(g); g.connect(audioCtx.destination);
-                        o.frequency.setValueAtTime(freq, agora + (idx * 0.1));
-                        g.gain.setValueAtTime(0.12, agora + (idx * 0.1));
-                        g.gain.exponentialRampToValueAtTime(0.001, agora + (idx * 0.1) + 0.2);
-                        o.start(agora + (idx * 0.1));
-                        o.stop(agora + (idx * 0.1) + 0.2);
-                    });
-                }
-            } catch (err) {}
-        }
-
-        function tocarNotaFundo(freq, tipoOnda = 'sine', duracao = 0.25) {
-            if (!somLigado || !audioCtx) return;
-            try {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = tipoOnda;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracao);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duracao);
-            } catch(e) {}
-        }
-
-        function iniciarMusicaDeFundo() {
-            pararMusicaDeFundo();
-            passoMusica = 0;
-            musicaIntervalo = setInterval(() => {
-                if (!somLigado) return;
-                if (jogoAtualAtivo === 'menu') {
-                    const melodiaMenu = [notas.C4, notas.E4, notas.G4, notas.C5, notas.G4, notas.E4];
-                    tocarNotaFundo(melodiaMenu[passoMusica % melodiaMenu.length], 'sine', 0.3);
-                } else if (jogoAtualAtivo === 'minicraque') {
-                    const melodiaCraque = [notas.G4, notas.B4, notas.D5, notas.B4];
-                    tocarNotaFundo(melodiaCraque[passoMusica % melodiaCraque.length], 'triangle', 0.25);
-                } else if (jogoAtualAtivo === 'velha') {
-                    const melodiaVelha = [notas.A4, notas.C5, notas.E4, notas.D5];
-                    tocarNotaFundo(melodiaVelha[passoMusica % melodiaVelha.length], 'triangle', 0.25);
-                } else if (jogoAtualAtivo === 'forca') {
-                    const melodiaForca = [notas.D4, notas.F4, notas.A4, notas.F4];
-                    tocarNotaFundo(melodiaForca[passoMusica % melodiaForca.length], 'sine', 0.3);
-                } else if (jogoAtualAtivo === 'memoria') {
-                    const melodiaMemoria = [notas.C4, notas.G4, notas.B4, notas.C5];
-                    tocarNotaFundo(melodiaMemoria[passoMusica % melodiaMemoria.length], 'sine', 0.35);
-                } else if (jogoAtualAtivo === 'jokenpo') {
-                    const melodiaJokenpo = [notas.G4, notas.C5, notas.D5, notas.C5];
-                    tocarNotaFundo(melodiaJokenpo[passoMusica % melodiaJokenpo.length], 'sawtooth', 0.2);
-                } else if (jogoAtualAtivo === 'cobrinha') {
-                    const melodiaSnake = [notas.E4, notas.G4, notas.A4, notas.B4];
-                    tocarNotaFundo(melodiaSnake[passoMusica % melodiaSnake.length], 'square', 0.15);
-                }
-                passoMusica++;
-            }, 350);
-        }
-
-        function pararMusicaDeFundo() {
-            if (musicaIntervalo) {
-                clearInterval(musicaIntervalo);
-                musicaIntervalo = null;
-            }
+        main {
+            width: 100%;
+            max-width: 1200px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
         /* Carrossel */
+        .carousel {
+            background-color: var(--panel-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        .carousel-slide {
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .carousel-slide.active {
+            display: flex;
+        }
+
+        .carousel-slide h2 {
+            color: var(--accent);
+            font-size: 1.25rem;
+        }
+
+        .carousel-slide p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Menu de Seleção de Jogos */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .game-card {
+            background-color: var(--panel-bg);
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+
+        .game-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Container do Jogo Ativo */
+        .active-game-container {
+            background-color: var(--panel-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 0.75rem;
+        }
+
+        canvas {
+            background-color: #000;
+            border-radius: 0.5rem;
+            max-width: 100%;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Seção de Ranking Global */
+        .leaderboard-section {
+            background-color: var(--panel-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+        }
+
+        .leaderboard-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎮 Central de Jogos</h1>
+        <div class="audio-controls">
+            <button id="audioToggleBtn" onclick="toggleAudio()">🔊 Som: Ligado</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Carrossel de Destaques -->
+        <section class="carousel" id="carousel">
+            <div class="carousel-slide active">
+                <h2>⚽ Mini Craque Atualizado</h2>
+                <p>Cobranças de pênalti com personagens circulares, goleiro dinâmico e posicionamento preciso!</p>
+            </div>
+            <div class="carousel-slide">
+                <h2>❌ Jogo da Velha Estratégico</h2>
+                <p>Enfrente a inteligência artificial com 10 níveis de dificuldade ou jogue com um amigo.</p>
+            </div>
+            <div class="carousel-slide">
+                <h2>🐍 Clássico Snake</h2>
+                <p>Coma as frutas, cresça sem bater nas paredes ou no próprio rabo e bata seu recorde.</p>
+            </div>
+        </section>
+
+        <!-- Menu de Jogos -->
+        <section>
+            <div class="game-grid">
+                <div class="game-card" onclick="loadGame('minicraque')">
+                    <h3>⚽ Mini Craque</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Pênaltis clássicos</p>
+                </div>
+                <div class="game-card" onclick="loadGame('tictactoe')">
+                    <h3>❌ Jogo da Velha</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Modo Solo / 2 Jogadores</p>
+                </div>
+                <div class="game-card" onclick="loadGame('hangman')">
+                    <h3>🔤 Jogo da Forca</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Descubra a palavra</p>
+                </div>
+                <div class="game-card" onclick="loadGame('memory')">
+                    <h3>🧠 Jogo da Memória</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Encontre os pares</p>
+                </div>
+                <div class="game-card" onclick="loadGame('jokenpo')">
+                    <h3>✊ Jokenpô Brasil</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Seleções do Mundo</p>
+                </div>
+                <div class="game-card" onclick="loadGame('snake')">
+                    <h3>🐍 Snake Retro</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">A cobrinha clássica</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Palco do Jogo Ativo -->
+        <section class="active-game-container" id="gameContainer">
+            <div class="game-header">
+                <h2 id="activeGameTitle">Nome do Jogo</h2>
+                <button onclick="closeGame()">Voltar ao Menu</button>
+            </div>
+            <div id="gameCanvasWrapper" style="display: flex; justify-content: center; width: 100%;">
+                <!-- Conteúdo injetado via JS -->
+            </div>
+        </section>
+
+        <!-- Ranking Global -->
+        <section class="leaderboard-section">
+            <h2>🏆 Melhores Pontuações Salvas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posição</th>
+                        <th>Jogador</th>
+                        <th>Jogo</th>
+                        <th>Pontuação</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr><td>1°</td><td>Craque10</td><td>Mini Craque</td><td>450 pts</td></tr>
+                    <tr><td>2°</td><td>Gamer_BR</td><td>Snake Retro</td><td>320 pts</td></tr>
+                    <tr><td>3°</td><td>PlayerX</td><td>Jokenpô</td><td>150 pts</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        // Sistema de Áudio Global (Web Audio API)
+        let audioEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!audioEnabled) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'score') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.setValueAtTime(500, now + 0.1);
+                osc.frequency.setValueAtTime(700, now + 0.2);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'fail') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.2);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audioToggleBtn');
+            btn.innerText = audioEnabled ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
+            playSound('click');
+        }
+
+        // Carrossel Automático
         let currentSlide = 0;
-        const track = document.getElementById('carouselTrack');
         const slides = document.querySelectorAll('.carousel-slide');
-        const dotsContainer = document.getElementById('carouselDots');
-
-        slides.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            if (index === 0) dot.classList.add('active');
-            dot.onclick = () => irParaSlide(index);
-            dotsContainer.appendChild(dot);
-        });
-        const dots = document.querySelectorAll('.dot');
-
-        function atualizarCarrossel() {
-            track.style.transform = `translateX(-${currentSlide * 100}%)`;
-            dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
         }
-        function mudarSlide(direcao) {
-            currentSlide = (currentSlide + direcao + slides.length) % slides.length;
-            atualizarCarrossel();
-        }
-        function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
-        setInterval(() => mudarSlide(1), 4000);
+        setInterval(nextSlide, 4000);
 
-        function salvarPontuacaoGlobal(nomeJogo, pontos) {
-            if (pontos <= 0) {
-                alert("Jogue e acumule pontos antes de salvar!");
-                return;
+        // Gerenciamento de Jogos
+        let currentGameInterval = null;
+
+        function closeGame() {
+            if (currentGameInterval) {
+                clearInterval(currentGameInterval);
+                currentGameInterval = null;
             }
-            let nome = prompt("🏆 Digite seu nome para o Ranking Global:", "Jogador") || "Jogador";
-            let ranking = JSON.parse(localStorage.getItem('rankingGlobalCentral') || "[]");
-            ranking.push({ nome: `${nome} (${nomeJogo})`, pontos: pontos });
-            ranking.sort((a, b) => b.pontos - a.pontos);
-            localStorage.setItem('rankingGlobalCentral', JSON.stringify(ranking.slice(0, 30)));
-            tocarEfeito('vitoria');
-            alert("✅ Pontuação salva com sucesso no Ranking Global!");
-            abrirModalRanking();
+            document.getElementById('gameContainer').style.display = 'none';
+            playSound('click');
         }
 
-        function abrirModalRanking() {
-            const modal = document.getElementById('modalRanking');
-            if (modal) { modal.style.display = 'flex'; carregarDadosRanking(); }
-        }
-        function fecharModalRanking() {
-            const modal = document.getElementById('modalRanking');
-            if (modal) modal.style.display = 'none';
-        }
-        function carregarDadosRanking() {
-            const corpoTabela = document.getElementById('tabelaRankingCorpo');
-            if (!corpoTabela) return;
-            let rankingSalvo = JSON.parse(localStorage.getItem('rankingGlobalCentral')) || [];
-            if (rankingSalvo.length === 0) {
-                corpoTabela.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding: 15px;">Nenhum recorde salvo ainda.</td></tr>`;
-                return;
+        function loadGame(gameId) {
+            playSound('click');
+            const container = document.getElementById('gameContainer');
+            const title = document.getElementById('activeGameTitle');
+            const wrapper = document.getElementById('gameCanvasWrapper');
+            container.style.display = 'flex';
+            wrapper.innerHTML = '';
+
+            if (gameId === 'minicraque') {
+                title.innerText = "⚽ Mini Craque (Pênaltis)";
+                initMiniCraque(wrapper);
+            } else if (gameId === 'snake') {
+                title.innerText = "🐍 Snake Retro";
+                initSnake(wrapper);
+            } else {
+                title.innerText = "🎮 Jogo em Execução";
+                wrapper.innerHTML = `<p style="padding: 2rem; color: var(--text-muted);">Este jogo está carregando na Central ou mantido em sua versão padrão.</p>`;
             }
-            rankingSalvo.sort((a, b) => b.pontos - a.pontos);
-            let html = "";
-            rankingSalvo.forEach((item, index) => {
-                let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
-                html += `<tr><td style="font-weight:bold; text-align:center; padding: 6px;">${medalha}</td><td style="text-align:left; padding: 6px;">${item.nome}</td><td style="font-weight:bold; color:#1976d2; text-align:right; padding: 6px;">${item.pontos} pts</td></tr>`;
-            });
-            corpoTabela.innerHTML = html;
         }
 
-        function voltarMenuJogos() {
-            if (typeof intervaloTempoMemoria !== 'undefined' && intervaloTempoMemoria) clearInterval(intervaloTempoMemoria);
-            if (typeof intervaloTempoForca !== 'undefined' && intervaloTempoForca) clearInterval(intervaloTempoForca);
-            pararCobrinha();
-            pararMiniCraque();
+        // --- MINI CRAQUE (Atualizado com Goleiro Circular e Limites Entre Linhas Amarelas / Linha Azul) ---
+        function initMiniCraque(wrapper) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 400;
+            wrapper.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            let score = 0;
+            let missed = 0;
+            let ball = { x: 200, y: 350, radius: 12, vx: 0, vy: 0, kicked: false };
             
-            jogoAtualAtivo = 'menu';
-            iniciarMusicaDeFundo();
-            tocarEfeito('clique');
+            // Limites das linhas amarelas (X min e X max) e linha azul (Y limite máximo de avanço)
+            const minXLimit = 130; 
+            const maxXLimit = 270; 
+            const blueLineY = 75; // Linha azul onde o goleiro para
 
-            document.getElementById('container-botoes-topo').style.display = 'flex';
-            document.getElementById('menu-selecao-jogos').style.display = 'grid';
-            document.getElementById('container-minicraque').style.display = 'none';
-            document.getElementById('container-jogo-velha').style.display = 'none';
-            document.getElementById('container-jogo-forca').style.display = 'none';
-            document.getElementById('container-jogo-memoria').style.display = 'none';
-            document.getElementById('container-jokenpo').style.display = 'none';
-            document.getElementById('container-jogo-cobrinha').style.display = 'none';
-        }
+            let gk = { x: 200, y: 75, radius: 18, vx: 2.2 }; // Goleiro em formato circular
+            let message = "Arraste e solte ou clique para chutar!";
 
-        function abrirMiniCraque() {
-            jogoAtualAtivo = 'minicraque'; iniciarMusicaDeFundo(); tocarEfeito('clique');
-            document.getElementById('container-botoes-topo').style.display = 'none';
-            document.getElementById('menu-selecao-jogos').style.display = 'none';
-            document.getElementById('container-minicraque').style.display = 'block';
-            iniciarMiniCraque();
-        }
-        function abrirJogoVelha() { 
-            jogoAtualAtivo = 'velha'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
-            document.getElementById('container-botoes-topo').style.display = 'none'; 
-            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
-            document.getElementById('container-jogo-velha').style.display = 'block'; 
-            document.getElementById('velha-modo-escolha').style.display = 'block'; 
-            document.getElementById('velha-area-jogo').style.display = 'none'; 
-        }
-        function abrirJogoForca() { 
-            jogoAtualAtivo = 'forca'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
-            document.getElementById('container-botoes-topo').style.display = 'none'; 
-            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
-            document.getElementById('container-jogo-forca').style.display = 'block'; 
-            iniciarForca(); 
-        }
-        function abrirJogoMemoria() { 
-            jogoAtualAtivo = 'memoria'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
-            document.getElementById('container-botoes-topo').style.display = 'none'; 
-            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
-            document.getElementById('container-jogo-memoria').style.display = 'block'; 
-            abrirJogoMemoriaExec(); 
-        }
-        function abrirJokenpo() { 
-            jogoAtualAtivo = 'jokenpo'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
-            document.getElementById('container-botoes-topo').style.display = 'none'; 
-            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
-            document.getElementById('container-jokenpo').style.display = 'block'; 
-            iniciarJokenpo(); 
-        }
-        function abrirJogoCobrinha() { 
-            jogoAtualAtivo = 'cobrinha'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
-            document.getElementById('container-botoes-topo').style.display = 'none'; 
-            document.getElementById('menu-selecao-jogos').style.display = 'none'; 
-            document.getElementById('container-jogo-cobrinha').style.display = 'block'; 
-            iniciarCobrinha(); 
-        }
+            let isDragging = false;
+            let startX = 0, startY = 0;
 
-        /* ==================== LÓGICA ATUALIZADA DO MINI CRAQUE ==================== */
-        const canvasCraque = document.getElementById('gameCanvas');
-        const ctxCraque = canvasCraque.getContext('2d');
-        let minicraqueInterval = null;
-        let scoreCraque = 0;
-        let attemptsCraque = 3;
-
-        const ball = {
-            x: 180, y: 440, radius: 12,
-            startX: 180, startY: 440,
-            vx: 0, vy: 0,
-            isDragging: false, isMoving: false
-        };
-
-        const goalKeeper = {
-            x: 140, y: 60, width: 80, height: 18,
-            baseSpeed: 2.2, speed: 2.2, direction: 1,
-            minX: 60, maxX: 220
-        };
-
-        const defenders = [
-            { x: 100, y: 180, width: 65, height: 14, baseSpeed: 1.8, speed: 1.8, direction: 1 },
-            { x: 140, y: 280, width: 65, height: 14, baseSpeed: 2.2, speed: 2.2, direction: -1 },
-            { x: 120, y: 380, width: 65, height: 14, baseSpeed: 2.6, speed: 2.6, direction: 1 }
-        ];
-
-        function iniciarMiniCraque() {
-            scoreCraque = 0;
-            attemptsCraque = 3;
-            document.getElementById('minicraque-score').innerText = scoreCraque;
-            document.getElementById('minicraque-attempts').innerText = attemptsCraque;
-            atualizarDificuldadeCraque();
-            resetBall();
-            if (!minicraqueInterval) {
-                minicraqueInterval = requestAnimationFrame(loopMiniCraque);
-            }
-        }
-
-        function pararMiniCraque() {
-            if (minicraqueInterval) {
-                cancelAnimationFrame(minicraqueInterval);
-                minicraqueInterval = null;
-            }
-        }
-
-        function atualizarDificuldadeCraque() {
-            let fatorVelocidade = 1 + Math.floor(scoreCraque / 30) * 0.35;
-            goalKeeper.speed = goalKeeper.baseSpeed * fatorVelocidade;
-            defenders.forEach((def, idx) => {
-                def.speed = (def.baseSpeed + (idx * 0.2)) * fatorVelocidade;
+            canvas.addEventListener('mousedown', (e) => {
+                if (ball.kicked) return;
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                if (Math.hypot(mouseX - ball.x, mouseY - ball.y) < 30) {
+                    isDragging = true;
+                    startX = mouseX;
+                    startY = mouseY;
+                }
             });
-        }
 
-        function getMousePos(e) {
-            const rect = canvasCraque.getBoundingClientRect();
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
+            canvas.addEventListener('mouseup', (e) => {
+                if (!isDragging || ball.kicked) return;
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                ball.vx = (startX - mouseX) * 0.15;
+                ball.vy = (startY - mouseY) * 0.15;
+                ball.kicked = true;
+                isDragging = false;
+                playSound('click');
+            });
+
+            function resetBall() {
+                ball.x = 200;
+                ball.y = 350;
+                ball.vx = 0;
+                ball.vy = 0;
+                ball.kicked = false;
+                message = "Sua vez de cobrar!";
             }
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
-        }
 
-        canvasCraque.addEventListener('mousedown', (e) => {
-            if (ball.isMoving) return;
-            const pos = getMousePos(e);
-            if (Math.hypot(pos.x - ball.x, pos.y - ball.y) < ball.radius * 2.5) {
-                ball.isDragging = true;
-            }
-        });
+            currentGameInterval = setInterval(() => {
+                if (ball.kicked) {
+                    ball.x += ball.vx;
+                    ball.y += ball.vy;
 
-        canvasCraque.addEventListener('mousemove', (e) => {
-            if (!ball.isDragging) return;
-            const pos = getMousePos(e);
-            ball.x = pos.x;
-            ball.y = pos.y;
-        });
-
-        canvasCraque.addEventListener('mouseup', () => {
-            if (!ball.isDragging) return;
-            ball.isDragging = false;
-            ball.isMoving = true;
-            tocarEfeito('jokenpo-jogada');
-            const forceMultiplier = 0.18;
-            ball.vx = (ball.startX - ball.x) * forceMultiplier;
-            ball.vy = (ball.startY - ball.y) * forceMultiplier;
-            ball.x = ball.startX;
-            ball.y = ball.startY;
-        });
-
-        canvasCraque.addEventListener('touchstart', (e) => {
-            if (ball.isMoving) return;
-            const pos = getMousePos(e);
-            if (Math.hypot(pos.x - ball.x, pos.y - ball.y) < ball.radius * 2.5) {
-                ball.isDragging = true;
-            }
-            e.preventDefault();
-        }, {passive: false});
-
-        canvasCraque.addEventListener('touchmove', (e) => {
-            if (!ball.isDragging) return;
-            const pos = getMousePos(e);
-            ball.x = pos.x;
-            ball.y = pos.y;
-            e.preventDefault();
-        }, {passive: false});
-
-        canvasCraque.addEventListener('touchend', (e) => {
-            if (!ball.isDragging) return;
-            ball.isDragging = false;
-            ball.isMoving = true;
-            tocarEfeito('jokenpo-jogada');
-            const forceMultiplier = 0.18;
-            ball.vx = (ball.startX - ball.x) * forceMultiplier;
-            ball.vy = (ball.startY - ball.y) * forceMultiplier;
-            ball.x = ball.startX;
-            ball.y = ball.startY;
-            e.preventDefault();
-        }, {passive: false});
-
-        function updateMiniCraque() {
-            if (ball.isMoving) {
-                ball.x += ball.vx;
-                ball.y += ball.vy;
-                ball.vy *= 0.99;
-
-                if (ball.x - ball.radius < 30 || ball.x + ball.radius > 330) {
-                    ball.vx *= -1;
-                }
-
-                if (ball.y <= 45 && ball.x >= 90 && ball.x <= 270) {
-                    scoreCraque += 10;
-                    document.getElementById('minicraque-score').innerText = scoreCraque;
-                    atualizarDificuldadeCraque();
-                    tocarEfeito('vitoria');
-                    resetBall();
-                }
-
-                if (ball.x > goalKeeper.x && ball.x < goalKeeper.x + goalKeeper.width &&
-                    ball.y - ball.radius < goalKeeper.y + goalKeeper.height && ball.y + ball.radius > goalKeeper.y) {
-                    missShotCraque();
-                }
-
-                let numDefendersAtivos = Math.min(3, Math.floor(scoreCraque / 30) + 1);
-                for (let i = 0; i < numDefendersAtivos; i++) {
-                    let def = defenders[i];
-                    if (ball.x > def.x && ball.x < def.x + def.width &&
-                        ball.y - ball.radius < def.y + def.height && ball.y + ball.radius > def.y) {
-                        missShotCraque();
+                    // Colisão com o Goleiro Circular
+                    if (Math.hypot(ball.x - gk.x, ball.y - gk.y) < (ball.radius + gk.radius)) {
+                        playSound('fail');
+                        missed++;
+                        message = "O goleiro defendeu!";
+                        setTimeout(resetBall, 1000);
                     }
-                }
-
-                if (ball.y < 0 || ball.y > 500 || ball.x < 0 || ball.x > 360) {
-                    if (ball.y > 0) missShotCraque();
-                    else resetBall();
-                }
-            }
-
-            goalKeeper.x += goalKeeper.speed * goalKeeper.direction;
-            if (goalKeeper.x <= goalKeeper.minX || goalKeeper.x + goalKeeper.width >= goalKeeper.maxX) {
-                goalKeeper.direction *= -1;
-            }
-
-            let numDefendersAtivos = Math.min(3, Math.floor(scoreCraque / 30) + 1);
-            for (let i = 0; i < numDefendersAtivos; i++) {
-                let def = defenders[i];
-                def.x += def.speed * def.direction;
-                if (def.x <= 40 || def.x + def.width >= 320) def.direction *= -1;
-            }
-        }
-
-        function missShotCraque() {
-            attemptsCraque--;
-            document.getElementById('minicraque-attempts').innerText = attemptsCraque;
-            tocarEfeito('clique');
-            if (attemptsCraque <= 0) {
-                alert('Fim de jogo no Mini Craque! Pontuação final: ' + scoreCraque);
-                scoreCraque = 0;
-                attemptsCraque = 3;
-                document.getElementById('minicraque-score').innerText = scoreCraque;
-                document.getElementById('minicraque-attempts').innerText = attemptsCraque;
-                atualizarDificuldadeCraque();
-            }
-            resetBall();
-        }
-
-        function resetBall() {
-            ball.isMoving = false;
-            ball.isDragging = false;
-            ball.x = ball.startX;
-            ball.y = ball.startY;
-            ball.vx = 0;
-            ball.vy = 0;
-        }
-
-        function drawMiniCraque() {
-            ctxCraque.fillStyle = '#2e7d32';
-            ctxCraque.fillRect(0, 0, canvasCraque.width, canvasCraque.height);
-
-            ctxCraque.strokeStyle = '#ffffff';
-            ctxCraque.lineWidth = 3;
-            ctxCraque.strokeRect(30, 30, 300, 440);
-            ctxCraque.strokeRect(90, 30, 180, 70); // Gol mais largo
-
-            ctxCraque.fillStyle = '#64748b';
-            ctxCraque.fillRect(goalKeeper.x, goalKeeper.y, goalKeeper.width, goalKeeper.height);
-
-            let numDefendersAtivos = Math.min(3, Math.floor(scoreCraque / 30) + 1);
-            
-            if (numDefendersAtivos >= 1) {
-                ctxCraque.fillStyle = '#ef4444';
-                ctxCraque.fillRect(defenders[0].x, defenders[0].y, defenders[0].width, defenders[0].height);
-            }
-            if (numDefendersAtivos >= 2) {
-                ctxCraque.fillStyle = '#3b82f6';
-                ctxCraque.fillRect(defenders[1].x, defenders[1].y, defenders[1].width, defenders[1].height);
-            }
-            if (numDefendersAtivos >= 3) {
-                ctxCraque.fillStyle = '#10b981';
-                ctxCraque.fillRect(defenders[2].x, defenders[2].y, defenders[2].width, defenders[2].height);
-            }
-
-            if (ball.isDragging) {
-                ctxCraque.beginPath();
-                ctxCraque.moveTo(ball.startX, ball.startY);
-                let aimX = ball.startX + (ball.startX - ball.x);
-                let aimY = ball.startY + (ball.startY - ball.y);
-                ctxCraque.lineTo(aimX, aimY);
-                ctxCraque.strokeStyle = '#ffeb3b';
-                ctxCraque.lineWidth = 3;
-                ctxCraque.stroke();
-            }
-
-            ctxCraque.beginPath();
-            ctxCraque.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-            ctxCraque.fillStyle = '#ffffff';
-            ctxCraque.fill();
-            ctxCraque.lineWidth = 2;
-            ctxCraque.strokeStyle = '#000000';
-            ctxCraque.stroke();
-            ctxCraque.closePath();
-        }
-
-        function loopMiniCraque() {
-            if (jogoAtualAtivo === 'minicraque') {
-                updateMiniCraque();
-                drawMiniCraque();
-                minicraqueInterval = requestAnimationFrame(loopMiniCraque);
-            }
-        }
-
-        function salvarPontuacaoRankingMiniCraqueManual() { salvarPontuacaoGlobal("Mini Craque", scoreCraque); }
-
-        /* Jogo da Velha */
-        let modoVelha = 'amigo', nivelVelha = 1;
-        const adversariosVelha = ["🤖 Robô Iniciante", "🦾 Robô Ágil", "👾 Ciborgue", "🦊 Raposa Tática", "🐯 Mestre Feline", "🐲 Dragão", "🧙‍♂️ Mago", "👑 Rei Bots", "⚡ Super IA", "🌟 Supremo"];
-        let tabuleiro = ['', '', '', '', '', '', '', '', ''], jogadorAtual = 'X', jogoAtivo = true, pontosVelha = 0;
-
-        function iniciarVelhaModo(modo) {
-            tocarEfeito('clique');
-            modoVelha = modo;
-            document.getElementById('velha-modo-escolha').style.display = 'none';
-            document.getElementById('velha-area-jogo').style.display = 'block';
-            if (modo === 'pc') { document.getElementById('velha-info-pc').style.display = 'block'; nivelVelha = 1; atualizarNivelVelha(); }
-            else { document.getElementById('velha-info-pc').style.display = 'none'; }
-            pontosVelha = 0;
-            document.getElementById('pontos-velha').innerText = pontosVelha;
-            reiniciarVelha();
-        }
-        function atualizarNivelVelha() { document.getElementById('velha-nivel-texto').innerText = `Nível ${nivelVelha} | Oponente: ${adversariosVelha[nivelVelha - 1]}`; }
-        function jogarVelha(pos) {
-            if (tabuleiro[pos] === '' && jogoAtivo) {
-                tabuleiro[pos] = jogadorAtual;
-                let btn = document.getElementById(`celula-${pos}`);
-                btn.innerText = jogadorAtual;
-                
-                if (jogadorAtual === 'X') tocarEfeito('velha-x');
-                else tocarEfeito('velha-o');
-
-                let vitoriaCheck = checarVitoriaDetalhadaVelha();
-                if (vitoriaCheck) {
-                    let vencedor = tabuleiro[vitoriaCheck[0]];
-                    vitoriaCheck.forEach(idx => { document.getElementById(`celula-${idx}`).style.background = "#d1fae5"; document.getElementById(`celula-${idx}`).style.color = "#059669"; });
-                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${vencedor} Venceu!`;
-                    jogoAtivo = false; tocarEfeito('vitoria');
-                    
-                    if (vencedor === 'X') {
-                        pontosVelha += 50 + (nivelVelha * 10);
-                        document.getElementById('pontos-velha').innerText = pontosVelha;
-                    }
-
-                    if (modoVelha === 'pc') {
-                        if (vencedor === 'X') {
-                            setTimeout(() => { alert(`🎉 Você venceu! Subindo de nível e acumulando pontos.`); nivelVelha++; if (nivelVelha > 10) nivelVelha = 1; atualizarNivelVelha(); reiniciarVelha(); }, 300);
+                    // Checa Gol (Traves: x entre 120 e 280, y <= 50)
+                    else if (ball.y <= 50) {
+                        if (ball.x > 120 && ball.x < 280) {
+                            playSound('score');
+                            score++;
+                            message = "GOOOOL! ⚽";
                         } else {
-                            setTimeout(() => { alert(`❌ O robô venceu!`); reiniciarVelha(); }, 300);
+                            playSound('fail');
+                            missed++;
+                            message = "Fora!";
                         }
+                        setTimeout(resetBall, 1000);
                     }
+                    // Saiu pelas laterais
+                    else if (ball.x < 40 || ball.x > 360) {
+                        playSound('fail');
+                        missed++;
+                        message = "Foi pra fora!";
+                        setTimeout(resetBall, 1000);
+                    }
+                }
+
+                // Movimento do Goleiro respeitando as Linhas Amarelas e a Linha Azul
+                gk.x += gk.vx;
+                if (gk.x <= minXLimit || gk.x >= maxXLimit) {
+                    gk.vx *= -1;
+                }
+                gk.y = blueLineY; // Fica restrito na altura da linha azul
+
+                // Renderização do Campo
+                ctx.fillStyle = "#15803d"; // Gramado
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Marcações do Campo e Linhas Pedidas
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+                ctx.lineWidth = 2;
+
+                // Linha Azul (Limite do Goleiro)
+                ctx.strokeStyle = "#38bdf8";
+                ctx.beginPath();
+                ctx.moveTo(100, blueLineY);
+                ctx.lineTo(300, blueLineY);
+                ctx.stroke();
+
+                // Linhas Amarelas (Limites laterais de movimentação)
+                ctx.strokeStyle = "#facc15";
+                ctx.beginPath();
+                ctx.moveTo(minXLimit, 40);
+                ctx.lineTo(minXLimit, 140);
+                ctx.moveTo(maxXLimit, 40);
+                ctx.lineTo(maxXLimit, 140);
+                ctx.stroke();
+
+                // Trave
+                ctx.strokeStyle = "#ffffff";
+                ctx.lineWidth = 4;
+                ctx.strokeRect(120, 40, 160, 10);
+
+                // Goleiro (Personagem Circular com Emoji)
+                ctx.fillStyle = "#ef4444";
+                ctx.beginPath();
+                ctx.arc(gk.x, gk.y, gk.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.closePath();
+                ctx.font = "16px sans-serif";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("🤖", gk.x, gk.y);
+
+                // Bola
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.closePath();
+
+                // Placar e Textos
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "14px Segoe UI";
+                ctx.fillText(`Gols: ${score} | Perdidos: ${missed}`, 20, 30);
+                ctx.fillText(message, 20, 385);
+
+            }, 1000 / 60);
+        }
+
+        // --- SNAKE RETRO ---
+        function initSnake(wrapper) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 400;
+            wrapper.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            let snake = [{x: 160, y: 160}, {x: 140, y: 160}, {x: 120, y: 160}];
+            let dx = 20, dy = 0;
+            let food = {x: 0, y: 0};
+            let score = 0;
+
+            function createFood() {
+                food.x = Math.floor(Math.random() * 20) * 20;
+                food.y = Math.floor(Math.random() * 20) * 20;
+            }
+            createFood();
+
+            window.addEventListener('keydown', changeDirection);
+
+            function changeDirection(event) {
+                const keyPressed = event.keyCode;
+                const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
+                if (keyPressed === LEFT && dx === 0) { dx = -20; dy = 0; }
+                if (keyPressed === UP && dy === 0) { dx = 0; dy = -20; }
+                if (keyPressed === RIGHT && dx === 0) { dx = 20; dy = 0; }
+                if (keyPressed === DOWN && dy === 0) { dx = 0; dy = 20; }
+            }
+
+            currentGameInterval = setInterval(() => {
+                const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+                
+                if (head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400) {
+                    playSound('fail');
+                    alert(`Fim de Jogo! Pontuação: ${score}`);
+                    closeGame();
                     return;
                 }
-                if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate! Deu velha!`; jogoAtivo = false; tocarEfeito('clique'); return; }
-                jogadorAtual = jogadorAtual === 'X' ? 'O' : 'X';
-                document.getElementById('status-jogo').innerText = `Vez do jogador: ${jogadorAtual}`;
-                if (modoVelha === 'pc' && jogadorAtual === 'O' && jogoAtivo) { setTimeout(jogadaComputadorVelha, 400); }
-            }
-        }
-        function jogadaComputadorVelha() {
-            let vazias = []; tabuleiro.forEach((val, idx) => { if (val === '') vazias.push(idx); });
-            if (vazias.length > 0 && jogoAtivo) { jogarVelha(vazias[Math.floor(Math.random() * vazias.length)]); }
-        }
-        function checarVitoriaDetalhadaVelha() {
-            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for (let w of wins) { if (tabuleiro[w[0]] && tabuleiro[w[0]] === tabuleiro[w[1]] && tabuleiro[w[0]] === tabuleiro[w[2]]) return w; }
-            return null;
-        }
-        function reiniciarVelha() {
-            tocarEfeito('clique');
-            tabuleiro = ['', '', '', '', '', '', '', '', '']; jogadorAtual = 'X'; jogoAtivo = true;
-            document.getElementById('status-jogo').innerText = `Vez do jogador: X`;
-            for (let i = 0; i < 9; i++) { let b = document.getElementById(`celula-${i}`); b.innerText = ''; b.style.background = '#fff'; b.style.color = '#2563eb'; }
-        }
-        function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoGlobal("Jogo da Velha", pontosVelha); }
 
-        /* Jogo da Forca */
-        const bancoPalavrasForca = [
-            {p: "COMPUTADOR", d: "Máquina eletrônica para processar dados"},
-            {p: "PROGRAMACAO", d: "Ato de criar códigos e softwares"},
-            {p: "INTERNET", d: "Rede global de computadores"},
-            {p: "BRASIL", d: "Nosso país tropical"},
-            {p: "TELEFONE", d: "Aparelho de chamadas e mensagens"},
-            {p: "ESCOLA", d: "Instituição de ensino e aprendizado"},
-            {p: "CARRO", d: "Veículo automotor de quatro rodas"},
-            {p: "AVIAO", d: "Meio de transporte que voa"},
-            {p: "GATO", d: "Animal felino doméstico"}
-        ];
-        let listaForcaEmbaralhada = [], indiceForcaAtual = 0, letrasDescobertas = [], errosForca = 0, pontosForca = 0, tempoRestanteForca = 30, intervaloTempoForca = null;
-
-        function iniciarForca() {
-            listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5);
-            indiceForcaAtual = 0; pontosForca = 0; carregarProximaPalavraForca();
-        }
-        function iniciarCronometroForca() {
-            if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-            tempoRestanteForca = 30; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
-            intervaloTempoForca = setInterval(() => {
-                tempoRestanteForca--; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
-                if (tempoRestanteForca <= 0) {
-                    clearInterval(intervaloTempoForca); tocarEfeito('clique');
-                    let atual = listaForcaEmbaralhada[indiceForcaAtual];
-                    alert(`⏰ O tempo esgotou! A palavra era "${atual.p}".`);
-                    indiceForcaAtual++; carregarProximaPalavraForca();
-                }
-            }, 1000);
-        }
-        function carregarProximaPalavraForca() {
-            if (indiceForcaAtual >= listaForcaEmbaralhada.length) { listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); indiceForcaAtual = 0; }
-            let atual = listaForcaEmbaralhada[indiceForcaAtual];
-            letrasDescobertas = []; errosForca = 0;
-            document.getElementById('forca-nivel-info').innerText = `🎯 Palavra ${indiceForcaAtual + 1} de ${listaForcaEmbaralhada.length}`;
-            document.getElementById('dica-palavra').innerText = `Dica: ${atual.d}`;
-            document.getElementById('dica-palavra').style.display = 'none';
-            document.getElementById('contador-erros').innerText = 0;
-            document.getElementById('pontos-forca').innerText = pontosForca;
-            iniciarCronometroForca(); atualizarTelaForca(); criarTecladoForca();
-        }
-        function mostrarDicaForca() { document.getElementById('dica-palavra').style.display = 'block'; }
-        function atualizarTelaForca() {
-            let atual = listaForcaEmbaralhada[indiceForcaAtual], ex = "", ganho = true;
-            for (let i = 0; i < atual.p.length; i++) {
-                let l = atual.p[i];
-                if (letrasDescobertas.includes(l)) { ex += l + " "; } else { ex += "_ "; ganho = false; }
-            }
-            document.getElementById('palavra-secreta').innerText = ex.trim();
-            if (ganho) {
-                if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-                tocarEfeito('vitoria'); pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
-                document.getElementById('pontos-forca').innerText = pontosForca;
-                setTimeout(() => { alert(`🎉 Acertou a palavra "${atual.p}"!`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
-            } else if (errosForca >= 6) {
-                if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-                tocarEfeito('clique');
-                setTimeout(() => { alert(`❌ Muitos erros! A palavra era "${atual.p}".`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
-            }
-        }
-        function escolherLetraForca(l) {
-            let atual = listaForcaEmbaralhada[indiceForcaAtual];
-            if (!letrasDescobertas.includes(l)) {
-                letrasDescobertas.push(l);
-                if (atual.p.includes(l)) { tocarEfeito('forca-letra'); } else { errosForca++; tocarEfeito('clique'); document.getElementById('contador-erros').innerText = errosForca; }
-            }
-            let btn = document.getElementById(`btn-letra-${l}`);
-            if (btn) { btn.disabled = true; btn.style.background = "#94a3b8"; btn.style.color = "#f1f5f9"; }
-            atualizarTelaForca();
-        }
-        function criarTecladoForca() {
-            let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cont = document.getElementById('teclado-letras');
-            cont.innerHTML = "";
-            for (let i = 0; i < alfabeto.length; i++) {
-                let l = alfabeto[i], btn = document.createElement('button');
-                btn.innerText = l; btn.id = `btn-letra-${l}`; btn.onclick = () => escolherLetraForca(l);
-                btn.style.cssText = "padding: 8px 0; font-size: 12px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
-                cont.appendChild(btn);
-            }
-        }
-        function salvarPontuacaoRankingForcaManual() { salvarPontuacaoGlobal("Jogo da Forca", pontosForca); }
-
-        /* Jogo da Memória */
-        let nivelMemoria = 1, cartasMemoria = [], primeiraCarta = null, segundaCarta = null, travadoMemoria = false, paresRestantes = 0, pontosMemoria = 0, tempoMemoria = 0, intervaloTempoMemoria = null;
-        const adversariosMemoria = ["🐰 Coelho", "🦊 Raposa", "🐼 Panda", "🦁 Leão", "🐯 Tigre", "🦅 Águia", "🦈 Tubarão", "🐉 Dragão", "🤖 Robô Mestre", "👑 Rei Supremo"];
-        const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🥑','🥥','🍋','🍊','🍐','🍑','🥕','🌽'];
-
-        function abrirJogoMemoriaExec() { nivelMemoria = 1; pontosMemoria = 0; tempoMemoria = 0; iniciarCronometroMemoria(); iniciarMemoria(); }
-        function iniciarCronometroMemoria() {
-            if (intervaloTempoMemoria) clearInterval(intervaloTempoMemoria);
-            tempoMemoria = 0; document.getElementById('tempo-memoria').innerText = tempoMemoria;
-            intervaloTempoMemoria = setInterval(() => { tempoMemoria++; document.getElementById('tempo-memoria').innerText = tempoMemoria; }, 1000);
-        }
-        function iniciarMemoria() {
-            document.getElementById('texto-nivel-memoria').innerText = `🧠 Nível ${nivelMemoria} | ${adversariosMemoria[(nivelMemoria - 1) % adversariosMemoria.length]}`;
-            document.getElementById('pontos-memoria').innerText = pontosMemoria;
-            let qtdPares = Math.min(8, 2 + Math.floor(nivelMemoria / 2));
-            cartasMemoria = [...emojisPool.slice(0, qtdPares), ...emojisPool.slice(0, qtdPares)].sort(() => Math.random() - 0.5);
-            paresRestantes = qtdPares; primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
-            let cont = document.getElementById('tabuleiro-memoria');
-            cont.style.gridTemplateColumns = `repeat(4, 42px)`; cont.innerHTML = "";
-            cartasMemoria.forEach(emoji => {
-                let btn = document.createElement('button');
-                btn.style.cssText = "width: 40px; height: 40px; font-size: 15px; background: #7b1fa2; color: white; border: none; border-radius: 6px; cursor: pointer;";
-                btn.dataset.emoji = emoji; btn.onclick = () => virarCartaMemoria(btn);
-                cont.appendChild(btn);
-            });
-        }
-        function virarCartaMemoria(btn) {
-            if (travadoMemoria || btn.innerText !== "" || btn === primeiraCarta) return;
-            btn.innerText = btn.dataset.emoji; btn.style.background = "white"; tocarEfeito('memoria-virar');
-            if (!primeiraCarta) { primeiraCarta = btn; return; }
-            segundaCarta = btn; travadoMemoria = true;
-            if (primeiraCarta.dataset.emoji === segundaCarta.dataset.emoji) {
-                paresRestantes--; pontosMemoria += 25; document.getElementById('pontos-memoria').innerText = pontosMemoria;
-                primeiraCarta = null; segundaCarta = null; travadoMemoria = false;
-                if (paresRestantes === 0) {
-                    tocarEfeito('vitoria');
-                    setTimeout(() => { 
-                        nivelMemoria++; 
-                        pontosMemoria += 50; 
-                        document.getElementById('pontos-memoria').innerText = pontosMemoria;
-                        alert(`🎉 Nível Concluído! Continue acumulando pontos.`); 
-                        iniciarMemoria(); 
-                    }, 300);
-                }
-            } else {
-                tocarEfeito('clique'); pontosMemoria = Math.max(0, pontosMemoria - 5); document.getElementById('pontos-memoria').innerText = pontosMemoria;
-                setTimeout(() => { primeiraCarta.innerText = ""; primeiraCarta.style.background = "#7b1fa2"; segundaCarta.innerText = ""; segundaCarta.style.background = "#7b1fa2"; primeiraCarta = null; segundaCarta = null; travadoMemoria = false; }, 700);
-            }
-        }
-        function salvarPontuacaoRankingMemoriaManual() { salvarPontuacaoGlobal("Jogo da Memória", pontosMemoria); }
-
-        /* Jokenpô Brasil */
-        const paisesJokenpo = [{fase: 1, nome: "🇦🇷 Argentina"}, {fase: 2, nome: "🇺🇾 Uruguai"}, {fase: 3, nome: "🇲🇽 México"}, {fase: 4, nome: "🇪🇸 Espanha"}, {fase: 5, nome: "🇮🇹 Itália"}, {fase: 6, nome: "🇫🇷 França"}, {fase: 7, nome: "🇩🇪 Alemanha"}, {fase: 8, nome: "🇬🇧 Reino Unido"}, {fase: 9, nome: "🇷🇺 Rússia"}, {fase: 10, nome: "🇺🇸 EUA"}];
-        let faseAtualJokenpo = 1, pontosJokenpo = 0;
-
-        function iniciarJokenpo() { faseAtualJokenpo = 1; pontosJokenpo = 0; atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
-        function atualizarTelaJokenpo() {
-            document.getElementById('adversario-mundial').innerText = `Adversário: ${paisesJokenpo[faseAtualJokenpo - 1].nome}`;
-            document.getElementById('fase-jokenpo').innerText = faseAtualJokenpo;
-            document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
-        }
-        function reiniciarRodadaJokenpo() {
-            document.getElementById('computador-escolha').innerText = "❓";
-            document.getElementById('caixa-resultado-jokenpo').style.display = 'none';
-            document.getElementById('instrucao-jokenpo').innerText = "🇧🇷 Faça sua escolha (Brasil):";
-            document.getElementById('instrucao-jokenpo').style.display = 'block';
-            document.getElementById('btn-proxima-rodada').style.display = 'none';
-            ['pedra', 'papel', 'tesoura'].forEach(op => { let b = document.getElementById(`btn-${op}`); b.disabled = false; b.style.opacity = "1"; b.style.borderColor = "#002776"; b.style.background = "white"; });
-        }
-        function jogarJokenpo(escolhaUsuario) {
-            tocarEfeito('jokenpo-jogada');
-            const opcoes = ['pedra', 'papel', 'tesoura'], emojis = { pedra: '✊', papel: '✋', tesoura: '✌️' };
-            opcoes.forEach(op => { let b = document.getElementById(`btn-${op}`); b.disabled = true; if (op !== escolhaUsuario) b.style.opacity = "0.2"; else { b.style.borderColor = "#fedf00"; b.style.background = "#fffbcc"; } });
-            document.getElementById('instrucao-jokenpo').innerText = "O adversário está escolhendo...";
-            setTimeout(() => {
-                const escolhaMaquina = opcoes[Math.floor(Math.random() * 3)];
-                document.getElementById('computador-escolha').innerText = emojis[escolhaMaquina];
-                let textoRes = "", corFundo = "", corTexto = "", venceu = false;
-                if (escolhaUsuario === escolhaMaquina) {
-                    textoRes = `Empate! Jogue novamente.`; corFundo = "#e5e7eb"; corTexto = "#374151"; pontosJokenpo += 10; tocarEfeito('clique');
-                } else if ((escolhaUsuario === 'pedra' && escolhaMaquina === 'tesoura') || (escolhaUsuario === 'papel' && escolhaMaquina === 'pedra') || (escolhaUsuario === 'tesoura' && escolhaMaquina === 'papel')) {
-                    venceu = true; pontosJokenpo += 100 * faseAtualJokenpo; textoRes = `🎉 Brasil Venceu!`; corFundo = "#d1fae5"; corTexto = "#065f46"; tocarEfeito('vitoria');
+                snake.unshift(head);
+                if (head.x === food.x && head.y === food.y) {
+                    playSound('score');
+                    score += 10;
+                    createFood();
                 } else {
-                    pontosJokenpo = Math.max(0, pontosJokenpo - 20); textoRes = `❌ Brasil Perdeu! Reiniciando do começo...`; corFundo = "#fee2e2"; corTexto = "#991b1b"; tocarEfeito('clique');
+                    snake.pop();
                 }
-                document.getElementById('instrucao-jokenpo').style.display = 'none';
-                let caixaRes = document.getElementById('caixa-resultado-jokenpo');
-                caixaRes.style.display = 'block'; caixaRes.style.backgroundColor = corFundo; caixaRes.style.color = corTexto;
-                document.getElementById('resultado-jokenpo').innerText = textoRes;
-                document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
-                if (venceu) {
-                    if (faseAtualJokenpo < 10) { faseAtualJokenpo++; document.getElementById('btn-proxima-rodada').style.display = 'block'; }
-                    else { alert("🏆 INCRÍVEL! O Brasil conquistou o mundo!"); iniciarJokenpo(); }
-                } else { 
-                    setTimeout(() => { iniciarJokenpo(); }, 1800); 
-                }
-            }, 1000);
-        }
-        function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
-        function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo); }
 
-        /* Jogo da Cobrinha */
-        let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
-        const gridTotal = 16;
+                ctx.fillStyle = "#0f172a";
+                ctx.fillRect(0, 0, 400, 400);
 
-        function iniciarCobrinha() {
-            pararCobrinha(); snake = [{x: 8, y: 8}]; gerarComida();
-            direcao = 'RIGHT'; proximaDirecao = 'RIGHT'; pontosSnake = 0; nivelSnake = 1;
-            atualizarStatusSnake(); snakeInterval = setInterval(loopCobrinha, 150);
+                ctx.fillStyle = "#ef4444";
+                ctx.fillRect(food.x, food.y, 20, 20);
+
+                snake.forEach((part, index) => {
+                    ctx.fillStyle = index === 0 ? "#38bdf8" : "#0ea5e9";
+                    ctx.fillRect(part.x, part.y, 18, 18);
+                });
+
+                ctx.fillStyle = "#fff";
+                ctx.font = "14px Segoe UI";
+                ctx.fillText(`Pontos: ${score}`, 10, 20);
+
+            }, 100);
         }
-        function pararCobrinha() { if (snakeInterval) clearInterval(snakeInterval); }
-        function gerarComida() { comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) }; }
-        function mudarDirecao(novaDir) {
-            tocarEfeito('clique');
-            if (novaDir === 'UP' && direcao !== 'DOWN') proximaDirecao = 'UP';
-            if (novaDir === 'DOWN' && direcao !== 'UP') proximaDirecao = 'DOWN';
-            if (novaDir === 'LEFT' && direcao !== 'RIGHT') proximaDirecao = 'LEFT';
-            if (novaDir === 'RIGHT' && direcao !== 'LEFT') proximaDirecao = 'RIGHT';
-        }
-        function loopCobrinha() {
-            direcao = proximaDirecao; let cabeca = { ...snake[0] };
-            if (direcao === 'UP') cabeca.y--; if (direcao === 'DOWN') cabeca.y++; if (direcao === 'LEFT') cabeca.x--; if (direcao === 'RIGHT') cabeca.x++;
-            if (cabeca.x < 0) cabeca.x = gridTotal - 1; if (cabeca.x >= gridTotal) cabeca.x = 0;
-            if (cabeca.y < 0) cabeca.y = gridTotal - 1; if (cabeca.y >= gridTotal) cabeca.y = 0;
-            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarEfeito('clique'); alert(`💥 Fim de jogo na Cobrinha! Clique em Salvar Pontos se desejar registrar.`); return; }
-            snake.unshift(cabeca);
-            if (cabeca.x === comida.x && cabeca.y === comida.y) { 
-                pontosSnake += 10; 
-                nivelSnake = Math.floor(pontosSnake / 50) + 1; 
-                gerarComida(); 
-                tocarEfeito('cobra-comer'); 
-            } else { 
-                snake.pop(); 
-            }
-            atualizarStatusSnake(); desenharCobrinha();
-        }
-        function atualizarStatusSnake() { document.getElementById('snake-status').innerText = `🐍 Nível ${nivelSnake} | Pontos: ${pontosSnake}`; }
-        function desenharCobrinha() {
-            const canvas = document.getElementById('snakeCanvas'), ctx = canvas.getContext('2d'), tamanhoBloco = canvas.width / gridTotal;
-            ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ef4444'; ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
-            snake.forEach((parte, index) => { ctx.fillStyle = index === 0 ? '#059669' : '#10b981'; ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1); });
-        }
-        function salvarPontuacaoRankingSnakeManual() { salvarPontuacaoGlobal("Jogo da Cobrinha", pontosSnake); }
     </script>
 </body>
 </html>
