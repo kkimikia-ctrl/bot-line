@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Jogos - Mini Craque</title>
+    <title>Central de Jogos</title>
     <style>
         * {
             box-sizing: border-box;
@@ -60,6 +60,40 @@
             display: flex;
             justify-content: space-between;
         }
+        
+        /* Telas */
+        .tela {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+        .tela.ativa {
+            display: flex;
+        }
+
+        /* Menu Principal */
+        .menu-container {
+            width: 95%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .card-jogo {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            color: #1a365d;
+        }
+
+        /* Jogo Mini Craque */
         .campo-container {
             position: relative;
             width: 95%;
@@ -71,7 +105,6 @@
             overflow: hidden;
             touch-action: none;
         }
-        /* Trave invertida corretamente para cima */
         .gol {
             position: absolute;
             top: 15px;
@@ -90,7 +123,6 @@
             justify-content: center;
             width: 38px;
             height: 38px;
-            transition: transform 0.1s;
         }
         .bola {
             position: absolute;
@@ -129,6 +161,33 @@
             display: none;
             z-index: 10;
         }
+
+        /* Jogo da Cobrinha */
+        .snake-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            background-color: #111;
+            border: 4px solid #333;
+            border-radius: 8px;
+        }
+        .controles-snake {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 5px;
+            margin-top: 15px;
+        }
+        .btn-dir {
+            padding: 15px;
+            font-size: 20px;
+            background-color: #1a365d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -138,40 +197,107 @@
         <button class="btn" style="background: #333;" id="btnSom">Som: Ligado</button>
     </div>
 
-    <div class="botoes-topo">
-        <button class="btn btn-voltar" id="btnVoltar">Voltar</button>
-        <button class="btn btn-salvar" id="btnSalvar">Salvar Pontos</button>
-    </div>
-
-    <div class="placar-box">
-        <span>⚽ Mini Craque</span>
-        <span id="scoreCraqueText">Gols: 0 | Vidas: 3</span>
-    </div>
-
-    <div class="campo-container" id="gameAreaCraque">
-        <div class="gol" id="gol">
-            <div class="jogador-campo" id="goalkeeperCraque" style="top: 10px; left: 100px;">🤖</div>
-            <div class="jogador-campo" id="defCraque1" style="top: 60px; left: 80px; display: none;">🛡️</div>
-            <div class="jogador-campo" id="defCraque2" style="top: 60px; left: 140px; display: none;">🛡️</div>
-            <div class="jogador-campo" id="defCraque3" style="top: 60px; left: 20px; display: none;">🛡️</div>
+    <div id="telaMenu" class="tela ativa">
+        <div class="menu-container">
+            <div class="card-jogo" onclick="abrirJogo('futebol')">⚽ Mini Craque</div>
+            <div class="card-jogo" onclick="abrirJogo('cobrinha')">🐍 Jogo da Cobrinha</div>
         </div>
-        
-        <svg style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:2;">
-            <line id="trajectoryCraque" x1="0" y1="0" x2="0" y2="0" stroke="yellow" stroke-dasharray="4" stroke-width="3"/>
-        </svg>
+    </div>
 
-        <div class="bola" id="ballCraque">⚽</div>
-        <div class="mensagem-gool" id="msgGoalCraque">GOOL!</div>
-        <div class="instrucao" id="txtInstrucao">Arraste a bola para posicionar ou chutar!</div>
+    <div id="telaFutebol" class="tela">
+        <div class="botoes-topo">
+            <button class="btn btn-voltar" onclick="voltarMenu()">Voltar</button>
+            <button class="btn btn-salvar" onclick="salvarPontuacaoRankingFutebolManual()">Salvar Pontos</button>
+        </div>
+
+        <div class="placar-box">
+            <span>⚽ Mini Craque</span>
+            <span id="scoreCraqueText">Gols: 0 | Vidas: 3</span>
+        </div>
+
+        <div class="campo-container" id="gameAreaCraque">
+            <div class="gol" id="gol">
+                <div class="jogador-campo" id="goalkeeperCraque" style="top: 10px; left: 100px;">🤖</div>
+                <div class="jogador-campo" id="defCraque1" style="top: 60px; left: 80px; display: none;">🛡️</div>
+                <div class="jogador-campo" id="defCraque2" style="top: 60px; left: 140px; display: none;">🛡️</div>
+                <div class="jogador-campo" id="defCraque3" style="top: 60px; left: 20px; display: none;">🛡️</div>
+            </div>
+            
+            <svg style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:2;">
+                <line id="trajectoryCraque" x1="0" y1="0" x2="0" y2="0" stroke="yellow" stroke-dasharray="4" stroke-width="3"/>
+            </svg>
+
+            <div class="bola" id="ballCraque">⚽</div>
+            <div class="mensagem-gool" id="msgGoalCraque">GOOL!</div>
+            <div class="instrucao" id="txtInstrucao">Arraste a bola para posicionar ou chutar!</div>
+        </div>
+    </div>
+
+    <div id="telaCobrinha" class="tela">
+        <div class="botoes-topo">
+            <button class="btn btn-voltar" onclick="voltarMenu()">Voltar</button>
+            <button class="btn btn-salvar" onclick="salvarPontuacaoRankingSnakeManual()">Salvar Pontos</button>
+        </div>
+
+        <div class="placar-box">
+            <span>🐍 Cobrinha</span>
+            <span id="snake-status">Nível 1 | Pontos: 0</span>
+        </div>
+
+        <div class="snake-container">
+            <canvas id="snakeCanvas" width="320" height="320"></canvas>
+            <div class="controles-snake">
+                <div></div>
+                <button class="btn-dir" onclick="mudarDirecao('UP')">⬆️</button>
+                <div></div>
+                <button class="btn-dir" onclick="mudarDirecao('LEFT')">⬅️</button>
+                <button class="btn-dir" onclick="mudarDirecao('DOWN')">⬇️</button>
+                <button class="btn-dir" onclick="mudarDirecao('RIGHT')">➡️</button>
+            </div>
+        </div>
     </div>
 
     <script>
+        let jogoAtualAtivo = '';
+
+        function abrirJogo(tipo) {
+            document.getElementById('telaMenu').classList.remove('ativa');
+            document.getElementById('telaFutebol').classList.remove('ativa');
+            document.getElementById('telaCobrinha').classList.remove('ativa');
+
+            jogoAtualAtivo = tipo;
+
+            if (tipo === 'futebol') {
+                document.getElementById('telaFutebol').classList.add('ativa');
+                iniciarCraque();
+            } else if (tipo === 'cobrinha') {
+                document.getElementById('telaCobrinha').classList.add('ativa');
+                iniciarCobrinha();
+            }
+        }
+
+        function voltarMenu() {
+            pararCobrinha();
+            jogoAtualAtivo = '';
+            document.getElementById('telaFutebol').classList.remove('ativa');
+            document.getElementById('telaCobrinha').classList.remove('ativa');
+            document.getElementById('telaMenu').classList.add('ativa');
+        }
+
+        function tocarEfeito(tipo) {
+            // Função genérica de som
+        }
+
+        function salvarPontuacaoGlobal(jogo, pontos) {
+            alert(`Pontuação de ${pontos} salva no jogo ${jogo}!`);
+        }
+
+        /* --- MINI CRAQUE --- */
         let golsCraque = 0;
         let vidasCraque = 3;
         let defsCraqueActive = 0;
         let craqueSpeedMultiplier = 1;
         let craqueRunning = true;
-        let jogoAtualAtivo = 'futebol';
 
         const ballCraque = document.getElementById('ballCraque');
         const goalkeeperCraque = document.getElementById('goalkeeperCraque');
@@ -185,7 +311,7 @@
         const txtInstrucao = document.getElementById('txtInstrucao');
 
         let ballBaseX = 0;
-        let ballBaseY = 30; // Posição inicial mais abaixo
+        let ballBaseY = 30;
         let ballCraqueX = 0;
         let ballCraqueY = 30;
         let isDraggingCraque = false;
@@ -201,12 +327,16 @@
             vidasCraque = 3;
             defsCraqueActive = 0;
             craqueSpeedMultiplier = 1;
+            craqueRunning = true;
             defCraque1.style.display = 'none';
             defCraque2.style.display = 'none';
             defCraque3.style.display = 'none';
             updateScoreCraque();
             resetBallCraque();
-            requestAnimationFrame(craqueGameLoop);
+            if (!window.craqueLoopStarted) {
+                window.craqueLoopStarted = true;
+                requestAnimationFrame(craqueGameLoop);
+            }
         }
 
         function resetBallCraque() {
@@ -219,10 +349,9 @@
             trajectoryCraque.setAttribute('y1', 0);
             trajectoryCraque.setAttribute('x2', 0);
             trajectoryCraque.setAttribute('y2', 0);
-            txtInstrucao.innerText = "Arraste a bola para posicionar e solte para chutar!";
+            txtInstrucao.innerText = "Arraste a bola para posicionar ou chutar!";
         }
 
-        // Eventos de arrastar a bola
         ballCraque.addEventListener('mousedown', startDragCraque);
         ballCraque.addEventListener('touchstart', startDragCraque);
         document.addEventListener('mousemove', dragCraque);
@@ -231,33 +360,31 @@
         document.addEventListener('touchend', endDragCraque);
 
         function startDragCraque(e) {
-            if (!craqueRunning) return;
+            if (!craqueRunning || jogoAtualAtivo !== 'futebol') return;
             isDraggingCraque = true;
             startCraqueX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
             startCraqueY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
         }
 
         function dragCraque(e) {
-            if (!isDraggingCraque || !craqueRunning) return;
+            if (!isDraggingCraque || !craqueRunning || jogoAtualAtivo !== 'futebol') return;
             const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
             const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
             
             let dx = clientX - startCraqueX;
             let dy = clientY - startCraqueY;
 
-            if (dy > 0) dy = 0; // Puxar para trás (para cima na tela)
+            if (dy > 0) dy = 0;
             
             ballCraqueX = ballBaseX + dx;
             ballCraqueY = ballBaseY - dy;
 
-            // Limites da área do jogo
             ballCraqueX = Math.max(10, Math.min(ballCraqueX, gameAreaCraque.clientWidth - 50));
             ballCraqueY = Math.max(20, Math.min(ballCraqueY, gameAreaCraque.clientHeight - 60));
 
             ballCraque.style.left = ballCraqueX + 'px';
             ballCraque.style.bottom = ballCraqueY + 'px';
 
-            // Linha guia de trajetória
             let areaRect = gameAreaCraque.getBoundingClientRect();
             let currentX = ballCraqueX + 21;
             let currentY = ballCraqueY + 21;
@@ -269,14 +396,13 @@
         }
 
         function endDragCraque(e) {
-            if (!isDraggingCraque || !craqueRunning) return;
+            if (!isDraggingCraque || !craqueRunning || jogoAtualAtivo !== 'futebol') return;
             isDraggingCraque = false;
             trajectoryCraque.setAttribute('x1', 0);
             trajectoryCraque.setAttribute('y1', 0);
             trajectoryCraque.setAttribute('x2', 0);
             trajectoryCraque.setAttribute('y2', 0);
 
-            // Se o usuário soltou na parte superior (direção ao gol), executa o chute. Caso contrário, a bola fica parada onde soltou.
             if (ballCraqueY > 180) {
                 let targetX = ballCraqueX;
                 animateShotCraque(targetX);
@@ -294,6 +420,7 @@
             let stepX = (targetX - currentLeft) / 10;
 
             let flight = setInterval(() => {
+                if (jogoAtualAtivo !== 'futebol') { clearInterval(flight); return; }
                 currentBottom += stepY;
                 currentLeft += stepX;
                 ballCraque.style.bottom = currentBottom + 'px';
@@ -337,6 +464,7 @@
         function handleGoalCraque() {
             golsCraque++;
             updateScoreCraque();
+            tocarEfeito('vitoria');
             msgGoalCraque.style.display = 'block';
             
             if (golsCraque >= 2) { defsCraqueActive = 1; defCraque1.style.display = 'flex'; }
@@ -354,6 +482,7 @@
         function handleMissCraque(reason) {
             vidasCraque--;
             updateScoreCraque();
+            tocarEfeito('clique');
             txtInstrucao.innerText = reason;
             setTimeout(() => {
                 if (vidasCraque <= 0) {
@@ -401,17 +530,64 @@
             requestAnimationFrame(craqueGameLoop);
         }
 
-        // Funções dos Botões Voltar e Salvar
-        document.getElementById('btnVoltar').addEventListener('click', () => {
-            window.history.back();
-        });
+        function salvarPontuacaoRankingFutebolManual() {
+            salvarPontuacaoGlobal("Mini Craque", golsCraque * 50);
+        }
 
-        document.getElementById('btnSalvar').addEventListener('click', () => {
-            alert(`Pontuação de ${golsCraque} gols salva com sucesso!`);
-        });
+        /* --- JOGO DA COBRINHA --- */
+        let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
+        const gridTotal = 16;
 
-        // Inicializar o jogo ao carregar
-        window.onload = iniciarCraque;
+        function iniciarCobrinha() {
+            pararCobrinha(); 
+            snake = [{x: 8, y: 8}]; 
+            gerarComida();
+            direcao = 'RIGHT'; 
+            proximaDirecao = 'RIGHT'; 
+            pontosSnake = 0; 
+            nivelSnake = 1;
+            atualizarStatusSnake(); 
+            snakeInterval = setInterval(loopCobrinha, 150);
+        }
+        function pararCobrinha() { if (snakeInterval) clearInterval(snakeInterval); }
+        function gerarComida() { comida = { x: Math.floor(Math.random() * gridTotal), y: Math.floor(Math.random() * gridTotal) }; }
+        function mudarDirecao(novaDir) {
+            tocarEfeito('clique');
+            if (novaDir === 'UP' && direcao !== 'DOWN') proximaDirecao = 'UP';
+            if (novaDir === 'DOWN' && direcao !== 'UP') proximaDirecao = 'DOWN';
+            if (novaDir === 'LEFT' && direcao !== 'RIGHT') proximaDirecao = 'LEFT';
+            if (novaDir === 'RIGHT' && direcao !== 'LEFT') proximaDirecao = 'RIGHT';
+        }
+        function loopCobrinha() {
+            if (jogoAtualAtivo !== 'cobrinha') return;
+            direcao = proximaDirecao; let cabeca = { ...snake[0] };
+            if (direcao === 'UP') cabeca.y--; if (direcao === 'DOWN') cabeca.y++; if (direcao === 'LEFT') cabeca.x--; if (direcao === 'RIGHT') cabeca.x++;
+            if (cabeca.x < 0) cabeca.x = gridTotal - 1; if (cabeca.x >= gridTotal) cabeca.x = 0;
+            if (cabeca.y < 0) cabeca.y = gridTotal - 1; if (cabeca.y >= gridTotal) cabeca.y = 0;
+            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarEfeito('clique'); alert(`💥 Fim de jogo na Cobrinha!`); return; }
+            snake.unshift(cabeca);
+            if (cabeca.x === comida.x && cabeca.y === comida.y) { 
+                pontosSnake += 10; 
+                nivelSnake = Math.floor(pontosSnake / 50) + 1; 
+                gerarComida(); 
+            } else { 
+                snake.pop(); 
+            }
+            atualizarStatusSnake(); desenharCobrinha();
+        }
+        function atualizarStatusSnake() { 
+            const statusEl = document.getElementById('snake-status');
+            if(statusEl) statusEl.innerText = `🐍 Nível ${nivelSnake} | Pontos: ${pontosSnake}`; 
+        }
+        function desenharCobrinha() {
+            const canvas = document.getElementById('snakeCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d'), tamanhoBloco = canvas.width / gridTotal;
+            ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(comida.x * tamanhoBloco, comida.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1);
+            snake.forEach((parte, index) => { ctx.fillStyle = index === 0 ? '#059669' : '#10b981'; ctx.fillRect(parte.x * tamanhoBloco, parte.y * tamanhoBloco, tamanhoBloco - 1, tamanhoBloco - 1); });
+        }
+        function salvarPontuacaoRankingSnakeManual() { salvarPontuacaoGlobal("Jogo da Cobrinha", pontosSnake); }
     </script>
 </body>
 </html>
