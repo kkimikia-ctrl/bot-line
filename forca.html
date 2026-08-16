@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Central de Jogos - Desafio Global</title>
     <style>
         body {
@@ -11,7 +11,7 @@
             margin: 0;
             padding: 10px;
             color: #333;
-            padding-bottom: 80px;
+            padding-bottom: 20px;
             text-align: center;
         }
 
@@ -156,32 +156,6 @@
             gap: 10px;
         }
 
-        /* Barra de Navegação Inferior */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 55px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            flex-grow: 1;
-        }
-        .nav-item.active { color: #0047ab; font-weight: bold; }
-        .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
-
         .jokenpo-arena {
             background: linear-gradient(135deg, #009b3a 0%, #002776 100%);
             color: white;
@@ -217,11 +191,11 @@
             color: #0047ab;
         }
 
-        /* Estilos do Mini Craque (Futebol Estilo Arco e Flecha) */
+        /* Estilos atualizados do Mini Craque (Gol menor, goleiro na linha, defesas verde/amarela/vermelha, sem barra inferior) */
         .game-area-craque {
             position: relative;
             width: 100%;
-            height: 380px;
+            height: 440px;
             background: #2e8b57;
             border-radius: 8px;
             overflow: hidden;
@@ -231,46 +205,54 @@
             justify-content: flex-end;
             padding-bottom: 15px;
             margin-top: 10px;
+            touch-action: none;
         }
+        /* Gol mais estreito */
         .goal-box {
             position: absolute;
-            top: 15px;
-            width: 80%;
-            height: 110px;
+            top: 10px;
+            width: 55%;
+            height: 90px;
             border: 3px solid white;
             border-bottom: none;
         }
+        /* Goleiro fixo na linha do gol */
         .goalkeeper-craque {
             position: absolute;
-            top: 35px;
-            width: 38px;
-            height: 38px;
+            top: 10px;
+            width: 32px;
+            height: 32px;
             background: #ff4500;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 16px;
+            font-size: 14px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
+        /* Defesas Progressivas (Verde 🟢, Amarela 🟡, Vermelha 🔴) */
         .defender-craque {
             position: absolute;
-            width: 32px;
-            height: 32px;
-            background: #ffcc00;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
+            color: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             display: none;
         }
+        #defCraque1 { background-color: #10b981; top: 130px; } /* Verde */
+        #defCraque2 { background-color: #f59e0b; top: 220px; } /* Amarelo */
+        #defCraque3 { background-color: #ef4444; top: 310px; } /* Vermelho */
+
         .ball-craque {
             position: absolute;
-            bottom: 30px;
+            bottom: 25px;
             width: 42px;
             height: 42px;
             background: white;
@@ -444,7 +426,7 @@
             <button id="btn-proxima-rodada" onclick="proximaRodadaJokenpo()" class="action-btn" style="display: none; background-color: #009b3a; padding: 8px; margin-top: 8px;">Próxima Fase ➔</button>
         </div>
 
-        <!-- Jogo Mini Craque (Futebol com Arco e Flecha e Defesas Progressivas) -->
+        <!-- Jogo Mini Craque (Futebol Ajustado) -->
         <div id="container-jogo-futebol" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
             <button onclick="salvarPontuacaoRankingFutebolManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
@@ -459,10 +441,10 @@
                 <div class="goal-box"></div>
                 <div class="goalkeeper-craque" id="goalkeeperCraque">🤖</div>
                 
-                <!-- Defesas Progressivas (Espaçadas corretamente) -->
-                <div class="defender-craque" id="defCraque1" style="top: 110px;">🛡️1</div>
-                <div class="defender-craque" id="defCraque2" style="top: 185px;">🛡️2</div>
-                <div class="defender-craque" id="defCraque3" style="top: 250px;">🛡️3</div>
+                <!-- Defesas Progressivas (Verde, Amarela, Vermelha) -->
+                <div class="defender-craque" id="defCraque1">🟢</div>
+                <div class="defender-craque" id="defCraque2">🟡</div>
+                <div class="defender-craque" id="defCraque3">🔴</div>
 
                 <div class="msg-goal-craque" id="msgGoalCraque">GOOL!</div>
                 <div id="instructionCraque" style="color: white; font-weight: bold; font-size: 12px; margin-bottom: 8px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); z-index: 10;">Puxe a bola para trás e solte para chutar!</div>
@@ -512,12 +494,12 @@
         </div>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
-        <a href="servicos.html" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
-        <a href="#" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
-        <a href="perfil.html" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
+    <!-- NAVEGAÇÃO INFERIOR GLOBAL (Mantida nos outros jogos/menu) -->
+    <nav class="bottom-nav" id="globalBottomNav" style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; display: flex; justify-content: space-around; align-items: center; height: 55px; box-shadow: 0 -2px 6px rgba(0,0,0,0.1); z-index: 999;">
+        <a href="index.html" class="nav-item" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.75rem; flex-grow: 1;"><span class="icon" style="font-size: 1.1rem; margin-bottom: 2px;">🏠</span><span>Home</span></a>
+        <a href="servicos.html" class="nav-item" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.75rem; flex-grow: 1;"><span class="icon" style="font-size: 1.1rem; margin-bottom: 2px;">📋</span><span>Serviços</span></a>
+        <a href="#" class="nav-item active" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #0047ab; font-weight: bold; font-size: 0.75rem; flex-grow: 1;"><span class="icon" style="font-size: 1.1rem; margin-bottom: 2px;">🎬</span><span>Lazer</span></a>
+        <a href="perfil.html" class="nav-item" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.75rem; flex-grow: 1;"><span class="icon" style="font-size: 1.1rem; margin-bottom: 2px;">👤</span><span>Perfil</span></a>
     </nav>
 
     <script>
@@ -764,6 +746,7 @@
 
             document.getElementById('container-botoes-topo').style.display = 'flex';
             document.getElementById('menu-selecao-jogos').style.display = 'grid';
+            document.getElementById('globalBottomNav').style.display = 'flex'; // Restaura barra inferior fora do Mini Craque
             document.getElementById('container-jogo-velha').style.display = 'none';
             document.getElementById('container-jogo-forca').style.display = 'none';
             document.getElementById('container-jogo-memoria').style.display = 'none';
@@ -805,6 +788,7 @@
             jogoAtualAtivo = 'futebol'; iniciarMusicaDeFundo(); tocarEfeito('clique');
             document.getElementById('container-botoes-topo').style.display = 'none';
             document.getElementById('menu-selecao-jogos').style.display = 'none';
+            document.getElementById('globalBottomNav').style.display = 'none'; // Tira os botões de baixo para liberar espaço no campo
             document.getElementById('container-jogo-futebol').style.display = 'block';
             iniciarCraque();
         }
@@ -1070,19 +1054,18 @@
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
         function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo); }
 
-        /* MINI CRAQUE (FUTEBOL ARCO E FLECHA + DEFESAS PROGRESSIVAS ESPAÇADAS) */
+        /* MINI CRAQUE (FUTEBOL COM GOLEIRO NA LINHA E DEFESAS PROGRESSIVAS) */
         let golsCraque = 0;
         let vidasCraque = 3;
-        let craqueRunning = true;
         
         let gkCraqueX = 140;
         let gkCraqueDir = 1.6;
         let craqueSpeedMultiplier = 1;
         
         let defsCraqueActive = 0;
-        let def1CraqueX = 40, def1CraqueDir = 1.3;
-        let def2CraqueX = 180, def2CraqueDir = -1.5;
-        let def3CraqueX = 90, def3CraqueDir = 1.8;
+        let def1CraqueX = 60, def1CraqueDir = 1.3;
+        let def2CraqueX = 160, def2CraqueDir = -1.5;
+        let def3CraqueX = 100, def3CraqueDir = 1.8;
 
         const ballCraque = document.getElementById('ballCraque');
         const goalkeeperCraque = document.getElementById('goalkeeperCraque');
@@ -1118,6 +1101,7 @@
         }
 
         function resetBallCraque() {
+            isDraggingCraque = false;
             ballBaseX = gameAreaCraque.clientWidth / 2 - 21;
             ballCraqueX = ballBaseX;
             ballCraqueY = ballBaseY;
@@ -1137,21 +1121,20 @@
         document.addEventListener('touchend', endDragCraque);
 
         function startDragCraque(e) {
-            if (!craqueRunning) return;
             isDraggingCraque = true;
             startCraqueX = e.clientX || e.touches[0].clientX;
             startCraqueY = e.clientY || e.touches[0].clientY;
         }
 
         function dragCraque(e) {
-            if (!isDraggingCraque || !craqueRunning) return;
+            if (!isDraggingCraque) return;
             const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
             const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
             
             let dx = clientX - startCraqueX;
             let dy = clientY - startCraqueY;
 
-            if (dy > 0) dy = 0; // Só permite puxar para trás
+            if (dy > 0) dy = 0; // Só puxar para trás
             
             ballCraqueX = (gameAreaCraque.clientWidth / 2 - 21) + dx;
             ballCraqueY = ballBaseY - dy;
@@ -1174,7 +1157,7 @@
         }
 
         function endDragCraque(e) {
-            if (!isDraggingCraque || !craqueRunning) return;
+            if (!isDraggingCraque) return;
             isDraggingCraque = false;
             trajectoryCraque.setAttribute('x1', 0);
             trajectoryCraque.setAttribute('y1', 0);
@@ -1201,26 +1184,26 @@
                 
                 if (defsCraqueActive >= 3 && checkCollisionCraque(bRect, defCraque3.getBoundingClientRect())) {
                     clearInterval(flight);
-                    handleMissCraque("Defendido pela Defesa 3!");
+                    handleMissCraque();
                     return;
                 }
                 if (defsCraqueActive >= 2 && checkCollisionCraque(bRect, defCraque2.getBoundingClientRect())) {
                     clearInterval(flight);
-                    handleMissCraque("Defendido pela Defesa 2!");
+                    handleMissCraque();
                     return;
                 }
                 if (defsCraqueActive >= 1 && checkCollisionCraque(bRect, defCraque1.getBoundingClientRect())) {
                     clearInterval(flight);
-                    handleMissCraque("Defendido pela Defesa 1!");
+                    handleMissCraque();
                     return;
                 }
                 if (checkCollisionCraque(bRect, goalkeeperCraque.getBoundingClientRect())) {
                     clearInterval(flight);
-                    handleMissCraque("O Goleiro defendeu!");
+                    handleMissCraque();
                     return;
                 }
 
-                if (currentBottom >= gameAreaCraque.clientHeight - 70) {
+                if (currentBottom >= gameAreaCraque.clientHeight - 65) {
                     clearInterval(flight);
                     handleGoalCraque();
                     return;
@@ -1238,12 +1221,11 @@
             tocarEfeito('vitoria');
             msgGoalCraque.style.display = 'block';
             
-            // Defesas progressivas bem espaçadas
             if (golsCraque >= 2) { defsCraqueActive = 1; defCraque1.style.display = 'flex'; }
             if (golsCraque >= 4) { defsCraqueActive = 2; defCraque2.style.display = 'flex'; }
             if (golsCraque >= 6) { defsCraqueActive = 3; defCraque3.style.display = 'flex'; }
             
-            craqueSpeedMultiplier += 0.2; // Aumenta a velocidade progressivamente
+            craqueSpeedMultiplier += 0.2;
 
             setTimeout(() => {
                 msgGoalCraque.style.display = 'none';
@@ -1251,7 +1233,7 @@
             }, 1000);
         }
 
-        function handleMissCraque(reason) {
+        function handleMissCraque() {
             vidasCraque--;
             updateScoreCraque();
             tocarEfeito('clique');
@@ -1274,7 +1256,7 @@
 
         function craqueGameLoop() {
             if (jogoAtualAtivo === 'futebol') {
-                let maxW = gameAreaCraque.clientWidth - 38;
+                let maxW = gameAreaCraque.clientWidth - 34;
                 
                 gkCraqueX += gkCraqueDir * (1.6 * craqueSpeedMultiplier);
                 if (gkCraqueX <= 10 || gkCraqueX >= maxW - 10) gkCraqueDir *= -1;
