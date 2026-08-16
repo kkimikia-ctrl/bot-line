@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Craque</title>
+    <title>Central de Jogos - Mini Craque</title>
     <style>
         * {
             box-sizing: border-box;
@@ -18,7 +18,7 @@
             align-items: center;
             justify-content: flex-start;
             min-height: 100vh;
-            padding-bottom: 60px;
+            padding-bottom: 70px;
         }
         .header-jogo {
             width: 100%;
@@ -28,69 +28,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .placar-box {
-            background-color: #2e8540;
-            color: white;
-            padding: 8px 15px;
-            font-weight: bold;
-            border-radius: 5px;
-            margin: 10px 0;
-            width: 95%;
-            max-width: 400px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .campo-container {
-            position: relative;
-            width: 95%;
-            max-width: 400px;
-            height: 450px;
-            background-color: #2e8540;
-            border: 4px solid white;
-            border-radius: 8px;
-            overflow: hidden;
-            touch-action: none;
-        }
-        /* Gol redimensionado */
-        .gol {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 220px;
-            height: 110px;
-            border: 4px solid white;
-            border-top: none;
-        }
-        .goleiro {
-            position: absolute;
-            font-size: 30px;
-            transition: left 0.3s ease;
-        }
-        .bola {
-            position: absolute;
-            width: 45px;
-            height: 45px;
-            background-color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            user-select: none;
-        }
-        .instrucao {
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            position: absolute;
-            bottom: 15px;
-            width: 100%;
-            font-size: 14px;
-            text-shadow: 1px 1px 2px black;
         }
         .botoes-topo {
             display: flex;
@@ -111,9 +48,78 @@
         .btn-voltar { background-color: #5c768d; }
         .btn-salvar { background-color: #2e8540; }
         
+        .placar-box {
+            background-color: #2e8540;
+            color: white;
+            padding: 8px 15px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 95%;
+            max-width: 400px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .campo-container {
+            position: relative;
+            width: 95%;
+            max-width: 400px;
+            height: 450px;
+            background-color: #2e8540;
+            border: 4px solid white;
+            border-radius: 8px;
+            overflow: hidden;
+            touch-action: none;
+        }
+        /* Trave invertida corretamente para cima */
+        .gol {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 240px;
+            height: 120px;
+            border: 4px solid white;
+            border-bottom: none;
+        }
+        .jogador-campo {
+            position: absolute;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            transition: transform 0.1s;
+        }
+        .bola {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            user-select: none;
+            z-index: 5;
+        }
+        .instrucao {
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            position: absolute;
+            bottom: 12px;
+            width: 100%;
+            font-size: 13px;
+            text-shadow: 1px 1px 2px black;
+        }
         .mensagem-gool {
             position: absolute;
-            top: 40%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 45px;
@@ -133,164 +139,279 @@
     </div>
 
     <div class="botoes-topo">
-        <button class="btn btn-voltar">Voltar</button>
-        <button class="btn btn-salvar">Salvar Pontos</button>
+        <button class="btn btn-voltar" id="btnVoltar">Voltar</button>
+        <button class="btn btn-salvar" id="btnSalvar">Salvar Pontos</button>
     </div>
 
     <div class="placar-box">
         <span>⚽ Mini Craque</span>
-        <span id="txtPlacar">Gols: 0 | Vidas: 3</span>
+        <span id="scoreCraqueText">Gols: 0 | Vidas: 3</span>
     </div>
 
-    <div class="campo-container" id="campo">
-        <div class="gol" id="gol"></div>
-        <div class="goleiro" id="goleiro">🤖</div>
-        <div class="bola" id="bola">⚽</div>
-        <div class="mensagem-gool" id="msgGool">GOOL!</div>
-        <div class="instrucao" id="txtInstrucao">Puxe a bola para trás e solte para chutá-la!</div>
+    <div class="campo-container" id="gameAreaCraque">
+        <div class="gol" id="gol">
+            <div class="jogador-campo" id="goalkeeperCraque" style="top: 10px; left: 100px;">🤖</div>
+            <div class="jogador-campo" id="defCraque1" style="top: 60px; left: 80px; display: none;">🛡️</div>
+            <div class="jogador-campo" id="defCraque2" style="top: 60px; left: 140px; display: none;">🛡️</div>
+            <div class="jogador-campo" id="defCraque3" style="top: 60px; left: 20px; display: none;">🛡️</div>
+        </div>
+        
+        <svg style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:2;">
+            <line id="trajectoryCraque" x1="0" y1="0" x2="0" y2="0" stroke="yellow" stroke-dasharray="4" stroke-width="3"/>
+        </svg>
+
+        <div class="bola" id="ballCraque">⚽</div>
+        <div class="mensagem-gool" id="msgGoalCraque">GOOL!</div>
+        <div class="instrucao" id="txtInstrucao">Arraste a bola para posicionar ou chutar!</div>
     </div>
 
     <script>
-        let gols = 0;
-        let vidas = 3;
-        
-        const bola = document.getElementById('bola');
-        const campo = document.getElementById('campo');
-        const goleiro = document.getElementById('goleiro');
-        const msgGool = document.getElementById('msgGool');
-        const txtPlacar = document.getElementById('txtPlacar');
+        let golsCraque = 0;
+        let vidasCraque = 3;
+        let defsCraqueActive = 0;
+        let craqueSpeedMultiplier = 1;
+        let craqueRunning = true;
+        let jogoAtualAtivo = 'futebol';
+
+        const ballCraque = document.getElementById('ballCraque');
+        const goalkeeperCraque = document.getElementById('goalkeeperCraque');
+        const defCraque1 = document.getElementById('defCraque1');
+        const defCraque2 = document.getElementById('defCraque2');
+        const defCraque3 = document.getElementById('defCraque3');
+        const gameAreaCraque = document.getElementById('gameAreaCraque');
+        const trajectoryCraque = document.getElementById('trajectoryCraque');
+        const msgGoalCraque = document.getElementById('msgGoalCraque');
+        const scoreCraqueText = document.getElementById('scoreCraqueText');
         const txtInstrucao = document.getElementById('txtInstrucao');
 
-        // Posição inicial da bola (mais abaixo no campo)
-        const posicaoInicialX = 177; // Centralizada horizontalmente (largura do campo 400 - 45 / 2)
-        const posicaoInicialY = 370; // Posicionada bem embaixo
+        let ballBaseX = 0;
+        let ballBaseY = 30; // Posição inicial mais abaixo
+        let ballCraqueX = 0;
+        let ballCraqueY = 30;
+        let isDraggingCraque = false;
+        let startCraqueX, startCraqueY;
 
-        function resetarBola() {
-            bola.style.left = posicaoInicialX + 'px';
-            bola.style.top = posicaoInicialY + 'px';
-            txtInstrucao.innerText = "Puxe a bola, posicione onde quiser e solte para chutar!";
+        let gkCraqueX = 100, gkCraqueDir = 1;
+        let def1CraqueX = 80, def1CraqueDir = 1;
+        let def2CraqueX = 140, def2CraqueDir = -1;
+        let def3CraqueX = 20, def3CraqueDir = 1;
+
+        function iniciarCraque() {
+            golsCraque = 0;
+            vidasCraque = 3;
+            defsCraqueActive = 0;
+            craqueSpeedMultiplier = 1;
+            defCraque1.style.display = 'none';
+            defCraque2.style.display = 'none';
+            defCraque3.style.display = 'none';
+            updateScoreCraque();
+            resetBallCraque();
+            requestAnimationFrame(craqueGameLoop);
         }
 
-        resetarBola();
+        function resetBallCraque() {
+            ballBaseX = (gameAreaCraque.clientWidth / 2) - 21;
+            ballCraqueX = ballBaseX;
+            ballCraqueY = ballBaseY;
+            ballCraque.style.bottom = ballCraqueY + 'px';
+            ballCraque.style.left = ballCraqueX + 'px';
+            trajectoryCraque.setAttribute('x1', 0);
+            trajectoryCraque.setAttribute('y1', 0);
+            trajectoryCraque.setAttribute('x2', 0);
+            trajectoryCraque.setAttribute('y2', 0);
+            txtInstrucao.innerText = "Arraste a bola para posicionar e solte para chutar!";
+        }
 
-        let isDragging = false;
-        let startX, startY;
+        // Eventos de arrastar a bola
+        ballCraque.addEventListener('mousedown', startDragCraque);
+        ballCraque.addEventListener('touchstart', startDragCraque);
+        document.addEventListener('mousemove', dragCraque);
+        document.addEventListener('touchmove', dragCraque, { passive: false });
+        document.addEventListener('mouseup', endDragCraque);
+        document.addEventListener('touchend', endDragCraque);
 
-        function iniciarArrasto(e) {
-            isDragging = true;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        function startDragCraque(e) {
+            if (!craqueRunning) return;
+            isDraggingCraque = true;
+            startCraqueX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            startCraqueY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+        }
+
+        function dragCraque(e) {
+            if (!isDraggingCraque || !craqueRunning) return;
+            const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
             
-            const rect = bola.getBoundingClientRect();
-            startX = clientX - rect.left;
-            startY = clientY - rect.top;
-        }
+            let dx = clientX - startCraqueX;
+            let dy = clientY - startCraqueY;
 
-        function duranteArrasto(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-            const campoRect = campo.getBoundingClientRect();
+            if (dy > 0) dy = 0; // Puxar para trás (para cima na tela)
             
-            let novoX = clientX - campoRect.left - startX;
-            let novoY = clientY - campoRect.top - startY;
+            ballCraqueX = ballBaseX + dx;
+            ballCraqueY = ballBaseY - dy;
 
-            // Limites do campo
-            novoX = Math.max(0, Math.min(novoX, campo.clientWidth - bola.clientWidth));
-            novoY = Math.max(0, Math.min(novoY, campo.clientHeight - bola.clientHeight));
+            // Limites da área do jogo
+            ballCraqueX = Math.max(10, Math.min(ballCraqueX, gameAreaCraque.clientWidth - 50));
+            ballCraqueY = Math.max(20, Math.min(ballCraqueY, gameAreaCraque.clientHeight - 60));
 
-            bola.style.left = novoX + 'px';
-            bola.style.top = novoY + 'px';
+            ballCraque.style.left = ballCraqueX + 'px';
+            ballCraque.style.bottom = ballCraqueY + 'px';
+
+            // Linha guia de trajetória
+            let areaRect = gameAreaCraque.getBoundingClientRect();
+            let currentX = ballCraqueX + 21;
+            let currentY = ballCraqueY + 21;
+            
+            trajectoryCraque.setAttribute('x1', currentX);
+            trajectoryCraque.setAttribute('y1', areaRect.height - currentY);
+            trajectoryCraque.setAttribute('x2', currentX - (dx * 0.8));
+            trajectoryCraque.setAttribute('y2', areaRect.height - (currentY + (dy * 0.8)));
         }
 
-        function fimArrasto() {
-            if (!isDragging) return;
-            isDragging = false;
+        function endDragCraque(e) {
+            if (!isDraggingCraque || !craqueRunning) return;
+            isDraggingCraque = false;
+            trajectoryCraque.setAttribute('x1', 0);
+            trajectoryCraque.setAttribute('y1', 0);
+            trajectoryCraque.setAttribute('x2', 0);
+            trajectoryCraque.setAttribute('y2', 0);
 
-            // Coordenadas atuais da bola ao soltar
-            let bolaX = parseInt(bola.style.left);
-            let bolaY = parseInt(bola.style.top);
-
-            // Verifica se a bola foi solta na metade superior (direção ao gol)
-            // Se soltar ainda embaixo, ela apenas fica parada onde o usuário soltou, permitindo mirar depois.
-            if (bolaY < 250) {
-                executarChute(bolaX, bolaY);
+            // Se o usuário soltou na parte superior (direção ao gol), executa o chute. Caso contrário, a bola fica parada onde soltou.
+            if (ballCraqueY > 180) {
+                let targetX = ballCraqueX;
+                animateShotCraque(targetX);
             } else {
-                txtInstrucao.innerText = "Bola posicionado! Arraste mais para cima para chutar ou mova novamente.";
+                txtInstrucao.innerText = "Bola posicionada! Arraste mais para cima para chutar.";
+                ballBaseX = ballCraqueX;
+                ballBaseY = ballCraqueY;
             }
         }
 
-        function executarChute(startXPos, startYPos) {
-            txtInstrucao.innerText = "Chutando...";
-            
-            // Simulação de trajetória simples até a linha do gol
-            let targetX = 170 + Math.random() * 50; 
-            let targetY = 35; // Altura da linha do gol
+        function animateShotCraque(targetX) {
+            let currentBottom = parseInt(ballCraque.style.bottom);
+            let currentLeft = parseInt(ballCraque.style.left);
+            let stepY = 16;
+            let stepX = (targetX - currentLeft) / 10;
 
-            let startTime = null;
-            const duration = 400; // milissegundos
+            let flight = setInterval(() => {
+                currentBottom += stepY;
+                currentLeft += stepX;
+                ballCraque.style.bottom = currentBottom + 'px';
+                ballCraque.style.left = currentLeft + 'px';
 
-            function animar(timestamp) {
-                if (!startTime) startTime = timestamp;
-                let progress = (timestamp - startTime) / duration;
+                let bRect = ballCraque.getBoundingClientRect();
                 
-                if (progress < 1) {
-                    let currentX = startXPos + (targetX - startXPos) * progress;
-                    let currentY = startYPos + (targetY - startYPos) * progress;
-                    bola.style.left = currentX + 'px';
-                    bola.style.top = currentY + 'px';
-                    requestAnimationFrame(animar);
-                } else {
-                    verificarGol(targetX, targetY);
+                if (defsCraqueActive >= 3 && checkCollisionCraque(bRect, defCraque3.getBoundingClientRect())) {
+                    clearInterval(flight);
+                    handleMissCraque("Defendido pela Defesa 3!");
+                    return;
+                }
+                if (defsCraqueActive >= 2 && checkCollisionCraque(bRect, defCraque2.getBoundingClientRect())) {
+                    clearInterval(flight);
+                    handleMissCraque("Defendido pela Defesa 2!");
+                    return;
+                }
+                if (defsCraqueActive >= 1 && checkCollisionCraque(bRect, defCraque1.getBoundingClientRect())) {
+                    clearInterval(flight);
+                    handleMissCraque("Defendido pela Defesa 1!");
+                    return;
+                }
+                if (checkCollisionCraque(bRect, goalkeeperCraque.getBoundingClientRect())) {
+                    clearInterval(flight);
+                    handleMissCraque("O Goleiro defendeu!");
+                    return;
+                }
+
+                if (currentBottom >= gameAreaCraque.clientHeight - 80) {
+                    clearInterval(flight);
+                    handleGoalCraque();
+                    return;
+                }
+            }, 20);
+        }
+
+        function checkCollisionCraque(r1, r2) {
+            return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+        }
+
+        function handleGoalCraque() {
+            golsCraque++;
+            updateScoreCraque();
+            msgGoalCraque.style.display = 'block';
+            
+            if (golsCraque >= 2) { defsCraqueActive = 1; defCraque1.style.display = 'flex'; }
+            if (golsCraque >= 4) { defsCraqueActive = 2; defCraque2.style.display = 'flex'; }
+            if (golsCraque >= 6) { defsCraqueActive = 3; defCraque3.style.display = 'flex'; }
+            
+            craqueSpeedMultiplier += 0.2;
+
+            setTimeout(() => {
+                msgGoalCraque.style.display = 'none';
+                resetBallCraque();
+            }, 1000);
+        }
+
+        function handleMissCraque(reason) {
+            vidasCraque--;
+            updateScoreCraque();
+            txtInstrucao.innerText = reason;
+            setTimeout(() => {
+                if (vidasCraque <= 0) {
+                    alert("Fim de jogo! Suas vidas acabaram.");
+                    golsCraque = 0;
+                    vidasCraque = 3;
+                    defsCraqueActive = 0;
+                    defCraque1.style.display = 'none';
+                    defCraque2.style.display = 'none';
+                    defCraque3.style.display = 'none';
+                    craqueSpeedMultiplier = 1;
+                }
+                resetBallCraque();
+            }, 1200);
+        }
+
+        function updateScoreCraque() {
+            scoreCraqueText.innerText = `Gols: ${golsCraque} | Vidas: ${vidasCraque}`;
+        }
+
+        function craqueGameLoop() {
+            if (jogoAtualAtivo === 'futebol') {
+                let maxW = gameAreaCraque.clientWidth - 45;
+                
+                gkCraqueX += gkCraqueDir * (1.6 * craqueSpeedMultiplier);
+                if (gkCraqueX <= 5 || gkCraqueX >= maxW) gkCraqueDir *= -1;
+                goalkeeperCraque.style.left = gkCraqueX + 'px';
+
+                if (defsCraqueActive >= 1) {
+                    def1CraqueX += def1CraqueDir * (1.3 * craqueSpeedMultiplier);
+                    if (def1CraqueX <= 5 || def1CraqueX >= maxW) def1CraqueDir *= -1;
+                    defCraque1.style.left = def1CraqueX + 'px';
+                }
+                if (defsCraqueActive >= 2) {
+                    def2CraqueX += def2CraqueDir * (1.5 * craqueSpeedMultiplier);
+                    if (def2CraqueX <= 5 || def2CraqueX >= maxW) def2CraqueDir *= -1;
+                    defCraque2.style.left = def2CraqueX + 'px';
+                }
+                if (defsCraqueActive >= 3) {
+                    def3CraqueX += def3CraqueDir * (1.7 * craqueSpeedMultiplier);
+                    if (def3CraqueX <= 5 || def3CraqueX >= maxW) def3CraqueDir *= -1;
+                    defCraque3.style.left = def3CraqueX + 'px';
                 }
             }
-
-            requestAnimationFrame(animar);
+            requestAnimationFrame(craqueGameLoop);
         }
 
-        function verificarGol(finalX, finalY) {
-            // Limites exatos do gol dentro do campo
-            const golEsquerda = 90;
-            const golDireita = 310;
-            const golTopo = 20;
-            const golFundo = 130;
+        // Funções dos Botões Voltar e Salvar
+        document.getElementById('btnVoltar').addEventListener('click', () => {
+            window.history.back();
+        });
 
-            if (finalX >= golEsquerda && finalX <= golDireita && finalY >= golTopo && finalY <= golFundo) {
-                gols++;
-                msgGool.style.display = 'block';
-                setTimeout(() => {
-                    msgGool.style.display = 'none';
-                    resetarBola();
-                }, 1200);
-            } else {
-                vidas--;
-                txtInstrucao.innerText = "Defesa do goleiro! Tente novamente.";
-                setTimeout(() => {
-                    if (vidas > 0) {
-                        resetarBola();
-                    } else {
-                        alert("Fim de jogo! Suas vidas acabaram.");
-                        gols = 0;
-                        vidas = 3;
-                        resetarBola();
-                    }
-                }, 1200);
-            }
-            txtPlacar.innerText = `Gols: ${gols} | Vidas: ${vidas}`;
-        }
+        document.getElementById('btnSalvar').addEventListener('click', () => {
+            alert(`Pontuação de ${golsCraque} gols salva com sucesso!`);
+        });
 
-        // Eventos de Mouse
-        bola.addEventListener('mousedown', iniciarArrasto);
-        document.addEventListener('mousemove', duranteArrasto);
-        document.addEventListener('mouseup', fimArrasto);
-
-        // Eventos de Toque (Mobile)
-        bola.addEventListener('touchstart', iniciarArrasto);
-        document.addEventListener('touchmove', duranteArrasto, { passive: false });
-        document.addEventListener('touchend', fimArrasto);
+        // Inicializar o jogo ao carregar
+        window.onload = iniciarCraque;
     </script>
 </body>
 </html>
