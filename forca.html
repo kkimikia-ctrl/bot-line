@@ -244,22 +244,19 @@
     </div>
 
     <div class="container">
-        <!-- Botões Azul e Laranja lado a lado -->
+        <!-- Botões de Topo -->
         <div class="buttons-row" id="container-botoes-topo">
             <button onclick="tocarEfeito('clique'); alert('Central de Jogos Ativa!')" class="top-action-btn btn-blue">🎮 Desafio</button>
             <button onclick="tocarEfeito('clique'); abrirModalRanking()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
         </div>
 
-        <!-- Menu Principal com o Jogo de Futebol adicionado -->
+        <!-- Menu Principal de Seleção de Jogos -->
         <div id="menu-selecao-jogos" class="card-game menu-jogos" style="display: grid;">
             <button onclick="abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
             <button onclick="abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
             <button onclick="abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
             <button onclick="abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
-            
-            <!-- JOGO DE FUTEBOL ADICIONADO AQUI -->
-            <a href="futebol.html" class="action-btn" style="background-color: #16a34a; margin-top:0;">⚽ Jogo de Futebol</a>
-            
+            <button onclick="abrirJogoFutebol()" class="action-btn" style="background-color: #16a34a; margin-top:0;">⚽ Jogo de Futebol</button>
             <button onclick="abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; margin-top:0;">🐍 Jogo da Cobrinha</button>
         </div>
 
@@ -364,6 +361,27 @@
             <button id="btn-proxima-rodada" onclick="proximaRodadaJokenpo()" class="action-btn" style="display: none; background-color: #009b3a; padding: 8px; margin-top: 8px;">Próxima Fase ➔</button>
         </div>
 
+        <!-- Jogo de Futebol Integrado -->
+        <div id="container-jogo-futebol" class="card-game" style="display: none;">
+            <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
+            <button onclick="salvarPontuacaoRankingFutebolManual()" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: right; font-weight: bold; font-size: 11px;">💾 Salvar Pontos</button>
+            <div style="clear: both;"></div>
+            
+            <div style="background: #16a34a; color: white; padding: 8px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <h3 style="margin: 0; font-size: 13px;">⚽ Desafio de Pênaltis</h3>
+                <span>⭐ Placar: <span id="placar-futebol">0</span></span>
+            </div>
+            
+            <div style="font-size: 45px; margin: 15px 0;" id="animacao-bola">⚽</div>
+            <p id="mensagem-futebol" style="font-weight: bold; font-size: 13px; color: #1e293b; min-height: 24px; margin: 8px 0;"></p>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 15px;">
+                <button onclick="chutarFutebol('esquerda')" class="action-btn" style="background-color: #2563eb; font-size: 12px; margin-top:0; padding: 10px 4px;">👈 Esquerda</button>
+                <button onclick="chutarFutebol('centro')" class="action-btn" style="background-color: #d97706; font-size: 12px; margin-top:0; padding: 10px 4px;">⬆️ Meio</button>
+                <button onclick="chutarFutebol('direita')" class="action-btn" style="background-color: #dc2626; font-size: 12px; margin-top:0; padding: 10px 4px;">👉 Direita</button>
+            </div>
+        </div>
+
         <!-- Jogo da Cobrinha -->
         <div id="container-jogo-cobrinha" class="card-game" style="display: none;">
             <button onclick="voltarMenuJogos()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left;">⬅ Voltar</button>
@@ -405,7 +423,7 @@
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
         <a href="servicos.html" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
-        <a href="lazer.html" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
+        <a href="#" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
         <a href="perfil.html" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
     </nav>
 
@@ -562,7 +580,7 @@
                 } else if (jogoAtualAtivo === 'jokenpo') {
                     const melodiaJokenpo = [notas.G4, notas.C5, notas.D5, notas.C5];
                     tocarNotaFundo(melodiaJokenpo[passoMusica % melodiaJokenpo.length], 'sawtooth', 0.2);
-                } else if (jogoAtualAtivo === 'cobrinha') {
+                } else if (jogoAtualAtivo === 'cobrinha' || jogoAtualAtivo === 'futebol') {
                     const melodiaSnake = [notas.E4, notas.G4, notas.A4, notas.B4];
                     tocarNotaFundo(melodiaSnake[passoMusica % melodiaSnake.length], 'square', 0.15);
                 }
@@ -657,6 +675,7 @@
             document.getElementById('container-jogo-forca').style.display = 'none';
             document.getElementById('container-jogo-memoria').style.display = 'none';
             document.getElementById('container-jokenpo').style.display = 'none';
+            document.getElementById('container-jogo-futebol').style.display = 'none';
             document.getElementById('container-jogo-cobrinha').style.display = 'none';
         }
 
@@ -688,6 +707,13 @@
             document.getElementById('menu-selecao-jogos').style.display = 'none'; 
             document.getElementById('container-jokenpo').style.display = 'block'; 
             iniciarJokenpo(); 
+        }
+        function abrirJogoFutebol() {
+            jogoAtualAtivo = 'futebol'; iniciarMusicaDeFundo(); tocarEfeito('clique');
+            document.getElementById('container-botoes-topo').style.display = 'none';
+            document.getElementById('menu-selecao-jogos').style.display = 'none';
+            document.getElementById('container-jogo-futebol').style.display = 'block';
+            iniciarFutebol();
         }
         function abrirJogoCobrinha() { 
             jogoAtualAtivo = 'cobrinha'; iniciarMusicaDeFundo(); tocarEfeito('clique'); 
@@ -946,6 +972,39 @@
         }
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
         function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo); }
+
+        /* Lógica do Jogo de Futebol Integrado */
+        let pontosFutebol = 0;
+        const cantosFutebol = ['esquerda', 'centro', 'direita'];
+
+        function iniciarFutebol() {
+            pontosFutebol = 0;
+            document.getElementById('placar-futebol').innerText = pontosFutebol;
+            document.getElementById('mensagem-futebol').innerText = "Escolha um canto para cobrar o pênalti!";
+            document.getElementById('animacao-bola').innerText = "⚽";
+        }
+
+        function chutarFutebol(escolhaJogador) {
+            tocarEfeito('jokenpo-jogada');
+            let escolhaGoleiro = cantosFutebol[Math.floor(Math.random() * cantosFutebol.length)];
+            let msg = document.getElementById('mensagem-futebol');
+            
+            if (escolhaJogador !== escolhaGoleiro) {
+                pontosFutebol += 50;
+                msg.style.color = "#16a34a";
+                msg.innerText = `GOOOOOOL! 🥅 O goleiro pulou para a ${escolhaGoleiro} e você mandou no ângulo!`;
+                tocarEfeito('vitoria');
+            } else {
+                msg.style.color = "#dc2626";
+                msg.innerText = `DEFENDEU! 🧤 O goleiro adivinhou sua cobrança no(a) ${escolhaGoleiro}!`;
+                tocarEfeito('clique');
+            }
+            document.getElementById('placar-futebol').innerText = pontosFutebol;
+        }
+
+        function salvarPontuacaoRankingFutebolManual() {
+            salvarPontuacaoGlobal("Jogo de Futebol", pontosFutebol);
+        }
 
         let snakeInterval = null, snake = [], comida = {}, direcao = 'RIGHT', proximaDirecao = 'RIGHT', pontosSnake = 0, nivelSnake = 1;
         const gridTotal = 16;
