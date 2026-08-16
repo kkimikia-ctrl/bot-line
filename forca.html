@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Mini Craque - Central de Jogos</title>
+    <title>Central de Jogos</title>
     <style>
         body {
             margin: 0;
-            background-color: #1a1a1a;
+            background-color: #121212;
             color: #ffffff;
             font-family: Arial, sans-serif;
             display: flex;
@@ -15,6 +15,32 @@
             justify-content: center;
             height: 100vh;
         }
+        .menu-container, .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
         canvas {
             border: 4px solid #4CAF50;
             background-color: #2e7d32;
@@ -22,27 +48,40 @@
         }
         .ui {
             margin-bottom: 10px;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="ui">
-        Pontuação: <span id="score">0</span> | Tentativas: <span id="attempts">3</span>
+    <!-- MENU PRINCIPAL DA CENTRAL DE JOGOS -->
+    <div id="mainMenu" class="menu-container">
+        <h1>Central de Jogos</h1>
+        <button class="btn" onclick="startMiniCraque()">Mini Craque</button>
+        <button class="btn" onclick="alert('Outro jogo em breve!')">Outro Jogo</button>
     </div>
-    
-    <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+    <!-- TELA DO JOGO MINI CRAQUE -->
+    <div id="miniCraqueGame" class="game-container hidden">
+        <div class="ui">
+            Pontuação: <span id="score">0</span> | Tentativas: <span id="attempts">3</span>
+            <button class="btn" style="padding: 4px 10px; font-size: 14px; margin-left: 20px;" onclick="returnToMenu()">Menu</button>
+        </div>
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+    </div>
 
     <script>
+        const mainMenu = document.getElementById('mainMenu');
+        const miniCraqueGame = document.getElementById('miniCraqueGame');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
+        let gameInterval = null;
         let score = 0;
         let attempts = 3;
 
-        // Estado da Bola (mecânica de estilingue)
+        // Estado da Bola (Mini Craque)
         const ball = {
             x: 200,
             y: 520,
@@ -71,6 +110,30 @@
             { x: 200, y: 380, width: 70, height: 15, speed: -2, direction: -1 }
         ];
 
+        function startMiniCraque() {
+            mainMenu.classList.add('hidden');
+            miniCraqueGame.classList.remove('hidden');
+            resetGame();
+            if (!gameInterval) {
+                gameInterval = requestAnimationFrame(loop);
+            }
+        }
+
+        function returnToMenu() {
+            miniCraqueGame.classList.add('hidden');
+            mainMenu.classList.remove('hidden');
+            cancelAnimationFrame(gameInterval);
+            gameInterval = null;
+        }
+
+        function resetGame() {
+            score = 0;
+            attempts = 3;
+            document.getElementById('score').innerText = score;
+            document.getElementById('attempts').innerText = attempts;
+            resetBall();
+        }
+
         // Controles de Mouse / Toque
         canvas.addEventListener('mousedown', (e) => {
             if (ball.isMoving) return;
@@ -78,7 +141,6 @@
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
 
-            // Verificar se clicou na bola
             const dist = Math.hypot(mouseX - ball.x, mouseY - ball.y);
             if (dist < ball.radius * 2) {
                 ball.isDragging = true;
@@ -91,11 +153,9 @@
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
 
-            // Limitar a área de puxada (estilingue para trás)
             let pullX = mouseX;
             let pullY = mouseY;
             
-            // Travar a distância máxima de puxada
             const maxPull = 80;
             const dist = Math.hypot(pullX - ball.startX, pullY - ball.startY);
             if (dist > maxPull) {
@@ -103,7 +163,6 @@
                 pullY = ball.startY + (pullY - ball.startY) * (maxPull / dist);
             }
 
-            // Não deixar empurrar para a frente da posição inicial
             if (pullY < ball.startY) pullY = ball.startY;
 
             ball.x = pullX;
@@ -115,25 +174,22 @@
             ball.isDragging = false;
             ball.isMoving = true;
 
-            // Calcular velocidade com base na distância do puxão (estilingue)
             const forceMultiplier = 0.15;
             ball.vx = (ball.startX - ball.x) * forceMultiplier;
             ball.vy = (ball.startY - ball.y) * forceMultiplier;
         });
 
         function update() {
-            // Movimento da bola
             if (ball.isMoving) {
                 ball.x += ball.vx;
                 ball.y += ball.vy;
-                ball.vy *= 0.99; // Atrito leve
+                ball.vy *= 0.99;
 
-                // Colisão com as paredes laterais
                 if (ball.x - ball.radius < 40 || ball.x + ball.radius > 360) {
                     ball.vx *= -1;
                 }
 
-                // GOL (Linha do topo entre x: 130 e 270, y: 60)
+                // GOL
                 if (ball.y <= 60 && ball.x >= 130 && ball.x <= 270) {
                     score += 10;
                     document.getElementById('score').innerText = score;
@@ -150,7 +206,7 @@
                     missShot();
                 }
 
-                // Defesa dos defensores móveis
+                // Defesas móveis
                 defenders.forEach(def => {
                     if (
                         ball.x > def.x &&
@@ -162,20 +218,17 @@
                     }
                 });
 
-                // Se sair da tela por cima (fora do gol) ou pelos lados sem pontuar
                 if (ball.y < 0 || ball.y > 600 || ball.x < 0 || ball.x > 400) {
-                    if (ball.y > 0) missShot(); // Se saiu por baixo ou lados
-                    else resetBall(); // Saiu por cima mas errou o gol
+                    if (ball.y > 0) missShot();
+                    else resetBall();
                 }
             }
 
-            // Movimentação do Goleiro
             goalKeeper.x += goalKeeper.speed * goalKeeper.direction;
             if (goalKeeper.x <= 130 || goalKeeper.x + goalKeeper.width >= 270) {
                 goalKeeper.direction *= -1;
             }
 
-            // Movimentação dos Defensores
             defenders.forEach(def => {
                 def.x += def.speed * def.direction;
                 if (def.x <= 50 || def.x + def.width >= 350) {
@@ -207,29 +260,22 @@
         }
 
         function drawField() {
-            // Relvado e marcações
             ctx.fillStyle = '#2e7d32';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Linhas do campo
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 3;
             ctx.strokeRect(40, 40, 320, 520);
-
-            // Área de Gol
             ctx.strokeRect(130, 40, 140, 80);
 
-            // Goleiro
             ctx.fillStyle = '#ff9800';
             ctx.fillRect(goalKeeper.x, goalKeeper.y, goalKeeper.width, goalKeeper.height);
 
-            // Defensores
             ctx.fillStyle = '#e91e63';
             defenders.forEach(def => {
                 ctx.fillRect(def.x, def.y, def.width, def.height);
             });
 
-            // Linha de Mira (Estilingue) se estiver a puxar
             if (ball.isDragging) {
                 ctx.beginPath();
                 ctx.moveTo(ball.startX, ball.startY);
@@ -239,7 +285,6 @@
                 ctx.stroke();
             }
 
-            // Bola (Mini Craque)
             ctx.beginPath();
             ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
             ctx.fillStyle = '#ffffff';
@@ -251,12 +296,12 @@
         }
 
         function loop() {
-            update();
-            drawField();
-            requestAnimationFrame(loop);
+            if (!miniCraqueGame.classList.contains('hidden')) {
+                update();
+                drawField();
+                gameInterval = requestAnimationFrame(loop);
+            }
         }
-
-        loop();
     </script>
 
 </body>
