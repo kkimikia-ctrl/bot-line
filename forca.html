@@ -191,7 +191,7 @@
             color: #0047ab;
         }
 
-        /* Estilos atualizados do Mini Craque (Gol menor, goleiro na linha, defesas verde/amarela/vermelha, sem barra inferior) */
+        /* Estilos atualizados do Mini Craque (Gol menor, defesas e bola mais acima) */
         .game-area-craque {
             position: relative;
             width: 100%;
@@ -207,54 +207,54 @@
             margin-top: 10px;
             touch-action: none;
         }
-        /* Gol mais estreito */
+        /* Gol mais estreito e menor */
         .goal-box {
             position: absolute;
-            top: 10px;
-            width: 55%;
-            height: 90px;
+            top: 5px;
+            width: 40%;
+            height: 75px;
             border: 3px solid white;
             border-bottom: none;
         }
         /* Goleiro fixo na linha do gol */
         .goalkeeper-craque {
             position: absolute;
-            top: 10px;
-            width: 32px;
-            height: 32px;
+            top: 5px;
+            width: 28px;
+            height: 28px;
             background: #ff4500;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 14px;
+            font-size: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
-        /* Defesas Progressivas (Verde 🟢, Amarela 🟡, Vermelha 🔴) */
+        /* Defesas Progressivas mais acima */
         .defender-craque {
             position: absolute;
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             display: none;
         }
-        #defCraque1 { background-color: #10b981; top: 130px; } /* Verde */
-        #defCraque2 { background-color: #f59e0b; top: 220px; } /* Amarelo */
-        #defCraque3 { background-color: #ef4444; top: 310px; } /* Vermelho */
+        #defCraque1 { background-color: #10b981; top: 90px; } /* Verde */
+        #defCraque2 { background-color: #f59e0b; top: 150px; } /* Amarelo */
+        #defCraque3 { background-color: #ef4444; top: 210px; } /* Vermelho */
 
         .ball-craque {
             position: absolute;
-            bottom: 25px;
-            width: 42px;
-            height: 42px;
+            bottom: 125px; /* Bola bem mais acima, quase não aparece na parte inferior */
+            width: 38px;
+            height: 38px;
             background: white;
             border-radius: 50%;
             display: flex;
@@ -263,7 +263,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.4);
             cursor: pointer;
             z-index: 10;
-            font-size: 22px;
+            font-size: 20px;
             user-select: none;
         }
         .msg-goal-craque {
@@ -494,7 +494,7 @@
         </div>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR GLOBAL (Mantida nos outros jogos/menu) -->
+    <!-- NAVEGAÇÃO INFERIOR GLOBAL -->
     <nav class="bottom-nav" id="globalBottomNav" style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; display: flex; justify-content: space-around; align-items: center; height: 55px; box-shadow: 0 -2px 6px rgba(0,0,0,0.1); z-index: 999;">
         <a href="index.html" class="nav-item" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.75rem; flex-grow: 1;"><span class="icon" style="font-size: 1.1rem; margin-bottom: 2px;">🏠</span><span>Home</span></a>
         <a href="servicos.html" class="nav-item" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.75rem; flex-grow: 1;"><span class="icon" style="font-size: 1.1rem; margin-bottom: 2px;">📋</span><span>Serviços</span></a>
@@ -746,7 +746,7 @@
 
             document.getElementById('container-botoes-topo').style.display = 'flex';
             document.getElementById('menu-selecao-jogos').style.display = 'grid';
-            document.getElementById('globalBottomNav').style.display = 'flex'; // Restaura barra inferior fora do Mini Craque
+            document.getElementById('globalBottomNav').style.display = 'flex';
             document.getElementById('container-jogo-velha').style.display = 'none';
             document.getElementById('container-jogo-forca').style.display = 'none';
             document.getElementById('container-jogo-memoria').style.display = 'none';
@@ -788,7 +788,7 @@
             jogoAtualAtivo = 'futebol'; iniciarMusicaDeFundo(); tocarEfeito('clique');
             document.getElementById('container-botoes-topo').style.display = 'none';
             document.getElementById('menu-selecao-jogos').style.display = 'none';
-            document.getElementById('globalBottomNav').style.display = 'none'; // Tira os botões de baixo para liberar espaço no campo
+            document.getElementById('globalBottomNav').style.display = 'none';
             document.getElementById('container-jogo-futebol').style.display = 'block';
             iniciarCraque();
         }
@@ -1054,7 +1054,7 @@
         function proximaRodadaJokenpo() { tocarEfeito('clique'); atualizarTelaJokenpo(); reiniciarRodadaJokenpo(); }
         function salvarPontuacaoRankingJokenpoManual() { salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo); }
 
-        /* MINI CRAQUE (FUTEBOL COM GOLEIRO NA LINHA E DEFESAS PROGRESSIVAS) */
+        /* MINI CRAQUE (FUTEBOL COM GOLEIRO NA LINHA, DEFESAS E POSIÇÃO FIXA DE ESTILINGUE) */
         let golsCraque = 0;
         let vidasCraque = 3;
         
@@ -1077,12 +1077,9 @@
         const msgGoalCraque = document.getElementById('msgGoalCraque');
         const scoreCraqueText = document.getElementById('scoreCraqueText');
 
-        let ballBaseX = 0;
-        let ballBaseY = 25;
-        let ballCraqueX = 0;
-        let ballCraqueY = 25;
         let isDraggingCraque = false;
         let startCraqueX, startCraqueY;
+        let ballBaseBottom = 125; // Posição fixa de origem da bola
 
         function iniciarCraque() {
             golsCraque = 0;
@@ -1102,11 +1099,8 @@
 
         function resetBallCraque() {
             isDraggingCraque = false;
-            ballBaseX = gameAreaCraque.clientWidth / 2 - 21;
-            ballCraqueX = ballBaseX;
-            ballCraqueY = ballBaseY;
-            ballCraque.style.bottom = ballCraqueY + 'px';
-            ballCraque.style.left = ballCraqueX + 'px';
+            ballCraque.style.bottom = ballBaseBottom + 'px';
+            ballCraque.style.left = (gameAreaCraque.clientWidth / 2 - 19) + 'px';
             trajectoryCraque.setAttribute('x1', 0);
             trajectoryCraque.setAttribute('y1', 0);
             trajectoryCraque.setAttribute('x2', 0);
@@ -1134,26 +1128,25 @@
             let dx = clientX - startCraqueX;
             let dy = clientY - startCraqueY;
 
-            if (dy > 0) dy = 0; // Só puxar para trás
+            if (dy > 0) dy = 0; // Só permite puxar para trás
             
-            ballCraqueX = (gameAreaCraque.clientWidth / 2 - 21) + dx;
-            ballCraqueY = ballBaseY - dy;
+            let currentLeft = (gameAreaCraque.clientWidth / 2 - 19) + dx;
+            let currentBottom = ballBaseBottom - dy;
 
-            ballCraque.style.left = ballCraqueX + 'px';
-            ballCraque.style.bottom = ballCraqueY + 'px';
+            ballCraque.style.left = currentLeft + 'px';
+            ballCraque.style.bottom = currentBottom + 'px';
 
-            let ballRect = ballCraque.getBoundingClientRect();
             let areaRect = gameAreaCraque.getBoundingClientRect();
-            let currentX = ballRect.left - areaRect.left + 21;
-            let currentY = areaRect.height - (ballRect.top - areaRect.top) - 21;
+            let originX = areaRect.width / 2;
+            let originY = areaRect.height - ballBaseBottom;
             
-            let aimX = currentX - dx * 1.5;
-            let aimY = currentY + dy * 1.5;
+            let aimX = originX - dx * 1.5;
+            let aimY = originY + dy * 1.5;
 
-            trajectoryCraque.setAttribute('x1', currentX);
-            trajectoryCraque.setAttribute('y1', areaRect.height - currentY);
+            trajectoryCraque.setAttribute('x1', originX);
+            trajectoryCraque.setAttribute('y1', originY);
             trajectoryCraque.setAttribute('x2', aimX);
-            trajectoryCraque.setAttribute('y2', areaRect.height - aimY);
+            trajectoryCraque.setAttribute('y2', aimY);
         }
 
         function endDragCraque(e) {
@@ -1164,7 +1157,8 @@
             trajectoryCraque.setAttribute('x2', 0);
             trajectoryCraque.setAttribute('y2', 0);
 
-            let targetX = ballCraqueX;
+            let currentLeft = parseInt(ballCraque.style.left);
+            let targetX = currentLeft;
             animateShotCraque(targetX);
         }
 
@@ -1172,7 +1166,7 @@
             let currentBottom = parseInt(ballCraque.style.bottom);
             let currentLeft = parseInt(ballCraque.style.left);
             let stepY = 16;
-            let stepX = (targetX - currentLeft) / 10;
+            let stepX = (targetX - ((gameAreaCraque.clientWidth / 2) - 19)) / 10;
 
             let flight = setInterval(() => {
                 currentBottom += stepY;
@@ -1203,7 +1197,7 @@
                     return;
                 }
 
-                if (currentBottom >= gameAreaCraque.clientHeight - 65) {
+                if (currentBottom >= gameAreaCraque.clientHeight - 40) {
                     clearInterval(flight);
                     handleGoalCraque();
                     return;
@@ -1256,7 +1250,7 @@
 
         function craqueGameLoop() {
             if (jogoAtualAtivo === 'futebol') {
-                let maxW = gameAreaCraque.clientWidth - 34;
+                let maxW = gameAreaCraque.clientWidth - 30;
                 
                 gkCraqueX += gkCraqueDir * (1.6 * craqueSpeedMultiplier);
                 if (gkCraqueX <= 10 || gkCraqueX >= maxW - 10) gkCraqueDir *= -1;
