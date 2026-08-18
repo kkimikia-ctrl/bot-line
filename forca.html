@@ -1277,10 +1277,21 @@
                 document.getElementById('resultado-jokenpo').innerText = textoRes;
                 document.getElementById('pontos-jokenpo').innerText = pontosJokenpo;
                 if (venceu) {
-                    if (faseAtualJokenpo < 10) { faseAtualJokenpo++; document.getElementById('btn-proxima-rodada').style.display = 'block'; }
-                    else { alert("🏆 INCRÍVEL! O Brasil conquistou o mundo!"); iniciarJokenpo(); }
+                    if (faseAtualJokenpo < 10) { 
+                        faseAtualJokenpo++; 
+                        document.getElementById('btn-proxima-rodada').style.display = 'block'; 
+                    } else { 
+                        alert("🏆 INCRÍVEL! O Brasil conquistou o mundo!"); 
+                        salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo);
+                        iniciarJokenpo(); 
+                    }
                 } else { 
-                    setTimeout(() => { iniciarJokenpo(); }, 1800); 
+                    setTimeout(() => { 
+                        if (pontosJokenpo > 0 && confirm("Fim da linha! Deseja salvar sua pontuação no ranking?")) {
+                            salvarPontuacaoGlobal("Jokenpô Brasil", pontosJokenpo);
+                        }
+                        iniciarJokenpo(); 
+                    }, 1800); 
                 }
             }, 1000);
         }
@@ -1310,7 +1321,16 @@
             if (direcao === 'UP') cabeca.y--; if (direcao === 'DOWN') cabeca.y++; if (direcao === 'LEFT') cabeca.x--; if (direcao === 'RIGHT') cabeca.x++;
             if (cabeca.x < 0) cabeca.x = gridTotal - 1; if (cabeca.x >= gridTotal) cabeca.x = 0;
             if (cabeca.y < 0) cabeca.y = gridTotal - 1; if (cabeca.y >= gridTotal) cabeca.y = 0;
-            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { pararCobrinha(); tocarEfeito('clique'); alert(`💥 Fim de jogo na Cobrinha! Clique em Salvar Pontos se desejar registrar.`); return; }
+            if (snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) { 
+                pararCobrinha(); 
+                tocarEfeito('clique'); 
+                if (pontosSnake > 0 && confirm(`💥 Fim de jogo na Cobrinha! Pontuação: ${pontosSnake}. Deseja salvar seus pontos no ranking?`)) {
+                    salvarPontuacaoGlobal("Jogo da Cobrinha", pontosSnake);
+                } else {
+                    alert(`💥 Fim de jogo na Cobrinha!`);
+                }
+                return; 
+            }
             snake.unshift(cabeca);
             if (cabeca.x === comida.x && cabeca.y === comida.y) { 
                 pontosSnake += 10; 
