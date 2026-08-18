@@ -720,11 +720,8 @@
             document.getElementById('container-jogo-cobrinha').style.display = 'none';
         }
 
-        // Função para voltar para o Menu Geral (Foto 2 / Tela de Lazer)
         function voltarParaMenuGeral() {
             tocarEfeito('clique');
-            // Se estiver em um ambiente web com rotas ou histórico, pode usar window.history.back() ou redirecionar.
-            // Exemplo redirecionando para a página anterior ou menu geral:
             if (window.history.length > 1) {
                 window.history.back();
             } else {
@@ -1116,24 +1113,60 @@
         }
         function salvarPontuacaoRankingVelhaManual() { salvarPontuacaoGlobal("Jogo da Velha", pontosVelha); }
 
-        /* Jogo da Forca */
-        const bancoPalavrasForca = [
-            {p: "COMPUTADOR", d: "Máquina eletrônica para processar dados"},
-            {p: "PROGRAMACAO", d: "Ato de criar códigos e softwares"},
-            {p: "INTERNET", d: "Rede global de computadores"},
-            {p: "BRASIL", d: "Nosso país tropical"},
-            {p: "TELEFONE", d: "Aparelho de chamadas e mensagens"},
-            {p: "ESCOLA", d: "Instituição de ensino e aprendizado"},
-            {p: "CARRO", d: "Veículo automotor de quatro rodas"},
-            {p: "AVIAO", d: "Meio de transporte que voa"},
-            {p: "GATO", d: "Animal felino doméstico"}
+        /* Jogo da Forca com Superlista Ordenada por Dificuldade Progressiva */
+        const bancoPalavrasForcaFase1 = [
+            {p: "GATO", d: "Animal felino doméstico", dif: "Fácil"},
+            {p: "BOLA", d: "Objeto esférico usado em esportes", dif: "Fácil"},
+            {p: "CASA", d: "Lugar onde moramos", dif: "Fácil"},
+            {p: "PATO", d: "Ave aquática", dif: "Fácil"},
+            {p: "LUA", d: "Satélite natural da Terra", dif: "Fácil"},
+            {p: "SOL", d: "Nossa estrela principal", dif: "Fácil"},
+            {p: "RUA", d: "Via pública pavimentada", dif: "Fácil"},
+            {p: "FOGO", d: "Elemento de combustão e calor", dif: "Fácil"},
+            {p: "AGUA", d: "Líquido essencial para a vida", dif: "Fácil"},
+            {p: "FLOR", d: "Parte colorida e perfumada das plantas", dif: "Fácil"}
         ];
+
+        const bancoPalavrasForcaFase2 = [
+            {p: "BRASIL", d: "Nosso país tropical", dif: "Médio"},
+            {p: "ESCOLA", d: "Instituição de ensino e aprendizado", dif: "Médio"},
+            {p: "CARRO", d: "Veículo automotor de quatro rodas", dif: "Médio"},
+            {p: "AVIAO", d: "Meio de transporte que voa", dif: "Médio"},
+            {p: "FUTEBOL", d: "Esporte mais popular do país", dif: "Médio"},
+            {p: "GELADEIRA", d: "Eletrodoméstico para resfriar alimentos", dif: "Médio"},
+            {p: "JANELA", d: "Abertura na parede para ventilação", dif: "Médio"},
+            {p: "LARANJA", d: "Fruta cítrica rica em vitamina C", dif: "Médio"},
+            {p: "PIANO", d: "Instrumento musical de teclas", dif: "Médio"},
+            {p: "MUNDO", d: "Nosso planeta Terra", dif: "Médio"}
+        ];
+
+        const bancoPalavrasForcaFase3 = [
+            {p: "COMPUTADOR", d: "Máquina eletrônica para processar dados", dif: "Difícil"},
+            {p: "PROGRAMACAO", d: "Ato de criar códigos e softwares", dif: "Difícil"},
+            {p: "INTERNET", d: "Rede global de computadores", dif: "Difícil"},
+            {p: "TELEFONE", d: "Aparelho de chamadas e mensagens", dif: "Difícil"},
+            {p: "PARALELEPIPEDO", d: "Bloco de rocha usado em calçamentos", dif: "Difícil"},
+            {p: "EXTRAORDINARIO", d: "Algo fora do comum e impressionante", dif: "Difícil"},
+            {p: "BICICLETA", d: "Veículo de duas rodas movido a pedal", dif: "Difícil"},
+            {p: "TECNOLOGIA", d: "Conjunto de conhecimentos científicos aplicados", dif: "Difícil"},
+            {p: "UNIVERSIDADE", d: "Instituição de ensino superior", dif: "Difícil"},
+            {p: "ENGENHEIRO", d: "Profissional que projeta estruturas e sistemas", dif: "Difícil"}
+        ];
+
         let listaForcaEmbaralhada = [], indiceForcaAtual = 0, letrasDescobertas = [], errosForca = 0, pontosForca = 0, tempoRestanteForca = 30, intervaloTempoForca = null;
 
         function iniciarForca() {
-            listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5);
-            indiceForcaAtual = 0; pontosForca = 0; carregarProximaPalavraForca();
+            // Mistura cada categoria internamente para manter aleatoriedade, mas garante a progressão de dificuldade
+            let fase1 = [...bancoPalavrasForcaFase1].sort(() => Math.random() - 0.5);
+            let fase2 = [...bancoPalavrasForcaFase2].sort(() => Math.random() - 0.5);
+            let fase3 = [...bancoPalavrasForcaFase3].sort(() => Math.random() - 0.5);
+            
+            listaForcaEmbaralhada = [...fase1, ...fase2, ...fase3];
+            indiceForcaAtual = 0; 
+            pontosForca = 0; 
+            carregarProximaPalavraForca();
         }
+
         function iniciarCronometroForca() {
             if (intervaloTempoForca) clearInterval(intervaloTempoForca);
             tempoRestanteForca = 30; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
@@ -1147,18 +1180,29 @@
                 }
             }, 1000);
         }
+
         function carregarProximaPalavraForca() {
-            if (indiceForcaAtual >= listaForcaEmbaralhada.length) { listaForcaEmbaralhada = [...bancoPalavrasForca].sort(() => Math.random() - 0.5); indiceForcaAtual = 0; }
+            if (indiceForcaAtual >= listaForcaEmbaralhada.length) {
+                // Reinicia misturando novamente se zerar a superlista
+                iniciarForca();
+                return;
+            }
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
-            letrasDescobertas = []; errosForca = 0;
-            document.getElementById('forca-nivel-info').innerText = `🎯 Palavra ${indiceForcaAtual + 1} de ${listaForcaEmbaralhada.length}`;
+            letrasDescobertas = []; 
+            errosForca = 0;
+            
+            document.getElementById('forca-nivel-info').innerText = `🎯 Nível: ${atual.dif} (${indiceForcaAtual + 1}/${listaForcaEmbaralhada.length})`;
             document.getElementById('dica-palavra').innerText = `Dica: ${atual.d}`;
             document.getElementById('dica-palavra').style.display = 'none';
             document.getElementById('contador-erros').innerText = 0;
             document.getElementById('pontos-forca').innerText = pontosForca;
-            iniciarCronometroForca(); atualizarTelaForca(); criarTecladoForca();
+            iniciarCronometroForca(); 
+            atualizarTelaForca(); 
+            criarTecladoForca();
         }
+
         function mostrarDicaForca() { document.getElementById('dica-palavra').style.display = 'block'; }
+
         function atualizarTelaForca() {
             let atual = listaForcaEmbaralhada[indiceForcaAtual], ex = "", ganho = true;
             for (let i = 0; i < atual.p.length; i++) {
@@ -1168,15 +1212,17 @@
             document.getElementById('palavra-secreta').innerText = ex.trim();
             if (ganho) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
-                tocarEfeito('vitoria'); pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
+                tocarEfeito('vitoria'); 
+                pontosForca += (7 - errosForca) * 15 + (tempoRestanteForca * 2);
                 document.getElementById('pontos-forca').innerText = pontosForca;
-                setTimeout(() => { alert(`🎉 Acertou a palavra "${atual.p}"!`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
+                setTimeout(() => { alert(`🎉 Acertou a palavra "${atual.p}"! Avançando para o próximo desafio.`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
             } else if (errosForca >= 6) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 tocarEfeito('clique');
                 setTimeout(() => { alert(`❌ Muitos erros! A palavra era "${atual.p}".`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
             }
         }
+
         function escolherLetraForca(l) {
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
             if (!letrasDescobertas.includes(l)) {
@@ -1187,6 +1233,7 @@
             if (btn) { btn.disabled = true; btn.style.background = "#94a3b8"; btn.style.color = "#f1f5f9"; }
             atualizarTelaForca();
         }
+
         function criarTecladoForca() {
             let alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cont = document.getElementById('teclado-letras');
             cont.innerHTML = "";
