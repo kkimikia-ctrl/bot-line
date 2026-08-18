@@ -694,20 +694,20 @@
         let attemptsCraque = 3;
 
         const ball = {
-            x: 180, y: 410, radius: 12, // Bola um pouco mais para trás ainda
+            x: 180, y: 410, radius: 12,
             startX: 180, startY: 410,
             vx: 0, vy: 0,
             isDragging: false, isMoving: false
         };
 
         const goalKeeper = {
-            x: 140, y: 45, width: 80, height: 18, // Goleiro mais perto da linha (y: 45)
+            x: 140, y: 45, width: 80, height: 18,
             baseSpeed: 2.2, speed: 2.2, direction: 1,
             minX: 110, maxX: 170
         };
 
         const defenders = [
-            { x: 100, y: 160, width: 65, height: 14, baseSpeed: 1.8, speed: 1.8, direction: 1 }, // Jogadores mais afastados entre si / mais para cima
+            { x: 100, y: 160, width: 65, height: 14, baseSpeed: 1.8, speed: 1.8, direction: 1 },
             { x: 140, y: 260, width: 65, height: 14, baseSpeed: 2.2, speed: 2.2, direction: -1 },
             { x: 120, y: 360, width: 65, height: 14, baseSpeed: 2.6, speed: 2.6, direction: 1 }
         ];
@@ -866,7 +866,19 @@
             document.getElementById('minicraque-attempts').innerText = attemptsCraque;
             tocarEfeito('clique');
             if (attemptsCraque <= 0) {
-                alert('Fim de jogo no Mini Craque! Pontuação final: ' + scoreCraque);
+                let finalScore = scoreCraque;
+                alert('Fim de jogo no Mini Craque! Pontuação final: ' + finalScore);
+                
+                // Salva automaticamente no Ranking Global ao fim das tentativas
+                if (finalScore > 0) {
+                    let nome = prompt("🏆 Digite seu nome para o Ranking Global:", "Jogador") || "Jogador";
+                    let ranking = JSON.parse(localStorage.getItem('rankingGlobalCentral') || "[]");
+                    ranking.push({ nome: `${nome} (Mini Craque)`, pontos: finalScore });
+                    ranking.sort((a, b) => b.pontos - a.pontos);
+                    localStorage.setItem('rankingGlobalCentral', JSON.stringify(ranking.slice(0, 30)));
+                    abrirModalRanking();
+                }
+
                 scoreCraque = 0;
                 attemptsCraque = 3;
                 document.getElementById('minicraque-score').innerText = scoreCraque;
