@@ -252,13 +252,18 @@
             <button onclick="ativarAudioGlobal(); tocarEfeito('clique'); abrirModalRanking()" class="top-action-btn btn-orange">🏆 Ranking Geral</button>
         </div>
 
-        <div id="menu-selecao-jogos" class="card-game menu-jogos" style="display: grid;">
-            <button onclick="ativarAudioGlobal(); abrirMiniCraque()" class="action-btn" style="margin-top:0; background-color: #2e7d32;">⚽ Mini Craque</button>
-            <button onclick="ativarAudioGlobal(); abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
-            <button onclick="ativarAudioGlobal(); abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
-            <button onclick="ativarAudioGlobal(); abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
-            <button onclick="ativarAudioGlobal(); abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
-            <button onclick="ativarAudioGlobal(); abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha</button>
+        <!-- MENU DE SELEÇÃO DE JOGOS COM BOTÃO DE VOLTAR PARA O MENU GERAL -->
+        <div id="menu-selecao-jogos" class="card-game" style="display: block;">
+            <button onclick="voltarParaMenuGeral()" style="background: #ccc; border: none; padding: 5px 10px; border-radius: 4px; margin-bottom: 12px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu Geral</button>
+            <div style="clear: both;"></div>
+            <div class="menu-jogos">
+                <button onclick="ativarAudioGlobal(); abrirMiniCraque()" class="action-btn" style="margin-top:0; background-color: #2e7d32;">⚽ Mini Craque</button>
+                <button onclick="ativarAudioGlobal(); abrirJogoVelha()" class="action-btn" style="margin-top:0;">❌ Jogo da Velha</button>
+                <button onclick="ativarAudioGlobal(); abrirJogoForca()" class="action-btn" style="margin-top:0; background-color: #00796b;">🎯 Jogo da Forca</button>
+                <button onclick="ativarAudioGlobal(); abrirJogoMemoria()" class="action-btn" style="margin-top:0; background-color: #7b1fa2;">🧠 Jogo da Memória</button>
+                <button onclick="ativarAudioGlobal(); abrirJokenpo()" class="action-btn" style="margin-top:0; background-color: #e65100;">🇧🇷 Jokenpô Brasil</button>
+                <button onclick="ativarAudioGlobal(); abrirJogoCobrinha()" class="action-btn" style="background-color: #059669; grid-column: span 2; margin-top:0;">🐍 Jogo da Cobrinha</button>
+            </div>
         </div>
 
         <div id="container-minicraque" class="card-game" style="display: none;">
@@ -626,14 +631,12 @@
             }
             let nome = prompt("🏆 Digite seu nome para o Ranking:", "Jogador") || "Jogador";
             
-            // Chave separada por jogo no localStorage
             let storageKey = `ranking_${nomeJogo.replace(/\s+/g, '_')}`;
             let ranking = JSON.parse(localStorage.getItem(storageKey) || "[]");
             
             ranking.push({ nome: nome, pontos: pontos });
             ranking.sort((a, b) => b.pontos - a.pontos);
             
-            // Mantém até 30 posições
             localStorage.setItem(storageKey, JSON.stringify(ranking.slice(0, 30)));
             
             tocarEfeito('vitoria');
@@ -658,7 +661,6 @@
         function mudarAbaRanking(nomeJogo) {
             jogoRankingAtual = nomeJogo;
             
-            // Atualiza estilo visual das abas
             const abas = ['Mini Craque', 'Jogo da Velha', 'Jogo da Forca', 'Jogo da Memória', 'Jokenpô Brasil', 'Jogo da Cobrinha'];
             abas.forEach(aba => {
                 let btnId = `tab-${aba.replace(/\s+/g, '-')}`;
@@ -690,7 +692,6 @@
             rankingSalvo.sort((a, b) => b.pontos - a.pontos);
             let html = "";
             
-            // Exibe até o 30º colocado
             rankingSalvo.slice(0, 30).forEach((item, index) => {
                 let posicaoExibida = index + 1;
                 let medalha = posicaoExibida === 1 ? "🥇" : posicaoExibida === 2 ? "🥈" : posicaoExibida === 3 ? "🥉" : `${posicaoExibida}º`;
@@ -710,13 +711,25 @@
             tocarEfeito('clique');
 
             document.getElementById('container-botoes-topo').style.display = 'flex';
-            document.getElementById('menu-selecao-jogos').style.display = 'grid';
+            document.getElementById('menu-selecao-jogos').style.display = 'block';
             document.getElementById('container-minicraque').style.display = 'none';
             document.getElementById('container-jogo-velha').style.display = 'none';
             document.getElementById('container-jogo-forca').style.display = 'none';
             document.getElementById('container-jogo-memoria').style.display = 'none';
             document.getElementById('container-jokenpo').style.display = 'none';
             document.getElementById('container-jogo-cobrinha').style.display = 'none';
+        }
+
+        // Função para voltar para o Menu Geral (Foto 2 / Tela de Lazer)
+        function voltarParaMenuGeral() {
+            tocarEfeito('clique');
+            // Se estiver em um ambiente web com rotas ou histórico, pode usar window.history.back() ou redirecionar.
+            // Exemplo redirecionando para a página anterior ou menu geral:
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                alert("Você retornou ao Menu Geral (Entretenimento e Lazer).");
+            }
         }
 
         function abrirMiniCraque() {
@@ -777,7 +790,6 @@
             isDragging: false, isMoving: false
         };
 
-        // Goleiro cobrindo de ponta a ponta da linha da grande área (X: 90 até 270)
         const goalKeeper = {
             x: 140, y: 30, width: 70, height: 16,
             baseSpeed: 2.4, speed: 2.4, direction: 1,
@@ -926,7 +938,6 @@
                 }
             }
 
-            // Movimentação lateral do goleiro limitada à linha da grande área (X: 90 até 270)
             goalKeeper.x += goalKeeper.speed * goalKeeper.direction;
             if (goalKeeper.x <= goalKeeper.minX || goalKeeper.x + goalKeeper.width >= goalKeeper.maxX) {
                 goalKeeper.direction *= -1;
