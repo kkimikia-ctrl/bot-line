@@ -11,7 +11,7 @@
             margin: 0;
             padding: 10px;
             color: #333;
-            padding-bottom: 50px; /* Aumentado para garantir espaço na parte de baixo */
+            padding-bottom: 50px;
             text-align: center;
         }
 
@@ -145,7 +145,7 @@
             padding: 15px;
             border-radius: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 25px; /* Margem inferior aumentada para evitar corte */
+            margin-bottom: 25px;
         }
         .menu-jogos {
             display: grid;
@@ -198,6 +198,28 @@
             cursor: pointer;
             font-weight: bold;
             color: #0047ab;
+        }
+
+        /* Estilos para as Abas do Ranking */
+        .ranking-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .ranking-tab-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 4px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #333;
+        }
+        .ranking-tab-btn.active {
+            background: #0047ab;
+            color: white;
         }
     </style>
 </head>
@@ -373,15 +395,27 @@
         </div>
     </div>
 
+    <!-- Modal do Ranking Separado por Jogos (Até 30 Posições) -->
     <div id="modalRanking" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
-        <div style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-            <h3 style="color: #0047ab; margin-top: 0;">🏆 Ranking Global</h3>
-            <div style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;">
+        <div style="background: white; padding: 15px; border-radius: 12px; width: 92%; max-width: 420px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+            <h3 style="color: #0047ab; margin-top: 0; margin-bottom: 10px;">🏆 Rankings dos Jogos</h3>
+            
+            <!-- Abas para os 6 Jogos -->
+            <div class="ranking-tabs">
+                <button onclick="mudarAbaRanking('Mini Craque')" id="tab-Mini-Craque" class="ranking-tab-btn active">Mini Craque</button>
+                <button onclick="mudarAbaRanking('Jogo da Velha')" id="tab-Jogo-da-Velha" class="ranking-tab-btn">Velha</button>
+                <button onclick="mudarAbaRanking('Jogo da Forca')" id="tab-Jogo-da-Forca" class="ranking-tab-btn">Forca</button>
+                <button onclick="mudarAbaRanking('Jogo da Memória')" id="tab-Jogo-da-Memória" class="ranking-tab-btn">Memória</button>
+                <button onclick="mudarAbaRanking('Jokenpô Brasil')" id="tab-Jokenpô-Brasil" class="ranking-tab-btn">Jokenpô</button>
+                <button onclick="mudarAbaRanking('Jogo da Cobrinha')" id="tab-Jogo-da-Cobrinha" class="ranking-tab-btn">Cobrinha</button>
+            </div>
+
+            <div style="max-height: 240px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <tbody id="tabelaRankingCorpo"></tbody>
                 </table>
             </div>
-            <button onclick="tocarEfeito('clique'); fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">Fechar</button>
+            <button onclick="tocarEfeito('clique'); fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">Fechar</button>
         </div>
     </div>
 
@@ -582,42 +616,85 @@
         function irParaSlide(index) { currentSlide = index; atualizarCarrossel(); }
         setInterval(() => mudarSlide(1), 4000);
 
+        /* SISTEMA DE RANKING SEPARADO POR JOGOS (ATÉ 30 POSIÇÕES) */
+        let jogoRankingAtual = 'Mini Craque';
+
         function salvarPontuacaoGlobal(nomeJogo, pontos) {
             if (pontos <= 0) {
                 alert("Jogue e acumule pontos antes de salvar!");
                 return;
             }
-            let nome = prompt("🏆 Digite seu nome para o Ranking Global:", "Jogador") || "Jogador";
-            let ranking = JSON.parse(localStorage.getItem('rankingGlobalCentral') || "[]");
-            ranking.push({ nome: `${nome} (${nomeJogo})`, pontos: pontos });
+            let nome = prompt("🏆 Digite seu nome para o Ranking:", "Jogador") || "Jogador";
+            
+            // Chave separada por jogo no localStorage
+            let storageKey = `ranking_${nomeJogo.replace(/\s+/g, '_')}`;
+            let ranking = JSON.parse(localStorage.getItem(storageKey) || "[]");
+            
+            ranking.push({ nome: nome, pontos: pontos });
             ranking.sort((a, b) => b.pontos - a.pontos);
-            localStorage.setItem('rankingGlobalCentral', JSON.stringify(ranking.slice(0, 30)));
+            
+            // Mantém até 30 posições
+            localStorage.setItem(storageKey, JSON.stringify(ranking.slice(0, 30)));
+            
             tocarEfeito('vitoria');
-            alert("✅ Pontuação salva com sucesso no Ranking Global!");
+            alert("✅ Pontuação salva com sucesso no Ranking!");
+            jogoRankingAtual = nomeJogo;
             abrirModalRanking();
         }
 
         function abrirModalRanking() {
             const modal = document.getElementById('modalRanking');
-            if (modal) { modal.style.display = 'flex'; carregarDadosRanking(); }
+            if (modal) { 
+                modal.style.display = 'flex'; 
+                mudarAbaRanking(jogoRankingAtual); 
+            }
         }
+
         function fecharModalRanking() {
             const modal = document.getElementById('modalRanking');
             if (modal) modal.style.display = 'none';
         }
-        function carregarDadosRanking() {
+
+        function mudarAbaRanking(nomeJogo) {
+            jogoRankingAtual = nomeJogo;
+            
+            // Atualiza estilo visual das abas
+            const abas = ['Mini Craque', 'Jogo da Velha', 'Jogo da Forca', 'Jogo da Memória', 'Jokenpô Brasil', 'Jogo da Cobrinha'];
+            abas.forEach(aba => {
+                let btnId = `tab-${aba.replace(/\s+/g, '-')}`;
+                let btn = document.getElementById(btnId);
+                if (btn) {
+                    if (aba === nomeJogo) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+
+            carregarDadosRankingPorJogo(nomeJogo);
+        }
+
+        function carregarDadosRankingPorJogo(nomeJogo) {
             const corpoTabela = document.getElementById('tabelaRankingCorpo');
             if (!corpoTabela) return;
-            let rankingSalvo = JSON.parse(localStorage.getItem('rankingGlobalCentral')) || [];
+
+            let storageKey = `ranking_${nomeJogo.replace(/\s+/g, '_')}`;
+            let rankingSalvo = JSON.parse(localStorage.getItem(storageKey)) || [];
+
             if (rankingSalvo.length === 0) {
-                corpoTabela.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding: 15px;">Nenhum recorde salvo ainda.</td></tr>`;
+                corpoTabela.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding: 20px;">Nenhum recorde salvo para ${nomeJogo} ainda.</td></tr>`;
                 return;
             }
+
             rankingSalvo.sort((a, b) => b.pontos - a.pontos);
             let html = "";
-            rankingSalvo.forEach((item, index) => {
-                let medalha = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}º`;
-                html += `<tr><td style="font-weight:bold; text-align:center; padding: 6px;">${medalha}</td><td style="text-align:left; padding: 6px;">${item.nome}</td><td style="font-weight:bold; color:#1976d2; text-align:right; padding: 6px;">${item.pontos} pts</td></tr>`;
+            
+            // Exibe até o 30º colocado
+            rankingSalvo.slice(0, 30).forEach((item, index) => {
+                let posicaoExibida = index + 1;
+                let medalha = posicaoExibida === 1 ? "🥇" : posicaoExibida === 2 ? "🥈" : posicaoExibida === 3 ? "🥉" : `${posicaoExibida}º`;
+                html += `<tr><td style="font-weight:bold; text-align:center; padding: 6px; width: 40px;">${medalha}</td><td style="text-align:left; padding: 6px; word-break: break-all;">${item.nome}</td><td style="font-weight:bold; color:#1976d2; text-align:right; padding: 6px; width: 80px;">${item.pontos} pts</td></tr>`;
             });
             corpoTabela.innerHTML = html;
         }
@@ -869,13 +946,14 @@
                 let finalScore = scoreCraque;
                 alert('Fim de jogo no Mini Craque! Pontuação final: ' + finalScore);
                 
-                // Salva automaticamente no Ranking Global ao fim das tentativas
                 if (finalScore > 0) {
-                    let nome = prompt("🏆 Digite seu nome para o Ranking Global:", "Jogador") || "Jogador";
-                    let ranking = JSON.parse(localStorage.getItem('rankingGlobalCentral') || "[]");
-                    ranking.push({ nome: `${nome} (Mini Craque)`, pontos: finalScore });
+                    let nome = prompt("🏆 Digite seu nome para o Ranking:", "Jogador") || "Jogador";
+                    let storageKey = "ranking_Mini_Craque";
+                    let ranking = JSON.parse(localStorage.getItem(storageKey) || "[]");
+                    ranking.push({ nome: nome, pontos: finalScore });
                     ranking.sort((a, b) => b.pontos - a.pontos);
-                    localStorage.setItem('rankingGlobalCentral', JSON.stringify(ranking.slice(0, 30)));
+                    localStorage.setItem(storageKey, JSON.stringify(ranking.slice(0, 30)));
+                    jogoRankingAtual = "Mini Craque";
                     abrirModalRanking();
                 }
 
