@@ -1153,10 +1153,9 @@
             {p: "ENGENHEIRO", d: "Profissional que projeta estruturas e sistemas", dif: "Difícil"}
         ];
 
-        let listaForcaEmbaralhada = [], indiceForcaAtual = 0, letrasDescobertas = [], errosForca = 0, pontosForca = 0, tempoRestanteForca = 30, intervaloTempoForca = null;
+        let listaForcaEmbaralhada = [], indiceForcaAtual = 0, letrasDescobertas = [], errosForca = 0, pontosForca = 0, tempoRestanteForca = 30, intervaloTempoForca = null, jogoForcaAtivo = false;
 
         function iniciarForca() {
-            // Mistura cada categoria internamente para manter aleatoriedade, mas garante a progressão de dificuldade
             let fase1 = [...bancoPalavrasForcaFase1].sort(() => Math.random() - 0.5);
             let fase2 = [...bancoPalavrasForcaFase2].sort(() => Math.random() - 0.5);
             let fase3 = [...bancoPalavrasForcaFase3].sort(() => Math.random() - 0.5);
@@ -1164,6 +1163,7 @@
             listaForcaEmbaralhada = [...fase1, ...fase2, ...fase3];
             indiceForcaAtual = 0; 
             pontosForca = 0; 
+            jogoForcaAtivo = true;
             carregarProximaPalavraForca();
         }
 
@@ -1171,25 +1171,32 @@
             if (intervaloTempoForca) clearInterval(intervaloTempoForca);
             tempoRestanteForca = 30; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
             intervaloTempoForca = setInterval(() => {
+                if (!jogoForcaAtivo) return;
                 tempoRestanteForca--; document.getElementById('forca-tempo').innerText = tempoRestanteForca;
                 if (tempoRestanteForca <= 0) {
                     clearInterval(intervaloTempoForca); tocarEfeito('clique');
                     let atual = listaForcaEmbaralhada[indiceForcaAtual];
-                    alert(`⏰ O tempo esgotou! A palavra era "${atual.p}".`);
-                    indiceForcaAtual++; carregarProximaPalavraForca();
+                    
+                    jogoForcaAtivo = false;
+                    let salvar = confirm(`⏰ O tempo esgotou! A palavra era "${atual.p}".\n\nDeseja salvar seus ${pontosForca} pontos no Ranking?`);
+                    if (salvar && pontosForca > 0) {
+                        salvarPontuacaoGlobal("Jogo da Forca", pontosForca);
+                    } else {
+                        voltarMenuJogos();
+                    }
                 }
             }, 1000);
         }
 
         function carregarProximaPalavraForca() {
             if (indiceForcaAtual >= listaForcaEmbaralhada.length) {
-                // Reinicia misturando novamente se zerar a superlista
                 iniciarForca();
                 return;
             }
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
             letrasDescobertas = []; 
             errosForca = 0;
+            jogoForcaAtivo = true;
             
             document.getElementById('forca-nivel-info').innerText = `🎯 Nível: ${atual.dif} (${indiceForcaAtual + 1}/${listaForcaEmbaralhada.length})`;
             document.getElementById('dica-palavra').innerText = `Dica: ${atual.d}`;
@@ -1219,11 +1226,21 @@
             } else if (errosForca >= 6) {
                 if (intervaloTempoForca) clearInterval(intervaloTempoForca);
                 tocarEfeito('clique');
-                setTimeout(() => { alert(`❌ Muitos erros! A palavra era "${atual.p}".`); indiceForcaAtual++; carregarProximaPalavraForca(); }, 200);
+                jogoForcaAtivo = false;
+                
+                setTimeout(() => {
+                    let salvar = confirm(`❌ Fim de Jogo! Você atingiu 6 erros. A palavra secreta era "${atual.p}".\n\nDeseja salvar seus ${pontosForca} pontos no Ranking?`);
+                    if (salvar && pontosForca > 0) {
+                        salvarPontuacaoGlobal("Jogo da Forca", pontosForca);
+                    } else {
+                        voltarMenuJogos();
+                    }
+                }, 200);
             }
         }
 
         function escolherLetraForca(l) {
+            if (!jogoForcaAtivo) return;
             let atual = listaForcaEmbaralhada[indiceForcaAtual];
             if (!letrasDescobertas.includes(l)) {
                 letrasDescobertas.push(l);
