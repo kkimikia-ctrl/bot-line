@@ -21,6 +21,7 @@ const inputMensagem = document.getElementById('mensagem-input');
 const botaoEnviar = document.getElementById('enviar-btn');
 const listaMensagens = document.getElementById('mensagens-lista');
 const botaoCriarSala = document.getElementById('btn-criar-sala');
+const listaSalas = document.getElementById('salas-lista');
 
 // 💬 Envio de mensagens para o Firestore
 botaoEnviar.addEventListener('click', async () => {
@@ -40,8 +41,8 @@ botaoEnviar.addEventListener('click', async () => {
 });
 
 // 🔄 Sincronização em tempo real das mensagens
-const q = query(collection(db, "mensagens"), orderBy("data", "asc"));
-onSnapshot(q, (snapshot) => {
+const qMensagens = query(collection(db, "mensagens"), orderBy("data", "asc"));
+onSnapshot(qMensagens, (snapshot) => {
     listaMensagens.innerHTML = ""; 
     snapshot.forEach((doc) => {
         const mensagem = doc.data();
@@ -63,10 +64,26 @@ if (botaoCriarSala) {
                     nome: nomeSala.trim(),
                     criadoEm: new Date()
                 });
-                alert(`Sala "${nomeSala}" criada com sucesso!`);
             } catch (e) {
                 console.error("Erro ao criar sala: ", e);
+                alert("Erro ao criar sala.");
             }
         }
     });
 }
+
+// 🔄 Sincronização em tempo real das salas criadas
+const qSalas = query(collection(db, "salas"), orderBy("criadoEm", "asc"));
+onSnapshot(qSalas, (snapshot) => {
+    listaSalas.innerHTML = "";
+    snapshot.forEach((doc) => {
+        const sala = doc.data();
+        const btnSala = document.createElement('button');
+        btnSala.classList.add('sala-tag');
+        btnSala.textContent = `# ${sala.nome}`;
+        btnSala.addEventListener('click', () => {
+            alert(`Você entrou na sala: ${sala.nome}`);
+        });
+        listaSalas.appendChild(btnSala);
+    });
+});
