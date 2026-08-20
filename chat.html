@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chat da Comunidade</title>
+    <!-- Importação do SDK oficial do LINE LIFF -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -244,17 +246,34 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Identificação do usuário atual
-        let meuNome = localStorage.getItem('chat_nome');
-        if (!meuNome) {
-            meuNome = prompt("Digite o seu nome para participar do chat:") || "Anônimo";
-            localStorage.setItem('chat_nome', meuNome);
-        }
+        // Identificação automática via LINE LIFF
+        let meuNome = "Anônimo";
+        let minhaFoto = "https://api.dicebear.com/7.x/bottts/svg?seed=Anônimo";
 
-        let minhaFoto = localStorage.getItem('chat_foto');
-        if (!minhaFoto) {
-            minhaFoto = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
-            localStorage.setItem('chat_foto', minhaFoto);
+        try {
+            // Inicializa o LIFF com o seu LIFF ID do LINE Login
+            await liff.init({ liffId: "2010902449-KWNNNsxn" });
+            
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            } else {
+                const profile = await liff.getProfile();
+                meuNome = profile.displayName;
+                minhaFoto = profile.pictureUrl || minhaFoto;
+            }
+        } catch (error) {
+            console.warn("LIFF não inicializado (rodando fora do LINE ou erro de ID). Usando fallback local.", error);
+            // Fallback caso abra no navegador comum fora do LINE
+            meuNome = localStorage.getItem('chat_nome');
+            if (!meuNome) {
+                meuNome = prompt("Digite o seu nome para participar do chat:") || "Anônimo";
+                localStorage.setItem('chat_nome', meuNome);
+            }
+            minhaFoto = localStorage.getItem('chat_foto');
+            if (!minhaFoto) {
+                minhaFoto = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
+                localStorage.setItem('chat_foto', minhaFoto);
+            }
         }
 
         const inputMensagem = document.getElementById('mensagem-input');
