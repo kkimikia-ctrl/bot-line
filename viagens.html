@@ -1,64 +1,293 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lazer e Viagens</title>
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; }
-    header { background-color: #06c755; color: white; padding: 15px; display: flex; align-items: center; }
-    header button { background: none; border: none; color: white; font-size: 16px; cursor: pointer; margin-right: 15px; }
-    
-    /* Estilo das abas de regiões */
-    .region-tabs { display: flex; overflow-x: auto; background: white; padding: 10px; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .region-btn { padding: 8px 16px; border: 1px solid #ddd; background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 14px; }
-    .region-btn.active { background: #06c755; color: white; border-color: #06c755; }
-    
-    /* Container dos posts */
-    #posts-container { padding: 15px; max-width: 600px; margin: 0 auto; }
-    .post-card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .post-card img { width: 100%; border-radius: 8px; margin-top: 10px; }
-    
-    /* Botão flutuante de nova postagem (+) */
-    .fab-btn { position: fixed; bottom: 20px; right: 20px; background: #06c755; color: white; border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 30px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lazer e Viagens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            padding-top: 130px;
+        }
+        .header {
+            background-color: #0d47a1;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+        .header h1 {
+            font-size: 16px;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+        
+        /* Carrossel de Banners no Topo */
+        .banners-top-container {
+            position: fixed;
+            top: 45px;
+            left: 0;
+            width: 100%;
+            background: rgba(13, 71, 161, 0.95);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 6px 10px;
+            z-index: 999;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            overflow-x: auto;
+        }
+        .banner-retangulo {
+            min-width: 150px;
+            width: 48%;
+            max-width: 190px;
+            height: 55px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .banner-slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            object-fit: cover;
+        }
+        .banner-slide.active {
+            display: block;
+        }
+
+        /* Abas de Regiões Deslizantes */
+        .regions-scroll-container {
+            position: fixed;
+            top: 108px;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 8px 10px;
+            z-index: 998;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+        .region-tab {
+            background: #e0e0e0;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s, color 0.2s;
+        }
+        .region-tab.active {
+            background: #0d47a1;
+            color: white;
+        }
+
+        /* Container Principal e Grade de Posts (2 colunas) */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            padding-bottom: 80px;
+            text-align: left;
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 15px;
+        }
+        .posts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .post-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .post-card:hover {
+            transform: translateY(-2px);
+        }
+        .post-img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+        .post-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+        .post-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin: 0 0 4px 0;
+        }
+        .post-location {
+            font-size: 11px;
+            color: #666;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <button onclick="window.location.href='index.html'">⬅️ Voltar</button>
-    <h2>🗺️ Lazer & Viagens</h2>
-  </header>
-
-  <!-- Abas de Regiões -->
-  <div class="region-tabs">
-    <button class="region-btn active" onclick="filterRegion('todas', this)">🌍 Todas</button>
-    <button class="region-btn" onclick="filterRegion('toyohashi', this)">Toyohashi</button>
-    <button class="region-btn" onclick="filterRegion('hamamatsu', this)">Hamamatsu</button>
-    <button class="region-btn" onclick="filterRegion('nagoya', this)">Nagoya</button>
-    <button class="region-btn" onclick="filterRegion('outros', this)">Outras</button>
-  </div>
-
-  <!-- Onde as postagens vão aparecer -->
-  <div id="posts-container">
-    <div class="post-card">
-      <p><strong>Exemplo de Post:</strong> Aqui aparecerão as dicas da galera em breve!</p>
+    <!-- Cabeçalho com botão voltar pra tela anterior -->
+    <div class="header">
+        <button class="back-btn" onclick="history.back()">⬅️</button>
+        <h1>Lazer & Viagens</h1>
+        <div style="width: 30px;"></div> <!-- Espaçamento simétrico -->
     </div>
-  </div>
 
-  <!-- Botão para adicionar nova postagem -->
-  <button class="fab-btn" onclick="alert('Aqui abrirá a tela de nova postagem!')">+</button>
+    <!-- Carrossel de Banners no Topo -->
+    <div class="banners-top-container">
+        <div class="banner-retangulo">
+            <img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide active" alt="L1">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L2">
+        </div>
+        <div class="banner-retangulo">
+            <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide active" alt="R1">
+            <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R2">
+        </div>
+    </div>
 
-  <script>
-    function filterRegion(regiao, element) {
-      // Remove a classe active de todos os botões e coloca no clicado
-      document.querySelectorAll('.region-btn').forEach(btn => btn.classList.remove('active'));
-      element.classList.add('active');
-      
-      console.log("Filtrando pela região:", regiao);
-      // Aqui depois vamos colocar a lógica para buscar os posts filtrados
-    }
-  </script>
+    <!-- Abas de Regiões Deslizantes -->
+    <div class="regions-scroll-container">
+        <button class="region-tab active" onclick="filterRegion('todas', this)">🌍 Todas</button>
+        <button class="region-tab" onclick="filterRegion('tokai', this)">Tokai (Aichi/Shizuoka/Gifu)</button>
+        <button class="region-tab" onclick="filterRegion('kanto', this)">Kanto (Tokyo/Gunma...)</button>
+        <button class="region-tab" onclick="filterRegion('kansai', this)">Kansai (Osaka/Mie...)</button>
+        <button class="region-tab" onclick="filterRegion('hokkaido', this)">Hokkaido / Tohoku</button>
+        <button class="region-tab" onclick="filterRegion('chugoku', this)">Chugoku / Shikoku</button>
+        <button class="region-tab" onclick="filterRegion('kyushu', this)">Kyushu / Okinawa</button>
+    </div>
 
+    <!-- Conteúdo com as postagens em fileiras de 2 colunas -->
+    <div class="container">
+        <div class="section-title">Dicas e Pontos Turísticos</div>
+        
+        <div class="posts-grid" id="postsContainer">
+            <!-- Exemplo de Card 1 -->
+            <div class="post-card" data-region="tokai">
+                <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" class="post-img" alt="Local">
+                <div class="post-info">
+                    <p class="post-title">Castelo de Toyohashi</p>
+                    <p class="post-location">📍 Toyohashi, Aichi</p>
+                </div>
+            </div>
+
+            <!-- Exemplo de Card 2 -->
+            <div class="post-card" data-region="kanto">
+                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&auto=format&fit=crop&q=60" class="post-img" alt="Local">
+                <div class="post-info">
+                    <p class="post-title">Torre de Tokyo</p>
+                    <p class="post-location">📍 Tokyo, Kanto</p>
+                </div>
+            </div>
+
+            <!-- Exemplo de Card 3 -->
+            <div class="post-card" data-region="kansai">
+                <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400&auto=format&fit=crop&q=60" class="post-img" alt="Local">
+                <div class="post-info">
+                    <p class="post-title">Osaka Castle</p>
+                    <p class="post-location">📍 Osaka, Kansai</p>
+                </div>
+            </div>
+
+            <!-- Exemplo de Card 4 -->
+            <div class="post-card" data-region="tokai">
+                <img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=400&auto=format&fit=crop&q=60" class="post-img" alt="Local">
+                <div class="post-info">
+                    <p class="post-title">Lago Hamana</p>
+                    <p class="post-location">📍 Hamamatsu, Shizuoka</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lógica do Carrossel de Banners
+        let currentLeft = 0;
+        const leftSlides = document.querySelectorAll('.left-slide');
+        function nextLeftSlide() {
+            leftSlides[currentLeft].classList.remove('active');
+            currentLeft = (currentLeft + 1) % leftSlides.length;
+            leftSlides[currentLeft].classList.add('active');
+        }
+        setInterval(nextLeftSlide, 3500);
+
+        let currentRight = 0;
+        const rightSlides = document.querySelectorAll('.right-slide');
+        function nextRightSlide() {
+            rightSlides[currentRight].classList.remove('active');
+            currentRight = (currentRight + 1) % rightSlides.length;
+            rightSlides[currentRight].classList.add('active');
+        }
+        setInterval(nextRightSlide, 4000);
+
+        // Lógica de Filtrar por Região nas Abas
+        function filterRegion(regiao, element) {
+            document.querySelectorAll('.region-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+
+            const cards = document.querySelectorAll('.post-card');
+            cards.forEach(card => {
+                if (regiao === 'todas' || card.getAttribute('data-region') === regiao) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
