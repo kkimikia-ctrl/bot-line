@@ -16,7 +16,7 @@
         h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 10px 0; }
 
         /* Botão Criar Sala */
-        .btn-criar-container { text-align: center; margin-bottom: 12px; }
+        .btn-criar-container { text-align: center; margin-bottom: 15px; }
         .btn-criar { 
             background: linear-gradient(135deg, #0d47a1, #1976d2); 
             color: white; border: none; padding: 10px 20px; 
@@ -24,47 +24,53 @@
             box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
         }
 
-        /* Barra horizontal de salas (estilo pílulas) */
-        .salas-scroll {
+        /* Lista Vertical de Salas (Estilo Lista Moderna) */
+        .salas-lista-vertical {
             display: flex;
+            flex-direction: column;
             gap: 8px;
-            overflow-x: auto;
-            padding: 5px 5px 12px 5px;
-            white-space: nowrap;
-            scrollbar-width: thin;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 2px;
         }
-        .salas-scroll::-webkit-scrollbar { height: 4px; }
-        .salas-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .salas-lista-vertical::-webkit-scrollbar { width: 4px; }
+        .salas-lista-vertical::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-        .sala-tag {
+        .sala-item {
             background: white;
             color: #333;
-            border: 1px solid #cbd5e1;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 13px;
+            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
-        .sala-tag.ativa {
+        .sala-item:hover { background-color: #f8fafc; }
+        .sala-item.ativa {
             background: #0d47a1;
             color: white;
             border-color: #0d47a1;
             box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
         }
+        .sala-item.ativa .seta { color: white; }
+        .seta { color: #94a3b8; font-size: 14px; }
 
         /* Título da sala ativa */
         .sala-atual-titulo {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            color: #1e293b;
-            margin: 8px 5px;
-            background: #e2e8f0;
-            padding: 6px 12px;
-            border-radius: 8px;
-            display: inline-block;
+            color: #475569;
+            margin: 5px 2px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Container de mensagens */
@@ -76,10 +82,9 @@
             background: white; 
             border-radius: 12px; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-            min-height: 280px;
-            max-height: 50vh;
+            min-height: 250px;
+            max-height: 45vh;
             overflow-y: auto;
-            margin-top: 5px;
         }
         
         .mensagem-balao {
@@ -124,12 +129,13 @@
         <button id="btn-criar-sala" class="btn-criar">+ Criar Nova Sala</button>
     </div>
 
-    <div id="salas-lista" class="salas-scroll">
-        <span style="font-size: 13px; color: #666; padding: 5px;">Carregando salas...</span>
+    <span class="sala-atual-titulo">Salas Disponíveis:</span>
+    <div id="salas-lista" class="salas-lista-vertical">
+        <div style="font-size: 13px; color: #666; padding: 10px; text-align: center;">Carregando salas...</div>
     </div>
 
     <div>
-        <span id="nome-sala-ativa" class="sala-atual-titulo">Sala: Geral</span>
+        <span id="nome-sala-ativa" class="sala-atual-titulo" style="color: #0d47a1; margin-top: 10px;">Conversando em: Geral</span>
     </div>
 
     <div id="mensagens-lista" class="chat-container">
@@ -172,15 +178,14 @@
         const spanSalaAtiva = document.getElementById('nome-sala-ativa');
 
         let salaAtualId = "geral";
-        let unsubMensagens = null; // Guarda a escuta anterior para limpar ao trocar de sala
+        let unsubMensagens = null;
 
-        // Função para carregar mensagens da sala selecionada
         function carregarMensagensDaSala(salaId, nomeSala) {
             salaAtualId = salaId;
-            spanSalaAtiva.textContent = `Sala: ${nomeSala}`;
+            spanSalaAtiva.textContent = `Conversando em: ${nomeSala}`;
 
             if (unsubMensagens) {
-                unsubMensagens(); // Para de escutar a sala anterior
+                unsubMensagens();
             }
 
             const qMensagens = query(collection(db, "mensagens"), where("salaId", "==", salaId));
@@ -209,7 +214,6 @@
             });
         }
 
-        // Enviar mensagem para a sala atual
         botaoEnviar.addEventListener('click', async () => {
             const texto = inputMensagem.value.trim();
             if (texto === "") return;
@@ -227,7 +231,6 @@
             }
         });
 
-        // Criar nova sala
         botaoCriarSala.addEventListener('click', async () => {
             const nomeSala = prompt("Digite o nome da nova sala:");
             if (nomeSala && nomeSala.trim() !== "") {
@@ -243,17 +246,15 @@
             }
         });
 
-        // Listar salas no topo em tempo real
         onSnapshot(collection(db, "salas"), (snapshot) => {
             listaSalas.innerHTML = "";
             if (snapshot.empty) {
-                listaSalas.innerHTML = '<span style="font-size: 13px; color: #666; padding: 5px;">Nenhuma sala criada.</span>';
+                listaSalas.innerHTML = '<div style="font-size: 13px; color: #666; padding: 10px; text-align: center;">Nenhuma sala criada.</div>';
                 carregarMensagensDaSala("geral", "Geral");
                 return;
             }
 
             const salasArray = [];
-            // Adiciona a sala "Geral" padrão primeiro se quiser
             salasArray.push({ id: "geral", nome: "Geral", criadoEm: 0 });
 
             snapshot.forEach((doc) => {
@@ -264,30 +265,31 @@
             let primeiraVez = true;
 
             salasArray.forEach((sala) => {
-                const btn = document.createElement('button');
-                btn.classList.add('sala-tag');
-                btn.textContent = `# ${sala.nome}`;
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('sala-item');
+                itemDiv.innerHTML = `
+                    <span># ${sala.nome}</span>
+                    <span class="seta">➔</span>
+                `;
                 
                 if (sala.id === salaAtualId) {
-                    btn.classList.add('ativa');
+                    itemDiv.classList.add('ativa');
                 }
 
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.sala-tag').forEach(b => b.classList.remove('ativa'));
-                    btn.classList.add('ativa');
+                itemDiv.addEventListener('click', () => {
+                    document.querySelectorAll('.sala-item').forEach(i => i.classList.remove('ativa'));
+                    itemDiv.classList.add('ativa');
                     carregarMensagensDaSala(sala.id, sala.nome);
                 });
 
-                listaSalas.appendChild(btn);
+                listaSalas.appendChild(itemDiv);
 
-                // Carrega a primeira sala automaticamente ao abrir se for a primeira vez
                 if (primeiraVez && salaAtualId === "geral" && sala.id === "geral") {
                     carregarMensagensDaSala(sala.id, sala.nome);
                     primeiraVez = false;
                 }
             });
 
-            // Se a sala atual não estiver na lista (ex: foi apagada), volta para a geral
             const existe = salasArray.some(s => s.id === salaAtualId);
             if (!existe && salasArray.length > 0) {
                 carregarMensagensDaSala(salasArray[0].id, salasArray[0].nome);
