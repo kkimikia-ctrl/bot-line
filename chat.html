@@ -11,26 +11,55 @@
             background-color: #f4f6f9; 
             margin: 0; 
             padding: 10px; 
-            padding-bottom: 140px; 
+            padding-bottom: 90px; 
         }
-        h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 10px 0; }
+        h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 10px 0 15px 0; }
 
-        /* Botão Criar Sala */
-        .btn-criar-container { text-align: center; margin-bottom: 15px; }
+        /* Barra de Ações Superior (Voltar, Criar Sala, Home) */
+        .acoes-topo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-topo {
+            background: #ffffff;
+            color: #333;
+            border: 1px solid #cbd5e1;
+            padding: 10px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-topo:hover { background-color: #f8fafc; }
+
         .btn-criar { 
             background: linear-gradient(135deg, #0d47a1, #1976d2); 
-            color: white; border: none; padding: 10px 20px; 
-            border-radius: 20px; font-weight: bold; font-size: 13px; cursor: pointer; 
+            color: white; 
+            border: none; 
+            padding: 10px 18px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            font-size: 13px; 
+            cursor: pointer; 
             box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
+            white-space: nowrap;
         }
 
-        /* Lista Vertical de Salas (Estilo Lista Moderna) */
+        /* Lista Vertical de Salas */
         .salas-lista-vertical {
             display: flex;
             flex-direction: column;
             gap: 8px;
             margin-bottom: 15px;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
             padding-right: 2px;
         }
@@ -62,7 +91,6 @@
         .sala-item.ativa .seta { color: white; }
         .seta { color: #94a3b8; font-size: 14px; }
 
-        /* Título da sala ativa */
         .sala-atual-titulo {
             font-size: 13px;
             font-weight: bold;
@@ -82,9 +110,10 @@
             background: white; 
             border-radius: 12px; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-            min-height: 250px;
-            max-height: 45vh;
+            min-height: 220px;
+            max-height: 40vh;
             overflow-y: auto;
+            margin-bottom: 75px; /* Espaço para o rodapé fixo */
         }
         
         .mensagem-balao {
@@ -100,7 +129,7 @@
             border-bottom-left-radius: 4px;
         }
 
-        /* Rodapé fixo para input e navegação */
+        /* Rodapé Fixo apenas para digitar e enviar */
         .footer-fixed {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); z-index: 1000;
@@ -114,19 +143,16 @@
             background-color: #06C755; color: white; border: none; 
             padding: 0 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px;
         }
-        .bottom-nav { 
-            display: flex; justify-content: space-around; align-items: center; 
-            padding: 8px 0; border-top: 1px solid #eee; background: #f8f9fa;
-        }
-        .nav-link { text-decoration: none; color: #333; font-weight: bold; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <h1>Chat da Comunidade 💬</h1>
     
-    <div class="btn-criar-container">
-        <button id="btn-criar-sala" class="btn-criar">+ Criar Nova Sala</button>
+    <div class="acoes-topo">
+        <a href="javascript:history.back()" class="btn-topo">⬅️ Voltar</a>
+        <button id="btn-criar-sala" class="btn-criar">+ Criar Sala</button>
+        <a href="index.html" class="btn-topo">🏠 Home</a>
     </div>
 
     <span class="sala-atual-titulo">Salas Disponíveis:</span>
@@ -147,11 +173,6 @@
             <input type="text" id="mensagem-input" placeholder="Digite sua mensagem...">
             <button id="enviar-btn">Enviar</button>
         </div>
-
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-link">🏠 Home</a>
-            <a href="javascript:history.back()" class="nav-link">⬅️ Voltar</a>
-        </nav>
     </div>
 
     <script type="module">
@@ -228,6 +249,13 @@
             } catch (e) {
                 console.error("Erro ao enviar mensagem: ", e);
                 alert("Erro ao enviar mensagem.");
+            }
+        });
+
+        // Enviar com a tecla Enter do teclado do celular/computador
+        inputMensagem.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                botaoEnviar.click();
             }
         });
 
