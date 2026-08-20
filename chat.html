@@ -16,7 +16,6 @@
         h1 { font-size: 20px; color: #0d47a1; text-align: center; margin-bottom: 5px; }
         p.sub { font-size: 13px; color: #666; text-align: center; margin-bottom: 20px; }
 
-        /* Botão Criar Sala Moderno */
         .btn-criar-container { text-align: center; margin-bottom: 20px; }
         .btn-criar { 
             background: linear-gradient(135deg, #0d47a1, #1976d2); 
@@ -30,12 +29,7 @@
             box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3);
         }
 
-        /* Lista de Salas em Cards */
-        .salas-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .salas-grid { display: flex; flex-direction: column; gap: 12px; }
         .sala-card {
             background: white;
             padding: 16px 20px;
@@ -45,15 +39,12 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             border-left: 5px solid #0d47a1;
         }
-        .sala-card:active { transform: scale(0.98); }
         .sala-info h3 { margin: 0; font-size: 16px; color: #333; }
         .sala-info span { font-size: 12px; color: #888; }
         .sala-arrow { font-size: 18px; color: #0d47a1; font-weight: bold; }
 
-        /* Barra de Navegação Inferior */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; 
             background: white; display: flex; justify-content: space-around; 
@@ -99,7 +90,6 @@
         const listaSalas = document.getElementById('salas-lista');
         const botaoCriarSala = document.getElementById('btn-criar-sala');
 
-        // Criar nova sala
         botaoCriarSala.addEventListener('click', async () => {
             const nomeSala = prompt("Digite o nome da nova sala de bate-papo:");
             if (nomeSala && nomeSala.trim() !== "") {
@@ -115,11 +105,10 @@
             }
         });
 
-        // Listar salas em tempo real
         onSnapshot(collection(db, "salas"), (snapshot) => {
             listaSalas.innerHTML = "";
             if (snapshot.empty) {
-                listaSalas.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Nenhuma sala criada ainda. Seja o primeiro!</div>';
+                listaSalas.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Nenhuma sala criada ainda.</div>';
                 return;
             }
 
@@ -127,7 +116,7 @@
             snapshot.forEach((doc) => {
                 salasArray.push({ id: doc.id, ...doc.data() });
             });
-            salasArray.sort((a, b) => b.criadoEm - a.criadoEm); // Mais recentes primeiro
+            salasArray.sort((a, b) => b.criadoEm - a.criadoEm);
 
             salasArray.forEach((sala) => {
                 const card = document.createElement('div');
@@ -140,7 +129,6 @@
                     <div class="sala-arrow">➔</div>
                 `;
                 
-                // Ao clicar, redireciona para a página específica da sala passando o ID na URL
                 card.addEventListener('click', () => {
                     window.location.href = `sala.html?id=${sala.id}&nome=${encodeURIComponent(sala.nome)}`;
                 });
