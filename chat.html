@@ -4,18 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chat da Comunidade</title>
-    <!-- Importação do SDK oficial do LINE LIFF -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         * { box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Evita rolagem indesejada na página inteira */
+        }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #f4f6f9; 
-            margin: 0; 
-            padding: 10px; 
-            padding-bottom: 90px; 
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
         }
-        h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 10px 0 15px 0; }
+        h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 5px 0 10px 0; flex-shrink: 0; }
 
         /* Barra de Ações Superior */
         .acoes-topo {
@@ -23,30 +28,29 @@
             justify-content: center;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
         }
 
         .btn-topo {
             background: #ffffff;
             color: #333;
             border: 1px solid #cbd5e1;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 20px;
             font-weight: 600;
             font-size: 12px;
             cursor: pointer;
             text-decoration: none;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: all 0.2s;
             white-space: nowrap;
         }
-        .btn-topo:hover { background-color: #f8fafc; }
 
         .btn-criar { 
             background: linear-gradient(135deg, #0d47a1, #1976d2); 
             color: white; 
             border: none; 
-            padding: 10px 18px; 
+            padding: 8px 16px; 
             border-radius: 20px; 
             font-weight: bold; 
             font-size: 13px; 
@@ -59,11 +63,11 @@
         .salas-lista-vertical {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-            max-height: 180px;
+            gap: 6px;
+            margin-bottom: 10px;
+            max-height: 120px;
             overflow-y: auto;
-            padding-right: 2px;
+            flex-shrink: 0;
         }
         .salas-lista-vertical::-webkit-scrollbar { width: 4px; }
         .salas-lista-vertical::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -72,50 +76,46 @@
             background: white;
             color: #333;
             border: 1px solid #e2e8f0;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
-        .sala-item:hover { background-color: #f8fafc; }
         .sala-item.ativa {
             background: #0d47a1;
             color: white;
             border-color: #0d47a1;
-            box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
         }
         .sala-item.ativa .seta { color: white; }
         .seta { color: #94a3b8; font-size: 14px; }
 
         .sala-atual-titulo {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #475569;
-            margin: 5px 2px;
+            margin: 2px 2px;
             display: block;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         /* Caixa de Informação da Sala Ativa com o Criador */
         .info-sala-ativa {
             background: #e3f2fd;
             border-left: 4px solid #0d47a1;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
-            margin-bottom: 10px;
-            font-size: 13px;
+            margin-bottom: 8px;
+            font-size: 12px;
             color: #0d47a1;
             font-weight: bold;
+            flex-shrink: 0;
         }
 
-        /* Container de mensagens */
+        /* Container de mensagens dinâmico */
         .chat-container { 
             display: flex; 
             flex-direction: column; 
@@ -124,10 +124,9 @@
             background: white; 
             border-radius: 12px; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-            min-height: 220px;
-            max-height: 40vh;
+            flex-grow: 1;
             overflow-y: auto;
-            margin-bottom: 75px;
+            margin-bottom: 10px;
         }
         
         /* Estilo da linha da mensagem com avatar e nome */
@@ -184,12 +183,15 @@
             border-top-right-radius: 2px;
         }
 
-        /* Rodapé Fixo de Envio */
+        /* Rodapé Estático alinhado com Flexbox (Sem espaço perdido) */
         .footer-fixed {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); z-index: 1000;
+            background: #ffffff; 
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); 
+            flex-shrink: 0;
         }
-        .chat-input-area { display: flex; gap: 8px; padding: 10px; }
+        .chat-input-area { display: flex; gap: 8px; }
         input[type="text"] { 
             flex-grow: 1; padding: 10px 14px; border: 1px solid #ccc; 
             border-radius: 20px; font-size: 14px; outline: none; background: white;
@@ -246,14 +248,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Identificação automática via LINE LIFF
         let meuNome = "Anônimo";
         let minhaFoto = "https://api.dicebear.com/7.x/bottts/svg?seed=Anônimo";
 
         try {
-            // Inicializa o LIFF com o seu LIFF ID do LINE Login
             await liff.init({ liffId: "2010902449-KWNNNsxn" });
-            
             if (!liff.isLoggedIn()) {
                 liff.login();
             } else {
@@ -262,18 +261,9 @@
                 minhaFoto = profile.pictureUrl || minhaFoto;
             }
         } catch (error) {
-            console.warn("LIFF não inicializado (rodando fora do LINE ou erro de ID). Usando fallback local.", error);
-            // Fallback caso abra no navegador comum fora do LINE
-            meuNome = localStorage.getItem('chat_nome');
-            if (!meuNome) {
-                meuNome = prompt("Digite o seu nome para participar do chat:") || "Anônimo";
-                localStorage.setItem('chat_nome', meuNome);
-            }
-            minhaFoto = localStorage.getItem('chat_foto');
-            if (!minhaFoto) {
-                minhaFoto = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
-                localStorage.setItem('chat_foto', minhaFoto);
-            }
+            console.warn("LIFF fallback ativo.", error);
+            meuNome = localStorage.getItem('chat_nome') || "Anônimo";
+            minhaFoto = localStorage.getItem('chat_foto') || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
         }
 
         const inputMensagem = document.getElementById('mensagem-input');
@@ -291,9 +281,7 @@
             const autorCriacao = criadoPor || "Sistema";
             divInfoSala.textContent = `💬 ${nomeSala} — Aberta por: ${autorCriacao}`;
 
-            if (unsubMensagens) {
-                unsubMensagens();
-            }
+            if (unsubMensagens) unsubMensagens();
 
             const qMensagens = query(collection(db, "mensagens"), where("salaId", "==", salaId));
             
@@ -305,9 +293,7 @@
                 }
                 
                 const mensagensArray = [];
-                snapshot.forEach((doc) => {
-                    mensagensArray.push(doc.data());
-                });
+                snapshot.forEach((doc) => mensagensArray.push(doc.data()));
                 mensagensArray.sort((a, b) => (a.data || 0) - (b.data || 0));
 
                 mensagensArray.forEach((mensagem) => {
@@ -315,9 +301,7 @@
                     linhaDiv.classList.add('mensagem-linha');
 
                     const ehMinha = mensagem.autor === meuNome;
-                    if (ehMinha) {
-                        linhaDiv.classList.add('minha-mensagem');
-                    }
+                    if (ehMinha) linhaDiv.classList.add('minha-mensagem');
 
                     const fotoUrl = mensagem.foto || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(mensagem.autor || 'User')}`;
 
@@ -328,10 +312,8 @@
                             <div class="mensagem-balao">${mensagem.texto}</div>
                         </div>
                     `;
-
                     listaMensagens.appendChild(linhaDiv);
                 });
-                
                 listaMensagens.scrollTop = listaMensagens.scrollHeight;
             });
         }
@@ -351,14 +333,11 @@
                 inputMensagem.value = "";
             } catch (e) {
                 console.error("Erro ao enviar mensagem: ", e);
-                alert("Erro ao enviar mensagem.");
             }
         });
 
         inputMensagem.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                botaoEnviar.click();
-            }
+            if (e.key === 'Enter') botaoEnviar.click();
         });
 
         botaoCriarSala.addEventListener('click', async () => {
@@ -372,34 +351,24 @@
                     });
                 } catch (e) {
                     console.error("Erro ao criar sala: ", e);
-                    alert("Erro ao criar sala.");
                 }
             }
         });
 
         onSnapshot(collection(db, "salas"), (snapshot) => {
             listaSalas.innerHTML = "";
-            const salasArray = [];
-            salasArray.push({ id: "geral", nome: "Geral", criador: "Sistema", criadoEm: 0 });
+            const salasArray = [{ id: "geral", nome: "Geral", criador: "Sistema", criadoEm: 0 }];
 
-            snapshot.forEach((doc) => {
-                salasArray.push({ id: doc.id, ...doc.data() });
-            });
+            snapshot.forEach((doc) => salasArray.push({ id: doc.id, ...doc.data() }));
             salasArray.sort((a, b) => (b.criadoEm || 0) - (a.criadoEm || 0));
 
             let primeiraVez = true;
-
             salasArray.forEach((sala) => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('sala-item');
-                itemDiv.innerHTML = `
-                    <span># ${sala.nome}</span>
-                    <span class="seta">➔</span>
-                `;
+                itemDiv.innerHTML = `<span># ${sala.nome}</span><span class="seta">➔</span>`;
                 
-                if (sala.id === salaAtualId) {
-                    itemDiv.classList.add('ativa');
-                }
+                if (sala.id === salaAtualId) itemDiv.classList.add('ativa');
 
                 itemDiv.addEventListener('click', () => {
                     document.querySelectorAll('.sala-item').forEach(i => i.classList.remove('ativa'));
