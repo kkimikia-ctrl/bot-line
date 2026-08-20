@@ -1,6 +1,6 @@
 // ⚙️ Importações do Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // 🔑 Configuração do projeto Firebase
 const firebaseConfig = {
@@ -23,7 +23,7 @@ const listaMensagens = document.getElementById('mensagens-lista');
 const botaoCriarSala = document.getElementById('btn-criar-sala');
 const listaSalas = document.getElementById('salas-lista');
 
-// Variável para controlar em qual sala o usuário está atualmente (começa vazia ou geral)
+// Variável para controlar em qual sala o usuário está atualmente
 let salaAtualId = "geral"; 
 
 // 💬 Envio de mensagens vinculado à sala atual
@@ -34,8 +34,8 @@ botaoEnviar.addEventListener('click', async () => {
     try {
         await addDoc(collection(db, "mensagens"), {
             texto: texto,
-            salaId: salaAtualId, // <-- Vincula a mensagem à sala ativa
-            data: new Date()
+            salaId: salaAtualId,
+            data: new Date().getTime() // Usando número para evitar erros de índice
         });
         inputMensagem.value = "";
     } catch (e) {
@@ -44,13 +44,14 @@ botaoEnviar.addEventListener('click', async () => {
     }
 });
 
-// 🔄 Sincronização em tempo real das mensagens filtradas por sala
+// 🔄 Sincronização em tempo real das mensagens por sala
 function carregarMensagens(idSala) {
     salaAtualId = idSala;
+    
+    // Consulta simplificada apenas com o filtro (não exige índice composto no Firebase)
     const qMensagens = query(
         collection(db, "mensagens"), 
-        where("salaId", "==", idSala),
-        orderBy("data", "asc")
+        where("salaId", "==", idSala)
     );
     
     onSnapshot(qMensagens, (snapshot) => {
@@ -59,13 +60,21 @@ function carregarMensagens(idSala) {
             listaMensagens.innerHTML = '<div class="mensagem-balao mensagem-recebida">Nenhuma mensagem nesta sala ainda. Seja o primeiro a escrever!</div>';
             return;
         }
+        
+        // Organiza as mensagens localmente por data para evitar erros
+        const mensagensArray = [];
         snapshot.forEach((doc) => {
-            const mensagem = doc.data();
+            mensagensArray.push(doc.data());
+        });
+        mensagensArray.sort((a, b) => a.data - b.data);
+
+        mensagensArray.forEach((mensagem) => {
             const divBalao = document.createElement('div');
             divBalao.classList.add('mensagem-balao', 'mensagem-recebida');
             divBalao.textContent = mensagem.texto;
             listaMensagens.appendChild(divBalao);
         });
+        
         listaMensagens.scrollTop = listaMensagens.scrollHeight;
     });
 }
@@ -81,7 +90,7 @@ if (botaoCriarSala) {
             try {
                 await addDoc(collection(db, "salas"), {
                     nome: nomeSala.trim(),
-                    criadoEm: new Date()
+                    criadoEm: new Date().getTime()
                 });
             } catch (e) {
                 console.error("Erro ao criar sala: ", e);
@@ -92,21 +101,23 @@ if (botaoCriarSala) {
 }
 
 // 🔄 Sincronização das salas criadas no topo
-const qSalas = query(collection(db, "salas"), orderBy("criadoEm", "asc"));
+const qSalas = collection(db, "salas");
 onSnapshot(qSalas, (snapshot) => {
     listaSalas.innerHTML = "";
+    const salasArray = [];
     snapshot.forEach((doc) => {
-        const sala = doc.data();
-        const salaId = doc.id; // ID único gerado pelo Firebase para esta sala
-        
+        const dados = doc.data();
+        salasArray.push({ id: doc.id, ...dados });
+    });
+    salasArray.sort((a, b) => a.criadoEm - b.criadoEm);
+
+    salasArray.forEach((sala) => {
         const btnSala = document.createElement('button');
         btnSala.classList.add('sala-tag');
         btnSala.textContent = `# ${sala.nome}`;
         
-        // Ao clicar na sala, alternamos o chat para mostrar apenas as mensagens dela
         btnSala.addEventListener('click', () => {
-            carregarMensagens(salaId);
-            // Destaca visualmente qual sala está ativa (opcional)
+            carregarMensagens(sala.id);
             document.querySelectorAll('.sala-tag').forEach(b => b.style.background = "#ffffff");
             btnSala.style.background = "#e2e8f0";
         });
