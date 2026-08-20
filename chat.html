@@ -1,6 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat da Comunidade</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f9; 
+            margin: 0; 
+            padding: 10px; 
+            padding-bottom: 140px; 
+        }
+        h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 10px 0; }
+
+        /* Botão Criar Sala */
+        .btn-criar-container { text-align: center; margin-bottom: 12px; }
+        .btn-criar { 
+            background: linear-gradient(135deg, #0d47a1, #1976d2); 
+            color: white; border: none; padding: 10px 20px; 
+            border-radius: 20px; font-weight: bold; font-size: 13px; cursor: pointer; 
+            box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
+        }
+
+        /* Barra horizontal de salas (estilo pílulas) */
+        .salas-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px 5px 12px 5px;
+            white-space: nowrap;
+            scrollbar-width: thin;
+        }
+        .salas-scroll::-webkit-scrollbar { height: 4px; }
+        .salas-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        .sala-tag {
+            background: white;
+            color: #333;
+            border: 1px solid #cbd5e1;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .sala-tag.ativa {
+            background: #0d47a1;
+            color: white;
+            border-color: #0d47a1;
+            box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
+        }
+
+        /* Título da sala ativa */
+        .sala-atual-titulo {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1e293b;
+            margin: 8px 5px;
+            background: #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        /* Container de mensagens */
+        .chat-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            padding: 12px; 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            min-height: 280px;
+            max-height: 50vh;
+            overflow-y: auto;
+            margin-top: 5px;
+        }
+        
+        .mensagem-balao {
+            padding: 10px 14px;
+            border-radius: 14px;
+            max-width: 80%;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            background-color: #e9ecef; 
+            color: #333333; 
+            align-self: flex-start; 
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Rodapé fixo para input e navegação */
+        .footer-fixed {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); z-index: 1000;
+        }
+        .chat-input-area { display: flex; gap: 8px; padding: 10px; }
+        input[type="text"] { 
+            flex-grow: 1; padding: 10px 14px; border: 1px solid #ccc; 
+            border-radius: 20px; font-size: 14px; outline: none; background: white;
+        }
+        button#enviar-btn { 
+            background-color: #06C755; color: white; border: none; 
+            padding: 0 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px;
+        }
+        .bottom-nav { 
+            display: flex; justify-content: space-around; align-items: center; 
+            padding: 8px 0; border-top: 1px solid #eee; background: #f8f9fa;
+        }
+        .nav-link { text-decoration: none; color: #333; font-weight: bold; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <h1>Chat da Comunidade 💬</h1>
+    
+    <div class="btn-criar-container">
+        <button id="btn-criar-sala" class="btn-criar">+ Criar Nova Sala</button>
+    </div>
+
+    <div id="salas-lista" class="salas-scroll">
+        <span style="font-size: 13px; color: #666; padding: 5px;">Carregando salas...</span>
+    </div>
+
+    <div>
+        <span id="nome-sala-ativa" class="sala-atual-titulo">Sala: Geral</span>
+    </div>
+
+    <div id="mensagens-lista" class="chat-container">
+        <div class="mensagem-balao">Selecione uma sala acima para ver as mensagens.</div>
+    </div>
+
+    <div class="footer-fixed">
+        <div class="chat-input-area">
+            <input type="text" id="mensagem-input" placeholder="Digite sua mensagem...">
+            <button id="enviar-btn">Enviar</button>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-link">🏠 Home</a>
+            <a href="javascript:history.back()" class="nav-link">⬅️ Voltar</a>
+        </nav>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
@@ -14,11 +164,72 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const listaSalas = document.getElementById('salas-lista');
+        const inputMensagem = document.getElementById('mensagem-input');
+        const botaoEnviar = document.getElementById('enviar-btn');
+        const listaMensagens = document.getElementById('mensagens-lista');
         const botaoCriarSala = document.getElementById('btn-criar-sala');
+        const listaSalas = document.getElementById('salas-lista');
+        const spanSalaAtiva = document.getElementById('nome-sala-ativa');
 
+        let salaAtualId = "geral";
+        let unsubMensagens = null; // Guarda a escuta anterior para limpar ao trocar de sala
+
+        // Função para carregar mensagens da sala selecionada
+        function carregarMensagensDaSala(salaId, nomeSala) {
+            salaAtualId = salaId;
+            spanSalaAtiva.textContent = `Sala: ${nomeSala}`;
+
+            if (unsubMensagens) {
+                unsubMensagens(); // Para de escutar a sala anterior
+            }
+
+            const qMensagens = query(collection(db, "mensagens"), where("salaId", "==", salaId));
+            
+            unsubMensagens = onSnapshot(qMensagens, (snapshot) => {
+                listaMensagens.innerHTML = ""; 
+                if (snapshot.empty) {
+                    listaMensagens.innerHTML = '<div class="mensagem-balao">Nenhuma mensagem nesta sala ainda. Seja o primeiro a escrever!</div>';
+                    return;
+                }
+                
+                const mensagensArray = [];
+                snapshot.forEach((doc) => {
+                    mensagensArray.push(doc.data());
+                });
+                mensagensArray.sort((a, b) => (a.data || 0) - (b.data || 0));
+
+                mensagensArray.forEach((mensagem) => {
+                    const divBalao = document.createElement('div');
+                    divBalao.classList.add('mensagem-balao');
+                    divBalao.textContent = mensagem.texto;
+                    listaMensagens.appendChild(divBalao);
+                });
+                
+                listaMensagens.scrollTop = listaMensagens.scrollHeight;
+            });
+        }
+
+        // Enviar mensagem para a sala atual
+        botaoEnviar.addEventListener('click', async () => {
+            const texto = inputMensagem.value.trim();
+            if (texto === "") return;
+
+            try {
+                await addDoc(collection(db, "mensagens"), {
+                    texto: texto,
+                    salaId: salaAtualId,
+                    data: new Date().getTime()
+                });
+                inputMensagem.value = "";
+            } catch (e) {
+                console.error("Erro ao enviar mensagem: ", e);
+                alert("Erro ao enviar mensagem.");
+            }
+        });
+
+        // Criar nova sala
         botaoCriarSala.addEventListener('click', async () => {
-            const nomeSala = prompt("Digite o nome da nova sala de bate-papo:");
+            const nomeSala = prompt("Digite o nome da nova sala:");
             if (nomeSala && nomeSala.trim() !== "") {
                 try {
                     await addDoc(collection(db, "salas"), {
@@ -32,36 +243,56 @@
             }
         });
 
+        // Listar salas no topo em tempo real
         onSnapshot(collection(db, "salas"), (snapshot) => {
             listaSalas.innerHTML = "";
             if (snapshot.empty) {
-                listaSalas.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Nenhuma sala criada ainda.</div>';
+                listaSalas.innerHTML = '<span style="font-size: 13px; color: #666; padding: 5px;">Nenhuma sala criada.</span>';
+                carregarMensagensDaSala("geral", "Geral");
                 return;
             }
 
             const salasArray = [];
+            // Adiciona a sala "Geral" padrão primeiro se quiser
+            salasArray.push({ id: "geral", nome: "Geral", criadoEm: 0 });
+
             snapshot.forEach((doc) => {
                 salasArray.push({ id: doc.id, ...doc.data() });
             });
-            salasArray.sort((a, b) => b.criadoEm - a.criadoEm);
+            salasArray.sort((a, b) => (b.criadoEm || 0) - (a.criadoEm || 0));
+
+            let primeiraVez = true;
 
             salasArray.forEach((sala) => {
-                const card = document.createElement('div');
-                card.classList.add('sala-card');
-                card.innerHTML = `
-                    <div class="sala-info">
-                        <h3># ${sala.nome}</h3>
-                        <span>Toque para entrar na conversa</span>
-                    </div>
-                    <div class="sala-arrow">➔</div>
-                `;
+                const btn = document.createElement('button');
+                btn.classList.add('sala-tag');
+                btn.textContent = `# ${sala.nome}`;
                 
-                // Usando caminho absoluto seguro para abrir a sala
-                card.addEventListener('click', () => {
-                    window.location.href = `sala.html?id=${sala.id}&nome=${encodeURIComponent(sala.nome)}`;
+                if (sala.id === salaAtualId) {
+                    btn.classList.add('ativa');
+                }
+
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.sala-tag').forEach(b => b.classList.remove('ativa'));
+                    btn.classList.add('ativa');
+                    carregarMensagensDaSala(sala.id, sala.nome);
                 });
 
-                listaSalas.appendChild(card);
+                listaSalas.appendChild(btn);
+
+                // Carrega a primeira sala automaticamente ao abrir se for a primeira vez
+                if (primeiraVez && salaAtualId === "geral" && sala.id === "geral") {
+                    carregarMensagensDaSala(sala.id, sala.nome);
+                    primeiraVez = false;
+                }
             });
+
+            // Se a sala atual não estiver na lista (ex: foi apagada), volta para a geral
+            const existe = salasArray.some(s => s.id === salaAtualId);
+            if (!existe && salasArray.length > 0) {
+                carregarMensagensDaSala(salasArray[0].id, salasArray[0].nome);
+            }
         });
     </script>
+</body>
+</html>
