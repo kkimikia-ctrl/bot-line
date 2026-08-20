@@ -14,6 +14,406 @@
             padding-bottom: 90px; 
         }
         h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 10px 0 15px 0; }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat da Comunidade</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f6f9; 
+            margin: 0; 
+            padding: 10px; 
+            padding-bottom: 90px; 
+        }
+        h1 { font-size: 18px; color: #0d47a1; text-align: center; margin: 10px 0 15px 0; }
+
+        /* Barra de Ações Superior */
+        .acoes-topo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-topo {
+            background: #ffffff;
+            color: #333;
+            border: 1px solid #cbd5e1;
+            padding: 10px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-topo:hover { background-color: #f8fafc; }
+
+        .btn-criar { 
+            background: linear-gradient(135deg, #0d47a1, #1976d2); 
+            color: white; 
+            border: none; 
+            padding: 10px 18px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            font-size: 13px; 
+            cursor: pointer; 
+            box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
+            white-space: nowrap;
+        }
+
+        /* Lista Vertical de Salas */
+        .salas-lista-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+        .salas-lista-vertical::-webkit-scrollbar { width: 4px; }
+        .salas-lista-vertical::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        .sala-item {
+            background: white;
+            color: #333;
+            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .sala-item:hover { background-color: #f8fafc; }
+        .sala-item.ativa {
+            background: #0d47a1;
+            color: white;
+            border-color: #0d47a1;
+            box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
+        }
+        .sala-item.ativa .seta { color: white; }
+        .seta { color: #94a3b8; font-size: 14px; }
+
+        .sala-atual-titulo {
+            font-size: 13px;
+            font-weight: bold;
+            color: #475569;
+            margin: 5px 2px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Container de mensagens */
+        .chat-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            padding: 12px; 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            min-height: 220px;
+            max-height: 40vh;
+            overflow-y: auto;
+            margin-bottom: 75px;
+        }
+        
+        /* Estilo da linha da mensagem com avatar e nome */
+        .mensagem-linha {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            max-width: 85%;
+        }
+        .mensagem-linha.minha-mensagem {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar-usuario {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #cbd5e1;
+            flex-shrink: 0;
+        }
+
+        .conteudo-balao {
+            display: flex;
+            flex-direction: column;
+        }
+        .mensagem-linha.minha-mensagem .conteudo-balao {
+            align-items: flex-end;
+        }
+
+        .nome-usuario {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .mensagem-balao {
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            background-color: #e9ecef; 
+            color: #333333; 
+            border-top-left-radius: 2px;
+        }
+        .minha-mensagem .mensagem-balao {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-top-left-radius: 14px;
+            border-top-right-radius: 2px;
+        }
+
+        /* Rodapé Fixo de Envio */
+        .footer-fixed {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); z-index: 1000;
+        }
+        .chat-input-area { display: flex; gap: 8px; padding: 10px; }
+        input[type="text"] { 
+            flex-grow: 1; padding: 10px 14px; border: 1px solid #ccc; 
+            border-radius: 20px; font-size: 14px; outline: none; background: white;
+        }
+        button#enviar-btn { 
+            background-color: #06C755; color: white; border: none; 
+            padding: 0 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Chat da Comunidade 💬</h1>
+    
+    <div class="acoes-topo">
+        <a href="javascript:history.back()" class="btn-topo">⬅️ Voltar</a>
+        <button id="btn-criar-sala" class="btn-criar">+ Criar Sala</button>
+        <a href="index.html" class="btn-topo">🏠 Home</a>
+    </div>
+
+    <span class="sala-atual-titulo">Salas Disponíveis:</span>
+    <div id="salas-lista" class="salas-lista-vertical">
+        <div style="font-size: 13px; color: #666; padding: 10px; text-align: center;">Carregando salas...</div>
+    </div>
+
+    <div>
+        <span id="nome-sala-ativa" class="sala-atual-titulo" style="color: #0d47a1; margin-top: 10px;">Conversando em: Geral</span>
+    </div>
+
+    <div id="mensagens-lista" class="chat-container">
+        <div style="font-size: 13px; color: #666; text-align: center; padding: 10px;">Selecione uma sala acima para ver as mensagens.</div>
+    </div>
+
+    <div class="footer-fixed">
+        <div class="chat-input-area">
+            <input type="text" id="mensagem-input" placeholder="Digite sua mensagem...">
+            <button id="enviar-btn">Enviar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+          authDomain: "ajuda-jp.firebaseapp.com",
+          projectId: "ajuda-jp",
+          storageBucket: "ajuda-jp.firebasestorage.app",
+          messagingSenderId: "40121072206",
+          appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let meuNome = localStorage.getItem('chat_nome');
+        if (!meuNome) {
+            meuNome = prompt("Digite o seu nome para participar do chat:") || "Anônimo";
+            localStorage.setItem('chat_nome', meuNome);
+        }
+
+        let minhaFoto = localStorage.getItem('chat_foto');
+        if (!minhaFoto) {
+            minhaFoto = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
+            localStorage.setItem('chat_foto', minhaFoto);
+        }
+
+        const inputMensagem = document.getElementById('mensagem-input');
+        const botaoEnviar = document.getElementById('enviar-btn');
+        const listaMensagens = document.getElementById('mensagens-lista');
+        const botaoCriarSala = document.getElementById('btn-criar-sala');
+        const listaSalas = document.getElementById('salas-lista');
+        const spanSalaAtiva = document.getElementById('nome-sala-ativa');
+
+        let salaAtualId = "geral";
+        let unsubMensagens = null;
+
+        function carregarMensagensDaSala(salaId, nomeSala, criadoPor) {
+            salaAtualId = salaId;
+            const autorTexto = criadoPor ? ` (Criado por: ${criadoPor})` : "";
+            spanSalaAtiva.textContent = `Conversando em: ${nomeSala}${autorTexto}`;
+
+            if (unsubMensagens) {
+                unsubMensagens();
+            }
+
+            const qMensagens = query(collection(db, "mensagens"), where("salaId", "==", salaId));
+            
+            unsubMensagens = onSnapshot(qMensagens, (snapshot) => {
+                listaMensagens.innerHTML = ""; 
+                if (snapshot.empty) {
+                    listaMensagens.innerHTML = '<div style="font-size: 13px; color: #666; text-align: center; padding: 10px;">Nenhuma mensagem nesta sala ainda. Seja o primeiro a escrever!</div>';
+                    return;
+                }
+                
+                const mensagensArray = [];
+                snapshot.forEach((doc) => {
+                    mensagensArray.push(doc.data());
+                });
+                mensagensArray.sort((a, b) => (a.data || 0) - (b.data || 0));
+
+                mensagensArray.forEach((mensagem) => {
+                    const linhaDiv = document.createElement('div');
+                    linhaDiv.classList.add('mensagem-linha');
+
+                    const ehMinha = mensagem.autor === meuNome;
+                    if (ehMinha) {
+                        linhaDiv.classList.add('minha-mensagem');
+                    }
+
+                    const fotoUrl = mensagem.foto || 'https://api.dicebear.com/7.x/bottts/svg?seed=default';
+
+                    linhaDiv.innerHTML = `
+                        <img src="${fotoUrl}" class="avatar-usuario" alt="Avatar">
+                        <div class="conteudo-balao">
+                            <span class="nome-usuario">${mensagem.autor || 'Anônimo'}</span>
+                            <div class="mensagem-balao">${mensagem.texto}</div>
+                        </div>
+                    `;
+
+                    listaMensagens.appendChild(linhaDiv);
+                });
+                
+                listaMensagens.scrollTop = listaMensagens.scrollHeight;
+            });
+        }
+
+        botaoEnviar.addEventListener('click', async () => {
+            const texto = inputMensagem.value.trim();
+            if (texto === "") return;
+
+            try {
+                await addDoc(collection(db, "mensagens"), {
+                    texto: texto,
+                    salaId: salaAtualId,
+                    autor: meuNome,
+                    foto: minhaFoto,
+                    data: new Date().getTime()
+                });
+                inputMensagem.value = "";
+            } catch (e) {
+                console.error("Erro ao enviar mensagem: ", e);
+                alert("Erro ao enviar mensagem.");
+            }
+        });
+
+        inputMensagem.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                botaoEnviar.click();
+            }
+        });
+
+        botaoCriarSala.addEventListener('click', async () => {
+            const nomeSala = prompt("Digite o nome da nova sala:");
+            if (nomeSala && nomeSala.trim() !== "") {
+                try {
+                    await addDoc(collection(db, "salas"), {
+                        nome: nomeSala.trim(),
+                        criador: meuNome,
+                        criadoEm: new Date().getTime()
+                    });
+                } catch (e) {
+                    console.error("Erro ao criar sala: ", e);
+                    alert("Erro ao criar sala.");
+                }
+            }
+        });
+
+        onSnapshot(collection(db, "salas"), (snapshot) => {
+            listaSalas.innerHTML = "";
+            if (snapshot.empty) {
+                listaSalas.innerHTML = '<div style="font-size: 13px; color: #666; padding: 10px; text-align: center;">Nenhuma sala criada.</div>';
+                carregarMensagensDaSala("geral", "Geral", "Sistema");
+                return;
+            }
+
+            const salasArray = [];
+            salasArray.push({ id: "geral", nome: "Geral", criador: "Sistema", criadoEm: 0 });
+
+            snapshot.forEach((doc) => {
+                salasArray.push({ id: doc.id, ...doc.data() });
+            });
+            salasArray.sort((a, b) => (b.criadoEm || 0) - (a.criadoEm || 0));
+
+            let primeiraVez = true;
+
+            salasArray.forEach((sala) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('sala-item');
+                itemDiv.innerHTML = `
+                    <span># ${sala.nome}</span>
+                    <span class="seta">➔</span>
+                `;
+                
+                if (sala.id === salaAtualId) {
+                    itemDiv.classList.add('ativa');
+                }
+
+                itemDiv.addEventListener('click', () => {
+                    document.querySelectorAll('.sala-item').forEach(i => i.classList.remove('ativa'));
+                    itemDiv.classList.add('ativa');
+                    carregarMensagensDaSala(sala.id, sala.nome, sala.criador);
+                });
+
+                listaSalas.appendChild(itemDiv);
+
+                if (primeiraVez && salaAtualId === "geral" && sala.id === "geral") {
+                    carregarMensagensDaSala(sala.id, sala.nome, sala.criador);
+                    primeiraVez = false;
+                }
+            });
+
+            const salaAtualObj = salasArray.find(s => s.id === salaAtualId);
+            if (salaAtualObj) {
+                carregarMensagensDaSala(salaAtualObj.id, salaAtualObj.nome, salaAtualObj.criador);
+            } else if (salasArray.length > 0) {
+                carregarMensagensDaSala(salasArray[0].id, salasArray[0].nome, salasArray[0].criador);
+            }
+        });
+    </script>
+</body>
+</html>
 
         /* Barra de Ações Superior (Voltar, Criar Sala, Home) */
         .acoes-topo {
