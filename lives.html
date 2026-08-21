@@ -16,7 +16,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .back-btn {
             background-color: #fff;
@@ -42,7 +42,7 @@
             background: rgba(171, 71, 188, 0.05);
             border-radius: 14px;
             padding: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #7b1fa2;
             font-weight: bold;
             font-size: 13px;
@@ -52,7 +52,7 @@
             font-size: 13px;
             font-weight: bold;
             color: #444;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -91,7 +91,6 @@
             font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .start-live-btn {
             background: linear-gradient(135deg, #7c4dff, #512da8);
@@ -107,14 +106,16 @@
             margin-top: 10px;
         }
         
-        /* Estilos da Tela de Reprodução da Live */
+        /* PLAYER DA LIVE */
         #live-player-container {
             display: none;
             text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
         }
         .video-box {
             width: 100%;
-            height: 220px;
+            height: 200px;
             background: #000;
             border-radius: 12px;
             display: flex;
@@ -124,37 +125,71 @@
             font-weight: bold;
             position: relative;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .video-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.7;
+            opacity: 0.8;
         }
         .live-tag-overlay {
             position: absolute;
-            top: 12px;
-            left: 12px;
+            top: 10px;
+            left: 10px;
             background: #f44336;
             color: white;
-            padding: 4px 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            padding: 6px 10px;
             border-radius: 6px;
             font-size: 11px;
+            cursor: pointer;
+        }
+        .gift-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .gift-chip {
+            background: #fff;
+            border: 1px solid #ffca28;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: bold;
+            color: #f57f17;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .gift-chip:active {
+            background: #ffecb3;
         }
         .chat-box {
             background: white;
             border-radius: 12px;
-            padding: 12px;
-            height: 140px;
+            padding: 10px;
+            height: 110px;
             overflow-y: auto;
             border: 1px solid #ddd;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-size: 12px;
         }
         .chat-msg {
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
         .chat-msg span {
             font-weight: bold;
@@ -162,11 +197,11 @@
         }
         .chat-input-area {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
         .chat-input-area input {
             flex: 1;
-            padding: 10px;
+            padding: 9px;
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 13px;
@@ -175,7 +210,7 @@
             background: #1976d2;
             color: white;
             border: none;
-            padding: 0 15px;
+            padding: 0 14px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
@@ -184,7 +219,7 @@
 </head>
 <body>
 
-    <!-- LISTA DE LIVES (HOME) -->
+    <!-- LISTA DE LIVES -->
     <div id="lives-home">
         <div class="top-bar">
             <button class="back-btn" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
@@ -226,24 +261,33 @@
         </button>
     </div>
 
-    <!-- TELA DO PLAYER DA LIVE (ABRE AO CLICAR) -->
+    <!-- TELA DO PLAYER DA LIVE -->
     <div id="live-player-container">
         <div class="top-bar">
-            <button class="back-btn" onclick="fecharLive()">⬅ Voltar às Lives</button>
-            <h1 class="page-title" id="player-title">Transmissão</h1>
+            <button class="back-btn" onclick="fecharLive()">⬅ Voltar</button>
+            <h1 class="page-title" id="player-title" style="font-size: 15px;">Transmissão</h1>
         </div>
 
-        <div class="video-box">
+        <div class="video-box" id="video-container-box">
             <div class="live-tag-overlay">AO VIVO</div>
             <img id="player-img" src="" alt="Live Stream">
-            <div style="position: absolute; bottom: 10px; left: 12px; font-size: 13px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);" id="player-host"></div>
+            <div style="position: absolute; bottom: 10px; left: 10px; font-size: 12px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);" id="player-host"></div>
+            <button class="fullscreen-btn" onclick="alternarTelaCheia()">⛶ Tela Cheia</button>
+        </div>
+
+        <!-- BARRA DE PRESENTES PARA O LIVER -->
+        <div class="section-subtitle">🎁 Enviar Presente ao Liver:</div>
+        <div class="gift-bar">
+            <div class="gift-chip" onclick="enviarPresente('☕ Café (100¥)', 100)">☕ Café (100¥)</div>
+            <div class="gift-chip" onclick="enviarPresente('🌹 Rosa (300¥)', 300)">🌹 Rosa (300¥)</div>
+            <div class="gift-chip" onclick="enviarPresente('⭐ Estrela (500¥)', 500)">⭐ Estrela (500¥)</div>
+            <div class="gift-chip" onclick="enviarPresente('🚗 Carrão (1000¥)', 1000)">🚗 Carrão (1000¥)</div>
         </div>
 
         <div class="section-subtitle">Chat ao Vivo</div>
         <div class="chat-box" id="chat-messages">
-            <div class="chat-msg"><span>Sistema:</span> Bem-vindo ao chat da transmissão! Seja educado.</div>
+            <div class="chat-msg"><span>Sistema:</span> Bem-vindo! Os primeiros 300¥ vão inteiros para o criador!</div>
             <div class="chat-msg"><span>Carlos:</span> Que legal essa transmissão! Salve de Toyohashi!</div>
-            <div class="chat-msg"><span>Mariana:</span> Muito bacana, acompanhando aqui.</div>
         </div>
 
         <div class="chat-input-area">
@@ -258,7 +302,7 @@
             document.getElementById('live-player-container').style.display = 'block';
             
             document.getElementById('player-title').innerText = titulo;
-            document.getElementById('player-host').innerText = "Apresentador(a): " + host + " • " + espectadores;
+            document.getElementById('player-host').innerText = host + " • " + espectadores;
             document.getElementById('player-img').src = imagemUrl;
             window.scrollTo(0, 0);
         }
@@ -280,6 +324,31 @@
                 chatBox.appendChild(novaMsg);
                 input.value = '';
                 chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        function enviarPresente(nomePresente, valor) {
+            const chatBox = document.getElementById('chat-messages');
+            const novaMsg = document.createElement('div');
+            novaMsg.className = 'chat-msg';
+            novaMsg.style.color = '#d81b60';
+            novaMsg.innerHTML = `🎁 <span>Você enviou ${nomePresente}!</span> O criador agradece o apoio!`;
+            chatBox.appendChild(novaMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function alternarTelaCheia() {
+            const elem = document.getElementById('video-container-box');
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari / iPhone */
+                    elem.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
             }
         }
     </script>
