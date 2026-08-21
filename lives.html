@@ -36,22 +36,26 @@
             margin: 0;
         }
         
-        /* ESTILO CARROSSEL DE ANÚNCIOS (MESMO TAMANHO DO KARAOKÊ) */
+        /* CARROSSEL DE ANÚNCIOS AUTOMÁTICO E MANUAL */
         .carousel-container {
             display: flex;
             gap: 10px;
             overflow-x: auto;
             padding-bottom: 8px;
             margin-bottom: 10px;
-            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Esconde a barra de rolagem */
+        .carousel-container::-webkit-scrollbar {
+            display: none;
         }
         .ad-banner {
-            flex: 0 0 47%; /* Exibe quase 2 blocos lado a lado na tela */
-            scroll-snap-align: start;
+            flex: 0 0 47%;
             border: 2px dashed #b0bec5;
             background: #ffffff;
             border-radius: 12px;
-            padding: 18px 10px;
+            padding: 32px 10px;
             text-align: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
@@ -59,7 +63,7 @@
             font-size: 12px;
             font-weight: bold;
             color: #444;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
         .ad-banner .ad-sub {
             font-size: 10px;
@@ -221,7 +225,7 @@
             <h1 class="page-title">🔴 Lives da Comunidade</h1>
         </div>
 
-        <div class="carousel-container">
+        <div class="carousel-container" id="adCarousel">
             <div class="ad-banner">
                 <div class="ad-title">🖼️ Anuncie Aqui</div>
                 <div class="ad-sub">Retângulo 1</div>
@@ -309,6 +313,24 @@
     </div>
 
     <script>
+        // ROLAGEM AUTOMÁTICA DO CARROSSEL
+        const carousel = document.getElementById('adCarousel');
+        let autoScrollInterval = setInterval(() => {
+            if (carousel) {
+                // Se chegou no final, volta para o início; senão avança a largura de um banner + gap
+                if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 10) {
+                    carousel.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    carousel.scrollBy({ left: 160, behavior: 'smooth' });
+                }
+            }
+        }, 3000); // Roda a cada 3 segundos
+
+        // Pausa temporariamente ou permite rolar manualmente sem travar
+        carousel.addEventListener('touchstart', () => {
+            clearInterval(autoScrollInterval);
+        });
+
         function abrirLive(titulo, host, espectadores, imagemUrl) {
             document.getElementById('lives-home').style.display = 'none';
             document.getElementById('live-player-container').style.display = 'block';
