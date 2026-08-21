@@ -36,7 +36,7 @@
             margin: 0;
         }
         
-        /* CARROSSEL DE ANÚNCIOS (HOME) */
+        /* CARROSSEL DA HOME (2 ANÚNCIOS LADO A LADO) */
         .carousel-container {
             display: flex;
             gap: 10px;
@@ -128,26 +128,40 @@
             margin: 0 auto;
         }
         
-        /* BANNER MAIOR NO TOPO DA LIVE */
-        .live-top-banner {
+        /* CARROSSEL DE ANÚNCIOS DA TELA DE LIVE (2 ANÚNCIOS LADO A LADO, AUTOMÁTICO + MANUAL) */
+        .live-carousel-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .live-carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .live-ad-card {
+            flex: 0 0 47%; /* Exatamente 2 anúncios visíveis lado a lado */
             background: #ffffff;
             border: 2px dashed #b0bec5;
             border-radius: 12px;
-            padding: 18px 10px;
+            padding: 24px 10px;
             text-align: center;
-            margin-bottom: 8px;
-            font-size: 12px;
-            color: #444;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        .live-top-banner b {
-            display: block;
-            font-size: 13px;
+        .live-ad-card .ad-title {
+            font-size: 11px;
+            font-weight: bold;
             color: #d32f2f;
             margin-bottom: 2px;
         }
+        .live-ad-card .ad-sub {
+            font-size: 9px;
+            color: #666;
+        }
 
-        /* TÍTULO DA LIVE EMBAIXO DO VÍDEO */
+        /* TÍTULO DA LIVE ENTRE O BANNER E O VÍDEO */
         .live-info-bottom {
             background: #ffffff;
             border-radius: 10px;
@@ -268,7 +282,7 @@
             <h1 class="page-title">🔴 Lives da Comunidade</h1>
         </div>
 
-        <!-- CARROSSEL DE ANÚNCIOS (AUTOMÁTICO + MANUAL) -->
+        <!-- CARROSSEL DE ANÚNCIOS (HOME) -->
         <div class="carousel-container" id="adCarousel">
             <div class="ad-banner">
                 <div class="ad-title">🖼️ Anuncie Aqui</div>
@@ -285,10 +299,6 @@
             <div class="ad-banner">
                 <div class="ad-title">🖼️ Anuncie Aqui</div>
                 <div class="ad-sub">Retângulo 4</div>
-            </div>
-            <div class="ad-banner">
-                <div class="ad-title">🖼️ Anuncie Aqui</div>
-                <div class="ad-sub">Retângulo 5</div>
             </div>
         </div>
 
@@ -330,10 +340,30 @@
             <h1 class="page-title">🔴 Transmissão</h1>
         </div>
 
-        <!-- BANNER MAIOR NO TOPO -->
-        <div class="live-top-banner">
-            <b>📢 ESPAÇO PUBLICITÁRIO</b>
-            Anuncie seu comércio ou serviço aqui para toda a comunidade!
+        <!-- CARROSSEL DE ANÚNCIOS NO TOPO DA LIVE (2 LADO A LADO, AUTOMÁTICO + MANUAL) -->
+        <div class="live-carousel-container" id="liveAdCarousel">
+            <div class="live-ad-card">
+                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
+                <div class="ad-sub">Anuncie seu comércio 1</div>
+            </div>
+            <div class="live-ad-card">
+                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
+                <div class="ad-sub">Anuncie seu comércio 2</div>
+            </div>
+            <div class="live-ad-card">
+                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
+                <div class="ad-sub">Anuncie seu comércio 3</div>
+            </div>
+            <div class="live-ad-card">
+                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
+                <div class="ad-sub">Anuncie seu comércio 4</div>
+            </div>
+        </div>
+
+        <!-- TÍTULO DA LIVE ENTRE O BANNER E O VÍDEO -->
+        <div class="live-info-bottom">
+            <h3 id="player-title">Título da Transmissão</h3>
+            <p id="player-host">Criador • 0 assistindo</p>
         </div>
 
         <div class="video-box" id="video-container-box" ondblclick="alternarTelaCheia()">
@@ -341,12 +371,6 @@
             <img id="player-img" src="" alt="Live Stream">
         </div>
         <div style="font-size: 9px; color: #666; margin-bottom: 4px; text-align: center;">💡 Dica: Dê um toque duplo no vídeo para ver em tela cheia (de lado).</div>
-
-        <!-- TÍTULO DA LIVE EMBAIXO DO VÍDEO -->
-        <div class="live-info-bottom">
-            <h3 id="player-title">Título da Transmissão</h3>
-            <p id="player-host">Criador • 0 assistindo</p>
-        </div>
 
         <!-- BARRA DE PRESENTES -->
         <div class="section-subtitle">🎁 Enviar Presente ao Liver:</div>
@@ -371,7 +395,7 @@
     </div>
 
     <script>
-        // ROLAGEM AUTOMÁTICA DO CARROSSEL
+        // ROLAGEM AUTOMÁTICA DO CARROSSEL DA HOME
         const carousel = document.getElementById('adCarousel');
         let autoScrollInterval = setInterval(() => {
             if (carousel) {
@@ -386,6 +410,24 @@
         if (carousel) {
             carousel.addEventListener('touchstart', () => {
                 clearInterval(autoScrollInterval);
+            });
+        }
+
+        // ROLAGEM AUTOMÁTICA DO CARROSSEL DE ANÚNCIOS DA LIVE
+        const liveCarousel = document.getElementById('liveAdCarousel');
+        let liveScrollInterval = setInterval(() => {
+            if (liveCarousel) {
+                if (liveCarousel.scrollLeft + liveCarousel.clientWidth >= liveCarousel.scrollWidth - 10) {
+                    liveCarousel.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    liveCarousel.scrollBy({ left: 160, behavior: 'smooth' });
+                }
+            }
+        }, 3000);
+
+        if (liveCarousel) {
+            liveCarousel.addEventListener('touchstart', () => {
+                clearInterval(liveScrollInterval);
             });
         }
 
