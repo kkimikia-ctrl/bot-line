@@ -15,7 +15,7 @@
         }
 
         .header {
-            background-color: #db2777; /* Cor temática para empregos */
+            background-color: #db2777;
             color: white;
             padding: 10px 15px;
             font-size: 18px;
@@ -55,32 +55,36 @@
             color: #1f2937;
         }
 
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-top: 8px;
-            margin-bottom: 12px;
-            box-sizing: border-box;
-            background-color: #fff;
+        /* Abas de Região (Estilo idêntico ao de Serviços) */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
         }
 
-        button.btn-primary {
-            background-color: #db2777;
-            color: white;
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background-color: #e5e7eb;
+            color: #4b5563;
             border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s, color 0.2s;
         }
 
-        button.btn-primary:active {
-            background-color: #be185d;
+        .tab-btn.active {
+            background-color: #db2777;
+            color: white;
         }
 
         /* Lista de Vagas */
@@ -160,7 +164,7 @@
         }
 
         .nav-item.active {
-            color: #1a73e8;
+            color: #db2777;
             font-weight: bold;
         }
 
@@ -179,37 +183,28 @@
     </div>
 
     <div class="container">
-        <!-- Filtro por Região -->
-        <div class="card">
-            <h3>📍 Filtrar por Região</h3>
-            <select id="filtroRegiao" onchange="filtrarVagas()">
-                <option value="todos">Todas as Regiões</option>
-                <option value="aichi">Aichi (Toyohashi, Nagoya, Okazaki...)</option>
-                <option value="shizuoka">Shizuoka (Hamamatsu, Shizuoka...)</option>
-                <option value="gifu">Gifu (Gifu, Ogaki...)</option>
-                <option value="mie">Mie (Tsu, Yokkaichi...)</option>
-                <option value="kanto">Kanto (Gunma, Ibaraki, Saitama...)</option>
-            </select>
-            <button class="btn-primary" onclick="filtrarVagas()">Aplicar Filtro</button>
+        
+        <div class="filter-tabs">
+            <button class="tab-btn active" onclick="filtrarRegiao('todas', this)">Todas</button>
+            <button class="tab-btn" onclick="filtrarRegiao('tokai', this)">Tokai (Aichi/Shizuoka/Gifu)</button>
+            <button class="tab-btn" onclick="filtrarRegiao('kanto', this)">Kanto (Tokyo/Gunma/Ibaraki)</button>
+            <button class="tab-btn" onclick="filtrarRegiao('kansai', this)">Kansai (Osaka/Kyoto/Mie)</button>
         </div>
 
-        <!-- Lista de Vagas -->
         <div class="vaga-list" id="listaVagas">
             
-            <!-- Vaga 1 (Aichi) -->
-            <div class="vaga-card" data-regiao="aichi">
+            <div class="vaga-card" data-regiao="tokai">
                 <div class="vaga-titulo">Montagem e Inspeção de Autopeças</div>
                 <div class="vaga-empresa">Empreiteira Exemplo - Toyohashi, Aichi</div>
                 <div class="vaga-detalhes">
                     <span>💵 Salário: ¥1,400 ~ ¥1,600 / hora</span>
-                    <span>⏰ Turno: Diurno / Noturno (Folgas semanais)</span>
-                    <span>🏠 Nihongo: Intermediário / Conversação</span>
+                    <span>⏰ Turno: Diurno / Noturno</span>
+                    <span>🏠 Nihongo: Intermediário</span>
                 </div>
                 <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
             </div>
 
-            <!-- Vaga 2 (Shizuoka) -->
-            <div class="vaga-card" data-regiao="shizuoka">
+            <div class="vaga-card" data-regiao="tokai">
                 <div class="vaga-titulo">Solda e Estamparia de Metais</div>
                 <div class="vaga-empresa">Global Service - Hamamatsu, Shizuoka</div>
                 <div class="vaga-detalhes">
@@ -220,26 +215,24 @@
                 <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
             </div>
 
-            <!-- Vaga 3 (Gifu) -->
-            <div class="vaga-card" data-regiao="gifu">
-                <div class="vaga-titulo">Embalagem de Alimentos em Fábrica</div>
-                <div class="vaga-empresa">Nihon Staff - Ogaki, Gifu</div>
+            <div class="vaga-card" data-regiao="kanto">
+                <div class="vaga-titulo">Logística e Expedição de Produtos</div>
+                <div class="vaga-empresa">Kanto Logistics - Ota, Gunma</div>
                 <div class="vaga-detalhes">
-                    <span>💵 Salário: ¥1,300 / hora</span>
-                    <span>⏰ Turno: Apenas diurno (Ideal para mulheres)</span>
-                    <span>🏠 Nihongo: Sem exigência</span>
+                    <span>💵 Salário: ¥1,500 / hora</span>
+                    <span>⏰ Turno: Diurno fixo</span>
+                    <span>🏠 Nihongo: Básico</span>
                 </div>
                 <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
             </div>
 
-            <!-- Vaga 4 (Aichi) -->
-            <div class="vaga-card" data-regiao="aichi">
-                <div class="vaga-titulo">Logística e Separação de Mercadorias (Seiso)</div>
-                <div class="vaga-empresa">LogiCorp - Komaki, Aichi</div>
+            <div class="vaga-card" data-regiao="kansai">
+                <div class="vaga-titulo">Fabricação e Embalagem de Alimentos</div>
+                <div class="vaga-empresa">Kansai Foods - Yokkaichi, Mie</div>
                 <div class="vaga-detalhes">
-                    <span>💵 Salário: ¥1,500 / hora</span>
-                    <span>⏰ Turno: Noturno fixo</span>
-                    <span>🏠 Nihongo: Básico</span>
+                    <span>💵 Salário: ¥1,350 / hora</span>
+                    <span>⏰ Turno: Apenas diurno</span>
+                    <span>🏠 Nihongo: Sem exigência</span>
                 </div>
                 <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
             </div>
@@ -267,13 +260,17 @@
     </nav>
 
     <script>
-        function filtrarVagas() {
-            const regiaoSelecionada = document.getElementById('filtroRegiao').value;
-            const cards = document.querySelectorAll('.vaga-card');
+        function filtrarRegiao(regiao, elementoBotao) {
+            // Atualizar classes ativas dos botões
+            const botoes = document.querySelectorAll('.tab-btn');
+            botoes.forEach(btn => btn.classList.remove('active'));
+            elementoBotao.classList.add('active');
 
+            // Filtrar cards de vagas
+            const cards = document.querySelectorAll('.vaga-card');
             cards.forEach(card => {
                 const regiaoCard = card.getAttribute('data-regiao');
-                if (regiaoSelecionada === 'todos' || regiaoCard === regiaoSelecionada) {
+                if (regiao === 'todas' || regiaoCard === regiao) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
