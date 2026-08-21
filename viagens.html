@@ -193,7 +193,7 @@
             margin: 0;
         }
 
-        /* Modal / Tela de Detalhes da Postagem */
+        /* Tela de Detalhes da Postagem */
         .details-overlay {
             display: none;
             position: fixed;
@@ -230,7 +230,6 @@
             padding: 15px;
             padding-bottom: 50px;
         }
-        /* Carrossel de fotos na tela de detalhes */
         .details-gallery {
             position: relative;
             width: 100%;
@@ -284,7 +283,8 @@
         .details-desc {
             font-size: 14px;
             color: #333;
-            line-height: 1.5;
+            line-height: 1.6;
+            white-space: pre-line; /* Mantém os parágrafos e quebras de linha */
             margin-bottom: 15px;
         }
 
@@ -387,10 +387,11 @@
         <div class="section-title">Dicas e Pontos Turísticos</div>
         
         <div class="posts-grid" id="postsContainer">
-            <div class="post-card" data-region="tokai" onclick="openDetails('Castelo de Toyohashi', '📍 Toyohashi, Aichi', 'Um lindo ponto histórico com belos jardins ao redor, ideal para passeios em família nos fins de semana e contemplação da natureza.', ['https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60', 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&auto=format&fit=crop&q=60'])">
+            <!-- CARD DE TESTE COM TEXTO MUITO GRANDE -->
+            <div class="post-card" data-region="tokai" onclick="openDetails('Guia Completo: Maravilhas de Toyohashi e Arredores', '📍 Toyohashi, Aichi', 'Este é um super guia de teste criado especialmente para demonstrar como o layout se comporta quando alguém escreve uma descrição extremamente longa, cheia de detalhes e dicas úteis para quem quer viajar.\n\nPrimeiramente, vale destacar que Toyohashi possui uma localização estratégica excelente na região de Tokai, facilitando o acesso tanto para quem vem de Nagoya quanto para quem está vindo de Shizuoka.\n\n1. O que levar:\n- Calçados confortáveis para caminhada nos parques e castelos.\n- Câmera ou celular com bateria extra para registrar todas as paisagens.\n- Um casaco leve dependendo da época do ano.\n\n2. Melhores épocas para visitar:\nA primavera (com as flores de cerejeira) e o outono (com as folhas avermelhadas momiji) são simplesmente espetaculares. As temperaturas ficam amenas e o clima colabora muito para passeios ao ar livre.\n\n3. Dicas de gastronomia local:\nNão deixe de experimentar as delícias locais e os pratos típicos da região. Há excelentes restaurantes tradicionais perto da estação central e nos arredores dos pontos turísticos.\n\nEsperamos que este guia ajude você a planejar um fim de semana inesquecível com sua família e amigos!', ['https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60', 'https://images.unsplash.com/photo-1533050487297-09b450131914?w=600&auto=format&fit=crop&q=60'])">
                 <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" class="post-img" alt="Local">
                 <div class="post-info">
-                    <p class="post-title">Castelo de Toyohashi</p>
+                    <p class="post-title">Guia Completo: Toyohashi</p>
                     <p class="post-location">📍 Toyohashi, Aichi</p>
                 </div>
             </div>
@@ -414,7 +415,6 @@
         </div>
         <div class="details-body">
             <div class="details-gallery" id="detailsGalleryContainer">
-                <!-- Imagens injetadas via JS -->
                 <button class="gallery-nav gallery-prev" onclick="prevPhoto()">❮</button>
                 <button class="gallery-nav gallery-next" onclick="nextPhoto()">❯</button>
             </div>
@@ -452,7 +452,7 @@
             </div>
             <div class="form-group">
                 <label>Descrição Completa</label>
-                <textarea id="postDescInput" rows="3" placeholder="Conte mais sobre o lugar..."></textarea>
+                <textarea id="postDescInput" rows="4" placeholder="Conte mais sobre o lugar..."></textarea>
             </div>
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -494,7 +494,6 @@
             });
         }
 
-        // Variáveis do Carrossel de Detalhes
         let currentPhotos = [];
         let currentPhotoIndex = 0;
 
@@ -517,7 +516,6 @@
 
         function renderGallery() {
             const galleryContainer = document.getElementById('detailsGalleryContainer');
-            // Mantém os botões e remove imagens antigas
             const oldImgs = galleryContainer.querySelectorAll('.gallery-img');
             oldImgs.forEach(img => img.remove());
 
@@ -570,10 +568,10 @@
             newCard.className = 'post-card';
             newCard.setAttribute('data-region', region);
             
-            // Passa os dados para abrir a página de detalhes ao clicar
+            const escapedDesc = desc.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             const photosListString = JSON.stringify([image, 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&auto=format&fit=crop&q=60']).replace(/"/g, '&quot;');
             
-            newCard.setAttribute('onclick', `openDetails('${title}', '📍 ${location}', '${desc}', ${photosListString})`);
+            newCard.setAttribute('onclick', `openDetails('${title}', '📍 ${location}', '${escapedDesc}', ${photosListString})`);
             
             newCard.innerHTML = `
                 <img src="${image}" class="post-img" alt="Local">
