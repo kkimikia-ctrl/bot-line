@@ -128,7 +128,7 @@
             margin: 0 auto;
         }
         
-        /* CARROSSEL DE ANÚNCIOS DA TELA DE LIVE (2 ANÚNCIOS LADO A LADO, AUTOMÁTICO + MANUAL) */
+        /* CARROSSEL DE ANÚNCIOS DA TELA DE LIVE (2 ANÚNCIOS LADO A LADO) */
         .live-carousel-container {
             display: flex;
             gap: 10px;
@@ -142,7 +142,7 @@
             display: none;
         }
         .live-ad-card {
-            flex: 0 0 47%; /* Exatamente 2 anúncios visíveis lado a lado */
+            flex: 0 0 47%;
             background: #ffffff;
             border: 2px dashed #b0bec5;
             border-radius: 12px;
@@ -275,14 +275,12 @@
 </head>
 <body>
 
-    <!-- LISTA DE LIVES -->
     <div id="lives-home">
         <div class="top-bar">
             <button class="back-btn" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
             <h1 class="page-title">🔴 Lives da Comunidade</h1>
         </div>
 
-        <!-- CARROSSEL DE ANÚNCIOS (HOME) -->
         <div class="carousel-container" id="adCarousel">
             <div class="ad-banner">
                 <div class="ad-title">🖼️ Anuncie Aqui</div>
@@ -333,14 +331,12 @@
         </button>
     </div>
 
-    <!-- TELA DO PLAYER DA LIVE -->
     <div id="live-player-container">
         <div class="top-bar">
             <button class="back-btn" onclick="fecharLive()">⬅ Voltar</button>
             <h1 class="page-title">🔴 Transmissão</h1>
         </div>
 
-        <!-- CARROSSEL DE ANÚNCIOS NO TOPO DA LIVE (2 LADO A LADO, AUTOMÁTICO + MANUAL) -->
         <div class="live-carousel-container" id="liveAdCarousel">
             <div class="live-ad-card">
                 <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
@@ -360,7 +356,6 @@
             </div>
         </div>
 
-        <!-- TÍTULO DA LIVE ENTRE O BANNER E O VÍDEO -->
         <div class="live-info-bottom">
             <h3 id="player-title">Título da Transmissão</h3>
             <p id="player-host">Criador • 0 assistindo</p>
@@ -372,7 +367,6 @@
         </div>
         <div style="font-size: 9px; color: #666; margin-bottom: 4px; text-align: center;">💡 Dica: Dê um toque duplo no vídeo para ver em tela cheia (de lado).</div>
 
-        <!-- BARRA DE PRESENTES -->
         <div class="section-subtitle">🎁 Enviar Presente ao Liver:</div>
         <div class="gift-bar">
             <div class="gift-chip" onclick="enviarPresente('☕ Café (100¥)', 100)">☕ Café (100¥)</div>
@@ -395,41 +389,24 @@
     </div>
 
     <script>
-        // ROLAGEM AUTOMÁTICA DO CARROSSEL DA HOME
-        const carousel = document.getElementById('adCarousel');
-        let autoScrollInterval = setInterval(() => {
-            if (carousel) {
-                if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 10) {
-                    carousel.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    carousel.scrollBy({ left: 160, behavior: 'smooth' });
-                }
-            }
-        }, 3000);
+        // FUNÇÃO DE ROLAGEM AUTOMÁTICA ROBUSTA
+        function iniciarCarrossel(elementoId) {
+            const el = document.getElementById(elementoId);
+            if (!el) return;
 
-        if (carousel) {
-            carousel.addEventListener('touchstart', () => {
-                clearInterval(autoScrollInterval);
-            });
+            setInterval(() => {
+                // Se o usuário rolou até o fim, volta para o começo; senão, avança um bloco
+                if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
+                    el.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    el.scrollBy({ left: 180, behavior: 'smooth' });
+                }
+            }, 3000);
         }
 
-        // ROLAGEM AUTOMÁTICA DO CARROSSEL DE ANÚNCIOS DA LIVE
-        const liveCarousel = document.getElementById('liveAdCarousel');
-        let liveScrollInterval = setInterval(() => {
-            if (liveCarousel) {
-                if (liveCarousel.scrollLeft + liveCarousel.clientWidth >= liveCarousel.scrollWidth - 10) {
-                    liveCarousel.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    liveCarousel.scrollBy({ left: 160, behavior: 'smooth' });
-                }
-            }
-        }, 3000);
-
-        if (liveCarousel) {
-            liveCarousel.addEventListener('touchstart', () => {
-                clearInterval(liveScrollInterval);
-            });
-        }
+        // Ativa os dois carrossels (Home e Tela da Live)
+        iniciarCarrossel('adCarousel');
+        iniciarCarrossel('liveAdCarousel');
 
         function abrirLive(titulo, host, espectadores, imagemUrl) {
             document.getElementById('lives-home').style.display = 'none';
