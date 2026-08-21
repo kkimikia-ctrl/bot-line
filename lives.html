@@ -41,11 +41,11 @@
             border: 2px dashed #ab47bc;
             background: rgba(171, 71, 188, 0.05);
             border-radius: 14px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 20px;
             color: #7b1fa2;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
         }
         .section-subtitle {
             text-align: left;
@@ -66,6 +66,12 @@
             align-items: center;
             justify-content: space-between;
             text-align: left;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .live-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .live-info h4 {
             margin: 0 0 5px 0;
@@ -100,48 +106,182 @@
             box-shadow: 0 4px 10px rgba(124, 77, 255, 0.3);
             margin-top: 10px;
         }
+        
+        /* Estilos da Tela de Reprodução da Live */
+        #live-player-container {
+            display: none;
+            text-align: left;
+        }
+        .video-box {
+            width: 100%;
+            height: 220px;
+            background: #000;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .video-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+        .live-tag-overlay {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #f44336;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .chat-box {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            height: 140px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        .chat-msg {
+            margin-bottom: 6px;
+        }
+        .chat-msg span {
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .chat-input-area button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <button class="back-btn" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
-        <h1 class="page-title">🔴 Lives da Comunidade</h1>
-    </div>
-
-    <div class="banner-box">
-        ✨ Espaço para Carrossel de Anúncios ✨
-    </div>
-
-    <div class="section-subtitle">Transmissões acontecendo agora:</div>
-
-    <div class="live-card">
-        <div class="live-info">
-            <h4>🍰 Receitas de Bolos Japoneses</h4>
-            <p>Ana Silva • 45 assistindo</p>
+    <!-- LISTA DE LIVES (HOME) -->
+    <div id="lives-home">
+        <div class="top-bar">
+            <button class="back-btn" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
+            <h1 class="page-title">🔴 Lives da Comunidade</h1>
         </div>
-        <div class="live-badge">Ao Vivo</div>
-    </div>
 
-    <div class="live-card">
-        <div class="live-info">
-            <h4>🎩 Truques de Mágica</h4>
-            <p>Mágico Hiro • 120 assistindo</p>
+        <div class="banner-box">
+            ✨ Espaço para Carrossel de Anúncios ✨
         </div>
-        <div class="live-badge">Ao Vivo</div>
-    </div>
 
-    <div class="live-card">
-        <div class="live-info">
-            <h4>🏠 Dicas de Moradia no Japão</h4>
-            <p>Pedro Santos • 85 assistindo</p>
+        <div class="section-subtitle">Transmissões acontecendo agora:</div>
+
+        <div class="live-card" onclick="abrirLive('Receitas de Bolos Japoneses', 'Ana Silva', '45 assistindo', 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&auto=format&fit=crop&q=60')">
+            <div class="live-info">
+                <h4>🍰 Receitas de Bolos Japoneses</h4>
+                <p>Ana Silva • 45 assistindo</p>
+            </div>
+            <div class="live-badge">Ao Vivo</div>
         </div>
-        <div class="live-badge">Ao Vivo</div>
+
+        <div class="live-card" onclick="abrirLive('Truques de Mágica', 'Mágico Hiro', '120 assistindo', 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=600&auto=format&fit=crop&q=60')">
+            <div class="live-info">
+                <h4>🎩 Truques de Mágica</h4>
+                <p>Mágico Hiro • 120 assistindo</p>
+            </div>
+            <div class="live-badge">Ao Vivo</div>
+        </div>
+
+        <div class="live-card" onclick="abrirLive('Dicas de Moradia no Japão', 'Pedro Santos', '85 assistindo', 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60')">
+            <div class="live-info">
+                <h4>🏠 Dicas de Moradia no Japão</h4>
+                <p>Pedro Santos • 85 assistindo</p>
+            </div>
+            <div class="live-badge">Ao Vivo</div>
+        </div>
+
+        <button class="start-live-btn" onclick="alert('Tela de criação de live em breve!')">
+            🎥 Iniciar Minha Própria Live
+        </button>
     </div>
 
-    <button class="start-live-btn" onclick="alert('Tela de criação de live em breve!')">
-        🎥 Iniciar Minha Própria Live
-    </button>
+    <!-- TELA DO PLAYER DA LIVE (ABRE AO CLICAR) -->
+    <div id="live-player-container">
+        <div class="top-bar">
+            <button class="back-btn" onclick="fecharLive()">⬅ Voltar às Lives</button>
+            <h1 class="page-title" id="player-title">Transmissão</h1>
+        </div>
 
+        <div class="video-box">
+            <div class="live-tag-overlay">AO VIVO</div>
+            <img id="player-img" src="" alt="Live Stream">
+            <div style="position: absolute; bottom: 10px; left: 12px; font-size: 13px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);" id="player-host"></div>
+        </div>
+
+        <div class="section-subtitle">Chat ao Vivo</div>
+        <div class="chat-box" id="chat-messages">
+            <div class="chat-msg"><span>Sistema:</span> Bem-vindo ao chat da transmissão! Seja educado.</div>
+            <div class="chat-msg"><span>Carlos:</span> Que legal essa transmissão! Salve de Toyohashi!</div>
+            <div class="chat-msg"><span>Mariana:</span> Muito bacana, acompanhando aqui.</div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Escreva uma mensagem...">
+            <button onclick="enviarMensagem()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirLive(titulo, host, espectadores, imagemUrl) {
+            document.getElementById('lives-home').style.display = 'none';
+            document.getElementById('live-player-container').style.display = 'block';
+            
+            document.getElementById('player-title').innerText = titulo;
+            document.getElementById('player-host').innerText = "Apresentador(a): " + host + " • " + espectadores;
+            document.getElementById('player-img').src = imagemUrl;
+            window.scrollTo(0, 0);
+        }
+
+        function fecharLive() {
+            document.getElementById('live-player-container').style.display = 'none';
+            document.getElementById('lives-home').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function enviarMensagem() {
+            const input = document.getElementById('chat-input');
+            const texto = input.value.trim();
+            if(texto !== '') {
+                const chatBox = document.getElementById('chat-messages');
+                const novaMsg = document.createElement('div');
+                novaMsg.className = 'chat-msg';
+                novaMsg.innerHTML = `<span>Você:</span> ${texto}`;
+                chatBox.appendChild(novaMsg);
+                input.value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+    </script>
 </body>
 </html>
