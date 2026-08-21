@@ -36,7 +36,7 @@
             margin: 0;
         }
         
-        /* CARROSSEL DE ANÚNCIOS AUTOMÁTICO E MANUAL */
+        /* CARROSSEL DE ANÚNCIOS (AUTOMÁTICO + MANUAL) */
         .carousel-container {
             display: flex;
             gap: 10px;
@@ -46,7 +46,6 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
-        /* Esconde a barra de rolagem */
         .carousel-container::-webkit-scrollbar {
             display: none;
         }
@@ -121,7 +120,7 @@
             margin-top: 5px;
         }
         
-        /* PLAYER DA LIVE */
+        /* PLAYER DA LIVE - FORMATO TELA DE TV (16:9 MAIOR) */
         #live-player-container {
             display: none;
             text-align: left;
@@ -130,9 +129,9 @@
         }
         .video-box {
             width: 100%;
-            height: 130px;
+            aspect-ratio: 16 / 9; /* Mantém o formato widescreen perfeito de TV */
             background: #000;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -141,22 +140,22 @@
             overflow: hidden;
             margin-bottom: 4px;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .video-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.85;
         }
         .live-tag-overlay {
             position: absolute;
-            top: 6px;
-            left: 6px;
+            top: 8px;
+            left: 8px;
             background: #f44336;
             color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 9px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: bold;
         }
         .gift-bar {
@@ -288,7 +287,7 @@
         <div class="video-box" id="video-container-box" ondblclick="alternarTelaCheia()">
             <div class="live-tag-overlay">AO VIVO</div>
             <img id="player-img" src="" alt="Live Stream">
-            <div style="position: absolute; bottom: 6px; left: 6px; font-size: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);" id="player-host"></div>
+            <div style="position: absolute; bottom: 8px; left: 8px; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);" id="player-host"></div>
         </div>
         <div style="font-size: 9px; color: #666; margin-bottom: 4px; text-align: center;">💡 Dica: Dê um toque duplo no vídeo para ver em tela cheia (de lado).</div>
 
@@ -317,16 +316,14 @@
         const carousel = document.getElementById('adCarousel');
         let autoScrollInterval = setInterval(() => {
             if (carousel) {
-                // Se chegou no final, volta para o início; senão avança a largura de um banner + gap
                 if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 10) {
                     carousel.scrollTo({ left: 0, behavior: 'smooth' });
                 } else {
                     carousel.scrollBy({ left: 160, behavior: 'smooth' });
                 }
             }
-        }, 3000); // Roda a cada 3 segundos
+        }, 3000);
 
-        // Pausa temporariamente ou permite rolar manualmente sem travar
         carousel.addEventListener('touchstart', () => {
             clearInterval(autoScrollInterval);
         });
