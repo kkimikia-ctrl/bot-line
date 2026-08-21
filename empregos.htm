@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ajuda JP - Empregos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background-color: #db2777; /* Cor temática para empregos */
+            color: white;
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #1f2937;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+
+        button.btn-primary {
+            background-color: #db2777;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.btn-primary:active {
+            background-color: #be185d;
+        }
+
+        /* Lista de Vagas */
+        .vaga-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .vaga-card {
+            background: #fff;
+            border-left: 5px solid #db2777;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .vaga-titulo {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .vaga-empresa {
+            font-size: 14px;
+            color: #db2777;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .vaga-detalhes {
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .btn-contato {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.75rem;
+            flex-grow: 1;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #1a73e8;
+            font-weight: bold;
+        }
+
+        .nav-item span.icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+        <span>Vagas de Emprego</span>
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+    </div>
+
+    <div class="container">
+        <!-- Filtro por Região -->
+        <div class="card">
+            <h3>📍 Filtrar por Região</h3>
+            <select id="filtroRegiao" onchange="filtrarVagas()">
+                <option value="todos">Todas as Regiões</option>
+                <option value="aichi">Aichi (Toyohashi, Nagoya, Okazaki...)</option>
+                <option value="shizuoka">Shizuoka (Hamamatsu, Shizuoka...)</option>
+                <option value="gifu">Gifu (Gifu, Ogaki...)</option>
+                <option value="mie">Mie (Tsu, Yokkaichi...)</option>
+                <option value="kanto">Kanto (Gunma, Ibaraki, Saitama...)</option>
+            </select>
+            <button class="btn-primary" onclick="filtrarVagas()">Aplicar Filtro</button>
+        </div>
+
+        <!-- Lista de Vagas -->
+        <div class="vaga-list" id="listaVagas">
+            
+            <!-- Vaga 1 (Aichi) -->
+            <div class="vaga-card" data-regiao="aichi">
+                <div class="vaga-titulo">Montagem e Inspeção de Autopeças</div>
+                <div class="vaga-empresa">Empreiteira Exemplo - Toyohashi, Aichi</div>
+                <div class="vaga-detalhes">
+                    <span>💵 Salário: ¥1,400 ~ ¥1,600 / hora</span>
+                    <span>⏰ Turno: Diurno / Noturno (Folgas semanais)</span>
+                    <span>🏠 Nihongo: Intermediário / Conversação</span>
+                </div>
+                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+            </div>
+
+            <!-- Vaga 2 (Shizuoka) -->
+            <div class="vaga-card" data-regiao="shizuoka">
+                <div class="vaga-titulo">Solda e Estamparia de Metais</div>
+                <div class="vaga-empresa">Global Service - Hamamatsu, Shizuoka</div>
+                <div class="vaga-detalhes">
+                    <span>💵 Salário: ¥1,650 / hora</span>
+                    <span>⏰ Turno: 2 Turnos alternados</span>
+                    <span>🏠 Nihongo: Básico aceito</span>
+                </div>
+                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+            </div>
+
+            <!-- Vaga 3 (Gifu) -->
+            <div class="vaga-card" data-regiao="gifu">
+                <div class="vaga-titulo">Embalagem de Alimentos em Fábrica</div>
+                <div class="vaga-empresa">Nihon Staff - Ogaki, Gifu</div>
+                <div class="vaga-detalhes">
+                    <span>💵 Salário: ¥1,300 / hora</span>
+                    <span>⏰ Turno: Apenas diurno (Ideal para mulheres)</span>
+                    <span>🏠 Nihongo: Sem exigência</span>
+                </div>
+                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+            </div>
+
+            <!-- Vaga 4 (Aichi) -->
+            <div class="vaga-card" data-regiao="aichi">
+                <div class="vaga-titulo">Logística e Separação de Mercadorias (Seiso)</div>
+                <div class="vaga-empresa">LogiCorp - Komaki, Aichi</div>
+                <div class="vaga-detalhes">
+                    <span>💵 Salário: ¥1,500 / hora</span>
+                    <span>⏰ Turno: Noturno fixo</span>
+                    <span>🏠 Nihongo: Básico</span>
+                </div>
+                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+            </div>
+
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="servicos.html" class="nav-item">
+            <span class="icon">📋</span>
+            <span>Serviços</span>
+        </a>
+        <a href="entretenimento.html" class="nav-item">
+            <span class="icon">🎬</span>
+            <span>Lazer</span>
+        </a>
+        <a href="perfil.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        function filtrarVagas() {
+            const regiaoSelecionada = document.getElementById('filtroRegiao').value;
+            const cards = document.querySelectorAll('.vaga-card');
+
+            cards.forEach(card => {
+                const regiaoCard = card.getAttribute('data-regiao');
+                if (regiaoSelecionada === 'todos' || regiaoCard === regiaoSelecionada) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
