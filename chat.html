@@ -6,168 +6,226 @@
     <title>Chat da Comunidade</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        * { box-sizing: border-box; }
+        :root {
+            --primary: #2563eb;
+            --primary-gradient: linear-gradient(135deg, #2563eb, #1d4ed8);
+            --line-green: #06C755;
+            --bg-color: #f1f5f9;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
+
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #f8fafc; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+            background-color: var(--bg-color); 
             display: flex;
             flex-direction: column;
-            padding: 12px;
+            padding: 14px;
+            color: var(--text-main);
         }
         
+        /* Header Moderno */
         .chat-header-main {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 8px;
+            justify-content: space-between;
+            margin-bottom: 12px;
             flex-shrink: 0;
-        }
-        h1 { 
-            font-size: 17px; 
-            color: #0d47a1; 
-            margin: 0; 
-            font-weight: 700;
+            padding: 0 4px;
         }
 
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-icon {
+            font-size: 20px;
+            background: #e0f2fe;
+            padding: 6px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 { 
+            font-size: 18px; 
+            color: var(--text-main); 
+            margin: 0; 
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        /* Ações do Topo */
         .acoes-topo {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 14px;
             flex-shrink: 0;
         }
 
         .btn-topo {
-            background: #ffffff;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-            padding: 7px 12px;
-            border-radius: 16px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
             font-weight: 600;
             font-size: 12px;
             cursor: pointer;
             text-decoration: none;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
             white-space: nowrap;
+        }
+
+        .btn-topo:active {
+            transform: scale(0.96);
         }
 
         .btn-criar { 
-            background: linear-gradient(135deg, #0d47a1, #1976d2); 
+            background: var(--primary-gradient); 
             color: white; 
             border: none; 
-            padding: 7px 14px; 
-            border-radius: 16px; 
+            padding: 8px 16px; 
+            border-radius: var(--radius-sm); 
             font-weight: 600; 
             font-size: 12px; 
             cursor: pointer; 
-            box-shadow: 0 2px 5px rgba(13, 71, 161, 0.25);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            transition: all 0.2s ease;
             white-space: nowrap;
         }
 
+        .btn-criar:active {
+            transform: scale(0.96);
+        }
+
+        /* Lista de Salas (Horizontal/Vertical Compacta) */
         .sala-atual-titulo {
             font-size: 11px;
             font-weight: 700;
-            color: #64748b;
-            margin: 0 0 4px 2px;
+            color: var(--text-secondary);
+            margin: 0 0 6px 4px;
             display: block;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
 
         .salas-lista-vertical {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 10px;
-            max-height: 115px;
-            overflow-y: auto;
+            gap: 8px;
+            margin-bottom: 12px;
+            overflow-x: auto;
             flex-shrink: 0;
-            padding-right: 2px;
+            padding-bottom: 4px;
+            scrollbar-width: none; /* Firefox */
         }
-        .salas-lista-vertical::-webkit-scrollbar { width: 3px; }
-        .salas-lista-vertical::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .salas-lista-vertical::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
 
         .sala-item {
-            background: white;
-            color: #334155;
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
-            border-radius: 10px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 20px;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            gap: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            white-space: nowrap;
+            transition: all 0.2s ease;
         }
+
         .sala-item.ativa {
-            background: #0d47a1;
+            background: var(--text-main);
             color: white;
-            border-color: #0d47a1;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(13, 71, 161, 0.2);
+            border-color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
         }
-        .sala-item.ativa .seta { color: rgba(255,255,255,0.8); }
-        .seta { color: #94a3b8; font-size: 13px; font-weight: bold; }
+        
+        .sala-item .seta { display: none; } /* Oculto no estilo pílula moderna */
 
+        /* Info da Sala Ativa */
         .info-sala-ativa {
-            background: #e0f2fe;
-            border-left: 3px solid #0284c7;
-            padding: 7px 10px;
-            border-radius: 6px;
-            margin-bottom: 8px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
             font-size: 11px;
-            color: #0369a1;
-            font-weight: 600;
+            color: var(--text-secondary);
+            font-weight: 500;
             flex-shrink: 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.01);
         }
+        .info-sala-ativa b { color: var(--text-main); }
 
+        /* Container do Chat */
         .chat-container { 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
-            padding: 12px; 
-            background: white; 
-            border-radius: 14px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
+            gap: 12px; 
+            padding: 14px; 
+            background: var(--surface); 
+            border-radius: var(--radius-md); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
             flex-grow: 1;
             overflow-y: auto;
-            margin-bottom: 8px;
-            border: 1px solid #f1f5f9;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
         }
         .chat-container::-webkit-scrollbar { width: 4px; }
-        .chat-container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+        .chat-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
         
         .mensagem-linha {
             display: flex;
-            align-items: flex-start;
+            align-items: flex-end;
             gap: 8px;
-            max-width: 88%;
+            max-width: 85%;
+            animation: fadeIn 0.2s ease;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .mensagem-linha.minha-mensagem {
             align-self: flex-end;
             flex-direction: row-reverse;
         }
 
         .avatar-usuario {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             object-fit: cover;
-            background-color: #e2e8f0;
+            background-color: var(--border-color);
             flex-shrink: 0;
-            border: 1.5px solid #ffffff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
         }
 
         .conteudo-balao {
@@ -180,74 +238,92 @@
 
         .nome-usuario {
             font-size: 10px;
-            color: #64748b;
-            margin-bottom: 2px;
-            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+            font-weight: 600;
+            padding: 0 2px;
         }
 
         .mensagem-balao {
-            padding: 9px 13px;
-            border-radius: 12px;
-            font-size: 13px;
-            line-height: 1.4;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 13.5px;
+            line-height: 1.45;
             word-wrap: break-word;
             background-color: #f1f5f9; 
-            color: #1e293b; 
-            border-top-left-radius: 2px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            color: var(--text-main); 
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.01);
         }
+        
         .minha-mensagem .mensagem-balao {
-            background-color: #06C755 !important; /* Força o verde do LINE */
+            background-color: var(--line-green) !important;
             color: #ffffff !important;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 2px;
-            box-shadow: 0 1px 3px rgba(6, 199, 85, 0.25);
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 3px 10px rgba(6, 199, 85, 0.2);
         }
 
+        /* Rodapé / Input Fixo */
         .footer-fixed {
-            background: #ffffff; 
-            padding: 8px 10px;
-            border-radius: 14px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.04); 
+            background: var(--surface); 
+            padding: 10px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.03); 
             flex-shrink: 0;
-            border: 1px solid #f1f5f9;
+            border: 1px solid var(--border-color);
         }
-        .chat-input-area { display: flex; gap: 8px; align-items: center; }
+        
+        .chat-input-area { 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+        }
         
         input[type="text"] { 
             flex-grow: 1; 
-            padding: 10px 14px; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 20px; 
-            font-size: 13px; 
+            padding: 11px 16px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 24px; 
+            font-size: 13.5px; 
             outline: none; 
             background: #f8fafc;
-            color: #334155;
+            color: var(--text-main);
+            transition: all 0.2s ease;
         }
+        
         input[type="text"]:focus {
-            border-color: #0d47a1;
+            border-color: var(--primary);
             background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         button#enviar-btn { 
-            background-color: #06C755; 
+            background-color: var(--line-green); 
             color: white; 
             border: none; 
-            padding: 0 16px; 
-            height: 38px;
-            border-radius: 20px; 
+            padding: 0 18px; 
+            height: 42px;
+            border-radius: 24px; 
             font-weight: 600; 
             cursor: pointer; 
-            font-size: 13px;
-            box-shadow: 0 2px 5px rgba(6, 199, 85, 0.3);
+            font-size: 13.5px;
+            box-shadow: 0 3px 10px rgba(6, 199, 85, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        button#enviar-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
     <div class="chat-header-main">
-        <h1>Chat da Comunidade</h1>
-        <span style="font-size: 16px;">💬</span>
+        <div class="header-title-wrapper">
+            <div class="header-icon">💬</div>
+            <h1>Chat da Comunidade</h1>
+        </div>
     </div>
     
     <div class="acoes-topo">
@@ -256,17 +332,17 @@
         <a href="index.html" class="btn-topo">🏠 Home</a>
     </div>
 
-    <span class="sala-atual-titulo">Salas Disponíveis:</span>
+    <span class="sala-atual-titulo">Salas Disponíveis</span>
     <div id="salas-lista" class="salas-lista-vertical">
-        <div style="font-size: 13px; color: #666; padding: 10px; text-align: center;">Carregando salas...</div>
+        <div style="font-size: 13px; color: #64748b; padding: 10px; text-align: center; width: 100%;">Carregando salas...</div>
     </div>
 
     <div id="info-sala-container">
-        <div id="nome-sala-ativa" class="info-sala-ativa">💬 Geral — Aberta por: Sistema</div>
+        <div id="nome-sala-ativa" class="info-sala-ativa">💬 <b>Geral</b> — Aberta por: Sistema</div>
     </div>
 
     <div id="mensagens-lista" class="chat-container">
-        <div style="font-size: 13px; color: #666; text-align: center; padding: 10px;">Selecione uma sala acima para ver as mensagens.</div>
+        <div style="font-size: 13px; color: #64748b; text-align: center; padding: 20px;">Selecione uma sala acima para ver as mensagens.</div>
     </div>
 
     <div class="footer-fixed">
@@ -292,8 +368,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let meuNome = "Anônimo";
-        let minhaFoto = "https://api.dicebear.com/7.x/bottts/svg?seed=Anônimo";
+        let meuNome = "Participante";
+        let minhaFoto = "https://api.dicebear.com/7.x/bottts/svg?seed=Participante";
 
         try {
             await liff.init({ liffId: "2010902449-KWNNNsxn" });
@@ -301,13 +377,18 @@
                 liff.login();
             } else {
                 const profile = await liff.getProfile();
-                meuNome = profile.displayName;
-                minhaFoto = profile.pictureUrl || minhaFoto;
+                if (profile.displayName) meuNome = profile.displayName;
+                if (profile.pictureUrl) minhaFoto = profile.pictureUrl;
             }
         } catch (error) {
             console.warn("LIFF fallback ativo.", error);
-            meuNome = localStorage.getItem('chat_nome') || "Anônimo";
-            minhaFoto = localStorage.getItem('chat_foto') || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
+            let savedName = localStorage.getItem('chat_nome');
+            if (!savedName || savedName === "Anônimo") {
+                savedName = prompt("Digite seu apelido para o chat:") || ("Usuário_" + Math.floor(Math.random() * 1000));
+                localStorage.setItem('chat_nome', savedName);
+            }
+            meuNome = savedName;
+            minhaFoto = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
         }
 
         const inputMensagem = document.getElementById('mensagem-input');
@@ -323,7 +404,7 @@
         function carregarMensagensDaSala(salaId, nomeSala, criadoPor) {
             salaAtualId = salaId;
             const autorCriacao = criadoPor || "Sistema";
-            divInfoSala.textContent = `💬 ${nomeSala} — Aberta por: ${autorCriacao}`;
+            divInfoSala.innerHTML = `💬 <b>${nomeSala}</b> — Aberta por: ${autorCriacao}`;
 
             if (unsubMensagens) unsubMensagens();
 
@@ -332,7 +413,7 @@
             unsubMensagens = onSnapshot(qMensagens, (snapshot) => {
                 listaMensagens.innerHTML = ""; 
                 if (snapshot.empty) {
-                    listaMensagens.innerHTML = '<div style="font-size: 13px; color: #666; text-align: center; padding: 10px;">Nenhuma mensagem nesta sala ainda. Seja o primeiro a escrever!</div>';
+                    listaMensagens.innerHTML = '<div style="font-size: 13px; color: #64748b; text-align: center; padding: 20px;">Nenhuma mensagem nesta sala ainda. Seja o primeiro a escrever!</div>';
                     return;
                 }
                 
@@ -410,7 +491,7 @@
             salasArray.forEach((sala) => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('sala-item');
-                itemDiv.innerHTML = `<span># ${sala.nome}</span><span class="seta">➔</span>`;
+                itemDiv.innerHTML = `<span># ${sala.nome}</span>`;
                 
                 if (sala.id === salaAtualId) itemDiv.classList.add('ativa');
 
