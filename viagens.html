@@ -11,7 +11,6 @@
             margin: 0;
             padding: 0;
             text-align: center;
-            /* Subido o topo para aproximar o título dos filtros */
             padding-top: 145px;
         }
         .header {
@@ -140,7 +139,7 @@
             color: white;
         }
 
-        /* Container Principal e Grade de Posts (2 colunas) */
+        /* Container Principal e Grade de Posts */
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -197,6 +196,82 @@
             color: #666;
             margin: 0;
         }
+
+        /* Estilo do Modal de Publicação */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 12px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #0d47a1;
+            font-size: 16px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+        .btn-submit {
+            background: #ffc107;
+            color: #333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -204,7 +279,7 @@
     <div class="header">
         <button class="back-btn" onclick="history.back()">⬅️</button>
         <h1>Lazer & Viagens</h1>
-        <button class="publish-header-btn" onclick="alert('Abrir tela de publicar!')">Publicar</button>
+        <button class="publish-header-btn" onclick="openModal()">Publicar</button>
     </div>
 
     <div class="banners-top-container">
@@ -282,7 +357,42 @@
         </div>
     </div>
 
+    <!-- Modal de Publicação -->
+    <div class="modal-overlay" id="publishModal">
+        <div class="modal-content">
+            <h3>Nova Publicação</h3>
+            <div class="form-group">
+                <label>Título do Local</label>
+                <input type="text" id="postTitleInput" placeholder="Ex: Praia de Enshu">
+            </div>
+            <div class="form-group">
+                <label>Região</label>
+                <select id="postRegionInput">
+                    <option value="tokai">Tokai (Aichi/Shizuoka/Gifu)</option>
+                    <option value="kanto">Kanto (Tokyo/Gunma...)</option>
+                    <option value="kansai">Kansai (Osaka/Mie...)</option>
+                    <option value="hokkaido">Hokkaido / Tohoku</option>
+                    <option value="chugoku">Chugoku / Shikoku</option>
+                    <option value="kyushu">Kyushu / Okinawa</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Cidade / Localização</label>
+                <input type="text" id="postLocationInput" placeholder="Ex: Toyohashi, Aichi">
+            </div>
+            <div class="form-group">
+                <label>Link da Imagem (URL)</label>
+                <input type="text" id="postImageInput" placeholder="https://exemplo.com/foto.jpg">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-submit" onclick="submitPost()">Publicar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Lógica do Carrossel de Banners
         let currentLeft = 0;
         const leftSlides = document.querySelectorAll('.left-slide');
         function nextLeftSlide() {
@@ -301,6 +411,7 @@
         }
         setInterval(nextRightSlide, 4000);
 
+        // Lógica de Filtrar por Região nas Abas
         function filterRegion(regiao, element) {
             document.querySelectorAll('.region-tab').forEach(tab => tab.classList.remove('active'));
             element.classList.add('active');
@@ -313,6 +424,51 @@
                     card.style.display = 'none';
                 }
             });
+        }
+
+        // Funções do Modal de Publicação
+        function openModal() {
+            document.getElementById('publishModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('publishModal').style.display = 'none';
+        }
+
+        function submitPost() {
+            const title = document.getElementById('postTitleInput').value;
+            const region = document.getElementById('postRegionInput').value;
+            const location = document.getElementById('postLocationInput').value;
+            const image = document.getElementById('postImageInput').value || 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60';
+
+            if (!title || !location) {
+                alert('Por favor, preencha o título e a localização!');
+                return;
+            }
+
+            // Criar novo card dinamicamente
+            const postsContainer = document.getElementById('postsContainer');
+            const newCard = document.createElement('div');
+            newCard.className = 'post-card';
+            newCard.setAttribute('data-region', region);
+            newCard.innerHTML = `
+                <img src="${image}" class="post-img" alt="Local">
+                <div class="post-info">
+                    <p class="post-title">${title}</p>
+                    <p class="post-location">📍 ${location}</p>
+                </div>
+            `;
+
+            // Adicionar no topo da grade
+            postsContainer.prepend(newCard);
+
+            // Fechar modal e limpar campos
+            closeModal();
+            document.getElementById('postTitleInput').value = '';
+            document.getElementById('postLocationInput').value = '';
+            document.getElementById('postImageInput').value = '';
+            
+            alert('Publicado com sucesso!');
         }
     </script>
 </body>
