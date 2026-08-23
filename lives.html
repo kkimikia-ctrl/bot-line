@@ -208,7 +208,7 @@
             font-size: 11px;
             font-weight: bold;
             font-family: monospace;
-            display: none; /* Inicialmente oculto, exibido via JS apenas para o criador */
+            display: none;
         }
 
         .report-btn {
@@ -509,7 +509,6 @@
 
         <div class="video-box" id="video-container-box">
             <div class="live-tag-overlay">AO VIVO</div>
-            <!-- Cronômetro visível apenas para o criador -->
             <div class="timer-badge" style="position: absolute; top: 8px; right: 8px; z-index: 10;" id="timer-display">60:00</div>
             <video id="camera-stream" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
             <img id="player-img" src="" alt="Live Stream" style="display:block; width:100%; height:100%; object-fit:cover;">
@@ -575,7 +574,7 @@
         let meuSaldo = 500; 
         let tempoRestanteSegundos = 60 * 60; 
         let timerInterval = null;
-        let souCriadorDaLive = false; // Identificador se o usuário atual é o criador
+        let souCriadorDaLive = false;
 
         function atualizarSaldoNaTela() {
             document.getElementById('user-wallet').innerText = meuSaldo;
@@ -617,7 +616,6 @@
                         (minutos < 10 ? "0" : "") + minutos + ":" + (segundos < 10 ? "0" : "") + segundos;
                 } else {
                     clearInterval(timerInterval);
-                    // Apenas exibe o modal de extensão se for o criador da live
                     if (souCriadorDaLive) {
                         document.getElementById('extendModal').style.display = 'flex';
                     }
@@ -647,17 +645,41 @@
             document.getElementById('reportModal').style.display = 'none';
         }
 
+        /* 
+          Função de envio de denúncia integrada ao Make.
+          Basta descomentar a linha do fetch e colocar a URL do seu Webhook do Make quando quiser ativar.
+        */
         function enviarDenuncia() {
+            const motivo = document.getElementById('reportReason').value;
+            const detalhes = document.getElementById('reportDetails').value;
+            const tituloLive = document.getElementById('player-title').innerText;
+            const criadorLive = document.getElementById('player-host').innerText;
+
+            const dadosEnvio = {
+                tipo_mensagem: "denuncia_live",
+                motivo: motivo,
+                detalhes: detalhes || "Nenhum detalhe informado",
+                live: tituloLive,
+                criador: criadorLive,
+                data: new Date().toLocaleString('ja-JP')
+            };
+
+            /*
+            fetch('https://hook.eu1.make.com/SUA_URL_DO_WEBHOOK_AQUI', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosEnvio)
+            }).catch(error => console.error('Erro ao enviar denúncia:', error));
+            */
+
             fecharModalDenuncia();
+            document.getElementById('reportDetails').value = ''; 
             alert("⚠️ Denúncia enviada com sucesso! A administração analisará a transmissão.");
         }
 
-        // Assistir a uma live gravada (Usuário é ESPECTADOR)
         function abrirLiveGravada(titulo, host, espectadores, imagemUrl) {
             pararCamera();
-            souCriadorDaLive = false; // É espectador
-            
-            // Oculta o cronômetro para espectadores
+            souCriadorDaLive = false;
             document.getElementById('timer-display').style.display = 'none';
 
             document.getElementById('lives-home').style.display = 'none';
@@ -681,7 +703,6 @@
             document.getElementById('liveModal').style.display = 'none';
         }
 
-        // Iniciar a própria live via câmera (Usuário é o CRIADOR)
         async function iniciarMinhaLiveCamera() {
             const tituloInput = document.getElementById('inputLiveTitle');
             const tituloLive = tituloInput.value.trim();
@@ -693,7 +714,7 @@
             }
 
             fecharModalLive();
-            souCriadorDaLive = true; // É o criador
+            souCriadorDaLive = true;
 
             document.getElementById('lives-home').style.display = 'none';
             document.getElementById('live-player-container').style.display = 'block';
@@ -705,7 +726,6 @@
             const videoElement = document.getElementById('camera-stream');
             videoElement.style.display = 'block';
 
-            // Mostra e ativa o cronômetro especificamente para o criador
             const timerBadge = document.getElementById('timer-display');
             timerBadge.style.display = 'block';
             tempoRestanteSegundos = 60 * 60;
