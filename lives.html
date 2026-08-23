@@ -271,6 +271,93 @@
             cursor: pointer;
             font-size: 11px;
         }
+
+        /* MODAL / POPUP DE REGULAMENTO E CRIAÇÃO DE LIVE */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #512da8;
+            font-size: 16px;
+            text-align: center;
+        }
+        .terms-text {
+            font-size: 11px;
+            color: #555;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            height: 130px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .modal-content label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .modal-content input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .modal-btn-cancel {
+            flex: 1;
+            background: #ccc;
+            color: #333;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .modal-btn-confirm {
+            flex: 2;
+            background: #512da8;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -326,9 +413,35 @@
             <div class="live-badge">Ao Vivo</div>
         </div>
 
-        <button class="start-live-btn" onclick="alert('Tela de criação de live em breve!')">
+        <!-- Botão atualizado para abrir o painel de regulamentos -->
+        <button class="start-live-btn" onclick="abrirModalLive()">
             🎥 Iniciar Minha Própria Live
         </button>
+    </div>
+
+    <!-- MODAL DE REGULAMENTO E INÍCIO DE LIVE -->
+    <div class="modal-overlay" id="liveModal">
+        <div class="modal-content">
+            <h3>📋 Regulamento & Início de Live</h3>
+            <div class="terms-text">
+                <b>1. Conteúdo Adequado:</b> É proibido transmitir violência, nudez, discurso de ódio ou atividades ilícitas.<br><br>
+                <b>2. Respeito Mútuo:</b> Mantenha cordialidade com os espectadores. Comportamentos abusivos resultam em banimento.<br><br>
+                <b>3. Foco Comunitário:</b> Encorajamos dicas de moradia, culinária, educação, cultura e entretenimento saudável.<br><br>
+                <b>4. Monetização e Presentes:</b><br>
+                - As lives são <b>100% gratuitas</b> para iniciar.<br>
+                - Os primeiros <b>300¥</b> arrecadados em presentes vão <b>100% para o autor da live</b>.<br>
+                - Após esse valor, a divisão passa a ser de **70% para o criador** e **30% para a manutenção do app**.<br><br>
+                <b>5. Responsabilidade:</b> O autor é o único responsável pelo conteúdo transmitido.
+            </div>
+
+            <label for="inputLiveTitle">Título da sua Transmissão:</label>
+            <input type="text" id="inputLiveTitle" placeholder="Ex: Bate-papo sobre o dia a dia no Japão">
+
+            <div class="modal-buttons">
+                <button class="modal-btn-cancel" onclick="fecharModalLive()">Cancelar</button>
+                <button class="modal-btn-confirm" onclick="iniciarMinhaLive()">Concordar e Iniciar Live</button>
+            </div>
+        </div>
     </div>
 
     <div id="live-player-container">
@@ -395,7 +508,6 @@
             if (!el) return;
 
             setInterval(() => {
-                // Se o usuário rolou até o fim, volta para o começo; senão, avança um bloco
                 if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
                     el.scrollTo({ left: 0, behavior: 'smooth' });
                 } else {
@@ -422,6 +534,35 @@
             document.getElementById('live-player-container').style.display = 'none';
             document.getElementById('lives-home').style.display = 'block';
             window.scrollTo(0, 0);
+        }
+
+        // FUNÇÕES DO MODAL DE CRIAÇÃO DE LIVE
+        function abrirModalLive() {
+            document.getElementById('liveModal').style.display = 'flex';
+        }
+
+        function fecharModalLive() {
+            document.getElementById('liveModal').style.display = 'none';
+        }
+
+        function iniciarMinhaLive() {
+            const tituloInput = document.getElementById('inputLiveTitle');
+            const tituloLive = tituloInput.value.trim();
+
+            if (tituloLive === '') {
+                alert('Por favor, digite o título da sua transmissão.');
+                tituloInput.focus();
+                return;
+            }
+
+            // Fecha o modal
+            fecharModalLive();
+
+            // Abre a tela de transmissão própria com a imagem padrão de câmera ao vivo
+            abrirLive(tituloLive, 'Você (Transmissão)', '1 assistindo', 'https://images.unsplash.com/photo-1522881193457-37ae97c905bf?w=600&auto=format&fit=crop&q=60');
+            
+            // Limpa o campo para a próxima
+            tituloInput.value = '';
         }
 
         function enviarMensagem() {
