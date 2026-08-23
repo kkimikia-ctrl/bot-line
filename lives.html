@@ -645,10 +645,7 @@
             document.getElementById('reportModal').style.display = 'none';
         }
 
-        /* 
-          Função de envio de denúncia integrada ao Make.
-          Basta descomentar a linha do fetch e colocar a URL do seu Webhook do Make quando quiser ativar.
-        */
+        // Função de envio integrada com o seu endpoint na Vercel
         function enviarDenuncia() {
             const motivo = document.getElementById('reportReason').value;
             const detalhes = document.getElementById('reportDetails').value;
@@ -664,17 +661,26 @@
                 data: new Date().toLocaleString('ja-JP')
             };
 
-            /*
-            fetch('https://hook.eu1.make.com/SUA_URL_DO_WEBHOOK_AQUI', {
+            fetch('https://bot-line-wine.vercel.app/api/denuncia', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dadosEnvio)
-            }).catch(error => console.error('Erro ao enviar denúncia:', error));
-            */
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erro na rede');
+                return response.json();
+            })
+            .then(data => {
+                console.log('Sucesso:', data);
+                alert("⚠️ Denúncia enviada com sucesso! A administração analisará a transmissão.");
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert("⚠️ Erro ao enviar denúncia para o servidor.");
+            });
 
             fecharModalDenuncia();
             document.getElementById('reportDetails').value = ''; 
-            alert("⚠️ Denúncia enviada com sucesso! A administração analisará a transmissão.");
         }
 
         function abrirLiveGravada(titulo, host, espectadores, imagemUrl) {
