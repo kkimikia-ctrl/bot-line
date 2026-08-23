@@ -36,7 +36,20 @@
             margin: 0;
         }
         
-        /* CARROSSEL DA HOME (2 ANÚNCIOS LADO A LADO) */
+        .wallet-badge {
+            background: linear-gradient(135deg, #ffb300, #ff8f00);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
         .carousel-container {
             display: flex;
             gap: 10px;
@@ -120,7 +133,6 @@
             margin-top: 5px;
         }
         
-        /* PLAYER DA LIVE */
         #live-player-container {
             display: none;
             text-align: left;
@@ -128,7 +140,6 @@
             margin: 0 auto;
         }
         
-        /* CARROSSEL DE ANÚNCIOS DA TELA DE LIVE */
         .live-carousel-container {
             display: flex;
             gap: 10px;
@@ -168,6 +179,9 @@
             margin-bottom: 6px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.05);
             border: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .live-info-bottom h3 {
             margin: 0 0 2px 0;
@@ -178,6 +192,40 @@
             margin: 0;
             font-size: 11px;
             color: #666;
+        }
+
+        .header-right-side {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-badge {
+            background: #333;
+            color: #00e676;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            font-family: monospace;
+            display: none; /* Inicialmente oculto, exibido via JS apenas para o criador */
+        }
+
+        .report-btn {
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            color: #d32f2f;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .report-btn:hover {
+            background: #ffebee;
         }
 
         .video-box {
@@ -320,7 +368,7 @@
             display: block;
             margin-bottom: 4px;
         }
-        .modal-content input[type="text"] {
+        .modal-content input[type="text"], .modal-content select {
             width: 100%;
             padding: 8px;
             border: 1px solid #ccc;
@@ -363,6 +411,9 @@
         <div class="top-bar">
             <button class="back-btn" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
             <h1 class="page-title">🔴 Lives da Comunidade</h1>
+            <div class="wallet-badge" onclick="adicionarCreditosSimulados()">
+                🪙 <span id="user-wallet">500</span>¥
+            </div>
         </div>
 
         <div class="carousel-container" id="adCarousel">
@@ -410,7 +461,8 @@
                 - As lives são <b>100% gratuitas</b> para iniciar.<br>
                 - Os primeiros <b>300¥</b> arrecadados em presentes vão <b>100% para o autor da live</b>.<br>
                 - Após esse valor, a divisão passa a ser de **70% para o criador** e **30% para a manutenção do app**.<br><br>
-                <b>4. Responsabilidade:</b> O autor é o único responsável pelo conteúdo transmitido.
+                <b>4. Duração:</b> A live inicia com limite de **60 minutos**, com opção ilimitada de extensão por mais 30 minutos quando necessário.<br><br>
+                <b>5. Responsabilidade:</b> O autor é o único responsável pelo conteúdo transmitido.
             </div>
 
             <label for="inputLiveTitle">Título da sua Transmissão:</label>
@@ -428,6 +480,9 @@
         <div class="top-bar">
             <button class="back-btn" onclick="fecharLive()">⬅ Sair da Live</button>
             <h1 class="page-title">🔴 Transmissão</h1>
+            <div class="wallet-badge" onclick="adicionarCreditosSimulados()">
+                🪙 <span id="user-wallet-live">500</span>¥
+            </div>
         </div>
 
         <div class="live-carousel-container" id="liveAdCarousel">
@@ -441,29 +496,36 @@
             </div>
         </div>
 
+        <!-- Bloco de Informações da Live -->
         <div class="live-info-bottom">
-            <h3 id="player-title">Título da Transmissão</h3>
-            <p id="player-host">Criador • 0 assistindo</p>
+            <div>
+                <h3 id="player-title">Título da Transmissão</h3>
+                <p id="player-host">Criador • 0 assistindo</p>
+            </div>
+            <div class="header-right-side">
+                <button class="report-btn" onclick="abrirModalDenuncia()">⚠️ Denunciar</button>
+            </div>
         </div>
 
         <div class="video-box" id="video-container-box">
             <div class="live-tag-overlay">AO VIVO</div>
-            <!-- Elemento de vídeo para a câmera ao vivo ou imagem para lives gravadas -->
+            <!-- Cronômetro visível apenas para o criador -->
+            <div class="timer-badge" style="position: absolute; top: 8px; right: 8px; z-index: 10;" id="timer-display">60:00</div>
             <video id="camera-stream" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
             <img id="player-img" src="" alt="Live Stream" style="display:block; width:100%; height:100%; object-fit:cover;">
         </div>
 
         <div class="section-subtitle">🎁 Enviar Presente ao Liver:</div>
         <div class="gift-bar">
-            <div class="gift-chip" onclick="enviarPresente('☕ Café (100¥)', 100)">☕ Café (100¥)</div>
-            <div class="gift-chip" onclick="enviarPresente('🌹 Rosa (300¥)', 300)">🌹 Rosa (300¥)</div>
-            <div class="gift-chip" onclick="enviarPresente('⭐ Estrela (500¥)', 500)">⭐ Estrela (500¥)</div>
-            <div class="gift-chip" onclick="enviarPresente('🚗 Carrão (1000¥)', 1000)">🚗 Carrão (1000¥)</div>
+            <div class="gift-chip" onclick="enviarPresente('☕ Café', 100)">☕ Café (100¥)</div>
+            <div class="gift-chip" onclick="enviarPresente('🌹 Rosa', 300)">🌹 Rosa (300¥)</div>
+            <div class="gift-chip" onclick="enviarPresente('⭐ Estrela', 500)">⭐ Estrela (500¥)</div>
+            <div class="gift-chip" onclick="enviarPresente('🚗 Carrão', 1000)">🚗 Carrão (1000¥)</div>
         </div>
 
         <div class="section-subtitle">Chat ao Vivo</div>
         <div class="chat-box" id="chat-messages">
-            <div class="chat-msg"><span>Sistema:</span> Seja bem-vindo à live!</div>
+            <div class="chat-msg"><span>Sistema:</span> Seja bem-vindo à live! Clique no seu saldo no topo se precisar recarregar créditos.</div>
         </div>
 
         <div class="chat-input-area">
@@ -472,8 +534,59 @@
         </div>
     </div>
 
+    <!-- MODAL DE EXTENSÃO DE TEMPO -->
+    <div class="modal-overlay" id="extendModal">
+        <div class="modal-content" style="text-align: center;">
+            <h3>⏰ Tempo Quase Acabando!</h3>
+            <p style="font-size: 13px; color: #555; margin-bottom: 20px;">
+                Sua live atingiu o limite atual. Deseja estender por mais **30 minutos** para continuar transmitindo?
+            </p>
+            <div class="modal-buttons">
+                <button class="modal-btn-cancel" onclick="fecharLive()">Encerrar Live</button>
+                <button class="modal-btn-confirm" onclick="estenderTempoLive()">Sim, +30 Minutos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DENÚNCIA -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-content">
+            <h3>🚨 Denunciar Transmissão</h3>
+            <label for="reportReason">Selecione o motivo:</label>
+            <select id="reportReason">
+                <option value="conteudo_improprio">Conteúdo impróprio ou adulto</option>
+                <option value="ofensas">Discurso de ódio ou ofensas</option>
+                <option value="spam">Spam ou propaganda enganosa</option>
+                <option value="outro">Outro motivo</option>
+            </select>
+            
+            <label for="reportDetails">Detalhes (opcional):</label>
+            <input type="text" id="reportDetails" placeholder="Descreva brevemente o que aconteceu...">
+
+            <div class="modal-buttons">
+                <button class="modal-btn-cancel" onclick="fecharModalDenuncia()">Cancelar</button>
+                <button class="modal-btn-confirm" style="background: #d32f2f;" onclick="enviarDenuncia()">Enviar Denúncia</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let mediaStream = null;
+        let meuSaldo = 500; 
+        let tempoRestanteSegundos = 60 * 60; 
+        let timerInterval = null;
+        let souCriadorDaLive = false; // Identificador se o usuário atual é o criador
+
+        function atualizarSaldoNaTela() {
+            document.getElementById('user-wallet').innerText = meuSaldo;
+            document.getElementById('user-wallet-live').innerText = meuSaldo;
+        }
+
+        function adicionarCreditosSimulados() {
+            meuSaldo += 500;
+            atualizarSaldoNaTela();
+            alert("🪙 Você ganhou +500¥ de créditos simulados para testes!");
+        }
 
         function iniciarCarrossel(elementoId) {
             const el = document.getElementById(elementoId);
@@ -489,10 +602,64 @@
 
         iniciarCarrossel('adCarousel');
         iniciarCarrossel('liveAdCarousel');
+        atualizarSaldoNaTela();
 
-        // Abre live gravada de exemplo
+        function iniciarCronometro() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (tempoRestanteSegundos > 0) {
+                    tempoRestanteSegundos--;
+                    
+                    let minutos = Math.floor(tempoRestanteSegundos / 60);
+                    let segundos = tempoRestanteSegundos % 60;
+                    
+                    document.getElementById('timer-display').innerText = 
+                        (minutos < 10 ? "0" : "") + minutos + ":" + (segundos < 10 ? "0" : "") + segundos;
+                } else {
+                    clearInterval(timerInterval);
+                    // Apenas exibe o modal de extensão se for o criador da live
+                    if (souCriadorDaLive) {
+                        document.getElementById('extendModal').style.display = 'flex';
+                    }
+                }
+            }, 1000);
+        }
+
+        function estenderTempoLive() {
+            document.getElementById('extendModal').style.display = 'none';
+            tempoRestanteSegundos = 30 * 60; 
+            iniciarCronometro();
+            
+            const chatBox = document.getElementById('chat-messages');
+            const novaMsg = document.createElement('div');
+            novaMsg.className = 'chat-msg';
+            novaMsg.style.color = '#2e7d32';
+            novaMsg.innerHTML = `<span>Sistema:</span> A live foi estendida por mais 30 minutos!`;
+            chatBox.appendChild(novaMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function abrirModalDenuncia() {
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        function fecharModalDenuncia() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function enviarDenuncia() {
+            fecharModalDenuncia();
+            alert("⚠️ Denúncia enviada com sucesso! A administração analisará a transmissão.");
+        }
+
+        // Assistir a uma live gravada (Usuário é ESPECTADOR)
         function abrirLiveGravada(titulo, host, espectadores, imagemUrl) {
             pararCamera();
+            souCriadorDaLive = false; // É espectador
+            
+            // Oculta o cronômetro para espectadores
+            document.getElementById('timer-display').style.display = 'none';
+
             document.getElementById('lives-home').style.display = 'none';
             document.getElementById('live-player-container').style.display = 'block';
             
@@ -502,10 +669,10 @@
             document.getElementById('camera-stream').style.display = 'none';
             document.getElementById('player-img').style.display = 'block';
             document.getElementById('player-img').src = imagemUrl;
+            
             window.scrollTo(0, 0);
         }
 
-        // FUNÇÕES DO MODAL
         function abrirModalLive() {
             document.getElementById('liveModal').style.display = 'flex';
         }
@@ -514,7 +681,7 @@
             document.getElementById('liveModal').style.display = 'none';
         }
 
-        // INICIA A CÂMERA REAL DO CELULAR PARA SUA PRÓPRIA LIVE
+        // Iniciar a própria live via câmera (Usuário é o CRIADOR)
         async function iniciarMinhaLiveCamera() {
             const tituloInput = document.getElementById('inputLiveTitle');
             const tituloLive = tituloInput.value.trim();
@@ -526,6 +693,7 @@
             }
 
             fecharModalLive();
+            souCriadorDaLive = true; // É o criador
 
             document.getElementById('lives-home').style.display = 'none';
             document.getElementById('live-player-container').style.display = 'block';
@@ -537,8 +705,13 @@
             const videoElement = document.getElementById('camera-stream');
             videoElement.style.display = 'block';
 
+            // Mostra e ativa o cronômetro especificamente para o criador
+            const timerBadge = document.getElementById('timer-display');
+            timerBadge.style.display = 'block';
+            tempoRestanteSegundos = 60 * 60;
+            iniciarCronometro();
+
             try {
-                // Pede acesso à câmera frontal do celular
                 mediaStream = await navigator.mediaDevices.getUserMedia({ 
                     video: { facingMode: 'user' }, 
                     audio: true 
@@ -558,10 +731,13 @@
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
             }
+            clearInterval(timerInterval);
         }
 
         function fecharLive() {
             pararCamera();
+            document.getElementById('extendModal').style.display = 'none';
+            document.getElementById('reportModal').style.display = 'none';
             document.getElementById('live-player-container').style.display = 'none';
             document.getElementById('lives-home').style.display = 'block';
             window.scrollTo(0, 0);
@@ -582,11 +758,19 @@
         }
 
         function enviarPresente(nomePresente, valor) {
+            if (meuSaldo < valor) {
+                alert("❌ Saldo insuficiente! Toque no ícone de moedas no topo para recarregar créditos.");
+                return;
+            }
+
+            meuSaldo -= valor;
+            atualizarSaldoNaTela();
+
             const chatBox = document.getElementById('chat-messages');
             const novaMsg = document.createElement('div');
             novaMsg.className = 'chat-msg';
             novaMsg.style.color = '#d81b60';
-            novaMsg.innerHTML = `🎁 <span>Você enviou ${nomePresente}!</span> O criador agradece o apoio!`;
+            novaMsg.innerHTML = `🎁 <span>Você enviou ${nomePresente} (${valor}¥)!</span> O criador agradece o apoio!`;
             chatBox.appendChild(novaMsg);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
