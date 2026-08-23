@@ -128,7 +128,7 @@
             margin: 0 auto;
         }
         
-        /* CARROSSEL DE ANÚNCIOS DA TELA DE LIVE (2 ANÚNCIOS LADO A LADO) */
+        /* CARROSSEL DE ANÚNCIOS DA TELA DE LIVE */
         .live-carousel-container {
             display: flex;
             gap: 10px;
@@ -161,7 +161,6 @@
             color: #666;
         }
 
-        /* TÍTULO DA LIVE ENTRE O BANNER E O VÍDEO */
         .live-info-bottom {
             background: #ffffff;
             border-radius: 10px;
@@ -193,10 +192,9 @@
             position: relative;
             overflow: hidden;
             margin-bottom: 4px;
-            cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .video-box img {
+        .video-box img, .video-box video {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -211,6 +209,7 @@
             border-radius: 6px;
             font-size: 10px;
             font-weight: bold;
+            z-index: 10;
         }
         .gift-bar {
             display: flex;
@@ -231,7 +230,6 @@
             white-space: nowrap;
         }
         
-        /* CHAT BEM ESPAÇOSO */
         .chat-box {
             background: white;
             border-radius: 10px;
@@ -272,7 +270,6 @@
             font-size: 11px;
         }
 
-        /* MODAL / POPUP DE REGULAMENTO E CRIAÇÃO DE LIVE */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -377,19 +374,11 @@
                 <div class="ad-title">🖼️ Anuncie Aqui</div>
                 <div class="ad-sub">Retângulo 2</div>
             </div>
-            <div class="ad-banner">
-                <div class="ad-title">🖼️ Anuncie Aqui</div>
-                <div class="ad-sub">Retângulo 3</div>
-            </div>
-            <div class="ad-banner">
-                <div class="ad-title">🖼️ Anuncie Aqui</div>
-                <div class="ad-sub">Retângulo 4</div>
-            </div>
         </div>
 
         <div class="section-subtitle">Transmissões acontecendo agora:</div>
 
-        <div class="live-card" onclick="abrirLive('Receitas de Bolos Japoneses', 'Ana Silva', '45 assistindo', 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&auto=format&fit=crop&q=60')">
+        <div class="live-card" onclick="abrirLiveGravada('Receitas de Bolos Japoneses', 'Ana Silva', '45 assistindo', 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&auto=format&fit=crop&q=60')">
             <div class="live-info">
                 <h4>🍰 Receitas de Bolos Japoneses</h4>
                 <p>Ana Silva • 45 assistindo</p>
@@ -397,18 +386,10 @@
             <div class="live-badge">Ao Vivo</div>
         </div>
 
-        <div class="live-card" onclick="abrirLive('Truques de Mágica', 'Mágico Hiro', '120 assistindo', 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=600&auto=format&fit=crop&q=60')">
+        <div class="live-card" onclick="abrirLiveGravada('Truques de Mágica', 'Mágico Hiro', '120 assistindo', 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=600&auto=format&fit=crop&q=60')">
             <div class="live-info">
                 <h4>🎩 Truques de Mágica</h4>
                 <p>Mágico Hiro • 120 assistindo</p>
-            </div>
-            <div class="live-badge">Ao Vivo</div>
-        </div>
-
-        <div class="live-card" onclick="abrirLive('Dicas de Moradia no Japão', 'Pedro Santos', '85 assistindo', 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60')">
-            <div class="live-info">
-                <h4>🏠 Dicas de Moradia no Japão</h4>
-                <p>Pedro Santos • 85 assistindo</p>
             </div>
             <div class="live-badge">Ao Vivo</div>
         </div>
@@ -425,12 +406,11 @@
             <div class="terms-text">
                 <b>1. Conteúdo Adequado:</b> É proibido transmitir violência, nudez, discurso de ódio ou atividades ilícitas.<br><br>
                 <b>2. Respeito Mútuo:</b> Mantenha cordialidade com os espectadores. Comportamentos abusivos resultam em banimento.<br><br>
-                <b>3. Segurança e Reclamações:</b> As transmissões poderão ser verificadas ou auditadas pelo administrador em caso de denúncias ou reclamações formais.<br><br>
-                <b>4. Monetização e Presentes:</b><br>
+                <b>3. Monetização e Presentes:</b><br>
                 - As lives são <b>100% gratuitas</b> para iniciar.<br>
                 - Os primeiros <b>300¥</b> arrecadados em presentes vão <b>100% para o autor da live</b>.<br>
                 - Após esse valor, a divisão passa a ser de **70% para o criador** e **30% para a manutenção do app**.<br><br>
-                <b>5. Responsabilidade:</b> O autor é o único responsável pelo conteúdo transmitido.
+                <b>4. Responsabilidade:</b> O autor é o único responsável pelo conteúdo transmitido.
             </div>
 
             <label for="inputLiveTitle">Título da sua Transmissão:</label>
@@ -438,14 +418,15 @@
 
             <div class="modal-buttons">
                 <button class="modal-btn-cancel" onclick="fecharModalLive()">Cancelar</button>
-                <button class="modal-btn-confirm" onclick="iniciarMinhaLive()">Concordar e Iniciar Live</button>
+                <button class="modal-btn-confirm" onclick="iniciarMinhaLiveCamera()">Concordar e Iniciar Live</button>
             </div>
         </div>
     </div>
 
+    <!-- PLAYER / TELA DA LIVE -->
     <div id="live-player-container">
         <div class="top-bar">
-            <button class="back-btn" onclick="fecharLive()">⬅ Voltar</button>
+            <button class="back-btn" onclick="fecharLive()">⬅ Sair da Live</button>
             <h1 class="page-title">🔴 Transmissão</h1>
         </div>
 
@@ -458,14 +439,6 @@
                 <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
                 <div class="ad-sub">Anuncie seu comércio 2</div>
             </div>
-            <div class="live-ad-card">
-                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
-                <div class="ad-sub">Anuncie seu comércio 3</div>
-            </div>
-            <div class="live-ad-card">
-                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
-                <div class="ad-sub">Anuncie seu comércio 4</div>
-            </div>
         </div>
 
         <div class="live-info-bottom">
@@ -473,11 +446,12 @@
             <p id="player-host">Criador • 0 assistindo</p>
         </div>
 
-        <div class="video-box" id="video-container-box" ondblclick="alternarTelaCheia()">
+        <div class="video-box" id="video-container-box">
             <div class="live-tag-overlay">AO VIVO</div>
-            <img id="player-img" src="" alt="Live Stream">
+            <!-- Elemento de vídeo para a câmera ao vivo ou imagem para lives gravadas -->
+            <video id="camera-stream" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+            <img id="player-img" src="" alt="Live Stream" style="display:block; width:100%; height:100%; object-fit:cover;">
         </div>
-        <div style="font-size: 9px; color: #666; margin-bottom: 4px; text-align: center;">💡 Dica: Dê um toque duplo no vídeo para ver em tela cheia (de lado).</div>
 
         <div class="section-subtitle">🎁 Enviar Presente ao Liver:</div>
         <div class="gift-bar">
@@ -489,9 +463,7 @@
 
         <div class="section-subtitle">Chat ao Vivo</div>
         <div class="chat-box" id="chat-messages">
-            <div class="chat-msg"><span>Sistema:</span> Seja bem-vindo!</div>
-            <div class="chat-msg"><span>Carlos:</span> Que legal essa transmissão! Salve de Toyohashi!</div>
-            <div class="chat-msg"><span>Ana:</span> Muito bom o conteúdo de hoje!</div>
+            <div class="chat-msg"><span>Sistema:</span> Seja bem-vindo à live!</div>
         </div>
 
         <div class="chat-input-area">
@@ -501,11 +473,11 @@
     </div>
 
     <script>
-        // FUNÇÃO DE ROLAGEM AUTOMÁTICA ROBUSTA
+        let mediaStream = null;
+
         function iniciarCarrossel(elementoId) {
             const el = document.getElementById(elementoId);
             if (!el) return;
-
             setInterval(() => {
                 if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
                     el.scrollTo({ left: 0, behavior: 'smooth' });
@@ -515,27 +487,25 @@
             }, 3000);
         }
 
-        // Ativa os dois carrossels (Home e Tela da Live)
         iniciarCarrossel('adCarousel');
         iniciarCarrossel('liveAdCarousel');
 
-        function abrirLive(titulo, host, espectadores, imagemUrl) {
+        // Abre live gravada de exemplo
+        function abrirLiveGravada(titulo, host, espectadores, imagemUrl) {
+            pararCamera();
             document.getElementById('lives-home').style.display = 'none';
             document.getElementById('live-player-container').style.display = 'block';
             
             document.getElementById('player-title').innerText = titulo;
             document.getElementById('player-host').innerText = host + " • " + espectadores;
+            
+            document.getElementById('camera-stream').style.display = 'none';
+            document.getElementById('player-img').style.display = 'block';
             document.getElementById('player-img').src = imagemUrl;
             window.scrollTo(0, 0);
         }
 
-        function fecharLive() {
-            document.getElementById('live-player-container').style.display = 'none';
-            document.getElementById('lives-home').style.display = 'block';
-            window.scrollTo(0, 0);
-        }
-
-        // FUNÇÕES DO MODAL DE CRIAÇÃO DE LIVE
+        // FUNÇÕES DO MODAL
         function abrirModalLive() {
             document.getElementById('liveModal').style.display = 'flex';
         }
@@ -544,7 +514,8 @@
             document.getElementById('liveModal').style.display = 'none';
         }
 
-        function iniciarMinhaLive() {
+        // INICIA A CÂMERA REAL DO CELULAR PARA SUA PRÓPRIA LIVE
+        async function iniciarMinhaLiveCamera() {
             const tituloInput = document.getElementById('inputLiveTitle');
             const tituloLive = tituloInput.value.trim();
 
@@ -555,8 +526,45 @@
             }
 
             fecharModalLive();
-            abrirLive(tituloLive, 'Você (Transmissão)', '1 assistindo', 'https://images.unsplash.com/photo-1522881193457-37ae97c905bf?w=600&auto=format&fit=crop&q=60');
-            tituloInput.value = '';
+
+            document.getElementById('lives-home').style.display = 'none';
+            document.getElementById('live-player-container').style.display = 'block';
+            
+            document.getElementById('player-title').innerText = tituloLive;
+            document.getElementById('player-host').innerText = 'Você (Transmitindo) • 1 assistindo';
+
+            document.getElementById('player-img').style.display = 'none';
+            const videoElement = document.getElementById('camera-stream');
+            videoElement.style.display = 'block';
+
+            try {
+                // Pede acesso à câmera frontal do celular
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' }, 
+                    audio: true 
+                });
+                videoElement.srcObject = mediaStream;
+            } catch (error) {
+                alert('Não foi possível acessar a câmera. Verifique as permissões do seu navegador.');
+                console.error(error);
+                fecharLive();
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function pararCamera() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+        }
+
+        function fecharLive() {
+            pararCamera();
+            document.getElementById('live-player-container').style.display = 'none';
+            document.getElementById('lives-home').style.display = 'block';
+            window.scrollTo(0, 0);
         }
 
         function enviarMensagem() {
@@ -581,21 +589,6 @@
             novaMsg.innerHTML = `🎁 <span>Você enviou ${nomePresente}!</span> O criador agradece o apoio!`;
             chatBox.appendChild(novaMsg);
             chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function alternarTelaCheia() {
-            const elem = document.getElementById('video-container-box');
-            if (!document.fullscreenElement) {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
         }
     </script>
 </body>
