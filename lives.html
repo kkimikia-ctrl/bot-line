@@ -577,6 +577,21 @@
         let timerInterval = null;
         let souCriadorDaLive = false;
 
+        // Captura e blindagem automática do userId ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            const rawSearch = window.location.search;
+            const urlParams = new URLSearchParams(rawSearch);
+            let idUrl = urlParams.get('userId');
+
+            if (!idUrl && (rawSearch.includes('%7BuserId%7D') || rawSearch.includes('{userId}'))) {
+                idUrl = '{userId}';
+            }
+
+            if (idUrl && idUrl !== '{userId}' && idUrl !== '%7BuserId%7D') {
+                localStorage.setItem('userId', idUrl);
+            }
+        });
+
         function atualizarSaldoNaTela() {
             document.getElementById('user-wallet').innerText = meuSaldo;
             document.getElementById('user-wallet-live').innerText = meuSaldo;
@@ -655,8 +670,11 @@
             let userIdCapturado = "Não informado";
 
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('userId')) {
-                userIdCapturado = urlParams.get('userId');
+            let idUrl = urlParams.get('userId');
+
+            if (idUrl && idUrl !== '{userId}' && idUrl !== '%7BuserId%7D') {
+                userIdCapturado = idUrl;
+                localStorage.setItem('userId', userIdCapturado);
             } else if (localStorage.getItem('userId')) {
                 userIdCapturado = localStorage.getItem('userId');
             } else {
