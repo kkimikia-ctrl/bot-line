@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-    // Permite apenas requisições POST
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Método não permitido' });
     }
@@ -7,7 +6,6 @@ export default async function handler(req, res) {
     try {
         const { motivo, detalhes, live, criador, data } = req.body;
 
-        // Monta a mensagem que vai chegar no seu LINE
         const mensagemTexto = `🚨 NOVA DENÚNCIA DE LIVE 🚨\n\n` +
             `📌 Live: ${live}\n` +
             `👤 Criador: ${criador}\n` +
@@ -15,7 +13,6 @@ export default async function handler(req, res) {
             `📝 Detalhes: ${detalhes}\n` +
             `🕒 Data: ${data}`;
 
-        // Utiliza a variável de ambiente configurada na Vercel
         const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN || process.env.LINE_CHANNEL_ACCESS_TOKEN;
         const MEU_USER_ID_LINE = process.env.LINE_ADMIN_USER_ID; 
 
@@ -32,15 +29,17 @@ export default async function handler(req, res) {
                 })
             });
 
+            // Se o LINE recusar, vamos capturar o motivo exato!
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Erro na API do LINE:', errorData);
+                console.error('ERRO DETALHADO DO LINE:', JSON.stringify(errorData));
+                return res.status(500).json({ error: 'Erro ao enviar para o LINE', detalhesLine: errorData });
             }
         }
 
         return res.status(200).json({ success: true, message: 'Denúncia processada com sucesso!' });
     } catch (error) {
-        console.error('Erro ao processar denúncia:', error);
+        console.error('Erro interno:', error);
         return res.status(500).json({ error: 'Erro interno ao processar denúncia' });
     }
 }
