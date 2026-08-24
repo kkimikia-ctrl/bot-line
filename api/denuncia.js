@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
 
     userName = userName || 'Usuário do App';
 
-    // 1. Envia o alerta limpo para o Administrador com o nome de quem denunciou
+    // 1. Envia o alerta limpo para o Administrador (Sem links de erro)
     await client.pushMessage(adminUserId, [
       {
         type: 'text',
