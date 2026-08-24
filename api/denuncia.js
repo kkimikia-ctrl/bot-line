@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
     
     // Captura os dados enviados pelo front-end
     const userId = body.userId || body.user_id || body.uid;
-    const userName = body.userName || 'Usuário Anônimo';
+    let userName = body.userName;
     const liveTitle = body.liveTitle || body.title || 'Truques de Mágica';
     const creator = body.creator || body.author || 'Mágico Hiro';
     const motivo = body.motivo || body.reason || 'Outro';
@@ -30,6 +30,21 @@ module.exports = async (req, res) => {
       console.error('LINE_ADMIN_USER_ID não configurado.');
       return res.status(500).json({ error: 'Erro de configuração do administrador.' });
     }
+
+    // Se o front-end não mandou o nome, mas temos o userId, busca o perfil direto na API do LINE!
+    if ((!userName || userName === 'Usuário Anônimo') && userId && userId.startsWith('U')) {
+      try {
+        const profile = await client.getProfile(userId);
+        if (profile && profile.displayName) {
+          userName = profile.displayName;
+        }
+      } catch (profileError) {
+        console.warn('Não foi possível buscar o perfil do LINE:', profileError.message);
+      }
+    }
+
+    // Se mesmo assim não achar, define um fallback limpo
+    userName = userName || 'Usuário do App';
 
     // 1. Envia o alerta para o Administrador mostrando o NOME de quem denunciou
     await client.pushMessage(adminUserId, [
