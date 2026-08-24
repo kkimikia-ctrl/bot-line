@@ -646,7 +646,7 @@
             document.getElementById('reportModal').style.display = 'none';
         }
 
-        // Função de envio com captura automática do userId via LIFF
+        // Função de envio robusta para capturar o ID de várias fontes possíveis
         async function enviarDenuncia() {
             const motivo = document.getElementById('reportReason').value;
             const detalhes = document.getElementById('reportDetails').value;
@@ -654,14 +654,26 @@
             const criadorLive = document.getElementById('player-host').innerText;
 
             let userIdCapturado = "Não informado";
-            
-            try {
-                if (typeof liff !== 'undefined' && liff.isInClient()) {
-                    const profile = await liff.getProfile();
-                    userIdCapturado = profile.userId;
+
+            // 1. Tenta pegar via parâmetro na URL (ex: ?userId=U12345...)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('userId')) {
+                userIdCapturado = urlParams.get('userId');
+            } 
+            // 2. Tenta pegar do localStorage caso seu app salve o login
+            else if (localStorage.getItem('userId')) {
+                userIdCapturado = localStorage.getItem('userId');
+            }
+            // 3. Tenta capturar via LIFF SDK do LINE
+            else {
+                try {
+                    if (typeof liff !== 'undefined' && liff.isInClient()) {
+                        const profile = await liff.getProfile();
+                        userIdCapturado = profile.userId;
+                    }
+                } catch (e) {
+                    console.warn('Não foi possível obter perfil via LIFF:', e);
                 }
-            } catch (e) {
-                console.warn('LIFF não disponível para capturar o ID automaticamente:', e);
             }
 
             const dadosEnvio = {
