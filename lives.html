@@ -576,19 +576,42 @@
         let tempoRestanteSegundos = 60 * 60; 
         let timerInterval = null;
         let souCriadorDaLive = false;
+        let globalUserId = "Não informado";
 
-        // Captura e blindagem automática do userId ao carregar a página
-        window.addEventListener('DOMContentLoaded', () => {
-            const rawSearch = window.location.search;
-            const urlParams = new URLSearchParams(rawSearch);
+        // Inicializa o LIFF e captura o perfil assim que a página é aberta
+        window.addEventListener('DOMContentLoaded', async () => {
+            // 1. Tenta pegar da URL ou localStorage de imediato
+            const urlParams = new URLSearchParams(window.location.search);
             let idUrl = urlParams.get('userId');
 
-            if (!idUrl && (rawSearch.includes('%7BuserId%7D') || rawSearch.includes('{userId}'))) {
+            if (!idUrl && window.location.search.includes('{userId}')) {
                 idUrl = '{userId}';
             }
 
             if (idUrl && idUrl !== '{userId}' && idUrl !== '%7BuserId%7D') {
-                localStorage.setItem('userId', idUrl);
+                globalUserId = idUrl;
+                localStorage.setItem('userId', globalUserId);
+            } else if (localStorage.getItem('userId')) {
+                globalUserId = localStorage.getItem('userId');
+            }
+
+            // 2. Tenta inicializar o LIFF de forma assíncrona para extrair o ID oficial do LINE
+            try {
+                if (typeof liff !== 'undefined') {
+                    await liff.init({ liffId: "2010902449-KWNNNsxn" });
+                    if (liff.isLoggedIn()) {
+                        const profile = await liff.getProfile();
+                        if (profile && profile.userId) {
+                            globalUserId = profile.userId;
+                            localStorage.setItem('userId', globalUserId);
+                        }
+                    } else {
+                        // Se não estiver logado no LIFF, força o login do LINE
+                        liff.login();
+                    }
+                }
+            } catch (e) {
+                console.warn('Erro na inicialização automática do LIFF:', e);
             }
         });
 
@@ -661,45 +684,14 @@
             document.getElementById('reportModal').style.display = 'none';
         }
 
-        async function enviarDenuncia() {
+        function enviarDenuncia() {
             const motivo = document.getElementById('reportReason').value;
             const detalhes = document.getElementById('reportDetails').value;
             const tituloLive = document.getElementById('player-title').innerText;
             const criadorLive = document.getElementById('player-host').innerText;
 
-            let userIdCapturado = "Não informado";
-
-            try {
-                if (typeof liff !== 'undefined') {
-                    // Inicializa o LIFF com o ID correto do seu painel do LINE Developers
-                    await liff.init({ liffId: "2010902449-KWNNNsxn" });
-                    if (liff.isLoggedIn()) {
-                        const profile = await liff.getProfile();
-                        userIdCapturado = profile.userId;
-                    } else {
-                        liff.login();
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.warn('Erro ao obter perfil via LIFF SDK:', e);
-            }
-
-            // Fallback caso o LIFF não recupere (tenta URL ou localStorage)
-            if (userIdCapturado === "Não informado") {
-                const urlParams = new URLSearchParams(window.location.search);
-                let idUrl = urlParams.get('userId');
-
-                if (idUrl && idUrl !== '{userId}' && idUrl !== '%7BuserId%7D') {
-                    userIdCapturado = idUrl;
-                    localStorage.setItem('userId', userIdCapturado);
-                } else if (localStorage.getItem('userId')) {
-                    userIdCapturado = localStorage.getItem('userId');
-                }
-            }
-
             const dadosEnvio = {
-                userId: userIdCapturado,
+                userId: globalUserId,
                 liveTitle: tituloLive,
                 creator: criadorLive,
                 motivo: motivo,
