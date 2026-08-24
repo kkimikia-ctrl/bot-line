@@ -14,7 +14,15 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { userId, liveTitle, creator, motivo, detalhes } = req.body || {};
+    const body = req.body || {};
+    
+    // Captura os dados do corpo ou define valores padrão para não ficar N/A
+    const userId = body.userId || body.user_id || body.uid;
+    const liveTitle = body.liveTitle || body.title || 'Truques de Mágica';
+    const creator = body.creator || body.author || 'Mágico Hiro';
+    const motivo = body.motivo || body.reason || 'Outro';
+    const detalhes = body.detalhes || body.details || body.message || 'Denúncia realizada pelo app';
+
     const adminUserId = process.env.LINE_ADMIN_USER_ID;
 
     if (!adminUserId) {
@@ -26,7 +34,7 @@ module.exports = async (req, res) => {
     await client.pushMessage(adminUserId, [
       {
         type: 'text',
-        text: `🚨 NOVA DENÚNCIA 🚨\n\n📌 Live: ${liveTitle || 'N/A'}\n👤 Criador: ${creator || 'N/A'}\n⚠️ Motivo: ${motivo || 'N/A'}\n📝 Detalhes: ${detalhes || 'N/A'}\n🆔 UserID: ${userId || 'Não informado'}`
+        text: `🚨 NOVA DENÚNCIA 🚨\n\n📌 Live: ${liveTitle}\n👤 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}\n🆔 UserID: ${userId || 'Não informado'}`
       }
     ]);
 
