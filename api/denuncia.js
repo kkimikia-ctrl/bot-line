@@ -30,11 +30,18 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Erro de configuração do administrador.' });
     }
 
-    // 1. Envia o alerta para o Administrador
+    // Formata o UserID para exibição e cria um link clicável válido (se o ID existir)
+    let userIdDisplay = 'Não informado';
+    if (userId && typeof userId === 'string' && userId.startsWith('U')) {
+      // O LINE permite links em Markdown. O link abaixo direciona para o perfil/chat do usuário ou serve de atalho.
+      userIdDisplay = `[${userId}](https://line.me/R/oaMessage/@bot/?${userId})`;
+    }
+
+    // 1. Envia o alerta para o Administrador com o ID clicável
     await client.pushMessage(adminUserId, [
       {
         type: 'text',
-        text: `🚨 NOVA DENÚNCIA 🚨\n\n📌 Live: ${liveTitle}\n👤 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}\n🆔 UserID: ${userId || 'Não informado'}`
+        text: `🚨 NOVA DENÚNCIA 🚨\n\n📌 Live: ${liveTitle}\n👤 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}\n🆔 UserID: ${userIdDisplay}`
       }
     ]);
 
