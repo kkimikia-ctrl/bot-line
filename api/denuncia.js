@@ -16,8 +16,9 @@ module.exports = async (req, res) => {
   try {
     const body = req.body || {};
     
-    // Captura os dados do corpo ou define valores padrão para não ficar N/A
+    // Captura os dados enviados pelo front-end
     const userId = body.userId || body.user_id || body.uid;
+    const userName = body.userName || 'Usuário Anônimo';
     const liveTitle = body.liveTitle || body.title || 'Truques de Mágica';
     const creator = body.creator || body.author || 'Mágico Hiro';
     const motivo = body.motivo || body.reason || 'Outro';
@@ -30,18 +31,11 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Erro de configuração do administrador.' });
     }
 
-    // Formata o UserID para exibição e cria um link clicável válido (se o ID existir)
-    let userIdDisplay = 'Não informado';
-    if (userId && typeof userId === 'string' && userId.startsWith('U')) {
-      // O LINE permite links em Markdown. O link abaixo direciona para o perfil/chat do usuário ou serve de atalho.
-      userIdDisplay = `[${userId}](https://line.me/R/oaMessage/@bot/?${userId})`;
-    }
-
-    // 1. Envia o alerta para o Administrador com o ID clicável
+    // 1. Envia o alerta para o Administrador mostrando o NOME de quem denunciou
     await client.pushMessage(adminUserId, [
       {
         type: 'text',
-        text: `🚨 NOVA DENÚNCIA 🚨\n\n📌 Live: ${liveTitle}\n👤 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}\n🆔 UserID: ${userIdDisplay}`
+        text: `🚨 NOVA DENÚNCIA 🚨\n\n👤 Quem denunciou: ${userName}\n📌 Live: ${liveTitle}\n🎬 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}`
       }
     ]);
 
