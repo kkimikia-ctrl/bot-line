@@ -569,6 +569,7 @@
         </div>
     </div>
 
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         let mediaStream = null;
         let meuSaldo = 500; 
@@ -645,20 +646,30 @@
             document.getElementById('reportModal').style.display = 'none';
         }
 
-        // Função de envio corrigida com caminho relativo para a Vercel
-        function enviarDenuncia() {
+        // Função de envio com captura automática do userId via LIFF
+        async function enviarDenuncia() {
             const motivo = document.getElementById('reportReason').value;
             const detalhes = document.getElementById('reportDetails').value;
             const tituloLive = document.getElementById('player-title').innerText;
             const criadorLive = document.getElementById('player-host').innerText;
 
+            let userIdCapturado = "Não informado";
+            
+            try {
+                if (typeof liff !== 'undefined' && liff.isInClient()) {
+                    const profile = await liff.getProfile();
+                    userIdCapturado = profile.userId;
+                }
+            } catch (e) {
+                console.warn('LIFF não disponível para capturar o ID automaticamente:', e);
+            }
+
             const dadosEnvio = {
-                tipo_mensagem: "denuncia_live",
+                userId: userIdCapturado,
+                liveTitle: tituloLive,
+                creator: criadorLive,
                 motivo: motivo,
-                detalhes: detalhes || "Nenhum detalhe informado",
-                live: tituloLive,
-                criador: criadorLive,
-                data: new Date().toLocaleString('ja-JP')
+                detalhes: detalhes || "Nenhum detalhe informado"
             };
 
             fetch('/api/denuncia', {
