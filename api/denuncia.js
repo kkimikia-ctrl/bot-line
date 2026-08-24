@@ -45,11 +45,11 @@ module.exports = async (req, res) => {
 
     userName = userName || 'Usuário do App';
 
-    // 1. Envia o alerta limpo para o Administrador (Sem links de erro)
+    // 1. Envia o alerta limpo para o Administrador (Versão atualizada sem links)
     await client.pushMessage(adminUserId, [
       {
         type: 'text',
-        text: `🚨 NOVA DENÚNCIA 🚨\n\n👤 Quem denunciou: ${userName}\n📌 Live: ${liveTitle}\n🎬 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}`
+        text: `🛡️ NOVO AVISO DE DENÚNCIA 🛡️\n\n👤 Quem denunciou: ${userName}\n📌 Live: ${liveTitle}\n🎬 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}`
       }
     ]);
 
