@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Erro de configuração do administrador.' });
     }
 
-    // Busca o nome real direto na API do LINE se necessário
+    // Busca o nome real direto na API do LINE caso o front-end não tenha enviado
     if ((!userName || userName === 'Usuário Anônimo') && userId && userId.startsWith('U')) {
       try {
         const profile = await client.getProfile(userId);
@@ -45,18 +45,11 @@ module.exports = async (req, res) => {
 
     userName = userName || 'Usuário do App';
 
-    // Cria um link funcional seguro usando o esquema universal do LINE para chat/perfil
-    let contatoLink = 'Não disponível';
-    if (userId && typeof userId === 'string' && userId.startsWith('U')) {
-      // Este formato abre o contato ou gera o atalho correto no app do LINE
-      contatoLink = `[Abrir Chat / Perfil](https://line.me/ti/p/~${userId}) ou ID: ${userId}`;
-    }
-
-    // 1. Envia o alerta para o Administrador com o nome e a opção de contato
+    // 1. Envia o alerta limpo para o Administrador com o nome de quem denunciou
     await client.pushMessage(adminUserId, [
       {
         type: 'text',
-        text: `🚨 NOVA DENÚNCIA 🚨\n\n👤 Quem denunciou: ${userName}\n📌 Live: ${liveTitle}\n🎬 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}\n💬 Contato: ${contatoLink}`
+        text: `🚨 NOVA DENÚNCIA 🚨\n\n👤 Quem denunciou: ${userName}\n📌 Live: ${liveTitle}\n🎬 Criador: ${creator}\n⚠️ Motivo: ${motivo}\n📝 Detalhes: ${detalhes}`
       }
     ]);
 
