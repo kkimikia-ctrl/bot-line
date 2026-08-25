@@ -124,7 +124,6 @@
             position: absolute;
             bottom: 8px;
         }
-        /* Painel do dia clicado (fica entre o calendário e o botão voltar) */
         .event-detail-card {
             background: #ffffff;
             border-radius: 16px;
@@ -154,6 +153,7 @@
             padding: 14px 20px;
             background: linear-gradient(135deg, #0d47a1, #1565c0);
             color: white;
+            border: none;
             text-decoration: none;
             border-radius: 14px;
             font-size: 15px;
@@ -161,6 +161,7 @@
             box-shadow: 0 4px 12px rgba(13, 71, 161, 0.25);
             box-sizing: border-box;
             text-align: center;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -188,8 +189,7 @@
                 <div class="week-day">Dom</div>
             </div>
 
-            <div class="calendar-grid" id="calendarDays" style="margin-top: 8px;">
-                </div>
+            <div class="calendar-grid" id="calendarDays" style="margin-top: 8px;"></div>
         </div>
 
         <div class="event-detail-card" id="eventDetailCard">
@@ -198,7 +198,7 @@
         </div>
 
         <div class="back-btn-container">
-            <a href="agenda.html" class="back-btn">Voltar</a>
+            <button class="back-btn" onclick="voltarPagina()">Voltar</button>
         </div>
     </div>
 
@@ -208,7 +208,7 @@
             "2026-08-26": "🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário"
         };
 
-        let dataAtual = new Date(2026, 7, 1); // Agosto de 2026
+        let dataAtual = new Date(2026, 7, 1);
         const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function renderizarCalendario() {
@@ -271,6 +271,15 @@
         function mudarMes(direcao) {
             dataAtual.setMonth(dataAtual.getMonth() + direcao);
             renderizarCalendario();
+        }
+
+        function voltarPagina() {
+            // Tenta voltar na histórico ou direciona com segurança para a agenda principal
+            if (document.referrer && document.referrer.includes('agenda.html')) {
+                window.history.back();
+            } else {
+                window.location.href = 'agenda.html';
+            }
         }
 
         renderizarCalendario();
