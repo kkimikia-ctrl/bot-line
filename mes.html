@@ -2,25 +2,26 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mês Inteiro - Agenda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calendário do Mês</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f0f4f8;
             margin: 0;
             padding: 0;
-            padding-top: 70px;
-            padding-bottom: 40px;
+            padding-top: 65px;
+            padding-bottom: 20px;
             color: #1e293b;
+            overflow-x: hidden;
         }
         .header {
             background: linear-gradient(135deg, #0d47a1, #1565c0);
             color: white;
-            padding: 14px 18px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 18px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             position: fixed;
             top: 0;
             left: 0;
@@ -28,78 +29,122 @@
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
             box-sizing: border-box;
-            letter-spacing: 0.5px;
+        }
+        .header-title {
+            font-weight: 700;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
         }
-        .back-btn-top {
-            position: absolute;
-            left: 15px;
+        .header-btn {
             background: rgba(255, 255, 255, 0.2);
-            color: white;
             border: none;
-            padding: 6px 12px;
+            color: white;
+            padding: 6px 10px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
             transition: background 0.2s;
+            white-space: nowrap;
         }
-        .back-btn-top:hover {
+        .header-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
+
+        /* --- CARROSSEL INFINITO LENTO --- */
+        .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #ffffff;
+            padding: 10px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 12px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 10px;
+            width: max-content;
+            animation: rolarInfinito 45s linear infinite;
+        }
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 150px;
+            height: 85px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #eee;
+            border: 1px solid #ddd;
+        }
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 5px)); }
+        }
+
         .container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 15px;
         }
         .calendar-card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-            margin-bottom: 15px;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 12px;
         }
         .month-title {
             text-align: center;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: #0d47a1;
-            margin-bottom: 20px;
-            letter-spacing: 0.3px;
+            margin-bottom: 15px;
         }
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
         .week-day {
             text-align: center;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
             text-transform: uppercase;
-            padding-bottom: 8px;
-            letter-spacing: 0.5px;
+            padding-bottom: 6px;
         }
         .week-day.weekend {
             color: #ef4444;
         }
         .day-box {
             background: #f8fafc;
-            border-radius: 12px;
+            border-radius: 10px;
             aspect-ratio: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: #334155;
             cursor: pointer;
@@ -127,43 +172,66 @@
             cursor: default;
         }
         .dot {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
             background-color: #ef4444;
             border-radius: 50%;
             position: absolute;
-            bottom: 8px;
+            bottom: 6px;
         }
         .event-detail-card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
+            border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             border-left: 4px solid #0d47a1;
-            text-align: left;
+            max-height: 120px; /* Mantém a página parada */
+            overflow-y: auto;  /* Se o evento for grande, rola dentro do cartão */
+        }
+        .event-detail-card::-webkit-scrollbar {
+            width: 4px;
+        }
+        .event-detail-card::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
         .detail-title {
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #0d47a1;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .detail-content {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #475569;
-            max-height: 120px;
-            overflow-y: auto;
-            padding-right: 5px;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="agenda.html" class="back-btn-top">◀ Voltar</a>
-        📅 Calendário do Mês
-    </div>
+    <header class="header">
+        <a href="agenda.html" class="header-btn">◀ Semana</a>
+        <div class="header-title">📅 Calendário do Mês</div>
+        <a href="index.html" class="header-btn">Home 🏠</a>
+    </header>
+
+    <section class="carousel-container">
+        <div class="carousel-track">
+            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+        </div>
+    </section>
 
     <div class="container">
         <div class="calendar-card">
@@ -179,12 +247,12 @@
                 <div class="week-day weekend">Dom</div>
             </div>
 
-            <div class="calendar-grid" id="calendarDays" style="margin-top: 8px;"></div>
+            <div class="calendar-grid" id="calendarDays" style="margin-top: 6px;"></div>
         </div>
 
         <div class="event-detail-card" id="eventDetailCard">
-            <div class="detail-title" id="detailDateTitle">Toque num dia</div>
-            <div class="detail-content" id="detailContentText">Selecione qualquer dia no calendário acima para ver os eventos programados.</div>
+            <div class="detail-title" id="detailDateTitle">24 de Agosto de 2026</div>
+            <div class="detail-content" id="detailContentText">🌟 <b>Evento encontrado:</b><br>🌸 Festival Cultural da Cidade - 14:00 na Praça Central<br>🎨 Oficina de Pintura - 15:30 no Centro Cultural<br>🎵 Show de Música Popular - 18:00 no Anfiteatro<br>🎆 Encerramento com Fogos - 21:00</div>
         </div>
     </div>
 
@@ -227,6 +295,11 @@
                 const chaveData = `${ano}-${mesStr}-${diaStr}`;
 
                 box.innerText = dia;
+
+                // Deixa o dia 24 selecionado por padrão ao abrir
+                if (dia === 24) {
+                    box.classList.add("selected");
+                }
 
                 if (eventosData[chaveData]) {
                     box.classList.add("has-event");
