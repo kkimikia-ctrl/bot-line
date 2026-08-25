@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             padding-top: 70px;
+            padding-bottom: 40px;
             color: #1e293b;
         }
         .header {
@@ -32,14 +33,13 @@
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
-            padding-bottom: 90px;
         }
         .calendar-card {
             background: #ffffff;
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .month-navigation {
             display: flex;
@@ -124,13 +124,13 @@
             position: absolute;
             bottom: 8px;
         }
-        /* Painel de exibição do dia clicado */
+        /* Painel do dia clicado (fica entre o calendário e o botão voltar) */
         .event-detail-card {
             background: #ffffff;
             border-radius: 16px;
-            padding: 18px;
+            padding: 16px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-left: 4px solid #0d47a1;
             text-align: left;
         }
@@ -138,7 +138,7 @@
             font-weight: bold;
             font-size: 0.95rem;
             color: #0d47a1;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .detail-content {
             font-size: 0.9rem;
@@ -146,11 +146,11 @@
         }
         .back-btn-container {
             text-align: center;
+            margin-top: 10px;
         }
         .back-btn {
-            display: inline-block;
+            display: block;
             width: 100%;
-            max-width: 100%;
             padding: 14px 20px;
             background: linear-gradient(135deg, #0d47a1, #1565c0);
             color: white;
@@ -160,6 +160,7 @@
             font-weight: 700;
             box-shadow: 0 4px 12px rgba(13, 71, 161, 0.25);
             box-sizing: border-box;
+            text-align: center;
         }
     </style>
 </head>
@@ -192,8 +193,8 @@
         </div>
 
         <div class="event-detail-card" id="eventDetailCard">
-            <div class="detail-title" id="detailDateTitle">Selecione um dia</div>
-            <div class="detail-content" id="detailContentText">Clique em um dia do calendário para ver os eventos programados.</div>
+            <div class="detail-title" id="detailDateTitle">Toque num dia</div>
+            <div class="detail-content" id="detailContentText">Selecione qualquer dia no calendário acima para ver os eventos programados.</div>
         </div>
 
         <div class="back-btn-container">
@@ -202,14 +203,12 @@
     </div>
 
     <script>
-        // Banco de dados simulado de eventos por data (Ano-Mês-Dia)
         const eventosData = {
             "2026-08-24": "🌸 Festival Cultural da Cidade - 14:00 na Praça Central",
             "2026-08-26": "🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário"
         };
 
         let dataAtual = new Date(2026, 7, 1); // Agosto de 2026
-
         const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function renderizarCalendario() {
@@ -221,22 +220,17 @@
             const grid = document.getElementById("calendarDays");
             grid.innerHTML = "";
 
-            // Primeiro dia do mês
             let primeiroDiaSemana = new Date(ano, mes, 1).getDay();
-            // Ajustar para segunda-feira como início (Dom=0 vira 6, Seg=1 vira 0, etc.)
             primeiroDiaSemana = (primeiroDiaSemana === 0) ? 6 : primeiroDiaSemana - 1;
 
-            // Total de dias no mês
             const ultimoDia = new Date(ano, mes + 1, 0).getDate();
 
-            // Espaços vazios antes do dia 1
             for (let i = 0; i < primeiroDiaSemana; i++) {
                 const vazio = document.createElement("div");
                 vazio.className = "day-box empty";
                 grid.appendChild(vazio);
             }
 
-            // Preencher os dias do mês
             for (let dia = 1; dia <= ultimoDia; dia++) {
                 const box = document.createElement("div");
                 box.className = "day-box";
@@ -247,7 +241,6 @@
 
                 box.innerText = dia;
 
-                // Verificar se tem evento neste dia
                 if (eventosData[chaveData]) {
                     box.classList.add("has-event");
                     const dot = document.createElement("span");
@@ -255,7 +248,6 @@
                     box.appendChild(dot);
                 }
 
-                // Ação ao clicar no dia
                 box.onclick = function() {
                     document.querySelectorAll('.day-box').forEach(b => b.classList.remove('selected'));
                     box.classList.add('selected');
@@ -281,7 +273,6 @@
             renderizarCalendario();
         }
 
-        // Inicializar
         renderizarCalendario();
     </script>
 </body>
