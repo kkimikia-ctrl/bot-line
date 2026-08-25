@@ -55,7 +55,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- CARROSSEL INFINITO LENTO --- */
+        /* --- CARROSSEL INFINITO DINÂMICO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
@@ -73,7 +73,8 @@
             display: flex;
             gap: 10px;
             width: max-content;
-            animation: rolarInfinito 45s linear infinite;
+            /* A animação usa a largura calculada via JS */
+            animation: rolarInfinito 30s linear infinite;
         }
         .carousel-container:hover .carousel-track,
         .carousel-container:active .carousel-track {
@@ -97,7 +98,7 @@
         }
         @keyframes rolarInfinito {
             0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-50% - 5px)); }
+            100% { transform: translateX(var(--scroll-amount)); }
         }
 
         .container {
@@ -112,8 +113,8 @@
             margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             border-left: 4px solid #0d47a1;
-            max-height: 140px; /* Mantém a página parada */
-            overflow-y: auto;  /* Se tiver muitos eventos, rola apenas dentro do cartão */
+            max-height: 140px; 
+            overflow-y: auto;  
         }
         .card::-webkit-scrollbar {
             width: 4px;
@@ -143,20 +144,13 @@
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
+    <!-- Carrossel com 4 exemplos de anúncios -->
     <section class="carousel-container">
-        <div class="carousel-track">
+        <div class="carousel-track" id="carouselTrack">
             <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
             <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
             <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
             <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="mes.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="mes.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
-            <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="mes.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="mini-banner-6.jpg" alt="Destaque 6"></a>
         </div>
     </section>
 
@@ -183,5 +177,22 @@
         </div>
     </div>
 
+    <script>
+        // Script para duplicar os itens automaticamente e ajustar o carrossel para qualquer quantidade de anúncios
+        const track = document.getElementById('carouselTrack');
+        const items = Array.from(track.children);
+        
+        // Clona os itens e adiciona ao final para criar o loop contínuo
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+
+        // Calcula exatamente metade da largura total da pista para o deslocamento perfeito da animação
+        window.addEventListener('load', () => {
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+        });
+    </script>
 </body>
 </html>
