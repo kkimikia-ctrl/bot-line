@@ -73,23 +73,32 @@
             display: flex;
             gap: 10px;
             width: max-content;
-            /* A animação usa a largura calculada via JS */
-            animation: rolarInfinito 30s linear infinite;
+            animation: rolarInfinito 35s linear infinite;
         }
         .carousel-container:hover .carousel-track,
         .carousel-container:active .carousel-track {
             animation-play-state: paused;
         }
         .carousel-track a {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             flex-shrink: 0;
-            width: 150px;
-            height: 85px;
+            width: 160px;
+            height: 90px;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #eee;
-            border: 1px solid #ddd;
+            background: #e2e8f0; /* Fundo visível caso a imagem falhe */
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            color: #334155;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 5px;
+            box-sizing: border-box;
         }
         .carousel-track img {
             width: 100%;
@@ -144,13 +153,24 @@
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <!-- Carrossel com 4 exemplos de anúncios -->
     <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
-            <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="mes.html">
+                <img src="mini-banner-1.jpg" alt="Destaque 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none;">📢 Anúncio 01</span>
+            </a>
+            <a href="mes.html">
+                <img src="mini-banner-2.jpg" alt="Destaque 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none;">📢 Anúncio 02</span>
+            </a>
+            <a href="mes.html">
+                <img src="mini-banner-3.jpg" alt="Destaque 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none;">📢 Anúncio 03</span>
+            </a>
+            <a href="mes.html">
+                <img src="mini-banner-4.jpg" alt="Destaque 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none;">📢 Anúncio 04</span>
+            </a>
         </div>
     </section>
 
@@ -178,17 +198,16 @@
     </div>
 
     <script>
-        // Script para duplicar os itens automaticamente e ajustar o carrossel para qualquer quantidade de anúncios
+        // Script automático para qualquer quantidade de anúncios (independente de serem 2, 4 ou 10)
         const track = document.getElementById('carouselTrack');
         const items = Array.from(track.children);
         
-        // Clona os itens e adiciona ao final para criar o loop contínuo
+        // Clona os itens para preencher e gerar o efeito infinito suave
         items.forEach(item => {
             const clone = item.cloneNode(true);
             track.appendChild(clone);
         });
 
-        // Calcula exatamente metade da largura total da pista para o deslocamento perfeito da animação
         window.addEventListener('load', () => {
             const totalWidth = track.scrollWidth / 2;
             track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
