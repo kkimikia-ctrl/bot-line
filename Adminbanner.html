@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Painel Admin - Gestão de Banners</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container { max-width: 650px; margin: 0 auto; }
+        .card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h2 { color: #0d47a1; margin-top: 0; font-size: 1.2rem; }
+        label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #475569; }
+        input[type="text"], input[type="file"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+        .btn {
+            background: #0d47a1;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+        .btn:hover { background: #1565c0; }
+        .ad-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .ad-info img {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            float: left;
+            margin-right: 10px;
+        }
+        .ad-text { font-size: 0.85rem; line-height: 1.4; }
+        .alert-badge {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .btn-whats {
+            background: #25d366;
+            color: white;
+            text-decoration: none;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .history-item {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-left: 4px solid #0d47a1;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Formulário de Registo e Publicação -->
+        <div class="card">
+            <h2>📤 Registar e Publicar Anúncio (1 Mês)</h2>
+            
+            <label>Nome do Anunciante / Empresa:</label>
+            <input type="text" id="nomeAnunciante" placeholder="Ex: Padaria do João">
+
+            <label>WhatsApp do Anunciante (com DDD para avisos):</label>
+            <input type="text" id="whatsappAnunciante" placeholder="5511999999999">
+
+            <label>Onde o banner vai aparecer (Categoria):</label>
+            <select id="categoriaInput">
+                <option value="semanames">Agenda (Semana e Mês)</option>
+                <option value="home">Menu Inicial (Home)</option>
+                <option value="jogos">Página de Jogos</option>
+                <option value="viagens">Página de Viagens</option>
+            </select>
+
+            <label>Link de Destino do Anúncio (Ex: Site ou WhatsApp):</label>
+            <input type="text" id="linkInput" placeholder="https://wa.me/55...">
+
+            <label>Selecione a Imagem do Banner:</label>
+            <input type="file" id="imagemInput" accept="image/*">
+
+            <button class="btn" onclick="salvarAnuncio()">Aprovar e Publicar</button>
+        </div>
+
+        <!-- Lista de Anúncios Ativos -->
+        <div class="card">
+            <h2>📋 Anúncios Ativos & Controlo de Validade</h2>
+            <div id="listaAdminAnuncios">A carregar anúncios ativos...</div>
+        </div>
+
+        <!-- Histórico de Anúncios Anteriores com Pesquisa -->
+        <div class="card">
+            <h2>📜 Histórico de Anúncios & Consulta por Anunciante</h2>
+            
+            <label>Pesquisar histórico por Nome da Empresa:</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="inputPesquisa" placeholder="Ex: Padaria do João" style="margin-bottom: 0;">
+                <button class="btn" style="width: 120px;" onclick="pesquisarAnunciante()">Pesquisar</button>
+                <button class="btn" style="width: 100px; background: #64748b;" onclick="carregarHistoricoAdmin()">Limpar</button>
+            </div>
+
+            <div id="resultadoPesquisaInfo" style="font-size: 0.85rem; font-weight: bold; color: #0d47a1; margin-bottom: 10px;"></div>
+            <div id="listaHistorico">A carregar histórico...</div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO DO FIREBASE (Substitua com as suas credenciais reais)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_DOMINIO.firebaseapp.com",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_BUCKET.appspot.com",
+            messagingSenderId: "SUA_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Função para calcular 1 mês exato no futuro
+        function calcularValidadeUmMes() {
+            const data = new Date();
+            data.setMonth(data.getMonth() + 1);
+            return data.toISOString().split('T')[0];
+        }
+
+        // Publicar novo anúncio
+        async function salvarAnuncio() {
+            const nome = document.getElementById('nomeAnunciante').value.trim();
+            const whats = document.getElementById('whatsappAnunciante').value.trim();
+            const categoria = document.getElementById('categoriaInput').value;
+            const link = document.getElementById('linkInput').value.trim();
+            const fileInput = document.getElementById('imagemInput');
+
+            if (!nome || fileInput.files.length === 0) {
+                alert("Por favor, preencha o nome do anunciante e selecione uma imagem.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const storageRef = storage.ref('banners/' + Date.now() + '_' + file.name);
+
+            alert("A carregar imagem para o Firebase...");
+
+            try {
+                const snapshot = await storageRef.put(file);
+                const downloadURL = await snapshot.ref.getDownloadURL();
+                const dataInicio = new Date().toISOString().split('T')[0];
+                const dataExpiracao = calcularValidadeUmMes();
+
+                // Guarda na coleção "anuncios" ativos
+                await db.collection("anuncios").add({
+                    nomeAnunciante: nome,
+                    whatsapp: whats,
+                    categoria: categoria,
+                    linkDestino: link || "#",
+                    imagemUrl: downloadURL,
+                    dataInicio: dataInicio,
+                    dataExpiracao: dataExpiracao,
+                    status: "ativo"
+                });
+
+                alert("Anúncio publicado com sucesso!");
+                location.reload();
+            } catch (error) {
+                console.error("Erro ao salvar: ", error);
+                alert("Erro ao publicar anúncio.");
+            }
+        }
+
+        // Carregar painel de ativos e histórico inicial
+        function carregarPaineis() {
+            carregarAnunciosAdmin();
+            carregarHistoricoAdmin();
+        }
+
+        function carregarAnunciosAdmin() {
+            const container = document.getElementById("listaAdminAnuncios");
+            container.innerHTML = "";
+
+            db.collection("anuncios").get().then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    container.innerHTML = "<p>Nenhum anúncio ativo no momento.</p>";
+                    return;
+                }
+
+                const hojeStr = new Date().toISOString().split('T')[0];
+
+                querySnapshot.forEach((doc) => {
+                    const an = doc.data();
+                    const hoje = new Date(hojeStr);
+                    const expiracao = new Date(an.dataExpiracao);
+                    const diferencaDias = Math.ceil((expiracao - hoje) / (1000 * 60 * 60 * 24));
+
+                    let alertaHtml = "";
+                    let botaoRenovarHtml = "";
+
+                    if (diferencaDias < 0) {
+                        alertaHtml = `<br><span class="alert-badge" style="background:#cbd5e1; color:#334155;">❌ Expirado (Pronto para arquivar)</span>`;
+                    } else if (diferencaDias <= 7) {
+                        alertaHtml = `<br><span class="alert-badge">⚠️ Vence em ${diferencaDias} dia(s)!</span>`;
+                        if (an.whatsapp) {
+                            const msg = encodeURIComponent(`Olá ${an.nomeAnunciante}! O seu anúncio vence em breve (${an.dataExpiracao}). Gostaria de renovar por mais 1 mês?`);
+                            botaoRenovarHtml = `<br><a href="https://wa.me/${an.whatsapp}?text=${msg}" target="_blank" class="btn-whats">💬 Pedir Renovação</a>`;
+                        }
+                    } else {
+                        alertaHtml = `<br><span style="font-size:0.75rem; color:#64748b;">Validade até: ${an.dataExpiracao} | Secção: <b>${an.categoria}</b></span>`;
+                    }
+
+                    container.innerHTML += `
+                        <div class="ad-item">
+                            <div class="ad-info" style="width: 100%;">
+                                <img src="${an.imagemUrl}" alt="Banner">
+                                <div class="ad-text">
+                                    <b>Anunciante:</b> ${an.nomeAnunciante}<br>
+                                    <b>Contacto:</b> ${an.whatsapp || 'Não informado'}
+                                    ${alertaHtml}
+                                    ${botaoRenovarHtml}
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                                <button onclick="arquivarParaHistorico('${doc.id}')" style="background:#f59e0b; color:white; border:none; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;" title="Move para o histórico">Arquivar</button>
+                                <button onclick="apagarAnuncio('${doc.id}')" style="background:#ef4444; color:white; border:none; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Apagar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // Mover anúncio para o histórico
+        async function arquivarParaHistorico(id) {
+            if (!confirm("Deseja mover este anúncio para o histórico?")) return;
+
+            try {
+                const docRef = db.collection("anuncios").doc(id);
+                const docSnap = await docRef.get();
+
+                if (docSnap.exists) {
+                    const dados = docSnap.data();
+                    await db.collection("historico").add({
+                        ...dados,
+                        dataArquivamento: new Date().toISOString().split('T')[0],
+                        status: "arquivado"
+                    });
+
+                    await docRef.delete();
+                    alert("Movido para o histórico com sucesso!");
+                    carregarPaineis();
+                }
+            } catch (err) {
+                console.error("Erro ao arquivar:", err);
+                alert("Erro ao mover para o histórico.");
+            }
+        }
+
+        function apagarAnuncio(id) {
+            if (confirm("Tem certeza que deseja eliminar este anúncio permanentemente?")) {
+                db.collection("anuncios").doc(id).delete().then(() => {
+                    alert("Anúncio apagado!");
+                    carregarPaineis();
+                });
+            }
+        }
+
+        // Carregar o Histórico Padrão
+        function carregarHistoricoAdmin() {
+            document.getElementById('inputPesquisa').value = "";
+            document.getElementById('resultadoPesquisaInfo').innerHTML = "";
+            const container = document.getElementById("listaHistorico");
+            container.innerHTML = "A carregar histórico...";
+
+            db.collection("historico").get().then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    container.innerHTML = "<p>Nenhum registo no histórico.</p>";
+                    return;
+                }
+
+                container.innerHTML = "";
+                querySnapshot.forEach((doc) => {
+                    const h = doc.data();
+                    container.innerHTML += `
+                        <div class="history-item">
+                            <b>Empresa:</b> ${h.nomeAnunciante} | 
+                            <b>WhatsApp:</b> ${h.whatsapp || 'N/A'} | 
+                            <b>Período:</b> ${h.dataInicio} até ${h.dataExpiracao} | 
+                            <b>Secção:</b> ${h.categoria}
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // Pesquisar Anunciante Específico no Histórico
+        function pesquisarAnunciante() {
+            const termo = document.getElementById('inputPesquisa').value.trim().toLowerCase();
+            const container = document.getElementById("listaHistorico");
+            const infoContainer = document.getElementById("resultadoPesquisaInfo");
+            
+            if (!termo) {
+                alert("Digite o nome do anunciante para pesquisar.");
+                return;
+            }
+
+            container.innerHTML = "A pesquisar...";
+            infoContainer.innerHTML = "";
+
+            Promise.all([
+                db.collection("historico").get(),
+                db.collection("anuncios").get()
+            ]).then(([snapshotHist, snapshotAtivos]) => {
+                let todosRegistos = [];
+
+                snapshotHist.forEach(doc => todosRegistos.push(doc.data()));
+                snapshotAtivos.forEach(doc => todosRegistos.push(doc.data()));
+
+                const resultados = todosRegistos.filter(item => 
+                    item.nomeAnunciante && item.nomeAnunciante.toLowerCase().includes(termo)
+                );
+
+                if (resultados.length === 0) {
+                    container.innerHTML = "<p>Nenhum registo encontrado para este anunciante.</p>";
+                    infoContainer.innerHTML = "";
+                    return;
+                }
+
+                resultados.sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
+
+                const primeiraData = resultados[0].dataInicio;
+                infoContainer.innerHTML = `🌟 ${resultados[0].nomeAnunciante} é nosso parceiro desde: <b>${primeiraData}</b> (Total de ${resultados.length} período(s) registados).`;
+
+                container.innerHTML = "";
+                resultados.forEach(h => {
+                    container.innerHTML += `
+                        <div class="history-item">
+                            <b>Empresa:</b> ${h.nomeAnunciante} | 
+                            <b>WhatsApp:</b> ${h.whatsapp || 'N/A'} | 
+                            <b>Período:</b> ${h.dataInicio} até ${h.dataExpiracao} | 
+                            <b>Secção:</b> ${h.categoria} |
+                            <b>Estado:</b> <span style="color: ${h.status === 'ativo' ? 'green' : 'gray'};">${h.status || 'arquivado'}</span>
+                        </div>
+                    `;
+                });
+            }).catch(err => {
+                console.error("Erro na pesquisa:", err);
+                container.innerHTML = "<p>Erro ao realizar a pesquisa.</p>";
+            });
+        }
+
+        window.onload = carregarPaineis;
+    </script>
+</body>
+</html>
