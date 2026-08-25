@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             padding-top: 70px;
+            padding-bottom: 40px;
             color: #1e293b;
         }
         .header {
@@ -33,13 +34,13 @@
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
-            padding-bottom: 90px;
         }
         .calendar-card {
             background: #ffffff;
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
         }
         .month-title {
             text-align: center;
@@ -63,6 +64,10 @@
             padding-bottom: 8px;
             letter-spacing: 0.5px;
         }
+        /* Destaca Sábado e Domingo em vermelho */
+        .week-day.weekend {
+            color: #ef4444;
+        }
         .day-box {
             background: #f8fafc;
             border-radius: 12px;
@@ -75,18 +80,25 @@
             font-size: 0.95rem;
             font-weight: 600;
             color: #334155;
+            cursor: pointer;
             transition: all 0.2s ease;
         }
         .day-box:not(.empty):hover {
             background: #e2e8f0;
-            transform: scale(1.03);
+        }
+        .day-box.selected {
+            border: 2px solid #0d47a1;
+            background: #e3f2fd !important;
+        }
+        /* Destaca números de Sábado e Domingo em vermelho (colunas 6 e 7) */
+        .day-box.weekend-day {
+            color: #ef4444;
         }
         .day-box.has-event {
             background: linear-gradient(135deg, #e3f2fd, #bbdefb);
             color: #0d47a1;
             font-weight: 800;
             border: 2px solid #90caf9;
-            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.1);
         }
         .day-box.empty {
             background: transparent;
@@ -100,28 +112,44 @@
             border-radius: 50%;
             position: absolute;
             bottom: 8px;
-            box-shadow: 0 0 8px #ef4444;
+        }
+        .event-detail-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            border-left: 4px solid #0d47a1;
+            text-align: left;
+        }
+        .detail-title {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #0d47a1;
+            margin-bottom: 6px;
+        }
+        .detail-content {
+            font-size: 0.9rem;
+            color: #475569;
         }
         .back-btn-container {
             text-align: center;
-            margin-top: 25px;
         }
         .back-btn {
-            display: inline-block;
+            display: block;
             width: 100%;
-            max-width: 220px;
-            padding: 12px 20px;
+            padding: 14px 20px;
             background: linear-gradient(135deg, #0d47a1, #1565c0);
             color: white;
+            border: none;
             text-decoration: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 15px;
             font-weight: 700;
             box-shadow: 0 4px 12px rgba(13, 71, 161, 0.25);
-            transition: transform 0.2s;
-        }
-        .back-btn:active {
-            transform: scale(0.98);
+            box-sizing: border-box;
+            text-align: center;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -141,64 +169,94 @@
                 <div class="week-day">Qua</div>
                 <div class="week-day">Qui</div>
                 <div class="week-day">Sex</div>
-                <div class="week-day">Sáb</div>
-                <div class="week-day">Dom</div>
-
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box">1</div>
-                <div class="day-box">2</div>
-
-                <div class="day-box">3</div>
-                <div class="day-box">4</div>
-                <div class="day-box">5</div>
-                <div class="day-box">6</div>
-                <div class="day-box">7</div>
-                <div class="day-box">8</div>
-                <div class="day-box">9</div>
-
-                <div class="day-box">10</div>
-                <div class="day-box">11</div>
-                <div class="day-box">12</div>
-                <div class="day-box">13</div>
-                <div class="day-box">14</div>
-                <div class="day-box">15</div>
-                <div class="day-box">16</div>
-
-                <div class="day-box">17</div>
-                <div class="day-box">18</div>
-                <div class="day-box">19</div>
-                <div class="day-box">20</div>
-                <div class="day-box">21</div>
-                <div class="day-box">22</div>
-                <div class="day-box">23</div>
-
-                <div class="day-box has-event">24 <span class="dot"></span></div>
-                <div class="day-box">25</div>
-                <div class="day-box has-event">26 <span class="dot"></span></div>
-                <div class="day-box">27</div>
-                <div class="day-box">28</div>
-                <div class="day-box">29</div>
-                <div class="day-box">30</div>
-
-                <div class="day-box">31</div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
-                <div class="day-box empty"></div>
+                <div class="week-day weekend">Sáb</div>
+                <div class="week-day weekend">Dom</div>
             </div>
+
+            <div class="calendar-grid" id="calendarDays" style="margin-top: 8px;"></div>
         </div>
 
+        <!-- Cartão onde aparece o evento ao clicar no dia -->
+        <div class="event-detail-card" id="eventDetailCard">
+            <div class="detail-title" id="detailDateTitle">Toque num dia</div>
+            <div class="detail-content" id="detailContentText">Selecione qualquer dia no calendário acima para ver os eventos programados.</div>
+        </div>
+
+        <!-- Botão Voltar na parte inferior -->
         <div class="back-btn-container">
-            <!-- Nota: Se o seu arquivo principal da semana se chamar 'index.html', mude 'agenda.html' abaixo para 'index.html' -->
             <a href="agenda.html" class="back-btn">Voltar</a>
         </div>
     </div>
 
+    <script>
+        const eventosData = {
+            "2026-08-24": "🌸 Festival Cultural da Cidade - 14:00 na Praça Central",
+            "2026-08-26": "🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário"
+        };
+
+        const ano = 2026;
+        const mes = 7; // Agosto (0 a 11)
+        const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        function renderizarCalendario() {
+            const grid = document.getElementById("calendarDays");
+            grid.innerHTML = "";
+
+            let primeiroDiaSemana = new Date(ano, mes, 1).getDay();
+            primeiroDiaSemana = (primeiroDiaSemana === 0) ? 6 : primeiroDiaSemana - 1;
+
+            const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+
+            for (let i = 0; i < primeiroDiaSemana; i++) {
+                const vazio = document.createElement("div");
+                vazio.className = "day-box empty";
+                grid.appendChild(vazio);
+            }
+
+            for (let dia = 1; dia <= ultimoDia; dia++) {
+                const box = document.createElement("div");
+                box.className = "day-box";
+                
+                // Identifica se é Sábado (5) ou Domingo (6) baseado na coluna da grid (índice 0 a 6)
+                const posicaoNaGrid = (primeiroDiaSemana + (dia - 1)) % 7;
+                if (posicaoNaGrid === 5 || posicaoNaGrid === 6) {
+                    box.classList.add("weekend-day");
+                }
+
+                const mesStr = String(mes + 1).padStart(2, '0');
+                const diaStr = String(dia).padStart(2, '0');
+                const chaveData = `${ano}-${mesStr}-${diaStr}`;
+
+                box.innerText = dia;
+
+                if (eventosData[chaveData]) {
+                    box.classList.add("has-event");
+                    const dot = document.createElement("span");
+                    dot.className = "dot";
+                    box.appendChild(dot);
+                }
+
+                box.onclick = function() {
+                    document.querySelectorAll('.day-box').forEach(b => b.classList.remove('selected'));
+                    box.classList.add('selected');
+                    
+                    const tituloCard = document.getElementById("detailDateTitle");
+                    const textoCard = document.getElementById("detailContentText");
+
+                    tituloCard.innerText = `${dia} de ${mesesNomes[mes]} de ${ano}`;
+                    
+                    if (eventosData[chaveData]) {
+                        textoCard.innerHTML = `🌟 <b>Evento encontrado:</b><br>${eventosData[currentGame = chaveData] || eventosData[chaveData]}`;
+                    } else {
+                        textoCard.innerText = "Nenhum evento programado para este dia.";
+                    }
+                };
+
+                grid.appendChild(box);
+            }
+        }
+
+        renderizarCalendario();
+    </script>
 </body>
 </html>
