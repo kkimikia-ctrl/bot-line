@@ -10,17 +10,18 @@
             background-color: #f0f4f8;
             margin: 0;
             padding: 0;
-            padding-top: 70px;
-            padding-bottom: 40px;
+            padding-top: 65px;
+            padding-bottom: 20px;
             color: #1e293b;
+            overflow-x: hidden;
         }
         .header {
             background: linear-gradient(135deg, #0d47a1, #1565c0);
             color: white;
-            padding: 18px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 18px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             position: fixed;
             top: 0;
             left: 0;
@@ -28,36 +29,40 @@
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
             box-sizing: border-box;
-            letter-spacing: 0.5px;
         }
-        .back-home-btn {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
+        .header-title {
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .header-btn {
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             transition: background 0.2s;
+            white-space: nowrap;
         }
-        .back-home-btn:hover {
+        .header-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- ESTILOS DO CARROSSEL INFINITO --- */
+        /* --- CARROSSEL INFINITO LENTO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
             background: #ffffff;
-            padding: 12px 0;
+            padding: 10px 0;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             position: relative;
             -webkit-overflow-scrolling: touch;
         }
@@ -66,9 +71,8 @@
         }
         .carousel-track {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             width: max-content;
-            /* 45s deixa o movimento bem devagar e suave */
             animation: rolarInfinito 45s linear infinite;
         }
         .carousel-container:hover .carousel-track,
@@ -78,8 +82,8 @@
         .carousel-track a {
             display: block;
             flex-shrink: 0;
-            width: 160px;
-            height: 90px;
+            width: 150px;
+            height: 85px;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -92,69 +96,54 @@
             object-fit: cover;
         }
         @keyframes rolarInfinito {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(calc(-50% - 6px));
-            }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 5px)); }
         }
 
         .container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 15px;
         }
         .card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 15px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             border-left: 4px solid #0d47a1;
+            max-height: 140px; /* Mantém a página parada */
+            overflow-y: auto;  /* Se tiver muitos eventos, rola apenas dentro do cartão */
+        }
+        .card::-webkit-scrollbar {
+            width: 4px;
+        }
+        .card::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
         .card-date {
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #0d47a1;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .card-content {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #475569;
-        }
-        .action-btn-container {
-            text-align: center;
-            margin-top: 25px;
-        }
-        .action-btn {
-            display: inline-block;
-            width: 100%;
-            max-width: 250px;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, #0d47a1, #1565c0);
-            color: white;
-            text-decoration: none;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.25);
-            transition: transform 0.2s;
-        }
-        .action-btn:active {
-            transform: scale(0.98);
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <div class="header" style="position: fixed;">
-        <a href="index.html" class="back-home-btn">◀ Voltar</a>
-        📅 Agenda da Semana
-    </div>
+    <header class="header">
+        <a href="index.html" class="header-btn">◀ Voltar</a>
+        <div class="header-title">📅 Agenda da Semana</div>
+        <a href="mes.html" class="header-btn">Ver Mês ▶</a>
+    </header>
 
-    <!-- Carrossel Infinito Automático e Lento -->
-    <section class="carousel-container" style="margin-top: 15px;">
+    <section class="carousel-container">
         <div class="carousel-track">
             <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
             <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
@@ -162,51 +151,35 @@
             <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
             <a href="mes.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
             <a href="mes.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
-
-            <!-- Duplicado para garantir o loop contínuo sem saltos -->
             <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
             <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
             <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
             <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
             <a href="mes.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="mes.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+            <a href="mini-banner-6.jpg" alt="Destaque 6"></a>
         </div>
     </section>
 
     <div class="container">
-        <!-- Segunda-feira -->
         <div class="card">
             <div class="card-date">Segunda-feira, 24 de Agosto</div>
             <div class="card-content">🌸 Festival Cultural da Cidade - 14:00 na Praça Central</div>
         </div>
-
-        <!-- Terça-feira -->
         <div class="card">
             <div class="card-date">Terça-feira, 25 de Agosto</div>
             <div class="card-content">Nenhum evento programado.</div>
         </div>
-
-        <!-- Quarta-feira -->
         <div class="card">
             <div class="card-date">Quarta-feira, 26 de Agosto</div>
             <div class="card-content">🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário</div>
         </div>
-
-        <!-- Quinta-feira -->
         <div class="card">
             <div class="card-date">Quinta-feira, 27 de Agosto</div>
             <div class="card-content">Nenhum evento programado.</div>
         </div>
-
-        <!-- Sexta-feira -->
         <div class="card">
             <div class="card-date">Sexta-feira, 28 de Agosto</div>
             <div class="card-content">Nenhum evento programado.</div>
-        </div>
-
-        <!-- Botão para abrir o mês inteiro -->
-        <div class="action-btn-container">
-            <a href="mes.html" class="action-btn">Ver Mês Inteiro</a>
         </div>
     </div>
 
