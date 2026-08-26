@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Painel Admin - Gestão de Banners</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
     <style>
         body {
@@ -108,27 +104,29 @@
         <div class="card">
             <h2>📤 Registar e Publicar Anúncio (1 Mês)</h2>
             
-            <label>Nome do Anunciante / Empresa:</label>
-            <input type="text" id="nomeAnunciante" placeholder="Ex: Padaria do João">
+            <form id="formBanner">
+                <label>Nome do Anunciante / Empresa:</label>
+                <input type="text" id="nomeAnunciante" placeholder="Ex: Padaria do João" required>
 
-            <label>WhatsApp do Anunciante (com DDD para avisos):</label>
-            <input type="text" id="whatsappAnunciante" placeholder="5511999999999">
+                <label>WhatsApp do Anunciante (com DDD para avisos):</label>
+                <input type="text" id="whatsappAnunciante" placeholder="5511999999999">
 
-            <label>Onde o banner vai aparecer (Categoria):</label>
-            <select id="categoriaInput">
-                <option value="semanames">Agenda (Semana e Mês)</option>
-                <option value="home">Menu Inicial (Home)</option>
-                <option value="jogos">Página de Jogos</option>
-                <option value="viagens">Página de Viagens</option>
-            </select>
+                <label>Onde o banner vai aparecer (Categoria):</label>
+                <select id="categoriaInput">
+                    <option value="semanames">Agenda (Semana e Mês)</option>
+                    <option value="home">Menu Inicial (Home)</option>
+                    <option value="jogos">Página de Jogos</option>
+                    <option value="viagens">Página de Viagens</option>
+                </select>
 
-            <label>Link de Destino do Anúncio (Ex: Site ou WhatsApp):</label>
-            <input type="text" id="linkInput" placeholder="https://wa.me/55...">
+                <label>Link de Destino do Anúncio (Ex: Site ou WhatsApp):</label>
+                <input type="text" id="linkInput" placeholder="https://wa.me/55...">
 
-            <label>Selecione a Imagem do Banner:</label>
-            <input type="file" id="imagemInput" accept="image/*">
+                <label>Selecione a Imagem do Banner:</label>
+                <input type="file" id="imagemInput" accept="image/*" required>
 
-            <button class="btn" onclick="salvarAnuncio()">Aprovar e Publicar</button>
+                <button type="submit" class="btn">Aprovar e Publicar</button>
+            </form>
         </div>
 
         <!-- Lista de Anúncios Ativos -->
@@ -144,8 +142,8 @@
             <label>Pesquisar histórico por Nome da Empresa:</label>
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                 <input type="text" id="inputPesquisa" placeholder="Ex: Padaria do João" style="margin-bottom: 0;">
-                <button class="btn" style="width: 120px;" onclick="pesquisarAnunciante()">Pesquisar</button>
-                <button class="btn" style="width: 100px; background: #64748b;" onclick="carregarHistoricoAdmin()">Limpar</button>
+                <button type="button" class="btn" style="width: 120px;" onclick="window.pesquisarAnunciante()">Pesquisar</button>
+                <button type="button" class="btn" style="width: 100px; background: #64748b;" onclick="window.carregarHistoricoAdmin()">Limpar</button>
             </div>
 
             <div id="resultadoPesquisaInfo" style="font-size: 0.85rem; font-weight: bold; color: #0d47a1; margin-bottom: 10px;"></div>
@@ -153,32 +151,34 @@
         </div>
     </div>
 
-    <script>
-        // CONFIGURAÇÃO DO FIREBASE (Substitua com as suas credenciais reais)
+    <!-- Script Modular do Firebase e Lógica -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-storage.js";
+
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_DOMINIO.firebaseapp.com",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_BUCKET.appspot.com",
-            messagingSenderId: "SUA_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+            authDomain: "ajuda-jp.firebaseapp.com",
+            projectId: "ajuda-jp",
+            storageBucket: "ajuda-jp.firebasestorage.app",
+            messagingSenderId: "40121072206",
+            appId: "1:40121072206:web:8a844e632f004f61d0a11f"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
-        const storage = firebase.storage();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        // Função para calcular 1 mês exato no futuro
         function calcularValidadeUmMes() {
             const data = new Date();
             data.setMonth(data.getMonth() + 1);
             return data.toISOString().split('T')[0];
         }
 
-        // Publicar novo anúncio
-        async function salvarAnuncio() {
+        // Submissão do Formulário
+        document.getElementById("formBanner").addEventListener("submit", async (e) => {
+            e.preventDefault();
             const nome = document.getElementById('nomeAnunciante').value.trim();
             const whats = document.getElementById('whatsappAnunciante').value.trim();
             const categoria = document.getElementById('categoriaInput').value;
@@ -186,23 +186,22 @@
             const fileInput = document.getElementById('imagemInput');
 
             if (!nome || fileInput.files.length === 0) {
-                alert("Por favor, preencha o nome do anunciante e selecione uma imagem.");
+                alert("Por favor, preencha o nome e selecione uma imagem.");
                 return;
             }
 
             const file = fileInput.files[0];
-            const storageRef = storage.ref('banners/' + Date.now() + '_' + file.name);
+            const storageRef = ref(storage, 'banners/' + Date.now() + '_' + file.name);
 
             alert("A carregar imagem para o Firebase...");
 
             try {
-                const snapshot = await storageRef.put(file);
-                const downloadURL = await snapshot.ref.getDownloadURL();
+                await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(storageRef);
                 const dataInicio = new Date().toISOString().split('T')[0];
                 const dataExpiracao = calcularValidadeUmMes();
 
-                // Guarda na coleção "anuncios" ativos
-                await db.collection("anuncios").add({
+                await addDoc(collection(db, "anuncios"), {
                     nomeAnunciante: nome,
                     whatsapp: whats,
                     categoria: categoria,
@@ -214,33 +213,37 @@
                 });
 
                 alert("Anúncio publicado com sucesso!");
-                location.reload();
+                document.getElementById("formBanner").reset();
+                window.carregarPaineis();
             } catch (error) {
                 console.error("Erro ao salvar: ", error);
                 alert("Erro ao publicar anúncio.");
             }
-        }
+        });
 
-        // Carregar painel de ativos e histórico inicial
-        function carregarPaineis() {
-            carregarAnunciosAdmin();
-            carregarHistoricoAdmin();
-        }
+        // Funções globais para ligar aos botões HTML
+        window.carregarPaineis = function() {
+            window.carregarAnunciosAdmin();
+            window.carregarHistoricoAdmin();
+        };
 
-        function carregarAnunciosAdmin() {
+        window.carregarAnunciosAdmin = async function() {
             const container = document.getElementById("listaAdminAnuncios");
-            container.innerHTML = "";
+            container.innerHTML = "A carregar anúncios ativos...";
 
-            db.collection("anuncios").get().then((querySnapshot) => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "anuncios"));
                 if (querySnapshot.empty) {
                     container.innerHTML = "<p>Nenhum anúncio ativo no momento.</p>";
                     return;
                 }
 
+                container.innerHTML = "";
                 const hojeStr = new Date().toISOString().split('T')[0];
 
-                querySnapshot.forEach((doc) => {
-                    const an = doc.data();
+                querySnapshot.forEach((documento) => {
+                    const an = documento.data();
+                    const docId = documento.id;
                     const hoje = new Date(hojeStr);
                     const expiracao = new Date(an.dataExpiracao);
                     const diferencaDias = Math.ceil((expiracao - hoje) / (1000 * 60 * 60 * 24));
@@ -272,66 +275,72 @@
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 5px;">
-                                <button onclick="arquivarParaHistorico('${doc.id}')" style="background:#f59e0b; color:white; border:none; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;" title="Move para o histórico">Arquivar</button>
-                                <button onclick="apagarAnuncio('${doc.id}')" style="background:#ef4444; color:white; border:none; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Apagar</button>
+                                <button type="button" onclick="window.arquivarParaHistorico('${docId}')" style="background:#f59e0b; color:white; border:none; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;" title="Move para o histórico">Arquivar</button>
+                                <button type="button" onclick="window.apagarAnuncio('${docId}')" style="background:#ef4444; color:white; border:none; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Apagar</button>
                             </div>
                         </div>
                     `;
                 });
-            });
-        }
+            } catch (err) {
+                console.error("Erro ao carregar anúncios:", err);
+                container.innerHTML = "<p>Erro ao carregar anúncios ativos.</p>";
+            }
+        };
 
-        // Mover anúncio para o histórico
-        async function arquivarParaHistorico(id) {
+        window.arquivarParaHistorico = async function(id) {
             if (!confirm("Deseja mover este anúncio para o histórico?")) return;
 
             try {
-                const docRef = db.collection("anuncios").doc(id);
-                const docSnap = await docRef.get();
+                const docRef = doc(db, "anuncios", id);
+                const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists) {
+                if (docSnap.exists()) {
                     const dados = docSnap.data();
-                    await db.collection("historico").add({
+                    await addDoc(collection(db, "historico"), {
                         ...dados,
                         dataArquivamento: new Date().toISOString().split('T')[0],
                         status: "arquivado"
                     });
 
-                    await docRef.delete();
+                    await deleteDoc(docRef);
                     alert("Movido para o histórico com sucesso!");
-                    carregarPaineis();
+                    window.carregarPaineis();
                 }
             } catch (err) {
                 console.error("Erro ao arquivar:", err);
                 alert("Erro ao mover para o histórico.");
             }
-        }
+        };
 
-        function apagarAnuncio(id) {
+        window.apagarAnuncio = async function(id) {
             if (confirm("Tem certeza que deseja eliminar este anúncio permanentemente?")) {
-                db.collection("anuncios").doc(id).delete().then(() => {
+                try {
+                    await deleteDoc(doc(db, "anuncios", id));
                     alert("Anúncio apagado!");
-                    carregarPaineis();
-                });
+                    window.carregarPaineis();
+                } catch (err) {
+                    console.error("Erro ao apagar:", err);
+                    alert("Erro ao apagar anúncio.");
+                }
             }
-        }
+        };
 
-        // Carregar o Histórico Padrão
-        function carregarHistoricoAdmin() {
+        window.carregarHistoricoAdmin = async function() {
             document.getElementById('inputPesquisa').value = "";
             document.getElementById('resultadoPesquisaInfo').innerHTML = "";
             const container = document.getElementById("listaHistorico");
             container.innerHTML = "A carregar histórico...";
 
-            db.collection("historico").get().then((querySnapshot) => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "historico"));
                 if (querySnapshot.empty) {
                     container.innerHTML = "<p>Nenhum registo no histórico.</p>";
                     return;
                 }
 
                 container.innerHTML = "";
-                querySnapshot.forEach((doc) => {
-                    const h = doc.data();
+                querySnapshot.forEach((documento) => {
+                    const h = documento.data();
                     container.innerHTML += `
                         <div class="history-item">
                             <b>Empresa:</b> ${h.nomeAnunciante} | 
@@ -341,14 +350,16 @@
                         </div>
                     `;
                 });
-            });
-        }
+            } catch (err) {
+                console.error("Erro ao carregar histórico:", err);
+                container.innerHTML = "<p>Erro ao carregar histórico.</p>";
+            }
+        };
 
-        // Pesquisar Anunciante Específico no Histórico
-        function pesquisarAnunciante() {
+        window.pesquisarAnunciante = async function() {
             const termo = document.getElementById('inputPesquisa').value.trim().toLowerCase();
             const container = document.getElementById("listaHistorico");
-            const infoContainer = document.getElementById("resultadoPesquisaInfo");
+            const infoContainer = document.getElementById('resultadoPesquisaInfo');
             
             if (!termo) {
                 alert("Digite o nome do anunciante para pesquisar.");
@@ -358,12 +369,13 @@
             container.innerHTML = "A pesquisar...";
             infoContainer.innerHTML = "";
 
-            Promise.all([
-                db.collection("historico").get(),
-                db.collection("anuncios").get()
-            ]).then(([snapshotHist, snapshotAtivos]) => {
-                let todosRegistos = [];
+            try {
+                const [snapshotHist, snapshotAtivos] = await Promise.all([
+                    getDocs(collection(db, "historico")),
+                    getDocs(collection(db, "anuncios"))
+                ]);
 
+                let todosRegistos = [];
                 snapshotHist.forEach(doc => todosRegistos.push(doc.data()));
                 snapshotAtivos.forEach(doc => todosRegistos.push(doc.data()));
 
@@ -394,31 +406,14 @@
                         </div>
                     `;
                 });
-            }).catch(err => {
+            } catch (err) {
                 console.error("Erro na pesquisa:", err);
                 container.innerHTML = "<p>Erro ao realizar a pesquisa.</p>";
-            });
-        }
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+            }
+        };
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
-    authDomain: "ajuda-jp.firebaseapp.com",
-    projectId: "ajuda-jp",
-    storageBucket: "ajuda-jp.firebasestorage.app",
-    messagingSenderId: "40121072206",
-    appId: "1:40121072206:web:8a844e632f004f61d0a11f"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-
-        window.onload = carregarPaineis;
+        // Carrega os painéis automaticamente ao abrir a página
+        window.onload = window.carregarPaineis;
     </script>
 </body>
 </html>
