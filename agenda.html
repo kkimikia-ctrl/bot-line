@@ -136,14 +136,24 @@
     <header class="header">
         <a href="index.html" class="header-btn">◀ Voltar</a>
         <div class="header-title">Agenda da Semana</div>
-        <!-- BOTÃO CORRIGIDO AQUI: Agora aponta corretamente para o mes.html -->
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <!-- Carrossel Infinito de Banners -->
+    <!-- Carrossel Infinito com padrão garantido -->
     <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
-            <!-- Os banners serão carregados dinamicamente aqui -->
+            <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="mes.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="mes.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+            <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="mes.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="mes.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
         </div>
     </section>
 
@@ -190,19 +200,16 @@
                 .where("categoria", "==", "semanames")
                 .get()
                 .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        document.querySelector(".carousel-container").style.display = "none";
-                        return;
-                    }
+                    if (querySnapshot.empty) return;
 
-                    let originalHTML = "";
+                    let dynamicHTML = "";
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
                         const imagemUrl = data.imagemUrl || data.url || "";
                         const linkUrl = data.linkDestino || data.linkUrl || "#";
 
                         if (imagemUrl) {
-                            originalHTML += `
+                            dynamicHTML += `
                                 <a href="${linkUrl}" target="_blank">
                                     <img src="${imagemUrl}" alt="Banner Anúncio">
                                 </a>
@@ -210,13 +217,9 @@
                         }
                     });
 
-                    if (originalHTML === "") {
-                        document.querySelector(".carousel-container").style.display = "none";
-                        return;
+                    if (dynamicHTML !== "") {
+                        track.innerHTML = dynamicHTML + dynamicHTML;
                     }
-
-                    // Duplica o conteúdo para garantir o efeito de carrossel infinito contínuo igualzinho ao do mês
-                    track.innerHTML = originalHTML + originalHTML;
                 })
                 .catch((error) => {
                     console.error("Erro ao carregar banners do carrossel:", error);
