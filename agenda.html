@@ -139,9 +139,9 @@
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <section class="carousel-container">
+    <section class="carousel-container" id="carouselWrapper">
         <div class="carousel-track" id="carouselTrack">
-            <!-- Os banners serão carregados dinamicamente do Firebase -->
+            <div style="padding: 15px; font-size: 0.85rem; color: #64748b;">A carregar banners...</div>
         </div>
     </section>
 
@@ -179,14 +179,16 @@
     <script>
         function carregarBannersAgenda() {
             const track = document.getElementById("carouselTrack");
-            if (!track) return;
+            const wrapper = document.getElementById("carouselWrapper");
+            if (!track || !wrapper) return;
 
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
             if (!dbFirestore) {
-                console.error("Firestore não inicializado!");
+                track.innerHTML = "<div style='padding:15px; color:red;'>Erro: Firebase não inicializado</div>";
                 return;
             }
 
+            // Buscando na coleção "anuncios" onde a categoria é "semanames"
             dbFirestore.collection("anuncios")
                 .where("categoria", "==", "semanames")
                 .get()
@@ -194,7 +196,7 @@
                     track.innerHTML = "";
 
                     if (querySnapshot.empty) {
-                        document.querySelector(".carousel-container").style.display = "none";
+                        track.innerHTML = "<div style='padding: 10px 15px; font-size: 0.85rem; color: #64748b;'>Nenhum banner cadastrado para 'semanames'.</div>";
                         return;
                     }
 
@@ -202,11 +204,11 @@
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
                         const imagemUrl = data.imagemUrl || data.url || "";
-                        const linkUrl = data.linkDestino || data.linkUrl || "agenda.html";
+                        const linkUrl = data.linkDestino || data.linkUrl || "#";
 
                         if (imagemUrl) {
                             bannersHTML += `
-                                <a href="${linkUrl}">
+                                <a href="${linkUrl}" target="_blank">
                                     <img src="${imagemUrl}" alt="Banner">
                                 </a>
                             `;
@@ -214,7 +216,7 @@
                     });
 
                     if (bannersHTML === "") {
-                        document.querySelector(".carousel-container").style.display = "none";
+                        track.innerHTML = "<div style='padding: 10px 15px; font-size: 0.85rem; color: #64748b;'>Imagens dos banners não encontradas.</div>";
                         return;
                     }
 
@@ -222,7 +224,8 @@
                     track.innerHTML = bannersHTML + bannersHTML;
                 })
                 .catch((error) => {
-                    console.error("Erro ao carregar banners na agenda:", error);
+                    console.error("Erro ao carregar banners:", error);
+                    track.innerHTML = `<div style='padding: 10px 15px; font-size: 0.85rem; color: red;'>Erro ao carregar: ${error.message}</div>`;
                 });
         }
 
