@@ -60,49 +60,52 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- CARROSSEL INFINITO LENTO --- */
-        .carousel-container {
-            width: 100%;
-            overflow-x: auto;
-            background: #ffffff;
-            padding: 10px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 12px;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-        }
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-        .carousel-track {
+        /* --- ESTILO DE DESTAQUES IDÊNTICO AO MÊS --- */
+        .destaques-container {
             display: flex;
             gap: 10px;
-            width: max-content;
-            animation: rolarInfinito 45s linear infinite;
+            padding: 10px 15px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-sizing: border-box;
         }
-        .carousel-container:hover .carousel-track,
-        .carousel-container:active .carousel-track {
-            animation-play-state: paused;
+        .destaque-card {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .carousel-track a {
-            display: block;
-            flex-shrink: 0;
-            width: 150px;
-            height: 85px;
-            border-radius: 8px;
+        .destaque-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 5px;
+        }
+        .destaque-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #eee;
-            border: 1px solid #ddd;
+            border: 1px dashed #cbd5e1;
+            font-size: 0.7rem;
+            color: #64748b;
+            text-decoration: none;
         }
-        .carousel-track img {
+        .destaque-content img {
             width: 100%;
-            height: 100%;
+            height: 60px;
             object-fit: cover;
-        }
-        @keyframes rolarInfinito {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-50% - 5px)); }
+            border-radius: 6px;
         }
 
         .container {
@@ -135,15 +138,25 @@
 
     <header class="header">
         <a href="index.html" class="header-btn">◀ Voltar</a>
-        <div class="header-title">📅 Agenda da Semana</div>
+        <div class="header-title">Agenda da Semana</div>
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <section class="carousel-container" id="carouselWrapper">
-        <div class="carousel-track" id="carouselTrack">
-            <div style="padding: 15px; font-size: 0.85rem; color: #64748b;">A carregar banners...</div>
+    <!-- 3 Blocos de Destaques Iguais ao Mês -->
+    <div class="destaques-container">
+        <div class="destaque-card">
+            <div class="destaque-title">Destaque 1</div>
+            <div class="destaque-content" id="slotBanner1">A carregar...</div>
         </div>
-    </section>
+        <div class="destaque-card">
+            <div class="destaque-title">Destaque 2</div>
+            <div class="destaque-content" id="slotBanner2">A carregar...</div>
+        </div>
+        <div class="destaque-card">
+            <div class="destaque-title">Destaque 3</div>
+            <div class="destaque-content" id="slotBanner3">A carregar...</div>
+        </div>
+    </div>
 
     <div class="container" id="agendaContainer">
         <div class="day-card">
@@ -177,59 +190,49 @@
     </div>
 
     <script>
-        function carregarBannersAgenda() {
-            const track = document.getElementById("carouselTrack");
-            const wrapper = document.getElementById("carouselWrapper");
-            if (!track || !wrapper) return;
-
+        function carregarBannersDestaques() {
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            if (!dbFirestore) {
-                track.innerHTML = "<div style='padding:15px; color:red;'>Erro: Firebase não inicializado</div>";
-                return;
-            }
+            if (!dbFirestore) return;
 
-            // Buscando na coleção "anuncios" onde a categoria é "semanames"
             dbFirestore.collection("anuncios")
                 .where("categoria", "==", "semanames")
                 .get()
                 .then((querySnapshot) => {
-                    track.innerHTML = "";
+                    const slots = [
+                        document.getElementById("slotBanner1"),
+                        document.getElementById("slotBanner2"),
+                        document.getElementById("slotBanner3")
+                    ];
 
-                    if (querySnapshot.empty) {
-                        track.innerHTML = "<div style='padding: 10px 15px; font-size: 0.85rem; color: #64748b;'>Nenhum banner cadastrado para 'semanames'.</div>";
-                        return;
-                    }
-
-                    let bannersHTML = "";
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const imagemUrl = data.imagemUrl || data.url || "";
-                        const linkUrl = data.linkDestino || data.linkUrl || "#";
-
-                        if (imagemUrl) {
-                            bannersHTML += `
-                                <a href="${linkUrl}" target="_blank">
-                                    <img src="${imagemUrl}" alt="Banner">
-                                </a>
-                            `;
-                        }
+                    // Limpa slots iniciais
+                    slots.forEach(slot => {
+                        if (slot) slot.innerHTML = "Vago";
                     });
 
-                    if (bannersHTML === "") {
-                        track.innerHTML = "<div style='padding: 10px 15px; font-size: 0.85rem; color: #64748b;'>Imagens dos banners não encontradas.</div>";
-                        return;
-                    }
+                    let index = 0;
+                    querySnapshot.forEach((doc) => {
+                        if (index < 3) {
+                            const data = doc.data();
+                            const imagemUrl = data.imagemUrl || data.url || "";
+                            const linkUrl = data.linkDestino || data.linkUrl || "#";
 
-                    // Duplica os elementos para o efeito de carrossel infinito contínuo
-                    track.innerHTML = bannersHTML + bannersHTML;
+                            if (imagemUrl && slots[index]) {
+                                slots[index].innerHTML = `
+                                    <a href="${linkUrl}" target="_blank" style="display:block; width:100%; height:100%;">
+                                        <img src="${imagemUrl}" alt="Banner">
+                                    </a>
+                                `;
+                            }
+                            index++;
+                        }
+                    });
                 })
                 .catch((error) => {
                     console.error("Erro ao carregar banners:", error);
-                    track.innerHTML = `<div style='padding: 10px 15px; font-size: 0.85rem; color: red;'>Erro ao carregar: ${error.message}</div>`;
                 });
         }
 
-        carregarBannersAgenda();
+        carregarBannersDestaques();
     </script>
 </body>
 </html>
