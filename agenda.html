@@ -141,12 +141,11 @@
 
     <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
-            <!-- Banners carregados dinamicamente via Firebase -->
+            <!-- Os banners serão carregados dinamicamente do Firebase -->
         </div>
     </section>
 
     <div class="container" id="agendaContainer">
-        <!-- Os dias da semana serão injetados aqui ou listados estaticamente -->
         <div class="day-card">
             <div class="day-title">Quarta-feira, 26 de Agosto</div>
             <div class="day-content">🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário</div>
@@ -178,16 +177,18 @@
     </div>
 
     <script>
-        // Função para carregar os banners do Firestore (Categoria: semanames)
-        function carregarBannersDinamicos() {
+        function carregarBannersAgenda() {
             const track = document.getElementById("carouselTrack");
             if (!track) return;
 
-            const dbFirestore = window.db || firebase.firestore();
+            const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
+            if (!dbFirestore) {
+                console.error("Firestore não inicializado!");
+                return;
+            }
 
-            dbFirestore.collection("banners")
+            dbFirestore.collection("anuncios")
                 .where("categoria", "==", "semanames")
-                .where("ativo", "==", true)
                 .get()
                 .then((querySnapshot) => {
                     track.innerHTML = "";
@@ -201,7 +202,7 @@
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
                         const imagemUrl = data.imagemUrl || data.url || "";
-                        const linkUrl = data.linkUrl || "agenda.html";
+                        const linkUrl = data.linkDestino || data.linkUrl || "agenda.html";
 
                         if (imagemUrl) {
                             bannersHTML += `
@@ -212,16 +213,20 @@
                         }
                     });
 
-                    // Duplica o conteúdo para manter a animação contínua e suave do carrossel
+                    if (bannersHTML === "") {
+                        document.querySelector(".carousel-container").style.display = "none";
+                        return;
+                    }
+
+                    // Duplica os elementos para o efeito de carrossel infinito contínuo
                     track.innerHTML = bannersHTML + bannersHTML;
                 })
                 .catch((error) => {
-                    console.error("Erro ao carregar banners do carrossel da agenda:", error);
+                    console.error("Erro ao carregar banners na agenda:", error);
                 });
         }
 
-        // Executa o carregamento ao iniciar a página
-        carregarBannersDinamicos();
+        carregarBannersAgenda();
     </script>
 </body>
 </html>
