@@ -44,6 +44,7 @@
             font-size: 0.95rem;
         }
         .btn:hover { background: #1565c0; }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; }
         .ad-item {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -95,6 +96,13 @@
             font-size: 0.8rem;
             color: #475569;
         }
+        #statusEnvio {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #d97706;
+            margin-bottom: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -125,7 +133,8 @@
                 <label>Selecione a Imagem do Banner:</label>
                 <input type="file" id="imagemInput" accept="image/*" required>
 
-                <button type="submit" class="btn">Aprovar e Publicar</button>
+                <div id="statusEnvio"></div>
+                <button type="submit" id="btnPublicar" class="btn">Aprovar e Publicar</button>
             </form>
         </div>
 
@@ -184,6 +193,8 @@
             const categoria = document.getElementById('categoriaInput').value;
             const link = document.getElementById('linkInput').value.trim();
             const fileInput = document.getElementById('imagemInput');
+            const statusDiv = document.getElementById('statusEnvio');
+            const btnPublicar = document.getElementById('btnPublicar');
 
             if (!nome || fileInput.files.length === 0) {
                 alert("Por favor, preencha o nome e selecione uma imagem.");
@@ -193,15 +204,18 @@
             const file = fileInput.files[0];
             const storageRef = ref(storage, 'banners/' + Date.now() + '_' + file.name);
 
-            alert("A carregar imagem para o Firebase...");
+            // Desativa o botão e mostra o status na tela sem pausar com alert
+            btnPublicar.disabled = true;
+            statusDiv.innerHTML = "⏳ A carregar imagem para o Firebase, aguarde...";
 
             try {
                 await uploadBytes(storageRef, file);
+                statusDiv.innerHTML = "⏳ A salvar dados no banco...";
+                
                 const downloadURL = await getDownloadURL(storageRef);
                 const dataInicio = new Date().toISOString().split('T')[0];
                 const dataExpiracao = calcularValidadeUmMes();
 
-                // Salva na coleção "anuncios" para aparecer na agenda
                 await addDoc(collection(db, "anuncios"), {
                     nomeAnunciante: nome,
                     whatsapp: whats,
@@ -213,12 +227,16 @@
                     status: "ativo"
                 });
 
+                statusDiv.innerHTML = "";
                 alert("Anúncio publicado com sucesso!");
                 document.getElementById("formBanner").reset();
                 window.carregarPaineis();
             } catch (error) {
                 console.error("Erro ao salvar: ", error);
-                alert("Erro ao publicar anúncio.");
+                alert("Erro ao publicar anúncio: " + error.message);
+                statusDiv.innerHTML = "";
+            } finally {
+                btnPublicar.disabled = false;
             }
         });
 
