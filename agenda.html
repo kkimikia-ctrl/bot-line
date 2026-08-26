@@ -60,52 +60,49 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- ESTILO DE DESTAQUES IDÊNTICO AO MÊS --- */
-        .destaques-container {
+        /* --- CARROSSEL INFINITO IDÊNTICO AO DO MÊS --- */
+        .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #ffffff;
+            padding: 10px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 12px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
             display: flex;
             gap: 10px;
-            padding: 10px 15px;
-            max-width: 500px;
-            margin: 0 auto;
-            box-sizing: border-box;
+            width: max-content;
+            animation: rolarInfinito 45s linear infinite;
         }
-        .destaque-card {
-            flex: 1;
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center;
-            border: 1px solid #e2e8f0;
-            min-height: 90px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
         }
-        .destaque-title {
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: #0d47a1;
-            margin-bottom: 5px;
-        }
-        .destaque-content {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8fafc;
-            border-radius: 6px;
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 150px;
+            height: 85px;
+            border-radius: 8px;
             overflow: hidden;
-            border: 1px dashed #cbd5e1;
-            font-size: 0.7rem;
-            color: #64748b;
-            text-decoration: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #eee;
+            border: 1px solid #ddd;
         }
-        .destaque-content img {
+        .carousel-track img {
             width: 100%;
-            height: 60px;
+            height: 100%;
             object-fit: cover;
-            border-radius: 6px;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 5px)); }
         }
 
         .container {
@@ -139,24 +136,16 @@
     <header class="header">
         <a href="index.html" class="header-btn">◀ Voltar</a>
         <div class="header-title">Agenda da Semana</div>
+        <!-- BOTÃO CORRIGIDO AQUI: Agora aponta corretamente para o mes.html -->
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <!-- 3 Blocos de Destaques Iguais ao Mês -->
-    <div class="destaques-container">
-        <div class="destaque-card">
-            <div class="destaque-title">Destaque 1</div>
-            <div class="destaque-content" id="slotBanner1">A carregar...</div>
+    <!-- Carrossel Infinito de Banners -->
+    <section class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+            <!-- Os banners serão carregados dinamicamente aqui -->
         </div>
-        <div class="destaque-card">
-            <div class="destaque-title">Destaque 2</div>
-            <div class="destaque-content" id="slotBanner2">A carregar...</div>
-        </div>
-        <div class="destaque-card">
-            <div class="destaque-title">Destaque 3</div>
-            <div class="destaque-content" id="slotBanner3">A carregar...</div>
-        </div>
-    </div>
+    </section>
 
     <div class="container" id="agendaContainer">
         <div class="day-card">
@@ -190,7 +179,10 @@
     </div>
 
     <script>
-        function carregarBannersDestaques() {
+        function carregarBannersCarrossel() {
+            const track = document.getElementById("carouselTrack");
+            if (!track) return;
+
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
             if (!dbFirestore) return;
 
@@ -198,41 +190,40 @@
                 .where("categoria", "==", "semanames")
                 .get()
                 .then((querySnapshot) => {
-                    const slots = [
-                        document.getElementById("slotBanner1"),
-                        document.getElementById("slotBanner2"),
-                        document.getElementById("slotBanner3")
-                    ];
+                    if (querySnapshot.empty) {
+                        document.querySelector(".carousel-container").style.display = "none";
+                        return;
+                    }
 
-                    // Limpa slots iniciais
-                    slots.forEach(slot => {
-                        if (slot) slot.innerHTML = "Vago";
-                    });
-
-                    let index = 0;
+                    let originalHTML = "";
                     querySnapshot.forEach((doc) => {
-                        if (index < 3) {
-                            const data = doc.data();
-                            const imagemUrl = data.imagemUrl || data.url || "";
-                            const linkUrl = data.linkDestino || data.linkUrl || "#";
+                        const data = doc.data();
+                        const imagemUrl = data.imagemUrl || data.url || "";
+                        const linkUrl = data.linkDestino || data.linkUrl || "#";
 
-                            if (imagemUrl && slots[index]) {
-                                slots[index].innerHTML = `
-                                    <a href="${linkUrl}" target="_blank" style="display:block; width:100%; height:100%;">
-                                        <img src="${imagemUrl}" alt="Banner">
-                                    </a>
-                                `;
-                            }
-                            index++;
+                        if (imagemUrl) {
+                            originalHTML += `
+                                <a href="${linkUrl}" target="_blank">
+                                    <img src="${imagemUrl}" alt="Banner Anúncio">
+                                </a>
+                            `;
                         }
                     });
+
+                    if (originalHTML === "") {
+                        document.querySelector(".carousel-container").style.display = "none";
+                        return;
+                    }
+
+                    // Duplica o conteúdo para garantir o efeito de carrossel infinito contínuo igualzinho ao do mês
+                    track.innerHTML = originalHTML + originalHTML;
                 })
                 .catch((error) => {
-                    console.error("Erro ao carregar banners:", error);
+                    console.error("Erro ao carregar banners do carrossel:", error);
                 });
         }
 
-        carregarBannersDestaques();
+        carregarBannersCarrossel();
     </script>
 </body>
 </html>
