@@ -60,7 +60,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- CARROSSEL INFINITO --- */
+        /* --- CARROSSEL INFINITO DINÂMICO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
@@ -78,22 +78,32 @@
             display: flex;
             gap: 10px;
             width: max-content;
-            animation: rolarInfinito 45s linear infinite;
+            animation: rolarInfinito 35s linear infinite;
         }
         .carousel-container:hover .carousel-track,
         .carousel-container:active .carousel-track {
             animation-play-state: paused;
         }
         .carousel-track a {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             flex-shrink: 0;
-            width: 150px;
-            height: 85px;
+            width: 160px;
+            height: 90px;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             background: #e2e8f0;
             border: 1px solid #cbd5e1;
+            text-decoration: none;
+            color: #334155;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 5px;
+            box-sizing: border-box;
         }
         .carousel-track img {
             width: 100%;
@@ -110,21 +120,30 @@
             margin: 0 auto;
             padding: 0 15px;
         }
-        .day-card {
+        .card {
             background: #ffffff;
             border-radius: 14px;
             padding: 14px 16px;
+            margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            margin-bottom: 10px;
             border-left: 4px solid #0d47a1;
+            max-height: 140px; 
+            overflow-y: auto;  
         }
-        .day-title {
-            font-weight: 700;
-            font-size: 0.95rem;
+        .card::-webkit-scrollbar {
+            width: 4px;
+        }
+        .card::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .card-date {
+            font-weight: bold;
+            font-size: 0.9rem;
             color: #0d47a1;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
-        .day-content {
+        .card-content {
             font-size: 0.85rem;
             color: #475569;
             line-height: 1.4;
@@ -135,56 +154,62 @@
 
     <header class="header">
         <a href="index.html" class="header-btn">◀ Voltar</a>
-        <div class="header-title">Agenda da Semana</div>
+        <div class="header-title">📅 Agenda da Semana</div>
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <!-- Carrossel Infinito -->
     <section class="carousel-container" id="carouselWrapper">
-        <div class="carousel-track" id="carouselTrack">
-            <!-- Conteúdo injetado via script para evitar imagens quebradas -->
-        </div>
+        <div class="carousel-track" id="carouselTrack"></div>
     </section>
 
-    <div class="container" id="agendaContainer">
-        <div class="day-card">
-            <div class="day-title">Quarta-feira, 26 de Agosto</div>
-            <div class="day-content">🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Quinta-feira, 27 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Sexta-feira, 28 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Sábado, 29 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Domingo, 30 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Segunda-feira, 31 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Terça-feira, 1 de Setembro</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-    </div>
+    <div class="container" id="agendaContainer"></div>
 
     <script>
-        function carregarBannersCarrossel() {
-            const track = document.getElementById("carouselTrack");
-            const wrapper = document.getElementById("carouselWrapper");
+        // Banco de eventos opcional por data (Formato: "AAAA-MM-DD")
+        const eventosAgenda = {
+            "2026-08-25": "🌸 Festival Cultural da Cidade - 14:00 na Praça Central",
+            "2026-08-27": "🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário"
+        };
+
+        const diasSemanaNomes = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+        const mesesNomes = ["de Janeiro", "de Fevereiro", "de Março", "de Abril", "de Maio", "de Junho", "de Julho", "de Agosto", "de Setembro", "de Outubro", "de Novembro", "de Dezembro"];
+
+        function gerarAgendaSemana() {
+            const container = document.getElementById('agendaContainer');
+            container.innerHTML = "";
+            const hoje = new Date();
+
+            for (let i = 0; i < 7; i++) {
+                const dataAtual = new Date(hoje);
+                dataAtual.setDate(hoje.getDate() + i);
+
+                const diaSemana = diasSemanaNomes[dataAtual.getDay()];
+                const diaMes = dataAtual.getDate();
+                const nomeMes = mesesNomes[dataAtual.getMonth()];
+                
+                const anoStr = dataAtual.getFullYear();
+                const mesStr = String(dataAtual.getMonth() + 1).padStart(2, '0');
+                const diaStr = String(diaMes).padStart(2, '0');
+                const chaveData = `${anoStr}-${mesStr}-${diaStr}`;
+
+                const textoEvento = eventosAgenda[chaveData] || "Nenhum evento programado.";
+
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
+                    <div class="card-date">${diaSemana}, ${diaMes} ${nomeMes}</div>
+                    <div class="card-content">${textoEvento}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function carregarBannersFirebase() {
+            const track = document.getElementById('carouselTrack');
+            const wrapper = document.getElementById('carouselWrapper');
             if (!track) return;
 
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            
             if (!dbFirestore) {
                 wrapper.style.display = "none";
                 return;
@@ -199,37 +224,37 @@
                         return;
                     }
 
-                    let originalHTML = "";
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const imagemUrl = data.imagemUrl || data.url || "";
-                        const linkUrl = data.linkDestino || data.linkUrl || "#";
+                    let bannersHtml = "";
+                    querySnapshot.forEach((docSnap) => {
+                        const an = docSnap.data();
+                        const imagemUrl = an.imagemUrl || an.url || "";
+                        const link = an.linkDestino && an.linkDestino !== "#" ? an.linkDestino : "#";
 
                         if (imagemUrl) {
-                            originalHTML += `
-                                <a href="${linkUrl}" target="_blank">
-                                    <img src="${imagemUrl}" alt="Banner Anúncio">
+                            bannersHtml += `
+                                <a href="${link}" target="_blank">
+                                    <img src="${imagemUrl}" alt="${an.nomeAnunciante || 'Banner'}">
                                 </a>
                             `;
                         }
                     });
 
-                    if (originalHTML === "") {
+                    if (bannersHtml !== "") {
+                        // Duplica o HTML para garantir a rolagem infinita contínua
+                        track.innerHTML = bannersHtml + bannersHtml;
+                        wrapper.style.display = "block";
+                    } else {
                         wrapper.style.display = "none";
-                        return;
                     }
-
-                    // Duplica perfeitamente para o efeito infinito contínuo
-                    track.innerHTML = originalHTML + originalHTML;
-                    wrapper.style.display = "block";
                 })
-                .catch((error) => {
-                    console.error("Erro ao carregar banners do carrossel:", error);
+                .catch((err) => {
+                    console.error("Erro ao carregar banners:", err);
                     wrapper.style.display = "none";
                 });
         }
 
-        carregarBannersCarrossel();
+        gerarAgendaSemana();
+        carregarBannersFirebase();
     </script>
 </body>
 </html>
