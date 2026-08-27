@@ -445,6 +445,9 @@
         </a>
     </nav>
 
+    <!-- Importa a biblioteca Wanakana para gerar o Romaji correto automaticamente direto no navegador -->
+    <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
+
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -489,7 +492,7 @@
             abrirModalTradutor();
         }
 
-        // Função de tradução com suporte a Romaji embutido
+        // Função de tradução ajustada para exibir o Romaji correto entre parênteses
         async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
@@ -513,25 +516,19 @@
                 if (dados && dados.responseData && dados.responseData.translatedText) {
                     let traducao = dados.responseData.translatedText;
 
-                    // Se traduzimos para japonês (pt|ja), buscamos o Romaji correspondente
+                    // Se traduzimos para japonês, geramos o Romaji correto usando a biblioteca Wanakana
                     if (!contemJapones) {
-                        try {
-                            const urlRomaji = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(traducao)}&langpair=ja|en`;
-                            const respRomaji = await fetch(urlRomaji);
-                            const dadosRomaji = await respRomaji.json();
-                            
-                            if (dadosRomaji && dadosRomaji.responseData && dadosRomaji.responseData.translatedText) {
-                                let romaji = dadosRomaji.responseData.translatedText;
-                                // Exibe Tradução + Romaji organizado
-                                box.innerHTML = `<strong>${traducao}</strong><br><span style="font-size: 14px; color: #047857; font-style: italic;">Romaji: ${romaji}</span>`;
-                                return;
-                            }
-                        } catch (errRomaji) {
-                            // Se falhar o Romaji, mostra só a tradução normal
+                        if (typeof wanakana !== 'undefined') {
+                            let romaji = wanakana.toRomaji(traducao);
+                            // Formata com a primeira letra maiúscula para ficar bonito (ex: Jūtaku)
+                            romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
+                            box.innerText = `${traducao} (${romaji})`;
+                        } else {
+                            box.innerText = traducao;
                         }
+                    } else {
+                        box.innerText = traducao;
                     }
-
-                    box.innerText = traducao;
                 } else {
                     box.innerText = 'Erro ao processar a tradução.';
                 }
