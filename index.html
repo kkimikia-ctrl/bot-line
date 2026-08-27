@@ -513,20 +513,19 @@
                     const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
                     
                     if (!contemJapones && typeof wanakana !== 'undefined') {
-                        let textoLimpo = traducao.replace(/[.!?。、]/g, '');
+                        let apenasJapones = traducao.split('(')[0].trim();
+                        let textoLimpo = apenasJapones.replace(/[.!?。、]/g, '');
                         let romaji = wanakana.toRomaji(textoLimpo);
                         
                         if (romaji) {
                             romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
-                        }
-
-                        if (romaji && romaji.toLowerCase() !== traducao.toLowerCase()) {
-                            box.innerHTML = `${traducao} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                            box.innerHTML = `${apenasJapones} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
                         } else {
-                            box.innerText = traducao;
+                            box.innerText = apenasJapones;
                         }
                     } else {
-                        box.innerText = traducao;
+                        let apenasPortugues = traducao.split('(')[0].trim();
+                        box.innerText = apenasPortugues;
                     }
                 } else {
                     box.innerText = dados.erro || 'Erro ao processar a tradução.';
