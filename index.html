@@ -201,7 +201,7 @@
         .btn-servicos    { background: linear-gradient(135deg, #d97706, #b45309); }
         .btn-empregos    { background: linear-gradient(135deg, #db2777, #be185d); }
         .btn-classificado{ background: linear-gradient(135deg, #0891b2, #0e7490); }
-        .btn-fale        { background: linear-gradient(135deg, #06c755, #059b43); } /* Cor verde LINE para Fale Conosco */
+        .btn-fale        { background: linear-gradient(135deg, #06c755, #059b43); }
 
         .modal {
             display: none;
@@ -489,11 +489,12 @@
             abrirModalTradutor();
         }
 
+        // Função de tradução atualizada usando uma API pública e gratuita
         async function traduzirTexto() {
-            const texto = document.getElementById('textoInput').value;
+            const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
-            if (!texto.trim()) {
+            if (!texto) {
                 alert('Digite algum texto primeiro!');
                 return;
             }
@@ -502,13 +503,21 @@
             box.innerText = 'Traduzindo...';
 
             try {
-                const resposta = await fetch('/api/traduzir', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texto })
-                });
+                // Detecta se o texto contém caracteres japoneses (Hiragana, Katakana ou Kanji)
+                const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
+                // Se for japonês, traduz para Português (ja|pt). Se não, traduz para Japonês (pt|ja).
+                const parIdioma = contemJapones ? 'ja|pt' : 'pt|ja';
+
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${parIdioma}`;
+                
+                const resposta = await fetch(url);
                 const dados = await resposta.json();
-                box.innerText = dados.traducao || 'Erro na tradução';
+
+                if (dados && dados.responseData && dados.responseData.translatedText) {
+                    box.innerText = dados.responseData.translatedText;
+                } else {
+                    box.innerText = 'Erro ao processar a tradução.';
+                }
             } catch (e) {
                 box.innerText = 'Erro ao conectar com o tradutor.';
             }
@@ -635,7 +644,7 @@
 
         function encerrarChamadaPorTempo() {
             clearInterval(timerInterval);
-            pararStream();
+          pararStream();
             document.getElementById('modalEspera').style.display = 'none';
             alert("O tempo contratado esgotou e a chamada foi encerrada.");
         }
