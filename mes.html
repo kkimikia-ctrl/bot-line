@@ -384,40 +384,46 @@
                 return;
             }
 
-            // Carrega todos os banners da coleção sem filtros restritos
-            dbFirestore.collection("anuncios")
-                .get()
-                .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        if (wrapper) wrapper.style.display = "none";
-                        return;
+            const processarSnapshot = (querySnapshot) => {
+                if (querySnapshot.empty) return false;
+
+                let bannersHtml = "";
+                querySnapshot.forEach((docSnap) => {
+                    const an = docSnap.data();
+                    const imagemUrl = an.imagemUrl || an.url || an.imagem || "";
+                    const link = an.linkDestino && an.linkDestino !== "#" ? an.linkDestino : "#";
+
+                    if (imagemUrl) {
+                        bannersHtml += `
+                            <a href="${link}" target="_blank">
+                                <img src="${imagemUrl}" alt="${an.nomeAnunciante || 'Banner'}">
+                            </a>
+                        `;
                     }
-
-                    let bannersHtml = "";
-                    querySnapshot.forEach((docSnap) => {
-                        const an = docSnap.data();
-                        const imagemUrl = an.imagemUrl || an.url || "";
-                        const link = an.linkDestino && an.linkDestino !== "#" ? an.linkDestino : "#";
-
-                        if (imagemUrl) {
-                            bannersHtml += `
-                                <a href="${link}" target="_blank">
-                                    <img src="${imagemUrl}" alt="${an.nomeAnunciante || 'Banner'}">
-                                </a>
-                            `;
-                        }
-                    });
-
-                    if (bannersHtml !== "") {
-                        track.innerHTML = bannersHtml + bannersHtml;
-                        if (wrapper) wrapper.style.display = "block";
-                    } else {
-                        if (wrapper) wrapper.style.display = "none";
-                    }
-                })
-                .catch(() => {
-                    if (wrapper) wrapper.style.display = "none";
                 });
+
+                if (bannersHtml !== "") {
+                    track.innerHTML = bannersHtml + bannersHtml;
+                    if (wrapper) wrapper.style.display = "block";
+                    return true;
+                }
+                return false;
+            };
+
+            // Tenta primeiro "anuncios", se não encontrar tenta "banners"
+            dbFirestore.collection("anuncios").get().then((snapshot1) => {
+                if (!processarSnapshot(snapshot1)) {
+                    dbFirestore.collection("banners").get().then((snapshot2) => {
+                        if (!processarSnapshot(snapshot2)) {
+                            if (wrapper) wrapper.style.display = "none";
+                        }
+                    }).catch(() => {
+                        if (wrapper) wrapper.style.display = "none";
+                    });
+                }
+            }).catch(() => {
+                if (wrapper) wrapper.style.display = "none";
+            });
         }
 
         carregarEventosFirebase();
