@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entretenimento e Lazer</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+        /* TRAVA TOTAL DA PÁGINA: Impede que a tela role ou puxe para cima/baixo */
+        html, body {
+            height: 100vh;
             margin: 0;
             padding: 0;
+            overflow: hidden;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
             text-align: center;
-            /* Espaçamento superior ajustado para o cabeçalho e carrossel não cortarem nada */
-            padding-top: 145px;
-            overflow-x: hidden;
         }
+
         .header {
             background-color: #0d47a1;
             color: white;
@@ -53,7 +54,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- CARROSSEL INFINITO EXATO DA SUA PÁGINA INICIAL --- */
+        /* --- CARROSSEL INFINITO EXATO --- */
         .carousel-container {
             position: fixed;
             top: 45px;
@@ -62,7 +63,7 @@
             overflow-x: auto;
             background: #ffffff;
             padding: 8px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
             z-index: 999;
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
@@ -105,13 +106,15 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 15px;
-            padding-bottom: 80px;
+            padding-top: 145px; /* Espaço exato para o topo fixo não tampar os botões */
+            box-sizing: border-box;
+            height: 100vh;
+            overflow: hidden;
         }
         .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 25px;
         }
         .card-btn {
             background: white;
@@ -155,93 +158,7 @@
         <div style="width: 55px;"></div>
     </div>
 
-    <!-- Carrossel Infinito com o tamanho exato que você enviou -->
     <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
             <a href="lives.html"><img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" alt="Destaque 1"></a>
-            <a href="radio.html"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" alt="Destaque 2"></a>
-            <a href="karaoke.html"><img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" alt="Destaque 3"></a>
-            <a href="omikuji.html"><img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=400&auto=format&fit=crop&q=60" alt="Destaque 4"></a>
-        </div>
-    </section>
-
-    <div class="container">
-        <div class="grid-menu">
-            <button class="card-btn" onclick="window.location.href='lives.html'">
-                <span class="icon">🔴</span>
-                <span class="title">Lives</span>
-                <span class="subtitle">Transmissões e Prêmios</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='radio.html'">
-                <span class="icon">📻</span>
-                <span class="title">Rádios & Som</span>
-                <span class="subtitle">Todas as Opções</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='karaoke.html'">
-                <span class="icon">🎤</span>
-                <span class="title">Karaokê</span>
-                <span class="subtitle">Cante com a Gente</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='omikuji.html'">
-                <span class="icon">🔮</span>
-                <span class="title">Horóscopo</span>
-                <span class="subtitle">Omikuji do Dia</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='chat.html'">
-                <span class="icon">💬</span>
-                <span class="title">Chat</span>
-                <span class="subtitle">Comunidade Online</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='viagens.html'">
-                <span class="icon">🗺️</span>
-                <span class="title">Lazer & Viagens</span>
-                <span class="subtitle">Dicas e pontos turísticos</span>
-            </button>
-
-            <button class="card-btn" onclick="alert('Descontos em breve!')">
-                <span class="icon">🎟️</span>
-                <span class="title">Descontos</span>
-                <span class="subtitle">Cupons em Loja</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='forca.html'">
-                <span class="icon">🎮</span>
-                <span class="title">Jogos</span>
-                <span class="subtitle">Sorteios e Diversão</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='agenda.html'">
-                <span class="icon">📅</span>
-                <span class="title">Agenda de Eventos</span>
-                <span class="subtitle">Festivais e Feiras</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='meus-eventos.html'">
-                <span class="icon">⭐</span>
-                <span class="title">Meus Eventos</span>
-                <span class="subtitle">Salvos e "Vou ir"</span>
-            </button>
-        </div>
-    </div>
-
-    <script>
-        const track = document.getElementById('carouselTrack');
-        const items = Array.from(track.children);
-        
-        items.forEach(item => {
-            const clone = item.cloneNode(true);
-            track.appendChild(clone);
-        });
-
-        window.addEventListener('load', () => {
-            const totalWidth = track.scrollWidth / 2;
-            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
-        });
-    </script>
-</body>
-</html>
+            <a href="radio.html"><img src="
