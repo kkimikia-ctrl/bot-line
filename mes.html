@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Agenda da Semana</title>
+    <title>Agenda do Mês</title>
     <!-- Firebase App (Core) SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <!-- Firebase Firestore SDK -->
@@ -60,7 +60,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- CARROSSEL INFINITO IDÊNTICO AO DO MÊS --- */
+        /* --- CARROSSEL INFINITO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
@@ -92,8 +92,8 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #eee;
-            border: 1px solid #ddd;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
         }
         .carousel-track img {
             width: 100%;
@@ -134,46 +134,27 @@
 <body>
 
     <header class="header">
-        <a href="index.html" class="header-btn">◀ Voltar</a>
-        <div class="header-title">Agenda da Semana</div>
-        <a href="mes.html" class="header-btn">Ver Mês ▶</a>
+        <a href="agenda.html" class="header-btn">◀ Semana</a>
+        <div class="header-title">Agenda de Setembro</div>
+        <a href="index.html" class="header-btn">Home 🏠</a>
     </header>
 
-    <!-- Carrossel Infinito idêntico ao mes.html -->
-    <section class="carousel-container">
+    <!-- Carrossel Infinito -->
+    <section class="carousel-container" id="carouselWrapper">
         <div class="carousel-track" id="carouselTrack">
-            <!-- Os banners serão carregados dinamicamente aqui -->
+            <a href="agenda.html"><img src="https://via.placeholder.com/150x85/0d47a1/ffffff?text=Mes" alt="Mês"></a>
+            <a href="agenda.html"><img src="https://via.placeholder.com/150x85/1565c0/ffffff?text=Eventos" alt="Eventos"></a>
         </div>
     </section>
 
     <div class="container" id="agendaContainer">
         <div class="day-card">
-            <div class="day-title">Quarta-feira, 26 de Agosto</div>
-            <div class="day-content">🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário</div>
+            <div class="day-title">1 de Setembro</div>
+            <div class="day-content">Início das inscrições para as atividades comunitárias.</div>
         </div>
         <div class="day-card">
-            <div class="day-title">Quinta-feira, 27 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Sexta-feira, 28 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Sábado, 29 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Domingo, 30 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Segunda-feira, 31 de Agosto</div>
-            <div class="day-content">Nenhum evento programado.</div>
-        </div>
-        <div class="day-card">
-            <div class="day-title">Terça-feira, 1 de Setembro</div>
-            <div class="day-content">Nenhum evento programado.</div>
+            <div class="day-title">15 de Setembro</div>
+            <div class="day-content">Reunião geral da comunidade às 20:00.</div>
         </div>
     </div>
 
@@ -189,19 +170,16 @@
                 .where("categoria", "==", "semanames")
                 .get()
                 .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        document.querySelector(".carousel-container").style.display = "none";
-                        return;
-                    }
+                    if (querySnapshot.empty) return;
 
-                    let originalHTML = "";
+                    let dynamicHTML = "";
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
                         const imagemUrl = data.imagemUrl || data.url || "";
                         const linkUrl = data.linkDestino || data.linkUrl || "#";
 
                         if (imagemUrl) {
-                            originalHTML += `
+                            dynamicHTML += `
                                 <a href="${linkUrl}" target="_blank">
                                     <img src="${imagemUrl}" alt="Banner Anúncio">
                                 </a>
@@ -209,13 +187,9 @@
                         }
                     });
 
-                    if (originalHTML === "") {
-                        document.querySelector(".carousel-container").style.display = "none";
-                        return;
+                    if (dynamicHTML !== "") {
+                        track.innerHTML = dynamicHTML + dynamicHTML;
                     }
-
-                    // Duplica exatamente igual ao padrão de carrossel infinito fluido
-                    track.innerHTML = originalHTML + originalHTML;
                 })
                 .catch((error) => {
                     console.error("Erro ao carregar banners do carrossel:", error);
