@@ -489,7 +489,7 @@
             abrirModalTradutor();
         }
 
-        // Função de tradução atualizada usando uma API pública e gratuita
+        // Função de tradução com suporte a Romaji embutido
         async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
@@ -503,18 +503,35 @@
             box.innerText = 'Traduzindo...';
 
             try {
-                // Detecta se o texto contém caracteres japoneses (Hiragana, Katakana ou Kanji)
                 const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
-                // Se for japonês, traduz para Português (ja|pt). Se não, traduz para Japonês (pt|ja).
                 const parIdioma = contemJapones ? 'ja|pt' : 'pt|ja';
 
                 const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${parIdioma}`;
-                
                 const resposta = await fetch(url);
                 const dados = await resposta.json();
 
                 if (dados && dados.responseData && dados.responseData.translatedText) {
-                    box.innerText = dados.responseData.translatedText;
+                    let traducao = dados.responseData.translatedText;
+
+                    // Se traduzimos para japonês (pt|ja), buscamos o Romaji correspondente
+                    if (!contemJapones) {
+                        try {
+                            const urlRomaji = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(traducao)}&langpair=ja|en`;
+                            const respRomaji = await fetch(urlRomaji);
+                            const dadosRomaji = await respRomaji.json();
+                            
+                            if (dadosRomaji && dadosRomaji.responseData && dadosRomaji.responseData.translatedText) {
+                                let romaji = dadosRomaji.responseData.translatedText;
+                                // Exibe Tradução + Romaji organizado
+                                box.innerHTML = `<strong>${traducao}</strong><br><span style="font-size: 14px; color: #047857; font-style: italic;">Romaji: ${romaji}</span>`;
+                                return;
+                            }
+                        } catch (errRomaji) {
+                            // Se falhar o Romaji, mostra só a tradução normal
+                        }
+                    }
+
+                    box.innerText = traducao;
                 } else {
                     box.innerText = 'Erro ao processar a tradução.';
                 }
@@ -644,7 +661,7 @@
 
         function encerrarChamadaPorTempo() {
             clearInterval(timerInterval);
-          pararStream();
+            pararStream();
             document.getElementById('modalEspera').style.display = 'none';
             alert("O tempo contratado esgotou e a chamada foi encerrada.");
         }
