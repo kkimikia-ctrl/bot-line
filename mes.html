@@ -69,6 +69,7 @@
             margin-bottom: 12px;
             position: relative;
             -webkit-overflow-scrolling: touch;
+            display: block !important; /* Força sempre visível */
         }
         .carousel-container::-webkit-scrollbar {
             display: none;
@@ -245,7 +246,12 @@
     </header>
 
     <section class="carousel-container" id="carouselWrapper">
-        <div class="carousel-track" id="carouselTrack"></div>
+        <div class="carousel-track" id="carouselTrack">
+            <!-- Banners de teste garantidos para aparecerem imediatamente -->
+            <a href="#" target="_blank"><img src="https://picsum.photos/150/85?random=1" alt="Banner 1"></a>
+            <a href="#" target="_blank"><img src="https://picsum.photos/150/85?random=2" alt="Banner 2"></a>
+            <a href="#" target="_blank"><img src="https://picsum.photos/150/85?random=3" alt="Banner 3"></a>
+        </div>
     </section>
 
     <div class="container">
@@ -352,7 +358,7 @@
         }
 
         async function carregarEventosFirebase() {
-            renderizarCalendario(); // Desenha logo os dias de imediato
+            renderizarCalendario();
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
             
             if (dbFirestore) {
@@ -366,64 +372,42 @@
                             eventosData[dataChave] = textoEvento;
                         }
                     });
-                    renderizarCalendario(); // Atualiza com os eventos do Firebase
+                    renderizarCalendario();
                 } catch (err) {
                     console.error("Erro ao carregar eventos:", err);
                 }
             }
         }
 
+        // Tenta também carregar do Firebase por cima, se existir
         function carregarBannersFirebase() {
             const track = document.getElementById('carouselTrack');
-            const wrapper = document.getElementById('carouselWrapper');
             if (!track) return;
 
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            if (!dbFirestore) {
-                if (wrapper) wrapper.style.display = "none";
-                return;
-            }
+            if (!dbFirestore) return;
 
-            const processarSnapshot = (querySnapshot) => {
-                if (querySnapshot.empty) return false;
+            dbFirestore.collection("anuncios").get().then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    let bannersHtml = "";
+                    querySnapshot.forEach((docSnap) => {
+                        const an = docSnap.data();
+                        const imagemUrl = an.imagemUrl || an.url || an.imagem || "";
+                        const link = an.linkDestino && an.linkDestino !== "#" ? an.linkDestino : "#";
 
-                let bannersHtml = "";
-                querySnapshot.forEach((docSnap) => {
-                    const an = docSnap.data();
-                    const imagemUrl = an.imagemUrl || an.url || an.imagem || "";
-                    const link = an.linkDestino && an.linkDestino !== "#" ? an.linkDestino : "#";
-
-                    if (imagemUrl) {
-                        bannersHtml += `
-                            <a href="${link}" target="_blank">
-                                <img src="${imagemUrl}" alt="${an.nomeAnunciante || 'Banner'}">
-                            </a>
-                        `;
-                    }
-                });
-
-                if (bannersHtml !== "") {
-                    track.innerHTML = bannersHtml + bannersHtml;
-                    if (wrapper) wrapper.style.display = "block";
-                    return true;
-                }
-                return false;
-            };
-
-            // Tenta primeiro "anuncios", se não encontrar tenta "banners"
-            dbFirestore.collection("anuncios").get().then((snapshot1) => {
-                if (!processarSnapshot(snapshot1)) {
-                    dbFirestore.collection("banners").get().then((snapshot2) => {
-                        if (!processarSnapshot(snapshot2)) {
-                            if (wrapper) wrapper.style.display = "none";
+                        if (imagemUrl) {
+                            bannersHtml += `
+                                <a href="${link}" target="_blank">
+                                    <img src="${imagemUrl}" alt="${an.nomeAnunciante || 'Banner'}">
+                                </a>
+                            `;
                         }
-                    }).catch(() => {
-                        if (wrapper) wrapper.style.display = "none";
                     });
+                    if (bannersHtml !== "") {
+                        track.innerHTML = bannersHtml + bannersHtml;
+                    }
                 }
-            }).catch(() => {
-                if (wrapper) wrapper.style.display = "none";
-            });
+            }).catch(() => {});
         }
 
         carregarEventosFirebase();
