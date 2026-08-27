@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Agenda do Mês</title>
-    <!-- Firebase App (Core) SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <!-- Firebase Firestore SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="firebase-init.js"></script>
+    <title>Calendário do Mês</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -60,7 +55,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- CARROSSEL INFINITO --- */
+        /* --- CARROSSEL INFINITO LENTO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
@@ -92,8 +87,8 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
+            background: #eee;
+            border: 1px solid #ddd;
         }
         .carousel-track img {
             width: 100%;
@@ -110,21 +105,103 @@
             margin: 0 auto;
             padding: 0 15px;
         }
-        .day-card {
+        .calendar-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 12px;
+        }
+        .month-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0d47a1;
+            margin-bottom: 15px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+        .week-day {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            padding-bottom: 6px;
+        }
+        .week-day.weekend {
+            color: #ef4444;
+        }
+        .day-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .day-box:not(.empty):hover {
+            background: #e2e8f0;
+        }
+        .day-box.selected {
+            border: 2px solid #0d47a1;
+            background: #e3f2fd !important;
+        }
+        .day-box.weekend-day {
+            color: #ef4444;
+        }
+        .day-box.has-event {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #0d47a1;
+            font-weight: 800;
+            border: 2px solid #90caf9;
+        }
+        .day-box.empty {
+            background: transparent;
+            color: transparent;
+            cursor: default;
+        }
+        .dot {
+            width: 5px;
+            height: 5px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 6px;
+        }
+        .event-detail-card {
             background: #ffffff;
             border-radius: 14px;
             padding: 14px 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            margin-bottom: 10px;
             border-left: 4px solid #0d47a1;
+            max-height: 120px; /* Mantém a página parada */
+            overflow-y: auto;  /* Se o evento for grande, rola dentro do cartão */
         }
-        .day-title {
-            font-weight: 700;
-            font-size: 0.95rem;
+        .event-detail-card::-webkit-scrollbar {
+            width: 4px;
+        }
+        .event-detail-card::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .detail-title {
+            font-weight: bold;
+            font-size: 0.9rem;
             color: #0d47a1;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
-        .day-content {
+        .detail-content {
             font-size: 0.85rem;
             color: #475569;
             line-height: 1.4;
@@ -135,68 +212,123 @@
 
     <header class="header">
         <a href="agenda.html" class="header-btn">◀ Semana</a>
-        <div class="header-title">Agenda de Setembro</div>
+        <div class="header-title">📅 Calendário do Mês</div>
         <a href="index.html" class="header-btn">Home 🏠</a>
     </header>
 
-    <!-- Carrossel Infinito -->
-    <section class="carousel-container" id="carouselWrapper">
-        <div class="carousel-track" id="carouselTrack">
-            <a href="agenda.html"><img src="https://via.placeholder.com/150x85/0d47a1/ffffff?text=Mes" alt="Mês"></a>
-            <a href="agenda.html"><img src="https://via.placeholder.com/150x85/1565c0/ffffff?text=Eventos" alt="Eventos"></a>
+    <section class="carousel-container">
+        <div class="carousel-track">
+            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
         </div>
     </section>
 
-    <div class="container" id="agendaContainer">
-        <div class="day-card">
-            <div class="day-title">1 de Setembro</div>
-            <div class="day-content">Início das inscrições para as atividades comunitárias.</div>
+    <div class="container">
+        <div class="calendar-card">
+            <div class="month-title">Agosto 2026</div>
+
+            <div class="calendar-grid">
+                <div class="week-day">Seg</div>
+                <div class="week-day">Ter</div>
+                <div class="week-day">Qua</div>
+                <div class="week-day">Qui</div>
+                <div class="week-day">Sex</div>
+                <div class="week-day weekend">Sáb</div>
+                <div class="week-day weekend">Dom</div>
+            </div>
+
+            <div class="calendar-grid" id="calendarDays" style="margin-top: 6px;"></div>
         </div>
-        <div class="day-card">
-            <div class="day-title">15 de Setembro</div>
-            <div class="day-content">Reunião geral da comunidade às 20:00.</div>
+
+        <div class="event-detail-card" id="eventDetailCard">
+            <div class="detail-title" id="detailDateTitle">24 de Agosto de 2026</div>
+            <div class="detail-content" id="detailContentText">🌟 <b>Evento encontrado:</b><br>🌸 Festival Cultural da Cidade - 14:00 na Praça Central<br>🎨 Oficina de Pintura - 15:30 no Centro Cultural<br>🎵 Show de Música Popular - 18:00 no Anfiteatro<br>🎆 Encerramento com Fogos - 21:00</div>
         </div>
     </div>
 
     <script>
-        function carregarBannersCarrossel() {
-            const track = document.getElementById("carouselTrack");
-            if (!track) return;
+        const eventosData = {
+            "2026-08-24": "🌸 Festival Cultural da Cidade - 14:00 na Praça Central<br>🎨 Oficina de Pintura - 15:30 no Centro Cultural<br>🎵 Show de Música Popular - 18:00 no Anfiteatro<br>🎆 Encerramento com Fogos - 21:00",
+            "2026-08-26": "🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário"
+        };
 
-            const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            if (!dbFirestore) return;
+        const ano = 2026;
+        const mes = 7; // Agosto (0 a 11)
+        const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-            dbFirestore.collection("anuncios")
-                .where("categoria", "==", "semanames")
-                .get()
-                .then((querySnapshot) => {
-                    if (querySnapshot.empty) return;
+        function renderizarCalendario() {
+            const grid = document.getElementById("calendarDays");
+            grid.innerHTML = "";
 
-                    let dynamicHTML = "";
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const imagemUrl = data.imagemUrl || data.url || "";
-                        const linkUrl = data.linkDestino || data.linkUrl || "#";
+            let primeiroDiaSemana = new Date(ano, mes, 1).getDay();
+            primeiroDiaSemana = (primeiroDiaSemana === 0) ? 6 : primeiroDiaSemana - 1;
 
-                        if (imagemUrl) {
-                            dynamicHTML += `
-                                <a href="${linkUrl}" target="_blank">
-                                    <img src="${imagemUrl}" alt="Banner Anúncio">
-                                </a>
-                            `;
-                        }
-                    });
+            const ultimoDia = new Date(ano, mes + 1, 0).getDate();
 
-                    if (dynamicHTML !== "") {
-                        track.innerHTML = dynamicHTML + dynamicHTML;
+            for (let i = 0; i < primeiroDiaSemana; i++) {
+                const vazio = document.createElement("div");
+                vazio.className = "day-box empty";
+                grid.appendChild(vazio);
+            }
+
+            for (let dia = 1; dia <= ultimoDia; dia++) {
+                const box = document.createElement("div");
+                box.className = "day-box";
+                
+                const posicaoNaGrid = (primeiroDiaSemana + (dia - 1)) % 7;
+                if (posicaoNaGrid === 5 || posicaoNaGrid === 6) {
+                    box.classList.add("weekend-day");
+                }
+
+                const mesStr = String(mes + 1).padStart(2, '0');
+                const diaStr = String(dia).padStart(2, '0');
+                const chaveData = `${ano}-${mesStr}-${diaStr}`;
+
+                box.innerText = dia;
+
+                // Deixa o dia 24 selecionado por padrão ao abrir
+                if (dia === 24) {
+                    box.classList.add("selected");
+                }
+
+                if (eventosData[chaveData]) {
+                    box.classList.add("has-event");
+                    const dot = document.createElement("span");
+                    dot.className = "dot";
+                    box.appendChild(dot);
+                }
+
+                box.onclick = function() {
+                    document.querySelectorAll('.day-box').forEach(b => b.classList.remove('selected'));
+                    box.classList.add('selected');
+                    
+                    const tituloCard = document.getElementById("detailDateTitle");
+                    const textoCard = document.getElementById("detailContentText");
+
+                    tituloCard.innerText = `${dia} de ${mesesNomes[mes]} de ${ano}`;
+                    
+                    if (eventosData[chaveData]) {
+                        textoCard.innerHTML = `🌟 <b>Evento encontrado:</b><br>${eventosData[chaveData]}`;
+                    } else {
+                        textoCard.innerText = "Nenhum evento programado para este dia.";
                     }
-                })
-                .catch((error) => {
-                    console.error("Erro ao carregar banners do carrossel:", error);
-                });
+                };
+
+                grid.appendChild(box);
+            }
         }
 
-        carregarBannersCarrossel();
+        renderizarCalendario();
     </script>
 </body>
 </html>
