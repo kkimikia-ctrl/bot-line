@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Calendário do Mês</title>
+    <!-- Firebase App (Core) SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Firebase Firestore SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="firebase-init.js"></script>
     <style>
@@ -283,28 +285,7 @@
             renderizarCalendario();
         }
 
-        async function carregarEventosFirebase() {
-            const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            
-            if (dbFirestore) {
-                try {
-                    const querySnapshot = await dbFirestore.collection("eventos").get();
-                    querySnapshot.forEach((doc) => {
-                        const dados = doc.data();
-                        // Lê tanto pelo ID do documento quanto pelo campo interno 'data'
-                        const dataChave = dados.data || doc.id;
-                        const textoEvento = dados.texto || dados.titulo || "Evento programado.";
-                        if (dataChave) {
-                            eventosData[dataChave] = textoEvento;
-                        }
-                    });
-                } catch (err) {
-                    console.error("Erro ao carregar eventos:", err);
-                }
-            }
-            renderizarCalendario();
-        }
-
+        // Renderiza o calendário imediatamente ao abrir a página
         function renderizarCalendario() {
             const ano = dataAtual.getFullYear();
             const mes = dataAtual.getMonth();
@@ -367,6 +348,28 @@
             }
         }
 
+        // Carrega os eventos do Firebase em segundo plano e atualiza a grelha quando estiverem prontos
+        async function carregarEventosFirebase() {
+            const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
+            
+            if (dbFirestore) {
+                try {
+                    const querySnapshot = await dbFirestore.collection("eventos").get();
+                    querySnapshot.forEach((doc) => {
+                        const dados = doc.data();
+                        const dataChave = dados.data || doc.id;
+                        const textoEvento = dados.texto || dados.titulo || "Evento programado.";
+                        if (dataChave) {
+                            eventosData[dataChave] = textoEvento;
+                        }
+                    });
+                    renderizarCalendario(); // Redesenha com os eventos marcados
+                } catch (err) {
+                    console.error("Erro ao carregar eventos:", err);
+                }
+            }
+        }
+
         function carregarBannersFirebase() {
             const track = document.getElementById('carouselTrack');
             const wrapper = document.getElementById('carouselWrapper');
@@ -414,6 +417,8 @@
                 });
         }
 
+        // Executa imediatamente
+        renderizarCalendario();
         carregarEventosFirebase();
         carregarBannersFirebase();
     </script>
