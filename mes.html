@@ -247,7 +247,6 @@
 
     <section class="carousel-container" id="carouselWrapper">
         <div class="carousel-track" id="carouselTrack">
-            <!-- Banners padrão de segurança para garantir exibição imediata -->
             <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
             <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
             <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
@@ -285,16 +284,13 @@
         </div>
 
         <div class="event-detail-card" id="eventDetailCard">
-            <div class="detail-title" id="detailDateTitle">24 de Agosto de 2026</div>
-            <div class="detail-content" id="detailContentText">Selecione um dia para ver os detalhes.</div>
+            <div class="detail-title" id="detailDateTitle">27 de Agosto de 2026</div>
+            <div class="detail-content" id="detailContentText">Carregando eventos...</div>
         </div>
     </div>
 
     <script>
-        const eventosData = {
-            "2026-08-24": "🌸 Festival Cultural da Cidade - 14:00 na Praça Central<br>🎨 Oficina de Pintura - 15:30 no Centro Cultural<br>🎵 Show de Música Popular - 18:00 no Anfiteatro<br>🎆 Encerramento com Fogos - 21:00",
-            "2026-08-26": "🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário"
-        };
+        let eventosData = {};
 
         // Começa em Agosto de 2026
         let dataAtual = new Date(2026, 7, 1);
@@ -303,6 +299,30 @@
         function mudarMes(direcao) {
             dataAtual.setMonth(dataAtual.getMonth() + direcao);
             renderizarCalendario();
+        }
+
+        function carregarEventosFirebase() {
+            const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
+            if (!dbFirestore) {
+                renderizarCalendario();
+                return;
+            }
+
+            dbFirestore.collection("eventos").get()
+                .then((querySnapshot) => {
+                    eventosData = {};
+                    querySnapshot.forEach((doc) => {
+                        const dados = doc.data();
+                        if (dados.data && dados.texto) {
+                            eventosData[dados.data] = dados.texto;
+                        }
+                    });
+                    renderizarCalendario();
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar eventos do Firebase:", error);
+                    renderizarCalendario();
+                });
         }
 
         function renderizarCalendario() {
@@ -404,7 +424,8 @@
                 });
         }
 
-        renderizarCalendario();
+        // Inicializa buscando os eventos do Firestore e os banners
+        carregarEventosFirebase();
         carregarBannersFirebase();
     </script>
 </body>
