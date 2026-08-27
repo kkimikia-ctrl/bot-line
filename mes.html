@@ -285,14 +285,15 @@
             renderizarCalendario();
         }
 
-        // Renderiza o calendário imediatamente ao abrir a página
         function renderizarCalendario() {
             const ano = dataAtual.getFullYear();
             const mes = dataAtual.getMonth();
 
-            document.getElementById("monthTitleText").innerText = `${mesesNomes[mes]} ${ano}`;
+            const titleEl = document.getElementById("monthTitleText");
+            if (titleEl) titleEl.innerText = `${mesesNomes[mes]} ${ano}`;
 
             const grid = document.getElementById("calendarDays");
+            if (!grid) return;
             grid.innerHTML = "";
 
             let primeiroDiaSemana = new Date(ano, mes, 1).getDay();
@@ -335,12 +336,14 @@
                     const tituloCard = document.getElementById("detailDateTitle");
                     const textoCard = document.getElementById("detailContentText");
 
-                    tituloCard.innerText = `${dia} de ${mesesNomes[mes]} de ${ano}`;
+                    if (tituloCard) tituloCard.innerText = `${dia} de ${mesesNomes[mes]} de ${ano}`;
                     
-                    if (eventosData[chaveData]) {
-                        textoCard.innerHTML = `🌟 <b>Evento encontrado:</b><br>${eventosData[chaveData]}`;
-                    } else {
-                        textoCard.innerText = "Nenhum evento programado para este dia.";
+                    if (textoCard) {
+                        if (eventosData[chaveData]) {
+                            textoCard.innerHTML = `🌟 <b>Evento encontrado:</b><br>${eventosData[chaveData]}`;
+                        } else {
+                            textoCard.innerText = "Nenhum evento programado para este dia.";
+                        }
                     }
                 };
 
@@ -348,8 +351,8 @@
             }
         }
 
-        // Carrega os eventos do Firebase em segundo plano e atualiza a grelha quando estiverem prontos
         async function carregarEventosFirebase() {
+            renderizarCalendario(); // Desenha logo os dias de imediato
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
             
             if (dbFirestore) {
@@ -363,7 +366,7 @@
                             eventosData[dataChave] = textoEvento;
                         }
                     });
-                    renderizarCalendario(); // Redesenha com os eventos marcados
+                    renderizarCalendario(); // Atualiza com os eventos do Firebase
                 } catch (err) {
                     console.error("Erro ao carregar eventos:", err);
                 }
@@ -377,16 +380,16 @@
 
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
             if (!dbFirestore) {
-                wrapper.style.display = "none";
+                if (wrapper) wrapper.style.display = "none";
                 return;
             }
 
+            // Carrega todos os banners da coleção sem filtros restritos
             dbFirestore.collection("anuncios")
-                .where("categoria", "==", "semanames")
                 .get()
                 .then((querySnapshot) => {
                     if (querySnapshot.empty) {
-                        wrapper.style.display = "none";
+                        if (wrapper) wrapper.style.display = "none";
                         return;
                     }
 
@@ -407,18 +410,16 @@
 
                     if (bannersHtml !== "") {
                         track.innerHTML = bannersHtml + bannersHtml;
-                        wrapper.style.display = "block";
+                        if (wrapper) wrapper.style.display = "block";
                     } else {
-                        wrapper.style.display = "none";
+                        if (wrapper) wrapper.style.display = "none";
                     }
                 })
                 .catch(() => {
-                    wrapper.style.display = "none";
+                    if (wrapper) wrapper.style.display = "none";
                 });
         }
 
-        // Executa imediatamente
-        renderizarCalendario();
         carregarEventosFirebase();
         carregarBannersFirebase();
     </script>
