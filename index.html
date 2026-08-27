@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ajuda JP - Início</title>
+    <!-- Biblioteca Wanakana para conversão correta de Romaji -->
+    <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -506,7 +508,15 @@
                 const dados = await resposta.json();
 
                 if (dados && dados.responseData && dados.responseData.translatedText) {
-                    box.innerText = dados.responseData.translatedText;
+                    let traducao = dados.responseData.translatedText;
+                    
+                    // Se traduziu para japonês, adiciona o Romaji embaixo
+                    if (!contemJapones && typeof wanakana !== 'undefined') {
+                        let romaji = wanakana.toRomaji(traducao);
+                        box.innerHTML = `${traducao}<br><span style="font-size: 13px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                    } else {
+                        box.innerText = traducao;
+                    }
                 } else {
                     box.innerText = 'Erro ao processar a tradução.';
                 }
