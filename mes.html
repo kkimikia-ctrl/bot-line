@@ -117,12 +117,36 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
             margin-bottom: 12px;
         }
+        .month-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
         .month-title {
-            text-align: center;
             font-size: 1.1rem;
             font-weight: 800;
             color: #0d47a1;
-            margin-bottom: 15px;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .nav-month-btn {
+            background: #f1f5f9;
+            border: none;
+            color: #0d47a1;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .nav-month-btn:hover {
+            background: #e2e8f0;
         }
         .calendar-grid {
             display: grid;
@@ -241,7 +265,11 @@
 
     <div class="container">
         <div class="calendar-card">
-            <div class="month-title">Agosto 2026</div>
+            <div class="month-navigation">
+                <button class="nav-month-btn" onclick="mudarMes(-1)">◀</button>
+                <div class="month-title" id="monthTitleText">Agosto 2026</div>
+                <button class="nav-month-btn" onclick="mudarMes(1)">▶</button>
+            </div>
 
             <div class="calendar-grid">
                 <div class="week-day">Seg</div>
@@ -258,7 +286,7 @@
 
         <div class="event-detail-card" id="eventDetailCard">
             <div class="detail-title" id="detailDateTitle">24 de Agosto de 2026</div>
-            <div class="detail-content" id="detailContentText">🌟 <b>Evento encontrado:</b><br>🌸 Festival Cultural da Cidade - 14:00 na Praça Central<br>🎨 Oficina de Pintura - 15:30 no Centro Cultural<br>🎵 Show de Música Popular - 18:00 no Anfiteatro<br>🎆 Encerramento com Fogos - 21:00</div>
+            <div class="detail-content" id="detailContentText">Selecione um dia para ver os detalhes.</div>
         </div>
     </div>
 
@@ -268,11 +296,21 @@
             "2026-08-26": "🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário"
         };
 
-        const ano = 2026;
-        const mes = 7; // Agosto (0 a 11)
+        // Começa em Agosto de 2026
+        let dataAtual = new Date(2026, 7, 1);
         const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
+        function mudarMes(direcao) {
+            dataAtual.setMonth(dataAtual.getMonth() + direcao);
+            renderizarCalendario();
+        }
+
         function renderizarCalendario() {
+            const ano = dataAtual.getFullYear();
+            const mes = dataAtual.getMonth();
+
+            document.getElementById("monthTitleText").innerText = `${mesesNomes[mes]} ${ano}`;
+
             const grid = document.getElementById("calendarDays");
             grid.innerHTML = "";
 
@@ -301,10 +339,6 @@
                 const chaveData = `${ano}-${mesStr}-${diaStr}`;
 
                 box.innerText = dia;
-
-                if (dia === 24) {
-                    box.classList.add("selected");
-                }
 
                 if (eventosData[chaveData]) {
                     box.classList.add("has-event");
