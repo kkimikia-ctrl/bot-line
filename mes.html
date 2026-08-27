@@ -217,12 +217,26 @@
 
     <header class="header">
         <a href="agenda.html" class="header-btn">◀ Semana</a>
-        <div class="header-title">📅 Calendário do Mês</div>
+        <div class="header-title">Calendário do Mês</div>
         <a href="index.html" class="header-btn">Home 🏠</a>
     </header>
 
     <section class="carousel-container" id="carouselWrapper">
-        <div class="carousel-track" id="carouselTrack"></div>
+        <div class="carousel-track" id="carouselTrack">
+            <!-- Banners padrão de segurança para garantir exibição imediata -->
+            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+        </div>
     </section>
 
     <div class="container">
@@ -321,23 +335,16 @@
 
         function carregarBannersFirebase() {
             const track = document.getElementById('carouselTrack');
-            const wrapper = document.getElementById('carouselWrapper');
             if (!track) return;
 
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            if (!dbFirestore) {
-                wrapper.style.display = "none";
-                return;
-            }
+            if (!dbFirestore) return;
 
             dbFirestore.collection("anuncios")
                 .where("categoria", "==", "semanames")
                 .get()
                 .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        wrapper.style.display = "none";
-                        return;
-                    }
+                    if (querySnapshot.empty) return;
 
                     let bannersHtml = "";
                     querySnapshot.forEach((docSnap) => {
@@ -356,14 +363,10 @@
 
                     if (bannersHtml !== "") {
                         track.innerHTML = bannersHtml + bannersHtml;
-                        wrapper.style.display = "block";
-                    } else {
-                        wrapper.style.display = "none";
                     }
                 })
                 .catch((err) => {
                     console.error("Erro ao carregar banners do mês:", err);
-                    wrapper.style.display = "none";
                 });
         }
 
