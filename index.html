@@ -154,7 +154,7 @@
             border-radius: 8px;
             margin-top: 10px;
             font-size: 16px;
-            white-space: pre-wrap;
+            word-break: break-word;
             display: none;
         }
 
@@ -510,27 +510,17 @@
                 if (dados && dados.responseData && dados.responseData.translatedText) {
                     let traducao = dados.responseData.translatedText;
                     
-                    // Se a tradução for para japonês, coloca o Romaji do lado entre parênteses
+                    // Se a tradução for para japonês, adiciona o Romaji limpo ao lado entre parênteses
                     if (!contemJapones && typeof wanakana !== 'undefined') {
-                        let romaji = wanakana.toRomaji(traducao);
+                        // Remove pontuações extras antes de gerar o romaji para evitar falhas
+                        let textoLimpo = traducao.replace(/[.!?。、]/g, '');
+                        let romaji = wanakana.toRomaji(textoLimpo);
+                        
                         if (romaji) {
                             romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
                         }
 
-                        // Dicionário de apoio caso o wanakana precise de uma ajuda com kanjis puros
-                        if (romaji === traducao && /[\u4e00-\u9faf]/.test(traducao)) {
-                            const dicionarioComum = {
-                                '住宅': 'Jutaku',
-                                '家': 'Ie',
-                                '車': 'Kuruma',
-                                '猫': 'Neko',
-                                '犬': 'Inu',
-                                '水': 'Mizu'
-                            };
-                            romaji = dicionarioComum[traducao] || '';
-                        }
-
-                        if (romaji && romaji !== traducao) {
+                        if (romaji && romaji.toLowerCase() !== traducao.toLowerCase()) {
                             box.innerHTML = `${traducao} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
                         } else {
                             box.innerText = traducao;
