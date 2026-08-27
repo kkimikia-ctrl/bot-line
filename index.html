@@ -1,4 +1,492 @@
-        // Tradução integrada com o backend seguro (/api/traduzir)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ajuda JP - Início</title>
+    <!-- Biblioteca Wanakana para conversão correta de Romaji -->
+    <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #ffffff;
+            padding: 12px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            animation: rolarInfinito 30s linear infinite;
+        }
+
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
+        }
+
+        .carousel-track a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 160px;
+            height: 90px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+            border: 1px solid #7dd3fc;
+            color: #0369a1;
+            font-weight: bold;
+            font-size: 13px;
+            text-decoration: none;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes rolarInfinito {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-50% - 6px));
+            }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+
+        button.btn-primary {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.btn-primary:active {
+            background-color: #1d4ed8;
+        }
+
+        .result-box {
+            background-color: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 16px;
+            word-break: break-word;
+            display: none;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            padding: 18px 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: transform 0.1s;
+        }
+
+        .menu-item:active {
+            transform: scale(0.97);
+        }
+
+        .menu-item span {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: normal;
+        }
+
+        .btn-tradutor    { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .btn-carteira    { background: linear-gradient(135deg, #059669, #047857); }
+        .btn-lazer       { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+        .btn-servicos    { background: linear-gradient(135deg, #d97706, #b45309); }
+        .btn-empregos    { background: linear-gradient(135deg, #db2777, #be185d); }
+        .btn-fale        { background: linear-gradient(135deg, #06c755, #059b43); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 98%;
+            max-width: 520px;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            text-align: left;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #videoContainer {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        video {
+            width: 100%;
+            height: 380px;
+            background: #000;
+            border-radius: 10px;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .timer-badge {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.75rem;
+            flex-grow: 1;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #1a73e8;
+            font-weight: bold;
+        }
+
+        .nav-item span.icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+        <span>Ajuda JP - Início</span>
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+    </div>
+
+    <section class="carousel-container">
+        <div class="carousel-track">
+            <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 1';"></a>
+            <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 2';"></a>
+            <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 3';"></a>
+            <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 4';"></a>
+
+            <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 1';"></a>
+            <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 2';"></a>
+            <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 3';"></a>
+            <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 4';"></a>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="card">
+            <h3>📸 Tradução de Texto e Fotos</h3>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto em japonês ou português para traduzir na hora:</p>
+            <textarea id="textoInput" rows="3" placeholder="Digite aqui..."></textarea>
+            <button class="btn-primary" onclick="traduzirTexto()">Traduzir Agora</button>
+            <div id="resultadoBox" class="result-box"></div>
+        </div>
+
+        <div class="grid-menu">
+            <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
+                📞 Tradutor
+                <span>Prefeitura / Hospital</span>
+            </button>
+            <button class="menu-item btn-carteira" onclick="alert('Tela Carteira em desenvolvimento')">
+                💰 Carteira
+                <span>Saldo e Ganhos</span>
+            </button>
+            <button class="menu-item btn-lazer" onclick="window.location.href='entretenimento.html'">
+                🎮 Entretenimento
+                <span>Lives, Aulas e Notícias</span>
+            </button>
+            <button class="menu-item btn-servicos" onclick="window.location.href='servicos.html'">
+                📋 Serviços
+                <span>Lojas, Ar-condicionado</span>
+            </button>
+            <button class="menu-item btn-empregos" onclick="window.location.href='empregos.html'">
+                💼 Empregos
+                <span>Vagas das Empreiteiras</span>
+            </button>
+            <button class="menu-item btn-fale" onclick="window.location.href='fale-conosco.html'">
+                📞 Fale Conosco
+                <span>Anúncios e Suporte</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="modalSemSaldo" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header" style="justify-content: center;">
+                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+                <h3 style="margin:0; color: #dc2626;">Saldo Insuficiente</h3>
+            </div>
+            <p style="font-size: 15px; color: #4b5563;">Você precisa ter créditos suficientes para iniciar a chamada com o tradutor.</p>
+            <button class="btn-primary" style="background-color: #10b981; margin-top: 10px;" onclick="comprarCreditos()">🛒 Comprar Créditos Agora</button>
+            <button class="btn-primary" style="background-color: #6b7280; margin-top: 8px;" onclick="fecharModalSemSaldo()">Voltar</button>
+        </div>
+    </div>
+
+    <div id="modalTradutor" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+                <h3 style="margin:0;">Chamar Tradutor</h3>
+            </div>
+
+            <label style="font-size: 14px; font-weight: bold;">Onde você está?</label>
+            <select id="localAtendimento">
+                <option value="Hospital">Hospital</option>
+                <option value="Prefeitura">Prefeitura</option>
+                <option value="Escola">Escola</option>
+                <option value="Outros">Outros</option>
+            </select>
+
+            <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
+            <select id="tempoAtendimento">
+                <option value="1800">30 minutos</option>
+                <option value="3600">1 hora</option>
+                <option value="7200">Mais de 1 hora</option>
+            </select>
+
+            <div class="modal-buttons">
+                <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
+                <button class="btn-primary" onclick="iniciarEspera()">Confirmar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEspera" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header" style="justify-content: center;">
+                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+                <h3 id="statusTexto" style="margin:0;">Procurando tradutor...</h3>
+            </div>
+            
+            <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
+            
+            <div id="videoContainer">
+                <div id="timerDisplay" class="timer-badge">⏱️ Tempo em chamada: 0s</div>
+                <video id="webcam" autoplay playsinline muted></video>
+                <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
+            </div>
+
+            <div id="alertaLimite" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
+                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando! (Teste)</p>
+                <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Deseja comprar mais tempo para continuar a chamada?</p>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais tempo</button>
+                    <button class="btn-primary" style="background-color: #dc2626; font-size: 14px; padding: 8px;" onclick="naoQueroMais()">❌ Não quero</button>
+                </div>
+            </div>
+
+            <button id="btnSairChamada" class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="finalizarChamadaNormal()">Sair / Encerrar</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <span class="icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="servicos.html" class="nav-item">
+            <span class="icon">📋</span>
+            <span>Serviços</span>
+        </a>
+        <a href="entretenimento.html" class="nav-item">
+            <span class="icon">🎬</span>
+            <span>Lazer</span>
+        </a>
+        <a href="perfil.html" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Perfil</span>
+        </a>
+    </nav>
+
+    <script>
+        let streamVideo = null;
+        let segundosDecorridos = 0; 
+        let limiteSegundos = 1800; 
+        let valorInicialRetido = 0; 
+        let timerInterval = null;
+        let creditoDescontado = false; 
+
+        let usuarioTemSaldo = true; 
+        let temCreditoParaContinuar = false; 
+
+        function salvarPontuacaoPorJogo(nomeJogo, pontos) {
+            if (pontos <= 0) {
+                alert("Jogue e acumule pontos antes de salvar!");
+                return;
+            }
+            let nome = prompt(`🏆 Digite seu nome para o Ranking de ${nomeJogo}:`, "Jogador") || "Jogador";
+            let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+            let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
+            
+            ranking.push({ nome: nome, pontos: Number(pontos) });
+            ranking.sort((a, b) => Number(b.pontos) - Number(a.pontos));
+            
+            localStorage.setItem(chaveStorage, JSON.stringify(ranking.slice(0, 30)));
+            alert(`✅ Pontuação salva com sucesso no ranking de ${nomeJogo}!`);
+            window.location.href = "ranking.html";
+        }
+
+        function verificarSaldoEChamar() {
+            usuarioTemSaldo = true; 
+            abrirModalTradutor();
+        }
+
+        function fecharModalSemSaldo() {
+            document.getElementById('modalSemSaldo').style.display = 'none';
+        }
+
+        function comprarCreditos() {
+            alert("Redirecionando para a tela de pagamento de créditos...");
+            usuarioTemSaldo = true; 
+            fecharModalSemSaldo();
+            abrirModalTradutor();
+        }
+
         async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
@@ -12,7 +500,6 @@
             box.innerText = 'Traduzindo...';
 
             try {
-                // Envia o texto para a rota backend na pasta api/traduzir.js
                 const resposta = await fetch('/api/traduzir', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -25,7 +512,6 @@
                     let traducao = dados.traducao;
                     const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
                     
-                    // Se a tradução for para japonês, adiciona o Romaji limpo ao lado entre parênteses
                     if (!contemJapones && typeof wanakana !== 'undefined') {
                         let textoLimpo = traducao.replace(/[.!?。、]/g, '');
                         let romaji = wanakana.toRomaji(textoLimpo);
@@ -49,3 +535,156 @@
                 box.innerText = 'Erro ao conectar com o servidor.';
             }
         }
+
+        function abrirModalTradutor() {
+            document.getElementById('modalTradutor').style.display = 'flex';
+        }
+
+        function fecharModalTradutor() {
+            document.getElementById('modalTradutor').style.display = 'none';
+        }
+
+        function iniciarEspera() {
+            const selectTempo = document.getElementById('tempoAtendimento');
+            limiteSegundos = parseInt(selectTempo.value);
+
+            if (limiteSegundos === 1800) valorInicialRetido = 1500;
+            else if (limiteSegundos === 3600) valorInicialRetido = 3000;
+            else valorInicialRetido = 6000;
+
+            fecharModalTradutor();
+            const modalEspera = document.getElementById('modalEspera');
+            const statusTexto = document.getElementById('statusTexto');
+            const subStatus = document.getElementById('subStatus');
+            const videoContainer = document.getElementById('videoContainer');
+            
+            modalEspera.style.display = 'flex';
+            statusTexto.innerText = "Procurando tradutor...";
+            subStatus.style.display = "block";
+            videoContainer.style.display = "none";
+            document.getElementById('alertaLimite').style.display = 'none';
+            creditoDescontado = false; 
+            temCreditoParaContinuar = false;
+
+            setTimeout(async () => {
+                statusTexto.innerText = "Tradutor conectado!";
+                subStatus.style.display = "none";
+                videoContainer.style.display = "block";
+
+                segundosDecorridos = 0;
+                atualizarDisplayCronometro();
+
+                try {
+                    streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    document.getElementById('webcam').srcObject = streamVideo;
+                } catch (err) {
+                    subStatus.style.display = "block";
+                    subStatus.innerText = "Câmera pronta (Modo Simulação)";
+                }
+
+                iniciarCronografoProgressivo();
+
+            }, 3000);
+        }
+
+        function iniciarCronografoProgressivo() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                segundosDecorridos++;
+                atualizarDisplayCronometro();
+
+                if (segundosDecorridos === 5 && !creditoDescontado) {
+                    creditoDescontado = true;
+                }
+
+                if (segundosDecorridos === 10) {
+                    if (!temCreditoParaContinuar) {
+                        document.getElementById('alertaLimite').style.display = 'block';
+                    }
+                }
+
+                if (segundosDecorridos >= limiteSegundos) {
+                    encerrarChamadaPorTempo();
+                }
+            }, 1000);
+        }
+
+        function atualizarDisplayCronometro() {
+            const badge = document.getElementById('timerDisplay');
+            let horas = Math.floor(segundosDecorridos / 3600);
+            let minutos = Math.floor((segundosDecorridos % 3600) / 60);
+            let segundos = segundosDecorridos % 60;
+            
+            let textoTempo = '';
+            if (horas > 0) {
+                textoTempo = `${horas}h ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+            } else {
+                textoTempo = `${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+            }
+            badge.innerText = `⏱️ Tempo em chamada: ${textoTempo}`;
+        }
+
+        function comprarMaisCreditos() {
+            alert("Tempo adicional adicionado com sucesso!");
+            temCreditoParaContinuar = true;
+            limiteSegundos += 1800; 
+            document.getElementById('alertaLimite').style.display = 'none';
+        }
+
+        function naoQueroMais() {
+            document.getElementById('alertaLimite').style.display = 'none';
+            alert("Você optou por não comprar mais tempo. A chamada continuará normalmente.");
+        }
+
+        function calcularCobrancaProporcional() {
+            if (segundosDecorridos <= 5) {
+                return 0; 
+            }
+
+            let blocosUtilizados = Math.ceil(segundosDecorridos / 1800);
+            if (blocosUtilizados < 1) blocosUtilizados = 1;
+
+            let valorFinalDevido = blocosUtilizados * 1500;
+            let valorParaDevolver = valorInicialRetido - valorFinalDevido;
+
+            if (valorParaDevolver > 0) {
+                return { cobrado: valorFinalDevido, devolvido: valorParaDevolver };
+            }
+
+            return { cobrado: valorInicialRetido, devolvido: 0 };
+        }
+
+        function encerrarChamadaPorTempo() {
+            clearInterval(timerInterval);
+            pararStream();
+            document.getElementById('modalEspera').style.display = 'none';
+            alert("O tempo contratado esgotou e a chamada foi encerrada.");
+        }
+
+        function finalizarChamadaNormal() {
+            if (timerInterval) clearInterval(timerInterval);
+            pararStream();
+            document.getElementById('modalEspera').style.display = 'none';
+
+            if (segundosDecorridos <= 5) {
+                alert("Chamada encerrada nos primeiros segundos. Nenhuma cobrança foi feita!");
+            } else {
+                let resultado = calcularCobrancaProporcional();
+                if (resultado.devolvido > 0) {
+                    alert(`Chamada encerrada!\nTempo utilizado: ${Math.floor(segundosDecorridos/60)} minutos e ${segundosDecorridos%60} segundos.\nValor debitado: ${resultado.cobrado}円\nO restante de ${resultado.devolvido}円 foi estornado para a sua carteira.`);
+                } else {
+                    alert(`Chamada encerrada com sucesso! Valor debitado: ${resultado.cobrado}円.`);
+                }
+            }
+        }
+
+        function pararStream() {
+            if (streamVideo) {
+                streamVideo.getTracks().forEach(track => track.stop());
+                streamVideo = null;
+            }
+        }
+    </script>
+</body>
+</html>
