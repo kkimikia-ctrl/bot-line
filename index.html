@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ajuda JP - Início</title>
-    <!-- Biblioteca Wanakana para conversão correta de Romaji -->
+    <!-- Biblioteca Wanakana para conversão de Romaji caso necessário -->
     <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
     <style>
         body {
@@ -91,12 +91,8 @@
         }
 
         @keyframes rolarInfinito {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(calc(-50% - 6px));
-            }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 6px)); }
         }
 
         .container {
@@ -183,9 +179,7 @@
             transition: transform 0.1s;
         }
 
-        .menu-item:active {
-            transform: scale(0.97);
-        }
+        .menu-item:active { transform: scale(0.97); }
 
         .menu-item span {
             display: block;
@@ -454,23 +448,6 @@
         let usuarioTemSaldo = true; 
         let temCreditoParaContinuar = false; 
 
-        function salvarPontuacaoPorJogo(nomeJogo, pontos) {
-            if (pontos <= 0) {
-                alert("Jogue e acumule pontos antes de salvar!");
-                return;
-            }
-            let nome = prompt(`🏆 Digite seu nome para o Ranking de ${nomeJogo}:`, "Jogador") || "Jogador";
-            let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-            let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
-            
-            ranking.push({ nome: nome, pontos: Number(pontos) });
-            ranking.sort((a, b) => Number(b.pontos) - Number(a.pontos));
-            
-            localStorage.setItem(chaveStorage, JSON.stringify(ranking.slice(0, 30)));
-            alert(`✅ Pontuação salva com sucesso no ranking de ${nomeJogo}!`);
-            window.location.href = "ranking.html";
-        }
-
         function verificarSaldoEChamar() {
             usuarioTemSaldo = true; 
             abrirModalTradutor();
@@ -509,24 +486,40 @@
                 const dados = await resposta.json();
 
                 if (resposta.ok && dados && dados.traducao) {
-                    let traducao = dados.traducao;
+                    let traducaoBruta = dados.traducao.trim();
                     const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
-                    
-                    if (!contemJapones && typeof wanakana !== 'undefined') {
-                        let apenasJapones = traducao.split('(')[0].trim();
-                        let romaji = wanakana.toRomaji(apenasJapones);
-                        
-                        if (romaji) {
-                            // Limpa qualquer caractere residual de kanji que venha misturado do wanakana
-                            romaji = romaji.replace(/[^\u0000-\u007F]+/g, ' ').replace(/\s+/g, ' ').trim();
-                            romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
-                            
-                            box.innerHTML = `${apenasJapones} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
-                        } else {
-                            box.innerText = apenasJapones;
+
+                    // Verifica se o texto digitado foi em Português (ou seja, a resposta é em Japonês)
+                    if (!contemJapones) {
+                        // Tenta extrair caso venha com parênteses do backend
+                        if (traducaoBruta.includes('(') && traducaoBruta.includes(')')) {
+                            const partes = traducaoBruta.split('(');
+                            const textoJapones = partes[0].trim();
+                            let romaji = partes[1].replace(')', '').trim();
+                            romaji = romaji.replace(/[^\u0000-\u007F]+/g, '').trim();
+
+                            if (romaji.length > 0) {
+                                box.innerHTML = `${textoJapones} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                                return;
+                            }
                         }
+
+                        // Se o backend não mandou o romaji, mas temos o Wanakana e o texto traduzido é puro Kana, gera automaticamente
+                        let apenasJapones = traducaoBruta.split('(')[0].trim();
+                        if (typeof wanakana !== 'undefined' && wanakana.isKana(apenasJapones)) {
+                            let romajiAuto = wanakana.toRomaji(apenasJapones);
+                            if (romajiAuto) {
+                                romajiAuto = romajiAuto.charAt(0).toUpperCase() + romajiAuto.slice(1);
+                                box.innerHTML = `${apenasJapones} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romajiAuto})</span>`;
+                                return;
+                            }
+                        }
+
+                        // Se não tiver romaji nem kana puro, exibe apenas a palavra em japonês sem parênteses vazios
+                        box.innerText = apenasJapones;
                     } else {
-                        let apenasPortugues = traducao.split('(')[0].trim();
+                        // Se o usuário digitou em japonês, exibe a tradução em português limpa
+                        let apenasPortugues = traducaoBruta.split('(')[0].trim();
                         box.innerText = apenasPortugues;
                     }
                 } else {
