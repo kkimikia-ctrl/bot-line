@@ -514,11 +514,13 @@
                     
                     if (!contemJapones && typeof wanakana !== 'undefined') {
                         let apenasJapones = traducao.split('(')[0].trim();
-                        let textoLimpo = apenasJapones.replace(/[.!?。、]/g, '');
-                        let romaji = wanakana.toRomaji(textoLimpo);
+                        let romaji = wanakana.toRomaji(apenasJapones);
                         
                         if (romaji) {
+                            // Limpa qualquer caractere residual de kanji que venha misturado do wanakana
+                            romaji = romaji.replace(/[^\u0000-\u007F]+/g, ' ').replace(/\s+/g, ' ').trim();
                             romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
+                            
                             box.innerHTML = `${apenasJapones} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
                         } else {
                             box.innerText = apenasJapones;
