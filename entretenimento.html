@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Entretenimento e Lazer</title>
     <style>
         body {
@@ -12,6 +12,7 @@
             padding: 0;
             text-align: center;
             padding-top: 130px;
+            overflow-x: hidden;
         }
         .header {
             background-color: #0d47a1;
@@ -26,11 +27,14 @@
             width: 100%;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-sizing: border-box;
         }
         .header h1 {
             font-size: 16px;
             margin: 0;
         }
+        
+        /* --- CARROSSEL INFINITO FIXO NO TOPO --- */
         .banners-top-container {
             position: fixed;
             top: 45px;
@@ -40,34 +44,48 @@
             backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             padding: 6px 10px;
             z-index: 999;
             box-shadow: 0 4px 6px rgba(0,0,0,0.15);
             box-sizing: border-box;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-        .banner-retangulo {
-            width: 48%;
-            max-width: 190px;
+        .banners-top-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 10px;
+            width: max-content;
+            animation: rolarInfinito 25s linear infinite;
+        }
+        .banners-top-container:hover .carousel-track,
+        .banners-top-container:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 175px;
             height: 55px;
             border-radius: 8px;
             overflow: hidden;
-            position: relative;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             background: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        .banner-slide {
+        .carousel-track img {
             width: 100%;
             height: 100%;
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
             object-fit: cover;
         }
-        .banner-slide.active {
-            display: block;
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
         }
+
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -120,20 +138,14 @@
         <h1>Entretenimento e Lazer</h1>
     </div>
 
+    <!-- Carrossel Infinito Único Integrado no Topo -->
     <div class="banners-top-container">
-        <div class="banner-retangulo">
-            <img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide active" alt="L1">
-            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L2">
-            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L3">
-            <img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L4">
-            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L5">
-        </div>
-        <div class="banner-retangulo">
-            <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide active" alt="R1">
-            <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R2">
-            <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R3">
-            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R4">
-            <img src="https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R5">
+        <div class="carousel-track" id="carouselTrack">
+            <a href="lives.html"><img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" alt="Destaque 1"></a>
+            <a href="radio.html"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" alt="Destaque 2"></a>
+            <a href="karaoke.html"><img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" alt="Destaque 3"></a>
+            <a href="omikuji.html"><img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=400&auto=format&fit=crop&q=60" alt="Destaque 4"></a>
+            <a href="viagens.html"><img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&auto=format&fit=crop&q=60" alt="Destaque 5"></a>
         </div>
     </div>
 
@@ -187,7 +199,6 @@
                 <span class="subtitle">Sorteios e Diversão</span>
             </button>
 
-            <!-- Novos botões de Eventos adicionados na grade -->
             <button class="card-btn" onclick="window.location.href='agenda.html'">
                 <span class="icon">📅</span>
                 <span class="title">Agenda de Eventos</span>
@@ -203,23 +214,21 @@
     </div>
 
     <script>
-        let currentLeft = 0;
-        const leftSlides = document.querySelectorAll('.left-slide');
-        function nextLeftSlide() {
-            leftSlides[currentLeft].classList.remove('active');
-            currentLeft = (currentLeft + 1) % leftSlides.length;
-            leftSlides[currentLeft].classList.add('active');
-        }
-        setInterval(nextLeftSlide, 3500);
+        // Script para duplicar os itens automaticamente e ajustar o carrossel para loop infinito suave
+        const track = document.getElementById('carouselTrack');
+        const items = Array.from(track.children);
+        
+        // Clona os itens e adiciona ao final para criar o ciclo contínuo
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
 
-        let currentRight = 0;
-        const rightSlides = document.querySelectorAll('.right-slide');
-        function nextRightSlide() {
-            rightSlides[currentRight].classList.remove('active');
-            currentRight = (currentRight + 1) % rightSlides.length;
-            rightSlides[currentRight].classList.add('active');
-        }
-        setInterval(nextRightSlide, 4000);
+        // Calcula exatamente metade da largura total da pista para o deslocamento perfeito da animação
+        window.addEventListener('load', () => {
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+        });
     </script>
 </body>
 </html>
