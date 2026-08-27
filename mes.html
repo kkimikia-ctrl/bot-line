@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Calendário do Mês</title>
-    <!-- Firebase App (Core) SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <!-- Firebase Firestore SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="firebase-init.js"></script>
     <style>
@@ -60,7 +58,6 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- CARROSSEL INFINITO LENTO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
@@ -246,20 +243,7 @@
     </header>
 
     <section class="carousel-container" id="carouselWrapper">
-        <div class="carousel-track" id="carouselTrack">
-            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
-            <a href="agenda.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="agenda.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="agenda.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="agenda.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            <a href="agenda.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
-            <a href="agenda.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
-        </div>
+        <div class="carousel-track" id="carouselTrack"></div>
     </section>
 
     <div class="container">
@@ -284,16 +268,14 @@
         </div>
 
         <div class="event-detail-card" id="eventDetailCard">
-            <div class="detail-title" id="detailDateTitle">27 de Agosto de 2026</div>
-            <div class="detail-content" id="detailContentText">Carregando eventos...</div>
+            <div class="detail-title" id="detailDateTitle">Selecione um dia</div>
+            <div class="detail-content" id="detailContentText">Clique em um dia do calendário para ver os eventos.</div>
         </div>
     </div>
 
     <script>
         let eventosData = {};
-
-        // Começa em Agosto de 2026
-        let dataAtual = new Date(2026, 7, 1);
+        let dataAtual = new Date(2026, 7, 1); // Agosto de 2026
         const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function mudarMes(direcao) {
@@ -301,28 +283,26 @@
             renderizarCalendario();
         }
 
-        function carregarEventosFirebase() {
+        async function carregarEventosFirebase() {
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            if (!dbFirestore) {
-                renderizarCalendario();
-                return;
-            }
-
-            dbFirestore.collection("eventos").get()
-                .then((querySnapshot) => {
-                    eventosData = {};
+            
+            if (dbFirestore) {
+                try {
+                    const querySnapshot = await dbFirestore.collection("eventos").get();
                     querySnapshot.forEach((doc) => {
                         const dados = doc.data();
-                        if (dados.data && dados.texto) {
-                            eventosData[dados.data] = dados.texto;
+                        // Lê tanto pelo ID do documento quanto pelo campo interno 'data'
+                        const dataChave = dados.data || doc.id;
+                        const textoEvento = dados.texto || dados.titulo || "Evento programado.";
+                        if (dataChave) {
+                            eventosData[dataChave] = textoEvento;
                         }
                     });
-                    renderizarCalendario();
-                })
-                .catch((error) => {
-                    console.error("Erro ao carregar eventos do Firebase:", error);
-                    renderizarCalendario();
-                });
+                } catch (err) {
+                    console.error("Erro ao carregar eventos:", err);
+                }
+            }
+            renderizarCalendario();
         }
 
         function renderizarCalendario() {
@@ -389,16 +369,23 @@
 
         function carregarBannersFirebase() {
             const track = document.getElementById('carouselTrack');
+            const wrapper = document.getElementById('carouselWrapper');
             if (!track) return;
 
             const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            if (!dbFirestore) return;
+            if (!dbFirestore) {
+                wrapper.style.display = "none";
+                return;
+            }
 
             dbFirestore.collection("anuncios")
                 .where("categoria", "==", "semanames")
                 .get()
                 .then((querySnapshot) => {
-                    if (querySnapshot.empty) return;
+                    if (querySnapshot.empty) {
+                        wrapper.style.display = "none";
+                        return;
+                    }
 
                     let bannersHtml = "";
                     querySnapshot.forEach((docSnap) => {
@@ -417,14 +404,16 @@
 
                     if (bannersHtml !== "") {
                         track.innerHTML = bannersHtml + bannersHtml;
+                        wrapper.style.display = "block";
+                    } else {
+                        wrapper.style.display = "none";
                     }
                 })
-                .catch((err) => {
-                    console.error("Erro ao carregar banners do mês:", err);
+                .catch(() => {
+                    wrapper.style.display = "none";
                 });
         }
 
-        // Inicializa buscando os eventos do Firestore e os banners
         carregarEventosFirebase();
         carregarBannersFirebase();
     </script>
