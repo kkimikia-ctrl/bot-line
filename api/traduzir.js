@@ -55,7 +55,6 @@ export default async function handler(req, res) {
       return res.status(200).json({ traducao: traducaoPrincipal });
     }
 
-    // Busca o Romaji (pronúncia) para exibir junto no frontend
     let romaji = "";
     try {
       const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
@@ -71,9 +70,7 @@ export default async function handler(req, res) {
           }
         }
       }
-    } catch (err) {
-      // Ignora erro secundário de romaji se houver
-    }
+    } catch (err) {}
 
     let resultadoFinal = traducaoPrincipal;
     if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
