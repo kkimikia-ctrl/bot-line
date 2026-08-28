@@ -7,13 +7,22 @@
     <!-- Biblioteca Wanakana para conversão de Romaji caso necessário -->
     <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
     <style>
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            position: fixed;
+            width: 100%;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
             color: #333;
-            padding-bottom: 80px;
+            padding-bottom: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .header {
@@ -253,41 +262,6 @@
             display: inline-block;
             margin-bottom: 8px;
         }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 60px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            flex-grow: 1;
-            transition: color 0.2s;
-        }
-
-        .nav-item.active {
-            color: #1a73e8;
-            font-weight: bold;
-        }
-
-        .nav-item span.icon {
-            font-size: 1.2rem;
-            margin-bottom: 2px;
-        }
     </style>
 </head>
 <body>
@@ -418,25 +392,6 @@
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
-            <span class="icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="servicos.html" class="nav-item">
-            <span class="icon">📋</span>
-            <span>Serviços</span>
-        </a>
-        <a href="entretenimento.html" class="nav-item">
-            <span class="icon">🎬</span>
-            <span>Lazer</span>
-        </a>
-        <a href="perfil.html" class="nav-item">
-            <span class="icon">👤</span>
-            <span>Perfil</span>
-        </a>
-    </nav>
-
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -481,59 +436,34 @@
                 const sl = contemJapones ? 'ja' : 'pt';
                 const tl = contemJapones ? 'pt' : 'ja';
 
-                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(texto)}`;
+                // Usando uma API pública alternativa e estável que aceita CORS em navegadores móveis
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${sl}|${tl}`;
                 
                 const resposta = await fetch(url);
                 const dados = await resposta.json();
 
-                let traducaoPrincipal = "";
-                if (dados && dados[0]) {
-                    for (let i = 0; i < dados[0].length; i++) {
-                        if (dados[0][i][0]) {
-                            traducaoPrincipal += dados[0][i][0];
-                        }
+                if (dados && dados.responseData && dados.responseData.translatedText) {
+                    let traducaoPrincipal = dados.responseData.translatedText;
+
+                    if (contemJapones) {
+                        box.innerText = traducaoPrincipal;
+                        return;
                     }
-                }
 
-                if (!traducaoPrincipal) {
-                    box.innerText = "Não foi possível traduzir.";
-                    return;
-                }
-
-                // Se digitou em japonês, exibe a tradução em português limpa
-                if (contemJapones) {
-                    box.innerText = traducaoPrincipal;
-                    return;
-                }
-
-                // Se digitou em português, busca o Romaji (pronúncia) oficial do Google
-                let romaji = "";
-                try {
-                    const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
-                    const respRomaji = await fetch(urlRomaji);
-                    const dadosRomaji = await respRomaji.json();
-
-                    if (dadosRomaji && dadosRomaji[0]) {
-                        for (let i = 0; i < dadosRomaji[0].length; i++) {
-                            if (dadosRomaji[0][i][3]) {
-                                romaji += (romaji ? " " : "") + dadosRomaji[0][i][3];
-                            }
-                        }
+                    // Se traduziu para japonês, tenta gerar o Romaji usando o Wanakana se disponível
+                    let romaji = "";
+                    if (typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
+                        romaji = wanakana.toRomaji(traducaoPrincipal);
                     }
-                } catch (e) {
-                    // Ignora erro secundário de romaji se houver
-                }
 
-                // Fallback automático com Wanakana se o Google não retornar o Romaji direto
-                if (!romaji && typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
-                    romaji = wanakana.toRomaji(traducaoPrincipal);
-                }
-
-                if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
-                    romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
-                    box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                    if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
+                        romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
+                        box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                    } else {
+                        box.innerText = traducaoPrincipal;
+                    }
                 } else {
-                    box.innerText = traducaoPrincipal;
+                    box.innerText = "Não foi possível traduzir.";
                 }
 
             } catch (e) {
@@ -670,6 +600,7 @@
         function finalizarChamadaNormal() {
             if (timerInterval) clearInterval(timerInterval);
             pararStream();
+            document.getElementById('modalEspera.style.display') = 'none';
             document.getElementById('modalEspera').style.display = 'none';
 
             if (segundosDecorridos <= 5) {
