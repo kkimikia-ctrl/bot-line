@@ -262,6 +262,10 @@
             display: inline-block;
             margin-bottom: 8px;
         }
+
+        /* Oculta o banner superior padrão feio do Google Tradutor */
+        .goog-te-banner-frame { display: none !important; }
+        body { top: 0 !important; }
     </style>
 </head>
 <body>
@@ -288,10 +292,14 @@
 
     <div class="container">
         <div class="card">
-            <h3>📸 Tradução de Texto e Fotos</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto para traduzir com o Google Tradutor:</p>
-            <textarea id="textoInput" rows="3" placeholder="Digite aqui..."></textarea>
-            <button class="btn-primary" onclick="traduzirComGoogleOficial()">Traduzir com o Google</button>
+            <h3>📸 Tradução de Texto e Fotos (Google Oficial)</h3>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Selecione o idioma desejado abaixo no seletor do Google e digite seu texto:</p>
+            
+            <!-- Widget Oficial do Google Tradutor Integrado -->
+            <div id="google_translate_element" style="margin-bottom: 12px;"></div>
+
+            <textarea id="textoInput" rows="3" placeholder="Digite o texto aqui para traduzir..."></textarea>
+            <button class="btn-primary" onclick="traduzirTextoLocal()">Traduzir na Hora</button>
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
@@ -392,7 +400,19 @@
         </div>
     </div>
 
-    <!-- Script de Integração com Redirecionamento Direto ao Google Tradutor Web Seguro -->
+    <!-- Script do Google Tradutor Oficial + Demais Funções -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'pt',
+                includedLanguages: 'ja,pt',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -420,8 +440,7 @@
             abrirModalTradutor();
         }
 
-        // Método inteligente: abre a tradução exata direto no Google oficial de forma 100% garantida
-        function traduzirComGoogleOficial() {
+        async function traduzirTextoLocal() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
@@ -431,15 +450,39 @@
             }
 
             box.style.display = 'block';
-            
-            const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
-            const sl = contemJapones ? 'ja' : 'pt';
-            const tl = contemJapones ? 'pt' : 'ja';
+            box.innerText = 'Traduzindo com motor do Google...';
 
-            // Como o Google bloqueia requisições internas em apps mobile, abrimos a página oficial com o texto preenchido ou geramos o link direto do Google
-            const urlGoogle = `https://translate.google.com/?hl=pt-BR&sl=${sl}&tl=${tl}&text=${encodeURIComponent(texto)}&op=translate`;
-            
-            box.innerHTML = `Texto pronto para tradução oficial.<br><a href="${urlGoogle}" target="_blank" style="display:inline-block; margin-top:8px; background:#1a73e8; color:white; padding:8px 12px; border-radius:6px; text-decoration:none; font-weight:bold;">🔗 Abrir no Google Tradutor Oficial</a>`;
+            const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
+            const sourceLang = contemJapones ? 'ja' : 'pt';
+            const targetLang = contemJapones ? 'pt' : 'ja';
+            const langPair = `${sourceLang}|${targetLang}`;
+
+            try {
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${langPair}`);
+                const data = await response.json();
+
+                if (data && data.responseData && data.responseData.translatedText) {
+                    let traducao = data.responseData.translatedText;
+
+                    if (!contemJapones && typeof wanakana !== 'undefined') {
+                        try {
+                            if (wanakana.isKana(traducao) || /[\u3040-\u30ff\u4e00-\u9faf]/.test(traducao)) {
+                                let romaji = wanakana.toRomaji(traducao);
+                                if (romaji && romaji !== traducao) {
+                                    box.innerHTML = `${traducao} <br><span style="font-size: 13px; color: #047857; font-style: italic;">Romaji: ${romaji}</span>`;
+                                    return;
+                                }
+                            }
+                        } catch(err) {}
+                    }
+
+                    box.innerText = traducao;
+                } else {
+                    box.innerText = "Erro ao processar a tradução.";
+                }
+            } catch (e) {
+                box.innerText = "Utilize o seletor do Google Tradutor acima ou verifique sua conexão.";
+            }
         }
 
         function abrirModalTradutor() {
