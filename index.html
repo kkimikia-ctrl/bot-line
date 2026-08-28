@@ -477,56 +477,67 @@
             box.innerText = 'Traduzindo...';
 
             try {
-                const resposta = await fetch('/api/traduzir', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texto })
-                });
+                const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
+                const sl = contemJapones ? 'ja' : 'pt';
+                const tl = contemJapones ? 'pt' : 'ja';
 
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(texto)}`;
+                
+                const resposta = await fetch(url);
                 const dados = await resposta.json();
 
-                if (resposta.ok && dados && dados.traducao) {
-                    let traducaoBruta = dados.traducao.trim();
-                    const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
-
-                    // Verifica se o texto digitado foi em Português (ou seja, a resposta é em Japonês)
-                    if (!contemJapones) {
-                        // Tenta extrair caso venha com parênteses do backend
-                        if (traducaoBruta.includes('(') && traducaoBruta.includes(')')) {
-                            const partes = traducaoBruta.split('(');
-                            const textoJapones = partes[0].trim();
-                            let romaji = partes[1].replace(')', '').trim();
-                            romaji = romaji.replace(/[^\u0000-\u007F]+/g, '').trim();
-
-                            if (romaji.length > 0) {
-                                box.innerHTML = `${textoJapones} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
-                                return;
-                            }
+                let traducaoPrincipal = "";
+                if (dados && dados[0]) {
+                    for (let i = 0; i < dados[0].length; i++) {
+                        if (dados[0][i][0]) {
+                            traducaoPrincipal += dados[0][i][0];
                         }
-
-                        // Se o backend não mandou o romaji, mas temos o Wanakana e o texto traduzido é puro Kana, gera automaticamente
-                        let apenasJapones = traducaoBruta.split('(')[0].trim();
-                        if (typeof wanakana !== 'undefined' && wanakana.isKana(apenasJapones)) {
-                            let romajiAuto = wanakana.toRomaji(apenasJapones);
-                            if (romajiAuto) {
-                                romajiAuto = romajiAuto.charAt(0).toUpperCase() + romajiAuto.slice(1);
-                                box.innerHTML = `${apenasJapones} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romajiAuto})</span>`;
-                                return;
-                            }
-                        }
-
-                        // Se não tiver romaji nem kana puro, exibe apenas a palavra em japonês sem parênteses vazios
-                        box.innerText = apenasJapones;
-                    } else {
-                        // Se o usuário digitou em japonês, exibe a tradução em português limpa
-                        let apenasPortugues = traducaoBruta.split('(')[0].trim();
-                        box.innerText = apenasPortugues;
                     }
-                } else {
-                    box.innerText = dados.erro || 'Erro ao processar a tradução.';
                 }
+
+                if (!traducaoPrincipal) {
+                    box.innerText = "Não foi possível traduzir.";
+                    return;
+                }
+
+                // Se digitou em japonês, exibe a tradução em português limpa
+                if (contemJapones) {
+                    box.innerText = traducaoPrincipal;
+                    return;
+                }
+
+                // Se digitou em português, busca o Romaji (pronúncia) oficial do Google
+                let romaji = "";
+                try {
+                    const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
+                    const respRomaji = await fetch(urlRomaji);
+                    const dadosRomaji = await respRomaji.json();
+
+                    if (dadosRomaji && dadosRomaji[0]) {
+                        for (let i = 0; i < dadosRomaji[0].length; i++) {
+                            if (dadosRomaji[0][i][3]) {
+                                romaji += (romaji ? " " : "") + dadosRomaji[0][i][3];
+                            }
+                        }
+                    }
+                } catch (e) {
+                    // Ignora erro secundário de romaji se houver
+                }
+
+                // Fallback automático com Wanakana se o Google não retornar o Romaji direto
+                if (!romaji && typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
+                    romaji = wanakana.toRomaji(traducaoPrincipal);
+                }
+
+                if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
+                    romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
+                    box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                } else {
+                    box.innerText = traducaoPrincipal;
+                }
+
             } catch (e) {
-                box.innerText = 'Erro ao conectar com o servidor.';
+                box.innerText = 'Erro ao processar a tradução.';
             }
         }
 
