@@ -24,15 +24,21 @@ export default async function handler(req, res) {
     const sl = temJapones ? 'ja' : 'pt';
     const tl = temJapones ? 'pt' : 'ja';
 
-    // Chamada oficial do Google Tradutor com cabeçalho de navegador para não bloquear
+    // Usando rota encode limpa e múltiplos headers para simular um navegador real
     const urlTraducao = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(termoLimpo)}`;
     
     const respTrad = await fetch(urlTraducao, {
+      method: 'GET',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1',
+        'Accept': 'application/json'
       }
     });
-    
+
+    if (!respTrad.ok) {
+      return res.status(200).json({ traducao: "Erro de comunicação com o tradutor." });
+    }
+
     const dadosTrad = await respTrad.json();
 
     let traducaoPrincipal = "";
@@ -48,12 +54,11 @@ export default async function handler(req, res) {
       return res.status(200).json({ traducao: "Não foi possível traduzir." });
     }
 
-    // Se digitou em japonês, retorna só o português
     if (temJapones) {
       return res.status(200).json({ traducao: traducaoPrincipal });
     }
 
-    // Se digitou em português, busca o Romaji (pronúncia) oficial do Google
+    // Busca o Romaji (pronúncia) do japonês traduzido
     let romaji = "";
     try {
       const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
@@ -70,7 +75,7 @@ export default async function handler(req, res) {
         }
       }
     } catch (err) {
-      // Ignora erro de romaji se falhar
+      // Ignora se falhar o romaji secundário
     }
 
     let resultadoFinal = traducaoPrincipal;
