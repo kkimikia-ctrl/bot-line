@@ -263,10 +263,28 @@
             margin-bottom: 8px;
         }
 
-        /* Oculta o banner padrão feio do Google Tradutor */
+        /* Estilização para o elemento nativo do Google Tradutor embutido */
         .goog-te-banner-frame { display: none !important; }
         body { top: 0 !important; }
-        #google_translate_element { display: none; }
+        
+        /* Container customizado para o widget do Google embutido */
+        #google_translate_element {
+            margin: 10px 0;
+            padding: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .goog-te-combo {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background-color: #fff;
+            font-size: 14px;
+            color: #334155;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -294,8 +312,12 @@
     <div class="container">
         <div class="card">
             <h3>🌐 Google Tradutor Oficial</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Digite em Português ou Japonês (Automático):</p>
-            <textarea id="textoInput" rows="3" placeholder="Digite aqui..."></textarea>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Selecione o idioma na ferramenta oficial do Google abaixo ou digite seu texto:</p>
+            
+            <!-- Widget Oficial Embutido do Google Tradutor -->
+            <div id="google_translate_element"></div>
+
+            <textarea id="textoInput" rows="3" placeholder="Digite aqui o texto para tradução rápida..."></textarea>
             <button class="btn-primary" onclick="traduzirGoogleOficial()">Traduzir com Google Oficial</button>
             <div id="resultadoBox" class="result-box"></div>
         </div>
@@ -327,9 +349,6 @@
             </button>
         </div>
     </div>
-
-    <!-- Elemento invisível do Google Tradutor Oficial -->
-    <div id="google_translate_element"></div>
 
     <!-- Modais de Chamada (mantidos intactos) -->
     <div id="modalSemSaldo" class="modal">
@@ -401,12 +420,13 @@
         </div>
     </div>
 
-    <!-- Script do Google Tradutor Oficial + Wanakana -->
+    <!-- Script Oficial do Google Tradutor -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'pt',
                 includedLanguages: 'ja,pt',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
                 autoDisplay: false
             }, 'google_translate_element');
         }
@@ -440,7 +460,7 @@
             abrirModalTradutor();
         }
 
-        // Função que aciona o motor oficial do Google Tradutor sem botões de escolha
+        // Função de tradução oficial via motor seguro do Google com suporte a Romaji
         async function traduzirGoogleOficial() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
@@ -458,7 +478,6 @@
             const targetLang = contemJapones ? 'pt' : 'ja';
 
             try {
-                // Utiliza API proxy publica segura integrada ao motor do Google para evitar bloqueio CORS
                 const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(texto)}`);
                 const data = await response.json();
 
@@ -469,7 +488,6 @@
                     box.innerText = "Erro ao traduzir. Tente novamente.";
                 }
             } catch (err) {
-                // Fallback inteligente caso haja qualquer restrição de rede no celular
                 box.innerHTML = `<a href="https://translate.google.com/?sl=${sourceLang}&tl=${targetLang}&text=${encodeURIComponent(texto)}&op=translate" target="_blank" style="color: #065f46; font-weight: bold; text-decoration: underline;">Clique aqui para abrir a tradução oficial no Google Tradutor</a>`;
             }
         }
