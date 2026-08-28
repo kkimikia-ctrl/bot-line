@@ -7,13 +7,22 @@
     <!-- Biblioteca Wanakana para conversão de Romaji caso necessário -->
     <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
     <style>
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            position: fixed;
+            width: 100%;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
             color: #333;
-            padding-bottom: 80px;
+            padding-bottom: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .header {
@@ -253,41 +262,6 @@
             display: inline-block;
             margin-bottom: 8px;
         }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 60px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            flex-grow: 1;
-            transition: color 0.2s;
-        }
-
-        .nav-item.active {
-            color: #1a73e8;
-            font-weight: bold;
-        }
-
-        .nav-item span.icon {
-            font-size: 1.2rem;
-            margin-bottom: 2px;
-        }
     </style>
 </head>
 <body>
@@ -418,25 +392,6 @@
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
-            <span class="icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="servicos.html" class="nav-item">
-            <span class="icon">📋</span>
-            <span>Serviços</span>
-        </a>
-        <a href="entretenimento.html" class="nav-item">
-            <span class="icon">🎬</span>
-            <span>Lazer</span>
-        </a>
-        <a href="perfil.html" class="nav-item">
-            <span class="icon">👤</span>
-            <span>Perfil</span>
-        </a>
-    </nav>
-
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -500,13 +455,11 @@
                     return;
                 }
 
-                // Se digitou em japonês, exibe a tradução em português limpa
                 if (contemJapones) {
                     box.innerText = traducaoPrincipal;
                     return;
                 }
 
-                // Se digitou em português, busca o Romaji (pronúncia) oficial do Google
                 let romaji = "";
                 try {
                     const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
@@ -520,11 +473,8 @@
                             }
                         }
                     }
-                } catch (e) {
-                    // Ignora erro secundário de romaji se houver
-                }
+                } catch (e) {}
 
-                // Fallback automático com Wanakana se o Google não retornar o Romaji direto
                 if (!romaji && typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
                     romaji = wanakana.toRomaji(traducaoPrincipal);
                 }
