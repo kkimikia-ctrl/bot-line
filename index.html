@@ -392,7 +392,7 @@
         </div>
     </div>
 
-    <!-- Script JSONP direto do Google Tradutor (Evita bloqueio de CORS sem travar) -->
+    <!-- Script Corrigido para acessar o Google Tradutor sem bloqueio CORS -->
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -420,8 +420,7 @@
             abrirModalTradutor();
         }
 
-        // Função de tradução direta conectada ao motor do Google Tradutor via JSONP
-        function traduzirTexto() {
+        async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
@@ -437,76 +436,64 @@
             const sl = contemJapones ? 'ja' : 'pt';
             const tl = contemJapones ? 'pt' : 'ja';
 
-            // Remove script anterior se houver
-            const scriptAntigo = document.getElementById('googleTranslateScript');
-            if (scriptAntigo) scriptAntigo.remove();
-
-            // Callback global para receber a resposta do Google imediatamente
-            window.googleTranslateCallback = function(data) {
-                try {
-                    let traducaoPrincipal = "";
-                    if (data && data[0]) {
-                        for (let i = 0; i < data[0].length; i++) {
-                            if (data[0][i][0]) {
-                                traducaoPrincipal += data[0][i][0];
-                            }
+            try {
+                // Usando uma rota de tradução do Google via API publica web estruturada com fetch seguro
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(texto)}`;
+                
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Erro na rede');
+                
+                const data = await response.json();
+                let traducaoPrincipal = "";
+                
+                if (data && data[0]) {
+                    for (let i = 0; i < data[0].length; i++) {
+                        if (data[0][i][0]) {
+                            traducaoPrincipal += data[0][i][0];
                         }
                     }
-
-                    if (!traducaoPrincipal) {
-                        box.innerText = "Não foi possível traduzir.";
-                        return;
-                    }
-
-                    if (contemJapones) {
-                        box.innerText = traducaoPrincipal;
-                        return;
-                    }
-
-                    // Se for do português para o japonês, busca o Romaji correspondente no Google
-                    window.googleRomajiCallback = function(dataRomaji) {
-                        let romaji = "";
-                        try {
-                            if (dataRomaji && dataRomaji[0]) {
-                                for (let i = 0; i < dataRomaji[0].length; i++) {
-                                    if (dataRomaji[0][i][3]) {
-                                        romaji += (romaji ? " " : "") + dataRomaji[0][i][3];
-                                    }
-                                }
-                            }
-                        } catch (e) {}
-
-                        if (!romaji && typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
-                            romaji = wanakana.toRomaji(traducaoPrincipal);
-                        }
-
-                        if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
-                            romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
-                            box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
-                        } else {
-                            box.innerText = traducaoPrincipal;
-                        }
-                    };
-
-                    const scriptRomaji = document.createElement('script');
-                    scriptRomaji.id = 'googleRomajiScript';
-                    scriptRomaji.src = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}&callback=googleRomajiCallback`;
-                    document.body.appendChild(scriptRomaji);
-
-                } catch (e) {
-                    box.innerText = 'Erro ao processar a tradução.';
                 }
-            };
 
-            const script = document.createElement('script');
-            script.id = 'googleTranslateScript';
-            script.src = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(texto)}&callback=googleTranslateCallback`;
-            
-            script.onerror = function() {
+                if (!traducaoPrincipal) {
+                    box.innerText = "Não foi possível traduzir.";
+                    return;
+                }
+
+                if (contemJapones) {
+                    box.innerText = traducaoPrincipal;
+                    return;
+                }
+
+                // Busca o Romaji correspondente no Google para o japonês traduzido
+                let romaji = "";
+                try {
+                    const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
+                    const resRomaji = await fetch(urlRomaji);
+                    const dataRomaji = await resRomaji.json();
+                    
+                    if (dataRomaji && dataRomaji[0]) {
+                        for (let i = 0; i < dataRomaji[0].length; i++) {
+                            if (dataRomaji[0][i][3]) {
+                                romaji += (romaji ? " " : "") + dataRomaji[0][i][3];
+                            }
+                        }
+                    }
+                } catch (e) {}
+
+                if (!romaji && typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
+                    romaji = wanakana.toRomaji(traducaoPrincipal);
+                }
+
+                if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
+                    romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
+                    box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                } else {
+                    box.innerText = traducaoPrincipal;
+                }
+
+            } catch (e) {
                 box.innerText = 'Erro de conexão com o Google Tradutor.';
-            };
-
-            document.body.appendChild(script);
+            }
         }
 
         function abrirModalTradutor() {
