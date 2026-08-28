@@ -263,7 +263,7 @@
             margin-bottom: 8px;
         }
 
-        /* Correções visuais essenciais para o Google Tradutor */
+        /* Correções visuais para o Google Tradutor na Página */
         .goog-te-banner-frame { display: none !important; }
         body { top: 0 !important; }
         
@@ -326,7 +326,7 @@
 
             <p style="font-size: 14px; color: #666; margin-top:0;">Ou consulte uma palavra/termo específico:</p>
             <textarea id="textoInput" rows="2" placeholder="Digite aqui o texto em português ou japonês..."></textarea>
-            <button class="btn-primary" onclick="traduzirTextoComGoogleOficial()">Traduzir com o Google</button>
+            <button class="btn-primary" onclick="traduzirTextoNaPagina()">Traduzir Texto Específico</button>
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
@@ -468,8 +468,8 @@
             abrirModalTradutor();
         }
 
-        // Alternativa segura usando o próprio Google Tradutor via aba secundária sem erro de CORS
-        function traduzirTextoComGoogleOficial() {
+        // Função de tradução que roda direto na página (na caixa verde)
+        async function traduzirTextoNaPagina() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
@@ -479,24 +479,39 @@
             }
 
             box.style.display = 'block';
-            
-            const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
-            const source = contemJapones ? 'ja' : 'pt';
-            const target = contemJapones ? 'pt' : 'ja';
+            box.innerText = 'Traduzindo...';
 
-            // Como o Google bloqueia requisições internas de API sem chave paga, 
-            // a forma 100% oficial e gratuita do Google sem cair em erro é abrir a tradução 
-            // ou usar a tradução nativa da barra superior para a página inteira.
-            // Para o termo específico, redirecionamos de forma limpa para o Google Tradutor oficial em uma aba rápida ou geramos o link:
-            let urlGoogle = `https://translate.google.com/?sl=${source}&tl=${target}&text=${encodeURIComponent(texto)}&op=translate`;
-            
-            box.innerHTML = `Texto pronto para traduzir no Google:<br><a href="${urlGoogle}" target="_blank" style="color: #047857; font-weight: bold; text-decoration: underline;">👉 Clique aqui para abrir a tradução oficial no Google</a>`;
-            
-            // Adiciona o Romaji caso seja japonês
-            if (!contemJapones && typeof wanakana !== 'undefined') {
-                // Se o usuário digitou em português e quer ver em japonês, tentamos traduzir via wanakana se houver correspondência, 
-                // mas para frases completas o ideal é o link do Google acima.
+            const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
+            const sourceLang = contemJapones ? 'ja' : 'pt';
+            const targetLang = contemJapones ? 'pt' : 'ja';
+
+            try {
+                // Utilizando API pública estável com suporte a CORS para renderizar na tela
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${sourceLang}|${targetLang}`);
+                const data = await response.json();
+
+                if (data && data.responseData && data.responseData.translatedText) {
+                    let traducao = data.responseData.translatedText;
+                    exibirResultadoComRomajiAoLado(traducao, !contemJapones, box);
+                } else {
+                    box.innerText = "Não foi possível traduzir no momento.";
+                }
+            } catch (err) {
+                box.innerText = "Erro de conexão com o serviço de tradução.";
             }
+        }
+
+        function exibirResultadoComRomajiAoLado(traducao, eJapones, box) {
+            if (eJapones && typeof wanakana !== 'undefined') {
+                try {
+                    let romaji = wanakana.toRomaji(traducao);
+                    if (romaji && romaji !== traducao) {
+                        box.innerHTML = `${traducao} <span style="font-size: 14px; color: #047857; font-weight: normal;">(${romaji})</span>`;
+                        return;
+                    }
+                } catch(err) {}
+            }
+            box.innerText = traducao;
         }
 
         function abrirModalTradutor() {
@@ -538,7 +553,7 @@
                 atualizarDisplayCronometro();
 
                 try {
-                    streamUser = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                     document.getElementById('webcam').srcObject = streamVideo;
                 } catch (err) {
                     subStatus.style.display = "block";
@@ -626,7 +641,7 @@
         }
 
         function finalizarChamadaNormal() {
-            if (timerInterval) clearInterval(timerIdentifier = null);
+            if (timerInterval) clearInterval(timerInterval);
             pararStream();
             document.getElementById('modalEspera').style.display = 'none';
 
