@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ajuda JP - Início</title>
-    <!-- Biblioteca Wanakana para conversão de Romaji -->
     <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
     <style>
         html, body {
@@ -155,12 +154,11 @@
             background-color: #ecfdf5;
             border: 1px solid #10b981;
             color: #065f46;
-            padding: 12px;
+            padding: 8px;
             border-radius: 8px;
             margin-top: 10px;
-            font-size: 16px;
-            word-break: break-word;
             display: none;
+            overflow: hidden;
         }
 
         .grid-menu {
@@ -263,7 +261,6 @@
             margin-bottom: 8px;
         }
 
-        /* Ocultar elementos padrão do Google que poluem a tela */
         .goog-te-banner-frame { display: none !important; }
         body { top: 0 !important; }
         
@@ -287,8 +284,6 @@
             max-width: 280px;
             cursor: pointer;
         }
-        .goog-tooltip { display: none !important; }
-        .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
     </style>
 </head>
 <body>
@@ -318,7 +313,6 @@
             <h3>🌐 Traduzir Página Inteira</h3>
             <p style="font-size: 14px; color: #666; margin-top:0;">Selecione o idioma abaixo para traduzir todo o conteúdo da tela instantaneamente:</p>
             
-            <!-- Widget Oficial do Google Tradutor -->
             <div id="google_translate_element"></div>
 
             <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
@@ -326,11 +320,12 @@
             <p style="font-size: 14px; color: #666; margin-top:0;">Ou consulte uma palavra/termo específico com o Google:</p>
             <textarea id="textoInput" rows="2" placeholder="Digite aqui o texto em português ou japonês..."></textarea>
             
-            <!-- Botão que interage com o tradutor oficial do Google na página -->
-            <button class="btn-primary" onclick="traduzirComGoogleOficial()">Traduzir com o Google</button>
+            <button class="btn-primary" onclick="traduzirNaPaginaComGoogle()">Traduzir com o Google</button>
             
-            <!-- Caixa verde onde o resultado aparece diretamente na página -->
-            <div id="resultadoBox" class="result-box"></div>
+            <!-- Caixa verde que abrirá o Google Tradutor direto na página -->
+            <div id="resultadoBox" class="result-box">
+                <iframe id="googleFrame" src="" style="width: 100%; height: 220px; border: none; border-radius: 6px;" scrolling="no"></iframe>
+            </div>
         </div>
 
         <div class="grid-menu">
@@ -431,7 +426,6 @@
         </div>
     </div>
 
-    <!-- Script Oficial do Google Tradutor -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
@@ -471,60 +465,24 @@
             abrirModalTradutor();
         }
 
-        // Função de tradução utilizando o ecossistema do Google embutido e gerando romaji via Wanakana
-        function traduzirComGoogleOficial() {
+        // Função para abrir o Google Tradutor direto dentro da caixinha verde na página
+        function traduzirNaPaginaComGoogle() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
+            const iframe = document.getElementById('googleFrame');
 
             if (!texto) {
                 alert('Digite algum texto primeiro!');
                 return;
             }
 
-            box.style.display = 'block';
-            box.innerHTML = 'Processando com o Google...';
-
-            // Identifica se digitou japonês ou português para guiar a tradução e o Romaji
             const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
+            const sourceLang = contemJapones ? 'ja' : 'pt';
+            const targetLang = contemJapones ? 'pt' : 'ja';
 
-            // Abre a tradução oficial do Google em uma nova guia de suporte segura, 
-            // mantendo o usuário na página e alimentando o histórico/caixa com o resultado esperado.
-            setTimeout(() => {
-                const targetLang = contemJapones ? 'pt' : 'ja';
-                const sourceLang = contemJapones ? 'ja' : 'pt';
-                
-                // URL oficial direta do Google Translate
-                const urlGoogle = `https://translate.google.com/?sl=${sourceLang}&tl=${targetLang}&text=${encodeURIComponent(texto)}&op=translate`;
-                
-                // Mantemos o texto e geramos as facilidades visuais na caixa verde
-                let traducaoSimuladaOuSugerida = texto;
-                
-                // Dispara uma requisição interna leve para tradução em tempo real sem sair da tela
-                fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(texto)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data && data[0] && data[0][0] && data[0][0][0]) {
-                            let resultadoTraduzido = data[0].map(item => item[0]).join('');
-                            
-                            if (!contemJapones && typeof wanakana !== 'undefined') {
-                                // Se traduziu para japonês, adiciona o Romaji ao lado
-                                try {
-                                    let romaji = wanakana.toRomaji(resultadoTraduzido);
-                                    if (romaji && romaji !== resultadoTraduzido) {
-                                        box.innerHTML = `<b>Google Tradutor:</b><br>${resultadoTraduzido} <span style="font-size: 14px; color: #047857; font-weight: normal;">(${romaji})</span>`;
-                                        return;
-                                    }
-                                } catch(e){}
-                            }
-                            box.innerHTML = `<b>Google Tradutor:</b><br>${resultadoTraduzido}`;
-                        } else {
-                            box.innerHTML = `Use o widget do Google acima ou <a href="${urlGoogle}" target="_blank" style="color: #065f46; font-weight: bold;">clique aqui para abrir no Google</a>.`;
-                        }
-                    })
-                    .catch(err => {
-                        box.innerHTML = `Para traduzir este termo com precisão total, <a href="${urlGoogle}" target="_blank" style="color: #065f46; font-weight: bold;">clique aqui para abrir no Google Tradutor</a>.`;
-                    });
-            }, 300);
+            // Carrega o site oficial do Google Tradutor carregando o termo diretamente na página atual via iframe
+            iframe.src = `https://translate.google.com/m?sl=${sourceLang}&tl=${targetLang}&q=${encodeURIComponent(texto)}`;
+            box.style.display = 'block';
         }
 
         function abrirModalTradutor() {
@@ -641,7 +599,6 @@
 
             if (valorParaDevolver > 0) {
                 return { cobrado: valorFinalDevido, devolvido: valorParaDevolver };
-
             }
 
             return { cobrado: valorInicialRetido, devolvido: 0 };
