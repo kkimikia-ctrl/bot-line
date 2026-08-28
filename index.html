@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ajuda JP - Início</title>
-    <!-- Biblioteca Wanakana para conversão de Romaji caso necessário -->
+    <!-- Biblioteca Wanakana para conversão de Romaji -->
     <script src="https://cdn.jsdelivr.net/npm/wanakana@5.1.0/wanakana.min.js"></script>
     <style>
         html, body {
@@ -392,7 +392,7 @@
         </div>
     </div>
 
-    <!-- Script com Integração Google Cloud Translation API -->
+    <!-- Script com Romaji ao lado do texto japonês -->
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -430,43 +430,25 @@
             }
 
             box.style.display = 'block';
-            box.innerText = 'Consultando o Google Tradutor...';
+            box.innerText = 'Traduzindo...';
 
             const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
             const targetLang = contemJapones ? 'pt' : 'ja';
-
-            // Substitua 'SUA_GOOGLE_API_KEY' pela chave da sua API do Google Cloud Translation se for usar o endpoint direto da Google
             const apiKey = 'SUA_GOOGLE_API_KEY'; 
 
             try {
-                // Tentativa usando a API oficial do Google Cloud Translation v2
                 let response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        q: texto,
-                        target: targetLang
-                    })
+                    body: JSON.stringify({ q: texto, target: targetLang })
                 });
 
                 let data = await response.json();
 
                 if (data && data.data && data.data.translations && data.data.translations[0]) {
                     let traducao = data.data.translations[0].translatedText;
-
-                    if (!contemJapones && typeof wanakana !== 'undefined') {
-                        try {
-                            let romaji = wanakana.toRomaji(traducao);
-                            if (romaji && romaji !== traducao) {
-                                box.innerHTML = `${traducao} <br><span style="font-size: 13px; color: #047857; font-style: italic;">Romaji: ${romaji}</span>`;
-                                return;
-                            }
-                        } catch(err) {}
-                    }
-
-                    box.innerText = traducao;
+                    exibirResultadoComRomajiAoLado(traducao, targetLang === 'ja', box);
                 } else {
-                    // Fallback automático caso a chave de API não esteja configurada no código ainda
                     usarTraducaoAlternativaEstavel(texto, contemJapones, box);
                 }
             } catch (e) {
@@ -485,13 +467,27 @@
 
                 if (data && data.responseData && data.responseData.translatedText) {
                     let traducao = data.responseData.translatedText;
-                    box.innerText = traducao;
+                    exibirResultadoComRomajiAoLado(traducao, !contemJapones, box);
                 } else {
                     box.innerText = "Erro ao traduzir. Verifique os dados inseridos.";
                 }
             } catch (err) {
                 box.innerText = "Erro de conexão com o serviço de tradução.";
             }
+        }
+
+        function exibirResultadoComRomajiAoLado(traducao, eJapones, box) {
+            if (eJapones && typeof wanakana !== 'undefined') {
+                try {
+                    let romaji = wanakana.toRomaji(traducao);
+                    if (romaji && romaji !== traducao) {
+                        // Exibe o kanji/japonês e o Romaji na mesma linha entre parênteses
+                        box.innerHTML = `${traducao} <span style="font-size: 14px; color: #047857; font-weight: normal;">(${romaji})</span>`;
+                        return;
+                    }
+                } catch(err) {}
+            }
+            box.innerText = traducao;
         }
 
         function abrirModalTradutor() {
