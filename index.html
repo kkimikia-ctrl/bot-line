@@ -289,9 +289,9 @@
     <div class="container">
         <div class="card">
             <h3>📸 Tradução de Texto e Fotos</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto em japonês ou português para traduzir na hora:</p>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto para traduzir com o Google Tradutor:</p>
             <textarea id="textoInput" rows="3" placeholder="Digite aqui..."></textarea>
-            <button class="btn-primary" onclick="traduzirTexto()">Traduzir Agora</button>
+            <button class="btn-primary" onclick="traduzirComGoogleOficial()">Traduzir com o Google</button>
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
@@ -392,7 +392,7 @@
         </div>
     </div>
 
-    <!-- Script Corrigido para acessar o Google Tradutor sem bloqueio CORS -->
+    <!-- Script de Integração com Redirecionamento Direto ao Google Tradutor Web Seguro -->
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -420,7 +420,8 @@
             abrirModalTradutor();
         }
 
-        async function traduzirTexto() {
+        // Método inteligente: abre a tradução exata direto no Google oficial de forma 100% garantida
+        function traduzirComGoogleOficial() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
@@ -430,70 +431,15 @@
             }
 
             box.style.display = 'block';
-            box.innerText = 'Traduzindo...';
-
+            
             const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
             const sl = contemJapones ? 'ja' : 'pt';
             const tl = contemJapones ? 'pt' : 'ja';
 
-            try {
-                // Usando uma rota de tradução do Google via API publica web estruturada com fetch seguro
-                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(texto)}`;
-                
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Erro na rede');
-                
-                const data = await response.json();
-                let traducaoPrincipal = "";
-                
-                if (data && data[0]) {
-                    for (let i = 0; i < data[0].length; i++) {
-                        if (data[0][i][0]) {
-                            traducaoPrincipal += data[0][i][0];
-                        }
-                    }
-                }
-
-                if (!traducaoPrincipal) {
-                    box.innerText = "Não foi possível traduzir.";
-                    return;
-                }
-
-                if (contemJapones) {
-                    box.innerText = traducaoPrincipal;
-                    return;
-                }
-
-                // Busca o Romaji correspondente no Google para o japonês traduzido
-                let romaji = "";
-                try {
-                    const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
-                    const resRomaji = await fetch(urlRomaji);
-                    const dataRomaji = await resRomaji.json();
-                    
-                    if (dataRomaji && dataRomaji[0]) {
-                        for (let i = 0; i < dataRomaji[0].length; i++) {
-                            if (dataRomaji[0][i][3]) {
-                                romaji += (romaji ? " " : "") + dataRomaji[0][i][3];
-                            }
-                        }
-                    }
-                } catch (e) {}
-
-                if (!romaji && typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
-                    romaji = wanakana.toRomaji(traducaoPrincipal);
-                }
-
-                if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
-                    romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
-                    box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
-                } else {
-                    box.innerText = traducaoPrincipal;
-                }
-
-            } catch (e) {
-                box.innerText = 'Erro de conexão com o Google Tradutor.';
-            }
+            // Como o Google bloqueia requisições internas em apps mobile, abrimos a página oficial com o texto preenchido ou geramos o link direto do Google
+            const urlGoogle = `https://translate.google.com/?hl=pt-BR&sl=${sl}&tl=${tl}&text=${encodeURIComponent(texto)}&op=translate`;
+            
+            box.innerHTML = `Texto pronto para tradução oficial.<br><a href="${urlGoogle}" target="_blank" style="display:inline-block; margin-top:8px; background:#1a73e8; color:white; padding:8px 12px; border-radius:6px; text-decoration:none; font-weight:bold;">🔗 Abrir no Google Tradutor Oficial</a>`;
         }
 
         function abrirModalTradutor() {
