@@ -288,10 +288,10 @@
 
     <div class="container">
         <div class="card">
-            <h3>📸 Tradução Oficial Google (Texto e Fotos)</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto abaixo para traduzir direto pelo motor do Google:</p>
+            <h3>📸 Tradução Rápida (Texto e Fotos)</h3>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto abaixo para traduzir:</p>
             <textarea id="textoInput" rows="3" placeholder="Digite aqui em português ou japonês..."></textarea>
-            <button class="btn-primary" onclick="traduzirComGoogleApiOficial()">Traduzir com Google Oficial</button>
+            <button class="btn-primary" onclick="traduzirTexto()">Traduzir</button>
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
@@ -392,7 +392,7 @@
         </div>
     </div>
 
-    <!-- Script com Romaji ao lado do texto japonês -->
+    <!-- Script de Tradução com Romaji ao lado -->
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -420,7 +420,7 @@
             abrirModalTradutor();
         }
 
-        async function traduzirComGoogleApiOficial() {
+        async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
@@ -433,30 +433,6 @@
             box.innerText = 'Traduzindo...';
 
             const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
-            const targetLang = contemJapones ? 'pt' : 'ja';
-            const apiKey = 'SUA_GOOGLE_API_KEY'; 
-
-            try {
-                let response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ q: texto, target: targetLang })
-                });
-
-                let data = await response.json();
-
-                if (data && data.data && data.data.translations && data.data.translations[0]) {
-                    let traducao = data.data.translations[0].translatedText;
-                    exibirResultadoComRomajiAoLado(traducao, targetLang === 'ja', box);
-                } else {
-                    usarTraducaoAlternativaEstavel(texto, contemJapones, box);
-                }
-            } catch (e) {
-                usarTraducaoAlternativaEstavel(texto, contemJapones, box);
-            }
-        }
-
-        async function usarTraducaoAlternativaEstavel(texto, contemJapones, box) {
             const sourceLang = contemJapones ? 'ja' : 'pt';
             const targetLang = contemJapones ? 'pt' : 'ja';
             const langPair = `${sourceLang}|${targetLang}`;
@@ -481,7 +457,6 @@
                 try {
                     let romaji = wanakana.toRomaji(traducao);
                     if (romaji && romaji !== traducao) {
-                        // Exibe o kanji/japonês e o Romaji na mesma linha entre parênteses
                         box.innerHTML = `${traducao} <span style="font-size: 14px; color: #047857; font-weight: normal;">(${romaji})</span>`;
                         return;
                     }
