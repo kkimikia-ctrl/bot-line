@@ -392,6 +392,7 @@
         </div>
     </div>
 
+    <!-- Script JSONP direto do Google Tradutor (Evita bloqueio de CORS sem travar) -->
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -419,7 +420,8 @@
             abrirModalTradutor();
         }
 
-        async function traduzirTexto() {
+        // Função de tradução direta conectada ao motor do Google Tradutor via JSONP
+        function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
@@ -431,43 +433,80 @@
             box.style.display = 'block';
             box.innerText = 'Traduzindo...';
 
-            try {
-                const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
-                const sl = contemJapones ? 'ja' : 'pt';
-                const tl = contemJapones ? 'pt' : 'ja';
+            const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
+            const sl = contemJapones ? 'ja' : 'pt';
+            const tl = contemJapones ? 'pt' : 'ja';
 
-                // API de tradução estável e direta sem travamentos de proxy
-                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${sl}|${tl}`;
-                
-                const resposta = await fetch(url);
-                const dados = await resposta.json();
+            // Remove script anterior se houver
+            const scriptAntigo = document.getElementById('googleTranslateScript');
+            if (scriptAntigo) scriptAntigo.remove();
 
-                if (dados && dados.responseData && dados.responseData.translatedText) {
-                    let traducaoPrincipal = dados.responseData.translatedText;
+            // Callback global para receber a resposta do Google imediatamente
+            window.googleTranslateCallback = function(data) {
+                try {
+                    let traducaoPrincipal = "";
+                    if (data && data[0]) {
+                        for (let i = 0; i < data[0].length; i++) {
+                            if (data[0][i][0]) {
+                                traducaoPrincipal += data[0][i][0];
+                            }
+                        }
+                    }
+
+                    if (!traducaoPrincipal) {
+                        box.innerText = "Não foi possível traduzir.";
+                        return;
+                    }
 
                     if (contemJapones) {
                         box.innerText = traducaoPrincipal;
                         return;
                     }
 
-                    let romaji = "";
-                    if (typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
-                        romaji = wanakana.toRomaji(traducaoPrincipal);
-                    }
+                    // Se for do português para o japonês, busca o Romaji correspondente no Google
+                    window.googleRomajiCallback = function(dataRomaji) {
+                        let romaji = "";
+                        try {
+                            if (dataRomaji && dataRomaji[0]) {
+                                for (let i = 0; i < dataRomaji[0].length; i++) {
+                                    if (dataRomaji[0][i][3]) {
+                                        romaji += (romaji ? " " : "") + dataRomaji[0][i][3];
+                                    }
+                                }
+                            }
+                        } catch (e) {}
 
-                    if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
-                        romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
-                        box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
-                    } else {
-                        box.innerText = traducaoPrincipal;
-                    }
-                } else {
-                    box.innerText = "Não foi possível traduzir.";
+                        if (!romaji && typeof wanakana !== 'undefined' && wanakana.isKana(traducaoPrincipal)) {
+                            romaji = wanakana.toRomaji(traducaoPrincipal);
+                        }
+
+                        if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
+                            romaji = romaji.charAt(0).toUpperCase() + romaji.slice(1);
+                            box.innerHTML = `${traducaoPrincipal} <span style="font-size: 14px; color: #047857; font-style: italic;">(${romaji})</span>`;
+                        } else {
+                            box.innerText = traducaoPrincipal;
+                        }
+                    };
+
+                    const scriptRomaji = document.createElement('script');
+                    scriptRomaji.id = 'googleRomajiScript';
+                    scriptRomaji.src = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}&callback=googleRomajiCallback`;
+                    document.body.appendChild(scriptRomaji);
+
+                } catch (e) {
+                    box.innerText = 'Erro ao processar a tradução.';
                 }
+            };
 
-            } catch (e) {
-                box.innerText = 'Erro ao processar a tradução.';
-            }
+            const script = document.createElement('script');
+            script.id = 'googleTranslateScript';
+            script.src = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(texto)}&callback=googleTranslateCallback`;
+            
+            script.onerror = function() {
+                box.innerText = 'Erro de conexão com o Google Tradutor.';
+            };
+
+            document.body.appendChild(script);
         }
 
         function abrirModalTradutor() {
