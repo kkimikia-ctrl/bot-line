@@ -3,15 +3,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
-  const { texto } = req.body;
-
-  if (!texto) {
-    return res.status(400).json({ error: 'Nenhum texto enviado.' });
-  }
-
-  const termoLimpo = texto.trim();
-
   try {
+    // Garante que o corpo da requisição seja lido corretamente na Vercel
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        body = {};
+      }
+    }
+
+    const texto = body?.texto;
+
+    if (!texto) {
+      return res.status(400).json({ error: 'Nenhum texto enviado.' });
+    }
+
+    const termoLimpo = texto.trim();
+
     const temJapones = /[ぁ-んァ-ン一-龥]/.test(termoLimpo);
     const sl = temJapones ? 'ja' : 'pt';
     const tl = temJapones ? 'pt' : 'ja';
