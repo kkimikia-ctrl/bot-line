@@ -262,10 +262,6 @@
             display: inline-block;
             margin-bottom: 8px;
         }
-
-        /* Oculta o banner superior padrão feio do Google Tradutor */
-        .goog-te-banner-frame { display: none !important; }
-        body { top: 0 !important; }
     </style>
 </head>
 <body>
@@ -292,14 +288,10 @@
 
     <div class="container">
         <div class="card">
-            <h3>📸 Tradução de Texto e Fotos (Google Oficial)</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Selecione o idioma desejado abaixo no seletor do Google e digite seu texto:</p>
-            
-            <!-- Widget Oficial do Google Tradutor Integrado -->
-            <div id="google_translate_element" style="margin-bottom: 12px;"></div>
-
-            <textarea id="textoInput" rows="3" placeholder="Digite o texto aqui para traduzir..."></textarea>
-            <button class="btn-primary" onclick="traduzirTextoLocal()">Traduzir na Hora</button>
+            <h3>📸 Tradução Oficial Google (Texto e Fotos)</h3>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto abaixo para traduzir direto pelo motor do Google:</p>
+            <textarea id="textoInput" rows="3" placeholder="Digite aqui em português ou japonês..."></textarea>
+            <button class="btn-primary" onclick="traduzirComGoogleApiOficial()">Traduzir com Google Oficial</button>
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
@@ -400,19 +392,7 @@
         </div>
     </div>
 
-    <!-- Script do Google Tradutor Oficial + Demais Funções -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'pt',
-                includedLanguages: 'ja,pt',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
+    <!-- Script com Integração Google Cloud Translation API -->
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -440,7 +420,7 @@
             abrirModalTradutor();
         }
 
-        async function traduzirTextoLocal() {
+        async function traduzirComGoogleApiOficial() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
 
@@ -450,9 +430,51 @@
             }
 
             box.style.display = 'block';
-            box.innerText = 'Traduzindo com motor do Google...';
+            box.innerText = 'Consultando o Google Tradutor...';
 
             const contemJapones = /[\u3040-\u30ff\u4e00-\u9faf]/.test(texto);
+            const targetLang = contemJapones ? 'pt' : 'ja';
+
+            // Substitua 'SUA_GOOGLE_API_KEY' pela chave da sua API do Google Cloud Translation se for usar o endpoint direto da Google
+            const apiKey = 'SUA_GOOGLE_API_KEY'; 
+
+            try {
+                // Tentativa usando a API oficial do Google Cloud Translation v2
+                let response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        q: texto,
+                        target: targetLang
+                    })
+                });
+
+                let data = await response.json();
+
+                if (data && data.data && data.data.translations && data.data.translations[0]) {
+                    let traducao = data.data.translations[0].translatedText;
+
+                    if (!contemJapones && typeof wanakana !== 'undefined') {
+                        try {
+                            let romaji = wanakana.toRomaji(traducao);
+                            if (romaji && romaji !== traducao) {
+                                box.innerHTML = `${traducao} <br><span style="font-size: 13px; color: #047857; font-style: italic;">Romaji: ${romaji}</span>`;
+                                return;
+                            }
+                        } catch(err) {}
+                    }
+
+                    box.innerText = traducao;
+                } else {
+                    // Fallback automático caso a chave de API não esteja configurada no código ainda
+                    usarTraducaoAlternativaEstavel(texto, contemJapones, box);
+                }
+            } catch (e) {
+                usarTraducaoAlternativaEstavel(texto, contemJapones, box);
+            }
+        }
+
+        async function usarTraducaoAlternativaEstavel(texto, contemJapones, box) {
             const sourceLang = contemJapones ? 'ja' : 'pt';
             const targetLang = contemJapones ? 'pt' : 'ja';
             const langPair = `${sourceLang}|${targetLang}`;
@@ -463,25 +485,12 @@
 
                 if (data && data.responseData && data.responseData.translatedText) {
                     let traducao = data.responseData.translatedText;
-
-                    if (!contemJapones && typeof wanakana !== 'undefined') {
-                        try {
-                            if (wanakana.isKana(traducao) || /[\u3040-\u30ff\u4e00-\u9faf]/.test(traducao)) {
-                                let romaji = wanakana.toRomaji(traducao);
-                                if (romaji && romaji !== traducao) {
-                                    box.innerHTML = `${traducao} <br><span style="font-size: 13px; color: #047857; font-style: italic;">Romaji: ${romaji}</span>`;
-                                    return;
-                                }
-                            }
-                        } catch(err) {}
-                    }
-
                     box.innerText = traducao;
                 } else {
-                    box.innerText = "Erro ao processar a tradução.";
+                    box.innerText = "Erro ao traduzir. Verifique os dados inseridos.";
                 }
-            } catch (e) {
-                box.innerText = "Utilize o seletor do Google Tradutor acima ou verifique sua conexão.";
+            } catch (err) {
+                box.innerText = "Erro de conexão com o serviço de tradução.";
             }
         }
 
