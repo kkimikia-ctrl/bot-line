@@ -1,620 +1,67 @@
-<!DOCTYPE html>
-<html lang="pt-BR" class="notranslate" translate="no">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="google" content="notranslate">
-    <meta http-equiv="Content-Language" content="pt-BR">
-    <title>Ajuda JP - Início</title>
-    <style>
-        html {
-            height: 100%;
-            width: 100%;
-        }
+<div class="tradutor-container">
+    <h3>Tradutor Oficial (Google Cloud)</h3>
+    
+    <!-- Caixa onde o usuário digita o texto -->
+    <textarea id="textoOrigem" placeholder="Digite o texto aqui..." rows="4" style="width: 100%; padding: 8px;"></textarea>
+    
+    <br><br>
+    
+    <!-- Botão para disparar a tradução -->
+    <button id="btnTraduzir" style="padding: 10px 20px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Traduzir
+    </button>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            padding-bottom: 30px;
-            min-height: 100%;
-            -webkit-overflow-scrolling: touch;
-        }
+    <br><br>
 
-        .header {
-            background-color: #1a73e8;
-            color: white;
-            padding: 10px 15px;
-            font-size: 18px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .logo-img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: white;
-            flex-shrink: 0;
-        }
-
-        .carousel-container {
-            width: 100%;
-            overflow-x: auto;
-            background: #ffffff;
-            padding: 12px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .carousel-track {
-            display: flex;
-            gap: 12px;
-            width: max-content;
-            animation: rolarInfinito 30s linear infinite;
-        }
-
-        .carousel-container:hover .carousel-track,
-        .carousel-container:active .carousel-track {
-            animation-play-state: paused;
-        }
-
-        .carousel-track a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            width: 160px;
-            height: 90px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
-            border: 1px solid #7dd3fc;
-            color: #0369a1;
-            font-weight: bold;
-            font-size: 13px;
-            text-decoration: none;
-            text-align: center;
-            padding: 5px;
-        }
-
-        .carousel-track img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        @keyframes rolarInfinito {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-50% - 6px)); }
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .tradutor-caixa-container {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .tradutor-caixa-container h3 {
-            margin: 0 0 10px 0;
-            font-size: 15px;
-            color: #1a73e8;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tradutor-input-falso {
-            width: 100%;
-            height: 70px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 8px;
-            font-size: 14px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            background: #fff;
-            font-family: inherit;
-            outline: none;
-            text-align: left;
-        }
-
-        .tradutor-input-falso:empty:before {
-            content: attr(data-placeholder);
-            color: #94a3b8;
-            pointer-events: none;
-            display: block;
-        }
-
-        .tradutor-caixa-container .btn-traduzir-texto {
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 8px;
-            width: 100%;
-        }
-
-        .tradutor-resultado {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f8fafc;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            font-size: 14px;
-            min-height: 24px;
-            color: #0f172a;
-            word-break: break-word;
-        }
-
-        button.btn-primary {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .menu-item {
-            padding: 18px 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            font-size: 15px;
-            font-weight: bold;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            transition: transform 0.1s;
-        }
-
-        .menu-item:active { transform: scale(0.97); }
-
-        .menu-item span {
-            display: block;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: normal;
-        }
-
-        .btn-tradutor    { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-        .btn-carteira    { background: linear-gradient(135deg, #059669, #047857); }
-        .btn-lazer       { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
-        .btn-servicos    { background: linear-gradient(135deg, #d97706, #b45309); }
-        .btn-empregos    { background: linear-gradient(135deg, #db2777, #be185d); }
-        .btn-fale        { background: linear-gradient(135deg, #06c755, #059b43); }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            width: 98%;
-            max-width: 520px;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-            text-align: left;
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        #videoContainer {
-            display: none;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        video {
-            width: 100%;
-            height: 380px;
-            background: #000;
-            border-radius: 10px;
-            object-fit: cover;
-            transform: scaleX(-1);
-        }
-
-        .timer-badge {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-    </style>
-</head>
-<body class="notranslate" translate="no">
-
-    <div class="header notranslate" translate="no">
-        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-        <span class="notranslate" translate="no">Ajuda JP - Início</span>
-        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+    <!-- Onde o texto traduzido vai aparecer -->
+    <div id="resultadoTraducao" style="background: #f1f3f4; padding: 12px; min-height: 50px; border-radius: 4px;">
+        <em>A tradução aparecerá aqui...</em>
     </div>
+</div>
 
-    <section class="carousel-container notranslate" translate="no">
-        <div class="carousel-track">
-            <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 1';"></a>
-            <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 2';"></a>
-            <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 3';"></a>
-            <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4" onerror="this.style.display='none'; this.parentElement.innerText='Destaque 4';"></a>
-        </div>
-    </section>
+<script>
+    // Cole a sua chave de API oficial do Google Cloud aqui entre aspas
+    const GOOGLE_API_KEY = 'SUA_CHAVE_DE_API_DO_GOOGLE';
 
-    <div class="container notranslate" translate="no">
-        
-        <!-- Caixa de Tradução Direta (Onde o usuário digita o texto que quer traduzir) -->
-        <div class="tradutor-caixa-container notranslate" translate="no">
-            <h3 class="notranslate" translate="no">🌐 Tradutor de Texto (PT ⇄ JP)</h3>
-            <div id="textoParaTraduzir" class="tradutor-input-falso notranslate" translate="no" contenteditable="true" data-placeholder="Digite ou cole o texto em Português ou Japonês aqui..."></div>
-            <button class="btn-traduzir-texto notranslate" translate="no" onclick="traduzirTexto()">Traduzir Agora</button>
-            <div id="resultadoTraducao" class="tradutor-resultado notranslate" translate="no">A tradução aparecerá aqui...</div>
-        </div>
+    document.getElementById('btnTraduzir').addEventListener('click', async () => {
+        const texto = document.getElementById('textoOrigem').value;
+        const resultadoDiv = document.getElementById('resultadoTraducao');
 
-        <div class="grid-menu notranslate" translate="no">
-            <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
-                📞 Tradutor
-                <span>Prefeitura / Hospital</span>
-            </button>
-            <button class="menu-item btn-carteira" onclick="alert('Tela Carteira em desenvolvimento')">
-                💰 Carteira
-                <span>Saldo e Ganhos</span>
-            </button>
-            <button class="menu-item btn-lazer" onclick="window.location.href='entretenimento.html'">
-                🎮 Entretenimento
-                <span>Lives, Aulas e Notícias</span>
-            </button>
-            <button class="menu-item btn-servicos" onclick="window.location.href='servicos.html'">
-                📋 Serviços
-                <span>Lojas, Ar-condicionado</span>
-            </button>
-            <button class="menu-item btn-empregos" onclick="window.location.href='empregos.html'">
-                💼 Empregos
-                <span>Vagas das Empreiteiras</span>
-            </button>
-            <button class="menu-item btn-fale" onclick="window.location.href='fale-conosco.html'">
-                📞 Fale Conosco
-                <span>Anúncios e Suporte</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Modais -->
-    <div id="modalSemSaldo" class="modal notranslate" translate="no">
-        <div class="modal-content" style="text-align: center;">
-            <div class="modal-header" style="justify-content: center;">
-                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-                <h3 style="margin:0; color: #dc2626;">Saldo Insuficiente</h3>
-            </div>
-            <p style="font-size: 15px; color: #4b5563;">Você precisa ter créditos suficientes para iniciar a chamada com o tradutor.</p>
-            <button class="btn-primary" style="background-color: #10b981; margin-top: 10px;" onclick="comprarCreditos()">🛒 Comprar Créditos Agora</button>
-            <button class="btn-primary" style="background-color: #6b7280; margin-top: 8px;" onclick="fecharModalSemSaldo()">Voltar</button>
-        </div>
-    </div>
-
-    <div id="modalTradutor" class="modal notranslate" translate="no">
-        <div class="modal-content">
-            <div class="modal-header">
-                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-                <h3 style="margin:0;">Chamar Tradutor</h3>
-            </div>
-
-            <label style="font-size: 14px; font-weight: bold;">Onde você está?</label>
-            <select id="localAtendimento" style="width:100%; padding:8px; margin-top:4px; margin-bottom:12px;" class="notranslate" translate="no">
-                <option value="Hospital">Hospital</option>
-                <option value="Prefeitura">Prefeitura</option>
-                <option value="Escola">Escola</option>
-                <option value="Outros">Outros</option>
-            </select>
-
-            <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
-            <select id="tempoAtendimento" style="width:100%; padding:8px; margin-top:4px; margin-bottom:12px;" class="notranslate" translate="no">
-                <option value="1800">30 minutos</option>
-                <option value="3600">1 hora</option>
-                <option value="7200">Mais de 1 hora</option>
-            </select>
-
-            <div class="modal-buttons">
-                <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
-                <button class="btn-primary" onclick="iniciarEspera()">Confirmar Pedido</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalEspera" class="modal notranslate" translate="no">
-        <div class="modal-content" style="text-align: center;">
-            <div class="modal-header" style="justify-content: center;">
-                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-                <h3 id="statusTexto" style="margin:0;">Procurando tradutor...</h3>
-            </div>
-            
-            <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
-            
-            <div id="videoContainer">
-                <div id="timerDisplay" class="timer-badge">⏱️ Tempo em chamada: 0s</div>
-                <video id="webcam" autoplay playsinline muted></video>
-                <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
-            </div>
-
-            <div id="alertaLimite" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando!</p>
-                <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Deseja comprar mais tempo para continuar a chamada?</p>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais tempo</button>
-                    <button class="btn-primary" style="background-color: #dc2626; font-size: 14px; padding: 8px;" onclick="naoQueroMais()">❌ Não quero</button>
-                </div>
-            </div>
-
-            <button id="btnSairChamada" class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="finalizarChamadaNormal()">Sair / Encerrar</button>
-        </div>
-    </div>
-
-    <script>
-        async function traduzirTexto() {
-            const texto = document.getElementById('textoParaTraduzir').innerText.trim();
-            const caixaResultado = document.getElementById('resultadoTraducao');
-
-            if (!texto) {
-                caixaResultado.innerText = "Por favor, digite algum texto para traduzir.";
-                return;
-            }
-
-            caixaResultado.innerText = "Traduzindo...";
-
-            try {
-                const temJapones = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(texto);
-                const langPair = temJapones ? "ja|pt" : "pt|ja";
-
-                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${langPair}`);
-                const data = await response.json();
-
-                if (data && data.responseData) {
-                    caixaResultado.innerText = data.responseData.translatedText;
-                } else {
-                    caixaResultado.innerText = "Erro ao obter tradução. Tente novamente.";
-                }
-            } catch (err) {
-                caixaResultado.innerText = "Erro de conexão ao traduzir.";
-            }
+        if (!texto.trim()) {
+            alert('Digite algum texto para traduzir.');
+            return;
         }
 
-        let streamVideo = null;
-        let segundosDecorridos = 0; 
-        let limiteSegundos = 1800; 
-        let valorInicialRetido = 0; 
-        let timerInterval = null;
-        let creditoDescontado = false; 
+        resultadoDiv.innerHTML = 'Traduzindo...';
 
-        let usuarioTemSaldo = true; 
-        let temCreditoParaContinuar = false; 
+        // URL oficial da API v2 do Google Tradutor
+        const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`;
 
-        function verificarSaldoEChamar() {
-            usuarioTemSaldo = true; 
-            abrirModalTradutor();
-        }
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    q: texto,
+                    target: 'ja', // Idioma de destino (ex: 'ja' para japonês)
+                    format: 'text'
+                })
+            });
 
-        function fecharModalSemSaldo() {
-            document.getElementById('modalSemSaldo').style.display = 'none';
-        }
+            const data = await response.json();
 
-        function comprarCreditos() {
-            alert("Redirecionando para a tela de pagamento de créditos...");
-            usuarioTemSaldo = true; 
-            fecharModalSemSaldo();
-            abrirModalTradutor();
-        }
-
-        function abrirModalTradutor() {
-            document.getElementById('modalTradutor').style.display = 'flex';
-        }
-
-        function fecharModalTradutor() {
-            document.getElementById('modalTradutor').style.display = 'none';
-        }
-
-        function iniciarEspera() {
-            const selectTempo = document.getElementById('tempoAtendimento');
-            limiteSegundos = parseInt(selectTempo.value);
-
-            if (limiteSegundos === 1800) valorInicialRetido = 1500;
-            else if (limiteSegundos === 3600) valorInicialRetido = 3000;
-            else valorInicialRetido = 6000;
-
-            fecharModalTradutor();
-            const modalEspera = document.getElementById('modalEspera');
-            const statusTexto = document.getElementById('statusTexto');
-            const subStatus = document.getElementById('subStatus');
-            const videoContainer = document.getElementById('videoContainer');
-            
-            modalEspera.style.display = 'flex';
-            statusTexto.innerText = "Procurando tradutor...";
-            subStatus.style.display = "block";
-            videoContainer.style.display = "none";
-            document.getElementById('alertaLimite').style.display = 'none';
-            creditoDescontado = false; 
-            temCreditoParaContinuar = false;
-
-            setTimeout(async () => {
-                statusTexto.innerText = "Tradutor conectado!";
-                subStatus.style.display = "none";
-                videoContainer.style.display = "block";
-
-                segundosDecorridos = 0;
-                atualizarDisplayCronometro();
-
-                try {
-                    streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                    document.getElementById('webcam').srcObject = streamVideo;
-                } catch (err) {
-                    subStatus.style.display = "block";
-                    subStatus.innerText = "Câmera pronta (Modo Simulação)";
-                }
-
-                iniciarCronografoProgressivo();
-
-            }, 3000);
-        }
-
-        function iniciarCronografoProgressivo() {
-            if (timerInterval) clearInterval(timerInterval);
-
-            timerInterval = setInterval(() => {
-                segundosDecorridos++;
-                atualizarDisplayCronometro();
-
-                if (segundosDecorridos === 5 && !creditoDescontado) {
-                    creditoDescontado = true;
-                }
-
-                if (segundosDecorridos === 10) {
-                    if (!temCreditoParaContinuar) {
-                        document.getElementById('alertaLimite').style.display = 'block';
-                    }
-                }
-
-                if (segundosDecorridos >= limiteSegundos) {
-                    encerrarChamadaPorTempo();
-                }
-            }, 1000);
-        }
-
-        function atualizarDisplayCronometro() {
-            const badge = document.getElementById('timerDisplay');
-            let horas = Math.floor(segundosDecorridos / 3600);
-            let minutos = Math.floor((segundosDecorridos % 3600) / 60);
-            let segundos = segundosDecorridos % 60;
-            
-            let textoTempo = '';
-            if (horas > 0) {
-                textoTempo = `${horas}h ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+            if (data.error) {
+                resultadoDiv.innerHTML = `<span style="color: red;">Erro do Google: ${data.error.message}</span>`;
             } else {
-                textoTempo = `${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
+                // Pega o texto traduzido retornado pelo Google
+                const textoTraduzido = data.data.translations[0].translatedText;
+                resultadoDiv.innerText = textoTraduzido;
             }
-            badge.innerText = `⏱️ Tempo em chamada: ${textoTempo}`;
+        } catch (error) {
+            resultadoDiv.innerHTML = `<span style="color: red;">Erro de conexão com a API do Google.</span>`;
+            console.error(error);
         }
-
-        function comprarMaisCreditos() {
-            alert("Tempo adicional adicionado com sucesso!");
-            temCreditoParaContinuar = true;
-            limiteSegundos += 1800; 
-            document.getElementById('alertaLimite').style.display = 'none';
-        }
-
-        function naoQueroMais() {
-            document.getElementById('alertaLimite').style.display = 'none';
-            alert("Você optou por não comprar mais tempo. A chamada continuará normalmente.");
-        }
-
-        function calcularCobrancaProporcional() {
-            if (segundosDecorridos <= 5) {
-                return 0; 
-            }
-
-            let blocosUtilizados = Math.ceil(segundosDecorridos / 1800);
-            if (blocosUtilizados < 1) blocosUtilizados = 1;
-
-            let valorFinalDevido = blocosUtilizados * 1500;
-            let valorParaDevolver = valorInicialRetido - valorFinalDevido;
-
-            if (valorParaDevolver > 0) {
-                return { cobrado: valorFinalDevido, devolvido: valorParaDevolver };
-            }
-
-            return { cobrado: valorInicialRetido, devolvido: 0 };
-        }
-
-        function encerrarChamadaPorTempo() {
-            clearInterval(timerInterval);
-            pararStream();
-            document.getElementById('modalEspera').style.display = 'none';
-            alert("O tempo contratado esgotou e a chamada foi encerrada.");
-        }
-
-        function finalizarChamadaNormal() {
-            if (timerInterval) clearInterval(timerInterval);
-            pararStream();
-            document.getElementById('modalEspera').style.display = 'none';
-
-            if (segundosDecorridos <= 5) {
-                alert("Chamada encerrada nos primeiros segundos. Nenhuma cobrança foi feita!");
-            } else {
-                let resultado = calcularCobrancaProporcional();
-                if (resultado.devolvido > 0) {
-                    alert(`Chamada encerrada!\nTempo utilizado: ${Math.floor(segundosDecorridos/60)} minutos e ${segundosDecorridos%60} segundos.\nValor debitado: ${resultado.cobrado}円\nO restante de ${resultado.devolvido}円 foi estornado para a sua carteira.`);
-                } else {
-                    alert(`Chamada encerrada com sucesso! Valor debitado: ${resultado.cobrado}円.`);
-                }
-            }
-        }
-
-        function pararStream() {
-            if (streamVideo) {
-                streamVideo.getTracks().forEach(track => track.stop());
-                streamVideo = null;
-            }
-        }
-    </script>
-</body>
-</html>
+    });
+</script>
