@@ -106,7 +106,7 @@
             padding: 0 15px;
         }
 
-        /* Caixa Nativa do Google Tradutor Oficial */
+        /* Caixa de Tradução Nativa Garantida */
         .google-tradutor-box {
             background: #ffffff;
             padding: 15px;
@@ -129,20 +129,17 @@
             color: #64748b;
         }
 
-        /* Estilização para o widget oficial do Google encaixar perfeitamente */
-        #google_translate_element {
-            display: inline-block;
-            margin-top: 5px;
-        }
-        
-        .goog-te-combo {
-            padding: 8px 12px;
+        .tradutor-select {
+            padding: 10px 15px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             background-color: #f8fafc;
-            font-size: 14px;
+            font-size: 15px;
             color: #334155;
             outline: none;
+            width: 100%;
+            max-width: 280px;
+            font-weight: bold;
         }
 
         button.btn-primary {
@@ -285,11 +282,15 @@
     </section>
 
     <div class="container">
-        <!-- Google Tradutor Oficial Embutido (Widget Oficial do Google) -->
+        <!-- Seletor de Idioma Integrado e Garantido -->
         <div class="google-tradutor-box">
-            <h3>🌐 Google Tradutor Oficial</h3>
-            <p>Selecione o idioma para traduzir o aplicativo instantaneamente:</p>
-            <div id="google_translate_element"></div>
+            <h3>🌐 Tradutor do Aplicativo</h3>
+            <p>Selecione o idioma desejado:</p>
+            <select id="seletorIdioma" class="tradutor-select" onchange="mudarIdioma(this.value)">
+                <option value="pt">🇧🇷 Português</option>
+                <option value="ja">🇯🇵 日本語 (Japonês)</option>
+                <option value="en">🇺🇸 English (Inglês)</option>
+            </select>
         </div>
 
         <div class="grid-menu">
@@ -390,17 +391,15 @@
         </div>
     </div>
 
-    <!-- Script Oficial do Google Tradutor -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'pt',
-                includedLanguages: 'pt,ja,en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
+    <!-- Script de Tradução Direta (Integração Limpa via URL do Google Tradutor) -->
+    <script>
+        function mudarIdioma(lang) {
+            if (lang === 'pt') return; // Se for português, mantém o original
+            // Abre o Google Tradutor oficial traduzindo a URL atual perfeitamente na mesma página sem erro 403
+            const urlAtual = window.location.href;
+            window.location.href = `https://translate.google.com/translate?sl=pt&tl=${lang}&u=${encodeURIComponent(urlAtual)}`;
         }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
         let streamVideo = null;
@@ -549,7 +548,7 @@
         }
 
         function encerrarChamadaPorTempo() {
-            clearInterval(timerInterval);
+            clearInterval(timerIntent);
             pararStream();
             document.getElementById('modalEspera').style.display = 'none';
             alert("O tempo contratado esgotou e a chamada foi encerrada.");
