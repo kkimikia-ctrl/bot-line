@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, translate=no">
+    <meta name="google" content="notranslate">
     <title>Ajuda JP - Início</title>
     <style>
         html {
@@ -295,9 +296,9 @@
 
     <div class="container">
         
-        <!-- Caixa de Tradução Direta via Google Cloud API -->
+        <!-- Caixa de Tradução Direta (Sem Chave e Sem Erro) -->
         <div class="tradutor-caixa-container">
-            <h3>🌐 Tradutor Oficial (Google Cloud)</h3>
+            <h3>🌐 Tradutor Instantâneo</h3>
             <textarea id="textoOrigem" placeholder="Digite ou cole o texto em Português ou Japonês aqui..."></textarea>
             <button class="btn-traduzir-texto" id="btnTraduzir">Traduzir Agora</button>
             <div id="resultadoTraducao" class="tradutor-resultado">A tradução aparecerá aqui...</div>
@@ -402,9 +403,7 @@
     </div>
 
     <script>
-        // --- SCRIPT DO GOOGLE CLOUD TRANSLATION API ---
-        const GOOGLE_API_KEY = 'SUA_CHAVE_DE_API_DO_GOOGLE';
-
+        // --- SCRIPT DE TRADUÇÃO DIRETA (SEM CHAVE E SEM ERRO) ---
         document.getElementById('btnTraduzir').addEventListener('click', async () => {
             const texto = document.getElementById('textoOrigem').value.trim();
             const caixaResultado = document.getElementById('resultadoTraducao');
@@ -416,35 +415,27 @@
 
             caixaResultado.innerText = "Traduzindo...";
 
-            const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`;
+            const temJapones = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(texto);
+            const sl = temJapones ? 'ja' : 'pt';
+            const tl = temJapones ? 'pt' : 'ja';
+
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(texto)}`;
 
             try {
-                const temJapones = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(texto);
-                const idiomaDestino = temJapones ? 'pt' : 'ja';
-
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        q: texto,
-                        target: idiomaDestino,
-                        format: 'text'
-                    })
-                });
-
+                const response = await fetch(url);
                 const data = await response.json();
-
-                if (data.error) {
-                    caixaResultado.innerText = `Erro do Google: ${data.error.message}`;
-                } else if (data.data && data.data.translations) {
-                    caixaResultado.innerText = data.data.translations[0].translatedText;
+                
+                if (data && data[0]) {
+                    let textoTraduzido = '';
+                    data[0].forEach(item => {
+                        if (item[0]) textoTraduzido += item[0];
+                    });
+                    caixaResultado.innerText = textoTraduzido;
                 } else {
-                    caixaResultado.innerText = "Erro ao obter tradução.";
+                    caixaResultado.innerText = "Erro ao traduzir.";
                 }
             } catch (err) {
-                caixaResultado.innerText = "Erro de conexão com a API do Google.";
+                caixaResultado.innerText = "Erro de conexão com o tradutor.";
             }
         });
 
@@ -622,7 +613,7 @@
             if (streamVideo) {
                 streamVideo.getTracks().forEach(track => track.stop());
                 streamVideo = null;
-                }
+            }
         }
     </script>
 </body>
