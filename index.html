@@ -106,84 +106,43 @@
             padding: 0 15px;
         }
 
-        /* Caixa de Tradução de Texto Embutida */
-        .tradutor-container {
+        /* Caixa Nativa do Google Tradutor Oficial */
+        .google-tradutor-box {
             background: #ffffff;
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             margin-bottom: 20px;
-            border-top: 4px solid #2563eb;
+            text-align: center;
+            border-top: 4px solid #1a73e8;
         }
 
-        .tradutor-container h3 {
-            margin: 0 0 10px 0;
+        .google-tradutor-box h3 {
+            margin: 0 0 8px 0;
             font-size: 16px;
             color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .tradutor-container textarea {
-            width: 100%;
-            height: 80px;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 14px;
-            resize: none;
-            box-sizing: border-box;
-            outline: none;
-            font-family: inherit;
+        .google-tradutor-box p {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            color: #64748b;
         }
 
-        .tradutor-container textarea:focus {
-            border-color: #2563eb;
+        /* Estilização para o widget oficial do Google encaixar perfeitamente */
+        #google_translate_element {
+            display: inline-block;
+            margin-top: 5px;
         }
-
-        .tradutor-controles {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .tradutor-controles select {
+        
+        .goog-te-combo {
             padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
-            background: #f8fafc;
+            background-color: #f8fafc;
             font-size: 14px;
-            font-weight: bold;
             color: #334155;
             outline: none;
-        }
-
-        .btn-traduzir-texto {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-traduzir-texto:active {
-            background-color: #1d4ed8;
-        }
-
-        .resultado-traducao {
-            background: #f1f5f9;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #334155;
-            min-height: 40px;
-            word-break: break-word;
-            border: 1px solid #e2e8f0;
         }
 
         button.btn-primary {
@@ -326,18 +285,11 @@
     </section>
 
     <div class="container">
-        <!-- Bloco de Tradução Rápida por Texto Integrado -->
-        <div class="tradutor-container">
-            <h3>🌐 Tradutor Rápido (PT ⇄ JP)</h3>
-            <textarea id="textoParaTraduzir" placeholder="Digite aqui o texto para traduzir..."></textarea>
-            <div class="tradutor-controles">
-                <select id="direcaoTraducao">
-                    <option value="pt-ja">Português ➔ Japonês</option>
-                    <option value="ja-pt">Japonês ➔ Português</option>
-                </select>
-                <button class="btn-traduzir-texto" onclick="executarTraducao()">Traduzir</button>
-            </div>
-            <div id="resultadoTraducao" class="resultado-traducao">A tradução aparecerá aqui...</div>
+        <!-- Google Tradutor Oficial Embutido (Widget Oficial do Google) -->
+        <div class="google-tradutor-box">
+            <h3>🌐 Google Tradutor Oficial</h3>
+            <p>Selecione o idioma para traduzir o aplicativo instantaneamente:</p>
+            <div id="google_translate_element"></div>
         </div>
 
         <div class="grid-menu">
@@ -438,41 +390,19 @@
         </div>
     </div>
 
-    <script>
-        // Função para simular ou direcionar a tradução sem erro 403
-        function executarTraducao() {
-            const texto = document.getElementById('textoParaTraduzir').value.trim();
-            const direcao = document.getElementById('direcaoTraducao').value;
-            const resultadoDiv = document.getElementById('resultadoTraducao');
-
-            if (!texto) {
-                alert("Digite algum texto para traduzir!");
-                return;
-            }
-
-            resultadoDiv.innerText = "Traduzindo...";
-
-            // Como o Google bloqueia iframes diretos, abrimos a query oficial integrada do Google Tradutor via link seguro sem sair da pasta visualmente ou redirecionando a página inteira, utilizando a API pública de tradução livre
-            const urlApi = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${direcao.split('-')[0]}&tl=${direcao.split('-')[1]}&dt=t&q=` + encodeURIComponent(texto);
-
-            fetch(urlApi)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data[0]) {
-                        let traducaoCompleta = "";
-                        data[0].forEach(item => {
-                            if (item[0]) traducaoCompleta += item[0];
-                        });
-                        resultadoDiv.innerText = traducaoCompleta;
-                    } else {
-                        resultadoDiv.innerText = "Erro ao traduzir. Tente novamente.";
-                    }
-                })
-                .catch(error => {
-                    resultadoDiv.innerText = "Erro de conexão com o serviço de tradução.";
-                });
+    <!-- Script Oficial do Google Tradutor -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'pt',
+                includedLanguages: 'pt,ja,en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
         }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+    <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
         let limiteSegundos = 1800; 
