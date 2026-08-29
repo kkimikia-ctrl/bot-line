@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Bloqueia o tradutor automático do navegador/Safari/Chrome -->
+    <meta name="google" content="notranslate">
     <title>Ajuda JP - Início</title>
     <style>
         html {
@@ -106,7 +108,7 @@
             padding: 0 15px;
         }
 
-        /* Caixa de Tradução de Texto Integrada */
+        /* Caixa de Tradução Direta */
         .tradutor-caixa-container {
             background: #ffffff;
             padding: 15px;
@@ -125,10 +127,41 @@
             gap: 6px;
         }
 
-        .tradutor-caixa-container iframe {
+        .tradutor-caixa-container textarea {
             width: 100%;
+            height: 70px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .tradutor-caixa-container .btn-traduzir-texto {
+            background-color: #1a73e8;
+            color: white;
             border: none;
-            height: 140px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .tradutor-resultado {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            min-height: 24px;
+            color: #0f172a;
+            word-break: break-word;
         }
 
         button.btn-primary {
@@ -141,10 +174,6 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-        }
-
-        button.btn-primary:active {
-            background-color: #1d4ed8;
         }
 
         .grid-menu {
@@ -248,7 +277,7 @@
         }
     </style>
 </head>
-<body>
+<body class="notranslate" translate="no">
 
     <div class="header">
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
@@ -272,11 +301,12 @@
 
     <div class="container">
         
-        <!-- Ferramenta de Tradução de Texto Integrada (Google Tradutor embutido via frame seguro) -->
+        <!-- Ferramenta de Tradução Nativa por API Interna (Sem Erro 403) -->
         <div class="tradutor-caixa-container">
-            <h3>🌐 Tradutor de Texto Rápido</h3>
-            <p style="font-size: 12px; color: #666; margin-top: 0; margin-bottom: 10px;">Digite ou cole frases aqui para traduzir entre Português e Japonês sem sair do app:</p>
-            <iframe src="https://translate.google.com/m?hl=pt&sl=pt&tl=ja" title="Google Tradutor"></iframe>
+            <h3>🌐 Tradutor de Texto (PT ⇄ JP)</h3>
+            <textarea id="textoParaTraduzir" placeholder="Digite ou cole o texto em Português ou Japonês aqui..."></textarea>
+            <button class="btn-traduzir-texto" onclick="traduzirTexto()">Traduzir Agora</button>
+            <div id="resultadoTraducao" class="tradutor-resultado">A tradução aparecerá aqui...</div>
         </div>
 
         <div class="grid-menu">
@@ -328,7 +358,7 @@
             </div>
 
             <label style="font-size: 14px; font-weight: bold;">Onde você está?</label>
-            <select id="localAtendimento">
+            <select id="localAtendimento" style="width:100%; padding:8px; margin-top:4px; margin-bottom:12px;">
                 <option value="Hospital">Hospital</option>
                 <option value="Prefeitura">Prefeitura</option>
                 <option value="Escola">Escola</option>
@@ -336,7 +366,7 @@
             </select>
 
             <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
-            <select id="tempoAtendimento">
+            <select id="tempoAtendimento" style="width:100%; padding:8px; margin-top:4px; margin-bottom:12px;">
                 <option value="1800">30 minutos</option>
                 <option value="3600">1 hora</option>
                 <option value="7200">Mais de 1 hora</option>
@@ -365,7 +395,7 @@
             </div>
 
             <div id="alertaLimite" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando! (Teste)</p>
+                <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando!</p>
                 <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Deseja comprar mais tempo para continuar a chamada?</p>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais tempo</button>
@@ -378,6 +408,37 @@
     </div>
 
     <script>
+        // Função para Tradução de Texto Direta sem iframe
+        async function traduzirTexto() {
+            const texto = document.getElementById('textoParaTraduzir').value.trim();
+            const caixaResultado = document.getElementById('resultadoTraducao');
+
+            if (!texto) {
+                caixaResultado.innerText = "Por favor, digite algum texto para traduzir.";
+                return;
+            }
+
+            caixaResultado.innerText = "Traduzindo...";
+
+            try {
+                // Identifica se é português ou japonês básico para definir o destino
+                const temJapones = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(texto);
+                const langPair = temJapones ? "ja|pt" : "pt|ja";
+
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${langPair}`);
+                const data = await response.json();
+
+                if (data && data.responseData) {
+                    caixaResultado.innerText = data.responseData.translatedText;
+                } else {
+                    caixaResultado.innerText = "Erro ao obter tradução. Tente novamente.";
+                }
+            } catch (err) {
+                caixaResultado.innerText = "Erro de conexão ao traduzir.";
+            }
+        }
+
+        // Lógica dos Modais e Chamada de Vídeo
         let streamVideo = null;
         let segundosDecorridos = 0; 
         let limiteSegundos = 1800; 
