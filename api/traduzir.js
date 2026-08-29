@@ -1,4 +1,12 @@
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido' });
   }
@@ -13,7 +21,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // Aceita tanto 'texto' quanto 'q' para evitar incompatibilidade
     const texto = body?.texto || body?.q;
 
     if (!texto) {
@@ -26,15 +33,11 @@ export default async function handler(req, res) {
     const tl = temJapones ? 'pt' : 'ja';
 
     const urlTraducao = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(termoLimpo)}`;
-    
-    const respTrad = await fetch(urlTraducao, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-      }
-    });
+
+    const respTrad = await fetch(urlTraducao);
 
     if (!respTrad.ok) {
-      return res.status(200).json({ traducao: "Erro ao acessar o tradutor.", translatedText: "Erro ao acessar o tradutor." });
+      return res.status(200).json({ traducao: "Erro na resposta do Google.", translatedText: "Erro na resposta do Google." });
     }
 
     const dadosTrad = await respTrad.json();
@@ -52,18 +55,19 @@ export default async function handler(req, res) {
       return res.status(200).json({ traducao: "Não foi possível traduzir.", translatedText: "Não foi possível traduzir." });
     }
 
+    let resultadoFinal = traducaoPrincipal;
+
+    // Se traduziu do japonês para o português, tenta buscar o Romaji opcionalmente
     if (temJapones) {
-      return res.status(200).json({ traducao: traducaoPrincipal, translatedText: traducaoPrincipal });
+      return res.status(200).json({ traducao: resultadoFinal, translatedText: resultadoFinal });
     }
 
-    let romaji = "";
     try {
       const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=rm&q=${encodeURIComponent(traducaoPrincipal)}`;
-      const respRomaji = await fetch(urlRomaji, {
-        headers: { 'User-Agent': 'Mozilla/5.0' }
-      });
+      const respRomaji = await fetch(urlRomaji);
       const dadosRomaji = await respRomaji.json();
 
+      let romaji = "";
       if (dadosRomaji && dadosRomaji[0]) {
         for (let i = 0; i < dadosRomaji[0].length; i++) {
           if (dadosRomaji[0][i][3]) {
@@ -71,20 +75,20 @@ export default async function handler(req, res) {
           }
         }
       }
-    } catch (err) {}
 
-    let resultadoFinal = traducaoPrincipal;
-    if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
-      resultadoFinal = `${traducaoPrincipal} (${romaji})`;
+      if (romaji && romaji.toLowerCase() !== traducaoPrincipal.toLowerCase()) {
+        resultadoFinal = `${traducaoPrincipal} (${romaji})`;
+      }
+    } catch (err) {
+      // Se falhar o romaji, mantém apenas a tradução principal sem quebrar a API
     }
 
-    // Retorna ambas as propriedades para garantir compatibilidade total com o front-end
     return res.status(200).json({ 
       traducao: resultadoFinal, 
       translatedText: resultadoFinal 
     });
 
   } catch (e) {
-    return res.status(200).json({ traducao: "Erro ao processar a tradução.", translatedText: "Erro ao processar a tradução." });
+    return res.status(200).json({ traducao: "Erro interno ao traduzir.", translatedText: "Erro interno ao traduzir." });
   }
 }
