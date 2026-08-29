@@ -13,7 +13,8 @@ export default async function handler(req, res) {
       }
     }
 
-    const texto = body?.texto;
+    // Aceita tanto 'texto' quanto 'q' para evitar incompatibilidade
+    const texto = body?.texto || body?.q;
 
     if (!texto) {
       return res.status(400).json({ error: 'Nenhum texto enviado.' });
@@ -33,7 +34,7 @@ export default async function handler(req, res) {
     });
 
     if (!respTrad.ok) {
-      return res.status(200).json({ traducao: "Erro ao acessar o tradutor." });
+      return res.status(200).json({ traducao: "Erro ao acessar o tradutor.", translatedText: "Erro ao acessar o tradutor." });
     }
 
     const dadosTrad = await respTrad.json();
@@ -48,11 +49,11 @@ export default async function handler(req, res) {
     }
 
     if (!traducaoPrincipal) {
-      return res.status(200).json({ traducao: "Não foi possível traduzir." });
+      return res.status(200).json({ traducao: "Não foi possível traduzir.", translatedText: "Não foi possível traduzir." });
     }
 
     if (temJapones) {
-      return res.status(200).json({ traducao: traducaoPrincipal });
+      return res.status(200).json({ traducao: traducaoPrincipal, translatedText: traducaoPrincipal });
     }
 
     let romaji = "";
@@ -77,9 +78,13 @@ export default async function handler(req, res) {
       resultadoFinal = `${traducaoPrincipal} (${romaji})`;
     }
 
-    return res.status(200).json({ traducao: resultadoFinal });
+    // Retorna ambas as propriedades para garantir compatibilidade total com o front-end
+    return res.status(200).json({ 
+      traducao: resultadoFinal, 
+      translatedText: resultadoFinal 
+    });
 
   } catch (e) {
-    return res.status(200).json({ traducao: "Erro ao processar a tradução." });
+    return res.status(200).json({ traducao: "Erro ao processar a tradução.", translatedText: "Erro ao processar a tradução." });
   }
 }
