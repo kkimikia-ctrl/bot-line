@@ -1,15 +1,12 @@
 export default async function handler(req, res) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Só aceita POST
   if (req.method !== 'POST') {
     return res.status(405).json({
       error: 'Método não permitido'
@@ -17,23 +14,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Pega o corpo enviado pelo HTML
     let body = req.body;
 
     if (typeof body === 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch {
-        return res.status(400).json({
-          error: 'JSON inválido.'
-        });
-      }
+      body = JSON.parse(body);
     }
 
-    // Aceita "q" ou "texto"
     const texto = body?.q || body?.texto;
 
-    if (!texto || typeof texto !== 'string') {
+    if (!texto) {
       return res.status(400).json({
         error: 'Nenhum texto enviado.'
       });
@@ -41,19 +30,11 @@ export default async function handler(req, res) {
 
     const termo = texto.trim();
 
-    if (!termo) {
-      return res.status(400).json({
-        error: 'Nenhum texto enviado.'
-      });
-    }
-
-    // Detecta japonês
     const temJapones = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(termo);
 
     const sl = temJapones ? 'ja' : 'pt';
     const tl = temJapones ? 'pt' : 'ja';
 
-    // Google Translate
     const urlTraducao =
       `https://translate.googleapis.com/translate_a/single` +
       `?client=gtx` +
@@ -62,19 +43,27 @@ export default async function handler(req, res) {
       `&dt=t` +
       `&q=${encodeURIComponent(termo)}`;
 
-    const respostaGoogle = await fetch(urlTraducao, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0'
-      }
-    });
+    const respostaGoogle = await fetch(urlTraducao);
+
+    const textoGoogle = await respostaGoogle.text();
 
     if (!respostaGoogle.ok) {
-      return res.status(502).json({
-        error: 'Erro ao acessar o serviço de tradução.'
+      return res.status(200).json({
+        error: `Google respondeu HTTP ${respostaGoogle.status}`,
+        detalhe: textoGoogle.substring(0, 500)
       });
     }
 
-    const dados = await respostaGoogle.json();
+    let dados;
+
+    try {
+      dados = JSON.parse(textoGoogle);
+    } catch {
+      return res.status(200).json({
+        error: 'Google não retornou JSON válido.',
+        detalhe: textoGoogle.substring(0, 500)
+      });
+    }
 
     let traducao = '';
 
@@ -88,59 +77,14 @@ export default async function handler(req, res) {
 
     if (!traducao) {
       return res.status(200).json({
-        translatedText: 'Não foi possível traduzir.',
-        traducao: 'Não foi possível traduzir.'
+        error: 'Google não retornou uma tradução.',
+        detalhe: JSON.stringify(dados).substring(0, 500)
       });
     }
 
-    let resultadoFinal = traducao;
-
-    // Português → Japonês: tenta adicionar Romaji
-    if (!temJapones) {
-      try {
-        const urlRomaji =
-          `https://translate.googleapis.com/translate_a/single` +
-          `?client=gtx` +
-          `&sl=ja` +
-          `&tl=en` +
-          `&dt=rm` +
-          `&q=${encodeURIComponent(traducao)}`;
-
-        const respostaRomaji = await fetch(urlRomaji, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0'
-          }
-        });
-
-        if (respostaRomaji.ok) {
-          const dadosRomaji = await respostaRomaji.json();
-
-          let romaji = '';
-
-          if (dadosRomaji?.[0]) {
-            for (const parte of dadosRomaji[0]) {
-              if (parte?.[3]) {
-                romaji += (romaji ? ' ' : '') + parte[3];
-              }
-            }
-          }
-
-          if (
-            romaji &&
-            romaji.toLowerCase() !== traducao.toLowerCase()
-          ) {
-            resultadoFinal = `${traducao} (${romaji})`;
-          }
-        }
-      } catch {
-        // Se o Romaji falhar, mantém a tradução japonesa.
-      }
-    }
-
-    // Resposta para o HTML
     return res.status(200).json({
-      traducao: resultadoFinal,
-      translatedText: resultadoFinal
+      traducao: traducao,
+      translatedText: traducao
     });
 
   } catch (erro) {
@@ -148,7 +92,7 @@ export default async function handler(req, res) {
 
     return res.status(500).json({
       error: 'Erro interno no tradutor.',
-      translatedText: 'Erro interno no tradutor.'
+      detalhe: erro?.message || String(erro)
     });
   }
 }
