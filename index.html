@@ -235,7 +235,7 @@
             margin-bottom: 8px;
         }
 
-        /* Estilo do campo de digitação funcional */
+        /* Estilos do Tradutor Local */
         .tradutor-input-box {
             display: flex;
             flex-direction: column;
@@ -243,7 +243,7 @@
         }
         .tradutor-input-box textarea {
             width: 100%;
-            height: 80px;
+            height: 75px;
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
@@ -256,6 +256,17 @@
         .tradutor-input-box textarea:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+        .tradutor-resultado {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1e293b;
+            min-height: 40px;
+            word-break: break-word;
         }
     </style>
 </head>
@@ -284,12 +295,19 @@
     <div class="container">
         <div class="card">
             <h3>🌐 Tradutor Rápido</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto que deseja traduzir (Português ⇄ Japonês):</p>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto abaixo para traduzir direto na tela:</p>
             
-            <!-- Caixa de texto funcional para digitar -->
             <div class="tradutor-input-box">
-                <textarea id="textoParaTraduzir" placeholder="Digite aqui o que quer traduzir..."></textarea>
-                <button class="btn-primary" style="padding: 10px; font-size: 14px;" onclick="abrirNoGoogleTradutor()">🔍 Traduzir no Google</button>
+                <textarea id="textoParaTraduzir" placeholder="Digite em português ou japonês..."></textarea>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary" style="padding: 10px; font-size: 14px; background-color: #2563eb;" onclick="traduzirTexto('pt-ja')">🇧🇷 ➔ 🇯🇵 Traduzir para Japonês</button>
+                    <button class="btn-primary" style="padding: 10px; font-size: 14px; background-color: #059669;" onclick="traduzirTexto('ja-pt')">🇯🇵 ➔ 🇧🇷 Traduzir para Português</button>
+                </div>
+
+                <div id="resultadoTraducao" class="tradutor-resultado">
+                    <span style="color: #94a3b8;">A tradução aparecerá aqui...</span>
+                </div>
             </div>
         </div>
 
@@ -402,14 +420,32 @@
         let usuarioTemSaldo = true; 
         let temCreditoParaContinuar = false; 
 
-        function abrirNoGoogleTradutor() {
+        // Função para traduzir diretamente na tela usando a API pública gratuita do MyMemory
+        async function traduzirTexto(direcao) {
             const texto = document.getElementById('textoParaTraduzir').value.trim();
+            const divResultado = document.getElementById('resultadoTraducao');
+
             if (!texto) {
                 alert("Por favor, digite algum texto para traduzir.");
                 return;
             }
-            const url = `https://translate.google.com/?sl=pt&tl=ja&text=${encodeURIComponent(texto)}&op=translate`;
-            window.open(url, '_blank');
+
+            divResultado.innerHTML = "Traduzindo...";
+
+            let langPair = (direcao === 'pt-ja') ? 'pt|ja' : 'ja|pt';
+
+            try {
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=${langPair}`);
+                const data = await response.json();
+
+                if (data && data.responseData && data.responseData.translatedText) {
+                    divResultado.innerHTML = data.responseData.translatedText;
+                } else {
+                    divResultado.innerHTML = "Erro ao traduzir. Tente novamente.";
+                }
+            } catch (error) {
+                divResultado.innerHTML = "Erro de conexão ao traduzir.";
+            }
         }
 
         function verificarSaldoEChamar() {
