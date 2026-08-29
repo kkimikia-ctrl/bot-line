@@ -21,6 +21,16 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        .tradutor-topo {
+            background: #fff;
+            padding: 8px 15px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
         .header {
             background-color: #1a73e8;
             color: white;
@@ -104,42 +114,6 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 0 15px;
-        }
-
-        /* Caixa de Tradução Nativa Garantida */
-        .google-tradutor-box {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-            text-align: center;
-            border-top: 4px solid #1a73e8;
-        }
-
-        .google-tradutor-box h3 {
-            margin: 0 0 8px 0;
-            font-size: 16px;
-            color: #1e293b;
-        }
-
-        .google-tradutor-box p {
-            margin: 0 0 12px 0;
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        .tradutor-select {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            background-color: #f8fafc;
-            font-size: 15px;
-            color: #334155;
-            outline: none;
-            width: 100%;
-            max-width: 280px;
-            font-weight: bold;
         }
 
         button.btn-primary {
@@ -261,6 +235,11 @@
 </head>
 <body>
 
+    <div class="tradutor-topo">
+        <span style="font-size: 12px; color: #555; font-weight: bold;">🌐 Traduzir Página:</span>
+        <div id="google_translate_element"></div>
+    </div>
+
     <div class="header">
         <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
         <span>Ajuda JP - Início</span>
@@ -282,17 +261,6 @@
     </section>
 
     <div class="container">
-        <!-- Seletor de Idioma Integrado e Garantido -->
-        <div class="google-tradutor-box">
-            <h3>🌐 Tradutor do Aplicativo</h3>
-            <p>Selecione o idioma desejado:</p>
-            <select id="seletorIdioma" class="tradutor-select" onchange="mudarIdioma(this.value)">
-                <option value="pt">🇧🇷 Português</option>
-                <option value="ja">🇯🇵 日本語 (Japonês)</option>
-                <option value="en">🇺🇸 English (Inglês)</option>
-            </select>
-        </div>
-
         <div class="grid-menu">
             <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
                 📞 Tradutor
@@ -391,15 +359,16 @@
         </div>
     </div>
 
-    <!-- Script de Tradução Direta (Integração Limpa via URL do Google Tradutor) -->
-    <script>
-        function mudarIdioma(lang) {
-            if (lang === 'pt') return; // Se for português, mantém o original
-            // Abre o Google Tradutor oficial traduzindo a URL atual perfeitamente na mesma página sem erro 403
-            const urlAtual = window.location.href;
-            window.location.href = `https://translate.google.com/translate?sl=pt&tl=${lang}&u=${encodeURIComponent(urlAtual)}`;
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'pt',
+                includedLanguages: 'ja,pt,en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
         }
     </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
         let streamVideo = null;
@@ -548,7 +517,7 @@
         }
 
         function encerrarChamadaPorTempo() {
-            clearInterval(timerIntent);
+            clearInterval(timerInterval);
             pararStream();
             document.getElementById('modalEspera').style.display = 'none';
             alert("O tempo contratado esgotou e a chamada foi encerrada.");
