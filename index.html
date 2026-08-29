@@ -1,67 +1,179 @@
-<div class="tradutor-container">
-    <h3>Tradutor Oficial (Google Cloud)</h3>
-    
-    <!-- Caixa onde o usuário digita o texto -->
-    <textarea id="textoOrigem" placeholder="Digite o texto aqui..." rows="4" style="width: 100%; padding: 8px;"></textarea>
-    
-    <br><br>
-    
-    <!-- Botão para disparar a tradução -->
-    <button id="btnTraduzir" style="padding: 10px 20px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        Traduzir
-    </button>
+<!DOCTYPE html>
+<html lang="pt-BR" class="notranslate" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="pt-BR">
+    <title>Ajuda JP - Início</title>
+    <style>
+        html {
+            height: 100%;
+            width: 100%;
+        }
 
-    <br><br>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            padding-bottom: 30px;
+            min-height: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
 
-    <!-- Onde o texto traduzido vai aparecer -->
-    <div id="resultadoTraducao" style="background: #f1f3f4; padding: 12px; min-height: 50px; border-radius: 4px;">
-        <em>A tradução aparecerá aqui...</em>
+        .header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .tradutor-caixa-container {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tradutor-caixa-container h3 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            color: #1a73e8;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .btn-traduzir-texto {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .tradutor-resultado {
+            margin-top: 10px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            min-height: 30px;
+            color: #0f172a;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body class="notranslate" translate="no">
+
+    <div class="header notranslate" translate="no">
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+        <span class="notranslate" translate="no">Ajuda JP - Início</span>
+        <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
     </div>
-</div>
 
-<script>
-    // Cole a sua chave de API oficial do Google Cloud aqui entre aspas
-    const GOOGLE_API_KEY = 'SUA_CHAVE_DE_API_DO_GOOGLE';
+    <div class="container notranslate" translate="no">
+        
+        <!-- Caixa de Tradução com API Oficial do Google -->
+        <div class="tradutor-caixa-container notranslate" translate="no">
+            <h3 class="notranslate" translate="no">🌐 Tradutor Oficial (Google Cloud)</h3>
+            
+            <textarea id="textoOrigem" class="notranslate" translate="no" placeholder="Digite ou cole o texto aqui..."></textarea>
+            
+            <button class="btn-traduzir-texto notranslate" translate="no" id="btnTraduzir">Traduzir Agora</button>
+            
+            <div id="resultadoTraducao" class="tradutor-resultado notranslate" translate="no">A tradução aparecerá aqui...</div>
+        </div>
 
-    document.getElementById('btnTraduzir').addEventListener('click', async () => {
-        const texto = document.getElementById('textoOrigem').value;
-        const resultadoDiv = document.getElementById('resultadoTraducao');
+    </div>
 
-        if (!texto.trim()) {
-            alert('Digite algum texto para traduzir.');
-            return;
-        }
+    <script>
+        // Cole aqui embaixo a sua chave de API do Google Cloud que você gerou
+        const GOOGLE_API_KEY = 'SUA_CHAVE_DE_API_DO_GOOGLE';
 
-        resultadoDiv.innerHTML = 'Traduzindo...';
+        document.getElementById('btnTraduzir').addEventListener('click', async () => {
+            const texto = document.getElementById('textoOrigem').value.trim();
+            const caixaResultado = document.getElementById('resultadoTraducao');
 
-        // URL oficial da API v2 do Google Tradutor
-        const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`;
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    q: texto,
-                    target: 'ja', // Idioma de destino (ex: 'ja' para japonês)
-                    format: 'text'
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.error) {
-                resultadoDiv.innerHTML = `<span style="color: red;">Erro do Google: ${data.error.message}</span>`;
-            } else {
-                // Pega o texto traduzido retornado pelo Google
-                const textoTraduzido = data.data.translations[0].translatedText;
-                resultadoDiv.innerText = textoTraduzido;
+            if (!texto) {
+                caixaResultado.innerText = "Por favor, digite algum texto para traduzir.";
+                return;
             }
-        } catch (error) {
-            resultadoDiv.innerHTML = `<span style="color: red;">Erro de conexão com a API do Google.</span>`;
-            console.error(error);
-        }
-    });
-</script>
+
+            caixaResultado.innerText = "Traduzindo...";
+
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`;
+
+            try {
+                // Detecta automaticamente se o texto contém caracteres japoneses para alternar entre PT->JP ou JP->PT
+                const temJapones = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(texto);
+                const idiomaDestino = temJapones ? 'pt' : 'ja';
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        q: texto,
+                        target: idiomaDestino,
+                        format: 'text'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    caixaResultado.innerText = `Erro do Google: ${data.error.message}`;
+                } else if (data.data && data.data.translations) {
+                    caixaResultado.innerText = data.data.translations[0].translatedText;
+                } else {
+                    caixaResultado.innerText = "Erro ao obter tradução.";
+                }
+            } catch (err) {
+                caixaResultado.innerText = "Erro de conexão com a API do Google.";
+            }
+        });
+    </script>
+</body>
+</html>
