@@ -235,32 +235,28 @@
             margin-bottom: 8px;
         }
 
-        /* Correção para o seletor do Google aceitar cliques perfeitamente */
-        .tradutor-google-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            position: relative;
-            z-index: 10;
+        /* Estilo do campo de digitação funcional */
+        .tradutor-input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        .goog-te-combo {
-            padding: 10px 12px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            font-size: 16px;
-            background: #fff;
-            color: #334155;
+        .tradutor-input-box textarea {
             width: 100%;
-            max-width: 300px;
+            height: 80px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
             outline: none;
-            cursor: pointer;
+            box-sizing: border-box;
         }
-        .goog-te-banner-frame { display: none !important; }
-        body { top: 0 !important; }
-        .goog-tooltip { display: none !important; }
-        .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+        .tradutor-input-box textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -287,12 +283,13 @@
 
     <div class="container">
         <div class="card">
-            <h3>🌐 Traduzir Página Inteira</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Selecione o idioma para traduzir todo o conteúdo da tela com o Google:</p>
+            <h3>🌐 Tradutor Rápido</h3>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto que deseja traduzir (Português ⇄ Japonês):</p>
             
-            <!-- Widget oficial do Google Tradutor -->
-            <div class="tradutor-google-box">
-                <div id="google_translate_element"></div>
+            <!-- Caixa de texto funcional para digitar -->
+            <div class="tradutor-input-box">
+                <textarea id="textoParaTraduzir" placeholder="Digite aqui o que quer traduzir..."></textarea>
+                <button class="btn-primary" style="padding: 10px; font-size: 14px;" onclick="abrirNoGoogleTradutor()">🔍 Traduzir no Google</button>
             </div>
         </div>
 
@@ -394,18 +391,6 @@
         </div>
     </div>
 
-    <!-- Script Oficial do Google Tradutor -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'pt',
-                includedLanguages: 'ja,pt',
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
     <script>
         let streamVideo = null;
         let segundosDecorridos = 0; 
@@ -416,6 +401,16 @@
 
         let usuarioTemSaldo = true; 
         let temCreditoParaContinuar = false; 
+
+        function abrirNoGoogleTradutor() {
+            const texto = document.getElementById('textoParaTraduzir').value.trim();
+            if (!texto) {
+                alert("Por favor, digite algum texto para traduzir.");
+                return;
+            }
+            const url = `https://translate.google.com/?sl=pt&tl=ja&text=${encodeURIComponent(texto)}&op=translate`;
+            window.open(url, '_blank');
+        }
 
         function verificarSaldoEChamar() {
             usuarioTemSaldo = true; 
