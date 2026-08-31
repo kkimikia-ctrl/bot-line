@@ -8,14 +8,15 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
             padding: 0;
             color: #333;
+            padding-bottom: 80px;
         }
 
-        /* Tela de Bloqueio / Aviso para Web */
+        /* --- TELA DE BLOQUEIO / LOGIN WEB --- */
         #login-overlay {
             position: fixed;
             top: 0;
@@ -73,42 +74,195 @@
             background-color: #05b24c;
         }
 
-        /* Conteúdo Principal do App (Fica oculto até validar o login) */
+        /* --- CONTEÚDO REAL DO APP (Oculto até autenticar) --- */
         #app-content {
             display: none;
-            padding: 15px;
+        }
+
+        /* --- CABEÇALHO COM LOGOS NOS CANTOS --- */
+        .app-header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #ffffff;
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* --- CARROSSEL INFINITO AUTOMÁTICO --- */
+        .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #ffffff;
+            padding: 12px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            animation: rolarInfinito 30s linear infinite;
+        }
+
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
+        }
+
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 160px;
+            height: 90px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #eee;
+            border: 1px solid #ddd;
+        }
+
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 6px)); }
+        }
+
+        /* --- FILTRO POR REGIÕES --- */
+        .region-filter {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #ffffff;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .region-filter::-webkit-scrollbar {
+            display: none;
+        }
+
+        .region-btn {
+            background-color: #e4e6eb;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .region-btn.active {
+            background-color: #1a73e8;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* --- FEED VERTICAL DE ANÚNCIOS --- */
+        .feed-container {
+            padding: 0 15px 30px 15px;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        .header {
-            background-color: #1a73e8;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 20px;
+        .feed-container h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #444;
         }
 
-        .menu-grid {
+        .feed-banner-card {
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            transition: transform 0.2s;
+        }
+
+        .feed-banner-card:active {
+            transform: scale(0.98);
+        }
+
+        .feed-banner-card a {
+            display: block;
+        }
+
+        .feed-banner-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 220px;
+            object-fit: cover;
+        }
+
+        /* --- BARRA DE NAVEGAÇÃO INFERIOR FIXA --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.75rem;
+            flex-grow: 1;
+            transition: color 0.2s;
         }
 
-        .menu-item {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #333;
+        .nav-item.active {
+            color: #1a73e8;
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        }
+
+        .nav-item span.icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
         }
     </style>
 </head>
@@ -118,27 +272,85 @@
     <div id="login-overlay">
         <div class="login-card">
             <h2>Ajuda JP</h2>
-            <p>Para acessar o mini app, visualizar seus créditos e gerenciar sua conta, é necessário entrar com sua conta do LINE.</p>
+            <p>Para acessar o mini app e visualizar os anúncios, é necessário entrar com sua conta do LINE.</p>
             <button class="btn-line-login" onclick="fazerLoginLine()">Entrar com o LINE</button>
         </div>
     </div>
 
-    <!-- Conteúdo real do App (exibido apenas após autenticação) -->
+    <!-- Conteúdo real do App (Home Completa) -->
     <div id="app-content">
-        <div class="header">
-            Menu Principal - Ajuda JP
+        <header class="app-header">
+            <img src="logo.jpeg" alt="Logo Esquerda" class="header-logo" onerror="this.style.display='none'">
+            <h1>Ajuda JP - Início</h1>
+            <img src="logo.jpeg" alt="Logo Direita" class="header-logo" onerror="this.style.display='none'">
+        </header>
+
+        <section class="carousel-container">
+            <div class="carousel-track">
+                <a href="anunciar.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+                <a href="anunciar.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+                <a href="anunciar.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+                <a href="anunciar.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+                <a href="anunciar.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+                <a href="anunciar.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+
+                <a href="anunciar.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+                <a href="anunciar.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+                <a href="anunciar.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+                <a href="anunciar.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+                <a href="anunciar.html"><img src="mini-banner-5.jpg" alt="Destaque 5"></a>
+                <a href="anunciar.html"><img src="mini-banner-6.jpg" alt="Destaque 6"></a>
+            </div>
+        </section>
+
+        <div class="region-filter">
+            <button class="region-btn active" onclick="filtrarRegiao('todas', event)">Todas</button>
+            <button class="region-btn" onclick="filtrarRegiao('tokai', event)">Tokai (Aichi/Shizuoka/Gifu)</button>
+            <button class="region-btn" onclick="filtrarRegiao('kanto', event)">Kanto (Tokyo/Gunma...)</button>
+            <button class="region-btn" onclick="filtrarRegiao('kansai', event)">Kansai (Osaka/Mie...)</button>
+            <button class="region-btn" onclick="filtrarRegiao('hokkaido-tohoku', event)">Hokkaido / Tohoku</button>
+            <button class="region-btn" onclick="filtrarRegiao('chugoku-shikoku', event)">Chugoku / Shikoku</button>
+            <button class="region-btn" onclick="filtrarRegiao('kyushu-okinawa', event)">Kyushu / Okinawa</button>
         </div>
-        
-        <div class="menu-grid">
-            <a href="perfil.html" class="menu-item">
-                <span>👤 Meu Perfil e Conta</span>
-                <span>&rsaquo;</span>
+
+        <section class="feed-container">
+            <h2>Destaques e Anúncios</h2>
+
+            <div class="feed-banner-card" data-regiao="tokai">
+                <a href="anunciar.html"><img src="banner-grande-1.jpg" alt="Anúncio Tokai"></a>
+            </div>
+
+            <div class="feed-banner-card" data-regiao="kanto">
+                <a href="anunciar.html"><img src="banner-grande-2.jpg" alt="Anúncio Kanto"></a>
+            </div>
+
+            <div class="feed-banner-card" data-regiao="kansai">
+                <a href="anunciar.html"><img src="banner-grande-3.jpg" alt="Anúncio Kansai"></a>
+            </div>
+
+            <div class="feed-banner-card" data-regiao="kyushu-okinawa">
+                <a href="anunciar.html"><img src="banner-grande-4.jpg" alt="Anúncio Kyushu"></a>
+            </div>
+        </section>
+
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item active">
+                <span class="icon">🏠</span>
+                <span>Home</span>
             </a>
-            <a href="historicocreditos.html" class="menu-item">
-                <span>💳 Histórico de Créditos</span>
-                <span>&rsaquo;</span>
+            <a href="servicos.html" class="nav-item">
+                <span class="icon">📋</span>
+                <span>Serviços</span>
             </a>
-        </div>
+            <a href="perfil.html" class="nav-item">
+                <span class="icon">👤</span>
+                <span>Perfil</span>
+            </a>
+            <a href="anunciar.html" class="nav-item">
+                <span class="icon">📢</span>
+                <span>Anunciar</span>
+            </a>
+        </nav>
     </div>
 
     <script>
@@ -161,7 +373,7 @@
                         }
                     }
 
-                    // Esconde a tela de aviso e mostra o conteúdo do app
+                    // Esconde a tela de aviso e mostra a home completa
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('app-content').style.display = 'block';
                 } else {
@@ -182,6 +394,20 @@
             if (!liff.isLoggedIn()) {
                 liff.login();
             }
+        }
+
+        function filtrarRegiao(regiao, event) {
+            const clickedBtn = event.currentTarget || event.target;
+            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+            clickedBtn.classList.add('active');
+
+            document.querySelectorAll('.feed-banner-card').forEach(card => {
+                if (regiao === 'todas' || card.getAttribute('data-regiao') === regiao) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
 
         // Executa assim que a página carrega
