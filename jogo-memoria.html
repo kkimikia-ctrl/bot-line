@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jogo da Memória</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card-game">
+            <button onclick="window.location.href='index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
+            <div style="clear: both;"></div>
+            <div id="tabuleiro" style="display: grid; grid-template-columns: repeat(4, 50px); gap: 6px; justify-content: center; margin-top: 15px;"></div>
+        </div>
+    </div>
+    <script>
+        const emojis = ['🍎','🍎','🍌','🍌','🍇','🍇','🍉','🍉'];
+        let cartas = emojis.sort(() => Math.random() - 0.5), primeira = null, travado = false;
+        let cont = document.getElementById('tabuleiro');
+        cartas.forEach(e => {
+            let b = document.createElement('button');
+            b.style.cssText = "width: 50px; height: 50px; font-size: 20px; background: #7b1fa2; color: white; border: none; border-radius: 6px; cursor: pointer;";
+            b.dataset.emoji = e; b.onclick = () => {
+                if (travado || b.innerText !== "" || b === primeira) return;
+                b.innerText = b.dataset.emoji; b.style.background = "white";
+                if (!primeira) { primeira = b; return; }
+                travado = true;
+                if (primeira.dataset.emoji === b.dataset.emoji) { primeira = null; travado = false; }
+                else { setTimeout(() => { primeira.innerText = ""; primeira.style.background = "#7b1fa2"; b.innerText = ""; b.style.background = "#7b1fa2"; primeira = null; travado = false; }, 700); }
+            };
+            cont.appendChild(b);
+        });
+    </script>
+</body>
+</html>
