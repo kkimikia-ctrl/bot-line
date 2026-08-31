@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jogo da Forca</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card-game">
+            <button onclick="window.location.href='../index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
+            <div style="clear: both;"></div>
+            <div style="background: #00796b; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
+                <h3 style="margin: 0; font-size: 13px;">🎯 Jogo da Forca</h3>
+            </div>
+            <div style="font-size: 13px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="erros">0</span> / 6</div>
+            <div id="palavra" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 15px 0;">_ _ _ _</div>
+            <div id="teclado" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
+        </div>
+    </div>
+    <script>
+        const palavras = [{p: "BRASIL", d: "País tropical"}, {p: "GATO", d: "Animal felino"}, {p: "COMPUTADOR", d: "Máquina"}];
+        let atual = 0, descobertas = [], erros = 0;
+        
+        function carregar() {
+            let obj = palavras[atual], ex = "";
+            obj.p.split("").forEach(l => { ex += descobertas.includes(l) ? l + " " : "_ "; });
+            document.getElementById('palavra').innerText = ex.trim();
+        }
+        function escolher(l) {
+            if (!descobertas.includes(l)) {
+                descobertas.push(l);
+                if (!palavras[atual].p.includes(l)) { erros++; document.getElementById('erros').innerText = erros; }
+            }
+            document.getElementById(`b-${l}`).disabled = true;
+            carregar();
+            if (erros >= 6) { alert('Fim de jogo!'); location.reload(); }
+        }
+        let tc = document.getElementById('teclado');
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
+            let b = document.createElement('button'); b.innerText = l; b.id = `b-${l}`; b.onclick = () => escolher(l);
+            b.style.cssText = "padding: 8px 0; font-size: 12px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
+            tc.appendChild(b);
+        });
+        carregar();
+    </script>
+</body>
+</html>
