@@ -74,7 +74,6 @@
             background-color: #05b24c;
         }
 
-        /* Conteúdo Real do App (Oculto até autenticar) */
         #app-content {
             display: none;
         }
@@ -100,6 +99,36 @@
             border: 2px solid white;
             flex-shrink: 0;
         }
+        
+        /* Carrossel de Destaques */
+        .destaques-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            scroll-snap-type: x mandatory;
+        }
+        .destaque-card {
+            background: white;
+            min-width: 150px;
+            flex: 0 0 auto;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 4px solid #6366f1;
+            scroll-snap-align: start;
+        }
+        .destaque-card h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .destaque-card span {
+            font-size: 20px;
+        }
+
         .card {
             background: white;
             padding: 15px;
@@ -147,14 +176,15 @@
             white-space: pre-wrap;
             display: none;
         }
+
+        /* Menu em grade colorido igual à referência */
         .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
         .menu-item {
-            background: white;
-            padding: 20px;
+            padding: 18px 15px;
             border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             text-align: center;
@@ -162,14 +192,22 @@
             border: none;
             font-size: 15px;
             font-weight: bold;
+            color: white;
         }
         .menu-item span {
             display: block;
-            font-size: 13px;
-            color: #666;
+            font-size: 12px;
+            color: #f0f0f0;
             font-weight: normal;
-            margin-top: 5px;
+            margin-top: 4px;
         }
+        /* Cores específicas dos botões baseadas na imagem */
+        .btn-tradutor { background-color: #2563eb; }
+        .btn-carteira { background-color: #059669; }
+        .btn-entretenimento { background-color: #7c3aed; }
+        .btn-servicos { background-color: #d97706; }
+        .btn-empregos { background-color: #db2777; grid-column: span 2; }
+
         .modal {
             display: none;
             position: fixed;
@@ -266,11 +304,31 @@
         </div>
     </div>
 
-    <!-- Conteúdo real do App (protegido pelo login do LINE) -->
+    <!-- Conteúdo real do App -->
     <div id="app-content">
         <div class="header">
             <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
             Ajuda JP - Início
+        </div>
+
+        <!-- Destaques no Topo -->
+        <div class="destaques-container">
+            <div class="destaque-card">
+                <h4>Destaque 1</h4>
+                <span>📢</span>
+            </div>
+            <div class="destaque-card">
+                <h4>Destaque 2</h4>
+                <span>⭐</span>
+            </div>
+            <div class="destaque-card">
+                <h4>Destaque 3</h4>
+                <span>❓</span>
+            </div>
+            <div class="destaque-card">
+                <h4>Destaque 4</h4>
+                <span>❓</span>
+            </div>
         </div>
 
         <!-- Bloco de Tradução -->
@@ -282,23 +340,27 @@
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
-        <!-- Menu Principal -->
+        <!-- Menu Principal com Cores e Botão Empregos -->
         <div class="grid-menu">
-            <button class="menu-item" onclick="verificarSaldoEChamar()">
+            <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
                 📞 Tradutor
                 <span>Prefeitura / Hospital</span>
             </button>
-            <button class="menu-item" onclick="alert('Tela Carteira em desenvolvimento')">
+            <button class="menu-item btn-carteira" onclick="alert('Tela Carteira em desenvolvimento')">
                 💰 Carteira
                 <span>Saldo e Ganhos</span>
             </button>
-            <button class="menu-item" onclick="window.location.href='entretenimento.html'">
+            <button class="menu-item btn-entretenimento" onclick="window.location.href='entretenimento.html'">
                 🎮 Entretenimento
                 <span>Lives, Aulas e Notícias</span>
             </button>
-            <button class="menu-item" onclick="window.location.href='servicos.html'">
+            <button class="menu-item btn-servicos" onclick="window.location.href='servicos.html'">
                 📋 Serviços
-                <span>Lojas, Ar-condicionado, Mecânico</span>
+                <span>Lojas, Ar-condicionado</span>
+            </button>
+            <button class="menu-item btn-empregos" onclick="alert('Tela de Empregos em desenvolvimento')">
+                💼 Empregos
+                <span>Vagas das Empreiteiras</span>
             </button>
         </div>
 
@@ -443,7 +505,6 @@
             }
         }
 
-        // Função Global Auxiliar de Salvamento e Integração com o Ranking de Jogos
         function salvarPontuacaoPorJogo(nomeJogo, pontos) {
             if (pontos <= 0) {
                 alert("Jogue e acumule pontos antes de salvar!");
