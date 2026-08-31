@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ajuda JP - Meus Anúncios</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            padding-bottom: 30px;
+        }
+
+        .header {
+            background-color: #0047ab;
+            color: white;
+            padding: 12px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-voltar {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        /* Sistema de Abas */
+        .tabs {
+            display: flex;
+            background: #e2e8f0;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #0047ab;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Lista de Anúncios */
+        .anuncio-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 12px;
+            border-left: 4px solid #0047ab;
+        }
+
+        .anuncio-card.vencido {
+            border-left-color: #dc2626;
+            opacity: 0.85;
+        }
+
+        .anuncio-titulo {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            color: #1e293b;
+        }
+
+        .anuncio-info {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-ativo {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-vencido {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .sem-anuncios {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            background: white;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .secao-conteudo {
+            display: none;
+        }
+
+        .secao-conteudo.ativo {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <div class="header">
+        <span>Meus Anúncios</span>
+        <a href="perfil.html" class="btn-voltar">Voltar</a>
+    </div>
+
+    <!-- Abas de Navegação -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="mudarAba('ativos')">Ativos</button>
+        <button class="tab-btn tab-vencidos" onclick="mudarAba('vencidos')">Vencidos</button>
+    </div>
+
+    <!-- Seção de Anúncios Ativos -->
+    <div id="lista-ativos" class="secao-conteudo ativo">
+        <div class="anuncio-card">
+            <h3 class="anuncio-titulo">Venda de Bicicleta Aro 29</h3>
+            <div class="anuncio-info">Publicado em: 15/08/2026 • Expira em: 15/09/2026</div>
+            <span class="badge-status badge-ativo">Ativo</span>
+        </div>
+        
+        <div class="anuncio-card">
+            <h3 class="anuncio-titulo">Serviço de Limpeza e Jardinagem</h3>
+            <div class="anuncio-info">Publicado em: 20/08/2026 • Expira em: 20/09/2026</div>
+            <span class="badge-status badge-ativo">Ativo</span>
+        </div>
+    </div>
+
+    <!-- Seção de Anúncios Vencidos -->
+    <div id="lista-vencidos" class="secao-conteudo">
+        <div class="anuncio-card vencido">
+            <h3 class="anuncio-titulo">Sofá 3 Lugares Usado</h3>
+            <div class="anuncio-info">Publicado em: 01/07/2026 • Venceu em: 01/08/2026</div>
+            <span class="badge-status badge-vencido">Vencido</span>
+        </div>
+    </div>
+
+    <script>
+        // Função para alternar entre as abas Ativos e Vencidos
+        function mudarAba(tipo) {
+            const btnAtivos = document.querySelector('.tabs button:nth-child(1)');
+            const btnVencidos = document.querySelector('.tabs button:nth-child(2)');
+            const divAtivos = document.getElementById('lista-ativos');
+            const divVencidos = document.getElementById('lista-vencidos');
+
+            if (tipo === 'ativos') {
+                btnAtivos.classList.add('active');
+                btnVencidos.classList.remove('active');
+                divAtivos.classList.add('ativo');
+                divVencidos.classList.remove('ativo');
+            } else {
+                btnVencidos.classList.add('active');
+                btnAtivos.classList.remove('active');
+                divVencidos.classList.add('ativo');
+                divAtivos.classList.remove('ativo');
+            }
+        }
+
+        // Validação de segurança do usuário logado ao abrir a página
+        document.addEventListener("DOMContentLoaded", () => {
+            const userId = localStorage.getItem('line_user_id');
+            if (!userId) {
+                alert("Por favor, faça login para ver seus anúncios.");
+                window.location.href = 'perfil.html';
+            }
+        });
+    </script>
+</body>
+</html>
