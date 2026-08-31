@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jogo da Velha</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .action-btn { background-color: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card-game">
+            <button onclick="window.location.href='../index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
+            <div style="clear: both;"></div>
+            <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
+            <div id="velha-modo-escolha" style="margin: 15px 0;">
+                <p style="font-weight: bold;">Escolha o modo:</p>
+                <button onclick="iniciarVelha('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
+                <button onclick="iniciarVelha('pc')" class="action-btn">🤖 Jogar contra PC</button>
+            </div>
+            <div id="velha-area-jogo" style="display: none;">
+                <div style="font-weight: bold; margin-bottom: 10px;"><span id="status-jogo">Vez do X</span></div>
+                <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
+                    <button onclick="jogar(0)" id="c-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(1)" id="c-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(2)" id="c-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(3)" id="c-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(4)" id="c-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(5)" id="c-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(6)" id="c-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(7)" id="c-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                    <button onclick="jogar(8)" id="c-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                </div>
+                <button onclick="reiniciar()" class="action-btn" style="background-color: #dc2626;">Reiniciar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
+        function iniciar(m) {
+            modo = m; document.getElementById('velha-modo-escolha').style.display = 'none';
+            document.getElementById('velha-area-jogo').style.display = 'block'; reiniciar();
+        }
+        function jogar(i) {
+            if (tabuleiro[i] === '' && ativo) {
+                tabuleiro[i] = atual; document.getElementById(`c-${i}`).innerText = atual;
+                let win = checarVitoria();
+                if (win) { document.getElementById('status-jogo').innerText = `🎉 Jogador ${atual} Venceu!`; ativo = false; return; }
+                if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate!`; ativo = false; return; }
+                atual = atual === 'X' ? 'O' : 'X';
+                document.getElementById('status-jogo').innerText = `Vez do ${atual}`;
+                if (modo === 'pc' && atual === 'O' && ativo) setTimeout(jogadaPC, 400);
+            }
+        }
+        function jogadaPC() {
+            let vazias = []; tabuleiro.forEach((v, i) => { if (v === '') vazias.push(i); });
+            if (vazias.length > 0) jogar(vazias[Math.floor(Math.random() * vazias.length)]);
+        }
+        function checarVitoria() {
+            const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let c of w) { if (tabuleiro[c[0]] && tabuleiro[c[0]] === tabuleiro[c[1]] && tabuleiro[c[0]] === tabuleiro[c[2]]) return c; }
+            return null;
+        }
+        function reiniciar() {
+            tabuleiro = ['', '', '', '', '', '', '', '', '']; atual = 'X'; ativo = true;
+            document.getElementById('status-jogo').innerText = 'Vez do X';
+            for (let i = 0; i < 9; i++) document.getElementById(`c-${i}`).innerText = '';
+        }
+    </script>
+</body>
+</html>
