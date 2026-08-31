@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jogo da Cobrinha</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .control-btn { background: #e2e8f0; border: none; font-size: 20px; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: #0047ab; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card-game">
+            <button onclick="window.location.href='index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
+            <div style="clear: both;"></div>
+            <canvas id="canvas" width="280" height="280" style="background: #111; border-radius: 8px; display: block; margin: 0 auto 15px auto;"></canvas>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-width: 210px; margin: 0 auto;">
+                <div></div><button class="control-btn" onclick="dir='UP'">⬆️</button><div></div>
+                <button class="control-btn" onclick="dir='LEFT'">⬅️</button>
+                <button class="control-btn" onclick="dir='DOWN'">⬇️</button>
+                <button class="control-btn" onclick="dir='RIGHT'">➡️</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
+        let snake = [{x:8, y:8}], comida = {x:5, y:5}, dir = 'RIGHT';
+        setInterval(() => {
+            let cabeca = {...snake[0]};
+            if(dir==='UP') cabeca.y--; if(dir==='DOWN') cabeca.y++; if(dir==='LEFT') cabeca.x--; if(dir==='RIGHT') cabeca.x++;
+            if(cabeca.x===comida.x && cabeca.y===comida.y) { comida = {x:Math.floor(Math.random()*16), y:Math.floor(Math.random()*16)}; } else { snake.pop(); }
+            snake.unshift(cabeca);
+            ctx.fillStyle = '#111'; ctx.fillRect(0,0,280,280);
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(comida.x*17.5, comida.y*17.5, 16, 16);
+            ctx.fillStyle = '#10b981'; snake.forEach(p => ctx.fillRect(p.x*17.5, p.y*17.5, 16, 16));
+        }, 150);
+    </script>
+</body>
+</html>
