@@ -1,85 +1,125 @@
-// Certifique-se de que o firebase/firestore já foi importado ou inicializado no seu projeto
-// Exemplo usando a modular SDK do Firebase (v9+):
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
-import { getFirestore, collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-firestore.js";
+<script type="module">
+    // Importe o Firebase do jeito que você já usa nos seus outros arquivos de jogos
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-firestore.js";
 
-// (Se você já inicializou o db em outro arquivo, basta importá-lo aqui)
-// const db = getFirestore(app);
+    // ⚠️ COLOQUE AQUI AS SUAS CONFIGURAÇÕES REAIS DO FIREBASE (mesmas dos outros arquivos)
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_AUTH_DOMAIN",
+        projectId: "SEU_PROJECT_ID",
+        storageBucket: "SEU_STORAGE_BUCKET",
+        messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+        appId: "SEU_APP_ID"
+    };
 
-async function carregarRankingJogo(idJogo) {
-    const listContainer = document.getElementById('rankingList');
-    listContainer.innerHTML = '<div class="empty-state">Carregando Top 100 do Firebase...</div>';
+    // Inicializa o Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    try {
-        let dadosRanking = [];
+    const jogos = [
+        { id: 'minicraque', nome: '⚽ Mini Craque' },
+        { id: 'velha', nome: '❌ Jogo da Velha' },
+        { id: 'forca', nome: '🎯 Jogo da Forca' },
+        { id: 'memoria', nome: '🧠 Jogo da Memória' },
+        { id: 'jokenpo', nome: '🇧🇷 Jokenpô' },
+        { id: 'cobrinha', nome: '🐍 Cobrinha' }
+    ];
 
-        // OPÇÃO A: Se você salva todos os scores numa coleção única chamada 'rankings' filtrando pelo jogo:
-        const q = query(
-            collection(db, "rankings"),
-            where("jogo", "==", idJogo),
-            orderBy("pontos", "desc"),
-            limit(100)
-        );
+    let jogoAtual = 'minicraque';
 
-        /* OPÇÃO B: Se você cria uma coleção para cada jogo (ex: 'ranking_minicraque', 'ranking_velha'):
-        const q = query(
-            collection(db, `ranking_${idJogo}`),
-            orderBy("pontos", "desc"),
-            limit(100)
-        );
-        */
+    function inicializarAbas() {
+        const tabsContainer = document.getElementById('gamesTabs');
+        tabsContainer.innerHTML = '';
 
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            dadosRanking.push({
-                nome: data.nome || "Jogador Anônimo",
-                pontos: Number(data.pontos) || 0
-            });
+        jogos.forEach(jogo => {
+            const btn = document.createElement('button');
+            btn.className = `tab-btn ${jogo.id === jogoAtual ? 'active' : ''}`;
+            btn.innerText = jogo.nome;
+            btn.onclick = () => {
+                jogoAtual = jogo.id;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                carregarRankingJogo(jogo.id);
+            };
+            tabsContainer.appendChild(btn);
         });
+    }
 
-        // Se o banco estiver vazio para esse jogo, exibe o aviso
-        if (dadosRanking.length === 0) {
-            listContainer.innerHTML = '<div class="empty-state">Nenhuma pontuação registrada ainda para este jogo. Seja o primeiro!</div>';
-            return;
-        }
+    async function carregarRankingJogo(idJogo) {
+        const listContainer = document.getElementById('rankingList');
+        listContainer.innerHTML = '<div class="empty-state">Carregando Top 100...</div>';
 
-        // Monta o HTML do Top 100 com os dados reais do Firebase
-        let html = '';
-        dadosRanking.forEach((jogador, index) => {
-            let posicao = index + 1;
-            let podiumClass = '';
-            let iconePosicao = `#${posicao}`;
+        try {
+            let dadosRanking = [];
 
-            if (posicao === 1) {
-                podiumClass = 'podium-1';
-                iconePosicao = '🥇';
-            } else if (posicao === 2) {
-                podiumClass = 'podium-2';
-                iconePosicao = '🥈';
-            } else if (posicao === 3) {
-                podiumClass = 'podium-3';
-                iconePosicao = '🥉';
+            // Faz a consulta na coleção correspondente a cada jogo no Firestore
+            const q = query(
+                collection(db, `ranking_${idJogo}`),
+                orderBy("pontos", "desc"),
+                limit(100)
+            );
+
+            const querySnapshot = await getDocs(q);
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                dadosRanking.push({
+                    nome: data.nome || "Jogador Anônimo",
+                    pontos: Number(data.pontos) || 0
+                });
+            });
+
+            if (dadosRanking.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state">Nenhuma pontuação registrada ainda. Seja o primeiro!</div>';
+                return;
             }
 
-            html += `
-                <div class="player-card ${podiumClass}">
-                    <div class="player-info">
-                        <span class="player-rank">${iconePosicao}</span>
-                        <span class="player-name">${escapeHtml(jogador.nome)}</span>
-                    </div>
-                    <div class="player-score">
-                        ⭐ ${jogador.pontos.toLocaleString()} pts
-                    </div>
-                </div>
-            `;
-        });
+            let html = '';
+            dadosRanking.forEach((jogador, index) => {
+                let posicao = index + 1;
+                let podiumClass = '';
+                let iconePosicao = `#${posicao}`;
 
-        listContainer.innerHTML = html;
+                if (posicao === 1) {
+                    podiumClass = 'podium-1';
+                    iconePosicao = '🥇';
+                } else if (posicao === 2) {
+                    podiumClass = 'podium-2';
+                    iconePosicao = '🥈';
+                } else if (posicao === 3) {
+                    podiumClass = 'podium-3';
+                    iconePosicao = '🥉';
+                }
 
-    } catch (error) {
-        console.error("Erro ao buscar ranking do Firebase:", error);
-        listContainer.innerHTML = '<div class="empty-state" style="color: #f87171;">Erro ao carregar o ranking. Verifique sua conexão com o Firebase.</div>';
+                html += `
+                    <div class="player-card ${podiumClass}">
+                        <div class="player-info">
+                            <span class="player-rank">${iconePosicao}</span>
+                            <span class="player-name">${escapeHtml(jogador.nome)}</span>
+                        </div>
+                        <div class="player-score">
+                            ⭐ ${jogador.pontos.toLocaleString()} pts
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+
+        } catch (error) {
+            console.error("Erro ao buscar ranking:", error);
+            listContainer.innerHTML = '<div class="empty-state" style="color: #f87171;">Erro ao carregar o ranking do Firebase.</div>';
+        }
     }
-}
+
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Inicializa ao carregar a página
+    window.onload = () => {
+        inicializarAbas();
+        carregarRankingJogo(jogoAtual);
+    };
+</script>
