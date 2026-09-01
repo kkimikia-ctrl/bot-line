@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jogo da Memória - Níveis</title>
+    <title>Jogo da Memória - Vidas</title>
     <style>
         body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
         .container { max-width: 650px; margin: 0 auto; }
         .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .btn-acao { background: #7e22ce; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; width: 100%; font-size: 15px; }
-        .btn-salvar { background: #16a34a; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; }
+        .btn-salvar { background: #16a34a; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; display: block; }
     </style>
 </head>
 <body>
@@ -19,54 +19,98 @@
             <div style="clear: both;"></div>
             
             <h3 style="color: #7e22ce; margin: 5px 0;">🧠 Jogo da Memória</h3>
-            <div style="font-weight: bold; margin-bottom: 10px; color: #333;" id="info-nivel">Nível 1 (6 Cartas)</div>
+            <div style="font-weight: bold; margin-bottom: 5px; color: #333;" id="info-fase">Fase (6 Cartas - Rodada 1/2)</div>
 
             <div style="font-weight: bold; margin-bottom: 5px; font-size: 13px;">
-                ⏱️ Tempo: <span id="tempo">0</span>s | 🏆 Pontos Acumulados: <span id="pontos-total">0</span> | ❌ Erros: <span id="erros">0</span>
+                ❤️ Vidas: <span id="vidas">♥♥</span> | ⏱️ Tempo: <span id="tempo">0</span>s | 🏆 Pontos: <span id="pontos-total">0</span>
             </div>
             
             <div id="tabuleiro" style="display: grid; gap: 5px; justify-content: center; margin-top: 10px;"></div>
 
-            <!-- Botões de Avançar de Fase ou Salvar -->
-            <button id="btnProximo" onclick="proximoNivel()" class="btn-acao" style="display: none; background: #2563eb;">➡️ Ir para o Próximo Nível</button>
+            <!-- Botão de Próxima Rodada / Fase -->
+            <button id="btnProximo" onclick="avancarRodada()" class="btn-acao" style="display: none; background: #2563eb;">➡️ Próxima Rodada</button>
+            
+            <!-- Botão Salvar Pontos visível para mandar para o ranking a qualquer momento -->
             <button id="btnSalvar" onclick="salvarPontuacao()" class="btn-salvar">🏆 Salvar Pontos e Ver Ranking</button>
+            
+            <button onclick="toggleAudio()" id="btnAudio" style="background: #475569; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; margin-top: 10px;">🔊 Som: Ligado</button>
         </div>
     </div>
     
     <script>
         const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🍑','🍋','🍊','🍐','🥥','🥑','🍆','🥔','🥕','🌽','🌶️','🍄','🥜','🌰','🍞','🥐'];
         let cartas = [], primeira = null, travado = false;
-        let erros = 0, pontosTotais = 0, paresAcertados = 0, totalPares = 0, nivelAtual = 1;
-        let tempoRestante = 0, intervaloTempo = null;
+        let erros = 0, pontosTotais = 0, paresAcertados = 0, totalPares = 3;
+        let qtdCartasAtual = 6; // Começa com 6 cartas (3 pares)
+        let rodadaAtual = 1; // 2 jogadas por quantidade de cartas
+        let vidasRestantes = 2; // Começa com 2 vidas
+        let tempoRestante = 30, intervaloTempo = null;
+        let audioLigado = true;
 
-        function iniciarFase(nivel) {
-            nivelAtual = nivel;
-            document.getElementById('btnProximo').style.display = 'none';
-            document.getElementById('btnSalvar').style.display = 'none';
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function tocarSom(tipo) {
+            if (!audioLigado) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
 
-            let colunas = 3;
-
-            if (nivel === 1) {
-                totalPares = 3; // 6 cartas (Começa com 3 pares)
-                tempoRestante = 30;
-                colunas = 3;
-                document.getElementById('info-nivel').innerText = "Nível 1 (6 Cartas / 3 Pares)";
-            } else if (nivel === 2) {
-                totalPares = 6; // 12 cartas
-                tempoRestante = 60;
-                colunas = 4;
-                document.getElementById('info-nivel').innerText = "Nível 2 (12 Cartas / 6 Pares)";
-            } else if (nivel === 3) {
-                totalPares = 10; // 20 cartas
-                tempoRestante = 90;
-                colunas = 5;
-                document.getElementById('info-nivel').innerText = "Nível 3 (20 Cartas / 10 Pares)";
-            } else if (nivel === 4) {
-                totalPares = 15; // 30 cartas
-                tempoRestante = 120;
-                colunas = 6;
-                document.getElementById('info-nivel').innerText = "Nível 4 - Mestre (30 Cartas / 15 Pares)";
+            if (tipo === 'clique') {
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (tipo === 'acerto') {
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } else if (tipo === 'vitoria_fase') {
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                setTimeout(() => osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1), 100);
+                setTimeout(() => osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2), 200);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (tipo === 'perdeu_vida') {
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
             }
+        }
+
+        function toggleAudio() {
+            audioLigado = !audioLigado;
+            document.getElementById('btnAudio').innerText = audioLigado ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
+        }
+
+        function atualizarVidasDisplay() {
+            let coracoes = '';
+            for (let i = 0; i < vidasRestantes; i++) coracoes += '♥';
+            document.getElementById('vidas').innerText = coracoes || '💔';
+        }
+
+        function iniciarJogo() {
+            document.getElementById('btnProximo').style.display = 'none';
+            totalPares = qtdCartasAtual / 2;
+            tempoRestante = 20 + (qtdCartasAtual * 5);
+
+            let colunas = 4;
+            if (qtdCartasAtual <= 6) colunas = 3;
+            else if (qtdCartasAtual <= 16) colunas = 4;
+            else if (qtdCartasAtual <= 30) colunas = 6;
+            else colunas = 8;
+
+            document.getElementById('info-fase').innerText = `${qtdCartasAtual} Cartas (${totalPares} Pares) - Rodada ${rodadaAtual}/2`;
 
             let selecionados = emojisPool.slice(0, totalPares);
             cartas = [...selecionados, ...selecionados].sort(() => Math.random() - 0.5);
@@ -76,20 +120,21 @@
             erros = 0;
             paresAcertados = 0;
 
-            document.getElementById('erros').innerText = erros;
             document.getElementById('tempo').innerText = tempoRestante;
             document.getElementById('pontos-total').innerText = pontosTotais;
-            document.getElementById('tabuleiro').style.gridTemplateColumns = `repeat(${colunas}, 50px)`;
+            atualizarVidasDisplay();
+            document.getElementById('tabuleiro').style.gridTemplateColumns = `repeat(${colunas}, 45px)`;
 
             let cont = document.getElementById('tabuleiro');
             cont.innerHTML = '';
 
             cartas.forEach(e => {
                 let b = document.createElement('button');
-                b.style.cssText = "width: 50px; height: 50px; font-size: 22px; background: #7b1fa2; color: white; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;";
+                b.style.cssText = "width: 45px; height: 45px; font-size: 20px; background: #7b1fa2; color: white; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;";
                 b.dataset.emoji = e; 
                 b.onclick = () => {
                     if (travado || b.innerText !== "" || b === primeira) return;
+                    tocarSom('clique');
                     b.innerText = b.dataset.emoji; 
                     b.style.background = "white";
 
@@ -101,6 +146,7 @@
                     travado = true;
                     
                     if (primeira.dataset.emoji === b.dataset.emoji) {
+                        tocarSom('acerto');
                         primeira = null; 
                         travado = false;
                         paresAcertados++;
@@ -108,16 +154,11 @@
                         if (paresAcertados === totalPares) {
                             pararRelogio();
                             somarPontosFase();
-
-                            if (nivelAtual < 4) {
-                                document.getElementById('btnProximo').style.display = 'block';
-                            } else {
-                                document.getElementById('btnSalvar').style.display = 'block';
-                            }
+                            tocarSom('vitoria_fase');
+                            document.getElementById('btnProximo').style.display = 'block';
                         }
                     } else {
                         erros++;
-                        document.getElementById('erros').innerText = erros;
                         setTimeout(() => { 
                             primeira.innerText = ""; 
                             primeira.style.background = "#7b1fa2"; 
@@ -142,8 +183,17 @@
                 if (tempoRestante <= 0) {
                     clearInterval(intervaloTempo);
                     travado = true;
-                    alert('⏰ O tempo acabou nesta fase!');
-                    window.location.reload();
+                    tocarSom('perdeu_vida');
+                    vidasRestantes--;
+                    atualizarVidasDisplay();
+
+                    if (vidasRestantes > 0) {
+                        alert(`⏰ O tempo acabou! Você perdeu 1 vida. Vidas restantes: ${vidasRestantes}`);
+                        iniciarJogo(); // Tenta a rodada novamente
+                    } else {
+                        alert('💀 Suas vidas acabaram! Fim de jogo. Seus pontos serão salvos no ranking.');
+                        salvarPontuacao();
+                    }
                 }
             }, 1000);
         }
@@ -153,19 +203,26 @@
         }
 
         function somarPontosFase() {
-            let baseNivel = totalPares * 30;
-            let bonusTempo = tempoRestante * 3;
-            let penalidadeErros = erros * 10;
-            let pontosFase = Math.max(20, baseNivel + bonusTempo - penalidadeErros);
-            
+            let base = totalPares * 25;
+            let bonus = tempoRestante * 2;
+            let penalidade = erros * 5;
+            let pontosFase = Math.max(10, base + bonus - penalidade);
             pontosTotais += pontosFase;
             document.getElementById('pontos-total').innerText = pontosTotais;
         }
 
-        function proximoNivel() {
-            if (nivelAtual < 4) {
-                iniciarFase(nivelAtual + 1);
+        function avancarRodada() {
+            if (rodadaAtual < 2) {
+                rodadaAtual++;
+            } else {
+                rodadaAtual = 1;
+                qtdCartasAtual += 2;
+                if (qtdCartasAtual > 40) {
+                    alert('🎉 Parabéns! Você concluiu o nível máximo de 20 pares!');
+                    qtdCartasAtual = 40;
+                }
             }
+            iniciarJogo();
         }
 
         function salvarPontuacao() {
@@ -173,8 +230,7 @@
             window.location.href = 'ranking.html';
         }
 
-        // Inicia automaticamente no Nível 1 com 3 pares
-        iniciarFase(1);
+        iniciarJogo();
     </script>
 </body>
 </html>
