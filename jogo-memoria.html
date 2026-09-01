@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jogo da Memória</title>
+    <title>Jogo da Memória - Níveis</title>
     <style>
         body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
         .container { max-width: 650px; margin: 0 auto; }
         .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .btn-nivel { background: #7e22ce; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin: 5px; width: 80%; max-width: 250px; display: block; margin-left: auto; margin-right: auto; }
+        .btn-acao { background: #7e22ce; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; width: 100%; font-size: 15px; }
         .btn-salvar { background: #16a34a; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; }
     </style>
 </head>
@@ -19,60 +19,53 @@
             <div style="clear: both;"></div>
             
             <h3 style="color: #7e22ce; margin: 5px 0;">🧠 Jogo da Memória</h3>
+            <div style="font-weight: bold; margin-bottom: 10px; color: #333;" id="info-nivel">Nível 1 (6 Cartas)</div>
+
+            <div style="font-weight: bold; margin-bottom: 5px; font-size: 13px;">
+                ⏱️ Tempo: <span id="tempo">0</span>s | 🏆 Pontos Acumulados: <span id="pontos-total">0</span> | ❌ Erros: <span id="erros">0</span>
+            </div>
             
-            <!-- Menu de Dificuldade com foco em 16 e 20 pares -->
-            <div id="menu-dificuldade" style="margin: 15px 0;">
-                <p style="font-weight: bold;">Escolha o nível de dificuldade:</p>
-                <button onclick="iniciarJogo('facil')" class="btn-nivel" style="background: #16a34a;">Fácil (8 Pares / 16 Cartas)</button>
-                <button onclick="iniciarJogo('medio')" class="btn-nivel" style="background: #2563eb;">Médio (12 Pares / 24 Cartas)</button>
-                <button onclick="iniciarJogo('dificil')" class="btn-nivel" style="background: #d97706;">Desafio (16 Pares / 32 Cartas)</button>
-                <button onclick="iniciarJogo('extremo')" class="btn-nivel" style="background: #dc2626;">Mestre (20 Pares / 40 Cartas)</button>
-            </div>
+            <div id="tabuleiro" style="display: grid; gap: 5px; justify-content: center; margin-top: 10px;"></div>
 
-            <!-- Área do Jogo -->
-            <div id="area-jogo" style="display: none;">
-                <div style="font-weight: bold; margin-bottom: 5px; font-size: 13px;">
-                    ⏱️ Tempo: <span id="tempo">0</span>s | 🏆 Pontos: <span id="pontos">0</span> | ❌ Erros: <span id="erros">0</span>
-                </div>
-                
-                <div id="tabuleiro" style="display: grid; gap: 5px; justify-content: center; margin-top: 10px;"></div>
-
-                <button id="btnSalvar" onclick="salvarPontuacao()" class="btn-salvar">🏆 Salvar Pontos e Ver Ranking</button>
-                <button onclick="voltarMenu()" style="background: #64748b; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">Mudar Dificuldade</button>
-            </div>
+            <!-- Botões de Avançar de Fase ou Salvar -->
+            <button id="btnProximo" onclick="proximoNivel()" class="btn-acao" style="display: none; background: #2563eb;">➡️ Ir para o Próximo Nível</button>
+            <button id="btnSalvar" onclick="salvarPontuacao()" class="btn-salvar">🏆 Salvar Pontos e Ver Ranking</button>
         </div>
     </div>
     
     <script>
-        // Lista ampla de emojis para suportar até 20 pares diferentes (40 cartas)
-        const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🍑','🍋','🍊','🍐',' 🥥','🥑','🍆','🥔','🥕','🌽','🌶️','🍄','🥜','🌰','🍞','🥐'];
+        const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🍑','🍋','🍊','🍐','🥥','🥑','🍆','🥔','🥕','🌽','🌶️','🍄','🥜','🌰','🍞','🥐'];
         let cartas = [], primeira = null, travado = false;
-        let erros = 0, pontos = 0, paresAcertados = 0, totalPares = 0;
+        let erros = 0, pontosTotais = 0, paresAcertados = 0, totalPares = 0, nivelAtual = 1;
         let tempoRestante = 0, intervaloTempo = null;
 
-        function iniciarJogo(nivel) {
-            document.getElementById('menu-dificuldade').style.display = 'none';
-            document.getElementById('area-jogo').style.display = 'block';
+        function iniciarFase(nivel) {
+            nivelAtual = nivel;
+            document.getElementById('btnProximo').style.display = 'none';
             document.getElementById('btnSalvar').style.display = 'none';
 
-            let colunas = 4;
+            let colunas = 3;
 
-            if (nivel === 'facil') {
-                totalPares = 8;
+            if (nivel === 1) {
+                totalPares = 3; // 6 cartas (Começa com 3 pares)
+                tempoRestante = 30;
+                colunas = 3;
+                document.getElementById('info-nivel').innerText = "Nível 1 (6 Cartas / 3 Pares)";
+            } else if (nivel === 2) {
+                totalPares = 6; // 12 cartas
                 tempoRestante = 60;
                 colunas = 4;
-            } else if (nivel === 'medio') {
-                totalPares = 12;
+                document.getElementById('info-nivel').innerText = "Nível 2 (12 Cartas / 6 Pares)";
+            } else if (nivel === 3) {
+                totalPares = 10; // 20 cartas
                 tempoRestante = 90;
+                colunas = 5;
+                document.getElementById('info-nivel').innerText = "Nível 3 (20 Cartas / 10 Pares)";
+            } else if (nivel === 4) {
+                totalPares = 15; // 30 cartas
+                tempoRestante = 120;
                 colunas = 6;
-            } else if (nivel === 'dificil') { // 16 pares
-                totalPares = 16;
-                tempoRestante = 130;
-                colunas = 8;
-            } else if (nivel === 'extremo') { // 20 pares
-                totalPares = 20;
-                tempoRestante = 160;
-                colunas = 8;
+                document.getElementById('info-nivel').innerText = "Nível 4 - Mestre (30 Cartas / 15 Pares)";
             }
 
             let selecionados = emojisPool.slice(0, totalPares);
@@ -85,14 +78,15 @@
 
             document.getElementById('erros').innerText = erros;
             document.getElementById('tempo').innerText = tempoRestante;
-            document.getElementById('tabuleiro').style.gridTemplateColumns = `repeat(${colunas}, 42px)`;
+            document.getElementById('pontos-total').innerText = pontosTotais;
+            document.getElementById('tabuleiro').style.gridTemplateColumns = `repeat(${colunas}, 50px)`;
 
             let cont = document.getElementById('tabuleiro');
             cont.innerHTML = '';
 
             cartas.forEach(e => {
                 let b = document.createElement('button');
-                b.style.cssText = "width: 42px; height: 42px; font-size: 18px; background: #7b1fa2; color: white; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;";
+                b.style.cssText = "width: 50px; height: 50px; font-size: 22px; background: #7b1fa2; color: white; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;";
                 b.dataset.emoji = e; 
                 b.onclick = () => {
                     if (travado || b.innerText !== "" || b === primeira) return;
@@ -113,8 +107,13 @@
 
                         if (paresAcertados === totalPares) {
                             pararRelogio();
-                            calcularPontosFinais();
-                            document.getElementById('btnSalvar').style.display = 'block';
+                            somarPontosFase();
+
+                            if (nivelAtual < 4) {
+                                document.getElementById('btnProximo').style.display = 'block';
+                            } else {
+                                document.getElementById('btnSalvar').style.display = 'block';
+                            }
                         }
                     } else {
                         erros++;
@@ -143,8 +142,8 @@
                 if (tempoRestante <= 0) {
                     clearInterval(intervaloTempo);
                     travado = true;
-                    alert('⏰ O tempo acabou!');
-                    voltarMenu();
+                    alert('⏰ O tempo acabou nesta fase!');
+                    window.location.reload();
                 }
             }, 1000);
         }
@@ -153,25 +152,29 @@
             if (intervaloTempo) clearInterval(intervaloTempo);
         }
 
-        function calcularPontosFinais() {
-            let baseNivel = totalPares * 40;
-            let bonusTempo = tempoRestante * 4;
+        function somarPontosFase() {
+            let baseNivel = totalPares * 30;
+            let bonusTempo = tempoRestante * 3;
             let penalidadeErros = erros * 10;
+            let pontosFase = Math.max(20, baseNivel + bonusTempo - penalidadeErros);
             
-            pontos = Math.max(50, baseNivel + bonusTempo - penalidadeErros);
-            document.getElementById('pontos').innerText = pontos;
+            pontosTotais += pontosFase;
+            document.getElementById('pontos-total').innerText = pontosTotais;
         }
 
-        function voltarMenu() {
-            pararRelogio();
-            document.getElementById('area-jogo').style.display = 'none';
-            document.getElementById('menu-dificuldade').style.display = 'block';
+        function proximoNivel() {
+            if (nivelAtual < 4) {
+                iniciarFase(nivelAtual + 1);
+            }
         }
 
         function salvarPontuacao() {
-            localStorage.setItem('pontuacao_memoria', pontos);
+            localStorage.setItem('pontuacao_memoria', pontosTotais);
             window.location.href = 'ranking.html';
         }
+
+        // Inicia automaticamente no Nível 1 com 3 pares
+        iniciarFase(1);
     </script>
 </body>
 </html>
