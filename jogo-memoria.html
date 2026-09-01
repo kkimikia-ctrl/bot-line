@@ -6,35 +6,172 @@
     <title>Jogo da Memória</title>
     <style>
         body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { max-width: 650px; margin: 0 auto; }
         .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .btn-nivel { background: #7e22ce; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin: 5px; width: 80%; max-width: 250px; display: block; margin-left: auto; margin-right: auto; }
+        .btn-salvar { background: #16a34a; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card-game">
-            <button onclick="window.location.href='index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
+            <button onclick="window.location.href='forca.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
             <div style="clear: both;"></div>
-            <div id="tabuleiro" style="display: grid; grid-template-columns: repeat(4, 50px); gap: 6px; justify-content: center; margin-top: 15px;"></div>
+            
+            <h3 style="color: #7e22ce; margin: 5px 0;">🧠 Jogo da Memória</h3>
+            
+            <!-- Menu de Dificuldade com foco em 16 e 20 pares -->
+            <div id="menu-dificuldade" style="margin: 15px 0;">
+                <p style="font-weight: bold;">Escolha o nível de dificuldade:</p>
+                <button onclick="iniciarJogo('facil')" class="btn-nivel" style="background: #16a34a;">Fácil (8 Pares / 16 Cartas)</button>
+                <button onclick="iniciarJogo('medio')" class="btn-nivel" style="background: #2563eb;">Médio (12 Pares / 24 Cartas)</button>
+                <button onclick="iniciarJogo('dificil')" class="btn-nivel" style="background: #d97706;">Desafio (16 Pares / 32 Cartas)</button>
+                <button onclick="iniciarJogo('extremo')" class="btn-nivel" style="background: #dc2626;">Mestre (20 Pares / 40 Cartas)</button>
+            </div>
+
+            <!-- Área do Jogo -->
+            <div id="area-jogo" style="display: none;">
+                <div style="font-weight: bold; margin-bottom: 5px; font-size: 13px;">
+                    ⏱️ Tempo: <span id="tempo">0</span>s | 🏆 Pontos: <span id="pontos">0</span> | ❌ Erros: <span id="erros">0</span>
+                </div>
+                
+                <div id="tabuleiro" style="display: grid; gap: 5px; justify-content: center; margin-top: 10px;"></div>
+
+                <button id="btnSalvar" onclick="salvarPontuacao()" class="btn-salvar">🏆 Salvar Pontos e Ver Ranking</button>
+                <button onclick="voltarMenu()" style="background: #64748b; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;">Mudar Dificuldade</button>
+            </div>
         </div>
     </div>
+    
     <script>
-        const emojis = ['🍎','🍎','🍌','🍌','🍇','🍇','🍉','🍉'];
-        let cartas = emojis.sort(() => Math.random() - 0.5), primeira = null, travado = false;
-        let cont = document.getElementById('tabuleiro');
-        cartas.forEach(e => {
-            let b = document.createElement('button');
-            b.style.cssText = "width: 50px; height: 50px; font-size: 20px; background: #7b1fa2; color: white; border: none; border-radius: 6px; cursor: pointer;";
-            b.dataset.emoji = e; b.onclick = () => {
-                if (travado || b.innerText !== "" || b === primeira) return;
-                b.innerText = b.dataset.emoji; b.style.background = "white";
-                if (!primeira) { primeira = b; return; }
-                travado = true;
-                if (primeira.dataset.emoji === b.dataset.emoji) { primeira = null; travado = false; }
-                else { setTimeout(() => { primeira.innerText = ""; primeira.style.background = "#7b1fa2"; b.innerText = ""; b.style.background = "#7b1fa2"; primeira = null; travado = false; }, 700); }
-            };
-            cont.appendChild(b);
-        });
+        // Lista ampla de emojis para suportar até 20 pares diferentes (40 cartas)
+        const emojisPool = ['🍎','🍌','🍇','🍉','🍓','🍒','🍍','🥝','🍑','🍋','🍊','🍐',' 🥥','🥑','🍆','🥔','🥕','🌽','🌶️','🍄','🥜','🌰','🍞','🥐'];
+        let cartas = [], primeira = null, travado = false;
+        let erros = 0, pontos = 0, paresAcertados = 0, totalPares = 0;
+        let tempoRestante = 0, intervaloTempo = null;
+
+        function iniciarJogo(nivel) {
+            document.getElementById('menu-dificuldade').style.display = 'none';
+            document.getElementById('area-jogo').style.display = 'block';
+            document.getElementById('btnSalvar').style.display = 'none';
+
+            let colunas = 4;
+
+            if (nivel === 'facil') {
+                totalPares = 8;
+                tempoRestante = 60;
+                colunas = 4;
+            } else if (nivel === 'medio') {
+                totalPares = 12;
+                tempoRestante = 90;
+                colunas = 6;
+            } else if (nivel === 'dificil') { // 16 pares
+                totalPares = 16;
+                tempoRestante = 130;
+                colunas = 8;
+            } else if (nivel === 'extremo') { // 20 pares
+                totalPares = 20;
+                tempoRestante = 160;
+                colunas = 8;
+            }
+
+            let selecionados = emojisPool.slice(0, totalPares);
+            cartas = [...selecionados, ...selecionados].sort(() => Math.random() - 0.5);
+            
+            primeira = null;
+            travado = false;
+            erros = 0;
+            paresAcertados = 0;
+
+            document.getElementById('erros').innerText = erros;
+            document.getElementById('tempo').innerText = tempoRestante;
+            document.getElementById('tabuleiro').style.gridTemplateColumns = `repeat(${colunas}, 42px)`;
+
+            let cont = document.getElementById('tabuleiro');
+            cont.innerHTML = '';
+
+            cartas.forEach(e => {
+                let b = document.createElement('button');
+                b.style.cssText = "width: 42px; height: 42px; font-size: 18px; background: #7b1fa2; color: white; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;";
+                b.dataset.emoji = e; 
+                b.onclick = () => {
+                    if (travado || b.innerText !== "" || b === primeira) return;
+                    b.innerText = b.dataset.emoji; 
+                    b.style.background = "white";
+
+                    if (!primeira) { 
+                        primeira = b; 
+                        return; 
+                    }
+
+                    travado = true;
+                    
+                    if (primeira.dataset.emoji === b.dataset.emoji) {
+                        primeira = null; 
+                        travado = false;
+                        paresAcertados++;
+
+                        if (paresAcertados === totalPares) {
+                            pararRelogio();
+                            calcularPontosFinais();
+                            document.getElementById('btnSalvar').style.display = 'block';
+                        }
+                    } else {
+                        erros++;
+                        document.getElementById('erros').innerText = erros;
+                        setTimeout(() => { 
+                            primeira.innerText = ""; 
+                            primeira.style.background = "#7b1fa2"; 
+                            b.innerText = ""; 
+                            b.style.background = "#7b1fa2"; 
+                            primeira = null; 
+                            travado = false; 
+                        }, 500); 
+                    }
+                };
+                cont.appendChild(b);
+            });
+
+            iniciarRelogio();
+        }
+
+        function iniciarRelogio() {
+            if (intervaloTempo) clearInterval(intervaloTempo);
+            intervaloTempo = setInterval(() => {
+                tempoRestante--;
+                document.getElementById('tempo').innerText = tempoRestante;
+                if (tempoRestante <= 0) {
+                    clearInterval(intervaloTempo);
+                    travado = true;
+                    alert('⏰ O tempo acabou!');
+                    voltarMenu();
+                }
+            }, 1000);
+        }
+
+        function pararRelogio() {
+            if (intervaloTempo) clearInterval(intervaloTempo);
+        }
+
+        function calcularPontosFinais() {
+            let baseNivel = totalPares * 40;
+            let bonusTempo = tempoRestante * 4;
+            let penalidadeErros = erros * 10;
+            
+            pontos = Math.max(50, baseNivel + bonusTempo - penalidadeErros);
+            document.getElementById('pontos').innerText = pontos;
+        }
+
+        function voltarMenu() {
+            pararRelogio();
+            document.getElementById('area-jogo').style.display = 'none';
+            document.getElementById('menu-dificuldade').style.display = 'block';
+        }
+
+        function salvarPontuacao() {
+            localStorage.setItem('pontuacao_memoria', pontos);
+            window.location.href = 'ranking.html';
+        }
     </script>
 </body>
 </html>
