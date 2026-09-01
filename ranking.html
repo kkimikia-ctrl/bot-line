@@ -5,62 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Jogos - Ranking</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background: #f4f4f9; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        button { background: #4CAF50; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #45a049; }
-        #mensagem { margin-top: 20px; font-weight: bold; font-size: 16px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+        .card-game {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .jogo-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .btn-voltar {
+            background: #ccc;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Central de Jogos e Ranking</h2>
-        <p>Conexão com o Firebase estabelecida com sucesso!</p>
-        <button onclick="testarEnvio()">Testar Salvar Pontuação</button>
-        <!-- Aqui vai aparecer a mensagem de erro ou sucesso -->
-        <p id="mensagem"></p> 
+<div class="card-game">
+    <button class="btn-voltar" onclick="window.location.href='index.html'">⬅ Voltar</button>
+    
+    <h2 style="text-align: center; color: #1e3a8a; font-size: 18px; margin-top: 0;">🏆 Ranking Global dos Jogos</h2>
+
+    <div id="lista-ranking-global">
+        <div style="text-align: center; color: #666; padding: 20px;">Carregando pontuações...</div>
     </div>
+</div>
 
-    <!-- Script de Conexão do Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+<script>
+    // Lista com os seus 6 jogos baseada nos arquivos do GitHub
+    const meusJogos = [
+        { id: 'minicraque', nome: '⚽ Mini Craque' },
+        { id: 'velha', nome: '❌ Jogo da Velha' },
+        { id: 'forca', nome: '🎯 Jogo da Forca' },
+        { id: 'memoria', nome: '🧠 Jogo da Memória' },
+        { id: 'jokenpo', nome: '🇧🇷 Jokenpô Brasil' },
+        { id: 'cobrinha', nome: '🐍 Jogo da Cobrinha' }
+    ];
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBebQKn7Bi7FafIJLda7wBDb96-ZEuxIa8",
-            authDomain: "ajuda-jp-ba2da.firebaseapp.com",
-            projectId: "ajuda-jp-ba2da",
-            storageBucket: "ajuda-jp-ba2da.firebasestorage.app",
-            messagingSenderId: "274976182",
-            appId: "1:274976182:web:6ad832d048e441d7c3c517",
-            measurementId: "G-EDC1BMHPW0"
-        };
+    function carregarRanking() {
+        const containerLista = document.getElementById('lista-ranking-global');
+        let htmlCards = '';
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        meusJogos.forEach(jogo => {
+            // Pega a pontuação salva (ajuste a chave do localStorage conforme você salva em cada jogo)
+            let pontuacao = localStorage.getItem(`score_${jogo.id}`) || localStorage.getItem(`pontos_${jogo.id}`) || 0;
 
-        // Função de teste com aviso na tela
-        window.testarEnvio = async function() {
-            const msgTexto = document.getElementById("mensagem");
-            msgTexto.innerText = "Enviando para o banco de dados...";
-            msgTexto.style.color = "blue";
-            
-            try {
-                await addDoc(collection(db, "ranking_jogos"), {
-                    jogo: "Teste Inicial",
-                    jogador: "Kimikia",
-                    pontos: 100,
-                    data: new Date()
-                });
-                msgTexto.innerText = "✅ Sucesso! Pontuação salva no Firebase.";
-                msgTexto.style.color = "green";
-            } catch (e) {
-                msgTexto.innerText = "❌ Erro: " + e.message;
-                msgTexto.style.color = "red";
-            }
-        };
-    </script>
+            htmlCards += `
+                <div class="jogo-item">
+                    <span style="font-weight: bold; color: #334155; font-size: 14px;">${jogo.nome}</span>
+                    <span style="background: #059669; color: white; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: bold;">⭐ ${pontuacao} pts</span>
+                </div>
+            `;
+        });
+
+        containerLista.innerHTML = htmlCards;
+    }
+
+    // Executa ao carregar a página
+    window.onload = carregarRanking;
+</script>
 
 </body>
 </html>
