@@ -58,6 +58,10 @@
                 <div id="msg-status-salvar" style="font-weight: bold; font-size: 13px; margin-bottom: 10px; min-height: 20px;"></div>
 
                 <button onclick="proximaRodada()" id="btn-proxima" class="action-btn" style="background-color: #16a34a; display: none;">Próxima Partida ➡️</button>
+                
+                <!-- Botão para Salvar Pontos a Qualquer Momento -->
+                <button onclick="salvarPontuacaoFirebase(true)" id="btn-salvar-manual" class="action-btn" style="background-color: #0284c7;">💾 Salvar Pontos e Parar</button>
+                
                 <button onclick="reiniciarTudo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente / Trocar Nome</button>
             </div>
         </div>
@@ -76,6 +80,7 @@
         let vidas = 2;
         let pontos = 0;
         let nomeJogador = "Kimikia";
+        let pontuacaoJaSalva = false;
 
         function iniciarJogoCompleto(m) {
             modo = m;
@@ -86,9 +91,11 @@
             
             vidas = 2;
             pontos = 0;
+            pontuacaoJaSalva = false;
             document.getElementById('txt-nome-exibicao').innerText = nomeJogador;
             document.getElementById('txt-vidas').innerText = vidas;
             document.getElementById('txt-pontos').innerText = pontos;
+            document.getElementById('btn-salvar-manual').style.display = 'block';
             document.getElementById('velha-modo-escolha').style.display = 'none';
             document.getElementById('velha-area-jogo').style.display = 'block';
             limparTabuleiro();
@@ -126,7 +133,8 @@
                             document.getElementById('btn-proxima').style.display = 'block';
                         } else {
                             document.getElementById('status-jogo').innerText = `💀 Game Over! Fim de Vidas.`;
-                            salvarPontuacaoFirebase();
+                            document.getElementById('btn-salvar-manual').style.display = 'none';
+                            salvarPontuacaoFirebase(false);
                             document.getElementById('btn-reiniciar').style.display = 'block';
                         }
                     }
@@ -168,8 +176,10 @@
             document.getElementById('velha-modo-escolha').style.display = 'block';
         }
 
-        function salvarPontuacaoFirebase() {
+        function salvarPontuacaoFirebase(manual) {
+            if (pontuacaoJaSalva) return;
             const msg = document.getElementById('msg-status-salvar');
+            
             db.collection("ranking_jogos").add({
                 jogador: nomeJogador,
                 jogo: "Jogo da Velha",
@@ -177,8 +187,14 @@
                 data: new Date()
             })
             .then(() => {
+                pontuacaoJaSalva = true;
                 msg.style.color = "green";
-                msg.innerText = `✅ Salvo no ranking para ${nomeJogador} (${pontos} pts)!`;
+                msg.innerText = `✅ Sucesso! ${pontos} pontos salvos no ranking para ${nomeJogador}.`;
+                document.getElementById('btn-salvar-manual').style.display = 'none';
+                if (manual) {
+                    document.getElementById('btn-reiniciar').style.display = 'block';
+                    ativo = false;
+                }
             })
             .catch((error) => {
                 console.error("Erro ao salvar: ", error);
