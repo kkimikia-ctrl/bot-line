@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jogo da Velha</title>
+    <!-- Importando o Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
         body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
         .container { max-width: 600px; margin: 0 auto; }
@@ -14,7 +17,7 @@
 <body>
     <div class="container">
         <div class="card-game">
-            <button onclick="window.location.href='forca.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
+            <button onclick="window.location.href='index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
             <div id="velha-modo-escolha" style="margin: 15px 0;">
@@ -40,6 +43,31 @@
         </div>
     </div>
     <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            projectId: "ajuda-jp-ba2da"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // Função para salvar pontuação no Firestore
+        function salvarPontuacaoFirebase(nomeJogo, pontos) {
+            db.collection("ranking_jogos").add({
+                jogador: "Kimikia",
+                jogo: nomeJogo,
+                pontos: pontos,
+                data: new Date()
+            })
+            .then(() => {
+                console.log("Pontuação salva com sucesso!");
+            })
+            .catch((error) => {
+                console.error("Erro ao salvar pontuação: ", error);
+            });
+        }
+
         let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
         function iniciar(m) {
             modo = m; document.getElementById('velha-modo-escolha').style.display = 'none';
@@ -49,7 +77,12 @@
             if (tabuleiro[i] === '' && ativo) {
                 tabuleiro[i] = atual; document.getElementById(`c-${i}`).innerText = atual;
                 let win = checarVitoria();
-                if (win) { document.getElementById('status-jogo').innerText = `🎉 Jogador ${atual} Venceu!`; ativo = false; return; }
+                if (win) { 
+                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${atual} Venceu!`; 
+                    ativo = false; 
+                    salvarPontuacaoFirebase("Jogo da Velha", 10);
+                    return; 
+                }
                 if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate!`; ativo = false; return; }
                 atual = atual === 'X' ? 'O' : 'X';
                 document.getElementById('status-jogo').innerText = `Vez do ${atual}`;
