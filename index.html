@@ -185,7 +185,7 @@
             display: none;
         }
 
-        /* Menu em grade com todos os 6 botões idênticos à referência */
+        /* Menu em grade */
         .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -209,7 +209,6 @@
             font-weight: normal;
             margin-top: 3px;
         }
-        /* Cores exatas conforme a imagem de referência */
         .btn-tradutor { background-color: #2563eb; }
         .btn-carteira { background-color: #059669; }
         .btn-entretenimento { background-color: #7c3aed; }
@@ -304,7 +303,6 @@
 </head>
 <body>
 
-    <!-- Tela de aviso de login para quem acessa via web sem estar autenticado -->
     <div id="login-overlay">
         <div class="login-card">
             <h2>Ajuda JP</h2>
@@ -313,14 +311,12 @@
         </div>
     </div>
 
-    <!-- Conteúdo real do App -->
     <div id="app-content">
         <div class="header">
             <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
             Ajuda JP - Início
         </div>
 
-        <!-- Destaques Compactos no Topo -->
         <div class="destaques-container">
             <div class="destaque-card">
                 <h4>Destaque 1</h4>
@@ -340,7 +336,6 @@
             </div>
         </div>
 
-        <!-- Bloco de Tradução -->
         <div class="card">
             <h3>📸 Tradução de Texto e Fotos</h3>
             <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto em japonês ou português para traduzir na hora:</p>
@@ -349,13 +344,13 @@
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
-        <!-- Menu Principal com os 6 botões corretos -->
+        <!-- Menu Principal com o botão Carteira direcionando para perfil.html -->
         <div class="grid-menu">
             <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
                 📞 Tradutor
                 <span>Prefeitura / Hospital</span>
             </button>
-            <button class="menu-item btn-carteira" onclick="window.location.href='historicocreditos.html'">
+            <button class="menu-item btn-carteira" onclick="window.location.href='perfil.html'">
                 💰 Carteira
                 <span>Saldo e Ganhos</span>
             </button>
@@ -377,7 +372,7 @@
             </button>
         </div>
 
-        <!-- Modal de Saldo Insuficiente -->
+        <!-- Modais de Tradutor mantidos -->
         <div id="modalSemSaldo" class="modal">
             <div class="modal-content" style="text-align: center;">
                 <div class="modal-header" style="justify-content: center;">
@@ -390,14 +385,12 @@
             </div>
         </div>
 
-        <!-- Modal 1: Questionário do Tradutor -->
         <div id="modalTradutor" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
                     <h3 style="margin:0;">Chamar Tradutor</h3>
                 </div>
-
                 <label style="font-size: 14px; font-weight: bold;">Onde você está?</label>
                 <select id="localAtendimento">
                     <option value="Hospital">Hospital</option>
@@ -405,14 +398,12 @@
                     <option value="Escola">Escola</option>
                     <option value="Outros">Outros</option>
                 </select>
-
                 <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
                 <select id="tempoAtendimento">
                     <option value="1800">30 minutos</option>
                     <option value="3600">1 hora</option>
                     <option value="7200">Mais de 1 hora</option>
                 </select>
-
                 <div class="modal-buttons">
                     <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
                     <button class="btn-primary" onclick="iniciarEspera()">Confirmar Pedido</button>
@@ -420,37 +411,22 @@
             </div>
         </div>
 
-        <!-- Modal 2: Tela de Vídeo Chamada e Cronômetro -->
         <div id="modalEspera" class="modal">
             <div class="modal-content" style="text-align: center;">
                 <div class="modal-header" style="justify-content: center;">
                     <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
                     <h3 id="statusTexto" style="margin:0;">Procurando tradutor...</h3>
                 </div>
-                
                 <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
-                
                 <div id="videoContainer">
                     <div id="timerDisplay" class="timer-badge">⏱️ Tempo em chamada: 0s</div>
                     <video id="webcam" autoplay playsinline muted></video>
-                    <p id="statusConexao" style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
+                    <p style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
                 </div>
-
-                <!-- Alerta Próximo ao Fim do Tempo -->
-                <div id="alertaLimite" style="display:none; background: #fef2f2; border: 1px solid #ef4444; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                    <p style="font-size: 14px; font-weight: bold; color: #991b1b; margin: 0 0 4px 0;">⚠️ O seu tempo contratado está quase acabando! (Teste)</p>
-                    <p style="font-size: 13px; color: #7f1d1d; margin: 0 0 10px 0;">Deseja comprar mais tempo para continuar a chamada?</p>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn-primary" style="background-color: #10b981; font-size: 14px; padding: 8px;" onclick="comprarMaisCreditos()">🛒 Comprar mais tempo</button>
-                        <button class="btn-primary" style="background-color: #dc2626; font-size: 14px; padding: 8px;" onclick="naoQueroMais()">❌ Não quero</button>
-                    </div>
-                </div>
-
                 <button id="btnSairChamada" class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="finalizarChamadaNormal()">Sair / Encerrar</button>
             </div>
         </div>
 
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA -->
         <nav class="bottom-nav">
             <a href="index.html" class="nav-item active">
                 <span class="icon">🏠</span>
@@ -473,260 +449,39 @@
 
     <script>
         const liffId = "2010902449-KWNNNsxn";
-
-        let streamVideo = null;
-        let segundosDecorridos = 0; 
-        let limiteSegundos = 1800; 
-        let valorInicialRetido = 0; 
-        let timerInterval = null;
-        let creditoDescontado = false; 
-
-        let usuarioTemSaldo = true; 
-        let temCreditoParaContinuar = false; 
-
         async function inicializarApp() {
             try {
                 await liff.init({ liffId: liffId });
-
                 if (liff.isLoggedIn() || localStorage.getItem('line_user_id')) {
                     if (liff.isLoggedIn() && !localStorage.getItem('line_user_id')) {
                         const profile = await liff.getProfile();
                         localStorage.setItem('line_user_id', profile.userId);
                         localStorage.setItem('line_user_name', profile.displayName);
-                        if (profile.pictureUrl) {
-                            localStorage.setItem('line_user_photo', profile.pictureUrl);
-                        }
                     }
-
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('app-content').style.display = 'block';
                 } else {
                     document.getElementById('login-overlay').style.display = 'flex';
                 }
             } catch (err) {
-                console.error("Erro ao inicializar o LIFF:", err);
                 if (localStorage.getItem('line_user_id')) {
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('app-content').style.display = 'block';
                 }
             }
         }
-
         function fazerLoginLine() {
-            if (!liff.isLoggedIn()) {
-                liff.login();
-            }
+            if (!liff.isLoggedIn()) { liff.login(); }
         }
-
-        function salvarPontuacaoPorJogo(nomeJogo, pontos) {
-            if (pontos <= 0) {
-                alert("Jogue e acumule pontos antes de salvar!");
-                return;
-            }
-            let nome = prompt(`🏆 Digite seu nome para o Ranking de ${nomeJogo}:`, "Jogador") || "Jogador";
-            let chaveStorage = `ranking_${nomeJogo.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-            let ranking = JSON.parse(localStorage.getItem(chaveStorage) || "[]");
-            
-            ranking.push({ nome: nome, pontos: Number(pontos) });
-            ranking.sort((a, b) => Number(b.pontos) - Number(a.pontos));
-            
-            localStorage.setItem(chaveStorage, JSON.stringify(ranking.slice(0, 30)));
-            alert(`✅ Pontuação salva com sucesso no ranking de ${nomeJogo}!`);
-            window.location.href = "ranking.html";
-        }
-
         function verificarSaldoEChamar() {
-            usuarioTemSaldo = true; 
-            abrirModalTradutor();
-        }
-
-        function fecharModalSemSaldo() {
-            document.getElementById('modalSemSaldo').style.display = 'none';
-        }
-
-        function comprarCreditos() {
-            alert("Redirecionando para a tela de pagamento de créditos...");
-            usuarioTemSaldo = true; 
-            fecharModalSemSaldo();
-            abrirModalTradutor();
-        }
-
-        async function traduzirTexto() {
-            const texto = document.getElementById('textoInput').value;
-            const box = document.getElementById('resultadoBox');
-
-            if (!texto.trim()) {
-                alert('Digite algum texto primeiro!');
-                return;
-            }
-
-            box.style.display = 'block';
-            box.innerText = 'Traduzindo...';
-
-            try {
-                const resposta = await fetch('/api/traduzir', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texto })
-                });
-                const dados = await resposta.json();
-                box.innerText = dados.traducao || 'Erro na tradução';
-            } catch (e) {
-                box.innerText = 'Erro ao conectar com o tradutor.';
-            }
-        }
-
-        function abrirModalTradutor() {
             document.getElementById('modalTradutor').style.display = 'flex';
         }
-
         function fecharModalTradutor() {
             document.getElementById('modalTradutor').style.display = 'none';
         }
-
-        function iniciarEspera() {
-            const selectTempo = document.getElementById('tempoAtendimento');
-            limiteSegundos = parseInt(selectTempo.value);
-
-            if (limiteSegundos === 1800) valorInicialRetido = 1500;
-            else if (limiteSegundos === 3600) valorInicialRetido = 3000;
-            else valorInicialRetido = 6000;
-
-            fecharModalTradutor();
-            const modalEspera = document.getElementById('modalEspera');
-            const statusTexto = document.getElementById('statusTexto');
-            const subStatus = document.getElementById('subStatus');
-            const videoContainer = document.getElementById('videoContainer');
-            
-            modalEspera.style.display = 'flex';
-            statusTexto.innerText = "Procurando tradutor...";
-            subStatus.style.display = "block";
-            videoContainer.style.display = "none";
-            document.getElementById('alertaLimite').style.display = 'none';
-            creditoDescontado = false; 
-            temCreditoParaContinuar = false;
-
-            setTimeout(async () => {
-                statusTexto.innerText = "Tradutor conectado!";
-                subStatus.style.display = "none";
-                videoContainer.style.display = "block";
-
-                segundosDecorridos = 0;
-                atualizarDisplayCronometro();
-
-                try {
-                    streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                    document.getElementById('webcam').srcObject = streamVideo;
-                } catch (err) {
-                    subStatus.style.display = "block";
-                    subStatus.innerText = "Câmera pronta (Modo Simulação)";
-                }
-
-                iniciarCronografoProgressivo();
-
-            }, 3000);
+        function fecharModalSemSaldo() {
+            document.getElementById('modalSemSaldo').style.display = 'none';
         }
-
-        function iniciarCronografoProgressivo() {
-            if (timerInterval) clearInterval(timerInterval);
-
-            timerInterval = setInterval(() => {
-                segundosDecorridos++;
-                atualizarDisplayCronometro();
-
-                if (segundosDecorridos === 5 && !creditoDescontado) {
-                    creditoDescontado = true;
-                    console.log(`Valor inicial retido de ${valorInicialRetido}円 garantido.`);
-                }
-
-                if (segundosDecorridos === 10) {
-                    if (!temCreditoParaContinuar) {
-                        document.getElementById('alertaLimite').style.display = 'block';
-                    }
-                }
-
-                if (segundosDecorridos >= limiteSegundos) {
-                    encerrarChamadaPorTempo();
-                }
-            }, 1000);
-        }
-
-        function atualizarDisplayCronometro() {
-            const badge = document.getElementById('timerDisplay');
-            let horas = Math.floor(segundosDecorridos / 3600);
-            let minutos = Math.floor((segundosDecorridos % 3600) / 60);
-            let segundos = segundosDecorridos % 60;
-            
-            let textoTempo = '';
-            if (horas > 0) {
-                textoTempo = `${horas}h ${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
-            } else {
-                textoTempo = `${minutos}m ${segundos < 10 ? '0' : ''}${segundos}s`;
-            }
-            badge.innerText = `⏱️ Tempo em chamada: ${textoTempo}`;
-        }
-
-        function comprarMaisCreditos() {
-            alert("Tempo adicional adicionado com sucesso!");
-            temCreditoParaContinuar = true;
-            limiteSegundos += 1800; 
-            document.getElementById('alertaLimite').style.display = 'none';
-        }
-
-        function naoQueroMais() {
-            document.getElementById('alertaLimite').style.display = 'none';
-            alert("Você optou por não comprar mais tempo. A chamada continuará normalmente.");
-        }
-
-        function calcularCobrancaProporcional() {
-            if (segundosDecorridos <= 5) {
-                return 0; 
-            }
-
-            let blocosUtilizados = Math.ceil(segundosDecorridos / 1800);
-            if (blocosUtilizados < 1) blocosUtilizados = 1;
-
-            let valorFinalDevido = blocosUtilizados * 1500;
-            let valorParaDevolver = valorInicialRetido - valorFinalDevido;
-
-            if (valorParaDevolver > 0) {
-                return { cobrado: valorFinalDevido, devolvido: valorParaDevolver };
-            }
-
-            return { cobrado: valorInicialRetido, devolvido: 0 };
-        }
-
-        function encerrarChamadaPorTempo() {
-            clearInterval(timerInterval);
-            pararStream();
-            document.getElementById('modalEspera').style.display = 'none';
-            alert("O tempo contratado esgotou e a chamada foi encerrada.");
-        }
-
-        function finalizarChamadaNormal() {
-            if (timerInterval) clearInterval(timerInterval);
-            pararStream();
-            document.getElementById('modalEspera').style.display = 'none';
-
-            if (segundosDecorridos <= 5) {
-                alert("Chamada encerrada nos primeiros segundos. Nenhuma cobrança foi feita!");
-            } else {
-                let resultado = calcularCobrancaProporcional();
-                if (resultado.devolvido > 0) {
-                    alert(`Chamada encerrada!\nTempo utilizado: ${Math.floor(segundosDecorridos/60)} minutos e ${segundosDecorridos%60} segundos.\nValor debitado: ${resultado.cobrado}円\nO restante de ${resultado.devolvido}円 foi estornado para a sua carteira.`);
-                } else {
-                    alert(`Chamada encerrada com sucesso! Valor debitado: ${resultado.cobrado}円.`);
-                }
-            }
-        }
-
-        function pararStream() {
-            if (streamVideo) {
-                streamVideo.getTracks().forEach(track => track.stop());
-                streamVideo = null;
-            }
-        }
-
         document.addEventListener("DOMContentLoaded", inicializarApp);
     </script>
 </body>
