@@ -1,212 +1,36 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking Geral - Central de Jogos</title>
-    
-    <!-- Importando o Firebase (SDK Modular v9/v10) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script type="module">
+  // Importe as funções necessárias dos SDKs do Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-        // ⚠️ Substitua com as configurações do seu projeto do Firebase
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_DOMINIO.firebaseapp.com",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_BUCKET.appspot.com",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
+  // Configuração do seu aplicativo central-jogos
+  const firebaseConfig = {
+    apiKey: "AIzaSyBebQKn7Bi7FafIJLda7wBDb96-ZEuxIa8",
+    authDomain: "ajuda-jp-ba2da.firebaseapp.com",
+    projectId: "ajuda-jp-ba2da",
+    storageBucket: "ajuda-jp-ba2da.firebasestorage.app",
+    messagingSenderId: "274976182",
+    appId: "1:274976182:web:6ad832d048e441d7c3c517",
+    measurementId: "G-EDC1BMHPW0"
+  };
 
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+  // Inicializa o Firebase e o Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-        // Torna a função global para ser chamada pelos botões
-        window.carregarRankingFirebase = async function(nomeColecao, elementoBtn) {
-            // Atualiza o visual dos botões
-            document.querySelectorAll('.btn-mod').forEach(b => b.classList.remove('active'));
-            if(elementoBtn) elementoBtn.classList.add('active');
-
-            let ul = document.getElementById('listaRankingDinamica');
-            ul.innerHTML = `<li style="padding: 25px; color: #64748b; text-align: center;">Carregando ranking da nuvem...</li>`;
-
-            try {
-                // Busca os dados no Firestore ordenados por pontos (maior para menor), limitando aos top 20
-                const q = query(collection(db, nomeColecao), orderBy("pontos", "desc"), limit(20));
-                const querySnapshot = await getDocs(q);
-                
-                ul.innerHTML = "";
-
-                if (querySnapshot.empty) {
-                    ul.innerHTML = `<li style="padding: 25px; color: #64748b; text-align: center;">Nenhuma pontuação salva nesta modalidade ainda.</li>`;
-                    return;
-                }
-
-                let index = 0;
-                querySnapshot.forEach((doc) => {
-                    let item = doc.data();
-                    let li = document.createElement('li');
-                    li.className = 'item-ranking';
-                    
-                    let medalha = "";
-                    if (index === 0) medalha = "🥇 ";
-                    else if (index === 1) medalha = "🥈 ";
-                    else if (index === 2) medalha = "🥉 ";
-                    else medalha = `${index + 1}.`;
-
-                    li.innerHTML = `
-                        <span class="posicao">${medalha}</span>
-                        <span class="nome-jogador">${item.nome}</span>
-                        <span class="pontos-jogador">${item.pontos} pts</span>
-                    `;
-                    ul.appendChild(li);
-                    index++;
-                });
-
-            } catch (error) {
-                console.error("Erro ao carregar o ranking: ", error);
-                ul.innerHTML = `<li style="padding: 25px; color: #dc2626; text-align: center;">Erro ao conectar com o Firebase. Verifique a configuração.</li>`;
-            }
-        };
-
-        // Carrega o primeiro ranking ao abrir a página
-        window.onload = function() {
-            window.carregarRankingFirebase('ranking_jogo_memoria');
-        };
-    </script>
-
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 10px;
-            color: #333;
-            padding-bottom: 80px;
-            text-align: center;
-        }
-
-        .container { max-width: 600px; margin: 0 auto; }
-
-        .header {
-            background-color: #0047ab;
-            color: white;
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-        }
-        .header h1 { font-size: 16px; margin: 0; }
-
-        .card-ranking {
-            background: white;
-            color: #333;
-            padding: 15px;
-            border-radius: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .botoes-modalidades {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        .btn-mod {
-            background: #e2e8f0;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #475569;
-        }
-        .btn-mod.active {
-            background: #1e3a8a;
-            color: white;
-        }
-        .lista-ranking {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .item-ranking {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 13px;
-        }
-        .item-ranking:nth-child(even) { background: #f8fafc; }
-        .posicao { font-weight: bold; color: #1e3a8a; width: 35px; text-align: left; }
-        .nome-jogador { flex-grow: 1; text-align: left; font-weight: 500; color: #1e293b; }
-        .pontos-jogador { font-weight: bold; color: #059669; }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 55px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            flex-grow: 1;
-        }
-        .nav-item.active { color: #0047ab; font-weight: bold; }
-        .nav-item span.icon { font-size: 1.1rem; margin-bottom: 2px; }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="header">
-            <h1>🏆 Ranking Global (Firebase)</h1>
-            <a href="index.html" style="background: rgba(255,255,255,0.2); color: white; padding: 6px 10px; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold;">⬅ Voltar</a>
-        </div>
-
-        <div class="card-ranking">
-            <div class="botoes-modalidades">
-                <button class="btn-mod active" onclick="carregarRankingFirebase('ranking_jogo_memoria', this)">🧠 Memória</button>
-                <button class="btn-mod" onclick="carregarRankingFirebase('ranking_jogo_velha', this)">❌ Velha</button>
-                <button class="btn-mod" onclick="carregarRankingFirebase('ranking_jogo_forca', this)">🎯 Forca</button>
-                <button class="btn-mod" onclick="carregarRankingFirebase('ranking_jokenpo', this)">🇧🇷 Jokenpô</button>
-                <button class="btn-mod" onclick="carregarRankingFirebase('ranking_jogo_cobrinha', this)">🐍 Cobrinha</button>
-                <button class="btn-mod" onclick="carregarRankingFirebase('ranking_jogo_minicraque', this)">⚽ Minicraque</button>
-            </div>
-
-            <ul id="listaRankingDinamica" class="lista-ranking"></ul>
-        </div>
-    </div>
-
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item"><span class="icon">🏠</span><span>Home</span></a>
-        <a href="servicos.html" class="nav-item"><span class="icon">📋</span><span>Serviços</span></a>
-        <a href="entretenimento.html" class="nav-item active"><span class="icon">🎬</span><span>Lazer</span></a>
-        <a href="perfil.html" class="nav-item"><span class="icon">👤</span><span>Perfil</span></a>
-    </nav>
-</body>
-</html>
+  // Exemplo de função para salvar a pontuação de um jogo no ranking:
+  // SalvarPontuacao("Jogo da Velha", "Kimikia", 150);
+  window.salvarPontuacao = async function(nomeJogo, nomeJogador, pontos) {
+    try {
+      await addDoc(collection(db, "ranking_jogos"), {
+        jogo: nomeJogo,
+        jogador: nomeJogador,
+        pontos: Number(pontos),
+        data: new Date()
+      });
+      console.log("Pontuação salva com sucesso!");
+    } catch (e) {
+      console.error("Erro ao salvar pontuação: ", e);
+    }
+  };
+</script>
