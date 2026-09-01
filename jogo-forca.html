@@ -38,9 +38,9 @@
         <div id="status-forca" style="font-size: 13px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="contador-erros">0</span> / 6 | Pontos: <span id="pontos-forca">0</span></div>
         <div id="palavra-secreta" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 10px 0;">_ _ _ _ _</div>
         
-        <div style="margin-bottom: 10px;">
-            <button onclick="tocarEfeito('clique'); mostrarDicaForca()" style="background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">💡 Mostrar Dica</button>
-            <p id="dica-palavra" style="font-weight: bold; color: #0284c7; font-size: 13px; margin: 5px 0; display: none;"></p>
+        <div style="margin-bottom: 15px;">
+            <button onclick="mostrarDicaForca()" style="background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">💡 Mostrar Dica</button>
+            <p id="dica-palavra" style="font-weight: bold; color: #0284c7; font-size: 13px; margin: 8px 0 0 0; display: none; background: #e0f2fe; padding: 6px; border-radius: 6px;"></p>
         </div>
 
         <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
@@ -96,7 +96,7 @@
                 if (tempoForcaRestante <= 0) {
                     clearInterval(timerForcaInterval);
                     alert("⏰ O tempo acabou! A palavra era: " + palavraForcaAtual);
-                    proximaPalavraForca(false);
+                    iniciarJogoForca();
                 }
             }, 1000);
         }
@@ -146,7 +146,7 @@
                 if (errosForca >= 6) {
                     clearInterval(timerForcaInterval);
                     alert(`❌ Fim de jogo! A palavra era: ${palavraForcaAtual}`);
-                    proximaPalavraForca(true);
+                    iniciarJogoForca();
                 }
             }
         }
@@ -165,12 +165,8 @@
 
         function mostrarDicaForca() {
             let dicaP = document.getElementById('dica-palavra');
-            dicaP.innerText = "💡 Dica: " + dicaForcaAtual;
+            dicaP.innerText = "💡 " + dicaForcaAtual;
             dicaP.style.display = 'block';
-        }
-
-        function proximaPalavraForca(derrota) {
-            iniciarJogoForca();
         }
 
         function salvarPontuacaoRankingForcaManual() {
@@ -179,7 +175,8 @@
 
         function voltarMenuJogos() {
             clearInterval(timerForcaInterval);
-            alert("Voltando ao menu...");
+            // Altere "forca.html" abaixo para o nome da página principal do seu menu, caso seja diferente
+            window.location.href = "forca.html"; 
         }
 
         window.onload = () => {
