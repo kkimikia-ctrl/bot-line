@@ -12,6 +12,8 @@
         .container { max-width: 600px; margin: 0 auto; }
         .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .action-btn { background-color: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .painel-info { display: flex; justify-content: space-around; background: #e0f2fe; padding: 8px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; font-size: 14px; color: #0369a1; }
+        .input-nome { width: 100%; padding: 10px; border: 2px solid #2563eb; border-radius: 8px; font-size: 16px; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
     </style>
 </head>
 <body>
@@ -20,13 +22,27 @@
             <button onclick="window.location.href='index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
+            
+            <!-- Tela de Início: Digitar Nome e Escolher Modo -->
             <div id="velha-modo-escolha" style="margin: 15px 0;">
-                <p style="font-weight: bold;">Escolha o modo:</p>
-                <button onclick="iniciar('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
-                <button onclick="iniciar('pc')" class="action-btn">🤖 Jogar contra PC</button>
+                <p style="font-weight: bold; text-align: left; margin-bottom: 5px;">Seu Nome para o Ranking:</p>
+                <input type="text" id="input-nome-jogador" class="input-nome" placeholder="Digite seu nome..." value="Kimikia">
+                
+                <p style="font-weight: bold; margin-top: 15px;">Escolha o modo:</p>
+                <button onclick="iniciarJogoCompleto('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
+                <button onclick="iniciarJogoCompleto('pc')" class="action-btn">🤖 Jogar contra PC</button>
             </div>
+
+            <!-- Tela do Jogo -->
             <div id="velha-area-jogo" style="display: none;">
+                <div class="painel-info">
+                    <div>👤 <span id="txt-nome-exibicao">Jogador</span></div>
+                    <div>❤️ Vidas: <span id="txt-vidas">2</span></div>
+                    <div>🏆 Pontos: <span id="txt-pontos">0</span></div>
+                </div>
+
                 <div style="font-weight: bold; margin-bottom: 10px;"><span id="status-jogo">Vez do X</span></div>
+                
                 <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
                     <button onclick="jogar(0)" id="c-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
                     <button onclick="jogar(1)" id="c-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
@@ -39,13 +55,10 @@
                     <button onclick="jogar(8)" id="c-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
                 </div>
 
-                <!-- Botão e aviso de Salvar Pontuação -->
-                <div id="painel-salvar" style="display: none; margin-bottom: 10px;">
-                    <button onclick="salvarPontuacaoFirebase()" id="btn-salvar" class="action-btn" style="background-color: #16a34a;">💾 Salvar Pontuação no Ranking</button>
-                    <p id="msg-status-salvar" style="font-weight: bold; font-size: 13px; margin-top: 5px;"></p>
-                </div>
+                <div id="msg-status-salvar" style="font-weight: bold; font-size: 13px; margin-bottom: 10px; min-height: 20px;"></div>
 
-                <button onclick="reiniciar()" class="action-btn" style="background-color: #dc2626;">Reiniciar</button>
+                <button onclick="proximaRodada()" id="btn-proxima" class="action-btn" style="background-color: #16a34a; display: none;">Próxima Partida ➡️</button>
+                <button onclick="reiniciarTudo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente / Trocar Nome</button>
             </div>
         </div>
     </div>
@@ -59,66 +72,74 @@
         }
         const db = firebase.firestore();
 
-        let pontosPartida = 10;
+        let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
+        let vidas = 2;
+        let pontos = 0;
+        let nomeJogador = "Kimikia";
 
-        // Função para salvar pontuação ao clicar no botão
-        function salvarPontuacaoFirebase() {
-            const btn = document.getElementById('btn-salvar');
-            const msg = document.getElementById('msg-status-salvar');
+        function iniciarJogoCompleto(m) {
+            modo = m;
+            let inputNome = document.getElementById('input-nome-jogador').value.trim();
+            if (inputNome !== "") {
+                nomeJogador = inputNome;
+            }
             
-            btn.disabled = true;
-            btn.style.opacity = "0.6";
-
-            db.collection("ranking_jogos").add({
-                jogador: "Kimikia",
-                jogo: "Jogo da Velha",
-                pontos: pontosPartida,
-                data: new Date()
-            })
-            .then(() => {
-                msg.style.color = "green";
-                msg.innerText = "✅ Sucesso! Pontuação salva no Firebase.";
-                btn.innerText = "Pontuação Salva!";
-            })
-            .catch((error) => {
-                console.error("Erro ao salvar: ", error);
-                msg.style.color = "red";
-                msg.innerText = "❌ Erro ao salvar pontuação.";
-                btn.disabled = false;
-                btn.style.opacity = "1";
-            });
+            vidas = 2;
+            pontos = 0;
+            document.getElementById('txt-nome-exibicao').innerText = nomeJogador;
+            document.getElementById('txt-vidas').innerText = vidas;
+            document.getElementById('txt-pontos').innerText = pontos;
+            document.getElementById('velha-modo-escolha').style.display = 'none';
+            document.getElementById('velha-area-jogo').style.display = 'block';
+            limparTabuleiro();
         }
 
-        let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
-        
-        function iniciar(m) {
-            modo = m; 
-            document.getElementById('velha-modo-escolha').style.display = 'none';
-            document.getElementById('velha-area-jogo').style.display = 'block'; 
-            reiniciar();
+        function limparTabuleiro() {
+            tabuleiro = ['', '', '', '', '', '', '', '', ''];
+            atual = 'X';
+            ativo = true;
+            document.getElementById('status-jogo').innerText = 'Vez do X';
+            document.getElementById('msg-status-salvar').innerText = '';
+            document.getElementById('btn-proxima').style.display = 'none';
+            document.getElementById('btn-reiniciar').style.display = 'none';
+            for (let i = 0; i < 9; i++) document.getElementById(`c-${i}`).innerText = '';
         }
 
         function jogar(i) {
             if (tabuleiro[i] === '' && ativo) {
-                tabuleiro[i] = atual; 
+                tabuleiro[i] = atual;
                 document.getElementById(`c-${i}`).innerText = atual;
                 let win = checarVitoria();
-                if (win) { 
-                    document.getElementById('status-jogo').innerText = `🎉 Jogador ${atual} Venceu!`; 
-                    ativo = false; 
-                    // Mostra o painel com o botão de salvar pontos
-                    document.getElementById('painel-salvar').style.display = 'block';
-                    document.getElementById('btn-salvar').disabled = false;
-                    document.getElementById('btn-salvar').innerText = "💾 Salvar Pontuação no Ranking";
-                    document.getElementById('btn-salvar').style.opacity = "1";
-                    document.getElementById('msg-status-salvar').innerText = "";
-                    return; 
+                
+                if (win) {
+                    ativo = false;
+                    if (atual === 'X') {
+                        pontos += 10;
+                        document.getElementById('status-jogo').innerText = `🎉 Você Venceu a Rodada! (+10 pts)`;
+                        document.getElementById('txt-pontos').innerText = pontos;
+                        document.getElementById('btn-proxima').style.display = 'block';
+                    } else {
+                        vidas--;
+                        document.getElementById('txt-vidas').innerText = vidas;
+                        if (vidas > 0) {
+                            document.getElementById('status-jogo').innerText = `⚠️ Você Perdeu a Rodada! (-1 Vida)`;
+                            document.getElementById('btn-proxima').style.display = 'block';
+                        } else {
+                            document.getElementById('status-jogo').innerText = `💀 Game Over! Fim de Vidas.`;
+                            salvarPontuacaoFirebase();
+                            document.getElementById('btn-reiniciar').style.display = 'block';
+                        }
+                    }
+                    return;
                 }
-                if (!tabuleiro.includes('')) { 
-                    document.getElementById('status-jogo').innerText = `Empate!`; 
-                    ativo = false; 
-                    return; 
+
+                if (!tabuleiro.includes('')) {
+                    document.getElementById('status-jogo').innerText = `Empate! Nova rodada.`;
+                    ativo = false;
+                    document.getElementById('btn-proxima').style.display = 'block';
+                    return;
                 }
+
                 atual = atual === 'X' ? 'O' : 'X';
                 document.getElementById('status-jogo').innerText = `Vez do ${atual}`;
                 if (modo === 'pc' && atual === 'O' && ativo) setTimeout(jogadaPC, 400);
@@ -136,13 +157,34 @@
             return null;
         }
 
-        function reiniciar() {
-            tabuleiro = ['', '', '', '', '', '', '', '', '']; 
-            atual = 'X'; 
-            ativo = true;
-            document.getElementById('status-jogo').innerText = 'Vez do X';
-            document.getElementById('painel-salvar').style.display = 'none';
-            for (let i = 0; i < 9; i++) document.getElementById(`c-${i}`).innerText = '';
+        function proximaRodada() {
+            if (vidas > 0) {
+                limparTabuleiro();
+            }
+        }
+
+        function reiniciarTudo() {
+            document.getElementById('velha-area-jogo').style.display = 'none';
+            document.getElementById('velha-modo-escolha').style.display = 'block';
+        }
+
+        function salvarPontuacaoFirebase() {
+            const msg = document.getElementById('msg-status-salvar');
+            db.collection("ranking_jogos").add({
+                jogador: nomeJogador,
+                jogo: "Jogo da Velha",
+                pontos: pontos,
+                data: new Date()
+            })
+            .then(() => {
+                msg.style.color = "green";
+                msg.innerText = `✅ Salvo no ranking para ${nomeJogador} (${pontos} pts)!`;
+            })
+            .catch((error) => {
+                console.error("Erro ao salvar: ", error);
+                msg.style.color = "red";
+                msg.innerText = "❌ Erro ao salvar pontuação no ranking.";
+            });
         }
     </script>
 </body>
