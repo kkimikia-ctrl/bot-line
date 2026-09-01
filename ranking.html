@@ -1,36 +1,58 @@
-<script type="module">
-  // Importe as funções necessárias dos SDKs do Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Jogos - Ranking</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background: #f4f4f9; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        button { background: #4CAF50; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
 
-  // Configuração do seu aplicativo central-jogos
-  const firebaseConfig = {
-    apiKey: "AIzaSyBebQKn7Bi7FafIJLda7wBDb96-ZEuxIa8",
-    authDomain: "ajuda-jp-ba2da.firebaseapp.com",
-    projectId: "ajuda-jp-ba2da",
-    storageBucket: "ajuda-jp-ba2da.firebasestorage.app",
-    messagingSenderId: "274976182",
-    appId: "1:274976182:web:6ad832d048e441d7c3c517",
-    measurementId: "G-EDC1BMHPW0"
-  };
+    <div class="container">
+        <h2>Central de Jogos e Ranking</h2>
+        <p>Conexão com o Firebase estabelecida com sucesso!</p>
+        <button onclick="testarEnvio()">Testar Salvar Pontuação</button>
+    </div>
 
-  // Inicializa o Firebase e o Firestore
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    <!-- Script de Conexão do Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-  // Exemplo de função para salvar a pontuação de um jogo no ranking:
-  // SalvarPontuacao("Jogo da Velha", "Kimikia", 150);
-  window.salvarPontuacao = async function(nomeJogo, nomeJogador, pontos) {
-    try {
-      await addDoc(collection(db, "ranking_jogos"), {
-        jogo: nomeJogo,
-        jogador: nomeJogador,
-        pontos: Number(pontos),
-        data: new Date()
-      });
-      console.log("Pontuação salva com sucesso!");
-    } catch (e) {
-      console.error("Erro ao salvar pontuação: ", e);
-    }
-  };
-</script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBebQKn7Bi7FafIJLda7wBDb96-ZEuxIa8",
+            authDomain: "ajuda-jp-ba2da.firebaseapp.com",
+            projectId: "ajuda-jp-ba2da",
+            storageBucket: "ajuda-jp-ba2da.firebasestorage.app",
+            messagingSenderId: "274976182",
+            appId: "1:274976182:web:6ad832d048e441d7c3c517",
+            measurementId: "G-EDC1BMHPW0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Função de teste global
+        window.testarEnvio = async function() {
+            try {
+                await addDoc(collection(db, "ranking_jogos"), {
+                    jogo: "Teste Inicial",
+                    jogador: "Kimikia",
+                    pontos: 100,
+                    data: new Date()
+                });
+                alert("Pontuação de teste salva no Firebase com sucesso!");
+            } catch (e) {
+                console.error("Erro ao salvar: ", e);
+                alert("Erro ao salvar, veja o console.");
+            }
+        };
+    </script>
+
+</body>
+</html>
