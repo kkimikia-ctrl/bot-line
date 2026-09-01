@@ -60,18 +60,16 @@
         let dicaForcaAtual = "";
         let letrasAdivinhadasForca = [];
         let errosForca = 0;
-        let pontosForca = 0; // Pontuação total acumulada
+        let pontosForca = 0;
         let tempoForcaRestante = 30;
         let timerForcaInterval = null;
 
-        // Inicia o jogo do zero (zerando os pontos)
         function iniciarJogoForcaCompleto() {
             pontosForca = 0;
             document.getElementById('pontos-forca').innerText = pontosForca;
             proximaRodadaForca();
         }
 
-        // Prepara a próxima palavra mantendo os pontos atuais
         function proximaRodadaForca() {
             errosForca = 0;
             letrasAdivinhadasForca = [];
@@ -140,7 +138,7 @@
 
                 if (venceu) {
                     clearInterval(timerForcaInterval);
-                    pontosForca += 20 + tempoForcaRestante; // Soma os pontos sem zerar os anteriores
+                    pontosForca += 20 + tempoForcaRestante;
                     document.getElementById('pontos-forca').innerText = pontosForca;
                     alert("🎉 Parabéns! Você acertou! Carregando próxima palavra...");
                     setTimeout(proximaRodadaForca, 800);
@@ -159,7 +157,6 @@
 
         function atualizarTelaForca() {
             let display = "";
-            let palavraLimpa = palavraForcaAtual.replace(/\s/g, ''); // Trata espaços se houver
             for (let l of palavraForcaAtual) {
                 if (l === " ") {
                     display += "   ";
@@ -179,7 +176,22 @@
         }
 
         function salvarPontuacaoRankingForcaManual() {
-            alert("Pontuação salva com sucesso: " + pontosForca + " pontos!");
+            if (pontosForca <= 0) {
+                alert("Você precisa fazer alguns pontos antes de salvar!");
+                return;
+            }
+
+            let nomeJogador = prompt("🏆 Digite seu nome para o Ranking:", "Jogador");
+            
+            if (nomeJogador && nomeJogador.trim() !== "") {
+                let storageKey = "ranking_Jogo_da_Forca";
+                let ranking = JSON.parse(localStorage.getItem(storageKey) || "[]");
+                ranking.push({ nome: nomeJogador.trim(), pontos: pontosForca });
+                ranking.sort((a, b) => b.pontos - a.pontos);
+                localStorage.setItem(storageKey, JSON.stringify(ranking.slice(0, 30)));
+                
+                alert(`✅ Pontuação de ${nomeJogador} (${pontosForca} pts) salva com sucesso no Ranking!`);
+            }
         }
 
         function voltarMenuJogos() {
