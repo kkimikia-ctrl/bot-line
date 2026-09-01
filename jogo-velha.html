@@ -38,6 +38,13 @@
                     <button onclick="jogar(7)" id="c-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
                     <button onclick="jogar(8)" id="c-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
                 </div>
+
+                <!-- Botão e aviso de Salvar Pontuação -->
+                <div id="painel-salvar" style="display: none; margin-bottom: 10px;">
+                    <button onclick="salvarPontuacaoFirebase()" id="btn-salvar" class="action-btn" style="background-color: #16a34a;">💾 Salvar Pontuação no Ranking</button>
+                    <p id="msg-status-salvar" style="font-weight: bold; font-size: 13px; margin-top: 5px;"></p>
+                </div>
+
                 <button onclick="reiniciar()" class="action-btn" style="background-color: #dc2626;">Reiniciar</button>
             </div>
         </div>
@@ -52,55 +59,89 @@
         }
         const db = firebase.firestore();
 
-        // Função para salvar pontuação no Firestore
-        function salvarPontuacaoFirebase(nomeJogo, pontos) {
+        let pontosPartida = 10;
+
+        // Função para salvar pontuação ao clicar no botão
+        function salvarPontuacaoFirebase() {
+            const btn = document.getElementById('btn-salvar');
+            const msg = document.getElementById('msg-status-salvar');
+            
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+
             db.collection("ranking_jogos").add({
                 jogador: "Kimikia",
-                jogo: nomeJogo,
-                pontos: pontos,
+                jogo: "Jogo da Velha",
+                pontos: pontosPartida,
                 data: new Date()
             })
             .then(() => {
-                console.log("Pontuação salva com sucesso!");
+                msg.style.color = "green";
+                msg.innerText = "✅ Sucesso! Pontuação salva no Firebase.";
+                btn.innerText = "Pontuação Salva!";
             })
             .catch((error) => {
-                console.error("Erro ao salvar pontuação: ", error);
+                console.error("Erro ao salvar: ", error);
+                msg.style.color = "red";
+                msg.innerText = "❌ Erro ao salvar pontuação.";
+                btn.disabled = false;
+                btn.style.opacity = "1";
             });
         }
 
         let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
+        
         function iniciar(m) {
-            modo = m; document.getElementById('velha-modo-escolha').style.display = 'none';
-            document.getElementById('velha-area-jogo').style.display = 'block'; reiniciar();
+            modo = m; 
+            document.getElementById('velha-modo-escolha').style.display = 'none';
+            document.getElementById('velha-area-jogo').style.display = 'block'; 
+            reiniciar();
         }
+
         function jogar(i) {
             if (tabuleiro[i] === '' && ativo) {
-                tabuleiro[i] = atual; document.getElementById(`c-${i}`).innerText = atual;
+                tabuleiro[i] = atual; 
+                document.getElementById(`c-${i}`).innerText = atual;
                 let win = checarVitoria();
                 if (win) { 
                     document.getElementById('status-jogo').innerText = `🎉 Jogador ${atual} Venceu!`; 
                     ativo = false; 
-                    salvarPontuacaoFirebase("Jogo da Velha", 10);
+                    // Mostra o painel com o botão de salvar pontos
+                    document.getElementById('painel-salvar').style.display = 'block';
+                    document.getElementById('btn-salvar').disabled = false;
+                    document.getElementById('btn-salvar').innerText = "💾 Salvar Pontuação no Ranking";
+                    document.getElementById('btn-salvar').style.opacity = "1";
+                    document.getElementById('msg-status-salvar').innerText = "";
                     return; 
                 }
-                if (!tabuleiro.includes('')) { document.getElementById('status-jogo').innerText = `Empate!`; ativo = false; return; }
+                if (!tabuleiro.includes('')) { 
+                    document.getElementById('status-jogo').innerText = `Empate!`; 
+                    ativo = false; 
+                    return; 
+                }
                 atual = atual === 'X' ? 'O' : 'X';
                 document.getElementById('status-jogo').innerText = `Vez do ${atual}`;
                 if (modo === 'pc' && atual === 'O' && ativo) setTimeout(jogadaPC, 400);
             }
         }
+
         function jogadaPC() {
             let vazias = []; tabuleiro.forEach((v, i) => { if (v === '') vazias.push(i); });
             if (vazias.length > 0) jogar(vazias[Math.floor(Math.random() * vazias.length)]);
         }
+
         function checarVitoria() {
             const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for (let c of w) { if (tabuleiro[c[0]] && tabuleiro[c[0]] === tabuleiro[c[1]] && tabuleiro[c[0]] === tabuleiro[c[2]]) return c; }
             return null;
         }
+
         function reiniciar() {
-            tabuleiro = ['', '', '', '', '', '', '', '', '']; atual = 'X'; ativo = true;
+            tabuleiro = ['', '', '', '', '', '', '', '', '']; 
+            atual = 'X'; 
+            ativo = true;
             document.getElementById('status-jogo').innerText = 'Vez do X';
+            document.getElementById('painel-salvar').style.display = 'none';
             for (let i = 0; i < 9; i++) document.getElementById(`c-${i}`).innerText = '';
         }
     </script>
