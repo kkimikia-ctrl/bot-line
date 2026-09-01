@@ -1,9 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Jogos - Ranking Global</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .ranking-container {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 90vh;
+            max-height: 750px;
+        }
+
+        .header-panel {
+            padding: 16px 20px;
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-voltar {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-voltar:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        .games-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .games-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: #ffffff;
+            border-color: #818cf8;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .ranking-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .ranking-scroll-area::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .ranking-scroll-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .player-card.podium-1 {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        .player-card.podium-2 {
+            background: linear-gradient(135deg, rgba(148, 163, 184, 0.15) 0%, rgba(100, 116, 139, 0.05) 100%);
+            border-color: rgba(148, 163, 184, 0.4);
+        }
+
+        .player-card.podium-3 {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(180, 83, 9, 0.05) 100%);
+            border-color: rgba(217, 119, 6, 0.4);
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .player-rank {
+            font-weight: 700;
+            font-size: 14px;
+            width: 28px;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .podium-1 .player-rank { color: #fbbf24; }
+        .podium-2 .player-rank { color: #cbd5e1; }
+        .podium-3 .player-rank { color: #f59e0b; }
+
+        .player-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #f1f5f9;
+        }
+
+        .player-score {
+            font-weight: 700;
+            font-size: 13px;
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #94a3b8;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ranking-container">
+    <div class="header-panel">
+        <div class="top-row">
+            <button class="btn-voltar" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
+            <div class="title-area">
+                <span>🏆</span> <span>Top 100 Global</span>
+            </div>
+        </div>
+
+        <div class="games-tabs" id="gamesTabs"></div>
+    </div>
+
+    <div class="ranking-scroll-area" id="rankingList">
+        <div class="empty-state">Iniciando painel...</div>
+    </div>
+</div>
+
 <script type="module">
-    // Importe o Firebase do jeito que você já usa nos seus outros arquivos de jogos
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
     import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-firestore.js";
 
-    // ⚠️ COLOQUE AQUI AS SUAS CONFIGURAÇÕES REAIS DO FIREBASE (mesmas dos outros arquivos)
+    // COLE SUAS CHAVES REAIS AQUI ABAIXO:
     const firebaseConfig = {
         apiKey: "SUA_API_KEY",
         authDomain: "SEU_AUTH_DOMAIN",
@@ -13,9 +231,13 @@
         appId: "SEU_APP_ID"
     };
 
-    // Inicializa o Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    let db = null;
+    try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+    } catch (e) {
+        console.error("Erro ao inicializar Firebase:", e);
+    }
 
     const jogos = [
         { id: 'minicraque', nome: '⚽ Mini Craque' },
@@ -26,7 +248,7 @@
         { id: 'cobrinha', nome: '🐍 Cobrinha' }
     ];
 
-    let jogoAtual = 'minicraque';
+    let jogoAtual = 'memoria';
 
     function inicializarAbas() {
         const tabsContainer = document.getElementById('gamesTabs');
@@ -50,10 +272,13 @@
         const listContainer = document.getElementById('rankingList');
         listContainer.innerHTML = '<div class="empty-state">Carregando Top 100...</div>';
 
+        if (!db) {
+            listContainer.innerHTML = '<div class="empty-state" style="color: #f87171;">Configure suas chaves do Firebase no código do ranking.</div>';
+            return;
+        }
+
         try {
             let dadosRanking = [];
-
-            // Faz a consulta na coleção correspondente a cada jogo no Firestore
             const q = query(
                 collection(db, `ranking_${idJogo}`),
                 orderBy("pontos", "desc"),
@@ -71,7 +296,7 @@
             });
 
             if (dadosRanking.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state">Nenhuma pontuação registrada ainda. Seja o primeiro!</div>';
+                listContainer.innerHTML = '<div class="empty-state">Nenhuma pontuação registrada ainda para este jogo. Jogue e seja o primeiro!</div>';
                 return;
             }
 
@@ -81,16 +306,9 @@
                 let podiumClass = '';
                 let iconePosicao = `#${posicao}`;
 
-                if (posicao === 1) {
-                    podiumClass = 'podium-1';
-                    iconePosicao = '🥇';
-                } else if (posicao === 2) {
-                    podiumClass = 'podium-2';
-                    iconePosicao = '🥈';
-                } else if (posicao === 3) {
-                    podiumClass = 'podium-3';
-                    iconePosicao = '🥉';
-                }
+                if (posicao === 1) { podiumClass = 'podium-1'; iconePosicao = '🥇'; }
+                else if (posicao === 2) { podiumClass = 'podium-2'; iconePosicao = '🥈'; }
+                else if (posicao === 3) { podiumClass = 'podium-3'; iconePosicao = '🥉'; }
 
                 html += `
                     <div class="player-card ${podiumClass}">
@@ -109,7 +327,7 @@
 
         } catch (error) {
             console.error("Erro ao buscar ranking:", error);
-            listContainer.innerHTML = '<div class="empty-state" style="color: #f87171;">Erro ao carregar o ranking do Firebase.</div>';
+            listContainer.innerHTML = `<div class="empty-state" style="color: #f87171;">Ainda não há dados na coleção <b>ranking_${idJogo}</b> no Firebase ou falta criar o índice de ordenação.</div>`;
         }
     }
 
@@ -117,9 +335,11 @@
         return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    // Inicializa ao carregar a página
     window.onload = () => {
         inicializarAbas();
         carregarRankingJogo(jogoAtual);
     };
 </script>
+
+</body>
+</html>
