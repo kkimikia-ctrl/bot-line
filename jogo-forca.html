@@ -60,18 +60,24 @@
         let dicaForcaAtual = "";
         let letrasAdivinhadasForca = [];
         let errosForca = 0;
-        let pontosForca = 0;
+        let pontosForca = 0; // Pontuação total acumulada
         let tempoForcaRestante = 30;
         let timerForcaInterval = null;
 
-        function iniciarJogoForca() {
-            errosForca = 0;
+        // Inicia o jogo do zero (zerando os pontos)
+        function iniciarJogoForcaCompleto() {
             pontosForca = 0;
+            document.getElementById('pontos-forca').innerText = pontosForca;
+            proximaRodadaForca();
+        }
+
+        // Prepara a próxima palavra mantendo os pontos atuais
+        function proximaRodadaForca() {
+            errosForca = 0;
             letrasAdivinhadasForca = [];
             tempoForcaRestante = 30;
 
             document.getElementById('contador-erros').innerText = errosForca;
-            document.getElementById('pontos-forca').innerText = pontosForca;
             document.getElementById('forca-tempo').innerText = tempoForcaRestante;
             
             let dicaP = document.getElementById('dica-palavra');
@@ -96,7 +102,7 @@
                 if (tempoForcaRestante <= 0) {
                     clearInterval(timerForcaInterval);
                     alert("⏰ O tempo acabou! A palavra era: " + palavraForcaAtual);
-                    iniciarJogoForca();
+                    proximaRodadaForca();
                 }
             }, 1000);
         }
@@ -134,10 +140,10 @@
 
                 if (venceu) {
                     clearInterval(timerForcaInterval);
-                    pontosForca += 20 + tempoForcaRestante;
+                    pontosForca += 20 + tempoForcaRestante; // Soma os pontos sem zerar os anteriores
                     document.getElementById('pontos-forca').innerText = pontosForca;
-                    alert("🎉 Parabéns! Você acertou!");
-                    setTimeout(iniciarJogoForca, 500);
+                    alert("🎉 Parabéns! Você acertou! Carregando próxima palavra...");
+                    setTimeout(proximaRodadaForca, 800);
                 }
             } else {
                 errosForca++;
@@ -146,15 +152,18 @@
                 if (errosForca >= 6) {
                     clearInterval(timerForcaInterval);
                     alert(`❌ Fim de jogo! A palavra era: ${palavraForcaAtual}`);
-                    iniciarJogoForca();
+                    proximaRodadaForca();
                 }
             }
         }
 
         function atualizarTelaForca() {
             let display = "";
+            let palavraLimpa = palavraForcaAtual.replace(/\s/g, ''); // Trata espaços se houver
             for (let l of palavraForcaAtual) {
-                if (letrasAdivinhadasForca.includes(l)) {
+                if (l === " ") {
+                    display += "   ";
+                } else if (letrasAdivinhadasForca.includes(l)) {
                     display += l + " ";
                 } else {
                     display += "_ ";
@@ -170,17 +179,16 @@
         }
 
         function salvarPontuacaoRankingForcaManual() {
-            alert("Pontuação salva: " + pontosForca);
+            alert("Pontuação salva com sucesso: " + pontosForca + " pontos!");
         }
 
         function voltarMenuJogos() {
             clearInterval(timerForcaInterval);
-            // Altere "forca.html" abaixo para o nome da página principal do seu menu, caso seja diferente
             window.location.href = "forca.html"; 
         }
 
         window.onload = () => {
-            iniciarJogoForca();
+            iniciarJogoForcaCompleto();
         };
     </script>
 </body>
