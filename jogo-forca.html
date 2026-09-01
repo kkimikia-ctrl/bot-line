@@ -1,53 +1,152 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jogo da Forca</title>
-    <style>
-        body { font-family: sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; text-align: center; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card-game">
-            <button onclick="window.location.href='../index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
-            <div style="clear: both;"></div>
-            <div style="background: #00796b; color: white; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
-                <h3 style="margin: 0; font-size: 13px;">🎯 Jogo da Forca</h3>
-            </div>
-            <div style="font-size: 13px; font-weight: bold; margin: 5px; color: #dc2626;">Erros: <span id="erros">0</span> / 6</div>
-            <div id="palavra" style="font-size: 24px; letter-spacing: 6px; font-weight: bold; margin: 15px 0;">_ _ _ _</div>
-            <div id="teclado" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
-        </div>
-    </div>
-    <script>
-        const palavras = [{p: "BRASIL", d: "País tropical"}, {p: "GATO", d: "Animal felino"}, {p: "COMPUTADOR", d: "Máquina"}];
-        let atual = 0, descobertas = [], erros = 0;
+/* VARIÁVEIS DO JOGO DA FORCA */
+const bancoPalavrasForca = [
+    { palavra: "COMPUTADOR", dica: "Equipamento eletrônico de dados" },
+    { palavra: "PROGRAMACAO", dica: "Arte de criar softwares" },
+    { palavra: "FUTEBOL", dica: "Esporte mais popular do Brasil" },
+    { palavra: "BRASIL", dica: "País sede da central de jogos" },
+    { palavra: "JAVASCRIPT", dica: "Linguagem de programação web" },
+    { palavra: "BICICLETA", dica: "Meio de transporte de duas rodas" }
+];
+
+let palavraForcaAtual = "";
+let dicaForcaAtual = "";
+let letrasAdivinhadasForca = [];
+let errosForca = 0;
+let pontosForca = 0;
+let tempoForcaRestante = 30;
+let timerForcaInterval = null;
+
+function iniciarJogoForca() {
+    // Exibe o container do jogo e oculta o menu principal (ajuste o ID do seu menu se precisar)
+    document.getElementById('container-jogo-forca').style.display = 'block';
+    
+    errosForca = 0;
+    pontosForca = 0;
+    letrasAdivinhadasForca = [];
+    tempoForcaRestante = 30;
+
+    document.getElementById('contador-erros').innerText = errosForca;
+    document.getElementById('pontos-forca').innerText = pontosForca;
+    document.getElementById('forca-tempo').innerText = tempoForcaRestante;
+    
+    let dicaP = document.getElementById('dica-palavra');
+    dicaP.style.display = 'none';
+    dicaP.innerText = "";
+
+    let sorteio = bancoPalavrasForca[Math.floor(Math.random() * bancoPalavrasForca.length)];
+    palavraForcaAtual = sorteio.palavra;
+    dicaForcaAtual = sorteio.dica;
+
+    atualizarTelaForca();
+    criarTecladoForca();
+    iniciarCronometroForca();
+    
+    if (typeof iniciarMusicaDeFundo === 'function') iniciarMusicaDeFundo();
+}
+
+function iniciarCronometroForca() {
+    clearInterval(timerForcaInterval);
+    timerForcaInterval = setInterval(() => {
+        tempoForcaRestante--;
+        document.getElementById('forca-tempo').innerText = tempoForcaRestante;
         
-        function carregar() {
-            let obj = palavras[atual], ex = "";
-            obj.p.split("").forEach(l => { ex += descobertas.includes(l) ? l + " " : "_ "; });
-            document.getElementById('palavra').innerText = ex.trim();
+        if (tempoForcaRestante <= 0) {
+            clearInterval(timerForcaInterval);
+            if (typeof tocarEfeito === 'function') tocarEfeito('clique');
+            alert("⏰ O tempo acabou! A palavra era: " + palavraForcaAtual);
+            proximaPalavraForca(false);
         }
-        function escolher(l) {
-            if (!descobertas.includes(l)) {
-                descobertas.push(l);
-                if (!palavras[atual].p.includes(l)) { erros++; document.getElementById('erros').innerText = erros; }
+    }, 1000);
+}
+
+function criarTecladoForca() {
+    const teclado = document.getElementById('teclado-letras');
+    teclado.innerHTML = "";
+    const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    
+    for (let letra of letras) {
+        let btn = document.createElement('button');
+        btn.innerText = letra;
+        btn.id = `tecla-forca-${letra}`;
+        btn.style.cssText = "background: #e2e8f0; border: none; padding: 10px 0; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; color: #333;";
+        btn.onclick = () => tentarLetraForca(letra);
+        teclado.appendChild(btn);
+    }
+}
+
+function tentarLetraForca(letra) {
+    if (typeof tocarEfeito === 'function') tocarEfeito('clique');
+    let btn = document.getElementById(`tecla-forca-${letra}`);
+    if (btn) btn.disabled = true;
+
+    if (palavraForcaAtual.includes(letra)) {
+        letrasAdivinhadasForca.push(letra);
+        atualizarTelaForca();
+
+        // Checar vitória
+        let venceu = true;
+        for (let l of palavraForcaAtual) {
+            if (!letrasAdivinhadasForca.includes(l)) {
+                venceu = false;
+                break;
             }
-            document.getElementById(`b-${l}`).disabled = true;
-            carregar();
-            if (erros >= 6) { alert('Fim de jogo!'); location.reload(); }
         }
-        let tc = document.getElementById('teclado');
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
-            let b = document.createElement('button'); b.innerText = l; b.id = `b-${l}`; b.onclick = () => escolher(l);
-            b.style.cssText = "padding: 8px 0; font-size: 12px; font-weight: bold; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;";
-            tc.appendChild(b);
-        });
-        carregar();
-    </script>
-</body>
-</html>
+
+        if (venceu) {
+            clearInterval(timerForcaInterval);
+            pontosForca += 20 + tempoForcaRestante; // Bônus de tempo
+            document.getElementById('pontos-forca').innerText = pontosForca;
+            if (typeof tocarEfeito === 'function') tocarEfeito('vitoria');
+            alert("🎉 Parabéns! Você acertou!");
+            setTimeout(iniciarJogoForca, 500);
+        }
+    } else {
+        errosForca++;
+        document.getElementById('contador-erros').innerText = errosForca;
+
+        if (errosForca >= 6) {
+            clearInterval(timerForcaInterval);
+            alert(`❌ Fim de jogo! A palavra era: ${palavraForcaAtual}`);
+            proximaPalavraForca(true);
+        }
+    }
+}
+
+function atualizarTelaForca() {
+    let display = "";
+    for (let l of palavraForcaAtual) {
+        if (letrasAdivinhadasForca.includes(l)) {
+            display += l + " ";
+        } else {
+            display += "_ ";
+        }
+    }
+    document.getElementById('palavra-secreta').innerText = display.trim();
+}
+
+function mostrarDicaForca() {
+    let dicaP = document.getElementById('dica-palavra');
+    dicaP.innerText = "💡 Dica: " + dicaForcaAtual;
+    dicaP.style.display = 'block';
+}
+
+function proximaPalavraForca(derrota) {
+    if (derrota && pontosForca > 0) {
+        if (typeof salvarPontuacaoGlobal === 'function') {
+            salvarPontuacaoGlobal("Jogo da Forca", pontosForca);
+        }
+    }
+    iniciarJogoForca();
+}
+
+function salvarPontuacaoRankingForcaManual() {
+    if (typeof salvarPontuacaoGlobal === 'function') {
+        salvarPontuacaoGlobal("Jogo da Forca", pontosForca);
+    }
+}
+
+function voltarMenuJogos() {
+    clearInterval(timerForcaInterval);
+    document.getElementById('container-jogo-forca').style.display = 'none';
+    // Coloque aqui a chamada para mostrar o menu inicial/central de jogos novamente
+}
