@@ -247,16 +247,15 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             const box = document.getElementById('termsBox');
-            // Se já estiver no fim ou não precisar rolar, libera na hora
-            if (box.scrollHeight <= box.clientHeight + 30) {
+            if (box.scrollHeight <= box.clientHeight + 80) {
                 liberarTermos();
             }
         });
 
         window.verificarRolagem = function() {
             const box = document.getElementById('termsBox');
-            // Tolerância de 30px para garantir que qualquer celular detecte o fim
-            const chegouNoFim = box.scrollTop + box.clientHeight >= box.scrollHeight - 30;
+            // Tolerância ampla: se rolar mais de 50px ou chegar perto do fim, já libera
+            const chegouNoFim = (box.scrollTop + box.clientHeight >= box.scrollHeight - 80) || (box.scrollTop > 60);
 
             if (chegouNoFim) {
                 liberarTermos();
@@ -279,7 +278,7 @@
 
         window.clicarCaixa = function(event) {
             if (!termosLiberados) {
-                alert("Por favor, role os termos até o final antes de aceitar.");
+                alert("Por favor, role os termos para baixo antes de aceitar.");
                 return;
             }
             const checkbox = document.getElementById('aceiteTermos');
