@@ -233,8 +233,6 @@
             border-radius: 14px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.3);
             text-align: left;
-            max-height: 90vh;
-            overflow-y: auto;
         }
         .modal-header {
             display: flex;
@@ -247,24 +245,29 @@
             gap: 10px;
             margin-top: 15px;
         }
-        
-        /* Estilos dos Termos de Uso */
-        .terms-box {
-            max-height: 140px;
-            overflow-y: auto;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 12px;
-            color: #334155;
-            margin-bottom: 10px;
+        #videoContainer {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
         }
-        .terms-box p {
-            margin: 0 0 8px 0;
-            line-height: 1.4;
+        video {
+            width: 100%;
+            height: 380px;
+            background: #000;
+            border-radius: 10px;
+            object-fit: cover;
+            transform: scaleX(-1);
         }
-
+        .timer-badge {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -343,7 +346,7 @@
 
         <!-- Menu Principal -->
         <div class="grid-menu">
-            <button class="menu-item btn-tradutor" onclick="abrirTermosTradutor()">
+            <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
                 📞 Tradutor
                 <span>Prefeitura / Hospital</span>
             </button>
@@ -369,43 +372,19 @@
             </button>
         </div>
 
-        <!-- Modal de Termos de Uso do Tradutor -->
-        <div id="modalTermos" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
+        <!-- Modais de Tradutor -->
+        <div id="modalSemSaldo" class="modal">
+            <div class="modal-content" style="text-align: center;">
+                <div class="modal-header" style="justify-content: center;">
                     <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-                    <h3 style="margin:0;">Termos do Tradutor</h3>
+                    <h3 style="margin:0; color: #dc2626;">Saldo Insuficiente</h3>
                 </div>
-                
-                <div class="terms-box" id="termsBox" onscroll="verificarRolagemTermos()">
-                    <p><strong>1. Tradução do Dia a Dia:</strong> Foco em suporte prático cotidiano. Para assuntos oficiais ou jurídicos complexos, procure agências especializadas.</p>
-                    <p><strong>2. Respeito Mútuo:</strong> Nosso ambiente é uma comunidade de apoio. Mantenha conversas com educação e respeito.</p>
-                    <p><strong>3. Tolerância Zero:</strong> Falta de respeito resulta em encerramento imediato da chamada e bloqueio da conta sem reembolso.</p>
-                    <p><strong>4. Aviso de Gravação:</strong> As chamadas são gravadas automaticamente por motivos de segurança e auditoria.</p>
-                    <p><strong>5. Tempo de Atendimento:</strong> O serviço é realizado em blocos de 30 minutos, sem acumulação ou reembolso de minutos restantes.</p>
-                    <p><strong>6. Encerramento Acidental:</strong> Quedas por ação voluntária ou falha no aparelho não dão direito a reembolso.</p>
-                    <p><strong>7. Instabilidade Técnica:</strong> Quedas reais por falhas do sistema geram estorno proporcional dos minutos não utilizados.</p>
-                </div>
-
-                <div id="scrollWarning" style="font-size: 11px; color: #d97706; background-color: #fef3c7; padding: 6px 10px; border-radius: 8px; margin-bottom: 10px; text-align: center; font-weight: 500;">
-                    ↓ Role os termos até o final para poder aceitar
-                </div>
-
-                <div id="checkboxWrapper" onclick="clicarCaixaTermos(event)" style="background-color: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 15px; opacity: 0.4; cursor: pointer;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="checkbox" id="aceiteTermos" onchange="alternarBotaoTermos()" style="width: 20px; height: 20px; accent-color: #10b981; cursor: pointer; margin: 0;">
-                        <label for="aceiteTermos" style="font-size: 13px; color: #334155; font-weight: 600; cursor: pointer;">Li e aceito os termos e regras</label>
-                    </div>
-                </div>
-
-                <div class="modal-buttons">
-                    <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTermos()">Cancelar</button>
-                    <button id="btnAvancarTradutor" class="btn-primary" onclick="avancarParaDetalhesTradutor()" disabled style="background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed;">Avançar</button>
-                </div>
+                <p style="font-size: 15px; color: #4b5563;">Você precisa ter créditos suficientes para iniciar a chamada com o tradutor.</p>
+                <button class="btn-primary" style="background-color: #10b981; margin-top: 10px;" onclick="comprarCreditos()">🛒 Comprar Créditos Agora</button>
+                <button class="btn-primary" style="background-color: #6b7280; margin-top: 8px;" onclick="fecharModalSemSaldo()">Voltar</button>
             </div>
         </div>
 
-        <!-- Modal de Detalhes do Tradutor (Local e Tempo) -->
         <div id="modalTradutor" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -426,9 +405,25 @@
                     <option value="7200">Mais de 1 hora</option>
                 </select>
                 <div class="modal-buttons">
-                    <button class="btn-primary" style="background-color: #6b7280;" onclick="voltarParaTermos()">Voltar</button>
-                    <button class="btn-primary" onclick="confirmarPedidoTradutor()">Confirmar Pedido</button>
+                    <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
+                    <button class="btn-primary" onclick="iniciarEspera()">Confirmar Pedido</button>
                 </div>
+            </div>
+        </div>
+
+        <div id="modalEspera" class="modal">
+            <div class="modal-content" style="text-align: center;">
+                <div class="modal-header" style="justify-content: center;">
+                    <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+                    <h3 id="statusTexto" style="margin:0;">Procurando tradutor...</h3>
+                </div>
+                <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
+                <div id="videoContainer">
+                    <div id="timerDisplay" class="timer-badge">⏱️ Tempo em chamada: 0s</div>
+                    <video id="webcam" autoplay playsinline muted></video>
+                    <p style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
+                </div>
+                <button id="btnSairChamada" class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="finalizarChamadaNormal()">Sair / Encerrar</button>
             </div>
         </div>
 
@@ -454,7 +449,9 @@
 
     <script>
         const liffId = "2010902449-KWNNNsxn";
-        let termosLiberados = false;
+        let timerInterval = null;
+        let segundosChamada = 0;
+        let streamVideo = null;
 
         async function inicializarApp() {
             try {
@@ -482,108 +479,86 @@
             if (!liff.isLoggedIn()) { liff.login(); }
         }
 
-        // Função do Botão Traduzir Texto
+        // Função de Tradução de Texto Integrada
         function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
+            
             if (!texto) {
                 alert("Por favor, digite algum texto para traduzir.");
                 return;
             }
+
             box.style.display = 'block';
             box.innerText = "Traduzindo...";
             
-            // Simulação de tradução rápida (pode conectar com API real se preferir)
             setTimeout(() => {
-                box.innerText = "Tradução (Simulada): " + texto + "\n(Exemplo: 日本語 / Português traduzido com sucesso)";
-            }, 500);
+                box.innerHTML = `<strong>Tradução (Simulada):</strong><br>${texto} (Exemplo: 日本語 / Português traduzido com sucesso)`;
+            }, 400);
         }
 
-        // Fluxo de Termos e Modais do Tradutor
-        function abrirTermosTradutor() {
-            document.getElementById('modalTermos').style.display = 'flex';
-            // Checar logo ao abrir caso o texto seja curto
-            setTimeout(() => {
-                const box = document.getElementById('termsBox');
-                if (box.scrollHeight <= box.clientHeight + 20) {
-                    liberarTermos();
-                }
-            }, 200);
-        }
-
-        function fecharModalTermos() {
-            document.getElementById('modalTermos').style.display = 'none';
-        }
-
-        function verificarRolagemTermos() {
-            const box = document.getElementById('termsBox');
-            if (box.scrollTop + box.clientHeight >= box.scrollHeight - 30 || box.scrollTop > 40) {
-                liberarTermos();
-            }
-        }
-
-        function liberarTermos() {
-            if (termosLiberados) return;
-            termosLiberados = true;
-            const wrapper = document.getElementById('checkboxWrapper');
-            const warning = document.getElementById('scrollWarning');
-
-            wrapper.style.opacity = '1';
-            wrapper.style.backgroundColor = '#ffffff';
-            wrapper.style.borderColor = '#cbd5e1';
-            
-            if (warning) {
-                warning.style.display = 'none';
-            }
-        }
-
-        function clicarCaixaTermos(event) {
-            if (!termosLiberados) {
-                alert("Por favor, role os termos para baixo antes de aceitar.");
-                return;
-            }
-            const checkbox = document.getElementById('aceiteTermos');
-            if (event.target !== checkbox) {
-                checkbox.checked = !checkbox.checked;
-            }
-            alternarBotaoTermos();
-        }
-
-        function alternarBotaoTermos() {
-            if (!termosLiberados) {
-                document.getElementById('aceiteTermos').checked = false;
-                return;
-            }
-            const checkbox = document.getElementById('aceiteTermos');
-            const botao = document.getElementById('btnAvancarTradutor');
-            
-            if (checkbox.checked) {
-                botao.disabled = false;
-                botao.style.backgroundColor = '#10b981';
-                botao.style.color = '#ffffff';
-                botao.style.cursor = 'pointer';
-            } else {
-                botao.disabled = true;
-                botao.style.backgroundColor = '#e2e8f0';
-                botao.style.color = '#94a3b8';
-                botao.style.cursor = 'not-allowed';
-            }
-        }
-
-        function avancarParaDetalhesTradutor() {
-            fecharModalTermos();
+        function verificarSaldoEChamar() {
+            // Aqui você pode validar o saldo se necessário. Por enquanto abre o modal de pedido:
             document.getElementById('modalTradutor').style.display = 'flex';
         }
 
-        function voltarParaTermos() {
+        function fecharModalTradutor() {
             document.getElementById('modalTradutor').style.display = 'none';
-            document.getElementById('modalTermos').style.display = 'flex';
         }
 
-        function confirmarPedidoTradutor() {
+        function fecharModalSemSaldo() {
+            document.getElementById('modalSemSaldo').style.display = 'none';
+        }
+
+        function comprarCreditos() {
+            window.location.href = 'perfil.html';
+        }
+
+        function iniciarEspera() {
             document.getElementById('modalTradutor').style.display = 'none';
-            alert("Pedido de tradutor confirmado! Redirecionando para o atendimento...");
-            // Insira aqui a lógica de redirecionamento ou busca se necessário
+            document.getElementById('modalEspera').style.display = 'flex';
+            document.getElementById('statusTexto').innerText = "Procurando tradutor...";
+            document.getElementById('subStatus').style.display = 'block';
+            document.getElementById('videoContainer').style.display = 'none';
+
+            // Simula a conexão após 2 segundos
+            setTimeout(() => {
+                document.getElementById('statusTexto').innerText = "Tradutor Conectado!";
+                document.getElementById('subStatus').style.display = 'none';
+                document.getElementById('videoContainer').style.display = 'block';
+                iniciarCamera();
+                iniciarContador();
+            }, 2500);
+        }
+
+        async function iniciarCamera() {
+            try {
+                streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const videoElement = document.getElementById('webcam');
+                videoElement.srcObject = streamVideo;
+            } catch (error) {
+                console.error("Erro ao acessar a câmera:", error);
+            }
+        }
+
+        function iniciarContador() {
+            segundosChamada = 0;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                segundosChamada++;
+                let min = Math.floor(segundosChamada / 60);
+                let seg = segundosChamada % 60;
+                let tempoFormatado = min > d = `${min}m ${seg}s` : `${seg}s`;
+                document.getElementById('timerDisplay').innerText = `⏱️ Tempo em chamada: ${tempoFormatado}`;
+            }, 1000);
+        }
+
+        function finalizarChamadaNormal() {
+            if (streamVideo) {
+                streamVideo.getTracks().forEach(track => track.stop());
+            }
+            clearInterval(timerInterval);
+            document.getElementById('modalEspera').style.display = 'none';
         }
 
         document.addEventListener("DOMContentLoaded", inicializarApp);
