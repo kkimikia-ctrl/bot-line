@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajuda JP - Tradutor Online</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+        }
+        .header {
+            background-color: #0047ab;
+            color: white;
+            padding: 12px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .btn-voltar {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        select {
+            border: 1px solid #ccc;
+            background: #fff;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-extender {
+            background-color: #d97706;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+        .btn-encerrar {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .video-box {
+            background: #000;
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+        .timer-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <span>📞 Tradutor Online</span>
+        <a href="../index.html" class="btn-voltar">Início</a>
+    </div>
+
+    <div class="card" id="painelSolicitacao">
+        <h3>Iniciar Atendimento</h3>
+        <p style="font-size: 14px; color: #666;">Selecione o local onde você precisa de tradução (Padrão inicial: 30 minutos).</p>
+        
+        <label style="font-weight: bold; font-size: 14px; text-align: left; display: block;">Onde você está?</label>
+        <select id="localAtendimento">
+            <option value="Hospital">Hospital</option>
+            <option value="Prefeitura">Prefeitura</option>
+            <option value="Escola">Escola</option>
+            <option value="Outros">Outros</option>
+        </select>
+
+        <button class="btn-primary" onclick="iniciarChamada()">Chamar Tradutor (30 min)</button>
+    </div>
+
+    <div class="card" id="painelChamada" style="display: none;">
+        <h3 id="tituloStatus">Conectado ao Tradutor</h3>
+        <div class="video-box">
+            <div class="timer-badge" id="displayTempo">⏱️ Tempo restante: 30:00</div>
+            <span style="color: #aaa;">[ Vídeo/Áudio com o Tradutor ]</span>
+        </div>
+
+        <button class="btn-extender" id="btnExtender" onclick="estenderTempo()">+ Estender mais 30 minutos</button>
+        <button class="btn-encerrar" onclick="finalizarChamada()">Encerrar e Salvar Histórico</button>
+    </div>
+
+    <script>
+        let tempoRestanteSegundos = 1800; // 30 minutos em segundos
+        let tempoAdicionalTotal = 0;
+        let intervaloTimer = null;
+        let localAtual = "";
+
+        function iniciarChamada() {
+            localAtual = document.getElementById('localAtendimento').value;
+            document.getElementById('painelSolicitacao').style.display = 'none';
+            document.getElementById('painelChamada').style.display = 'block';
+
+            tempoRestanteSegundos = 1800; // Reinicia para 30 min
+            tempoAdicionalTotal = 0;
+            atualizarDisplayTempo();
+
+            intervaloTimer = setInterval(() => {
+                tempoRestanteSegundos--;
+                atualizarDisplayTempo();
+
+                if (tempoRestanteSegundos === 300) {
+                    document.getElementById('btnExtender').style.display = 'block';
+                    alert("Seu tempo está acabando! Você já pode estender o atendimento se precisar.");
+                }
+
+                if (tempoRestanteSegundos <= 0) {
+                    clearInterval(intervaloTimer);
+                    alert("O tempo de atendimento esgotou.");
+                    finalizarChamada();
+                }
+            }, 1000);
+        }
+
+        function estenderTempo() {
+            tempoRestanteSegundos += 1800; // Adiciona mais 30 minutos
+            tempoAdicionalTotal += 30; // Guarda para o histórico
+            document.getElementById('btnExtender').style.display = 'none';
+            alert("Atendimento estendido com sucesso por mais 30 minutos!");
+        }
+
+        function atualizarDisplayTempo() {
+            const minutos = Math.floor(tempoRestanteSegundos / 60);
+            const segundos = tempoRestanteSegundos % 60;
+            document.getElementById('displayTempo').innerText = `⏱️ Restante: ${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+        }
+
+        function finalizarChamada() {
+            clearInterval(intervaloTimer);
+
+            const tempoBase = 30;
+            const tempoTotalUso = tempoBase + tempoAdicionalTotal;
+
+            const userId = localStorage.getItem('line_user_id') || 'usuario_padrao';
+            let historico = JSON.parse(localStorage.getItem('historico_chamadas_' + userId)) || [];
+
+            const novaChamada = {
+                id: Date.now(),
+                local: localAtual,
+                data: new Date().toLocaleDateString('pt-BR') + " - " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+                duracao: `${tempoTotalUso} minutos` + (tempoAdicionalTotal > 0 ? " (com extensão)" : "")
+            };
+
+            historico.unshift(novaChamada);
+            localStorage.setItem('historico_chamadas_' + userId, JSON.stringify(historico));
+
+            alert(`Chamada encerrada! Duração total: ${tempoTotalUso} minutos. Salvo no seu histórico.`);
+            window.location.href = '../perfil.html';
+        }
+    </script>
+</body>
+</html>
