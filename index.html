@@ -119,12 +119,11 @@
             display: flex;
             gap: 10px;
             width: max-content;
-            animation: rolarInfinito 25s linear infinite;
-            animation-play-state: paused;
+            animation: rolarInfinito 30s linear infinite;
         }
         .carousel-container:hover .carousel-track,
         .carousel-container:active .carousel-track {
-            animation-play-state: paused !important;
+            animation-play-state: paused;
         }
         .carousel-track a {
             display: block;
@@ -310,7 +309,7 @@
                 <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
                 <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
                 <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-                <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+                <a href="mini-banner-4.jpg" alt="Destaque 4"></a>
             </div>
         </section>
 
@@ -397,33 +396,29 @@
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('app-content').style.display = 'block';
             
-            // Inicializa o carrossel SOMENTE após o app estar visível para calcular o tamanho real
-            iniciarCarrossel();
+            // Executa a lógica original do seu carrossel assim que a tela aparece
+            ativarCarrossel();
         }
 
         function fazerLoginLine() {
             if (!liff.isLoggedIn()) { liff.login(); }
         }
 
-        function iniciarCarrossel() {
+        function ativarCarrossel() {
+            // Seu script original exato:
             const track = document.getElementById('carouselTrack');
-            if (!track || track.dataset.initialized) return;
-            track.dataset.initialized = "true";
+            if (!track || track.dataset.iniciado) return;
+            track.dataset.iniciado = "true";
 
             const items = Array.from(track.children);
             
-            // Clona os itens para criar o efeito contínuo
             items.forEach(item => {
                 const clone = item.cloneNode(true);
                 track.appendChild(clone);
             });
 
-            // Aguarda um pequeno ciclo para garantir renderização de imagem e calcula o tamanho exato
-            setTimeout(() => {
-                const totalWidth = track.scrollWidth / 2;
-                track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
-                track.style.animationPlayState = 'running';
-            }, 100);
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
         }
 
         document.addEventListener("DOMContentLoaded", inicializarApp);
