@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ajuda JP - Histórico de Chamadas</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background-color: #0047ab;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-voltar {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .chamada-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-chamada h4 {
+            margin: 0 0 5px 0;
+            font-size: 15px;
+            color: #0047ab;
+        }
+
+        .info-chamada p {
+            margin: 3px 0;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .badge-tempo {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .sem-registro {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-teste {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="perfil.html" class="btn-voltar">← Voltar</a>
+        <span>Histórico de Chamadas</span>
+        <div style="width: 60px;"></div>
+    </div>
+
+    <div class="container" id="listaChamadas">
+        <!-- Preenchido via JavaScript -->
+    </div>
+
+    <div class="container">
+        <button class="btn-teste" onclick="adicionarChamadaTeste()">+ Simular Nova Chamada (Teste)</button>
+    </div>
+
+    <script>
+        function carregarHistoricoChamadas() {
+            const userId = localStorage.getItem('line_user_id') || 'usuario_padrao';
+            const container = document.getElementById('listaChamadas');
+
+            // Puxa do localStorage ou cria dados iniciais de exemplo
+            let historico = JSON.parse(localStorage.getItem('historico_chamadas_' + userId)) || [
+                { id: 1, local: "Hospital", data: "28/08/2026 - 14:32", duracao: "30 minutos" },
+                { id: 2, local: "Prefeitura", data: "15/08/2026 - 10:15", duracao: "1 hora" }
+            ];
+
+            if (historico.length === 0) {
+                container.innerHTML = `<div class="sem-registro">Nenhuma chamada realizada ainda.</div>`;
+                return;
+            }
+
+            let html = '';
+            historico.forEach(item => {
+                html += `
+                    <div class="chamada-card">
+                        <div class="info-chamada">
+                            <h4>📍 Local: ${item.local}</h4>
+                            <p>📅 Data: ${item.data}</p>
+                        </div>
+                        <div class="badge-tempo">
+                            ⏱️ ${item.duracao}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function adicionarChamadaTeste() {
+            const userId = localStorage.getItem('line_user_id') || 'usuario_padrao';
+            let historico = JSON.parse(localStorage.getItem('historico_chamadas_' + userId)) || [];
+
+            const novaChamada = {
+                id: Date.now(),
+                local: "Escola",
+                data: new Date().toLocaleDateString('pt-BR') + " - " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+                duracao: "30 minutos"
+            };
+
+            historico.unshift(novaChamada); // Adiciona no topo
+            localStorage.setItem('historico_chamadas_' + userId, JSON.stringify(historico));
+            carregarHistoricoChamadas();
+            alert("Chamada de teste registrada com sucesso!");
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarHistoricoChamadas);
+    </script>
+</body>
+</html>
