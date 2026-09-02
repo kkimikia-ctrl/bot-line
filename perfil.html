@@ -39,7 +39,6 @@
             border: 2px solid white;
             flex-shrink: 0;
         }
-        /* Botão Voltar no Canto Superior Direito */
         .btn-voltar {
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
@@ -72,6 +71,12 @@
             justify-content: center;
             font-size: 36px;
             margin: 0 auto 15px auto;
+            overflow: hidden;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .profile-name {
             font-size: 18px;
@@ -169,16 +174,16 @@
     </div>
 
     <div class="card">
-        <div class="profile-avatar">👤</div>
-        <div class="profile-name">Usuário Ajuda JP</div>
-        <div class="profile-email">usuario@exemplo.com</div>
+        <div class="profile-avatar" id="userAvatarContainer">👤</div>
+        <div class="profile-name" id="userName">Usuário Ajuda JP</div>
+        <div class="profile-email" id="userEmail">Carregando dados...</div>
 
         <div class="credit-badge">
             <div class="credit-info">
                 <span>Seus Créditos</span>
                 <strong>150 pts</strong>
             </div>
-            <a href="carteira.html" class="btn-buy">+ Comprar</a>
+            <a href="historicocreditos.html" class="btn-buy">+ Comprar</a>
         </div>
     </div>
 
@@ -187,7 +192,7 @@
             <span>💳 Meus Créditos e Histórico</span>
             <span>&rsaquo;</span>
         </a>
-        <a href="servicos.html" class="menu-item-link">
+        <a href="meusanuncios.html" class="menu-item-link">
             <span>📢 Meus Anúncios</span>
             <span>&rsaquo;</span>
         </a>
@@ -202,8 +207,38 @@
     </div>
 
     <div style="padding: 0 5px;">
-        <button class="btn-danger" onclick="alert('Sessão encerrada (Simulação)')">Sair da Conta</button>
+        <button class="btn-danger" onclick="sairDaConta()">Sair da Conta</button>
     </div>
 
+    <script>
+        // Carrega as informações salvas no navegador pelo LINE ou login prévio
+        document.addEventListener("DOMContentLoaded", () => {
+            const nomeSalvo = localStorage.getItem('line_user_name');
+            const idSalvo = localStorage.getItem('line_user_id');
+            const fotoSalva = localStorage.getItem('line_user_picture');
+
+            if (nomeSalvo) {
+                document.getElementById('userName').innerText = nomeSalvo;
+            }
+            if (idSalvo) {
+                document.getElementById('userEmail').innerText = "ID: " + idSalvo.substring(0, 8) + "...";
+            } else {
+                document.getElementById('userEmail').innerText = "Conta conectada via Web";
+            }
+
+            if (fotoSalva) {
+                const avatarContainer = document.getElementById('userAvatarContainer');
+                avatarContainer.innerHTML = `<img src="${fotoSalva}" alt="Foto de Perfil">`;
+            }
+        });
+
+        function sairDaConta() {
+            localStorage.removeItem('line_user_id');
+            localStorage.removeItem('line_user_name');
+            localStorage.removeItem('line_user_picture');
+            alert('Sessão encerrada com sucesso!');
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
