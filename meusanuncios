@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ajuda JP - Meus Anúncios</title>
+    <!-- SDKs do Firebase v9 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background-color: #db2777;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-voltar {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        h3 {
+            color: #db2777;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #fbcfe8;
+            padding-bottom: 5px;
+        }
+
+        .anuncio-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-ativo {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-vencido {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .anuncio-card h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            color: #1f2937;
+            padding-right: 80px;
+        }
+
+        .anuncio-card p {
+            margin: 4px 0;
+            font-size: 13px;
+            color: #4b5563;
+        }
+
+        .sem-anuncio {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .btn-novo {
+            background-color: #db2777;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 2px 4px rgba(219, 39, 119, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html" class="btn-voltar">← Voltar</a>
+        <span>Meus Anúncios</span>
+        <div style="width: 60px;"></div>
+    </div>
+
+    <div class="container">
+        <!-- Seção Ativos -->
+        <h3>🟢 Anúncios Ativos</h3>
+        <div id="listaAtivos">
+            <div class="sem-anuncio">Carregando anúncios...</div>
+        </div>
+
+        <!-- Seção Histórico (Vencidos) -->
+        <h3>🔴 Histórico (Vencidos)</h3>
+        <div id="listaVencidos">
+            <div class="sem-anuncio">Carregando histórico...</div>
+        </div>
+
+        <button class="btn-novo" onclick="cadastrarAnuncioFirebase()">+ Cadastrar Novo Anúncio (Teste)</button>
+    </div>
+
+    <script>
+        // Configuração do Firebase (Substitua pelas suas credenciais reais do projeto)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto-id"
+        };
+
+        // Inicializa o Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        function carregarAnunciosDoFirebase() {
+            const userId = localStorage.getItem('line_user_id') || 'usuario_padrao';
+            const containerAtivos = document.getElementById('listaAtivos');
+            const containerVencidos = document.getElementById('listaVencidos');
+
+            db.collection("anuncios")
+                .where("userId", "==", userId)
+                .get()
+                .then((querySnapshot) => {
+                    let ativosHtml = '';
+                    let vencidosHtml = '';
+                    let temAtivo = false;
+                    let temVencido = false;
+
+                    querySnapshot.forEach((doc) => {
+                        const anuncio = doc.data();
+                        
+                        // Opcional: comparar data de validade com a data atual para definir o status automaticamente
+                        const dataAtual = new Date().toISOString().split('T')[0];
+                        const statusReal = anuncio.dataValidade >= dataAtual ? 'ativo' : 'vencido';
+
+                        const cardHtml = `
+                            <div class="anuncio-card">
+                                <span class="status-badge ${statusReal === 'ativo' ? 'status-ativo' : 'status-vencido'}">
+                                    ${statusReal === 'ativo' ? 'Ativo' : 'Vencido'}
+                                </span>
+                                <h4>${anuncio.titulo}</h4>
+                                <p><strong>Categoria:</strong> ${anuncio.categoria}</p>
+                                <p><strong>Detalhes:</strong> ${anuncio.detalhes}</p>
+                                <p style="font-size: 11px; color: #888; margin-top: 8px;">Validade: ${anuncio.dataValidade}</p>
+                            </div>
+                        `;
+
+                        if (statusReal === 'ativo') {
+                            ativosHtml += cardHtml;
+                            temAtivo = true;
+                        } else {
+                            vencidosHtml += cardHtml;
+                            temVencido = true;
+                        }
+                    });
+
+                    containerAtivos.innerHTML = temAtivo ? ativosHtml : `<div class="sem-anuncio">Nenhum anúncio ativo no momento.</div>`;
+                    containerVencidos.innerHTML = temVencido ? vencidosHtml : `<div class="sem-anuncio">Nenhum anúncio vencido no histórico.</div>`;
+                })
+                .catch((error) => {
+                    console.error("Erro ao buscar anúncios: ", error);
+                    containerAtivos.innerHTML = `<div class="sem-anuncio">Erro ao carregar do banco de dados.</div>`;
+                });
+        }
+
+        function cadastrarAnuncioFirebase() {
+            const userId = localStorage.getItem('line_user_id') || 'usuario_padrao';
+
+            const novoAnuncio = {
+                userId: userId,
+                titulo: "Serviço de Limpeza / Hikkoshi",
+                categoria: "Serviços",
+                detalhes: "Ajuda com mudança e limpeza pesada.",
+                dataValidade: "2026-12-30", // Data futura para testar como ativo
+                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection("anuncios").add(novoAnuncio)
+                .then(() => {
+                    alert("Anúncio cadastrado com sucesso no Firebase!");
+                    carregarAnunciosDoFirebase();
+                })
+                .catch((error) => {
+                    console.error("Erro ao adicionar anúncio: ", error);
+                    alert("Erro ao salvar o anúncio.");
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarAnunciosDoFirebase);
+    </script>
+</body>
+</html>
