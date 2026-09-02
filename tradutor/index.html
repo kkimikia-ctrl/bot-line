@@ -482,6 +482,57 @@
         function fecharModalSemSaldo() {
             document.getElementById('modalSemSaldo').style.display = 'none';
         }
+
+        // Função que faltava para abrir a tela de espera ao confirmar o pedido do tradutor
+        function iniciarEspera() {
+            document.getElementById('modalTradutor').style.display = 'none';
+            document.getElementById('modalEspera').style.display = 'flex';
+            document.getElementById('statusTexto').innerText = "Procurando tradutor...";
+            document.getElementById('subStatus').innerText = "Aguarde um momento enquanto conectamos você.";
+            document.getElementById('videoContainer').style.display = 'none';
+            
+            // Simulação de conexão após alguns segundos (você pode ajustar se tiver a lógica real de vídeo)
+            setTimeout(() => {
+                document.getElementById('statusTexto').innerText = "Tradutor Encontrado!";
+                document.getElementById('subStatus').style.display = 'none';
+                document.getElementById('videoContainer').style.display = 'block';
+                
+                // Tenta ligar a webcam se disponível
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(stream => {
+                        const videoElement = document.getElementById('webcam');
+                        videoElement.srcObject = stream;
+                    })
+                    .catch(e => console.log("Câmera não utilizada ou bloqueada"));
+            }, 3000);
+        }
+
+        function finalizarChamadaNormal() {
+            document.getElementById('modalEspera').style.display = 'none';
+            // Para a câmera se estiver ativa
+            const videoElement = document.getElementById('webcam');
+            if (videoElement.srcObject) {
+                videoElement.srcObject.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        // Função básica para traduzir o texto digitado na caixa
+        function traduzirTexto() {
+            const texto = document.getElementById('textoInput').value.trim();
+            const box = document.getElementById('resultadoBox');
+            if (!texto) {
+                alert('Digite algum texto para traduzir.');
+                return;
+            }
+            box.style.display = 'block';
+            box.innerText = "Traduzindo...";
+            
+            // Simulação de tradução rápida (substitua pela sua API real se houver)
+            setTimeout(() => {
+                box.innerText = "Tradução (Simulada): " + texto + " (輝 - Traduzido com sucesso)";
+            }, 800);
+        }
+
         document.addEventListener("DOMContentLoaded", inicializarApp);
     </script>
 </body>
