@@ -119,7 +119,9 @@
             display: flex;
             gap: 10px;
             width: max-content;
+            /* A animação só roda depois que o JS injetar a variável --scroll-amount */
             animation: rolarInfinito 30s linear infinite;
+            animation-play-state: paused; 
         }
         .carousel-container:hover .carousel-track,
         .carousel-container:active .carousel-track {
@@ -397,20 +399,23 @@
         }
         document.addEventListener("DOMContentLoaded", inicializarApp);
 
-        // Script para duplicar os itens automaticamente e ajustar o carrossel infinito
-        const track = document.getElementById('carouselTrack');
-        const items = Array.from(track.children);
-        
-        // Clona os itens e adiciona ao final para criar o loop contínuo
-        items.forEach(item => {
-            const clone = item.cloneNode(true);
-            track.appendChild(clone);
-        });
-
-        // Calcula exatamente metade da largura total da pista para o deslocamento perfeito
+        // Script robusto para o carrossel infinito (aguarda as imagens carregarem)
         window.addEventListener('load', () => {
+            const track = document.getElementById('carouselTrack');
+            const items = Array.from(track.children);
+            
+            // Clona os itens e adiciona ao final para criar o loop contínuo
+            items.forEach(item => {
+                const clone = item.cloneNode(true);
+                track.appendChild(clone);
+            });
+
+            // Calcula exatamente metade da largura total da pista após o carregamento das imagens
             const totalWidth = track.scrollWidth / 2;
             track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+            
+            // Libera a animação para rodar
+            track.style.animationPlayState = 'running';
         });
     </script>
 </body>
