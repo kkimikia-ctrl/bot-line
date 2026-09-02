@@ -344,7 +344,7 @@
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
-        <!-- Menu Principal -->
+        <!-- Menu Principal com o botão Carteira direcionando para perfil.html -->
         <div class="grid-menu">
             <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
                 📞 Tradutor
@@ -372,7 +372,7 @@
             </button>
         </div>
 
-        <!-- Modais de Tradutor -->
+        <!-- Modais de Tradutor mantidos -->
         <div id="modalSemSaldo" class="modal">
             <div class="modal-content" style="text-align: center;">
                 <div class="modal-header" style="justify-content: center;">
@@ -449,141 +449,39 @@
 
     <script>
         const liffId = "2010902449-KWNNNsxn";
-        let timerInterval = null;
-        let segundosChamada = 0;
-        let streamVideo = null;
-
         async function inicializarApp() {
             try {
-                // Tenta inicializar o LIFF
                 await liff.init({ liffId: liffId });
-                
-                if (liff.isLoggedIn()) {
-                    const profile = await liff.getProfile();
-                    localStorage.setItem('line_user_id', profile.userId);
-                    localStorage.setItem('line_user_name', profile.displayName);
-                    liberarConteudoApp();
-                } else {
-                    // Se não estiver logado no LIFF, mas já salvou antes, libera
-                    if (localStorage.getItem('line_user_id')) {
-                        liberarConteudoApp();
-                    } else {
-                        document.getElementById('login-overlay').style.display = 'flex';
+                if (liff.isLoggedIn() || localStorage.getItem('line_user_id')) {
+                    if (liff.isLoggedIn() && !localStorage.getItem('line_user_id')) {
+                        const profile = await liff.getProfile();
+                        localStorage.setItem('line_user_id', profile.userId);
+                        localStorage.setItem('line_user_name', profile.displayName);
                     }
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('app-content').style.display = 'block';
+                } else {
+                    document.getElementById('login-overlay').style.display = 'flex';
                 }
             } catch (err) {
-                console.warn("Erro no LIFF (normal se testando fora do app do LINE):", err);
-                // Se houver falha no LIFF (ex: abrindo no Chrome/Safari), libera o uso local para testes
                 if (localStorage.getItem('line_user_id')) {
-                    liberarConteudoApp();
-                } else {
-                    // Cria um usuário de teste temporário para não travar sua tela
-                    localStorage.setItem('line_user_id', 'usuario_teste_local');
-                    liberarConteudoApp();
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('app-content').style.display = 'block';
                 }
             }
         }
-
-        function liberarConteudoApp() {
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('app-content').style.display = 'block';
-        }
-
         function fazerLoginLine() {
-            try {
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    liberarConteudoApp();
-                }
-            } catch (e) {
-                // Fallback caso o liff.login falhe fora do app
-                localStorage.setItem('line_user_id', 'usuario_teste_local');
-                liberarConteudoApp();
-            }
+            if (!liff.isLoggedIn()) { liff.login(); }
         }
-
-        // Função de Tradução de Texto Integrada
-        function traduzirTexto() {
-            const texto = document.getElementById('textoInput').value.trim();
-            const box = document.getElementById('resultadoBox');
-            
-            if (!texto) {
-                alert("Por favor, digite algum texto para traduzir.");
-                return;
-            }
-
-            box.style.display = 'block';
-            box.innerText = "Traduzindo...";
-            
-            setTimeout(() => {
-                box.innerHTML = `<strong>Tradução (Simulada):</strong><br>${texto} (Exemplo: 日本語 / Português traduzido com sucesso)`;
-            }, 400);
-        }
-
         function verificarSaldoEChamar() {
             document.getElementById('modalTradutor').style.display = 'flex';
         }
-
         function fecharModalTradutor() {
             document.getElementById('modalTradutor').style.display = 'none';
         }
-
         function fecharModalSemSaldo() {
             document.getElementById('modalSemSaldo').style.display = 'none';
         }
-
-        function comprarCreditos() {
-            window.location.href = 'perfil.html';
-        }
-
-        function iniciarEspera() {
-            document.getElementById('modalTradutor').style.display = 'none';
-            document.getElementById('modalEspera').style.display = 'flex';
-            document.getElementById('statusTexto').innerText = "Procurando tradutor...";
-            document.getElementById('subStatus').style.display = 'block';
-            document.getElementById('videoContainer').style.display = 'none';
-
-            // Simula a conexão após 2 segundos
-            setTimeout(() => {
-                document.getElementById('statusTexto').innerText = "Tradutor Conectado!";
-                document.getElementById('subStatus').style.display = 'none';
-                document.getElementById('videoContainer').style.display = 'block';
-                iniciarCamera();
-                iniciarContador();
-            }, 2500);
-        }
-
-        async function iniciarCamera() {
-            try {
-                streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                const videoElement = document.getElementById('webcam');
-                videoElement.srcObject = streamVideo;
-            } catch (error) {
-                console.error("Erro ao acessar a câmera:", error);
-            }
-        }
-
-        function iniciarContador() {
-            segundosChamada = 0;
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                segundosChamada++;
-                let min = Math.floor(segundosChamada / 60);
-                let seg = segundosChamada % 60;
-                let tempoFormatado = min > 0 ? `${min}m ${seg}s` : `${seg}s`;
-                document.getElementById('timerDisplay').innerText = `⏱️ Tempo em chamada: ${tempoFormatado}`;
-            }, 1000);
-        }
-
-        function finalizarChamadaNormal() {
-            if (streamVideo) {
-                streamVideo.getTracks().forEach(track => track.stop());
-            }
-            clearInterval(timerInterval);
-            document.getElementById('modalEspera').style.display = 'none';
-        }
-
         document.addEventListener("DOMContentLoaded", inicializarApp);
     </script>
 </body>
