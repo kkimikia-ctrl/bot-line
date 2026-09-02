@@ -10,6 +10,7 @@
         * {
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -131,7 +132,7 @@
             padding: 14px 16px;
             margin-bottom: 24px;
             transition: all 0.2s ease;
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         .checkbox-wrapper.enabled {
@@ -145,50 +146,30 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            cursor: inherit;
-            user-select: none;
             width: 100%;
+            pointer-events: none; /* Controlado via JS na div pai */
         }
 
-        .checkbox-container input {
-            appearance: none;
+        .checkbox-wrapper.enabled .checkbox-container {
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-container input[type="checkbox"] {
             width: 24px;
             height: 24px;
-            border: 2px solid #94a3b8;
-            border-radius: 8px;
-            outline: none;
-            cursor: inherit;
-            transition: all 0.2s ease;
+            accent-color: #10b981;
+            cursor: pointer;
+            margin: 0;
             flex-shrink: 0;
-            background-color: #fff;
-            display: grid;
-            place-content: center;
-            pointer-events: none; /* Deixa o clique ir direto para o wrapper principal */
-        }
-
-        .checkbox-container input:checked {
-            background-color: #10b981;
-            border-color: #10b981;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-        }
-
-        .checkbox-container input:checked::before {
-            content: "";
-            width: 6px;
-            height: 12px;
-            border: solid white;
-            border-width: 0 2.5px 2.5px 0;
-            transform: rotate(45deg);
-            margin-bottom: 2px;
         }
 
         .checkbox-container label {
             font-size: 14px;
             color: #334155;
             font-weight: 600;
-            cursor: inherit;
+            cursor: pointer;
             line-height: 1.4;
-            pointer-events: none;
         }
 
         .action-button {
@@ -244,10 +225,10 @@
             ↓ Role os termos até o final para poder aceitar
         </div>
 
-        <div class="checkbox-wrapper" id="checkboxWrapper" onclick="tentarAlternar()">
+        <div class="checkbox-wrapper" id="checkboxWrapper" onclick="alternarSelecao(event)">
             <div class="checkbox-container">
-                <input type="checkbox" id="aceiteTermos">
-                <label for="aceiteTermos">Li e aceito os termos e regras do Tradutor Online</label>
+                <input type="checkbox" id="aceiteTermos" onclick="event.stopPropagation(); alternarBotao();">
+                <label for="aceiteTermos" onclick="event.stopPropagation(); alternarBotaoLabel();">Li e aceito os termos e regras do Tradutor Online</label>
             </div>
         </div>
 
@@ -286,6 +267,7 @@
         };
 
         function liberarTermos() {
+            if (termosLiberados) return;
             termosLiberados = true;
             const wrapper = document.getElementById('checkboxWrapper');
             const warning = document.getElementById('scrollWarning');
@@ -298,18 +280,36 @@
             }
         }
 
-        window.tentarAlternar = function() {
+        window.alternarSelecao = function(event) {
             if (!termosLiberados) return;
-
             const checkbox = document.getElementById('aceiteTermos');
-            checkbox.checked = !checkbox.checked;
-
-            const botao = document.getElementById('btnIniciar');
-            if (checkbox.checked) {
-                botao.disabled = false;
-            } else {
-                botao.disabled = true;
+            // Evita disparar duas vezes se clicar direto no input
+            if (event.target !== checkbox && event.target.tagName !== 'LABEL') {
+                checkbox.checked = !checkbox.checked;
+                alternarBotao();
             }
+        };
+
+        window.alternarBotao = function() {
+            if (!termosLiberados) {
+                document.getElementById('aceiteTermos').checked = false;
+                return;
+            }
+            const checkbox = document.getElementById('aceiteTermos');
+            const botao = document.getElementById('btnIniciar');
+            botao.disabled = !checkbox.checked;
+        };
+
+        window.alternarBotaoLabel = function() {
+            if (!termosLiberados) {
+                document.getElementById('aceiteTermos').checked = false;
+                return;
+            }
+            const checkbox = document.getElementById('aceiteTermos');
+            setTimeout(() => {
+                const botao = document.getElementById('btnIniciar');
+                botao.disabled = !checkbox.checked;
+            }, 50);
         };
 
         window.iniciarChamada = async function() {
