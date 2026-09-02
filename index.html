@@ -100,41 +100,50 @@
             flex-shrink: 0;
         }
         
-        /* Carrossel de Destaques Compacto */
-        .destaques-container {
-            display: flex;
-            gap: 8px;
+        /* --- CARROSSEL INFINITO DINÂMICO --- */
+        .carousel-container {
+            width: 100%;
             overflow-x: auto;
+            background: #ffffff;
+            padding: 10px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 12px;
-            padding-bottom: 3px;
-            scroll-snap-type: x mandatory;
-        }
-        .destaque-card {
-            background: #e0f2fe;
-            min-width: 110px;
-            height: 65px;
-            flex: 0 0 auto;
-            padding: 8px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
             border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            text-align: center;
-            border: 1px solid #bae6fd;
-            scroll-snap-align: start;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            gap: 10px;
+            width: max-content;
+            animation: rolarInfinito 30s linear infinite;
         }
-        .destaque-card h4 {
-            margin: 0;
-            font-size: 13px;
-            color: #0369a1;
-            font-weight: bold;
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
         }
-        .destaque-card span {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 2px;
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 150px;
+            height: 85px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #eee;
+            border: 1px solid #ddd;
+        }
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
         }
 
         .card {
@@ -294,24 +303,15 @@
             Ajuda JP - Início
         </div>
 
-        <div class="destaques-container">
-            <div class="destaque-card">
-                <h4>Destaque 1</h4>
-                <span>📢 Novidade</span>
+        <!-- Carrossel Infinito -->
+        <section class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
             </div>
-            <div class="destaque-card">
-                <h4>Destaque 2</h4>
-                <span>⭐ Especial</span>
-            </div>
-            <div class="destaque-card">
-                <h4>Destaque 3</h4>
-                <span>❓ Ajuda</span>
-            </div>
-            <div class="destaque-card">
-                <h4>Destaque 4</h4>
-                <span>❓ FAQ</span>
-            </div>
-        </div>
+        </section>
 
         <div class="card">
             <h3>📸 Tradução de Texto e Fotos</h3>
@@ -396,6 +396,22 @@
             if (!liff.isLoggedIn()) { liff.login(); }
         }
         document.addEventListener("DOMContentLoaded", inicializarApp);
+
+        // Script para duplicar os itens automaticamente e ajustar o carrossel infinito
+        const track = document.getElementById('carouselTrack');
+        const items = Array.from(track.children);
+        
+        // Clona os itens e adiciona ao final para criar o loop contínuo
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+
+        // Calcula exatamente metade da largura total da pista para o deslocamento perfeito
+        window.addEventListener('load', () => {
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+        });
     </script>
 </body>
 </html>
