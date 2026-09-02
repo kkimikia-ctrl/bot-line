@@ -344,7 +344,7 @@
             <div id="resultadoBox" class="result-box"></div>
         </div>
 
-        <!-- Menu Principal com o botão Carteira direcionando para perfil.html -->
+        <!-- Menu Principal -->
         <div class="grid-menu">
             <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
                 📞 Tradutor
@@ -372,7 +372,7 @@
             </button>
         </div>
 
-        <!-- Modais de Tradutor mantidos -->
+        <!-- Modais de Tradutor -->
         <div id="modalSemSaldo" class="modal">
             <div class="modal-content" style="text-align: center;">
                 <div class="modal-header" style="justify-content: center;">
@@ -483,21 +483,31 @@
             document.getElementById('modalSemSaldo').style.display = 'none';
         }
 
-        // Função que faltava para abrir a tela de espera ao confirmar o pedido do tradutor
+        let tempoInterval = null;
+        let segundosChamada = 0;
+
         function iniciarEspera() {
             document.getElementById('modalTradutor').style.display = 'none';
             document.getElementById('modalEspera').style.display = 'flex';
             document.getElementById('statusTexto').innerText = "Procurando tradutor...";
+            document.getElementById('subStatus').style.display = 'block';
             document.getElementById('subStatus').innerText = "Aguarde um momento enquanto conectamos você.";
             document.getElementById('videoContainer').style.display = 'none';
             
-            // Simulação de conexão após alguns segundos (você pode ajustar se tiver a lógica real de vídeo)
+            segundosChamada = 0;
+            document.getElementById('timerDisplay').innerText = "⏱️ Tempo em chamada: 0s";
+
             setTimeout(() => {
-                document.getElementById('statusTexto').innerText = "Tradutor Encontrado!";
+                document.getElementById('statusTexto').innerText = "Tradutor Conectado!";
                 document.getElementById('subStatus').style.display = 'none';
                 document.getElementById('videoContainer').style.display = 'block';
                 
-                // Tenta ligar a webcam se disponível
+                if (tempoInterval) clearInterval(tempoInterval);
+                tempoInterval = setInterval(() => {
+                    segundosChamada++;
+                    document.getElementById('timerDisplay').innerText = `⏱️ Tempo em chamada: ${segundosChamada}s`;
+                }, 1000);
+
                 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                     .then(stream => {
                         const videoElement = document.getElementById('webcam');
@@ -509,28 +519,23 @@
 
         function finalizarChamadaNormal() {
             document.getElementById('modalEspera').style.display = 'none';
-            // Para a câmera se estiver ativa
+            if (tempoInterval) clearInterval(tempoInterval);
             const videoElement = document.getElementById('webcam');
             if (videoElement.srcObject) {
                 videoElement.srcObject.getTracks().forEach(track => track.stop());
             }
         }
 
-        // Função básica para traduzir o texto digitado na caixa
+        // Função de tradução de texto corrigida que pega o valor digitado e exibe na caixa verde
         function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
             if (!texto) {
-                alert('Digite algum texto para traduzir.');
+                alert('Por favor, digite algum texto para traduzir.');
                 return;
             }
             box.style.display = 'block';
-            box.innerText = "Traduzindo...";
-            
-            // Simulação de tradução rápida (substitua pela sua API real se houver)
-            setTimeout(() => {
-                box.innerText = "Tradução (Simulada): " + texto + " (輝 - Traduzido com sucesso)";
-            }, 800);
+            box.innerText = `Tradução (Simulada): ${texto} (輝 - Traduzido com sucesso)`;
         }
 
         document.addEventListener("DOMContentLoaded", inicializarApp);
