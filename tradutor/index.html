@@ -112,6 +112,18 @@
             margin-bottom: 0;
         }
 
+        .scroll-warning {
+            font-size: 11px;
+            color: #d97706;
+            background-color: #fef3c7;
+            padding: 6px 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
         .checkbox-wrapper {
             background-color: #f8fafc;
             border: 2px solid #e2e8f0;
@@ -119,11 +131,13 @@
             padding: 14px 16px;
             margin-bottom: 24px;
             transition: all 0.2s ease;
+            opacity: 0.6;
+            pointer-events: none; /* Bloqueado até ler tudo */
         }
 
-        .checkbox-wrapper:hover {
-            border-color: #cbd5e1;
-            background-color: #f1f5f9;
+        .checkbox-wrapper.enabled {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .checkbox-container {
@@ -213,10 +227,10 @@
         </div>
         
         <p class="subtitle">
-            Conecte-se com um intérprete certificado para te auxiliar em repartições, prefeituras ou consultas.
+            Conecte-se com um intérprete para te auxiliar em assuntos do dia a dia!
         </p>
 
-        <div class="terms-box">
+        <div class="terms-box" id="termsBox" onscroll="verificarRolagem()">
             <strong class="title">Regras e Termos de Uso:</strong>
             <p><strong>1. Tradução do Dia a Dia:</strong> Foco em suporte prático cotidiano. Para assuntos oficiais ou jurídicos complexos, procure agências especializadas.</p>
             <p><strong>2. Respeito Mútuo:</strong> Nosso ambiente é uma comunidade de apoio. Mantenha conversas com educação e respeito.</p>
@@ -227,7 +241,11 @@
             <p><strong>7. Instabilidade Técnica:</strong> Quedas reais por falhas do sistema geram estorno proporcional dos minutos não utilizados.</p>
         </div>
 
-        <div class="checkbox-wrapper">
+        <div id="scrollWarning" class="scroll-warning">
+            ↓ Role os termos até o final para poder aceitar
+        </div>
+
+        <div class="checkbox-wrapper" id="checkboxWrapper">
             <label class="checkbox-container">
                 <input type="checkbox" id="aceiteTermos" onchange="alternarBotao()">
                 <span>Li e aceito os termos e regras do Tradutor Online</span>
@@ -249,6 +267,22 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // Função que verifica se o usuário chegou até o final da caixa de texto
+        window.verificarRolagem = function() {
+            const box = document.getElementById('termsBox');
+            const wrapper = document.getElementById('checkboxWrapper');
+            const warning = document.getElementById('scrollWarning');
+
+            // Margem de tolerância de 5 pixels para compensar telas de celular
+            const chegouNoFim = box.scrollTop + box.clientHeight >= box.scrollHeight - 5;
+
+            if (chegouNoFim) {
+                wrapper.classList.add('enabled');
+                warning.style.opacity = '0';
+                setTimeout(() => warning.style.display = 'none', 300);
+            }
+        };
 
         window.alternarBotao = function() {
             const checkbox = document.getElementById('aceiteTermos');
