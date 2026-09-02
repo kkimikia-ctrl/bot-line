@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajuda JP - Tradutor Online</title>
+    <title>Ajuda JP - Tradutor</title>
+    <!-- SDK do LINE LIFF -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -11,194 +13,392 @@
             margin: 0;
             padding: 15px;
             color: #333;
+            padding-bottom: 80px;
         }
+
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f4f6f9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 9999;
+            text-align: center;
+        }
+
+        .login-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 380px;
+            width: 100%;
+        }
+
+        .login-card h2 {
+            color: #0047ab;
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .login-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .btn-line-login {
+            background-color: #06c755;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(6, 199, 85, 0.3);
+            transition: background 0.2s;
+        }
+
+        .btn-line-login:active {
+            background-color: #05b24c;
+        }
+
+        #app-content {
+            display: none;
+        }
+
         .header {
             background-color: #0047ab;
             color: white;
-            padding: 12px 15px;
+            padding: 10px 15px;
             font-size: 18px;
             font-weight: bold;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
         }
-        .btn-voltar {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            text-decoration: none;
+        .logo-img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+            border: 2px solid white;
+            flex-shrink: 0;
         }
+        
         .card {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
-        select, button {
+        h3 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+        textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        button.btn-primary {
+            background-color: #2563eb;
+            color: white;
+            border: none;
             width: 100%;
             padding: 12px;
             border-radius: 8px;
             font-size: 16px;
-            margin-top: 10px;
-            box-sizing: border-box;
-        }
-        select {
-            border: 1px solid #ccc;
-            background: #fff;
-        }
-        .btn-primary {
-            background-color: #2563eb;
-            color: white;
-            border: none;
             font-weight: bold;
             cursor: pointer;
         }
-        .btn-extender {
-            background-color: #d97706;
-            color: white;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
+        button.btn-primary:active {
+            background-color: #1d4ed8;
+        }
+
+        .modal {
             display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-        .btn-encerrar {
-            background-color: #dc2626;
-            color: white;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
+        .modal-content {
+            background: white;
+            width: 98%;
+            max-width: 520px;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            text-align: left;
         }
-        .video-box {
-            background: #000;
-            width: 100%;
-            height: 300px;
-            border-radius: 8px;
-            margin: 15px 0;
+        .modal-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            position: relative;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        #videoContainer {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        video {
+            width: 100%;
+            height: 380px;
+            background: #000;
+            border-radius: 10px;
+            object-fit: cover;
+            transform: scaleX(-1);
         }
         .timer-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.6);
-            padding: 5px 10px;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+            z-index: 999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.75rem;
+            flex-grow: 1;
+            transition: color 0.2s;
+        }
+        .nav-item.active {
+            color: #0047ab;
+            font-weight: bold;
+        }
+        .nav-item span.icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <span>📞 Tradutor Online</span>
-        <a href="../index.html" class="btn-voltar">Início</a>
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2>Ajuda JP</h2>
+            <p>Para acessar o tradutor, visualizar seus créditos e gerenciar sua conta, é necessário entrar com sua conta do LINE.</p>
+            <button class="btn-line-login" onclick="fazerLoginLine()">Entrar com o LINE</button>
+        </div>
     </div>
 
-    <div class="card" id="painelSolicitacao">
-        <h3>Iniciar Atendimento</h3>
-        <p style="font-size: 14px; color: #666;">Selecione o local onde você precisa de tradução (Padrão inicial: 30 minutos).</p>
-        
-        <label style="font-weight: bold; font-size: 14px; text-align: left; display: block;">Onde você está?</label>
-        <select id="localAtendimento">
-            <option value="Hospital">Hospital</option>
-            <option value="Prefeitura">Prefeitura</option>
-            <option value="Escola">Escola</option>
-            <option value="Outros">Outros</option>
-        </select>
-
-        <button class="btn-primary" onclick="iniciarChamada()">Chamar Tradutor (30 min)</button>
-    </div>
-
-    <div class="card" id="painelChamada" style="display: none;">
-        <h3 id="tituloStatus">Conectado ao Tradutor</h3>
-        <div class="video-box">
-            <div class="timer-badge" id="displayTempo">⏱️ Tempo restante: 30:00</div>
-            <span style="color: #aaa;">[ Vídeo/Áudio com o Tradutor ]</span>
+    <div id="app-content">
+        <div class="header">
+            <img src="../logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='../logo.png';">
+            Ajuda JP - Tradutor
         </div>
 
-        <button class="btn-extender" id="btnExtender" onclick="estenderTempo()">+ Estender mais 30 minutos</button>
-        <button class="btn-encerrar" onclick="finalizarChamada()">Encerrar e Salvar Histórico</button>
+        <div class="card">
+            <h3>📞 Atendimento com Tradutor ao Vivo</h3>
+            <p style="font-size: 14px; color: #666; margin-top:0;">Conecte-se com um intérprete para te ajudar em repartições ou consultas.</p>
+            <button class="btn-primary" style="background-color: #059669;" onclick="verificarSaldoEChamar()">Iniciar Chamada com Tradutor</button>
+        </div>
+
+        <!-- Modais -->
+        <div id="modalSemSaldo" class="modal">
+            <div class="modal-content" style="text-align: center;">
+                <div class="modal-header" style="justify-content: center;">
+                    <img src="../logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='../logo.png';">
+                    <h3 style="margin:0; color: #dc2626;">Saldo Insuficiente</h3>
+                </div>
+                <p style="font-size: 15px; color: #4b5563;">Você precisa ter créditos suficientes para iniciar a chamada com o tradutor.</p>
+                <button class="btn-primary" style="background-color: #10b981; margin-top: 10px;" onclick="comprarCreditos()">🛒 Comprar Créditos Agora</button>
+                <button class="btn-primary" style="background-color: #6b7280; margin-top: 8px;" onclick="fecharModalSemSaldo()">Voltar</button>
+            </div>
+        </div>
+
+        <div id="modalTradutor" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="../logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='../logo.png';">
+                    <h3 style="margin:0;">Chamar Tradutor</h3>
+                </div>
+                <label style="font-size: 14px; font-weight: bold;">Onde você está?</label>
+                <select id="localAtendimento">
+                    <option value="Hospital">Hospital</option>
+                    <option value="Prefeitura">Prefeitura</option>
+                    <option value="Escola">Escola</option>
+                    <option value="Outros">Outros</option>
+                </select>
+                <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
+                <select id="tempoAtendimento">
+                    <option value="1800">30 minutos</option>
+                    <option value="3600">1 hora</option>
+                    <option value="7200">Mais de 1 hora</option>
+                </select>
+                <div class="modal-buttons">
+                    <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
+                    <button class="btn-primary" onclick="iniciarEspera()">Confirmar Pedido</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modalEspera" class="modal">
+            <div class="modal-content" style="text-align: center;">
+                <div class="modal-header" style="justify-content: center;">
+                    <img src="../logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='../logo.png';">
+                    <h3 id="statusTexto" style="margin:0;">Procurando tradutor...</h3>
+                </div>
+                <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
+                <div id="videoContainer">
+                    <div id="timerDisplay" class="timer-badge">⏱️ Tempo em chamada: 0s</div>
+                    <video id="webcam" autoplay playsinline muted></video>
+                    <p style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
+                </div>
+                <button id="btnSairChamada" class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="finalizarChamadaNormal()">Sair / Encerrar</button>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="../index.html" class="nav-item">
+                <span class="icon">🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="../servicos.html" class="nav-item">
+                <span class="icon">📋</span>
+                <span>Serviços</span>
+            </a>
+            <a href="../entretenimento.html" class="nav-item">
+                <span class="icon">🎬</span>
+                <span>Lazer</span>
+            </a>
+            <a href="../perfil.html" class="nav-item">
+                <span class="icon">👤</span>
+                <span>Perfil</span>
+            </a>
+        </nav>
     </div>
 
     <script>
-        let tempoRestanteSegundos = 1800; // 30 minutos em segundos
-        let tempoAdicionalTotal = 0;
-        let intervaloTimer = null;
-        let localAtual = "";
-
-        function iniciarChamada() {
-            localAtual = document.getElementById('localAtendimento').value;
-            document.getElementById('painelSolicitacao').style.display = 'none';
-            document.getElementById('painelChamada').style.display = 'block';
-
-            tempoRestanteSegundos = 1800; // Reinicia para 30 min
-            tempoAdicionalTotal = 0;
-            atualizarDisplayTempo();
-
-            intervaloTimer = setInterval(() => {
-                tempoRestanteSegundos--;
-                atualizarDisplayTempo();
-
-                if (tempoRestanteSegundos === 300) {
-                    document.getElementById('btnExtender').style.display = 'block';
-                    alert("Seu tempo está acabando! Você já pode estender o atendimento se precisar.");
+        const liffId = "2010902449-KWNNNsxn";
+        async function inicializarApp() {
+            try {
+                await liff.init({ liffId: liffId });
+                if (liff.isLoggedIn() || localStorage.getItem('line_user_id')) {
+                    if (liff.isLoggedIn() && !localStorage.getItem('line_user_id')) {
+                        const profile = await liff.getProfile();
+                        localStorage.setItem('line_user_id', profile.userId);
+                        localStorage.setItem('line_user_name', profile.displayName);
+                    }
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('app-content').style.display = 'block';
+                } else {
+                    document.getElementById('login-overlay').style.display = 'flex';
                 }
-
-                if (tempoRestanteSegundos <= 0) {
-                    clearInterval(intervaloTimer);
-                    alert("O tempo de atendimento esgotou.");
-                    finalizarChamada();
+            } catch (err) {
+                if (localStorage.getItem('line_user_id')) {
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('app-content').style.display = 'block';
                 }
-            }, 1000);
+            }
         }
-
-        function estenderTempo() {
-            tempoRestanteSegundos += 1800; // Adiciona mais 30 minutos
-            tempoAdicionalTotal += 30; // Guarda para o histórico
-            document.getElementById('btnExtender').style.display = 'none';
-            alert("Atendimento estendido com sucesso por mais 30 minutos!");
+        function fazerLoginLine() {
+            if (!liff.isLoggedIn()) { liff.login(); }
         }
-
-        function atualizarDisplayTempo() {
-            const minutos = Math.floor(tempoRestanteSegundos / 60);
-            const segundos = tempoRestanteSegundos % 60;
-            document.getElementById('displayTempo').innerText = `⏱️ Restante: ${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+        function verificarSaldoEChamar() {
+            document.getElementById('modalTradutor').style.display = 'flex';
         }
-
-        function finalizarChamada() {
-            clearInterval(intervaloTimer);
-
-            const tempoBase = 30;
-            const tempoTotalUso = tempoBase + tempoAdicionalTotal;
-
-            const userId = localStorage.getItem('line_user_id') || 'usuario_padrao';
-            let historico = JSON.parse(localStorage.getItem('historico_chamadas_' + userId)) || [];
-
-            const novaChamada = {
-                id: Date.now(),
-                local: localAtual,
-                data: new Date().toLocaleDateString('pt-BR') + " - " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
-                duracao: `${tempoTotalUso} minutos` + (tempoAdicionalTotal > 0 ? " (com extensão)" : "")
-            };
-
-            historico.unshift(novaChamada);
-            localStorage.setItem('historico_chamadas_' + userId, JSON.stringify(historico));
-
-            alert(`Chamada encerrada! Duração total: ${tempoTotalUso} minutos. Salvo no seu histórico.`);
+        function fecharModalTradutor() {
+            document.getElementById('modalTradutor').style.display = 'none';
+        }
+        function fecharModalSemSaldo() {
+            document.getElementById('modalSemSaldo').style.display = 'none';
+        }
+        function comprarCreditos() {
             window.location.href = '../perfil.html';
         }
+        let timerInterval;
+        let segundosChamada = 0;
+        let streamCamera = null;
+
+        function iniciarEspera() {
+            fecharModalTradutor();
+            document.getElementById('modalEspera').style.display = 'flex';
+            document.getElementById('statusTexto').innerText = "Procurando tradutor...";
+            document.getElementById('subStatus').style.display = 'block';
+            document.getElementById('videoContainer').style.display = 'none';
+
+            setTimeout(() => {
+                document.getElementById('statusTexto').innerText = "Tradutor conectado!";
+                document.getElementById('subStatus').style.display = 'none';
+                document.getElementById('videoContainer').style.display = 'block';
+                
+                segundosChamada = 0;
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(stream => {
+                        streamCamera = stream;
+                        document.getElementById('webcam').srcObject = stream;
+                    })
+                    .catch(e => console.log("Câmera indisponível ou negada."));
+
+                timerInterval = setInterval(() => {
+                    segundosChamada++;
+                    let min = Math.floor(segundosChamada / 60);
+                    let seg = segundosChamada % 60;
+                    document.getElementById('timerDisplay').innerText = `⏱️ Tempo em chamada: ${min > 0 ? min + 'm ' : ''}${seg}s`;
+                }, 1000);
+            }, 2000);
+        }
+
+        function finalizarChamadaNormal() {
+            clearInterval(timerInterval);
+            if (streamCamera) {
+                streamCamera.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('modalEspera').style.display = 'none';
+            alert("Chamada encerrada.");
+        }
+
+        document.addEventListener("DOMContentLoaded", inicializarApp);
     </script>
 </body>
 </html>
