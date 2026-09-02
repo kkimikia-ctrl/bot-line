@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Serviços e Anúncios</title>
+    <title>Agenda da Semana</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f0f4f8;
             margin: 0;
             padding: 0;
-            padding-top: 120px; /* Ajustado para caber o header + barra de regiões */
-            padding-bottom: 70px; /* Espaço para a barra inferior */
+            padding-top: 120px; /* Espaço para o header + barra de regiões */
+            padding-bottom: 20px;
             color: #1e293b;
             overflow-x: hidden;
         }
 
-        /* --- HEADER PRINCIPAL --- */
         .header {
-            background: linear-gradient(135deg, #1565c0, #1e88e5);
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
             color: white;
-            padding: 12px 15px;
+            padding: 10px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -29,30 +28,42 @@
             left: 0;
             width: 100%;
             z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
             box-sizing: border-box;
-        }
-        .header-logo {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: white;
-            object-fit: contain;
         }
         .header-title {
             font-weight: 700;
-            font-size: 1.05rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
             color: white;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        /* --- BARRA DE REGIÕES (Filtro Horizontal) --- */
+        /* --- BARRA DE REGIÕES --- */
         .regions-container {
             position: fixed;
-            top: 58px; /* Logo abaixo do header principal */
+            top: 55px; /* Logo abaixo do header */
             left: 0;
             width: 100%;
             background: #ffffff;
-            padding: 10px 12px;
+            padding: 8px 12px;
             display: flex;
             gap: 8px;
             overflow-x: auto;
@@ -79,17 +90,18 @@
             flex-shrink: 0;
         }
         .region-btn:hover, .region-btn.active {
-            background: #1565c0;
+            background: #0d47a1;
             color: white;
-            border-color: #1565c0;
+            border-color: #0d47a1;
         }
 
-        /* --- CARROSSEL DE DESTAQUES --- */
+        /* --- CARROSSEL INFINITO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
             background: #ffffff;
             padding: 10px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 12px;
             position: relative;
             -webkit-overflow-scrolling: touch;
@@ -128,144 +140,111 @@
             100% { transform: translateX(var(--scroll-amount)); }
         }
 
-        /* --- CONTEÚDO / SERVIÇOS --- */
         .container {
             max-width: 500px;
             margin: 0 auto;
             padding: 0 15px;
         }
-        .section-title {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #334155;
-            margin-bottom: 10px;
-            margin-top: 5px;
-        }
-        .card {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-        }
-        .card-title {
-            font-weight: bold;
-            font-size: 0.95rem;
-            color: #1e293b;
-            margin-bottom: 8px;
-        }
-        .card-placeholder {
+
+        /* --- BARRA DE PESQUISA --- */
+        .search-box {
             width: 100%;
-            height: 120px;
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            font-size: 13px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            outline: none;
+            box-sizing: border-box;
+            background: #ffffff;
+            transition: border-color 0.2s;
+        }
+        .search-box:focus {
+            border-color: #0d47a1;
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.1);
         }
 
-        /* --- MENU INFERIOR FIXO --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+        .card {
             background: #ffffff;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            z-index: 1000;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.03);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border-left: 4px solid #0d47a1;
+            display: block;
         }
-        .nav-item {
-            text-decoration: none;
-            color: #64748b;
-            font-size: 11px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            font-weight: 500;
+        .card.hidden {
+            display: none;
         }
-        .nav-item.active {
-            color: #1565c0;
+        .card-date {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #0d47a1;
+            margin-bottom: 4px;
         }
-        .nav-item img {
-            width: 22px;
-            height: 22px;
-            object-fit: contain;
+        .card-content {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Principal -->
     <header class="header">
-        <img src="logo.png" alt="Logo" class="header-logo">
-        <div class="header-title">Serviços e Anúncios</div>
-        <img src="logo.png" alt="Logo" class="header-logo">
+        <a href="index.html" class="header-btn">◀ Voltar</a>
+        <div class="header-title">📅 Agenda da Semana</div>
+        <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <!-- Barra de Filtro por Regiões -->
+    <!-- Barra de Regiões -->
     <nav class="regions-container">
-        <a href="?regiao=todas" class="region-btn active">🌐 Todas</a>
-        <a href="?regiao=tokai" class="region-btn">📍 Tokai (Aichi/Shizuoka/Gifu)</a>
-        <a href="?regiao=kanto" class="region-btn">📍 Kanto (Tokyo/Gunma...)</a>
-        <a href="?regiao=kansai" class="region-btn">📍 Kansai (Osaka/Mie...)</a>
-        <a href="?regiao=hokuriku" class="region-btn">📍 Hokuriku / Shinetsu</a>
-        <a href="?regiao=tohoku" class="region-btn">📍 Hokkaido / Tohoku</a>
-        <a href="?regiao=chugoku" class="region-btn">📍 Chugoku / Shikoku</a>
-        <a href="?regiao=kyushu" class="region-btn">📍 Kyushu / Okinawa</a>
+        <button class="region-btn active" data-regiao="todas">🌐 Todas</button>
+        <button class="region-btn" data-regiao="toyohashi">📍 Toyohashi</button>
+        <button class="region-btn" data-regiao="hamamatsu">📍 Hamamatsu</button>
+        <button class="region-btn" data-regiao="toyokawa">📍 Toyokawa</button>
+        <button class="region-btn" data-regiao="okazaki">📍 Okazaki</button>
     </nav>
 
-    <!-- Carrossel de Destaques -->
+    <!-- Carrossel de Banners/Anúncios -->
     <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
-            <a href="#"><img src="banner-1.jpg" alt="Destaque 1"></a>
-            <a href="#"><img src="banner-2.jpg" alt="Destaque 2"></a>
-            <a href="#"><img src="banner-3.jpg" alt="Destaque 3"></a>
-            <a href="#"><img src="banner-4.jpg" alt="Destaque 4"></a>
+            <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+            <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
         </div>
     </section>
 
-    <!-- Lista de Serviços -->
     <div class="container">
-        <div class="section-title">Todos os Serviços</div>
-        
-        <div class="card">
-            <div class="card-title">Anúncio Tokai</div>
-            <div class="card-placeholder">📦 Conteúdo do serviço da região de Tokai</div>
-        </div>
+        <!-- Campo de Pesquisa -->
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Pesquisar evento ou cidade (ex: Toyohashi)...">
 
-        <div class="card">
-            <div class="card-title">Anúncio Kanto</div>
-            <div class="card-placeholder">📦 Conteúdo do serviço da região de Kanto</div>
+        <!-- Cartões de Eventos da Semana com o atributo data-regiao -->
+        <div class="card" data-regiao="toyohashi">
+            <div class="card-date">Segunda-feira, 24 de Agosto</div>
+            <div class="card-content">🌸 Festival Cultural da Cidade - 14:00 na Praça Central (Toyohashi)</div>
+        </div>
+        <div class="card" data-regiao="hamamatsu">
+            <div class="card-date">Terça-feira, 25 de Agosto</div>
+            <div class="card-content">📌 Reunião comunitária em Hamamatsu - 19:00</div>
+        </div>
+        <div class="card" data-regiao="toyohashi">
+            <div class="card-date">Quarta-feira, 26 de Agosto</div>
+            <div class="card-content">🇧🇷 Encontro da Comunidade Brasileira - 19:30 no Centro Comunitário (Toyohashi)</div>
+        </div>
+        <div class="card" data-regiao="toyokawa">
+            <div class="card-date">Quinta-feira, 27 de Agosto</div>
+            <div class="card-content">🎨 Feira de Arte e Artesanato - 10:00 (Toyokawa)</div>
+        </div>
+        <div class="card" data-regiao="okazaki">
+            <div class="card-date">Sexta-feira, 28 de Agosto</div>
+            <div class="card-content">🎵 Encontro Musical - 18:00 (Okazaki)</div>
         </div>
     </div>
 
-    <!-- Menu Inferior -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            🏠 Home
-        </a>
-        <a href="servicos.html" class="nav-item active">
-            📋 Serviços
-        </a>
-        <a href="perfil.html" class="nav-item">
-            👤 Perfil
-        </a>
-        <a href="anunciar.html" class="nav-item">
-            📢 Anunciar
-        </a>
-    </nav>
-
     <script>
-        // Script do Carrossel Infinito
+        // Script do Carrossel
         const track = document.getElementById('carouselTrack');
         const items = Array.from(track.children);
         
@@ -277,6 +256,47 @@
         window.addEventListener('load', () => {
             const totalWidth = track.scrollWidth / 2;
             track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+        });
+
+        // Script de Filtro por Região
+        const botoesRegiao = document.querySelectorAll('.region-btn');
+        const cardsEvento = document.querySelectorAll('.card');
+        const searchInput = document.getElementById('searchInput');
+
+        botoesRegiao.forEach(botao => {
+            botao.addEventListener('click', () => {
+                botoesRegiao.forEach(b => b.classList.remove('active'));
+                botao.classList.add('active');
+                searchInput.value = ''; // Limpa a busca ao clicar no botão
+
+                const regiaoSelecionada = botao.getAttribute('data-regiao');
+
+                cardsEvento.forEach(card => {
+                    const regiaoCard = card.getAttribute('data-regiao');
+                    if (regiaoSelecionada === 'todas' || regiaoCard === regiaoSelecionada) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Script de Pesquisa por Texto (ex: Toyohashi)
+        searchInput.addEventListener('input', (e) => {
+            const termo = e.target.value.toLowerCase().trim();
+
+            botoesRegiao.forEach(b => b.classList.remove('active'));
+            document.querySelector('.region-btn[data-regiao="todas"]').classList.add('active');
+
+            cardsEvento.forEach(card => {
+                const textoCard = card.innerText.toLowerCase();
+                if (textoCard.includes(termo)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
