@@ -138,19 +138,16 @@
             opacity: 1;
             background-color: #ffffff;
             border-color: #cbd5e1;
+            cursor: pointer;
         }
 
         .checkbox-container {
             display: flex;
             align-items: center;
             gap: 12px;
-            cursor: not-allowed;
+            cursor: inherit;
             user-select: none;
             width: 100%;
-        }
-
-        .checkbox-wrapper.enabled .checkbox-container {
-            cursor: pointer;
         }
 
         .checkbox-container input {
@@ -166,6 +163,7 @@
             background-color: #fff;
             display: grid;
             place-content: center;
+            pointer-events: none; /* Deixa o clique ir direto para o wrapper principal */
         }
 
         .checkbox-container input:checked {
@@ -190,6 +188,7 @@
             font-weight: 600;
             cursor: inherit;
             line-height: 1.4;
+            pointer-events: none;
         }
 
         .action-button {
@@ -245,9 +244,9 @@
             ↓ Role os termos até o final para poder aceitar
         </div>
 
-        <div class="checkbox-wrapper" id="checkboxWrapper">
-            <div class="checkbox-container" onclick="clicarCheckbox()">
-                <input type="checkbox" id="aceiteTermos" disabled onchange="alternarBotao()">
+        <div class="checkbox-wrapper" id="checkboxWrapper" onclick="tentarAlternar()">
+            <div class="checkbox-container">
+                <input type="checkbox" id="aceiteTermos">
                 <label for="aceiteTermos">Li e aceito os termos e regras do Tradutor Online</label>
             </div>
         </div>
@@ -268,7 +267,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Verifica logo ao carregar se os termos cabem sem precisar rolar
+        let termosLiberados = false;
+
         window.addEventListener('DOMContentLoaded', () => {
             const box = document.getElementById('termsBox');
             if (box.scrollHeight <= box.clientHeight + 10) {
@@ -286,12 +286,11 @@
         };
 
         function liberarTermos() {
+            termosLiberados = true;
             const wrapper = document.getElementById('checkboxWrapper');
-            const checkbox = document.getElementById('aceiteTermos');
             const warning = document.getElementById('scrollWarning');
 
             wrapper.classList.add('enabled');
-            checkbox.disabled = false;
             
             if (warning) {
                 warning.style.opacity = '0';
@@ -299,18 +298,13 @@
             }
         }
 
-        window.clicarCheckbox = function() {
-            const checkbox = document.getElementById('aceiteTermos');
-            if (!checkbox.disabled) {
-                checkbox.checked = !checkbox.checked;
-                alternarBotao();
-            }
-        };
+        window.tentarAlternar = function() {
+            if (!termosLiberados) return;
 
-        window.alternarBotao = function() {
             const checkbox = document.getElementById('aceiteTermos');
+            checkbox.checked = !checkbox.checked;
+
             const botao = document.getElementById('btnIniciar');
-
             if (checkbox.checked) {
                 botao.disabled = false;
             } else {
