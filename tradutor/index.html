@@ -131,22 +131,26 @@
             padding: 14px 16px;
             margin-bottom: 24px;
             transition: all 0.2s ease;
-            opacity: 0.6;
-            pointer-events: none; /* Bloqueado até ler tudo */
+            opacity: 0.5;
         }
 
         .checkbox-wrapper.enabled {
             opacity: 1;
-            pointer-events: auto;
+            background-color: #ffffff;
+            border-color: #cbd5e1;
         }
 
         .checkbox-container {
             display: flex;
             align-items: center;
             gap: 12px;
-            cursor: pointer;
+            cursor: not-allowed;
             user-select: none;
             width: 100%;
+        }
+
+        .checkbox-wrapper.enabled .checkbox-container {
+            cursor: pointer;
         }
 
         .checkbox-container input {
@@ -156,7 +160,7 @@
             border: 2px solid #94a3b8;
             border-radius: 8px;
             outline: none;
-            cursor: pointer;
+            cursor: inherit;
             transition: all 0.2s ease;
             flex-shrink: 0;
             background-color: #fff;
@@ -184,7 +188,7 @@
             font-size: 14px;
             color: #334155;
             font-weight: 600;
-            cursor: pointer;
+            cursor: inherit;
             line-height: 1.4;
         }
 
@@ -211,10 +215,6 @@
         .action-button:not(:disabled):hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(16, 185, 129, 0.5);
-        }
-
-        .action-button:not(:disabled):active {
-            transform: translateY(0);
         }
     </style>
 </head>
@@ -246,10 +246,10 @@
         </div>
 
         <div class="checkbox-wrapper" id="checkboxWrapper">
-            <label class="checkbox-container">
-                <input type="checkbox" id="aceiteTermos" onchange="alternarBotao()">
-                <span>Li e aceito os termos e regras do Tradutor Online</span>
-            </label>
+            <div class="checkbox-container" onclick="clicarCheckbox()">
+                <input type="checkbox" id="aceiteTermos" disabled onchange="alternarBotao()">
+                <label for="aceiteTermos">Li e aceito os termos e regras do Tradutor Online</label>
+            </div>
         </div>
 
         <button id="btnIniciar" onclick="iniciarChamada()" disabled class="action-button">
@@ -268,19 +268,42 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Função que verifica se o usuário chegou até o final da caixa de texto
+        // Verifica logo ao carregar se os termos cabem sem precisar rolar
+        window.addEventListener('DOMContentLoaded', () => {
+            const box = document.getElementById('termsBox');
+            if (box.scrollHeight <= box.clientHeight + 10) {
+                liberarTermos();
+            }
+        });
+
         window.verificarRolagem = function() {
             const box = document.getElementById('termsBox');
-            const wrapper = document.getElementById('checkboxWrapper');
-            const warning = document.getElementById('scrollWarning');
-
-            // Margem de tolerância de 5 pixels para compensar telas de celular
-            const chegouNoFim = box.scrollTop + box.clientHeight >= box.scrollHeight - 5;
+            const chegouNoFim = box.scrollTop + box.clientHeight >= box.scrollHeight - 10;
 
             if (chegouNoFim) {
-                wrapper.classList.add('enabled');
+                liberarTermos();
+            }
+        };
+
+        function liberarTermos() {
+            const wrapper = document.getElementById('checkboxWrapper');
+            const checkbox = document.getElementById('aceiteTermos');
+            const warning = document.getElementById('scrollWarning');
+
+            wrapper.classList.add('enabled');
+            checkbox.disabled = false;
+            
+            if (warning) {
                 warning.style.opacity = '0';
                 setTimeout(() => warning.style.display = 'none', 300);
+            }
+        }
+
+        window.clicarCheckbox = function() {
+            const checkbox = document.getElementById('aceiteTermos');
+            if (!checkbox.disabled) {
+                checkbox.checked = !checkbox.checked;
+                alternarBotao();
             }
         };
 
