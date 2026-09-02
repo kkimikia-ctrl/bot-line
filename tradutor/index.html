@@ -494,7 +494,7 @@
             }
         }
 
-        // Função de tradução real usando a API gratuita de tradução online
+        // Função de tradução real com suporte a Romaji (leitura em japonês romanizado)
         async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
@@ -508,13 +508,11 @@
             box.innerText = "Traduzindo...";
 
             try {
-                // Detecta se tem caracteres japoneses ou não para alternar a tradução (PT <-> JA)
                 const contemJapones = /[\u3000-\u30ff\u4e00-\u9faf]/.test(texto);
                 const langTarget = contemJapones ? 'pt' : 'ja';
                 const langSource = contemJapones ? 'ja' : 'pt';
 
                 const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${langSource}&tl=${langTarget}&dt=t&q=` + encodeURIComponent(texto);
-                
                 const response = await fetch(url);
                 const data = await response.json();
                 
@@ -523,7 +521,21 @@
                     data[0].forEach(item => {
                         if (item[0]) traducaoReal += item[0];
                     });
-                    box.innerText = traducaoReal;
+
+                    // Se traduziu para japonês, busca também o Romaji para colocar entre parênteses
+                    if (langTarget === 'ja') {
+                        const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=` + encodeURIComponent(traducaoReal);
+                        // Como parâmetro de leitura, o Google às vezes retorna o Romaji na resposta auxiliar (data[3])
+                        let romajiText = data[3] && data[3][0] && data[3][0][2] ? data[3][0][2] : "";
+                        
+                        if (romajiText && romajiText !== traducaoReal) {
+                            box.innerText = `${traducaoReal} (${romajiText})`;
+                        } else {
+                            box.innerText = `${traducaoReal}`;
+                        }
+                    } else {
+                        box.innerText = traducaoReal;
+                    }
                 } else {
                     box.innerText = "Erro ao traduzir. Tente novamente.";
                 }
