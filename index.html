@@ -119,13 +119,12 @@
             display: flex;
             gap: 10px;
             width: max-content;
-            /* A animação só roda depois que o JS injetar a variável --scroll-amount */
-            animation: rolarInfinito 30s linear infinite;
-            animation-play-state: paused; 
+            animation: rolarInfinito 25s linear infinite;
+            animation-play-state: paused;
         }
         .carousel-container:hover .carousel-track,
         .carousel-container:active .carousel-track {
-            animation-play-state: paused;
+            animation-play-state: paused !important;
         }
         .carousel-track a {
             display: block;
@@ -373,6 +372,7 @@
 
     <script>
         const liffId = "2010902449-KWNNNsxn";
+        
         async function inicializarApp() {
             try {
                 await liff.init({ liffId: liffId });
@@ -382,41 +382,51 @@
                         localStorage.setItem('line_user_id', profile.userId);
                         localStorage.setItem('line_user_name', profile.displayName);
                     }
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('app-content').style.display = 'block';
+                    liberarApp();
                 } else {
                     document.getElementById('login-overlay').style.display = 'flex';
                 }
             } catch (err) {
                 if (localStorage.getItem('line_user_id')) {
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('app-content').style.display = 'block';
+                    liberarApp();
                 }
             }
         }
+
+        function liberarApp() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('app-content').style.display = 'block';
+            
+            // Inicializa o carrossel SOMENTE após o app estar visível para calcular o tamanho real
+            iniciarCarrossel();
+        }
+
         function fazerLoginLine() {
             if (!liff.isLoggedIn()) { liff.login(); }
         }
-        document.addEventListener("DOMContentLoaded", inicializarApp);
 
-        // Script robusto para o carrossel infinito (aguarda as imagens carregarem)
-        window.addEventListener('load', () => {
+        function iniciarCarrossel() {
             const track = document.getElementById('carouselTrack');
+            if (!track || track.dataset.initialized) return;
+            track.dataset.initialized = "true";
+
             const items = Array.from(track.children);
             
-            // Clona os itens e adiciona ao final para criar o loop contínuo
+            // Clona os itens para criar o efeito contínuo
             items.forEach(item => {
                 const clone = item.cloneNode(true);
                 track.appendChild(clone);
             });
 
-            // Calcula exatamente metade da largura total da pista após o carregamento das imagens
-            const totalWidth = track.scrollWidth / 2;
-            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
-            
-            // Libera a animação para rodar
-            track.style.animationPlayState = 'running';
-        });
+            // Aguarda um pequeno ciclo para garantir renderização de imagem e calcula o tamanho exato
+            setTimeout(() => {
+                const totalWidth = track.scrollWidth / 2;
+                track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+                track.style.animationPlayState = 'running';
+            }, 100);
+        }
+
+        document.addEventListener("DOMContentLoaded", inicializarApp);
     </script>
 </body>
 </html>
