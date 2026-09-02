@@ -133,13 +133,13 @@
             margin-bottom: 24px;
             transition: all 0.2s ease;
             opacity: 0.4;
+            cursor: pointer;
         }
 
         .checkbox-wrapper.enabled {
             opacity: 1;
             background-color: #ffffff;
             border-color: #cbd5e1;
-            cursor: pointer;
         }
 
         .checkbox-container {
@@ -147,11 +147,6 @@
             align-items: center;
             gap: 12px;
             width: 100%;
-            pointer-events: none; /* Controlado via JS na div pai */
-        }
-
-        .checkbox-wrapper.enabled .checkbox-container {
-            pointer-events: auto;
             cursor: pointer;
         }
 
@@ -225,10 +220,10 @@
             ↓ Role os termos até o final para poder aceitar
         </div>
 
-        <div class="checkbox-wrapper" id="checkboxWrapper" onclick="alternarSelecao(event)">
+        <div class="checkbox-wrapper" id="checkboxWrapper" onclick="clicarCaixa(event)">
             <div class="checkbox-container">
-                <input type="checkbox" id="aceiteTermos" onclick="event.stopPropagation(); alternarBotao();">
-                <label for="aceiteTermos" onclick="event.stopPropagation(); alternarBotaoLabel();">Li e aceito os termos e regras do Tradutor Online</label>
+                <input type="checkbox" id="aceiteTermos" onchange="alternarBotao()">
+                <label for="aceiteTermos">Li e aceito os termos e regras do Tradutor Online</label>
             </div>
         </div>
 
@@ -252,14 +247,16 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             const box = document.getElementById('termsBox');
-            if (box.scrollHeight <= box.clientHeight + 10) {
+            // Se já estiver no fim ou não precisar rolar, libera na hora
+            if (box.scrollHeight <= box.clientHeight + 30) {
                 liberarTermos();
             }
         });
 
         window.verificarRolagem = function() {
             const box = document.getElementById('termsBox');
-            const chegouNoFim = box.scrollTop + box.clientHeight >= box.scrollHeight - 10;
+            // Tolerância de 30px para garantir que qualquer celular detecte o fim
+            const chegouNoFim = box.scrollTop + box.clientHeight >= box.scrollHeight - 30;
 
             if (chegouNoFim) {
                 liberarTermos();
@@ -280,11 +277,13 @@
             }
         }
 
-        window.alternarSelecao = function(event) {
-            if (!termosLiberados) return;
+        window.clicarCaixa = function(event) {
+            if (!termosLiberados) {
+                alert("Por favor, role os termos até o final antes de aceitar.");
+                return;
+            }
             const checkbox = document.getElementById('aceiteTermos');
-            // Evita disparar duas vezes se clicar direto no input
-            if (event.target !== checkbox && event.target.tagName !== 'LABEL') {
+            if (event.target !== checkbox) {
                 checkbox.checked = !checkbox.checked;
                 alternarBotao();
             }
@@ -298,18 +297,6 @@
             const checkbox = document.getElementById('aceiteTermos');
             const botao = document.getElementById('btnIniciar');
             botao.disabled = !checkbox.checked;
-        };
-
-        window.alternarBotaoLabel = function() {
-            if (!termosLiberados) {
-                document.getElementById('aceiteTermos').checked = false;
-                return;
-            }
-            const checkbox = document.getElementById('aceiteTermos');
-            setTimeout(() => {
-                const botao = document.getElementById('btnIniciar');
-                botao.disabled = !checkbox.checked;
-            }, 50);
         };
 
         window.iniciarChamada = async function() {
