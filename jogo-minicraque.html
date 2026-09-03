@@ -18,7 +18,7 @@
             color: #333;
             padding-bottom: 50px;
             text-align: center;
-            padding-top: 130px !important; /* Espaço para o menu do topo */
+            padding-top: 130px !important; /* Espaço para a barra de banners do topo */
             overscroll-behavior-y: none;
         }
         
@@ -30,23 +30,6 @@
             border-radius: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             margin-bottom: 25px;
-        }
-
-        /* Botão de Som Global Fixo e Garantido no Topo */
-        #barra-som-topo {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 99999;
-            background: #1e293b;
-            color: white;
-            border: 2px solid white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         /* Canvas do Mini Craque */
@@ -63,9 +46,6 @@
     </style>
 </head>
 <body>
-
-    <!-- BOTÃO DE SOM GARANTIDO NO TOPO DA TELA -->
-    <button id="barra-som-topo" onclick="alternarAudioGlobal(event)">🔊 Som: Ligado</button>
 
     <div class="container">
         <div id="container-minicraque" class="card-game" style="display: block;">
@@ -133,6 +113,7 @@
         let somLigado = true;
         let musicaIntervalo = null;
         let passoMusica = 0;
+        let audioDestravado = false;
 
         const notas = { C4: 261.63, E4: 329.63, G4: 392.00, B4: 493.88, D5: 587.33 };
 
@@ -143,18 +124,24 @@
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
+            audioDestravado = true;
         }
 
+        // Destrava o áudio no primeiro toque na tela para tocar direto
+        window.addEventListener('pointerdown', () => {
+            if (!audioDestravado) {
+                inicializarAudioContext();
+                if (somLigado && !musicaIntervalo) {
+                    iniciarMusicaDeFundo();
+                }
+            }
+        }, { once: true });
+
+        // Função global caso queira ligar/desligar por algum elemento externo
         window.alternarAudioGlobal = function(e) {
             if (e) e.stopPropagation();
             inicializarAudioContext();
             somLigado = !somLigado;
-            
-            const btn = document.getElementById('barra-som-topo');
-            if (btn) {
-                btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Sem Som";
-                btn.style.background = somLigado ? "#1e293b" : "#dc2626";
-            }
 
             if (somLigado) {
                 iniciarMusicaDeFundo();
@@ -512,7 +499,7 @@
         };
     </script>
 
-    <!-- Script de Banners (Mantido de forma segura) -->
+    <!-- Script de Banners do Topo -->
     <script src="bannersjogo.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
