@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jogo da Velha</title>
-    <!-- Importando o Firebase SDK -->
+    <!-- Importando o Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
@@ -19,7 +19,7 @@
 <body>
     <div class="container">
         <div class="card-game">
-            <button onclick="window.location.href='index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar ao Menu</button>
+            <button onclick="voltarParaCentral()" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
             
@@ -59,18 +59,24 @@
 
                 <button onclick="proximaRodada()" id="btn-proxima" class="action-btn" style="background-color: #16a34a; display: none;">Próxima Partida ➡️</button>
                 
-                <!-- Botão para Salvar Pontos a Qualquer Momento -->
-                <button onclick="salvarPontuacaoFirebase(true)" id="btn-salvar-manual" class="action-btn" style="background-color: #0284c7;">💾 Salvar Pontos e Parar</button>
+                <!-- Botão para Salvar Pontos e ir para o Ranking -->
+                <button onclick="salvarPontuacaoFirebase(true)" id="btn-salvar-manual" class="action-btn" style="background-color: #0284c7;">💾 Salvar Pontos e Ver Ranking</button>
                 
                 <button onclick="reiniciarTudo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente / Trocar Nome</button>
             </div>
         </div>
     </div>
     <script>
-        // Configuração do Firebase
+        // Configuração do Firebase corrigida com a apiKey correta e collection unificada 'ranking_velha'
         const firebaseConfig = {
-            projectId: "ajuda-jp-ba2da"
+            apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+            authDomain: "ajuda-jp.firebaseapp.com",
+            projectId: "ajuda-jp",
+            storageBucket: "ajuda-jp.firebasestorage.app",
+            messagingSenderId: "40121072206",
+            appId: "1:40121072206:web:8a844e632f004f61d0a11f"
         };
+        
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -81,6 +87,14 @@
         let pontos = 0;
         let nomeJogador = "Kimikia";
         let pontuacaoJaSalva = false;
+
+        function voltarParaCentral() {
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html'; 
+            }
+        }
 
         function iniciarJogoCompleto(m) {
             modo = m;
@@ -180,21 +194,25 @@
             if (pontuacaoJaSalva) return;
             const msg = document.getElementById('msg-status-salvar');
             
-            db.collection("ranking_jogos").add({
-                jogador: nomeJogador,
-                jogo: "Jogo da Velha",
-                pontos: pontos,
-                data: new Date()
+            const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
+            db.collection("ranking_velha").doc(idUnicoDoc).set({
+                nome: nomeJogador,
+                pontos: Number(pontos),
+                data: new Date().toISOString()
             })
             .then(() => {
                 pontuacaoJaSalva = true;
+                
+                // Grava no localStorage para que o botão "Voltar" do ranking saiba retornar para o Jogo da Velha
+                localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
+
                 msg.style.color = "green";
-                msg.innerText = `✅ Sucesso! ${pontos} pontos salvos no ranking para ${nomeJogador}.`;
+                msg.innerText = `✅ Sucesso! Redirecionando para o ranking...`;
                 document.getElementById('btn-salvar-manual').style.display = 'none';
-                if (manual) {
-                    document.getElementById('btn-reiniciar').style.display = 'block';
-                    ativo = false;
-                }
+                
+                setTimeout(() => {
+                    window.location.href = "ranking.html";
+                }, 1000);
             })
             .catch((error) => {
                 console.error("Erro ao salvar: ", error);
