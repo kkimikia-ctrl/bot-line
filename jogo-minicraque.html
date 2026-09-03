@@ -18,17 +18,49 @@
             color: #333;
             padding-bottom: 50px;
             text-align: center;
-            padding-top: 130px !important; /* Espaço para a barra de banners do topo */
+            padding-top: 80px;
             overscroll-behavior-y: none;
         }
         
         .container { max-width: 600px; margin: 0 auto; }
+
+        /* Barra Superior Própria com Botão de Voltar e Som Garantidos */
+        .topo-personalizado {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #1e293b;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            z-index: 99999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .topo-personalizado button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        #btn-som-toggle {
+            background: #059669 !important;
+        }
 
         .card-game {
             background: white;
             padding: 15px;
             border-radius: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 15px;
             margin-bottom: 25px;
         }
 
@@ -46,6 +78,13 @@
     </style>
 </head>
 <body>
+
+    <!-- BARRA SUPERIOR COM BOTÃO DE SOM GARANTIDO -->
+    <div class="topo-personalizado">
+        <button onclick="window.location.href='forca.html'">⬅ Voltar</button>
+        <span style="font-weight: bold; font-size: 14px;">⚽ Mini Craque</span>
+        <button id="btn-som-toggle" onclick="alternarAudioGlobal(event)">🔊 Som: Ligado</button>
+    </div>
 
     <div class="container">
         <div id="container-minicraque" class="card-game" style="display: block;">
@@ -127,7 +166,7 @@
             audioDestravado = true;
         }
 
-        // Destrava o áudio no primeiro toque na tela para tocar direto
+        // Destrava o áudio no primeiro toque na tela
         window.addEventListener('pointerdown', () => {
             if (!audioDestravado) {
                 inicializarAudioContext();
@@ -137,11 +176,16 @@
             }
         }, { once: true });
 
-        // Função global caso queira ligar/desligar por algum elemento externo
         window.alternarAudioGlobal = function(e) {
             if (e) e.stopPropagation();
             inicializarAudioContext();
             somLigado = !somLigado;
+
+            const btn = document.getElementById('btn-som-toggle');
+            if (btn) {
+                btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Sem Som";
+                btn.style.background = somLigado ? "#059669" : "#dc2626";
+            }
 
             if (somLigado) {
                 iniciarMusicaDeFundo();
@@ -497,16 +541,6 @@
         window.onload = () => {
             iniciarMiniCraque();
         };
-    </script>
-
-    <!-- Script de Banners do Topo -->
-    <script src="bannersjogo.js"></script>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            if (typeof carregarSistemaDeBanners === 'function') {
-                carregarSistemaDeBanners("⚽ Mini Craque", "forca.html");
-            }
-        });
     </script>
 </body>
 </html>
