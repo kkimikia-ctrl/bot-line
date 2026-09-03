@@ -46,6 +46,72 @@
         <div id="teclado-letras" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 350px; margin: 0 auto;"></div>
     </div>
 
+    <!-- Firebase SDKs com Validação do Top 100 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, limit, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+          authDomain: "ajuda-jp.firebaseapp.com",
+          projectId: "ajuda-jp",
+          storageBucket: "ajuda-jp.firebasestorage.app",
+          messagingSenderId: "40121072206",
+          appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+        };
+
+        let db = null;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            window.dbFirebase = db;
+        } catch (err) {
+            console.error("Erro Firebase:", err);
+        }
+
+        window.salvarNoFirebase = async function(nomeJogador, pontosJogador) {
+            if (!window.dbFirebase) {
+                alert("Erro de conexão com o banco de dados do Ranking Global.");
+                return;
+            }
+            try {
+                const colecaoRef = collection(window.dbFirebase, "ranking_forca");
+
+                const q = query(colecaoRef, orderBy("pontos", "desc"), limit(100));
+                const querySnapshot = await getDocs(q);
+                
+                let pontuacoesTop = [];
+                querySnapshot.forEach((docSnap) => {
+                    pontuacoesTop.push(docSnap.data().pontos);
+                });
+
+                if (pontuacoesTop.length >= 100) {
+                    const menorPontuacaoTop100 = pontuacoesTop[pontuacoesTop.length - 1];
+                    
+                    if (pontosJogador <= menorPontuacaoTop100) {
+                        alert(`Sua pontuação (${pontosJogador}) não atingiu o mínimo necessário para entrar no Top 100 (mínimo atual: ${menorPontuacaoTop100} pts). Tente novamente!`);
+                        return;
+                    }
+                }
+
+                const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
+                await setDoc(doc(colecaoRef, idUnicoDoc), {
+                    nome: nomeJogador,
+                    pontos: Number(pontosJogador),
+                    data: new Date().toISOString()
+                });
+                
+                localStorage.setItem('ultimoJogoRetorno', 'forca.html');
+
+                alert("✅ Parabéns! Sua pontuação entrou para o Top 100 Global!");
+                window.location.href = "ranking.html";
+            } catch (e) {
+                console.error("Erro ao salvar no Firebase:", e);
+                alert("Erro ao salvar pontuação online.");
+            }
+        };
+    </script>
+
     <script>
         const bancoPalavrasForca = [
             { palavra: "COMPUTADOR", dica: "Equipamento eletrônico de dados" },
@@ -184,13 +250,9 @@
             let nomeJogador = prompt("🏆 Digite seu nome para o Ranking:", "Jogador");
             
             if (nomeJogador && nomeJogador.trim() !== "") {
-                let storageKey = "ranking_Jogo_da_Forca";
-                let ranking = JSON.parse(localStorage.getItem(storageKey) || "[]");
-                ranking.push({ nome: nomeJogador.trim(), pontos: pontosForca });
-                ranking.sort((a, b) => b.pontos - a.pontos);
-                localStorage.setItem(storageKey, JSON.stringify(ranking.slice(0, 30)));
-                
-                alert(`✅ Pontuação de ${nomeJogador} (${pontosForca} pts) salva com sucesso no Ranking!`);
+                if (window.salvarNoFirebase) {
+                    window.salvarNoFirebase(nomeJogador.trim(), pontosForca);
+                }
             }
         }
 
