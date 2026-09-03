@@ -22,7 +22,7 @@
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
             
-            <!-- Tela de Início: Escolha de Modo -->
+            <!-- Tela de Início: Apenas Escolha de Modo (Sem tela de nome antes) -->
             <div id="velha-modo-escolha" style="margin: 15px 0;">
                 <p style="font-weight: bold; margin-top: 15px;">Escolha o modo:</p>
                 <button onclick="iniciarJogoCompleto('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
@@ -52,7 +52,7 @@
 
                 <button onclick="proximaRodada()" id="btn-proxima" class="action-btn" style="background-color: #16a34a; display: none;">Próxima Partida ➡️</button>
                 
-                <!-- Botão para Salvar Pontos com confirmação Sim/Não para o Ranking -->
+                <!-- Botão para Salvar Pontos (Abre o prompt de nome e pergunta se quer ir ao ranking) -->
                 <button onclick="salvarPontuacaoFirebase()" id="btn-salvar-manual" class="action-btn" style="background-color: #0284c7;">💾 Salvar Pontos</button>
                 
                 <button onclick="reiniciarTudo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente</button>
@@ -163,7 +163,7 @@
             document.getElementById('velha-modo-escolha').style.display = 'block';
         }
 
-        // Função de salvar com o prompt do nome e a pergunta (confirm) se deseja ir ao ranking
+        // Função que abre o prompt de nome ao clicar em salvar e pergunta se deseja ir para o ranking (Sim/Não)
         function salvarPontuacaoFirebase() {
             let nomeSalvo = localStorage.getItem('nomeJogadorCentral') || "Jogador";
             let nomeJogador = prompt("🏆 Digite seu nome para o Ranking Global:", nomeSalvo);
@@ -179,14 +179,12 @@
                 data: new Date().toISOString()
             })
             .then(() => {
-                // Pergunta se quer ir para o ranking (OK = Sim / Cancelar = Não)
-                let irRanking = confirm("✅ Pontuação salva com sucesso!\n\nDeseja ir para a página do Ranking?");
+                let irRanking = confirm("✅ Pontuação salva com sucesso no Ranking Global!\n\nDeseja ir para a página do Ranking?");
                 
                 if (irRanking) {
                     localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
                     window.location.href = "ranking.html";
                 }
-                // Se clicar em "Cancelar", ele apenas permanece na página do jogo.
             })
             .catch((error) => {
                 console.error("Erro ao salvar: ", error);
