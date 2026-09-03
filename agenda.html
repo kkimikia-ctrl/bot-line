@@ -192,11 +192,11 @@
 
     <header class="header">
         <a href="index.html" class="header-btn">◀ Voltar</a>
-        <div class="header-title">📅 Agenda da Semana</div>
+        <div class="header-title">📅 Próximos 7 Dias</div>
         <a href="mes.html" class="header-btn">Ver Mês ▶</a>
     </header>
 
-    <!-- Barra de Regiões com as grandes regiões do Japão -->
+    <!-- Barra de Regiões -->
     <div class="regions-container">
         <button class="region-btn active" data-regiao="todas">🌐 Todas</button>
         <button class="region-btn" data-regiao="tokai">📍 Tokai (Aichi/Shizuoka/Gifu)</button>
@@ -212,40 +212,69 @@
     <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
             <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="mini-banner-3.jpg" alt="Destaque 3"></a>
             <a href="mini-banner-4.jpg" alt="Destaque 4"></a>
         </div>
     </section>
 
     <div class="container">
-        <!-- Campo de Pesquisa por Texto (Ex: Toyohashi, Tokyo, etc.) -->
+        <!-- Campo de Pesquisa por Texto -->
         <input type="text" id="searchInput" class="search-box" placeholder="🔍 Pesquisar evento ou cidade (ex: Toyohashi)...">
 
-        <!-- Dias da Semana com as respectivas regiões cadastradas -->
-        <div class="card" data-regiao="tokai">
-            <div class="card-date">Segunda-feira, 24 de Agosto</div>
-            <div class="card-content">🌸 Festival Cultural da Cidade - 14:00 na Praça Central (Toyohashi - Aichi / Tokai)</div>
-        </div>
-        <div class="card" data-regiao="tokai">
-            <div class="card-date">Terça-feira, 25 de Agosto</div>
-            <div class="card-content">📌 Reunião comunitária em Hamamatsu - Shizuoka (Tokai)</div>
-        </div>
-        <div class="card" data-regiao="kanto">
-            <div class="card-date">Quarta-feira, 26 de Agosto</div>
-            <div class="card-content">🇧🇷 Encontro da Comunidade Brasileira - Tokyo (Kanto)</div>
-        </div>
-        <div class="card" data-regiao="kansai">
-            <div class="card-date">Quinta-feira, 27 de Agosto</div>
-            <div class="card-content">🎨 Feira de Arte e Artesanato - Osaka (Kansai)</div>
-        </div>
-        <div class="card" data-regiao="tokai">
-            <div class="card-date">Sexta-feira, 28 de Agosto</div>
-            <div class="card-content">🎵 Encontro Musical - Nagoya, Aichi (Tokai)</div>
-        </div>
+        <!-- Onde os cartões dos próximos 7 dias serão inseridos dinamicamente -->
+        <div id="cardsContainer"></div>
     </div>
 
     <script>
+        // Lista de eventos cadastrados no sistema (você pode carregar do seu banco de dados aqui)
+        const eventosCadastrados = [
+            { data: '2026-09-03', regiao: 'tokai', texto: '🌸 Festival Cultural da Cidade - 14:00 na Praça Central (Toyohashi - Aichi / Tokai)' },
+            { data: '2026-09-04', regiao: 'tokai', texto: '📌 Reunião comunitária em Hamamatsu - Shizuoka (Tokai)' },
+            { data: '2026-09-06', regiao: 'kanto', texto: '🇧🇷 Encontro da Comunidade Brasileira - Tokyo (Kanto)' },
+            { data: '2026-09-08', regiao: 'kansai', texto: '🎨 Feira de Arte e Artesanato - Osaka (Kansai)' },
+            { data: '2026-09-09', regiao: 'tokai', texto: '🎵 Encontro Musical - Nagoya, Aichi (Tokai)' }
+        ];
+
+        // Gerar dinamicamente os próximos 7 dias a partir de hoje
+        const container = document.getElementById('cardsContainer');
+        const hoje = new Date();
+
+        for (let i = 0; i < 7; i++) {
+            const dataAtual = new Date(hoje);
+            dataAtual.setDate(hoje.getDate() + i);
+
+            // Formatar a data no formato YYYY-MM-DD para comparar com os eventos
+            const ano = dataAtual.getFullYear();
+            const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+            const dia = String(dataAtual.getDate).padStart(2, '0'); // Correção do getDay para getDate
+            // Usando string formatada yyyy-mm-dd
+            const yyyy = dataAtual.getFullYear();
+            const mm = String(dataAtual.getMonth() + 1).padStart(2, '0');
+            const dd = String(dataAtual.getDate()).padStart(2, '0');
+            const dataFormatadaStr = `${yyyy}-${mm}-${dd}`;
+
+            // Nome do dia da semana e data legível em Português
+            const opcoesData = { weekday: 'long', day: 'numeric', month: 'long' };
+            const dataLegivel = dataAtual.toLocaleDateString('pt-BR', opcoesData);
+            const dataCapitalizada = dataLegivel.charAt(0).toUpperCase() + dataLegivel.slice(1);
+
+            // Procurar se há evento para esta data específica
+            const eventoEncontrado = eventosCadastrados.find(ev => ev.data === dataFormatadaStr);
+
+            // Criar o HTML do cartão
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.setAttribute('data-regiao', eventoEncontrado ? eventoEncontrado.regiao : 'nenhuma');
+
+            card.innerHTML = `
+                <div class="card-date">${dataCapitalizada}</div>
+                <div class="card-content">${eventoEncontrado ? eventoEncontrado.texto : 'Nenhum evento programado.'}</div>
+            `;
+
+            container.appendChild(card);
+        }
+
         // Script do Carrossel Infinito
         const track = document.getElementById('carouselTrack');
         const items = Array.from(track.children);
@@ -262,16 +291,16 @@
 
         // Script de Filtro por Botões de Região
         const botoesRegiao = document.querySelectorAll('.region-btn');
-        const cardsEvento = document.querySelectorAll('.card');
         const searchInput = document.getElementById('searchInput');
 
         botoesRegiao.forEach(botao => {
             botao.addEventListener('click', () => {
                 botoesRegiao.forEach(b => b.classList.remove('active'));
                 botao.classList.add('active');
-                searchInput.value = ''; // Limpa a barra de pesquisa ao clicar em um botão de região
+                searchInput.value = ''; 
 
                 const regiaoSelecionada = botao.getAttribute('data-regiao');
+                const cardsEvento = document.querySelectorAll('.card');
 
                 cardsEvento.forEach(card => {
                     const regiaoCard = card.getAttribute('data-regiao');
@@ -284,9 +313,10 @@
             });
         });
 
-        // Script de Pesquisa por Texto (Ex: Toyohashi)
+        // Script de Pesquisa por Texto
         searchInput.addEventListener('input', (e) => {
             const termo = e.target.value.toLowerCase().trim();
+            const cardsEvento = document.querySelectorAll('.card');
 
             botoesRegiao.forEach(b => b.classList.remove('active'));
             document.querySelector('.region-btn[data-regiao="todas"]').classList.add('active');
