@@ -220,32 +220,54 @@
             document.getElementById('velha-modo-escolha').style.display = 'block';
         }
 
-        function salvarPontuacaoFirebase() {
+        async function salvarPontuacaoFirebase() {
+            if (pontos <= 0) {
+                alert("Você precisa fazer alguns pontos antes de salvar!");
+                return;
+            }
+
             let nomeSalvo = localStorage.getItem('nomeJogadorCentral') || "Jogador";
             let nomeJogador = prompt("🏆 Digite seu nome para o Ranking Global:", nomeSalvo);
             
             if (!nomeJogador || nomeJogador.trim() === "") return;
             
+            nomeJogador = nomeJogador.trim();
             localStorage.setItem('nomeJogadorCentral', nomeJogador);
-            
-            const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
-            db.collection("ranking_velha").doc(idUnicoDoc).set({
-                nome: nomeJogador.trim(),
-                pontos: Number(pontos),
-                data: new Date().toISOString()
-            })
-            .then(() => {
-                let irRanking = confirm("✅ Pontuação salva com sucesso no Ranking Global!\n\nDeseja ir para a página do Ranking?");
+
+            try {
+                const colecaoRef = db.collection("ranking_velha");
+
+                const querySnapshot = await colecaoRef.orderBy("pontos", "desc").limit(100).get();
                 
-                if (irRanking) {
-                    localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
-                    window.location.href = "ranking.html";
+                let pontuacoesTop = [];
+                querySnapshot.forEach((docSnap) => {
+                    pontuacoesTop.push(docSnap.data().pontos);
+                });
+
+                if (pontuacoesTop.length >= 100) {
+                    const menorPontuacaoTop100 = pontuacoesTop[pontuacoesTop.length - 1];
+                    
+                    if (pontos <= menorPontuacaoTop100) {
+                        alert(`Sua pontuação (${pontos}) não atingiu o mínimo necessário para entrar no Top 100 (mínimo atual: ${menorPontuacaoTop100} pts). Tente novamente!`);
+                        return;
+                    }
                 }
-            })
-            .catch((error) => {
-                console.error("Erro ao salvar: ", error);
-                alert("❌ Erro ao salvar pontuação no ranking.");
-            });
+
+                const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
+                await colecaoRef.doc(idUnicoDoc).set({
+                    nome: nomeJogador,
+                    pontos: Number(pontos),
+                    data: new Date().toISOString()
+                });
+                
+                localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
+
+                alert("✅ Parabéns! Sua pontuação entrou para o Top 100 Global!");
+                window.location.href = "ranking.html";
+            } catch (error) {
+                console.error("Erro ao salvar no Firebase:", error);
+                alert("❌ Erro ao salvar pontuação online.");
+            }
         }
 
         // Script do Carrossel Infinito
