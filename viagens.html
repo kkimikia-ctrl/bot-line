@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             text-align: center;
-            padding-top: 175px; /* Altura ajustada para acomodar o cabeçalho, carrossel e abas fixas */
+            padding-top: 175px; /* Espaço para cabeçalho, carrossel e abas */
         }
         .header {
             background-color: #0d47a1;
@@ -24,7 +24,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 1000;
+            z-index: 3001; /* Fica acima de tudo */
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
@@ -59,7 +59,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        /* --- CLASSE DO CARROSSEL INFINITO QUE FALTAVA --- */
+        /* --- CARROSSEL INFINITO DE BANNERS (100px) --- */
         .banner-carousel {
             position: fixed;
             top: 45px;
@@ -68,7 +68,7 @@
             background: rgba(13, 71, 161, 0.95);
             backdrop-filter: blur(5px);
             padding: 10px 0;
-            z-index: 999;
+            z-index: 3000; /* Acima da tela de detalhes */
             overflow-x: auto;
             display: flex;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -219,7 +219,7 @@
             margin: 0;
         }
 
-        /* Tela de Detalhes da Postagem corrigida */
+        /* Tela de Detalhes da Postagem */
         .details-overlay {
             display: none;
             position: fixed;
@@ -228,36 +228,16 @@
             width: 100%;
             height: 100%;
             background: #f4f4f9;
-            z-index: 3000;
+            z-index: 2999; /* Fica abaixo do cabeçalho e do carrossel, mas acima do resto */
             overflow-y: auto;
             text-align: left;
             box-sizing: border-box;
-        }
-        .details-header {
-            background-color: #0d47a1;
-            color: white;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            box-sizing: border-box;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .details-header h2 {
-            font-size: 16px;
-            margin: 0;
-            flex-grow: 1;
-            text-align: center;
+            padding-top: 145px; /* Empurra o conteúdo para baixo dos elementos fixos do topo */
         }
         .details-body {
             max-width: 600px;
             margin: 0 auto;
-            padding: 70px 15px 50px 15px;
+            padding: 10px 15px 50px 15px;
         }
         .details-gallery {
             position: relative;
@@ -345,7 +325,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 2000;
+            z-index: 4000;
             justify-content: center;
             align-items: center;
             padding: 20px 0;
@@ -413,7 +393,7 @@
         <button class="publish-header-btn" onclick="openModal()">Publicar</button>
     </div>
 
-    <!-- Carrossel de Banners Fixo no Topo (Tamanho Padrão 100px) -->
+    <!-- Carrossel de Banners Fixo no Topo (Visível em todas as telas) -->
     <div class="banner-carousel">
         <div class="carousel-track" id="carouselTrack">
             <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-lazer-1', 'fale-conosco.html')">
@@ -465,11 +445,6 @@
 
     <!-- Tela de Detalhes da Postagem -->
     <div class="details-overlay" id="detailsView">
-        <div class="details-header">
-            <button class="back-btn" onclick="closeDetails()">⬅️ Voltar</button>
-            <h2 id="detTitleHeader">Detalhes do Local</h2>
-            <div style="width: 40px;"></div>
-        </div>
         <div class="details-body">
             <div class="details-gallery" id="detailsGalleryContainer">
                 <button class="gallery-nav gallery-prev" onclick="prevPhoto()">❮</button>
@@ -597,7 +572,6 @@
 
         function openDetails(title, location, desc, photos, isOwner = true) {
             document.getElementById('detTitle').innerText = title;
-            document.getElementById('detTitleHeader').innerText = title;
             document.getElementById('detLocation').innerText = location;
             document.getElementById('detDesc').innerText = desc;
             
@@ -609,10 +583,15 @@
             renderGallery();
 
             document.getElementById('detailsView').style.display = 'block';
+            
+            // Oculta as abas de regiões na tela de detalhes para não atrapalhar
+            document.querySelector('.regions-scroll-container').style.display = 'none';
         }
 
         function closeDetails() {
             document.getElementById('detailsView').style.display = 'none';
+            // Reexibe as abas de regiões ao voltar
+            document.querySelector('.regions-scroll-container').style.display = 'flex';
         }
 
         function renderGallery() {
