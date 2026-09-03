@@ -18,7 +18,7 @@
             color: #333;
             padding-bottom: 50px;
             text-align: center;
-            padding-top: 155px !important; /* Espaço para o banner fixo no topo */
+            padding-top: 130px !important; /* Espaço para o menu do topo */
             overscroll-behavior-y: none;
         }
         
@@ -30,6 +30,23 @@
             border-radius: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             margin-bottom: 25px;
+        }
+
+        /* Botão de Som Global Fixo e Garantido no Topo */
+        #barra-som-topo {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 99999;
+            background: #1e293b;
+            color: white;
+            border: 2px solid white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         /* Canvas do Mini Craque */
@@ -46,6 +63,9 @@
     </style>
 </head>
 <body>
+
+    <!-- BOTÃO DE SOM GARANTIDO NO TOPO DA TELA -->
+    <button id="barra-som-topo" onclick="alternarAudioGlobal(event)">🔊 Som: Ligado</button>
 
     <div class="container">
         <div id="container-minicraque" class="card-game" style="display: block;">
@@ -130,9 +150,11 @@
             inicializarAudioContext();
             somLigado = !somLigado;
             
-            document.querySelectorAll('.btnAudioToggleNav').forEach(btn => {
+            const btn = document.getElementById('barra-som-topo');
+            if (btn) {
                 btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Sem Som";
-            });
+                btn.style.background = somLigado ? "#1e293b" : "#dc2626";
+            }
 
             if (somLigado) {
                 iniciarMusicaDeFundo();
@@ -205,11 +227,6 @@
                 clearInterval(musicaIntervalo);
                 musicaIntervalo = null;
             }
-        }
-
-        function voltarMenuJogos() {
-            pararMiniCraque();
-            window.location.href = "forca.html";
         }
 
         /* LÓGICA DO MINI CRAQUE */
@@ -495,14 +512,12 @@
         };
     </script>
 
-    <!-- Sistema de Banners Dinâmicos Integrado com o Botão de Volume Correto no Topo -->
+    <!-- Script de Banners (Mantido de forma segura) -->
     <script src="bannersjogo.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof carregarSistemaDeBanners === 'function') {
-                carregarSistemaDeBanners("⚽ Mini Craque", "forca.html", `
-                    <button class="btnAudioToggleNav" onclick="alternarAudioGlobal(event)" style="background: rgba(255,255,255,0.25); border: 1px solid white; color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold;">🔊 Som: Ligado</button>
-                `);
+                carregarSistemaDeBanners("⚽ Mini Craque", "forca.html");
             }
         });
     </script>
