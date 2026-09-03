@@ -5,38 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mini Craque - Central de Jogos</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
             padding: 10px;
             color: #333;
             padding-bottom: 50px;
             text-align: center;
-        }
-
-        /* Cabeçalho */
-        .header {
-            background-color: #0047ab;
-            color: white;
-            padding: 8px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-        }
-        .header h1 { font-size: 14px; margin: 0; }
-        .btn-audio-toggle {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid white;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: bold;
+            padding-top: 155px !important; /* Espaço para o banner fixo no topo */
+            overscroll-behavior-y: none;
         }
         
         .container { max-width: 600px; margin: 0 auto; }
@@ -60,36 +43,9 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             touch-action: none;
         }
-
-        /* Abas do Ranking */
-        .ranking-tabs {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-            margin-bottom: 12px;
-        }
-        .ranking-tab-btn {
-            background: #e2e8f0;
-            border: none;
-            padding: 6px 4px;
-            font-size: 11px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            color: #333;
-        }
-        .ranking-tab-btn.active {
-            background: #0047ab;
-            color: white;
-        }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>⚽ Mini Craque</h1>
-        <button id="btnAudioToggle" class="btn-audio-toggle" onclick="alternarAudio(event)">🔊 Som: Ligado</button>
-    </div>
 
     <div class="container">
         <div id="container-minicraque" class="card-game" style="display: block;">
@@ -107,28 +63,52 @@
         </div>
     </div>
 
-    <!-- Modal do Ranking -->
-    <div id="modalRanking" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
-        <div style="background: white; padding: 15px; border-radius: 12px; width: 92%; max-width: 420px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-            <h3 style="color: #0047ab; margin-top: 0; margin-bottom: 10px;">🏆 Rankings dos Jogos</h3>
-            
-            <div class="ranking-tabs">
-                <button onclick="mudarAbaRanking('Mini Craque')" id="tab-Mini-Craque" class="ranking-tab-btn active">Mini Craque</button>
-                <button onclick="mudarAbaRanking('Jogo da Velha')" id="tab-Jogo-da-Velha" class="ranking-tab-btn">Velha</button>
-                <button onclick="mudarAbaRanking('Jogo da Forca')" id="tab-Jogo-da-Forca" class="ranking-tab-btn">Forca</button>
-                <button onclick="mudarAbaRanking('Jogo da Memória')" id="tab-Jogo-da-Memória" class="ranking-tab-btn">Memória</button>
-                <button onclick="mudarAbaRanking('Jokenpô Brasil')" id="tab-Jokenpô-Brasil" class="ranking-tab-btn">Jokenpô</button>
-                <button onclick="mudarAbaRanking('Jogo da Cobrinha')" id="tab-Jogo-da-Cobrinha" class="ranking-tab-btn">Cobrinha</button>
-            </div>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addset, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-            <div style="max-height: 240px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tbody id="tabelaRankingCorpo"></tbody>
-                </table>
-            </div>
-            <button onclick="tocarEfeito('clique'); fecharModalRanking()" style="background: #dc2626; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">Fechar</button>
-        </div>
-    </div>
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+          authDomain: "ajuda-jp.firebaseapp.com",
+          projectId: "ajuda-jp",
+          storageBucket: "ajuda-jp.firebasestorage.app",
+          messagingSenderId: "40121072206",
+          appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+        };
+
+        let db = null;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            window.dbFirebase = db;
+        } catch (err) {
+            console.error("Erro Firebase:", err);
+        }
+
+        window.salvarNoFirebase = async function(nomeJogador, pontosJogador) {
+            if (!window.dbFirebase) {
+                alert("Erro de conexão com o banco de dados do Ranking Global.");
+                return;
+            }
+            try {
+                // Salva na mesma coleção 'ranking_minicraque' que a tela de ranking lê
+                const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
+                await setDoc(doc(window.dbFirebase, "ranking_minicraque", idUnicoDoc), {
+                    nome: nomeJogador,
+                    pontos: Number(pontosJogador),
+                    data: new Date().toISOString()
+                });
+                tocarEfeito('vitoria');
+                alert("✅ Pontuação salva com sucesso no Ranking Global!");
+                // Redireciona para a tela de ranking para o jogador ver o nome dele lá
+                window.location.href = "ranking.html";
+            } catch (e) {
+                console.error("Erro ao salvar no Firebase:", e);
+                alert("Erro ao salvar pontuação online.");
+            }
+        };
+    </script>
 
     <script>
         /* SISTEMA DE ÁUDIO E MÚSICA */
@@ -149,19 +129,20 @@
             }
         }
 
-        function alternarAudio(e) {
-            e.stopPropagation();
+        window.alternarAudioGlobal = function(e) {
+            if (e) e.stopPropagation();
             somLigado = !somLigado;
-            let btn = document.getElementById('btnAudioToggle');
+            let btn = document.getElementById('btnAudioToggleNav');
+            if (btn) {
+                btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
+            }
             if (somLigado) {
-                btn.innerText = "🔊 Som: Ligado";
                 inicializarAudioContext();
                 iniciarMusicaDeFundo();
             } else {
-                btn.innerText = "🔇 Som: Desligado";
                 pararMusicaDeFundo();
             }
-        }
+        };
 
         function tocarEfeito(tipo) {
             if (!somLigado) return;
@@ -227,66 +208,6 @@
                 clearInterval(musicaIntervalo);
                 musicaIntervalo = null;
             }
-        }
-
-        /* RANKING */
-        let jogoRankingAtual = 'Mini Craque';
-
-        function salvarPontuacaoGlobal(nomeJogo, pontos) {
-            if (pontos <= 0) {
-                alert("Jogue e acumule pontos antes de salvar!");
-                return;
-            }
-            let nome = prompt("🏆 Digite seu nome para o Ranking:", "Jogador") || "Jogador";
-            let storageKey = `ranking_${nomeJogo.replace(/\s+/g, '_')}`;
-            let ranking = JSON.parse(localStorage.getItem(storageKey) || "[]");
-            ranking.push({ nome: nome, pontos: pontos });
-            ranking.sort((a, b) => b.pontos - a.pontos);
-            localStorage.setItem(storageKey, JSON.stringify(ranking.slice(0, 30)));
-            tocarEfeito('vitoria');
-            alert("✅ Pontuação salva com sucesso no Ranking!");
-            jogoRankingAtual = nomeJogo;
-            abrirModalRanking();
-        }
-
-        function abrirModalRanking() {
-            const modal = document.getElementById('modalRanking');
-            if (modal) { modal.style.display = 'flex'; mudarAbaRanking(jogoRankingAtual); }
-        }
-
-        function fecharModalRanking() {
-            const modal = document.getElementById('modalRanking');
-            if (modal) modal.style.display = 'none';
-        }
-
-        function mudarAbaRanking(nomeJogo) {
-            jogoRankingAtual = nomeJogo;
-            const abas = ['Mini Craque', 'Jogo da Velha', 'Jogo da Forca', 'Jogo da Memória', 'Jokenpô Brasil', 'Jogo da Cobrinha'];
-            abas.forEach(aba => {
-                let btnId = `tab-${aba.replace(/\s+/g, '-')}`;
-                let btn = document.getElementById(btnId);
-                if (btn) btn.classList.toggle('active', aba === nomeJogo);
-            });
-            carregarDadosRankingPorJogo(nomeJogo);
-        }
-
-        function carregarDadosRankingPorJogo(nomeJogo) {
-            const corpoTabela = document.getElementById('tabelaRankingCorpo');
-            if (!corpoTabela) return;
-            let storageKey = `ranking_${nomeJogo.replace(/\s+/g, '_')}`;
-            let rankingSalvo = JSON.parse(localStorage.getItem(storageKey)) || [];
-            if (rankingSalvo.length === 0) {
-                corpoTabela.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding: 20px;">Nenhum recorde salvo para ${nomeJogo} ainda.</td></tr>`;
-                return;
-            }
-            rankingSalvo.sort((a, b) => b.pontos - a.pontos);
-            let html = "";
-            rankingSalvo.slice(0, 30).forEach((item, index) => {
-                let pos = index + 1;
-                let medalha = pos === 1 ? "🥇" : pos === 2 ? "🥈" : pos === 3 ? "🥉" : `${pos}º`;
-                html += `<tr><td style="font-weight:bold; text-align:center; padding: 6px; width: 40px;">${medalha}</td><td style="text-align:left; padding: 6px; word-break: break-all;">${item.nome}</td><td style="font-weight:bold; color:#1976d2; text-align:right; padding: 6px; width: 80px;">${item.pontos} pts</td></tr>`;
-            });
-            corpoTabela.innerHTML = html;
         }
 
         function voltarMenuJogos() {
@@ -481,14 +402,10 @@
                 alert('Fim de jogo no Mini Craque! Pontuação final: ' + finalScore);
                 
                 if (finalScore > 0) {
-                    let nome = prompt("🏆 Digite seu nome para o Ranking:", "Jogador") || "Jogador";
-                    let storageKey = "ranking_Mini_Craque";
-                    let ranking = JSON.parse(localStorage.getItem(storageKey) || "[]");
-                    ranking.push({ nome: nome, pontos: finalScore });
-                    ranking.sort((a, b) => b.pontos - a.pontos);
-                    localStorage.setItem(storageKey, JSON.stringify(ranking.slice(0, 30)));
-                    jogoRankingAtual = "Mini Craque";
-                    abrirModalRanking();
+                    let nome = prompt("🏆 Digite seu nome para o Ranking Global:", "Jogador") || "Jogador";
+                    if (window.salvarNoFirebase) {
+                        window.salvarNoFirebase(nome, finalScore);
+                    }
                 }
 
                 scoreCraque = 0;
@@ -565,20 +482,31 @@
             }
         }
 
-        function salvarPontuacaoRankingMiniCraqueManual() { salvarPontuacaoGlobal("Mini Craque", scoreCraque); }
+        function salvarPontuacaoRankingMiniCraqueManual() { 
+            if (scoreCraque <= 0) {
+                alert("Jogue e acumule pontos antes de salvar!");
+                return;
+            }
+            let nome = prompt("🏆 Digite seu nome para o Ranking Global:", "Jogador") || "Jogador";
+            if (window.salvarNoFirebase) {
+                window.salvarNoFirebase(nome, scoreCraque);
+            }
+        }
 
-        // Inicializa o jogo ao carregar a página
         window.onload = () => {
             iniciarMiniCraque();
         };
     </script>
 
-    <!-- Sistema de Banners Dinâmicos Integrado -->
+    <!-- Sistema de Banners Dinâmicos Integrado com Botão de Som no Topo -->
     <script src="bannersjogo.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof carregarSistemaDeBanners === 'function') {
-                carregarSistemaDeBanners("⚽ Mini Craque", "forca.html");
+                // Insere o título e o botão de som diretamente no menu superior do script de banners
+                carregarSistemaDeBanners("⚽ Mini Craque", "forca.html", `
+                    <button id="btnAudioToggleNav" onclick="alternarAudioGlobal(event)" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold;">🔊 Som: Ligado</button>
+                `);
             }
         });
     </script>
