@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jogo da Velha</title>
+    <title>Jogo da Forca</title>
     <!-- Importando o Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -13,50 +13,40 @@
         .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .action-btn { background-color: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .painel-info { display: flex; justify-content: space-around; background: #e0f2fe; padding: 8px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; font-size: 14px; color: #0369a1; }
+        .letra-btn { width: 35px; height: 35px; font-size: 16px; font-weight: bold; margin: 3px; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer; }
+        .letra-btn:disabled { background: #cbd5e1; opacity: 0.6; cursor: not-allowed; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card-game">
-            <!-- Botão Voltar ajustado para a Central de Jogos -->
             <button onclick="window.location.href='central.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar</button>
             <div style="clear: both;"></div>
-            <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
+            <h3 style="color: #0047ab; margin: 5px 0;">🎯 Jogo da Forca </h3>
             
-            <!-- Tela de Início: Escolha de Modo -->
-            <div id="velha-modo-escolha" style="margin: 15px 0;">
-                <p style="font-weight: bold; margin-top: 15px;">Escolha o modo:</p>
-                <button onclick="iniciarJogoCompleto('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
-                <button onclick="iniciarJogoCompleto('pc')" class="action-btn">🤖 Jogar contra PC</button>
-            </div>
-
-            <!-- Tela do Jogo -->
-            <div id="velha-area-jogo" style="display: none;">
+            <div id="forca-area-jogo">
                 <div class="painel-info">
-                    <div>❤️ Vidas: <span id="txt-vidas">2</span></div>
+                    <div>❌ Erros: <span id="txt-erros">0</span>/6</div>
                     <div>🏆 Pontos: <span id="txt-pontos">0</span></div>
                 </div>
 
-                <div style="font-weight: bold; margin-bottom: 10px;"><span id="status-jogo">Vez do X</span></div>
+                <div style="font-size: 13px; color: #64748b; margin-bottom: 5px;">Dica: <span id="txt-dica" style="font-weight: bold; color: #0f172a;">-</span></div>
                 
-                <div style="display: grid; grid-template-columns: repeat(3, 85px); gap: 5px; justify-content: center; margin-bottom: 15px;">
-                    <button onclick="jogar(0)" id="c-0" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(1)" id="c-1" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(2)" id="c-2" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(3)" id="c-3" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(4)" id="c-4" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(5)" id="c-5" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(6)" id="c-6" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(7)" id="c-7" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
-                    <button onclick="jogar(8)" id="c-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
+                <!-- Desenho da Forca Simplificado -->
+                <div style="font-family: monospace; font-size: 20px; background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 10px; letter-spacing: 2px;" id="txt-palavra">
+                    _ _ _ _ _
                 </div>
 
-                <button onclick="proximaRodada()" id="btn-proxima" class="action-btn" style="background-color: #16a34a; display: none;">Próxima Partida ➡️</button>
+                <div id="teclado-letras" style="margin-bottom: 15px; max-width: 350px; margin-left: auto; margin-right: auto;">
+                    <!-- Teclado gerado via JS -->
+                </div>
+
+                <button onclick="proximaPalavra()" id="btn-proxima" class="action-btn" style="background-color: #16a34a; display: none;">Próxima Palavra ➡️</button>
                 
-                <!-- Botão para Salvar Pontos -->
+                <!-- Botão Salvar Pontos idêntico ao padrão desejado -->
                 <button onclick="salvarPontuacaoFirebase()" id="btn-salvar-manual" class="action-btn" style="background-color: #0284c7;">💾 Salvar Pontos</button>
                 
-                <button onclick="reiniciarTudo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente</button>
+                <button onclick="reiniciarJogo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente</button>
             </div>
         </div>
     </div>
@@ -75,93 +65,108 @@
         }
         const db = firebase.firestore();
 
-        let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
-        let vidas = 2;
+        const listaPalavras = [
+            { palavra: "PROGRAMACAO", dica: "Desenvolvimento de softwares" },
+            { palavra: "COMPUTADOR", dica: "Máquina usada para trabalhar e jogar" },
+            { palavra: "FUTEBOL", dica: "Esporte mais popular do mundo" },
+            { palavra: "INTERNET", dica: "Rede mundial de computadores" },
+            { palavra: "GATO", dica: "Animal felino de estimação" },
+            { palavra: "BANANA", dica: "Fruta amarela rica em potássio" },
+            { palavra: "ESCOLA", dica: "Lugar onde aprendemos" },
+            { palavra: "PIANO", dica: "Instrumento musical de teclas" }
+        ];
+
+        let palavraSecreta = "";
+        let dicaAtual = "";
+        let letrasDescobertas = [];
+        let erros = 0;
         let pontos = 0;
 
-        function iniciarJogoCompleto(m) {
-            modo = m;
-            vidas = 2;
+        function iniciarJogo() {
+            erros = 0;
             pontos = 0;
-            document.getElementById('txt-vidas').innerText = vidas;
             document.getElementById('txt-pontos').innerText = pontos;
             document.getElementById('btn-salvar-manual').style.display = 'block';
-            document.getElementById('velha-modo-escolha').style.display = 'none';
-            document.getElementById('velha-area-jogo').style.display = 'block';
-            limparTabuleiro();
-        }
-
-        function limparTabuleiro() {
-            tabuleiro = ['', '', '', '', '', '', '', '', ''];
-            atual = 'X';
-            ativo = true;
-            document.getElementById('status-jogo').innerText = 'Vez do X';
-            document.getElementById('btn-proxima').style.display = 'none';
             document.getElementById('btn-reiniciar').style.display = 'none';
-            for (let i = 0; i < 9; i++) document.getElementById(`c-${i}`).innerText = '';
+            sortearPalavra();
         }
 
-        function jogar(i) {
-            if (tabuleiro[i] === '' && ativo) {
-                tabuleiro[i] = atual;
-                document.getElementById(`c-${i}`).innerText = atual;
-                let win = checarVitoria();
-                
-                if (win) {
-                    ativo = false;
-                    if (atual === 'X') {
-                        pontos += 10;
-                        document.getElementById('status-jogo').innerText = `🎉 Você Venceu a Rodada! (+10 pts)`;
-                        document.getElementById('txt-pontos').innerText = pontos;
-                        document.getElementById('btn-proxima').style.display = 'block';
-                    } else {
-                        vidas--;
-                        document.getElementById('txt-vidas').innerText = vidas;
-                        if (vidas > 0) {
-                            document.getElementById('status-jogo').innerText = `⚠️ Você Perdeu a Rodada! (-1 Vida)`;
-                            document.getElementById('btn-proxima').style.display = 'block';
-                        } else {
-                            document.getElementById('status-jogo').innerText = `💀 Game Over! Fim de Vidas.`;
-                            document.getElementById('btn-salvar-manual').style.display = 'none';
-                            document.getElementById('btn-reiniciar').style.display = 'block';
-                        }
+        function sortearPalavra() {
+            let item = listaPalavras[Math.floor(Math.random() * listaPalavras.length)];
+            palavraSecreta = item.palavra;
+            dicaAtual = item.dica;
+            letrasDescobertas = Array(palavraSecreta.length).fill('_');
+            erros = 0;
+            
+            document.getElementById('txt-erros').innerText = erros;
+            document.getElementById('txt-dica').innerText = dicaAtual;
+            document.getElementById('btn-proxima').style.display = 'none';
+            document.getElementById('btn-salvar-manual').style.display = 'block';
+            
+            atualizarTela();
+            criarTeclado();
+        }
+
+        function atualizarTela() {
+            document.getElementById('txt-palavra').innerText = letrasDescobertas.join(' ');
+        }
+
+        function criarTeclado() {
+            let tecladoDiv = document.getElementById('teclado-letras');
+            tecladoDiv.innerHTML = '';
+            const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            
+            for (let letra of alfabeto) {
+                let btn = document.createElement('button');
+                btn.innerText = letra;
+                btn.className = 'letra-btn';
+                btn.id = 'btn-' + letra;
+                btn.onclick = () => escolherLetra(letra);
+                tecladoDiv.appendChild(btn);
+            }
+        }
+
+        function escolherLetra(letra) {
+            let btn = document.getElementById('btn-' + letra);
+            btn.disabled = true;
+
+            if (palavraSecreta.includes(letra)) {
+                for (let i = 0; i < palavraSecreta.length; i++) {
+                    if (palavraSecreta[i] === letra) {
+                        letrasDescobertas[i] = letra;
                     }
-                    return;
                 }
+                atualizarTela();
 
-                if (!tabuleiro.includes('')) {
-                    document.getElementById('status-jogo').innerText = `Empate! Nova rodada.`;
-                    ativo = false;
+                if (!letrasDescobertas.includes('_')) {
+                    pontos += 20;
+                    document.getElementById('txt-pontos').innerText = pontos;
                     document.getElementById('btn-proxima').style.display = 'block';
-                    return;
+                    desativarTeclado();
                 }
-
-                atual = atual === 'X' ? 'O' : 'X';
-                document.getElementById('status-jogo').innerText = `Vez do ${atual}`;
-                if (modo === 'pc' && atual === 'O' && ativo) setTimeout(jogadaPC, 400);
+            } else {
+                erros++;
+                document.getElementById('txt-erros').innerText = erros;
+                if (erros >= 6) {
+                    document.getElementById('txt-palavra').innerText = palavraSecreta.split('').join(' ');
+                    document.getElementById('btn-salvar-manual').style.display = 'none';
+                    document.getElementById('btn-reiniciar').style.display = 'block';
+                    desativarTeclado();
+                }
             }
         }
 
-        function jogadaPC() {
-            let vazias = []; tabuleiro.forEach((v, i) => { if (v === '') vazias.push(i); });
-            if (vazias.length > 0) jogar(vazias[Math.floor(Math.random() * vazias.length)]);
+        function desativarTeclado() {
+            const botoes = document.querySelectorAll('.letra-btn');
+            botoes.forEach(b => b.disabled = true);
         }
 
-        function checarVitoria() {
-            const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for (let c of w) { if (tabuleiro[c[0]] && tabuleiro[c[0]] === tabuleiro[c[1]] && tabuleiro[c[0]] === tabuleiro[c[2]]) return c; }
-            return null;
+        function proximaPalavra() {
+            sortearPalavra();
         }
 
-        function proximaRodada() {
-            if (vidas > 0) {
-                limparTabuleiro();
-            }
-        }
-
-        function reiniciarTudo() {
-            document.getElementById('velha-area-jogo').style.display = 'none';
-            document.getElementById('velha-modo-escolha').style.display = 'block';
+        function reiniciarJogo() {
+            iniciarJogo();
         }
 
         function salvarPontuacaoFirebase() {
@@ -173,7 +178,7 @@
             localStorage.setItem('nomeJogadorCentral', nomeJogador);
             
             const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
-            db.collection("ranking_velha").doc(idUnicoDoc).set({
+            db.collection("ranking_forca").doc(idUnicoDoc).set({
                 nome: nomeJogador.trim(),
                 pontos: Number(pontos),
                 data: new Date().toISOString()
@@ -182,7 +187,7 @@
                 let irRanking = confirm("✅ Pontuação salva com sucesso no Ranking Global!\n\nDeseja ir para a página do Ranking?");
                 
                 if (irRanking) {
-                    localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
+                    localStorage.setItem('ultimoJogoRetorno', 'forca.html');
                     window.location.href = "ranking.html";
                 }
             })
@@ -191,6 +196,11 @@
                 alert("❌ Erro ao salvar pontuação no ranking.");
             });
         }
+
+        // Inicializa o jogo automaticamente ao carregar a página
+        window.onload = function() {
+            iniciarJogo();
+        };
     </script>
 </body>
 </html>
