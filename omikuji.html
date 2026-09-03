@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Omikuji do Dia - Sorte & Fortuna</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #70b7ff 100%);
             margin: 0;
             padding: 10px;
-            padding-top: 130px;
+            padding-top: 175px; /* Ajustado proporcionalmente para a altura padrão do carrossel */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -29,6 +30,7 @@
             width: 100%;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-sizing: border-box;
         }
         .back-btn {
             position: absolute;
@@ -40,44 +42,80 @@
             cursor: pointer;
             font-weight: bold;
         }
-        /* Contêiner fixo no topo para os dois banners lado a lado */
-        .banners-top-container {
+
+        /* --- CARROSSEL INFINITO AUTOMÁTICO DE BANNERS (PADRÃO) --- */
+        .banner-carousel {
             position: fixed;
-            top: 48px;
+            top: 45px; /* Logo abaixo do cabeçalho azul */
             left: 0;
             width: 100%;
             background: rgba(30, 60, 114, 0.95);
             backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            padding: 6px 10px;
+            padding: 10px 0;
             z-index: 999;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            overflow-x: auto;
+            display: flex;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            -webkit-overflow-scrolling: touch;
             box-sizing: border-box;
         }
-        .banner-retangulo {
-            width: 48%;
-            max-width: 190px;
-            height: 55px;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            background: #fff;
+        .banner-carousel::-webkit-scrollbar {
+            display: none;
         }
-        .banner-slide {
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            padding: 0 12px;
+            animation: rolarInfinito 35s linear infinite;
+        }
+        .banner-carousel:hover .carousel-track,
+        .banner-carousel:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .ad-banner-card {
+            flex: 0 0 160px; /* Largura padrão */
+            height: 100px; /* Altura padrão exigida */
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #b0bec5;
+            cursor: pointer;
+        }
+        .ad-banner-card img {
             width: 100%;
             height: 100%;
-            display: none;
+            object-fit: cover;
             position: absolute;
             top: 0;
             left: 0;
-            object-fit: cover;
         }
-        .banner-slide.active {
-            display: block;
+        .ad-placeholder-text {
+            font-size: 11px;
+            color: #555;
+            font-weight: bold;
+            z-index: 2;
+            text-align: center;
+            padding: 0 5px;
+            background: rgba(255, 255, 255, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
+        }
+
         .omikuji-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -167,23 +205,25 @@
         Omikuji do Dia ⛩️
     </div>
 
-    <!-- Dois Banners Retangulares Fixos no Topo com 10 imagens no total (5 de cada lado rodando) -->
-    <div class="banners-top-container">
-        <!-- Retângulo Esquerdo (5 imagens) -->
-        <div class="banner-retangulo">
-            <img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide active" alt="L1">
-            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L2">
-            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L3">
-            <img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L4">
-            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&auto=format&fit=crop&q=60" class="banner-slide left-slide" alt="L5">
-        </div>
-        <!-- Retângulo Direito (5 imagens) -->
-        <div class="banner-retangulo">
-            <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide active" alt="R1">
-            <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R2">
-            <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R3">
-            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R4">
-            <img src="https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=400&auto=format&fit=crop&q=60" class="banner-slide right-slide" alt="R5">
+    <!-- Carrossel de Banners Fixo no Topo (Tamanho Padrão) -->
+    <div class="banner-carousel">
+        <div class="carousel-track" id="carouselTrack">
+            <!-- Banner 1 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-omikuji-1', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Omikuji 1</span></div>
+            </div>
+            <!-- Banner 2 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-omikuji-2', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Omikuji 2</span></div>
+            </div>
+            <!-- Banner 3 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-omikuji-3', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Omikuji 3</span></div>
+            </div>
+            <!-- Banner 4 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-omikuji-4', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Omikuji 4</span></div>
+            </div>
         </div>
     </div>
 
@@ -197,7 +237,7 @@
 
         <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Descubra a mensagem especial que o destino reservou para você hoje:</p>
         
-        <!-- Ícone de pergaminho tradicional (sem ser de aniversário) -->
+        <!-- Ícone de pergaminho tradicional -->
         <img src="https://cdn-icons-png.flaticon.com/512/2919/2919639.png" alt="Omikuji Pergaminho" class="box-image">
 
         <br>
@@ -211,27 +251,57 @@
 
     <!-- Puxa as mensagens do arquivo omikuji-mensagens.js -->
     <script src="omikuji-mensagens.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+          authDomain: "ajuda-jp.firebaseapp.com",
+          projectId: "ajuda-jp",
+          storageBucket: "ajuda-jp.firebasestorage.app",
+          messagingSenderId: "40121072206",
+          appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- INICIALIZAÇÃO DO CARROSSEL INFINITO ---
+        function configurarCarrosselInfinito() {
+            const track = document.getElementById('carouselTrack');
+            if (!track || track.dataset.initialized === "true") return;
+            
+            const items = Array.from(track.children);
+            items.forEach(item => {
+                const clone = item.cloneNode(true);
+                track.appendChild(clone);
+            });
+            
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+            track.dataset.initialized = "true";
+        }
+
+        window.addEventListener('load', () => {
+            configurarCarrosselInfinito();
+        });
+
+        // --- FUNÇÃO DE REGISTRO DE CLIQUES NO FIREBASE ---
+        window.registrarCliqueBanner = async function(bannerId, urlDestino) {
+            try {
+                const bannerRef = doc(db, 'banners', bannerId);
+                await updateDoc(bannerRef, {
+                    cliques: increment(1)
+                });
+            } catch (error) {
+                console.log("Erro ao contabilizar clique ou documento não criado ainda: ", error);
+            } finally {
+                window.location.href = urlDestino;
+            }
+        };
+    </script>
     <script>
-        // Carrossel esquerdo (alterna entre as 5 imagens)
-        let currentLeft = 0;
-        const leftSlides = document.querySelectorAll('.left-slide');
-        function nextLeftSlide() {
-            leftSlides[currentLeft].classList.remove('active');
-            currentLeft = (currentLeft + 1) % leftSlides.length;
-            leftSlides[currentLeft].classList.add('active');
-        }
-        setInterval(nextLeftSlide, 3500);
-
-        // Carrossel direito (alterna entre as 5 imagens)
-        let currentRight = 0;
-        const rightSlides = document.querySelectorAll('.right-slide');
-        function nextRightSlide() {
-            rightSlides[currentRight].classList.remove('active');
-            currentRight = (currentRight + 1) % rightSlides.length;
-            rightSlides[currentRight].classList.add('active');
-        }
-        setInterval(nextRightSlide, 4000);
-
         // Verificar se já tirou a sorte hoje ao carregar a página
         window.onload = function() {
             const hoje = new Date().toLocaleDateString();
