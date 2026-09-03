@@ -23,14 +23,20 @@
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
             
-            <!-- Tela de Início: Digitar Nome e Escolher Modo -->
+            <!-- Tela de Início: Identificação e Escolha de Modo -->
             <div id="velha-modo-escolha" style="margin: 15px 0;">
-                <p style="font-weight: bold; text-align: left; margin-bottom: 5px;">Seu Nome para o Ranking:</p>
-                <input type="text" id="input-nome-jogador" class="input-nome" placeholder="Digite seu nome..." value="Kimikia">
-                
-                <p style="font-weight: bold; margin-top: 15px;">Escolha o modo:</p>
-                <button onclick="iniciarJogoCompleto('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
-                <button onclick="iniciarJogoCompleto('pc')" class="action-btn">🤖 Jogar contra PC</button>
+                <div id="bloco-cadastro-nome" style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+                    <p style="font-weight: bold; text-align: left; margin-top: 0; margin-bottom: 5px; color: #1e293b;">Seu Nome para o Ranking:</p>
+                    <input type="text" id="input-nome-jogador" class="input-nome" placeholder="Digite seu nome..." value="">
+                    <button onclick="salvarNomeJogador()" class="action-btn" style="background-color: #16a34a; margin-top: 0;">Salvar Nome 💾</button>
+                </div>
+
+                <div id="bloco-menu-jogar" style="display: none;">
+                    <p style="font-weight: bold; color: #0f172a; margin-bottom: 10px;">Jogador: <span id="span-nome-cadastrado" style="color: #2563eb;"></span> <a href="#" onclick="trocarNome()" style="font-size: 12px; color: #dc2626; margin-left: 10px;">(Alterar)</a></p>
+                    <p style="font-weight: bold; margin-top: 15px;">Escolha o modo:</p>
+                    <button onclick="iniciarJogoCompleto('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
+                    <button onclick="iniciarJogoCompleto('pc')" class="action-btn">🤖 Jogar contra PC</button>
+                </div>
             </div>
 
             <!-- Tela do Jogo -->
@@ -67,7 +73,6 @@
         </div>
     </div>
     <script>
-        // Configuração do Firebase corrigida com a apiKey correta e collection unificada 'ranking_velha'
         const firebaseConfig = {
             apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
             authDomain: "ajuda-jp.firebaseapp.com",
@@ -85,24 +90,48 @@
         let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
         let vidas = 2;
         let pontos = 0;
-        let nomeJogador = "Kimikia";
+        let nomeJogador = "";
         let pontuacaoJaSalva = false;
 
-        function voltarParaCentral() {
-            if (document.referrer && document.referrer.includes(window.location.hostname)) {
-                window.history.back();
+        window.onload = function() {
+            let nomeSalvo = localStorage.getItem('nomeJogadorCentral');
+            if (nomeSalvo && nomeSalvo.trim() !== "") {
+                nomeJogador = nomeSalvo;
+                document.getElementById('span-nome-cadastrado').innerText = nomeJogador;
+                document.getElementById('bloco-cadastro-nome').style.display = 'none';
+                document.getElementById('bloco-menu-jogar').style.display = 'block';
             } else {
-                window.location.href = 'index.html'; 
+                document.getElementById('bloco-cadastro-nome').style.display = 'block';
+                document.getElementById('bloco-menu-jogar').style.display = 'none';
             }
+        };
+
+        function salvarNomeJogador() {
+            let inputVal = document.getElementById('input-nome-jogador').value.trim();
+            if (inputVal === "") {
+                alert("Por favor, digite o seu nome!");
+                return;
+            }
+            nomeJogador = inputVal;
+            localStorage.setItem('nomeJogadorCentral', nomeJogador);
+            
+            document.getElementById('span-nome-cadastrado').innerText = nomeJogador;
+            document.getElementById('bloco-cadastro-nome').style.display = 'none';
+            document.getElementById('bloco-menu-jogar').style.display = 'block';
+        }
+
+        function trocarNome() {
+            document.getElementById('input-nome-jogador').value = nomeJogador;
+            document.getElementById('bloco-cadastro-nome').style.display = 'block';
+            document.getElementById('bloco-menu-jogar').style.display = 'none';
+        }
+
+        function voltarParaCentral() {
+            window.location.href = 'index.html';
         }
 
         function iniciarJogoCompleto(m) {
             modo = m;
-            let inputNome = document.getElementById('input-nome-jogador').value.trim();
-            if (inputNome !== "") {
-                nomeJogador = inputNome;
-            }
-            
             vidas = 2;
             pontos = 0;
             pontuacaoJaSalva = false;
@@ -202,8 +231,6 @@
             })
             .then(() => {
                 pontuacaoJaSalva = true;
-                
-                // Grava no localStorage para que o botão "Voltar" do ranking saiba retornar para o Jogo da Velha
                 localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
 
                 msg.style.color = "green";
