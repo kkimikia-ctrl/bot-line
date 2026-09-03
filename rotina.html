@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotina & Finanças - Ajuda JP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5c6b53;
+            --primary-light: #eaf0e6;
+            --bg-main: #f2eee3;
+            --card-bg: #ffffff;
+            --text-main: #2c2a29;
+            --text-muted: #78746e;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        /* --- CARROSSEL INFINITO DINÂMICO --- */
+        .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #ffffff;
+            padding: 10px 0;
+            border-radius: 12px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid #dfdbce;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 10px;
+            width: max-content;
+            animation: rolarInfinito 30s linear infinite;
+        }
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 150px;
+            height: 85px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #eee;
+            border: 1px solid #ddd;
+        }
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
+        }
+
+        /* --- BOTÃO VOLTAR & TÍTULO --- */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .btn-back {
+            background: #2b4c7e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+
+        .btn-back:hover {
+            background: #1f375c;
+        }
+
+        .page-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* --- GRADE DE BOTÕES (2x2) --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid #dfdbce;
+            border-radius: 12px;
+            padding: 20px 14px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-main);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-color: var(--primary);
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .menu-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .menu-card p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+
+        .menu-card.disabled {
+            opacity: 0.6;
+            border-style: dashed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- BOTÃO VOLTAR & TÍTULO -->
+        <div class="top-nav">
+            <a href="index.html" class="btn-back">← Voltar</a>
+            <span class="page-title">Rotina & Finanças</span>
+            <div style="width: 60px;"></div> <!-- Espassador para centralizar o título -->
+        </div>
+
+        <!-- CARROSSEL INFINITO -->
+        <section class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            </div>
+        </section>
+
+        <!-- GRADE DE 4 BOTÕES -->
+        <div class="menu-grid">
+            <!-- 1. Agenda -->
+            <a href="agenda.html" class="menu-card">
+                <div class="menu-icon">📅</div>
+                <h3>Agenda</h3>
+                <p>Compromissos e eventos</p>
+            </a>
+
+            <!-- 2. Diário -->
+            <a href="diario.html" class="menu-card">
+                <div class="menu-icon">📖</div>
+                <h3>Diário</h3>
+                <p>Termômetro e reflexões</p>
+            </a>
+
+            <!-- 3. Gastos -->
+            <a href="gastos.html" class="menu-card">
+                <div class="menu-icon">💰</div>
+                <h3>Gastos</h3>
+                <p>Planilha de orçamento</p>
+            </a>
+
+            <!-- 4. A Definir -->
+            <a href="#" class="menu-card disabled">
+                <div class="menu-icon">✨</div>
+                <h3>Em breve</h3>
+                <p>A definir</p>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Script para duplicar os itens automaticamente e ajustar o carrossel infinito
+        const track = document.getElementById('carouselTrack');
+        const items = Array.from(track.children);
+        
+        // Clona os itens e adiciona ao final para criar o loop contínuo
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+
+        // Calcula exatamente metade da largura total da pista para o deslocamento perfeito
+        window.addEventListener('load', () => {
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+        });
+    </script>
+</body>
+</html>
