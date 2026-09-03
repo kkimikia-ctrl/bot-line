@@ -69,7 +69,7 @@
             margin-bottom: 12px;
             position: relative;
             -webkit-overflow-scrolling: touch;
-            display: block !important; /* Força sempre visível */
+            display: block !important;
         }
         .carousel-container::-webkit-scrollbar {
             display: none;
@@ -208,14 +208,16 @@
             position: absolute;
             bottom: 6px;
         }
+        
+        /* Caixa de detalhes com rolagem caso tenha muitos eventos */
         .event-detail-card {
             background: #ffffff;
             border-radius: 14px;
             padding: 14px 16px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             border-left: 4px solid #0d47a1;
-            max-height: 120px;
-            overflow-y: auto;
+            max-height: 150px; /* Altura máxima para ativar a rolagem */
+            overflow-y: auto;  /* Ativa a rolagem vertical automática */
         }
         .event-detail-card::-webkit-scrollbar {
             width: 4px;
@@ -228,12 +230,22 @@
             font-weight: bold;
             font-size: 0.9rem;
             color: #0d47a1;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .detail-content {
             font-size: 0.85rem;
             color: #475569;
-            line-height: 1.4;
+            line-height: 1.5;
+        }
+        .evento-item {
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .evento-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
     </style>
 </head>
@@ -247,7 +259,6 @@
 
     <section class="carousel-container" id="carouselWrapper">
         <div class="carousel-track" id="carouselTrack">
-            <!-- Banners de teste garantidos para aparecerem imediatamente -->
             <a href="#" target="_blank"><img src="https://picsum.photos/150/85?random=1" alt="Banner 1"></a>
             <a href="#" target="_blank"><img src="https://picsum.photos/150/85?random=2" alt="Banner 2"></a>
             <a href="#" target="_blank"><img src="https://picsum.photos/150/85?random=3" alt="Banner 3"></a>
@@ -258,7 +269,7 @@
         <div class="calendar-card">
             <div class="month-navigation">
                 <button class="nav-month-btn" onclick="mudarMes(-1)">◀</button>
-                <div class="month-title" id="monthTitleText">Agosto 2026</div>
+                <div class="month-title" id="monthTitleText">Carregando...</div>
                 <button class="nav-month-btn" onclick="mudarMes(1)">▶</button>
             </div>
 
@@ -283,7 +294,7 @@
 
     <script>
         let eventosData = {};
-        let dataAtual = new Date(2026, 7, 1); // Agosto de 2026
+        let dataAtual = new Date(); // Abre automaticamente no mês/ano atual do sistema
         const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function mudarMes(direcao) {
@@ -328,6 +339,7 @@
 
                 box.innerText = dia;
 
+                // Verifica se existe evento cadastrado para o dia
                 if (eventosData[chaveData]) {
                     box.classList.add("has-event");
                     const dot = document.createElement("span");
@@ -346,7 +358,17 @@
                     
                     if (textoCard) {
                         if (eventosData[chaveData]) {
-                            textoCard.innerHTML = `🌟 <b>Evento encontrado:</b><br>${eventosData[chaveData]}`;
+                            // Se houver vários eventos salvos como array ou texto separado, exibe todos
+                            let listaEventos = eventosData[chaveData];
+                            if (!Array.isArray(listaEventos)) {
+                                listaEventos = [listaEventos]; // Converte para array se for texto único
+                            }
+
+                            let htmlEventos = "";
+                            listaEventos.forEach((ev, idx) => {
+                                htmlEventos += `<div class="evento-item">🌟 <b>Evento ${idx + 1}:</b> ${ev}</div>`;
+                            });
+                            textoCard.innerHTML = htmlEventos;
                         } else {
                             textoCard.innerText = "Nenhum evento programado para este dia.";
                         }
@@ -368,8 +390,16 @@
                         const dados = doc.data();
                         const dataChave = dados.data || doc.id;
                         const textoEvento = dados.texto || dados.titulo || "Evento programado.";
+                        
                         if (dataChave) {
-                            eventosData[dataChave] = textoEvento;
+                            // Permite acumular vários eventos na mesma data caso venham múltiplos registros
+                            if (!eventosData[dataChave]) {
+                                eventosData[dataChave] = [];
+                            }
+                            if (Array.isArray(eventosData[dataChave])) {
+                                eventosData[dataCustomizar = dataChave];
+                                eventosData[dataChave].push(textoEvento);
+                            }
                         }
                     });
                     renderizarCalendario();
@@ -379,39 +409,7 @@
             }
         }
 
-        // Tenta também carregar do Firebase por cima, se existir
-        function carregarBannersFirebase() {
-            const track = document.getElementById('carouselTrack');
-            if (!track) return;
-
-            const dbFirestore = window.db || (typeof firebase !== 'undefined' ? firebase.firestore() : null);
-            if (!dbFirestore) return;
-
-            dbFirestore.collection("anuncios").get().then((querySnapshot) => {
-                if (!querySnapshot.empty) {
-                    let bannersHtml = "";
-                    querySnapshot.forEach((docSnap) => {
-                        const an = docSnap.data();
-                        const imagemUrl = an.imagemUrl || an.url || an.imagem || "";
-                        const link = an.linkDestino && an.linkDestino !== "#" ? an.linkDestino : "#";
-
-                        if (imagemUrl) {
-                            bannersHtml += `
-                                <a href="${link}" target="_blank">
-                                    <img src="${imagemUrl}" alt="${an.nomeAnunciante || 'Banner'}">
-                                </a>
-                            `;
-                        }
-                    });
-                    if (bannersHtml !== "") {
-                        track.innerHTML = bannersHtml + bannersHtml;
-                    }
-                }
-            }).catch(() => {});
-        }
-
         carregarEventosFirebase();
-        carregarBannersFirebase();
     </script>
 </body>
 </html>
