@@ -24,7 +24,6 @@
         
         .container { max-width: 600px; margin: 0 auto; }
 
-        /* Barra Superior Própria com Botão de Voltar e Som Garantidos */
         .topo-personalizado {
             position: fixed;
             top: 0;
@@ -64,7 +63,6 @@
             margin-bottom: 25px;
         }
 
-        /* Canvas do Mini Craque */
         canvas#gameCanvas {
             border: 4px solid #2e7d32;
             background-color: #2e7d32;
@@ -79,9 +77,9 @@
 </head>
 <body>
 
-    <!-- BARRA SUPERIOR COM BOTÃO DE SOM INTELIGENTE -->
+    <!-- BARRA SUPERIOR COM BOTÃO DE VOLTAR PARA O MENU PRINCIPAL -->
     <div class="topo-personalizado">
-        <button onclick="window.location.href='forca.html'">⬅ Voltar</button>
+        <button onclick="window.location.href='index.html'">⬅ Voltar</button>
         <span style="font-weight: bold; font-size: 14px;">⚽ Mini Craque</span>
         <button id="btn-som-toggle" onclick="alternarAudioGlobal(event)">🔊 Som: Ativar</button>
     </div>
@@ -136,9 +134,8 @@
                     pontos: Number(pontosJogador),
                     data: new Date().toISOString()
                 });
-                tocarEfeito('vitoria');
                 
-                // Salva que o último jogo jogado foi o minicraque antes de ir para o ranking
+                // Grava no localStorage que o último jogo jogado foi o minicraque.html
                 localStorage.setItem('ultimoJogoRetorno', 'minicraque.html');
 
                 alert("✅ Pontuação salva com sucesso no Ranking Global!");
@@ -151,9 +148,8 @@
     </script>
 
     <script>
-        /* SISTEMA DE ÁUDIO E MÚSICA */
         let audioCtx = null;
-        let somLigado = false; // Começa desligado até o usuário clicar em "Som: Ativar"
+        let somLigado = false;
         let musicaIntervalo = null;
         let passoMusica = 0;
         let audioDestravado = false;
@@ -174,7 +170,6 @@
             if (e) e.stopPropagation();
             inicializarAudioContext();
             
-            // Se estava desativado ou desligado, muda para ligado
             if (!somLigado) {
                 somLigado = true;
                 const btn = document.getElementById('btn-som-toggle');
@@ -185,7 +180,6 @@
                 iniciarMusicaDeFundo();
                 tocarEfeito('clique');
             } else {
-                // Se já estava ligado, desliga
                 somLigado = false;
                 const btn = document.getElementById('btn-som-toggle');
                 if (btn) {
@@ -261,7 +255,6 @@
             }
         }
 
-        /* LÓGICA DO MINI CRAQUE */
         const canvasCraque = document.getElementById('gameCanvas');
         const ctxCraque = canvasCraque.getContext('2d');
         let minicraqueInterval = null;
