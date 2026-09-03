@@ -79,7 +79,7 @@
 </head>
 <body>
 
-    <!-- BARRA SUPERIOR COM BOTÃO DE SOM GARANTIDO -->
+    <!-- BARRA SUPERIOR COM BOTÃO DE SOM INTELIGENTE -->
     <div class="topo-personalizado">
         <button onclick="window.location.href='forca.html'">⬅ Voltar</button>
         <span style="font-weight: bold; font-size: 14px;">⚽ Mini Craque</span>
@@ -137,6 +137,10 @@
                     data: new Date().toISOString()
                 });
                 tocarEfeito('vitoria');
+                
+                // Salva que o último jogo jogado foi o minicraque antes de ir para o ranking
+                localStorage.setItem('ultimoJogoRetorno', 'minicraque.html');
+
                 alert("✅ Pontuação salva com sucesso no Ranking Global!");
                 window.location.href = "ranking.html";
             } catch (e) {
@@ -149,7 +153,7 @@
     <script>
         /* SISTEMA DE ÁUDIO E MÚSICA */
         let audioCtx = null;
-        let somLigado = false; // Começa desligado por restrição do navegador até o primeiro toque
+        let somLigado = false; // Começa desligado até o usuário clicar em "Som: Ativar"
         let musicaIntervalo = null;
         let passoMusica = 0;
         let audioDestravado = false;
@@ -169,18 +173,25 @@
         window.alternarAudioGlobal = function(e) {
             if (e) e.stopPropagation();
             inicializarAudioContext();
-            somLigado = !somLigado;
-
-            const btn = document.getElementById('btn-som-toggle');
-            if (btn) {
-                btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
-                btn.style.background = somLigado ? "#059669" : "#dc2626";
-            }
-
-            if (somLigado) {
+            
+            // Se estava desativado ou desligado, muda para ligado
+            if (!somLigado) {
+                somLigado = true;
+                const btn = document.getElementById('btn-som-toggle');
+                if (btn) {
+                    btn.innerText = "🔊 Som: Ligado";
+                    btn.style.background = "#059669";
+                }
                 iniciarMusicaDeFundo();
                 tocarEfeito('clique');
             } else {
+                // Se já estava ligado, desliga
+                somLigado = false;
+                const btn = document.getElementById('btn-som-toggle');
+                if (btn) {
+                    btn.innerText = "🔇 Som: Desligado";
+                    btn.style.background = "#dc2626";
+                }
                 pararMusicaDeFundo();
             }
         };
