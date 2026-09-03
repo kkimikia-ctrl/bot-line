@@ -83,7 +83,7 @@
     <div class="topo-personalizado">
         <button onclick="window.location.href='forca.html'">⬅ Voltar</button>
         <span style="font-weight: bold; font-size: 14px;">⚽ Mini Craque</span>
-        <button id="btn-som-toggle" onclick="alternarAudioGlobal(event)">🔊 Som: Ligado</button>
+        <button id="btn-som-toggle" onclick="alternarAudioGlobal(event)">🔊 Som: Ativar</button>
     </div>
 
     <div class="container">
@@ -149,7 +149,7 @@
     <script>
         /* SISTEMA DE ÁUDIO E MÚSICA */
         let audioCtx = null;
-        let somLigado = true;
+        let somLigado = false; // Começa desligado por restrição do navegador até o primeiro toque
         let musicaIntervalo = null;
         let passoMusica = 0;
         let audioDestravado = false;
@@ -166,16 +166,6 @@
             audioDestravado = true;
         }
 
-        // Destrava o áudio no primeiro toque na tela
-        window.addEventListener('pointerdown', () => {
-            if (!audioDestravado) {
-                inicializarAudioContext();
-                if (somLigado && !musicaIntervalo) {
-                    iniciarMusicaDeFundo();
-                }
-            }
-        }, { once: true });
-
         window.alternarAudioGlobal = function(e) {
             if (e) e.stopPropagation();
             inicializarAudioContext();
@@ -183,20 +173,20 @@
 
             const btn = document.getElementById('btn-som-toggle');
             if (btn) {
-                btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Sem Som";
+                btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
                 btn.style.background = somLigado ? "#059669" : "#dc2626";
             }
 
             if (somLigado) {
                 iniciarMusicaDeFundo();
+                tocarEfeito('clique');
             } else {
                 pararMusicaDeFundo();
             }
         };
 
         function tocarEfeito(tipo) {
-            if (!somLigado) return;
-            inicializarAudioContext();
+            if (!somLigado || !audioCtx) return;
             try {
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
@@ -295,7 +285,6 @@
             resetBall();
             pararMiniCraque();
             minicraqueInterval = requestAnimationFrame(loopMiniCraque);
-            iniciarMusicaDeFundo();
         }
 
         function pararMiniCraque() {
