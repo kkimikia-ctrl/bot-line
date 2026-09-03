@@ -558,6 +558,7 @@
         let timerInterval = null;
         let souCriadorDaLive = false;
         let globalUserId = "Não informado";
+        let carrosselLiveInicializado = false;
 
         window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -603,22 +604,24 @@
             alert("🪙 Você ganhou +500¥ de créditos simulados para testes!");
         }
 
-        // Função para configurar os carrosseles infinitos dinamicamente
+        // Função corrigida para carrosséis (evita duplicação excessiva e calcula corretamente)
         function configurarCarrosselInfinito(trackId) {
             const track = document.getElementById(trackId);
-            if (!track) return;
+            if (!track || track.dataset.initialized === "true") return;
+            
             const items = Array.from(track.children);
             items.forEach(item => {
                 const clone = item.cloneNode(true);
                 track.appendChild(clone);
             });
+            
             const totalWidth = track.scrollWidth / 2;
             track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+            track.dataset.initialized = "true";
         }
 
         window.addEventListener('load', () => {
             configurarCarrosselInfinito('carouselTrack');
-            configurarCarrosselInfinito('carouselTrackLive');
         });
 
         atualizarSaldoNaTela();
@@ -699,13 +702,24 @@
             document.getElementById('reportDetails').value = ''; 
         }
 
+        function prepararEntradaNaLive() {
+            document.getElementById('lives-home').style.display = 'none';
+            document.getElementById('live-player-container').style.display = 'block';
+            
+            // Força a leitura correta do tamanho da tela agora que o container está visível
+            setTimeout(() => {
+                configurarCarrosselInfinito('carouselTrackLive');
+            }, 50);
+
+            window.scrollTo(0, 0);
+        }
+
         function abrirLiveGravada(titulo, host, espectadores, imagemUrl) {
             pararCamera();
             souCriadorDaLive = false;
             document.getElementById('timer-display').style.display = 'none';
 
-            document.getElementById('lives-home').style.display = 'none';
-            document.getElementById('live-player-container').style.display = 'block';
+            prepararEntradaNaLive();
             
             document.getElementById('player-title').innerText = titulo;
             document.getElementById('player-host').innerText = host + " • " + espectadores;
@@ -713,8 +727,6 @@
             document.getElementById('camera-stream').style.display = 'none';
             document.getElementById('player-img').style.display = 'block';
             document.getElementById('player-img').src = imagemUrl;
-            
-            window.scrollTo(0, 0);
         }
 
         function abrirModalLive() {
@@ -738,8 +750,7 @@
             fecharModalLive();
             souCriadorDaLive = true;
 
-            document.getElementById('lives-home').style.display = 'none';
-            document.getElementById('live-player-container').style.display = 'block';
+            prepararEntradaNaLive();
             
             document.getElementById('player-title').innerText = tituloLive;
             document.getElementById('player-host').innerText = 'Você (Transmitindo) • 1 assistindo';
@@ -764,8 +775,6 @@
                 console.error(error);
                 fecharLive();
             }
-
-            window.scrollTo(0, 0);
         }
 
         function pararCamera() {
