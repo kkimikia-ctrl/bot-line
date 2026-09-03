@@ -157,7 +157,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, limit, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
@@ -183,8 +183,31 @@
                 return;
             }
             try {
+                const colecaoRef = collection(window.dbFirebase, "ranking_minicraque");
+
+                // 1. Busca os atuais melhores do ranking ordenados por pontos (máximo de 100)
+                const q = query(colecaoRef, orderBy("pontos", "desc"), limit(100));
+                const querySnapshot = await getDocs(q);
+                
+                let pontuacoesTop = [];
+                querySnapshot.forEach((docSnap) => {
+                    pontuacoesTop.push(docSnap.data().pontos);
+                });
+
+                // 2. Se já completou 100 jogadores, aplica a regra de corte
+                if (pontuacoesTop.length >= 100) {
+                    const menorPontuacaoTop100 = pontuacoesTop[pontuacoesTop.length - 1]; // O 100º colocado
+                    
+                    // Se a pontuação nova for menor ou igual à do 100º, rejeita
+                    if (pontosJogador <= menorPontuacaoTop100) {
+                        alert(`Sua pontuação (${pontosJogador}) não atingiu o mínimo necessário para entrar no Top 100 (mínimo atual: ${menorPontuacaoTop100} pts). Tente novamente!`);
+                        return;
+                    }
+                }
+
+                // 3. Se passou na regra, salva o novo recorde no Firebase
                 const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
-                await setDoc(doc(window.dbFirebase, "ranking_minicraque", idUnicoDoc), {
+                await setDoc(doc(colecaoRef, idUnicoDoc), {
                     nome: nomeJogador,
                     pontos: Number(pontosJogador),
                     data: new Date().toISOString()
@@ -192,7 +215,7 @@
                 
                 localStorage.setItem('ultimoJogoRetorno', 'jogo-minicraque.html');
 
-                alert("✅ Pontuação salva com sucesso no Ranking Global!");
+                alert("✅ Parabéns! Sua pontuação entrou para o Top 100 Global!");
                 window.location.href = "ranking.html";
             } catch (e) {
                 console.error("Erro ao salvar no Firebase:", e);
@@ -548,7 +571,6 @@
             }
             if (numDefendersAtivos >= 2) {
                 ctxCraque.fillStyle = '#3b82f6';
-                ctxCry = defenders[1];
                 ctxCraque.fillRect(defenders[1].x, defenders[1].y, defenders[1].width, defenders[1].height);
             }
             if (numDefendersAtivos >= 3) {
