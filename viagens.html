@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             text-align: center;
-            padding-top: 175px; /* Empurra o conteúdo para baixo para não ficar debaixo do topo fixo */
+            padding-top: 175px;
         }
         .header {
             background-color: #0d47a1;
@@ -61,7 +61,7 @@
         /* --- CARROSSEL INFINITO DE BANNERS --- */
         .banner-carousel {
             position: fixed;
-            top: 41px; /* Fica logo abaixo do cabeçalho azul */
+            top: 41px;
             left: 0;
             width: 100%;
             background: rgba(13, 71, 161, 0.95);
@@ -131,10 +131,10 @@
             100% { transform: translateX(var(--scroll-amount)); }
         }
 
-        /* --- ABAS DE REGIÕES CORRIGIDAS (LOGO ABAIXO DO CARROSSEL) --- */
+        /* --- ABAS DE REGIÕES --- */
         .regions-scroll-container {
             position: fixed;
-            top: 139px; /* Posicionado perfeitamente abaixo do carrossel de 90px + padding */
+            top: 139px;
             left: 0;
             width: 100%;
             background: #ffffff;
@@ -411,7 +411,7 @@
         </div>
     </div>
 
-    <!-- Abas de Regiões Posicionadas Corretamente -->
+    <!-- Abas de Regiões -->
     <div class="regions-scroll-container">
         <button class="region-tab active" onclick="filterRegion('todas', this)">🌍 Todas</button>
         <button class="region-tab" onclick="filterRegion('tokai', this)">Tokai (Aichi/Shizuoka/Gifu)</button>
@@ -551,24 +551,26 @@
         };
     </script>
     <script>
-        function filterRegion(regiao, element) {
+        // Função de filtro por região corrigida e garantida
+        window.filterRegion = function(regiao, element) {
             document.querySelectorAll('.region-tab').forEach(tab => tab.classList.remove('active'));
             element.classList.add('active');
 
             const cards = document.querySelectorAll('.post-card');
             cards.forEach(card => {
-                if (regiao === 'todas' || card.getAttribute('data-region') === regiao) {
+                const cardRegion = card.getAttribute('data-region');
+                if (regiao === 'todas' || cardRegion === regiao) {
                     card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }
             });
-        }
+        };
 
         let currentPhotos = [];
         let currentPhotoIndex = 0;
 
-        function openDetails(title, location, desc, photos, isOwner = true) {
+        window.openDetails = function(title, location, desc, photos, isOwner = true) {
             document.getElementById('detTitle').innerText = title;
             document.getElementById('detLocation').innerText = location;
             document.getElementById('detDesc').innerText = desc;
@@ -581,12 +583,12 @@
 
             document.getElementById('detailsView').style.display = 'block';
             document.querySelector('.regions-scroll-container').style.display = 'none';
-        }
+        };
 
-        function closeDetails() {
+        window.closeDetails = function() {
             document.getElementById('detailsView').style.display = 'none';
             document.querySelector('.regions-scroll-container').style.display = 'flex';
-        }
+        };
 
         function renderGallery() {
             const galleryContainer = document.getElementById('detailsGalleryContainer');
@@ -600,45 +602,44 @@
             });
         }
 
-        function nextPhoto() {
+        window.nextPhoto = function() {
             if (currentPhotos.length === 0) return;
             const imgs = document.querySelectorAll('.gallery-img');
             imgs[currentPhotoIndex].classList.remove('active');
             currentPhotoIndex = (currentPhotoIndex + 1) % currentPhotos.length;
             imgs[currentPhotoIndex].classList.add('active');
-        }
+        };
 
-        function prevPhoto() {
+        window.prevPhoto = function() {
             if (currentPhotos.length === 0) return;
             const imgs = document.querySelectorAll('.gallery-img');
             imgs[currentPhotoIndex].classList.remove('active');
             currentPhotoIndex = (currentPhotoIndex - 1 + currentPhotos.length) % currentPhotos.length;
             imgs[currentPhotoIndex].classList.add('active');
-        }
+        };
 
-        function openModal() {
+        window.openModal = function() {
             document.getElementById('publishModal').style.display = 'flex';
-        }
+        };
 
-        function closeModal() {
+        window.closeModal = function() {
             document.getElementById('publishModal').style.display = 'none';
-        }
+        };
 
-        function editPost() {
+        window.editPost = function() {
             alert('Função de editar em breve!');
-        }
+        };
 
-        function deletePost() {
+        window.deletePost = function() {
             if(confirm('Deseja realmente excluir esta postagem?')) {
                 alert('Postagem excluída!');
                 closeDetails();
             }
-        }
+        };
 
-        function submitPost() {
+        window.submitPost = function() {
             const title = document.getElementById('postTitleInput').value;
             const region = document.getElementById('postRegionInput').value;
-            const location = document.getElementById('postLocationInput5'] || document.getElementById('postLocationInput').value;
             const locVal = document.getElementById('postLocationInput').value;
             const desc = document.getElementById('postDescInput').value || 'Sem descrição informada.';
             const imageInputFiles = document.getElementById('postImagesInput').files;
@@ -684,7 +685,7 @@
             document.getElementById('postDescInput').value = '';
             
             alert('Publicado com sucesso!');
-        }
+        };
     </script>
 </body>
 </html>
