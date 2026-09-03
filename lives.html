@@ -154,38 +154,6 @@
             max-width: 600px;
             margin: 0 auto;
         }
-        
-        .live-carousel-container {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            margin-bottom: 8px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-        .live-carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-        .live-ad-card {
-            flex: 0 0 47%;
-            background: #ffffff;
-            border: 2px dashed #b0bec5;
-            border-radius: 12px;
-            padding: 24px 10px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        .live-ad-card .ad-title {
-            font-size: 11px;
-            font-weight: bold;
-            color: #d32f2f;
-            margin-bottom: 2px;
-        }
-        .live-ad-card .ad-sub {
-            font-size: 9px;
-            color: #666;
-        }
 
         .live-info-bottom {
             background: #ffffff;
@@ -431,7 +399,7 @@
             </div>
         </div>
 
-        <!-- Carrossel Infinito -->
+        <!-- Carrossel Infinito Principal -->
         <section class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
                 <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
@@ -499,16 +467,15 @@
             </div>
         </div>
 
-        <div class="live-carousel-container" id="liveAdCarousel">
-            <div class="live-ad-card">
-                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
-                <div class="ad-sub">Anuncie seu comércio 1</div>
+        <!-- Mesmo Carrossel Infinito inserido na tela da Live -->
+        <section class="carousel-container">
+            <div class="carousel-track" id="carouselTrackLive">
+                <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
             </div>
-            <div class="live-ad-card">
-                <div class="ad-title">📢 ESPAÇO COMERCIAL</div>
-                <div class="ad-sub">Anuncie seu comércio 2</div>
-            </div>
-        </div>
+        </section>
 
         <!-- Bloco de Informações da Live -->
         <div class="live-info-bottom">
@@ -636,36 +603,24 @@
             alert("🪙 Você ganhou +500¥ de créditos simulados para testes!");
         }
 
-        // Script para duplicar os itens automaticamente e ajustar o carrossel infinito
-        const track = document.getElementById('carouselTrack');
-        const items = Array.from(track.children);
-        
-        // Clona os itens e adiciona ao final para criar o loop contínuo
-        items.forEach(item => {
-            const clone = item.cloneNode(true);
-            track.appendChild(clone);
-        });
-
-        // Calcula exatamente metade da largura total da pista para o deslocamento perfeito
-        window.addEventListener('load', () => {
+        // Função para configurar os carrosseles infinitos dinamicamente
+        function configurarCarrosselInfinito(trackId) {
+            const track = document.getElementById(trackId);
+            if (!track) return;
+            const items = Array.from(track.children);
+            items.forEach(item => {
+                const clone = item.cloneNode(true);
+                track.appendChild(clone);
+            });
             const totalWidth = track.scrollWidth / 2;
             track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
-        });
-
-        // Mantém a função original para o carrossel inferior de anúncios da live
-        function iniciarCarrossel(elementoId) {
-            const el = document.getElementById(elementoId);
-            if (!el) return;
-            setInterval(() => {
-                if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 5) {
-                    el.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    el.scrollBy({ left: 180, behavior: 'smooth' });
-                }
-            }, 3000);
         }
 
-        iniciarCarrossel('liveAdCarousel');
+        window.addEventListener('load', () => {
+            configurarCarrosselInfinito('carouselTrack');
+            configurarCarrosselInfinito('carouselTrackLive');
+        });
+
         atualizarSaldoNaTela();
 
         function iniciarCronometro() {
@@ -673,10 +628,8 @@
             timerInterval = setInterval(() => {
                 if (tempoRestanteSegundos > 0) {
                     tempoRestanteSegundos--;
-                    
                     let minutos = Math.floor(tempoRestanteSegundos / 60);
                     let segundos = tempoRestanteSegundos % 60;
-                    
                     document.getElementById('timer-display').innerText = 
                         (minutos < 10 ? "0" : "") + minutos + ":" + (segundos < 10 ? "0" : "") + segundos;
                 } else {
