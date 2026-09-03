@@ -66,7 +66,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addset, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
@@ -92,7 +92,6 @@
                 return;
             }
             try {
-                // Salva na mesma coleção 'ranking_minicraque' que a tela de ranking lê
                 const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
                 await setDoc(doc(window.dbFirebase, "ranking_minicraque", idUnicoDoc), {
                     nome: nomeJogador,
@@ -101,7 +100,6 @@
                 });
                 tocarEfeito('vitoria');
                 alert("✅ Pontuação salva com sucesso no Ranking Global!");
-                // Redireciona para a tela de ranking para o jogador ver o nome dele lá
                 window.location.href = "ranking.html";
             } catch (e) {
                 console.error("Erro ao salvar no Firebase:", e);
@@ -115,7 +113,6 @@
         let audioCtx = null;
         let somLigado = true;
         let musicaIntervalo = null;
-        let jogoAtualAtivo = 'minicraque'; 
         let passoMusica = 0;
 
         const notas = { C4: 261.63, E4: 329.63, G4: 392.00, B4: 493.88, D5: 587.33 };
@@ -131,13 +128,15 @@
 
         window.alternarAudioGlobal = function(e) {
             if (e) e.stopPropagation();
+            inicializarAudioContext();
             somLigado = !somLigado;
-            let btn = document.getElementById('btnAudioToggleNav');
-            if (btn) {
+            
+            // Atualiza todos os botões de som possíveis na tela (seja no script de banners ou customizado)
+            document.querySelectorAll('.btnAudioToggleNav').forEach(btn => {
                 btn.innerText = somLigado ? "🔊 Som: Ligado" : "🔇 Som: Desligado";
-            }
+            });
+
             if (somLigado) {
-                inicializarAudioContext();
                 iniciarMusicaDeFundo();
             } else {
                 pararMusicaDeFundo();
@@ -286,6 +285,7 @@
         }
 
         canvasCraque.addEventListener('mousedown', (e) => {
+            inicializarAudioContext();
             if (ball.isMoving) return;
             const pos = getMousePos(e);
             if (Math.hypot(pos.x - ball.x, pos.y - ball.y) < ball.radius * 2.5) {
@@ -313,6 +313,7 @@
         });
 
         canvasCraque.addEventListener('touchstart', (e) => {
+            inicializarAudioContext();
             if (ball.isMoving) return;
             const pos = getMousePos(e);
             if (Math.hypot(pos.x - ball.x, pos.y - ball.y) < ball.radius * 2.5) {
@@ -475,11 +476,9 @@
         }
 
         function loopMiniCraque() {
-            if (jogoAtualAtivo === 'minicraque') {
-                updateMiniCraque();
-                drawMiniCraque();
-                minicraqueInterval = requestAnimationFrame(loopMiniCraque);
-            }
+            updateMiniCraque();
+            drawMiniCraque();
+            minicraqueInterval = requestAnimationFrame(loopMiniCraque);
         }
 
         function salvarPontuacaoRankingMiniCraqueManual() { 
@@ -503,9 +502,8 @@
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof carregarSistemaDeBanners === 'function') {
-                // Insere o título e o botão de som diretamente no menu superior do script de banners
                 carregarSistemaDeBanners("⚽ Mini Craque", "forca.html", `
-                    <button id="btnAudioToggleNav" onclick="alternarAudioGlobal(event)" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold;">🔊 Som: Ligado</button>
+                    <button class="btnAudioToggleNav" onclick="alternarAudioGlobal(event)" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold;">🔊 Som: Ligado</button>
                 `);
             }
         });
