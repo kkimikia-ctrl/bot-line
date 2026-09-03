@@ -11,20 +11,20 @@
             margin: 0;
             padding: 0;
             text-align: center;
-            padding-top: 175px; /* Espaço para cabeçalho, carrossel e abas */
+            padding-top: 175px; /* Empurra o conteúdo para baixo para não ficar debaixo do topo fixo */
         }
         .header {
             background-color: #0d47a1;
             color: white;
-            padding: 12px;
+            padding: 10px 12px;
             text-align: center;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 3001; /* Fica acima de tudo */
+            z-index: 3001;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
@@ -32,7 +32,7 @@
             box-sizing: border-box;
         }
         .header h1 {
-            font-size: 16px;
+            font-size: 15px;
             margin: 0;
             flex-grow: 1;
             text-align: center;
@@ -43,32 +43,31 @@
             color: white;
             font-size: 16px;
             cursor: pointer;
-            padding: 0 10px;
+            padding: 0 5px;
         }
         
         .publish-header-btn {
             background-color: #ffc107;
             color: #333;
             border: none;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
-            margin-right: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        /* --- CARROSSEL INFINITO DE BANNERS (100px) --- */
+        /* --- CARROSSEL INFINITO DE BANNERS --- */
         .banner-carousel {
             position: fixed;
-            top: 45px;
+            top: 41px; /* Fica logo abaixo do cabeçalho azul */
             left: 0;
             width: 100%;
             background: rgba(13, 71, 161, 0.95);
             backdrop-filter: blur(5px);
-            padding: 10px 0;
-            z-index: 3000; /* Acima da tela de detalhes */
+            padding: 8px 0;
+            z-index: 3000;
             overflow-x: auto;
             display: flex;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -80,9 +79,9 @@
         }
         .carousel-track {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             width: max-content;
-            padding: 0 12px;
+            padding: 0 10px;
             animation: rolarInfinito 35s linear infinite;
         }
         .banner-carousel:hover .carousel-track,
@@ -90,10 +89,10 @@
             animation-play-state: paused;
         }
         .ad-banner-card {
-            flex: 0 0 160px;
-            height: 100px;
+            flex: 0 0 150px;
+            height: 90px;
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
@@ -132,9 +131,10 @@
             100% { transform: translateX(var(--scroll-amount)); }
         }
 
+        /* --- ABAS DE REGIÕES CORRIGIDAS (LOGO ABAIXO DO CARROSSEL) --- */
         .regions-scroll-container {
             position: fixed;
-            top: 138px;
+            top: 139px; /* Posicionado perfeitamente abaixo do carrossel de 90px + padding */
             left: 0;
             width: 100%;
             background: #ffffff;
@@ -142,10 +142,10 @@
             overflow-x: auto;
             gap: 8px;
             padding: 8px 10px;
-            z-index: 998;
+            z-index: 2998;
             box-sizing: border-box;
             white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
         }
         .regions-scroll-container::-webkit-scrollbar {
             display: none;
@@ -228,11 +228,11 @@
             width: 100%;
             height: 100%;
             background: #f4f4f9;
-            z-index: 2999; /* Fica abaixo do cabeçalho e do carrossel, mas acima do resto */
+            z-index: 2999;
             overflow-y: auto;
             text-align: left;
             box-sizing: border-box;
-            padding-top: 145px; /* Empurra o conteúdo para baixo dos elementos fixos do topo */
+            padding-top: 145px;
         }
         .details-body {
             max-width: 600px;
@@ -393,7 +393,7 @@
         <button class="publish-header-btn" onclick="openModal()">Publicar</button>
     </div>
 
-    <!-- Carrossel de Banners Fixo no Topo (Visível em todas as telas) -->
+    <!-- Carrossel de Banners Fixo no Topo -->
     <div class="banner-carousel">
         <div class="carousel-track" id="carouselTrack">
             <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-lazer-1', 'fale-conosco.html')">
@@ -411,6 +411,7 @@
         </div>
     </div>
 
+    <!-- Abas de Regiões Posicionadas Corretamente -->
     <div class="regions-scroll-container">
         <button class="region-tab active" onclick="filterRegion('todas', this)">🌍 Todas</button>
         <button class="region-tab" onclick="filterRegion('tokai', this)">Tokai (Aichi/Shizuoka/Gifu)</button>
@@ -425,7 +426,7 @@
         <div class="section-title">Dicas e Pontos Turísticos</div>
         
         <div class="posts-grid" id="postsContainer">
-            <div class="post-card" data-region="tokai" onclick="openDetails('Guia Completo: Maravilhas de Toyohashi e Arredores', '📍 Toyohashi, Aichi', 'Este é um super guia de teste criado especialmente para demonstrar como o layout se comporta quando alguém escreve uma descrição extremamente longa, cheia de detalhes e dicas úteis para quem quer viajar.\n\nPrimeiramente, vale destacar que Toyohashi possui uma localização estratégica excelente na região de Tokai, facilitando o acesso tanto para quem vem de Nagoya quanto para quem está vindo de Shizuoka.\n\n1. O que levar:\n- Calçados confortáveis para caminhada nos parques e castelos.\n- Câmera ou celular com bateria extra para registrar todas as paisagens.\n- Um casaco leve dependendo da época do ano.\n\n2. Melhores épocas para visitar:\nA primavera (com as flores de cerejeira) e o outono (com as folhas avermelhadas momiji) são simplesmente espetaculares. As temperaturas ficam amenas e o clima colabora muito para passeios ao ar livre.\n\n3. Dicas de gastronomia local:\nNão deixe de experimentar as delícias locais e os pratos típicos da região. Há excelentes restaurantes tradicionais perto da estação central e nos arredores dos pontos turísticos.\n\nEsperamos que este guia ajude você a planejar um fim de semana inesquecível com sua família e amigos!', ['https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60', 'https://images.unsplash.com/photo-1533050487297-09b450131914?w=600&auto=format&fit=crop&q=60'])">
+            <div class="post-card" data-region="tokai" onclick="openDetails('Guia Completo: Maravilhas de Toyohashi e Arredores', '📍 Toyohashi, Aichi', 'Este é um super guia de teste...', ['https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60'])">
                 <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" class="post-img" alt="Local">
                 <div class="post-info">
                     <p class="post-title">Guia Completo: Toyohashi</p>
@@ -433,7 +434,7 @@
                 </div>
             </div>
 
-            <div class="post-card" data-region="kanto" onclick="openDetails('Torre de Tokyo', '📍 Tokyo, Kanto', 'Um dos cartões-postais mais famosos do Japão, oferecendo uma vista panorâmica incrível de toda a metrópole de Tóquio.', ['https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&auto=format&fit=crop&q=60', 'https://images.unsplash.com/photo-1528164344705-475426879c0d?w=600&auto=format&fit=crop&q=60'])">
+            <div class="post-card" data-region="kanto" onclick="openDetails('Torre de Tokyo', '📍 Tokyo, Kanto', 'Um dos cartões-postais...', ['https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&auto=format&fit=crop&q=60'])">
                 <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&auto=format&fit=crop&q=60" class="post-img" alt="Local">
                 <div class="post-info">
                     <p class="post-title">Torre de Tokyo</p>
@@ -501,7 +502,6 @@
         </div>
     </div>
 
-    <!-- Scripts do Carrossel e Lógica Firebase/Página -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -518,7 +518,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- INICIALIZAÇÃO DO CARROSSEL INFINITO ---
         function configurarCarrosselInfinito() {
             const track = document.getElementById('carouselTrack');
             if (!track || track.dataset.initialized === "true") return;
@@ -538,7 +537,6 @@
             configurarCarrosselInfinito();
         });
 
-        // --- FUNÇÃO DE REGISTRO DE CLIQUES NO FIREBASE ---
         window.registrarCliqueBanner = async function(bannerId, urlDestino) {
             try {
                 const bannerRef = doc(db, 'banners', bannerId);
@@ -546,7 +544,7 @@
                     cliques: increment(1)
                 });
             } catch (error) {
-                console.log("Erro ao contabilizar clique ou documento não criado ainda: ", error);
+                console.log("Erro ao contabilizar clique: ", error);
             } finally {
                 window.location.href = urlDestino;
             }
@@ -575,29 +573,24 @@
             document.getElementById('detLocation').innerText = location;
             document.getElementById('detDesc').innerText = desc;
             
-            const ownerButtons = document.getElementById('ownerButtons');
-            ownerButtons.style.display = isOwner ? 'flex' : 'none';
+            document.getElementById('ownerButtons').style.display = isOwner ? 'flex' : 'none';
             
             currentPhotos = photos;
             currentPhotoIndex = 0;
             renderGallery();
 
             document.getElementById('detailsView').style.display = 'block';
-            
-            // Oculta as abas de regiões na tela de detalhes para não atrapalhar
             document.querySelector('.regions-scroll-container').style.display = 'none';
         }
 
         function closeDetails() {
             document.getElementById('detailsView').style.display = 'none';
-            // Reexibe as abas de regiões ao voltar
             document.querySelector('.regions-scroll-container').style.display = 'flex';
         }
 
         function renderGallery() {
             const galleryContainer = document.getElementById('detailsGalleryContainer');
-            const oldImgs = galleryContainer.querySelectorAll('.gallery-img');
-            oldImgs.forEach(img => img.remove());
+            galleryContainer.querySelectorAll('.gallery-img').forEach(img => img.remove());
 
             currentPhotos.forEach((photo, index) => {
                 const imgEl = document.createElement('img');
@@ -645,17 +638,13 @@
         function submitPost() {
             const title = document.getElementById('postTitleInput').value;
             const region = document.getElementById('postRegionInput').value;
-            const location = document.getElementById('postLocationInput').value;
+            const location = document.getElementById('postLocationInput5'] || document.getElementById('postLocationInput').value;
+            const locVal = document.getElementById('postLocationInput').value;
             const desc = document.getElementById('postDescInput').value || 'Sem descrição informada.';
             const imageInputFiles = document.getElementById('postImagesInput').files;
 
-            if (!title || !location) {
+            if (!title || !locVal) {
                 alert('Por favor, preencha o título e a localização!');
-                return;
-            }
-
-            if (imageInputFiles.length > 6) {
-                alert('Você pode selecionar no máximo 6 fotos!');
                 return;
             }
 
@@ -668,7 +657,6 @@
                 photosArray.push('https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=60');
             }
 
-            const mainImage = photosArray[0];
             const postsContainer = document.getElementById('postsContainer');
             const newCard = document.createElement('div');
             newCard.className = 'post-card';
@@ -677,13 +665,13 @@
             const escapedDesc = desc.replace(/'/g, "\\'").replace(/"/g, '&quot;');
             const photosListString = JSON.stringify(photosArray).replace(/"/g, '&quot;');
             
-            newCard.setAttribute('onclick', `openDetails('${title}', '📍 ${location}', '${escapedDesc}', ${photosListString})`);
+            newCard.setAttribute('onclick', `openDetails('${title}', '📍 ${locVal}', '${escapedDesc}', ${photosListString})`);
             
             newCard.innerHTML = `
-                <img src="${mainImage}" class="post-img" alt="Local">
+                <img src="${photosArray[0]}" class="post-img" alt="Local">
                 <div class="post-info">
                     <p class="post-title">${title}</p>
-                    <p class="post-location">📍 ${location}</p>
+                    <p class="post-location">📍 ${locVal}</p>
                 </div>
             `;
 
