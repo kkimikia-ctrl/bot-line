@@ -37,7 +37,7 @@
             font-weight: bold;
         }
 
-        /* Carrossel Ajustado com Espaçamentos Perfeitos para 2 Blocos */
+        /* --- CARROSSEL INFINITO AUTOMÁTICO DINÂMICO --- */
         .banner-carousel {
             position: fixed;
             top: 45px;
@@ -48,28 +48,30 @@
             z-index: 999;
             overflow-x: auto;
             display: flex;
-            gap: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             box-sizing: border-box;
         }
         .banner-carousel::-webkit-scrollbar {
             display: none;
         }
-        .banner-carousel::before,
-        .banner-carousel::after {
-            content: '';
-            flex: 0 0 12px; /* Garante o espaçamento exato nas extremidades (esquerda e direita) */
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            padding: 0 12px;
+            animation: rolarInfinito 35s linear infinite;
+        }
+        .banner-carousel:hover .carousel-track,
+        .banner-carousel:active .carousel-track {
+            animation-play-state: paused;
         }
         .ad-banner-card {
-            flex: 0 0 calc(50% - 18px); /* Garante que caibam exatamente 2 blocos com respiros perfeitos */
+            flex: 0 0 160px; /* Largura fixa ideal para manter 2 blocos visíveis e padrão */
             height: 100px;
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            scroll-snap-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -101,6 +103,10 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
         }
 
         .music-card {
@@ -167,60 +173,74 @@
         Karaokê da Comunidade
     </div>
 
-    <!-- Carrossel com 12 Banners Publicitários -->
-    <div class="banner-carousel" id="carouselBanners">
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 1')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 1</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 2')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 2</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 3')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 3</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 4')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 4</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 5')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 5</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 6')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 6</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 7')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 7</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 8')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 8</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 9')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 9</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 10')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 10</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 11')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 11</span></div>
-        </div>
-        <div class="ad-banner-card" onclick="alert('Espaço disponível para Anúncio 12')">
-            <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 12</span></div>
+    <!-- Carrossel com Pista Infinita -->
+    <div class="banner-carousel">
+        <div class="carousel-track" id="carouselTrack">
+            <!-- Banner 1 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-karaoke-1', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 1</span></div>
+            </div>
+            <!-- Banner 2 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-karaoke-2', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 2</span></div>
+            </div>
+            <!-- Banner 3 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-karaoke-3', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 3</span></div>
+            </div>
+            <!-- Banner 4 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-karaoke-4', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Retângulo 4</span></div>
+            </div>
         </div>
     </div>
 
     <div id="container-musicas" style="margin-top: 10px;"></div>
 
+    <!-- Firebase SDKs (Ajuste caso já tenha importado no topo ou em outro arquivo) -->
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore-compat.js"></script>
     <script src="karaoke-musicas.js"></script>
     <script>
-        // Rotação automática suave do carrossel
-        const carousel = document.getElementById('carouselBanners');
-        setInterval(() => {
-            if (!carousel) return;
-            if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 10) {
-                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+        // Inicialização do Carrossel Infinito Automático
+        function configurarCarrosselInfinito() {
+            const track = document.getElementById('carouselTrack');
+            if (!track || track.dataset.initialized === "true") return;
+            
+            // Clona os elementos para garantir o loop contínuo sem cortes
+            const items = Array.from(track.children);
+            items.forEach(item => {
+                const clone = item.cloneNode(true);
+                track.appendChild(clone);
+            });
+            
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+            track.dataset.initialized = "true";
+        }
+
+        window.addEventListener('load', () => {
+            configurarCarrosselInfinito();
+        });
+
+        // Função de Registro de Cliques no Firebase Firestore
+        function registrarCliqueBanner(bannerId, urlDestino) {
+            // Se você já tiver o 'db' inicializado globalmente no app, ele usará ele. 
+            // Caso utilize outra versão do Firebase, ajuste a chamada abaixo conforme o seu projeto:
+            if (typeof db !== 'undefined') {
+                const bannerRef = db.collection('banners').doc(bannerId);
+                bannerRef.update({
+                    cliques: firebase.firestore.FieldValue.increment(1)
+                }).catch((error) => {
+                    console.log("Erro ao contabilizar clique: ", error);
+                }).finally(() => {
+                    window.location.href = urlDestino;
+                });
             } else {
-                carousel.scrollBy({ left: carousel.clientWidth * 0.5, behavior: 'smooth' });
+                // Caso o objeto db não esteja carregado nesta página específica, redireciona direto
+                window.location.href = urlDestino;
             }
-        }, 3500);
+        }
 
         // Renderização das músicas
         const wrapper = document.getElementById('container-musicas');
