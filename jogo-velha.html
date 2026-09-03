@@ -13,36 +13,25 @@
         .card-game { background: white; padding: 15px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .action-btn { background-color: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .painel-info { display: flex; justify-content: space-around; background: #e0f2fe; padding: 8px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; font-size: 14px; color: #0369a1; }
-        .input-nome { width: 100%; padding: 10px; border: 2px solid #2563eb; border-radius: 8px; font-size: 16px; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card-game">
-            <button onclick="voltarParaCentral()" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar</button>
+            <button onclick="window.location.href='index.html'" style="background: #ccc; border: none; padding: 6px 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; float: left; font-weight: bold;">⬅ Voltar</button>
             <div style="clear: both;"></div>
             <h3 style="color: #0047ab; margin: 5px 0;">❌ Jogo da Velha ⭕</h3>
             
-            <!-- Tela de Início: Identificação e Escolha de Modo -->
+            <!-- Tela de Início: Escolha de Modo -->
             <div id="velha-modo-escolha" style="margin: 15px 0;">
-                <div id="bloco-cadastro-nome" style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
-                    <p style="font-weight: bold; text-align: left; margin-top: 0; margin-bottom: 5px; color: #1e293b;">Seu Nome para o Ranking:</p>
-                    <input type="text" id="input-nome-jogador" class="input-nome" placeholder="Digite seu nome..." value="">
-                    <button onclick="salvarNomeJogador()" class="action-btn" style="background-color: #16a34a; margin-top: 0;">Salvar Nome 💾</button>
-                </div>
-
-                <div id="bloco-menu-jogar" style="display: none;">
-                    <p style="font-weight: bold; color: #0f172a; margin-bottom: 10px;">Jogador: <span id="span-nome-cadastrado" style="color: #2563eb;"></span> <a href="#" onclick="trocarNome()" style="font-size: 12px; color: #dc2626; margin-left: 10px;">(Alterar)</a></p>
-                    <p style="font-weight: bold; margin-top: 15px;">Escolha o modo:</p>
-                    <button onclick="iniciarJogoCompleto('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
-                    <button onclick="iniciarJogoCompleto('pc')" class="action-btn">🤖 Jogar contra PC</button>
-                </div>
+                <p style="font-weight: bold; margin-top: 15px;">Escolha o modo:</p>
+                <button onclick="iniciarJogoCompleto('amigo')" class="action-btn" style="background-color: #00796b;">👥 Jogar com Amigo</button>
+                <button onclick="iniciarJogoCompleto('pc')" class="action-btn">🤖 Jogar contra PC</button>
             </div>
 
             <!-- Tela do Jogo -->
             <div id="velha-area-jogo" style="display: none;">
                 <div class="painel-info">
-                    <div>👤 <span id="txt-nome-exibicao">Jogador</span></div>
                     <div>❤️ Vidas: <span id="txt-vidas">2</span></div>
                     <div>🏆 Pontos: <span id="txt-pontos">0</span></div>
                 </div>
@@ -61,14 +50,12 @@
                     <button onclick="jogar(8)" id="c-8" style="width: 85px; height: 85px; font-size: 32px; font-weight: bold; background: #fff; border: 2px solid #2563eb; border-radius: 8px; cursor: pointer;"></button>
                 </div>
 
-                <div id="msg-status-salvar" style="font-weight: bold; font-size: 13px; margin-bottom: 10px; min-height: 20px;"></div>
-
                 <button onclick="proximaRodada()" id="btn-proxima" class="action-btn" style="background-color: #16a34a; display: none;">Próxima Partida ➡️</button>
                 
-                <!-- Botão para Salvar Pontos e ir para o Ranking -->
-                <button onclick="salvarPontuacaoFirebase(true)" id="btn-salvar-manual" class="action-btn" style="background-color: #0284c7;">💾 Salvar Pontos e Ver Ranking</button>
+                <!-- Botão para Salvar Pontos com confirmação Sim/Não para o Ranking -->
+                <button onclick="salvarPontuacaoFirebase()" id="btn-salvar-manual" class="action-btn" style="background-color: #0284c7;">💾 Salvar Pontos</button>
                 
-                <button onclick="reiniciarTudo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente / Trocar Nome</button>
+                <button onclick="reiniciarTudo()" id="btn-reiniciar" class="action-btn" style="background-color: #dc2626; display: none;">Jogar Novamente</button>
             </div>
         </div>
     </div>
@@ -90,52 +77,11 @@
         let modo = 'amigo', tabuleiro = ['', '', '', '', '', '', '', '', ''], atual = 'X', ativo = true;
         let vidas = 2;
         let pontos = 0;
-        let nomeJogador = "";
-        let pontuacaoJaSalva = false;
-
-        window.onload = function() {
-            let nomeSalvo = localStorage.getItem('nomeJogadorCentral');
-            if (nomeSalvo && nomeSalvo.trim() !== "") {
-                nomeJogador = nomeSalvo;
-                document.getElementById('span-nome-cadastrado').innerText = nomeJogador;
-                document.getElementById('bloco-cadastro-nome').style.display = 'none';
-                document.getElementById('bloco-menu-jogar').style.display = 'block';
-            } else {
-                document.getElementById('bloco-cadastro-nome').style.display = 'block';
-                document.getElementById('bloco-menu-jogar').style.display = 'none';
-            }
-        };
-
-        function salvarNomeJogador() {
-            let inputVal = document.getElementById('input-nome-jogador').value.trim();
-            if (inputVal === "") {
-                alert("Por favor, digite o seu nome!");
-                return;
-            }
-            nomeJogador = inputVal;
-            localStorage.setItem('nomeJogadorCentral', nomeJogador);
-            
-            document.getElementById('span-nome-cadastrado').innerText = nomeJogador;
-            document.getElementById('bloco-cadastro-nome').style.display = 'none';
-            document.getElementById('bloco-menu-jogar').style.display = 'block';
-        }
-
-        function trocarNome() {
-            document.getElementById('input-nome-jogador').value = nomeJogador;
-            document.getElementById('bloco-cadastro-nome').style.display = 'block';
-            document.getElementById('bloco-menu-jogar').style.display = 'none';
-        }
-
-        function voltarParaCentral() {
-            window.location.href = 'index.html';
-        }
 
         function iniciarJogoCompleto(m) {
             modo = m;
             vidas = 2;
             pontos = 0;
-            pontuacaoJaSalva = false;
-            document.getElementById('txt-nome-exibicao').innerText = nomeJogador;
             document.getElementById('txt-vidas').innerText = vidas;
             document.getElementById('txt-pontos').innerText = pontos;
             document.getElementById('btn-salvar-manual').style.display = 'block';
@@ -149,7 +95,6 @@
             atual = 'X';
             ativo = true;
             document.getElementById('status-jogo').innerText = 'Vez do X';
-            document.getElementById('msg-status-salvar').innerText = '';
             document.getElementById('btn-proxima').style.display = 'none';
             document.getElementById('btn-reiniciar').style.display = 'none';
             for (let i = 0; i < 9; i++) document.getElementById(`c-${i}`).innerText = '';
@@ -177,7 +122,6 @@
                         } else {
                             document.getElementById('status-jogo').innerText = `💀 Game Over! Fim de Vidas.`;
                             document.getElementById('btn-salvar-manual').style.display = 'none';
-                            salvarPontuacaoFirebase(false);
                             document.getElementById('btn-reiniciar').style.display = 'block';
                         }
                     }
@@ -219,32 +163,34 @@
             document.getElementById('velha-modo-escolha').style.display = 'block';
         }
 
-        function salvarPontuacaoFirebase(manual) {
-            if (pontuacaoJaSalva) return;
-            const msg = document.getElementById('msg-status-salvar');
+        // Função de salvar com o prompt do nome e a pergunta (confirm) se deseja ir ao ranking
+        function salvarPontuacaoFirebase() {
+            let nomeSalvo = localStorage.getItem('nomeJogadorCentral') || "Jogador";
+            let nomeJogador = prompt("🏆 Digite seu nome para o Ranking Global:", nomeSalvo);
+            
+            if (!nomeJogador || nomeJogador.trim() === "") return;
+            
+            localStorage.setItem('nomeJogadorCentral', nomeJogador);
             
             const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
             db.collection("ranking_velha").doc(idUnicoDoc).set({
-                nome: nomeJogador,
+                nome: nomeJogador.trim(),
                 pontos: Number(pontos),
                 data: new Date().toISOString()
             })
             .then(() => {
-                pontuacaoJaSalva = true;
-                localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
-
-                msg.style.color = "green";
-                msg.innerText = `✅ Sucesso! Redirecionando para o ranking...`;
-                document.getElementById('btn-salvar-manual').style.display = 'none';
+                // Pergunta se quer ir para o ranking (OK = Sim / Cancelar = Não)
+                let irRanking = confirm("✅ Pontuação salva com sucesso!\n\nDeseja ir para a página do Ranking?");
                 
-                setTimeout(() => {
+                if (irRanking) {
+                    localStorage.setItem('ultimoJogoRetorno', 'jogo-velha.html');
                     window.location.href = "ranking.html";
-                }, 1000);
+                }
+                // Se clicar em "Cancelar", ele apenas permanece na página do jogo.
             })
             .catch((error) => {
                 console.error("Erro ao salvar: ", error);
-                msg.style.color = "red";
-                msg.innerText = "❌ Erro ao salvar pontuação no ranking.";
+                alert("❌ Erro ao salvar pontuação no ranking.");
             });
         }
     </script>
