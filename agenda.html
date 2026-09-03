@@ -88,11 +88,33 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
-        .region-btn:hover, .region-btn.active {
-            background: #0d47a1;
-            color: white;
-            border-color: #0d47a1;
+        .region-btn:hover {
+            opacity: 0.8;
         }
+
+        /* --- CORES CLARINHAS PARA OS BOTÕES DE FILTRO --- */
+        .region-btn[data-regiao="todas"].active { background: #0d47a1; color: white; border-color: #0d47a1; }
+        .region-btn[data-regiao="tokai"] { background-color: #e3f2fd; color: #0d47a1; border-color: #90caf9; }
+        .region-btn[data-regiao="tokai"].active { background-color: #1e88e5; color: white; border-color: #1e88e5; }
+        
+        .region-btn[data-regiao="kanto"] { background-color: #e8f5e9; color: #1b5e20; border-color: #a5d6a7; }
+        .region-btn[data-regiao="kanto"].active { background-color: #43a047; color: white; border-color: #43a047; }
+
+        .region-btn[data-regiao="kansai"] { background-color: #fffde7; color: #f57f17; border-color: #ffe082; }
+        .region-btn[data-regiao="kansai"].active { background-color: #fbc02d; color: #333; border-color: #fbc02d; }
+
+        .region-btn[data-regiao="hokuriku"] { background-color: #f3e5f5; color: #4a148c; border-color: #ce93d8; }
+        .region-btn[data-regiao="hokuriku"].active { background-color: #ab47bc; color: white; border-color: #ab47bc; }
+
+        .region-btn[data-regiao="tohoku"] { background-color: #e0f7fa; color: #006064; border-color: #80deea; }
+        .region-btn[data-regiao="tohoku"].active { background-color: #00acc1; color: white; border-color: #00acc1; }
+
+        .region-btn[data-regiao="chugoku"] { background-color: #fbe9e7; color: #bf360c; border-color: #ffab91; }
+        .region-btn[data-regiao="chugoku"].active { background-color: #f4511e; color: white; border-color: #f4511e; }
+
+        .region-btn[data-regiao="kyushu"] { background-color: #efebe9; color: #3e2723; border-color: #d7ccc8; }
+        .region-btn[data-regiao="kyushu"].active { background-color: #6d4c41; color: white; border-color: #6d4c41; }
+
 
         /* --- CARROSSEL INFINITO --- */
         .carousel-container {
@@ -163,13 +185,14 @@
             box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.1);
         }
 
+        /* --- CARTÕES DE EVENTOS COM CORES CLARINHAS --- */
         .card {
             background: #ffffff;
             border-radius: 14px;
             padding: 14px 16px;
             margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            border-left: 4px solid #0d47a1;
+            border-left: 4px solid #cbd5e1;
             display: block;
         }
         .card.hidden {
@@ -186,6 +209,15 @@
             color: #475569;
             line-height: 1.4;
         }
+
+        /* Cores de fundo e bordas específicas por região nos cartões */
+        .card[data-regiao="tokai"] { background-color: #e3f2fd !important; border-left-color: #1e88e5 !important; }
+        .card[data-regiao="kanto"] { background-color: #e8f5e9 !important; border-left-color: #43a047 !important; }
+        .card[data-regiao="kansai"] { background-color: #fffde7 !important; border-left-color: #fbc02d !important; }
+        .card[data-regiao="hokuriku"] { background-color: #f3e5f5 !important; border-left-color: #ab47bc !important; }
+        .card[data-regiao="tohoku"] { background-color: #e0f7fa !important; border-left-color: #00acc1 !important; }
+        .card[data-regiao="chugoku"] { background-color: #fbe9e7 !important; border-left-color: #f4511e !important; }
+        .card[data-regiao="kyushu"] { background-color: #efebe9 !important; border-left-color: #6d4c41 !important; }
     </style>
 </head>
 <body>
@@ -212,9 +244,9 @@
     <section class="carousel-container">
         <div class="carousel-track" id="carouselTrack">
             <a href="mes.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-            <a href="mini-banner-2.jpg" alt="Destaque 2"></a>
-            <a href="mini-banner-3.jpg" alt="Destaque 3"></a>
-            <a href="mini-banner-4.jpg" alt="Destaque 4"></a>
+            <a href="mes.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+            <a href="mes.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+            <a href="mes.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
         </div>
     </section>
 
@@ -227,7 +259,7 @@
     </div>
 
     <script>
-        // Lista de eventos cadastrados no sistema (você pode carregar do seu banco de dados aqui)
+        // Lista de eventos cadastrados no sistema
         const eventosCadastrados = [
             { data: '2026-09-03', regiao: 'tokai', texto: '🌸 Festival Cultural da Cidade - 14:00 na Praça Central (Toyohashi - Aichi / Tokai)' },
             { data: '2026-09-04', regiao: 'tokai', texto: '📌 Reunião comunitária em Hamamatsu - Shizuoka (Tokai)' },
@@ -245,10 +277,6 @@
             dataAtual.setDate(hoje.getDate() + i);
 
             // Formatar a data no formato YYYY-MM-DD para comparar com os eventos
-            const ano = dataAtual.getFullYear();
-            const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
-            const dia = String(dataAtual.getDate).padStart(2, '0'); // Correção do getDay para getDate
-            // Usando string formatada yyyy-mm-dd
             const yyyy = dataAtual.getFullYear();
             const mm = String(dataAtual.getMonth() + 1).padStart(2, '0');
             const dd = String(dataAtual.getDate()).padStart(2, '0');
