@@ -182,7 +182,7 @@
             width: 100%;
         }
 
-        /* Filtro de Categoria */
+        /* Filtro de Categoria e Subtotal Dividido */
         .filter-row {
             display: flex;
             align-items: center;
@@ -202,6 +202,25 @@
             background: #fff;
             outline: none;
             flex: 1;
+        }
+
+        .filter-subtotal-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(235, 245, 235, 0.7);
+            border: 1px solid #d0e1d0;
+            border-radius: 4px;
+            padding: 3px 6px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .filter-subtotal-box span:last-child {
+            color: var(--danger-color);
         }
 
         /* Listas sem limite restrito, podendo ir até o fim */
@@ -310,6 +329,12 @@
                 </select>
             </div>
 
+            <!-- Caixa de Subtotal da Categoria Selecionada -->
+            <div class="filter-subtotal-box">
+                <span id="label-subtotal-filtro">Total Filtrado:</span>
+                <span id="subtotal-filtrado">¥ 0</span>
+            </div>
+
             <div class="item-list" id="lista-gastos"></div>
         </div>
     </div>
@@ -377,10 +402,17 @@
                 `;
             });
 
-            let somaGastos = 0;
-            gastosSalvos.forEach((item, index) => {
-                somaGastos += Number(item.valor);
+            let somaGastosGeral = 0;
+            let somaGastosFiltrados = 0;
 
+            gastosSalvos.forEach((item) => {
+                somaGastosGeral += Number(item.valor);
+                if (filtroCat === 'Todos' || item.cat === filtroCat) {
+                    somaGastosFiltrados += Number(item.valor);
+                }
+            });
+
+            gastosSalvos.forEach((item, index) => {
                 if (filtroCat !== 'Todos' && item.cat !== filtroCat) {
                     return;
                 }
@@ -405,10 +437,23 @@
                 `;
             });
 
-            const saldo = somaGanhos - somaGastos;
+            // Atualiza o texto do rótulo e o valor do subtotal filtrado
+            if (filtroCat === 'Todos') {
+                document.getElementById('label-subtotal-filtro').textContent = 'Total Geral dos Gastos:';
+            } else {
+                let catNomeFormatado = filtroCat;
+                if(filtroCat === 'Fixos') catNomeFormatado = '1 - Fixos';
+                if(filtroCat === 'Compras') catNomeFormatado = '2 - Compras';
+                if(filtroCat === 'Outros') catNomeFormatado = '3 - Outros';
+                if(filtroCat === 'Transporte') catNomeFormatado = '4 - Transporte';
+                document.getElementById('label-subtotal-filtro').textContent = `Total (${catNomeFormatado}):`;
+            }
+            document.getElementById('subtotal-filtrado').textContent = formatarMoeda(somaGastosFiltrados);
+
+            const saldo = somaGanhos - somaGastosGeral;
 
             document.getElementById('total-ganhos').textContent = formatarMoeda(somaGanhos);
-            document.getElementById('total-gastos').textContent = formatarMoeda(somaGastos);
+            document.getElementById('total-gastos').textContent = formatarMoeda(somaGastosGeral);
             
             const saldoEl = document.getElementById('total-saldo');
             saldoEl.textContent = formatarMoeda(saldo);
@@ -444,7 +489,7 @@
         function adicionarGasto() {
             const desc = document.getElementById('gasto-desc').value.trim();
             const cat = document.getElementById('gasto-cat').value;
-            const valor = document.getElementById('gasto-valor').value;
+            const valor = document.getElementById('gasto-valor'].value;
             const data = document.getElementById('gasto-data').value;
 
             if (!desc || !valor) {
