@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Diário - Ajuda JP</title>
+    <!-- Importando fonte manuscrita/cursiva -->
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,7 +12,7 @@
             --line-color: #e3dcd2;
             --margin-color: #f28b82;
             --text-color: #2c2c2c;
-            --primary-color: #556b2f; /* Cor Verde */
+            --primary-color: #556b2f; /* Cor Verde Principal */
         }
 
         body {
@@ -42,12 +43,33 @@
             margin-bottom: 4px;
         }
 
+        .date-navigator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-family: 'Caveat', cursive;
             margin: 0;
             color: #3b3b3b;
             font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .nav-date-btn {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #555;
         }
 
         .header-icons {
@@ -68,7 +90,7 @@
             cursor: pointer;
         }
 
-        /* GRID: Coloca a Meta (Esquerda) e as Escalas (Direita) lado a lado perfeitamente */
+        /* GRID: Coloca a Meta (Esquerda) e as Escalas (Direita) lado a lado */
         .side-by-side-grid {
             display: grid;
             grid-template-columns: 1fr 1.25fr;
@@ -76,10 +98,21 @@
             margin-bottom: 6px;
         }
 
-        /* Cards Estilizados */
-        .card-box {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid #dcd6ce;
+        /* Cards Estilizados com Cores Clarinhas Diferentes */
+        .card-box-meta {
+            background: rgba(235, 245, 235, 0.85); /* Verde clarinho */
+            border: 1px solid #d0e1d0;
+            border-radius: 8px;
+            padding: 5px 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-box-escalas {
+            background: rgba(253, 248, 235, 0.85); /* Amarelinho/Creme clarinho */
+            border: 1px solid #e8e0cc;
             border-radius: 8px;
             padding: 5px 6px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
@@ -92,7 +125,7 @@
         .meta-title {
             font-size: 0.65rem;
             font-weight: bold;
-            color: #555;
+            color: #4a5c3a;
             margin-bottom: 3px;
             text-transform: uppercase;
         }
@@ -126,7 +159,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 2px 0;
-            border-bottom: 1px dashed #e8e2d8;
+            border-bottom: 1px dashed #e2d7c3;
             font-size: 0.68rem;
         }
 
@@ -146,7 +179,7 @@
             align-items: center;
             justify-content: center;
             background: #fff;
-            border: 1px solid #ddd;
+            border: 1px solid #dcd3bd;
             border-radius: 3px;
             font-size: 0.55rem;
             cursor: pointer;
@@ -178,31 +211,7 @@
             resize: none;
             color: var(--text-color);
             flex-grow: 1;
-            min-height: 150px;
-        }
-
-        .speak-btn-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 4px;
-        }
-
-        .speak-btn {
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 12px;
-            padding: 3px 10px;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
-
-        .speak-btn.recording {
-            background-color: #f28b82;
-            color: white;
-            border-color: #d9534f;
+            min-height: 170px;
         }
 
         .footer-box {
@@ -242,15 +251,21 @@
 
     <div class="container">
         <header>
-            <h1>Sexta-feira, 4 de set</h1>
+            <div class="date-navigator">
+                <button class="nav-date-btn" onclick="mudarDia(-1)" title="Dia Anterior">◀</button>
+                <h1 id="titulo-data">Sexta-feira, 4 de set</h1>
+                <button class="nav-date-btn" onclick="mudarDia(1)" title="Próximo Dia">▶</button>
+            </div>
             <div class="header-icons">
                 <button class="icon-btn" title="Áudio Geral">🔊</button>
                 <button class="icon-btn" title="Configurações">⚙️</button>
             </div>
         </header>
 
+        <!-- BLOCOS LADO A LADO COM CORES CLARAS -->
         <div class="side-by-side-grid">
-            <div class="card-box">
+            <!-- Esquerda: Meta (Verde Clarinho) -->
+            <div class="card-box-meta">
                 <div class="meta-title">Meta de hj?</div>
                 <div class="meta-options-grid">
                     <label class="radio-label">
@@ -265,7 +280,8 @@
                 </div>
             </div>
 
-            <div class="card-box">
+            <!-- Direita: Escalas (Amarelinho Clarinho) -->
+            <div class="card-box-escalas">
                 <div class="compact-row">
                     <span>🔋 Cansado</span>
                     <div class="scale-group">
@@ -299,14 +315,12 @@
             </div>
         </div>
 
+        <!-- Área de Texto Principal (Usa o microfone nativo do teclado do iPhone) -->
         <div class="text-area-container">
             <textarea id="diario-texto" placeholder="Escreva como foi o seu dia aqui..."></textarea>
         </div>
 
-        <div class="speak-btn-container">
-            <button class="speak-btn" id="btn-falar" onclick="ouvirVoz()">🎙️ Falar</button>
-        </div>
-
+        <!-- Meta amanhã -->
         <div class="footer-box">
             <div class="footer-title">Meta para amanhã</div>
             <textarea id="meta-amanha" style="min-height: 22px; line-height: 20px; font-size: 0.85rem;" placeholder="O que quer realizar amanhã?"></textarea>
@@ -316,54 +330,40 @@
     </div>
 
     <script>
-        function ouvirVoz() {
-            const btnFalar = document.getElementById('btn-falar');
-            const textarea = document.getElementById('diario-texto');
+        // Controlar data atual selecionada
+        let dataAtual = new Date(2026, 8, 4); // 4 de Setembro de 2026
 
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            
-            if (!SpeechRecognition) {
-                alert('O reconhecimento de voz não é compatível com este navegador.');
-                return;
-            }
+        function formatarData(data) {
+            const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+            const diaSemana = diasSemana[data.getDay()];
+            const diaMes = data.getDate();
+            const mes = meses[data.getMonth()];
+            return `${diaSemana}, ${diaMes} de ${mes}`;
+        }
 
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
+        function obterChaveStorage(data) {
+            return data.toISOString().split('T')[0]; // ex: "2026-09-04"
+        }
 
-            recognition.onstart = function() {
-                btnFalar.textContent = '🎙️ Ouvindo...';
-                btnFalar.classList.add('recording');
-            };
+        function atualizarTela() {
+            document.getElementById('titulo-data').textContent = formatarData(dataAtual);
+            carregarDiario();
+        }
 
-            recognition.onresult = function(event) {
-                const speechResult = event.results[0][0].transcript;
-                if (textarea.value.trim() !== '') {
-                    textarea.value += ' ' + speechResult;
-                } else {
-                    textarea.value = speechResult;
-                }
-            };
+        function mudarDia(dias) {
+            dataAtual.setDate(dataAtual.getDate() + dias);
+            atualizarTela();
+        }
 
-            recognition.onerror = function() {
-                btnFalar.textContent = '🎙️ Falar';
-                btnFalar.classList.remove('recording');
-            };
-
-            recognition.onend = function() {
-                btnFalar.textContent = '🎙️ Falar';
-                btnFalar.classList.remove('recording');
-            };
-
-            try {
-                recognition.start();
-            } catch (e) {
-                console.error(e);
-            }
+        function limparFormulario() {
+            document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+            document.getElementById('diario-texto').value = '';
+            document.getElementById('meta-amanha').value = '';
         }
 
         function salvarDiario() {
+            const chave = obterChaveStorage(dataAtual);
             const metaSelecionada = document.querySelector('input[name="meta"]:checked');
             const cansado = document.querySelector('input[name="c"]:checked');
             const produtivo = document.querySelector('input[name="p"]:checked');
@@ -372,7 +372,6 @@
             const metaAmanha = document.getElementById('meta-amanha').value;
 
             const dadosDiario = {
-                data: "04/09/2026",
                 meta: metaSelecionada ? metaSelecionada.value : "",
                 cansado: cansado ? cansado.value : "",
                 produtivo: produtivo ? produtivo.value : "",
@@ -381,11 +380,42 @@
                 metaAmanha: metaAmanha
             };
 
-            // Salva na memória do navegador
-            localStorage.setItem('diario_04_09_2026', JSON.stringify(dadosDiario));
-
+            localStorage.setItem('diario_' + chave, JSON.stringify(dadosDiario));
             alert('✨ Diário salvo com sucesso!');
         }
+
+        function carregarDiario() {
+            limparFormulario();
+            const chave = obterChaveStorage(dataAtual);
+            const salvo = localStorage.getItem('diario_' + chave);
+
+            if (salvo) {
+                const dados = JSON.parse(salvo);
+                if (dados.meta) {
+                    const el = document.querySelector(`input[name="meta"][value="${dados.meta}"]`);
+                    if (el) el.checked = true;
+                }
+                if (dados.cansado) {
+                    const el = document.querySelector(`input[name="c"][value="${dados.cansado}"]`);
+                    if (el) el.checked = true;
+                }
+                if (dados.produtivo) {
+                    const el = document.querySelector(`input[name="p"][value="${dados.produtivo}"]`);
+                    if (el) el.checked = true;
+                }
+                if (dados.feliz) {
+                    const el = document.querySelector(`input[name="f"][value="${dados.feliz}"]`);
+                    if (el) el.checked = true;
+                }
+                document.getElementById('diario-texto').value = dados.texto || '';
+                document.getElementById('meta-amanha').value = dados.metaAmanha || '';
+            }
+        }
+
+        // Carregar ao iniciar
+        window.onload = function() {
+            atualizarTela();
+        };
     </script>
 </body>
 </html>
