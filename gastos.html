@@ -13,7 +13,6 @@
             --text-color: #2c2c2c;
             --primary-color: #556b2f;
             --danger-color: #d9534f;
-            --success-color: #4cae4c;
         }
 
         html, body {
@@ -175,4 +174,312 @@
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 5
+            padding: 5px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Filtro de Categoria */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .filter-row select {
+            padding: 2px 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            background: #fff;
+            outline: none;
+            flex: 1;
+        }
+
+        /* Listas de Itens Lançados */
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            max-height: 110px;
+            overflow-y: auto;
+            margin-top: 3px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f8f5;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            border: 1px solid #eee;
+        }
+
+        .item-info {
+            display: flex;
+            gap: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .item-delete {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="date-navigator">
+                <a href="rotina.html" class="icon-btn" style="width: 20px; height: 20px; font-size: 0.6rem; border-radius: 3px;" title="Voltar para Rotina">🏠</a>
+                <h1 id="titulo-pagina">Controle de Gastos & Ganhos</h1>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" title="Configurações">⚙️</button>
+            </div>
+        </header>
+
+        <div class="month-selector">
+            <span>Mês de Referência:</span>
+            <input type="month" id="input-mes-ref" onchange="mudarMesReferencia()">
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-title">Ganhos</div>
+                <div class="summary-value text-ganhos" id="total-ganhos">¥ 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title">Gastos</div>
+                <div class="summary-value text-gastos" id="total-gastos">¥ 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title">Saldo</div>
+                <div class="summary-value text-saldo" id="total-saldo">¥ 0</div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-header">💰 Ganhos (Receitas)</div>
+            <div class="form-row">
+                <input type="text" id="ganho-desc" class="input-descricao" placeholder="Ex: Salário...">
+                <input type="number" id="ganho-valor" class="input-valor" placeholder="Valor (¥)">
+                <input type="date" id="ganho-data" class="input-data">
+            </div>
+            <button class="btn-adicionar" onclick="adicionarGanho()">Adicionar Ganho</button>
+            <div class="item-list" id="lista-ganhos" style="max-height: 65px;"></div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-header">💸 Gastos do Mês</div>
+            
+            <div class="form-row">
+                <input type="text" id="gasto-desc" class="input-descricao" placeholder="Descrição...">
+                <input type="number" id="gasto-valor" class="input-valor" placeholder="Valor (¥)">
+            </div>
+            <div class="form-row">
+                <select id="gasto-cat" class="input-categoria">
+                    <option value="Fixos">1 - Fixos</option>
+                    <option value="Compras">2 - Compras</option>
+                    <option value="Outros">3 - Outros</option>
+                    <option value="Transporte">4 - Transporte</option>
+                </select>
+                <input type="date" id="gasto-data" class="input-data" style="flex: 1.5;">
+            </div>
+            <button class="btn-adicionar" onclick="adicionarGasto()">Adicionar Gasto</button>
+
+            <div class="filter-row">
+                <span>Filtrar:</span>
+                <select id="filtro-cat" onchange="carregarDados()">
+                    <option value="Todos">Todas as Categorias</option>
+                    <option value="Fixos">1 - Fixos</option>
+                    <option value="Compras">2 - Compras</option>
+                    <option value="Outros">3 - Outros</option>
+                    <option value="Transporte">4 - Transporte</option>
+                </select>
+            </div>
+
+            <div class="item-list" id="lista-gastos"></div>
+        </div>
+    </div>
+
+    <script>
+        const dataHoje = new Date();
+        const anoAtual = dataHoje.getFullYear();
+        const mesAtualStr = String(dataHoje.getMonth() + 1).padStart(2, '0');
+        const mesAnoAtual = `${anoAtual}-${mesAtualStr}`;
+        
+        const diaHojeStr = dataHoje.toISOString().split('T')[0];
+
+        document.getElementById('input-mes-ref').value = mesAnoAtual;
+        document.getElementById('ganho-data').value = diaHojeStr;
+        document.getElementById('gasto-data').value = diaHojeStr;
+
+        function obterChaveGanhos() {
+            const mesRef = document.getElementById('input-mes-ref').value;
+            return 'ganhos_' + mesRef;
+        }
+
+        function obterChaveGastos() {
+            const mesRef = document.getElementById('input-mes-ref').value;
+            return 'gastos_' + mesRef;
+        }
+
+        function formatarMoeda(valor) {
+            return '¥ ' + Number(valor).toLocaleString('ja-JP');
+        }
+
+        function formatarDataBR(dataStr) {
+            if (!dataStr) return '';
+            const partes = dataStr.split('-');
+            if (partes.length === 3) {
+                return `${partes[2]}/${partes[1]}`;
+            }
+            return dataStr;
+        }
+
+        function carregarDados() {
+            const ganhosSalvos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
+            const gastosSalvos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
+
+            const listaGanhosEl = document.getElementById('lista-ganhos');
+            const listaGastosEl = document.getElementById('lista-gastos');
+            const filtroCat = document.getElementById('filtro-cat').value;
+
+            listaGanhosEl.innerHTML = '';
+            listaGastosEl.innerHTML = '';
+
+            let somaGanhos = 0;
+            ganhosSalvos.forEach((item, index) => {
+                somaGanhos += Number(item.valor);
+                listaGanhosEl.innerHTML += `
+                    <div class="item-row">
+                        <div class="item-info">
+                            <span style="color:#666;">${formatarDataBR(item.data)}</span>
+                            <span><strong>${item.desc}</strong></span>
+                        </div>
+                        <div>
+                            <span style="color: #2e7d32; font-weight: bold; margin-right: 6px;">${formatarMoeda(item.valor)}</span>
+                            <button class="item-delete" onclick="removerGanho(${index})">❌</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            let somaGastos = 0;
+            gastosSalvos.forEach((item, index) => {
+                somaGastos += Number(item.valor);
+
+                if (filtroCat !== 'Todos' && item.cat !== filtroCat) {
+                    return;
+                }
+
+                let nomeCatLabel = item.cat;
+                if(item.cat === 'Fixos') nomeCatLabel = '1 - Fixos';
+                if(item.cat === 'Compras') nomeCatLabel = '2 - Compras';
+                if(item.cat === 'Outros') nomeCatLabel = '3 - Outros';
+                if(item.cat === 'Transporte') nomeCatLabel = '4 - Transporte';
+
+                listaGastosEl.innerHTML += `
+                    <div class="item-row">
+                        <div class="item-info">
+                            <span style="color:#666;">${formatarDataBR(item.data)}</span>
+                            <span><strong>[${nomeCatLabel}]</strong> ${item.desc}</span>
+                        </div>
+                        <div>
+                            <span style="color: #c62828; font-weight: bold; margin-right: 6px;">${formatarMoeda(item.valor)}</span>
+                            <button class="item-delete" onclick="removerGasto(${index})">❌</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const saldo = somaGanhos - somaGastos;
+
+            document.getElementById('total-ganhos').textContent = formatarMoeda(somaGanhos);
+            document.getElementById('total-gastos').textContent = formatarMoeda(somaGastos);
+            
+            const saldoEl = document.getElementById('total-saldo');
+            saldoEl.textContent = formatarMoeda(saldo);
+            saldoEl.className = 'summary-value ' + (saldo >= 0 ? 'text-saldo' : 'text-gastos');
+        }
+
+        function adicionarGanho() {
+            const desc = document.getElementById('ganho-desc').value.trim();
+            const valor = document.getElementById('ganho-valor').value;
+            const data = document.getElementById('ganho-data').value;
+
+            if (!desc || !valor) {
+                alert('Preencha a descrição e o valor do ganho!');
+                return;
+            }
+
+            const ganhos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
+            ganhos.push({ desc, valor: Number(valor), data });
+            localStorage.setItem(obterChaveGanhos(), JSON.stringify(ganhos));
+
+            document.getElementById('ganho-desc').value = '';
+            document.getElementById('ganho-valor').value = '';
+            carregarDados();
+        }
+
+        function removerGanho(index) {
+            const ganhos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
+            ganhos.splice(index, 1);
+            localStorage.setItem(obterChaveGanhos(), JSON.stringify(ganhos));
+            carregarDados();
+        }
+
+        function adicionarGasto() {
+            const desc = document.getElementById('gasto-desc').value.trim();
+            const cat = document.getElementById('gasto-cat').value;
+            const valor = document.getElementById('gasto-valor').value;
+            const data = document.getElementById('gasto-data').value;
+
+            if (!desc || !valor) {
+                alert('Preencha a descrição e o valor do gasto!');
+                return;
+            }
+
+            const gastos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
+            gastos.push({ desc, cat, valor: Number(valor), data });
+            localStorage.setItem(obterChaveGastos(), JSON.stringify(gastos));
+
+            document.getElementById('gasto-desc').value = '';
+            document.getElementById('gasto-valor').value = '';
+            carregarDados();
+        }
+
+        function removerGasto(index) {
+            const gastos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
+            gastos.splice(index, 1);
+            localStorage.setItem(obterChaveGastos(), JSON.stringify(gastos));
+            carregarDados();
+        }
+
+        function mudarMesReferencia() {
+            carregarDados();
+        }
+
+        window.addEventListener('load', () => {
+            carregarDados();
+        });
+    </script>
+</body>
+</html>
