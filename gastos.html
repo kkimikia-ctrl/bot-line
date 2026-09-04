@@ -3,53 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planilha de Gastos - Ajuda JP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Rotina & Finanças - Gastos</title>
+    <!-- Importando fonte manuscrita/cursiva -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #5c6b53;
-            --primary-light: #eaf0e6;
-            --bg-main: #f2eee3;
-            --card-bg: #ffffff;
-            --text-main: #2c2a29;
-            --text-muted: #78746e;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --bg-color: #fdfbf7;
+            --line-color: #e3dcd2;
+            --margin-color: #f28b82;
+            --text-color: #2c2c2c;
+            --primary-color: #556b2f; /* Cor Verde Principal */
+            --danger-color: #d9534f;
+            --success-color: #4cae4c;
         }
 
         body {
-            background-color: var(--bg-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-main);
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 6px 10px;
+            background-image: 
+                linear-gradient(90deg, transparent 39px, var(--margin-color) 39px, var(--margin-color) 41px, transparent 41px),
+                linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 26px;
         }
 
         .container {
-            width: 100%;
-            max-width: 480px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 94vh;
         }
 
-        /* --- CARROSSEL INFINITO DINÂMICO --- */
+        /* --- CARROSSEL INFINITO NO TOPO ABSOLUTO --- */
         .carousel-container {
             width: 100%;
             overflow-x: auto;
-            background: #ffffff;
-            padding: 10px 0;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 6px 0;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 16px;
+            margin-bottom: 6px;
+            border-radius: 8px;
             position: relative;
             -webkit-overflow-scrolling: touch;
-            border: 1px solid #dfdbce;
         }
         .carousel-container::-webkit-scrollbar {
             display: none;
@@ -85,179 +84,194 @@
             100% { transform: translateX(var(--scroll-amount)); }
         }
 
-        /* --- BOTÃO VOLTAR & TÍTULO --- */
-        .top-nav {
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .date-navigator {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            gap: 4px;
         }
 
-        .btn-back {
-            background: #2b4c7e;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
+        h1 {
+            font-size: 1.15rem;
+            font-family: 'Caveat', cursive;
+            margin: 0;
+            color: #1a1a1a;
+            font-weight: 700;
+            -webkit-text-stroke: 0.3px #1a1a1a;
+            white-space: nowrap;
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
             cursor: pointer;
             text-decoration: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: background 0.2s;
+            color: inherit;
         }
 
-        .btn-back:hover {
-            background: #1f375c;
-        }
-
-        .page-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        /* --- FORMULÁRIO DE LANÇAMENTO --- */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid #dfdbce;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: var(--shadow);
-            margin-bottom: 16px;
-        }
-
-        .card h3 {
-            font-size: 1rem;
-            color: var(--primary);
-            margin-bottom: 12px;
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #d6d0bf;
+        /* Seletor de Mês/Ano */
+        .month-selector {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dcd6ce;
             border-radius: 6px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.9rem;
-            background: #faf8f3;
-            outline: none;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
 
-        .form-control:focus {
-            border-color: var(--primary);
+        .month-selector select {
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 0.8rem;
+            outline: none;
             background: #fff;
         }
 
-        .row-inputs {
+        /* Cards de Resumo */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dcd6ce;
+            border-radius: 8px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-size: 0.65rem;
+            color: #666;
+            margin-bottom: 2px;
+            font-weight: bold;
+        }
+
+        .summary-value {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .text-ganhos { color: #2e7d32; }
+        .text-gastos { color: #c62828; }
+        .text-saldo { color: #1565c0; }
+
+        /* Seções de Lançamento */
+        .section-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dcd6ce;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .section-header {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom: 1px dashed #e2d7c3;
+            padding-bottom: 3px;
         }
 
-        .row-inputs .form-group {
-            flex: 1;
+        .form-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 5px;
         }
 
-        .btn-add {
-            width: 100%;
-            background-color: var(--primary);
+        .form-row input, .form-row select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            outline: none;
+            background: #fff;
+        }
+
+        .input-descricao { flex: 2; }
+        .input-valor { flex: 1; }
+        .input-categoria { flex: 1.2; }
+
+        .btn-adicionar {
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 6px;
+            width: 100%;
         }
 
-        .btn-add:hover {
-            background-color: #4b5843;
-        }
-
-        /* --- RESUMO & TABELA --- */
-        .summary-box {
-            background: var(--primary-light);
-            border: 1px solid #d0e0c8;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-
-        .summary-total {
-            color: var(--primary);
-            font-size: 1.1rem;
-        }
-
-        .expenses-list {
+        /* Listas de Itens Lançados */
+        .item-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 3px;
+            max-height: 120px;
+            overflow-y: auto;
+            margin-top: 5px;
         }
 
-        .expense-item {
-            background: var(--card-bg);
-            border: 1px solid #dfdbce;
-            border-radius: 8px;
-            padding: 10px 12px;
+        .item-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
+            background: #f9f8f5;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            border: 1px solid #eee;
         }
 
-        .expense-info desc {
-            font-weight: 600;
+        .item-info {
+            display: flex;
+            gap: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .expense-info small {
-            display: block;
-            color: var(--text-muted);
+        .item-delete {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
             font-size: 0.75rem;
-        }
-
-        .expense-value {
-            font-weight: 700;
-            color: #b25a5a;
-        }
-
-        .empty-msg {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            padding: 16px;
-            font-style: italic;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- BOTÃO VOLTAR & TÍTULO -->
-        <div class="top-nav">
-            <a href="rotina.html" class="btn-back">← Voltar</a>
-            <span class="page-title">Controle de Gastos</span>
-            <div style="width: 60px;"></div>
-        </div>
-
-        <!-- CARROSSEL INFINITO -->
+        <!-- Carrossel Infinito de Banners no Topo -->
         <section class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
                 <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
@@ -267,125 +281,206 @@
             </div>
         </section>
 
-        <!-- NOVO LANÇAMENTO -->
-        <div class="card">
-            <h3>Adicionar Gasto</h3>
-            <div class="form-group">
-                <label>Descrição</label>
-                <input type="text" id="desc" class="form-control" placeholder="Ex: Supermercado, Gasolina...">
+        <header>
+            <div class="date-navigator">
+                <a href="rotina.html" class="icon-btn" style="width: 22px; height: 22px; font-size: 0.65rem; border-radius: 4px;" title="Voltar para Rotina">🏠</a>
+                <h1 id="titulo-pagina">Controle de Gastos & Ganhos</h1>
             </div>
-            <div class="row-inputs">
-                <div class="form-group">
-                    <label>Valor (¥ ou R$)</label>
-                    <input type="number" id="valor" class="form-control" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="categoria" class="form-control">
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Moradia">Moradia</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Lazer">Lazer</option>
-                        <option value="Outros">Outros</option>
-                    </select>
-                </div>
+            <div class="header-actions">
+                <button class="icon-btn" title="Configurações">⚙️</button>
             </div>
-            <button class="btn-add" id="btn-save-expense">Salvar Lançamento</button>
+        </header>
+
+        <!-- Seletor de Mês -->
+        <div class="month-selector">
+            <span>Mês de Referência:</span>
+            <input type="month" id="input-mes-ref" onchange="mudarMesReferencia()" style="padding: 2px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.75rem;">
         </div>
 
-        <!-- RESUMO TOTAL -->
-        <div class="summary-box">
-            <span>Total do Mês:</span>
-            <span class="summary-total" id="total-val">¥ 0</span>
+        <!-- Cards de Resumo -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-title">Ganhos</div>
+                <div class="summary-value text-ganhos" id="total-ganhos">¥ 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title">Gastos</div>
+                <div class="summary-value text-gastos" id="total-gastos">¥ 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title">Saldo</div>
+                <div class="summary-value text-saldo" id="total-saldo">¥ 0</div>
+            </div>
         </div>
 
-        <!-- LISTA DE GASTOS -->
-        <div class="expenses-list" id="expense-list-container">
-            <div class="empty-msg" id="empty-notice">Nenhum gasto registrado ainda.</div>
+        <!-- Bloco de Ganhos -->
+        <div class="section-box">
+            <div class="section-header">💰 Ganhos (Receitas)</div>
+            <div class="form-row">
+                <input type="text" id="ganho-desc" class="input-descricao" placeholder="Ex: Salário, Extra...">
+                <input type="number" id="ganho-valor" class="input-valor" placeholder="Valor (¥)">
+                <button class="btn-adicionar" style="flex: 0.8;" onclick="adicionarGanho()">Adicionar</button>
+            </div>
+            <div class="item-list" id="lista-ganhos"></div>
+        </div>
+
+        <!-- Bloco de Gastos -->
+        <div class="section-box">
+            <div class="section-header">💸 Gastos do Mês</div>
+            <div class="form-row">
+                <input type="text" id="gasto-desc" class="input-descricao" placeholder="Descrição (ex: Supermercado)">
+                <select id="gasto-cat" class="input-categoria">
+                    <option value="Fixos">1 - Fixos (Aluguel, Água, Luz)</option>
+                    <option value="Compras">2 - Compras (Comidas)</option>
+                    <option value="Outros">3 - Outros (100shop)</option>
+                    <option value="Transporte">4 - Transporte (Gasolina, Ônibus)</option>
+                </select>
+                <input type="number" id="gasto-valor" class="input-valor" placeholder="Valor (¥)">
+            </div>
+            <button class="btn-adicionar" onclick="adicionarGasto()">Adicionar Gasto</button>
+            <div class="item-list" id="lista-gastos"></div>
         </div>
     </div>
 
     <script>
-        // Script do Carrossel Infinito
+        // Inicializar com o mês atual no formato YYYY-MM
+        const dataHoje = new Date();
+        const anoAtual = dataHoje.getFullYear();
+        const mesAtualStr = String(dataHoje.getMonth() + 1).padStart(2, '0');
+        const mesAnoAtual = `${anoAtual}-${mesAtualStr}`;
+
+        document.getElementById('input-mes-ref').value = mesAnoAtual;
+
+        function obterChaveGanhos() {
+            const mesRef = document.getElementById('input-mes-ref').value;
+            return 'ganhos_' + mesRef;
+        }
+
+        function obterChaveGastos() {
+            const mesRef = document.getElementById('input-mes-ref').value;
+            return 'gastos_' + mesRef;
+        }
+
+        function formatarMoeda(valor) {
+            return '¥ ' + Number(valor).toLocaleString('ja-JP');
+        }
+
+        function carregarDados() {
+            const ganhosSalvos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
+            const gastosSalvos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
+
+            const listaGanhosEl = document.getElementById('lista-ganhos');
+            const listaGastosEl = document.getElementById('lista-gastos');
+
+            listaGanhosEl.innerHTML = '';
+            listaGastosEl.innerHTML = '';
+
+            let somaGanhos = 0;
+            ganhosSalvos.forEach((item, index) => {
+                somaGanhos += Number(item.valor);
+                listaGanhosEl.innerHTML += `
+                    <div class="item-row">
+                        <div class="item-info"><span><strong>${item.desc}</strong></span></div>
+                        <div><span style="color: #2e7d32; font-weight: bold; margin-right: 8px;">${formatarMoeda(item.valor)}</span><button class="item-delete" onclick="removerGanho(${index})">❌</button></div>
+                    </div>
+                `;
+            });
+
+            let somaGastos = 0;
+            gastosSalvos.forEach((item, index) => {
+                somaGastos += Number(item.valor);
+                let nomeCatLabel = item.cat;
+                if(item.cat === 'Fixos') nomeCatLabel = '1 - Fixos';
+                if(item.cat === 'Compras') nomeCatLabel = '2 - Compras';
+                if(item.cat === 'Outros') nomeCatLabel = '3 - Outros';
+                if(item.cat === 'Transporte') nomeCatLabel = '4 - Transporte';
+
+                listaGastosEl.innerHTML += `
+                    <div class="item-row">
+                        <div class="item-info"><span><strong>[${nomeCatLabel}]</strong> ${item.desc}</span></div>
+                        <div><span style="color: #c62828; font-weight: bold; margin-right: 8px;">${formatarMoeda(item.valor)}</span><button class="item-delete" onclick="removerGasto(${index})">❌</button></div>
+                    </div>
+                `;
+            });
+
+            const saldo = somaGanhos - somaGastos;
+
+            document.getElementById('total-ganhos').textContent = formatarMoeda(somaGanhos);
+            document.getElementById('total-gastos').textContent = formatarMoeda(somaGastos);
+            
+            const saldoEl = document.getElementById('total-saldo');
+            saldoEl.textContent = formatarMoeda(saldo);
+            saldoEl.className = 'summary-value ' + (saldo >= 0 ? 'text-saldo' : 'text-gastos');
+        }
+
+        function adicionarGanho() {
+            const desc = document.getElementById('ganho-desc').value.trim();
+            const valor = document.getElementById('ganho-valor').value;
+
+            if (!desc || !valor) {
+                alert('Preencha a descrição e o valor do ganho!');
+                return;
+            }
+
+            const ganhos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
+            ganhos.push({ desc, valor: Number(valor) });
+            localStorage.setItem(obterChaveGanhos(), JSON.stringify(ganhos));
+
+            document.getElementById('ganho-desc').value = '';
+            document.getElementById('ganho-valor').value = '';
+            carregarDados();
+        }
+
+        function removerGanho(index) {
+            const ganhos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
+            ganhos.splice(index, 1);
+            localStorage.setItem(obterChaveGanhos(), JSON.stringify(ganhos));
+            carregarDados();
+        }
+
+        function adicionarGasto() {
+            const desc = document.getElementById('gasto-desc').value.trim();
+            const cat = document.getElementById('gasto-cat').value;
+            const valor = document.getElementById('gasto-valor').value;
+
+            if (!desc || !valor) {
+                alert('Preencha a descrição e o valor do gasto!');
+                return;
+            }
+
+            const gastos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
+            gastos.push({ desc, cat, valor: Number(valor) });
+            localStorage.setItem(obterChaveGastos(), JSON.stringify(gastos));
+
+            document.getElementById('gasto-desc').value = '';
+            document.getElementById('gasto-valor').value = '';
+            carregarDados();
+        }
+
+        function removerGasto(index) {
+            const gastos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
+            gastos.splice(index, 1);
+            localStorage.setItem(obterChaveGastos(), JSON.stringify(gastos));
+            carregarDados();
+        }
+
+        function mudarMesReferencia() {
+            carregarDados();
+        }
+
+        // Script para carrossel infinito
         const track = document.getElementById('carouselTrack');
         const items = Array.from(track.children);
         items.forEach(item => {
             const clone = item.cloneNode(true);
             track.appendChild(clone);
         });
+
         window.addEventListener('load', () => {
             const totalWidth = track.scrollWidth / 2;
             track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+            carregarDados();
         });
-
-        // Lógica simples da Planilha de Gastos
-        const btnSave = document.getElementById('btn-save-expense');
-        const descInput = document.getElementById('desc');
-        const valorInput = document.getElementById('valor');
-        const catInput = document.getElementById('categoria');
-        const listContainer = document.getElementById('expense-list-container');
-        const totalValDisplay = document.getElementById('total-val');
-        const emptyNotice = document.getElementById('empty-notice');
-
-        let expenses = JSON.parse(localStorage.getItem('ajuda_jp_gastos')) || [];
-
-        function renderExpenses() {
-            listContainer.innerHTML = '';
-            if (expenses.length === 0) {
-                listContainer.innerHTML = '<div class="empty-msg">Nenhum gasto registrado ainda.</div>';
-                totalValDisplay.textContent = '¥ 0';
-                return;
-            }
-
-            let total = 0;
-            expenses.forEach((item, index) => {
-                total += parseFloat(item.valor);
-                
-                const div = document.createElement('div');
-                div.className = 'expense-item';
-                div.innerHTML = `
-                    <div class="expense-info">
-                        <strong>${item.desc}</strong>
-                        <small>${item.categoria} • ${item.data}</small>
-                    </div>
-                    <div class="expense-value">- ¥ ${Number(item.valor).toLocaleString()}</div>
-                `;
-                listContainer.appendChild(div);
-            });
-
-            totalValDisplay.textContent = `¥ ${total.toLocaleString()}`;
-        }
-
-        btnSave.addEventListener('click', () => {
-            const desc = descInput.value.trim();
-            const valor = valorInput.value.trim();
-            const categoria = catInput.value;
-
-            if (!desc || !valor) {
-                alert('Por favor, preencha a descrição e o valor.');
-                return;
-            }
-
-            const dateOptions = { day: '2-digit', month: '2-digit' };
-            const dataStr = new Date().toLocaleDateString('pt-BR', dateOptions);
-
-            const newExpense = {
-                desc,
-                valor: parseFloat(valor),
-                categoria,
-                data: dataStr
-            };
-
-            expenses.unshift(newExpense);
-            localStorage.setItem('ajuda_jp_gastos', JSON.stringify(expenses));
-
-            descInput.value = '';
-            valorInput.value = '';
-            renderExpenses();
-        });
-
-        // Carregar ao iniciar
-        renderExpenses();
     </script>
 </body>
 </html>
