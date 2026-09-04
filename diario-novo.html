@@ -7,11 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f5efe6; /* Marrom clarinho suave (tom pergaminho) */
+            --bg-color: #f5efe6;
             --line-color: #e3dcd2;
             --margin-color: #f28b82;
             --text-color: #2c2c2c;
-            --primary-color: #556b2f; /* Cor Verde Principal */
+            --primary-color: #556b2f;
         }
 
         body {
@@ -20,7 +20,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 6px 10px;
-            /* Linha vermelha jogada mais para a esquerda e recuo ajustado no container */
             background-image: 
                 linear-gradient(90deg, transparent 14px, var(--margin-color) 14px, var(--margin-color) 16px, transparent 16px),
                 linear-gradient(var(--line-color) 1px, transparent 1px);
@@ -30,7 +29,7 @@
         .container {
             max-width: 600px;
             margin: 0 auto;
-            padding-left: 12px; /* Espaço para afastar as letras da linha vermelha */
+            padding-left: 12px;
             display: flex;
             flex-direction: column;
             min-height: 94vh;
@@ -67,3 +66,631 @@
             color: #1a1a1a;
             font-weight: 700;
             -webkit-text-stroke: 0.3px #1a1a1a;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .nav-date-btn {
+            background: var(--primary-color);
+            border: 1px solid #3f5222;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-hoje {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .side-by-side-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 5px;
+            margin-bottom: 6px;
+        }
+
+        .card-box-meta {
+            background: rgba(235, 245, 235, 0.85);
+            border: 1px solid #d0e1d0;
+            border-radius: 8px;
+            padding: 5px 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-box-escalas {
+            background: rgba(253, 248, 235, 0.85);
+            border: 1px solid #e8e0cc;
+            border-radius: 8px;
+            padding: 5px 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .meta-title {
+            font-size: 0.51rem;
+            font-weight: bold;
+            color: #4a5c3a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .meta-options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            color: var(--text-color);
+            white-space: nowrap;
+        }
+
+        .radio-label input[type="radio"] {
+            accent-color: var(--primary-color);
+            width: 10px;
+            height: 10px;
+            cursor: pointer;
+        }
+
+        .meta-progress-container {
+            margin-top: 3px;
+            padding-top: 3px;
+            border-top: 1px dashed #d0e1d0;
+        }
+
+        .meta-progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.52rem;
+            color: #4a5c3a;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .meta-progress-bar-bg {
+            width: 100%;
+            height: 5px;
+            background-color: #d0e1d0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .meta-progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .compact-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 0;
+            border-bottom: 1px dashed #e2d7c3;
+            font-size: 0.68rem;
+        }
+
+        .compact-row:last-child {
+            border-bottom: none;
+        }
+
+        .scale-group {
+            display: flex;
+            gap: 2px;
+        }
+
+        .s-btn {
+            width: 16px;
+            height: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 1px solid #dcd3bd;
+            border-radius: 3px;
+            font-size: 0.55rem;
+            cursor: pointer;
+        }
+
+        .s-btn input { display: none; }
+        .s-btn:has(input:checked) {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .text-area-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 26px;
+            resize: none;
+            color: var(--text-color);
+            flex-grow: 1;
+            min-height: 150px;
+        }
+
+        .footer-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #dcd6ce;
+            border-radius: 6px;
+            padding: 4px 8px;
+            margin-bottom: 6px;
+        }
+
+        .footer-title {
+            font-size: 0.68rem;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 1px;
+        }
+
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .save-btn:active {
+            background-color: #3f5222;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .modal-overlay.ativo {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            width: 85%;
+            max-width: 340px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            text-align: center;
+            animation: scaleUp 0.2s ease;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.9); }
+            to { transform: scale(1); }
+        }
+
+        .modal-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .modal-verse-box {
+            background-color: #f6f8f3;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 0.88rem;
+            font-style: italic;
+            color: #3b442b;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .modal-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .modal-btn:active {
+            background-color: #3f5222;
+        }
+
+        .modal-date-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            outline: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <a href="rotina.html" class="icon-btn" style="width: 22px; height: 22px; font-size: 0.65rem; border-radius: 4px;" title="Voltar para Rotina">🏠</a>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="abrirJanelaBusca()" title="Pesquisar Data">🔍</button>
+                    <button class="icon-btn" title="Áudio Geral">🔊</button>
+                    <button class="icon-btn" title="Configurações">⚙️</button>
+                </div>
+            </div>
+            
+            <h1 id="titulo-data">Quarta-feira, 2 de setembro</h1>
+
+            <div class="date-navigator" style="margin-top: 4px;">
+                <button class="nav-date-btn" onclick="mudarDia(-1)" title="Dia Anterior">◀</button>
+                <button class="btn-hoje" onclick="irParaHoje()" title="Voltar para Hoje">Hoje</button>
+                <button class="nav-date-btn" onclick="mudarDia(1)" title="Próximo Dia">▶</button>
+            </div>
+        </header>
+
+        <div class="side-by-side-grid">
+            <div class="card-box-meta">
+                <div>
+                    <div class="meta-title">Conseguiu fazer a meta de hoje?</div>
+                    <div class="meta-options-grid">
+                        <label class="radio-label">
+                            <input type="radio" name="meta" value="sim" onchange="calcularProgressoMes()"> Sim
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="meta" value="parcial" onchange="calcularProgressoMes()"> Mais/menos
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="meta" value="nao" onchange="calcularProgressoMes()"> Não deu
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="meta-progress-container">
+                    <div class="meta-progress-info">
+                        <span>Meta do Mês</span>
+                        <span id="meta-porcentagem-texto">0%</span>
+                    </div>
+                    <div class="meta-progress-bar-bg">
+                        <div id="meta-porcentagem-barra" class="meta-progress-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-box-escalas">
+                <div class="compact-row">
+                    <span>🔋 Cansado</span>
+                    <div class="scale-group">
+                        <label class="s-btn"><input type="radio" name="c" value="1">1</label>
+                        <label class="s-btn"><input type="radio" name="c" value="2">2</label>
+                        <label class="s-btn"><input type="radio" name="c" value="3">3</label>
+                        <label class="s-btn"><input type="radio" name="c" value="4">4</label>
+                        <label class="s-btn"><input type="radio" name="c" value="5">5</label>
+                    </div>
+                </div>
+                <div class="compact-row">
+                    <span>⚡ Produtivo</span>
+                    <div class="scale-group">
+                        <label class="s-btn"><input type="radio" name="p" value="1">1</label>
+                        <label class="s-btn"><input type="radio" name="p" value="2">2</label>
+                        <label class="s-btn"><input type="radio" name="p" value="3">3</label>
+                        <label class="s-btn"><input type="radio" name="p" value="4">4</label>
+                        <label class="s-btn"><input type="radio" name="p" value="5">5</label>
+                    </div>
+                </div>
+                <div class="compact-row">
+                    <span>😊 Feliz</span>
+                    <div class="scale-group">
+                        <label class="s-btn"><input type="radio" name="f" value="1">1</label>
+                        <label class="s-btn"><input type="radio" name="f" value="2">2</label>
+                        <label class="s-btn"><input type="radio" name="f" value="3">3</label>
+                        <label class="s-btn"><input type="radio" name="f" value="4">4</label>
+                        <label class="s-btn"><input type="radio" name="f" value="5">5</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-area-container">
+            <textarea id="diario-texto" placeholder="Escreva como foi o seu dia aqui..."></textarea>
+        </div>
+
+        <div class="footer-box">
+            <div class="footer-title">Meta para amanhã</div>
+            <textarea id="meta-amanha" style="min-height: 22px; line-height: 20px; font-size: 0.85rem;" placeholder="O que quer realizar amanhã?"></textarea>
+        </div>
+
+        <button class="save-btn" onclick="salvarDiario()">Salvar Diário</button>
+    </div>
+
+    <div id="modal-busca-data" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">🔍 Pesquisar Data</div>
+            <input type="date" id="input-modal-data" class="modal-date-input">
+            <button class="modal-btn" onclick="irParaDataModal()">Pesquisar</button>
+        </div>
+    </div>
+
+    <div id="modal-alerta" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">✨ Diário salvo com sucesso!</div>
+            <div id="modal-texto-versiculo" class="modal-verse-box"></div>
+            <button class="modal-btn" onclick="fecharModal()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        let dataAtual = new Date();
+
+        const versiculos = [
+            "\"O Senhor é a minha força e o meu escudo; nele o meu coração confia, e dele recebo ajuda.\" - Salmos 28:7",
+            "\"Tudo posso naquele que me fortalece.\" - Filipenses 4:13",
+            "\"Confie no Senhor de todo o coração e não se apoie na sua própria inteligência.\" - Provérbios 3:5",
+            "\"Disse-lhe Jesus: Se podes crer, tudo é possível ao que crê.\" - Marcos 9:23",
+            "\"O Senhor te abençoará e te guardará; o Senhor faça resplandecer o seu rosto sobre ti.\" - Números 6:24-25",
+            "\"Alegrem-se na esperança, sejam pacientes na tribulação, perseverem na oração.\" - Romanos 12:12",
+            "\"Lancem sobre ele toda a sua ansiedade, porque ele tem cuidado de vocês.\" - 1 Pedro 5:7",
+            "\"O choro pode durar uma noite, mas a alegria vem pela manhã.\" - Salmos 30:5"
+        ];
+
+        function formatarData(data) {
+            const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const diaSemana = diasSemana[data.getDay()];
+            const diaMes = data.getDate();
+            const mes = meses[data.getMonth()];
+            return `${diaSemana}, ${diaMes} de ${mes}`;
+        }
+
+        function obterChaveStorage(data) {
+            return data.toISOString().split('T')[0];
+        }
+
+        function atualizarTela() {
+            document.getElementById('titulo-data').textContent = formatarData(dataAtual);
+            carregarDiario();
+            calcularProgressoMes();
+        }
+
+        function mudarDia(dias) {
+            dataAtual.setDate(dataAtual.getDate() + dias);
+            atualizarTela();
+        }
+
+        function irParaHoje() {
+            dataAtual = new Date();
+            atualizarTela();
+        }
+
+        function abrirJanelaBusca() {
+            const ano = dataAtual.getFullYear();
+            const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+            const dia = String(dataAtual.getDate()).padStart(2, '0');
+            document.getElementById('input-modal-data').value = `${ano}-${mes}-${dia}`;
+            
+            document.getElementById('modal-busca-data').classList.add('ativo');
+        }
+
+        function irParaDataModal() {
+            const valorInput = document.getElementById('input-modal-data').value;
+            if (valorInput) {
+                const partes = valorInput.split('-');
+                dataAtual = new Date(partes[0], partes[1] - 1, partes[2]);
+                atualizarTela();
+                document.getElementById('modal-busca-data').classList.remove('ativo');
+            }
+        }
+
+        function limparFormulario() {
+            document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+            document.getElementById('diario-texto').value = '';
+            document.getElementById('meta-amanha').value = '';
+        }
+
+        // Função de cálculo automático da porcentagem do mês
+        function calcularProgressoMes() {
+            const ano = dataAtual.getFullYear();
+            const mes = dataAtual.getMonth();
+            const totalDiasNoMes = new Date(ano, mes + 1, 0).getDate();
+            
+            let pontosObtidos = 0;
+
+            for (let d = 1; d <= totalDiasNoMes; d++) {
+                const dataIteracao = new Date(ano, mes, d);
+                const chave = obterChaveStorage(dataIteracao);
+                const salvo = localStorage.getItem('diario_' + chave);
+
+                if (salvo) {
+                    try {
+                        const dados = JSON.parse(salvo);
+                        if (dados.meta === 'sim') {
+                            pontosObtidos += 1.0; // 100%
+                        } else if (dados.meta === 'parcial') {
+                            pontosObtidos += 0.5; // 50%
+                        } else if (dados.meta === 'nao') {
+                            pontosObtidos += 0.0; // 0%
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            const metaSelecionadaAtual = document.querySelector('input[name="meta"]:checked');
+            const chaveAtual = obterChaveStorage(dataAtual);
+            let jaSalvo = false;
+            const salvoAtual = localStorage.getItem('diario_' + chaveAtual);
+            if (salvoAtual) {
+                try {
+                    const dados = JSON.parse(salvoAtual);
+                    if (dados.meta) jaSalvo = true;
+                } catch(e){}
+            }
+
+            if (metaSelecionadaAtual && !jaSalvo) {
+                if (metaSelecionadaAtual.value === 'sim') pontosObtidos += 1.0;
+                else if (metaSelecionadaAtual.value === 'parcial') pontosObtidos += 0.5;
+                else if (metaSelecionadaAtual.value === 'nao') pontosObtidos += 0.0;
+            }
+
+            let porcentagem = Math.round((pontosObtidos / totalDiasNoMes) * 100);
+            if (porcentagem > 100) porcentagem = 100;
+
+            document.getElementById('meta-porcentagem-texto').textContent = `${porcentagem}%`;
+            document.getElementById('meta-porcentagem-barra').style.width = `${porcentagem}%`;
+        }
+
+        function salvarDiario() {
+            const chave = obterChaveStorage(dataAtual);
+            const metaSelecionada = document.querySelector('input[name="meta"]:checked');
+            const cansado = document.querySelector('input[name="c"]:checked');
+            const produtivo = document.querySelector('input[name="p"]:checked');
+            const feliz = document.querySelector('input[name="f"]:checked');
+            const textoDiario = document.getElementById('diario-texto').value;
+            const metaAmanha = document.getElementById('meta-amanha').value;
+
+            const dadosDiario = {
+                meta: metaSelecionada ? metaSelecionada.value : "",
+                cansado: cansado ? cansado.value : "",
+                produtivo: produtivo ? produtivo.value : "",
+                feliz: feliz ? feliz.value : "",
+                texto: textoDiario,
+                metaAmanha: metaAmanha
+            };
+
+            localStorage.setItem('diario_' + chave, JSON.stringify(dadosDiario));
+            calcularProgressoMes();
+
+            const hojeReal = new Date();
+            const chaveHoje = hojeReal.toISOString().split('T')[0];
+
+            let somaCaracteres = 0;
+            for (let i = 0; i < chaveHoje.length; i++) {
+                somaCaracteres += chaveHoje.charCodeAt(i);
+            }
+            const indiceVersiculo = somaCaracteres % versiculos.length;
+            const versiculoDoDia = versiculos[indiceVersiculo];
+            
+            document.getElementById('modal-texto-versiculo').textContent = versiculoDoDia;
+            document.getElementById('modal-alerta').classList.add('ativo');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-alerta').classList.remove('ativo');
+        }
+
+        function carregarDiario() {
+            limparFormulario();
+            const chave = obterChaveStorage(dataAtual);
+            const salvo = localStorage.getItem('diario_' + chave);
+
+            if (salvo) {
+                const dados = JSON.parse(salvo);
+                if (dados.meta) {
+                    const el = document.querySelector(`input[name="meta"][value="${dados.meta}"]`);
+                    if (el) el.checked = true;
+                }
+                if (dados.cansado) {
+                    const el = document.querySelector(`input[name="c"][value="${dados.cansado}"]`);
+                    if (el) el.checked = true;
+                }
+                if (dados.produtivo) {
+                    const el = document.querySelector(`input[name="p"][value="${dados.produtivo}"]`);
+                    if (el) el.checked = true;
+                }
+                if (dados.feliz) {
+                    const el = document.querySelector(`input[name="f"][value="${dados.feliz}"]`);
+                    if (el) el.checked = true;
+                }
+                document.getElementById('diario-texto').value = dados.texto || '';
+                document.getElementById('meta-amanha').value = dados.metaAmanha || '';
+            }
+        }
+
+        window.addEventListener('load', () => {
+            atualizarTela();
+        });
+    </script>
+</body>
+</html>
