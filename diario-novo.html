@@ -18,7 +18,7 @@
             color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 8px 12px;
+            padding: 6px 10px;
             background-image: 
                 linear-gradient(90deg, transparent 39px, var(--margin-color) 39px, var(--margin-color) 41px, transparent 41px),
                 linear-gradient(var(--line-color) 1px, transparent 1px);
@@ -29,13 +29,16 @@
             max-width: 600px;
             margin: 0 auto;
             padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 95vh;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         h1 {
@@ -54,51 +57,57 @@
             background: rgba(255,255,255,0.9);
             border: 1px solid #ccc;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
         }
 
-        /* Painel Único Super Enxuto */
+        /* Painel Único Compacto */
         .compact-panel {
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #dcd6ce;
             border-radius: 8px;
             padding: 6px 10px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
 
-        .compact-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 3px 0;
+        /* Meta em 2 Linhas */
+        .meta-row-box {
+            padding-bottom: 4px;
+            margin-bottom: 4px;
             border-bottom: 1px solid #f2ece4;
-            font-size: 0.8rem;
         }
 
-        .compact-row:last-child {
-            border-bottom: none;
+        .meta-title {
+            font-size: 0.78rem;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 4px;
         }
 
-        /* Botões de Meta Mini */
-        .meta-group {
-            display: flex;
+        .meta-grid-2lines {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 3px;
         }
 
         .m-btn {
-            padding: 2px 6px;
-            font-size: 0.7rem;
+            padding: 3px 4px;
+            font-size: 0.68rem;
+            text-align: center;
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 4px;
             cursor: pointer;
+        }
+
+        .m-btn.full-width {
+            grid-column: span 2;
         }
 
         .m-btn input { display: none; }
@@ -108,22 +117,35 @@
             border-color: var(--primary-color);
         }
 
-        /* Números das Escalas Mini */
+        /* Linhas das Escalas (3 itens) */
+        .compact-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 0;
+            border-bottom: 1px solid #f2ece4;
+            font-size: 0.78rem;
+        }
+
+        .compact-row:last-child {
+            border-bottom: none;
+        }
+
         .scale-group {
             display: flex;
             gap: 2px;
         }
 
         .s-btn {
-            width: 22px;
-            height: 20px;
+            width: 20px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
             border: 1px solid #ddd;
             border-radius: 3px;
-            font-size: 0.65rem;
+            font-size: 0.63rem;
             cursor: pointer;
         }
 
@@ -134,7 +156,14 @@
             border-color: var(--primary-color);
         }
 
-        /* Área de Texto Principal */
+        /* Área de Texto Principal Expandida */
+        .text-area-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 4px;
+        }
+
         textarea {
             width: 100%;
             background: transparent;
@@ -145,13 +174,14 @@
             line-height: 26px;
             resize: none;
             color: var(--text-color);
-            min-height: 140px;
+            flex-grow: 1;
+            min-height: 180px;
         }
 
         .speak-btn-container {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .speak-btn {
@@ -166,16 +196,22 @@
             cursor: pointer;
         }
 
+        .speak-btn.recording {
+            background-color: #f28b82;
+            color: white;
+            border-color: #d9534f;
+        }
+
         .footer-box {
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #dcd6ce;
             border-radius: 6px;
-            padding: 5px 8px;
-            margin-bottom: 8px;
+            padding: 4px 8px;
+            margin-bottom: 6px;
         }
 
         .footer-title {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: bold;
             color: #666;
             margin-bottom: 1px;
@@ -191,7 +227,7 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -201,20 +237,21 @@
         <header>
             <h1>Sexta-feira, 4 de set</h1>
             <div class="header-icons">
-                <button class="icon-btn">🔊</button>
-                <button class="icon-btn">⚙️</button>
+                <button class="icon-btn" title="Áudio Geral">🔊</button>
+                <button class="icon-btn" title="Configurações">⚙️</button>
             </div>
         </header>
 
         <div class="compact-panel">
-            <div class="compact-row">
-                <span>🎯 Meta de hj?</span>
-                <div class="meta-group">
-                    <label class="m-btn"><input type="radio" name="meta">Sim</label>
-                    <label class="m-btn"><input type="radio" name="meta">Mais/menos</label>
-                    <label class="m-btn"><input type="radio" name="meta">Não</label>
+            <div class="meta-row-box">
+                <div class="meta-title">🎯 Cumpriu a meta de hj?</div>
+                <div class="meta-grid-2lines">
+                    <label class="m-btn"><input type="radio" name="meta" value="sim"> Sim</label>
+                    <label class="m-btn"><input type="radio" name="meta" value="parcial"> Mais ou menos</label>
+                    <label class="m-btn full-width"><input type="radio" name="meta" value="nao"> Não deu</label>
                 </div>
             </div>
+
             <div class="compact-row">
                 <span>🔋 Cansado</span>
                 <div class="scale-group">
@@ -245,33 +282,68 @@
                     <label class="s-btn"><input type="radio" name="f" value="5">5</label>
                 </div>
             </div>
-            <div class="compact-row">
-                <span>💡 Aprendizado</span>
-                <div class="scale-group">
-                    <label class="s-btn"><input type="radio" name="a" value="1">1</label>
-                    <label class="s-btn"><input type="radio" name="a" value="2">2</label>
-                    <label class="s-btn"><input type="radio" name="a" value="3">3</label>
-                    <label class="s-btn"><input type="radio" name="a" value="4">4</label>
-                    <label class="s-btn"><input type="radio" name="a" value="5">5</label>
-                </div>
-            </div>
         </div>
 
-        <div>
-            <textarea placeholder="Escreva como foi o seu dia aqui..."></textarea>
+        <div class="text-area-container">
+            <textarea id="diario-texto" placeholder="Escreva como foi o seu dia aqui..."></textarea>
         </div>
 
         <div class="speak-btn-container">
-            <button class="speak-btn">🎙️ Falar</button>
+            <button class="speak-btn" id="btn-falar" onclick="ouvirVoz()">🎙️ Falar</button>
         </div>
 
         <div class="footer-box">
             <div class="footer-title">Meta para amanhã</div>
-            <textarea style="min-height: 25px; line-height: 20px;" placeholder="O que quer realizar amanhã?"></textarea>
+            <textarea id="meta-amanha" style="min-height: 22px; line-height: 20px; font-size: 0.85rem;" placeholder="O que quer realizar amanhã?"></textarea>
         </div>
 
         <button class="save-btn">Salvar Diário</button>
     </div>
 
+    <script>
+        function ouvirVoz() {
+            const btnFalar = document.getElementById('btn-falar');
+            const textarea = document.getElementById('diario-texto');
+
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Seu navegador não suporta reconhecimento de voz.');
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            recognition.lang = 'pt-BR';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = function() {
+                btnFalar.textContent = '🎙️ Ouvindo...';
+                btnFalar.classList.add('recording');
+            };
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                if (textarea.value.trim() !== '') {
+                    textarea.value += ' ' + speechResult;
+                } else {
+                    textarea.value = speechResult;
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Erro no reconhecimento de voz:', event.error);
+                btnFalar.textContent = '🎙️ Falar';
+                btnFalar.classList.remove('recording');
+            };
+
+            recognition.onend = function() {
+                btnFalar.textContent = '🎙️ Falar';
+                btnFalar.classList.remove('recording');
+            };
+
+            recognition.start();
+        }
+    </script>
 </body>
 </html>
