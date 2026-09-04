@@ -41,21 +41,53 @@
             padding: 15px;
         }
 
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        /* --- CARROSSEL INFINITO DINÂMICO --- */
+        .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            background: #ffffff;
+            padding: 10px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 15px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 10px;
+            width: max-content;
+            animation: rolarInfinito 30s linear infinite;
+        }
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 150px;
+            height: 85px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #eee;
+            border: 1px solid #ddd;
+        }
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
         }
 
-        h3 {
-            margin-top: 0;
-            font-size: 16px;
-            color: #1f2937;
-        }
-
-        /* Abas de Região (Estilo idêntico ao de Serviços) */
+        /* Abas de Região */
         .filter-tabs {
             display: flex;
             gap: 8px;
@@ -87,55 +119,91 @@
             color: white;
         }
 
-        /* Lista de Vagas */
+        /* Lista e Cards de Vagas com Foto Estilo "Alternativa" */
         .vaga-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
         }
 
         .vaga-card {
             background: #fff;
-            border-left: 5px solid #db2777;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .vaga-img-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background: #e5e7eb;
+        }
+
+        .vaga-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vaga-badge-regiao {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .vaga-content {
             padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .vaga-empresa {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
 
         .vaga-titulo {
             font-size: 16px;
             font-weight: bold;
             color: #1f2937;
-            margin-bottom: 4px;
-        }
-
-        .vaga-empresa {
-            font-size: 14px;
-            color: #db2777;
-            font-weight: bold;
             margin-bottom: 8px;
+            text-transform: uppercase;
         }
 
-        .vaga-detalhes {
-            font-size: 13px;
-            color: #4b5563;
-            margin-bottom: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
+        .vaga-salario {
+            font-size: 17px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 12px;
         }
 
         .btn-contato {
             background-color: #2563eb;
             color: white;
             border: none;
-            padding: 8px 12px;
+            width: 100%;
+            padding: 10px;
             border-radius: 6px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
+            display: block;
+            text-align: center;
         }
 
         .bottom-nav {
@@ -184,6 +252,17 @@
 
     <div class="container">
         
+        <!-- Carrossel Infinito de Banners -->
+        <section class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+                <a href="mini-banner-4.jpg" alt="Destaque 4"></a>
+            </div>
+        </section>
+
+        <!-- Abas de Filtro -->
         <div class="filter-tabs">
             <button class="tab-btn active" onclick="filtrarRegiao('todas', this)">Todas</button>
             <button class="tab-btn" onclick="filtrarRegiao('tokai', this)">Tokai (Aichi/Shizuoka/Gifu)</button>
@@ -191,50 +270,49 @@
             <button class="tab-btn" onclick="filtrarRegiao('kansai', this)">Kansai (Osaka/Kyoto/Mie)</button>
         </div>
 
+        <!-- Lista de Vagas com Fotos -->
         <div class="vaga-list" id="listaVagas">
             
+            <!-- Vaga 1 -->
             <div class="vaga-card" data-regiao="tokai">
-                <div class="vaga-titulo">Montagem e Inspeção de Autopeças</div>
-                <div class="vaga-empresa">Empreiteira Exemplo - Toyohashi, Aichi</div>
-                <div class="vaga-detalhes">
-                    <span>💵 Salário: ¥1,400 ~ ¥1,600 / hora</span>
-                    <span>⏰ Turno: Diurno / Noturno</span>
-                    <span>🏠 Nihongo: Intermediário</span>
+                <div class="vaga-img-container">
+                    <img src="vaga1.jpg" alt="Autopeças" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&auto=format&fit=crop&q=60';">
+                    <div class="vaga-badge-regiao">📍 Aichi</div>
                 </div>
-                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+                <div class="vaga-content">
+                    <div class="vaga-empresa">TOKI K.K. (NISHIO)</div>
+                    <div class="vaga-titulo">AUTOPEÇAS</div>
+                    <div class="vaga-salario">¥1.100 ~ ¥1.800/h</div>
+                    <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+                </div>
             </div>
 
-            <div class="vaga-card" data-regiao="tokai">
-                <div class="vaga-titulo">Solda e Estamparia de Metais</div>
-                <div class="vaga-empresa">Global Service - Hamamatsu, Shizuoka</div>
-                <div class="vaga-detalhes">
-                    <span>💵 Salário: ¥1,650 / hora</span>
-                    <span>⏰ Turno: 2 Turnos alternados</span>
-                    <span>🏠 Nihongo: Básico aceito</span>
-                </div>
-                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
-            </div>
-
+            <!-- Vaga 2 -->
             <div class="vaga-card" data-regiao="kanto">
-                <div class="vaga-titulo">Logística e Expedição de Produtos</div>
-                <div class="vaga-empresa">Kanto Logistics - Ota, Gunma</div>
-                <div class="vaga-detalhes">
-                    <span>💵 Salário: ¥1,500 / hora</span>
-                    <span>⏰ Turno: Diurno fixo</span>
-                    <span>🏠 Nihongo: Básico</span>
+                <div class="vaga-img-container">
+                    <img src="vaga2.jpg" alt="Autopeças" onerror="this.src='https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&auto=format&fit=crop&q=60';">
+                    <div class="vaga-badge-regiao">📍 Kanagawa</div>
                 </div>
-                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+                <div class="vaga-content">
+                    <div class="vaga-empresa">TAKUEI</div>
+                    <div class="vaga-titulo">AUTOPEÇAS</div>
+                    <div class="vaga-salario">¥1.600/h</div>
+                    <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+                </div>
             </div>
 
-            <div class="vaga-card" data-regiao="kansai">
-                <div class="vaga-titulo">Fabricação e Embalagem de Alimentos</div>
-                <div class="vaga-empresa">Kansai Foods - Yokkaichi, Mie</div>
-                <div class="vaga-detalhes">
-                    <span>💵 Salário: ¥1,350 / hora</span>
-                    <span>⏰ Turno: Apenas diurno</span>
-                    <span>🏠 Nihongo: Sem exigência</span>
+            <!-- Vaga 3 -->
+            <div class="vaga-card" data-regiao="kanto">
+                <div class="vaga-img-container">
+                    <img src="vaga3.jpg" alt="Ar Condicionado" onerror="this.src='https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=60';">
+                    <div class="vaga-badge-regiao">📍 Kanagawa</div>
                 </div>
-                <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+                <div class="vaga-content">
+                    <div class="vaga-empresa">JUST JP K.K.</div>
+                    <div class="vaga-titulo">AR CONDICIONADO INDUSTRIAL</div>
+                    <div class="vaga-salario">¥1.300/h</div>
+                    <a href="tel:09000000000" class="btn-contato">📞 Ligar / Candidatar-se</a>
+                </div>
             </div>
 
         </div>
@@ -260,13 +338,26 @@
     </nav>
 
     <script>
+        // Script do Carrossel Infinito
+        const track = document.getElementById('carouselTrack');
+        const items = Array.from(track.children);
+        
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+
+        window.addEventListener('load', () => {
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+        });
+
+        // Script de Filtro por Região
         function filtrarRegiao(regiao, elementoBotao) {
-            // Atualizar classes ativas dos botões
             const botoes = document.querySelectorAll('.tab-btn');
             botoes.forEach(btn => btn.classList.remove('active'));
             elementoBotao.classList.add('active');
 
-            // Filtrar cards de vagas
             const cards = document.querySelectorAll('.vaga-card');
             cards.forEach(card => {
                 const regiaoCard = card.getAttribute('data-regiao');
