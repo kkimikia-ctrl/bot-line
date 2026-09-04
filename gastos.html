@@ -26,7 +26,7 @@
                 linear-gradient(90deg, transparent 39px, var(--margin-color) 39px, var(--margin-color) 41px, transparent 41px),
                 linear-gradient(var(--line-color) 1px, transparent 1px);
             background-size: 100% 26px;
-            overscroll-behavior-y: none; /* Trava o efeito elástico no celular */
+            overscroll-behavior-y: none;
         }
 
         .container {
@@ -161,7 +161,7 @@
             padding: 6px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             outline: none;
             background: #fff;
         }
@@ -169,6 +169,7 @@
         .input-descricao { flex: 2; }
         .input-valor { flex: 1; }
         .input-categoria { flex: 1.2; }
+        .input-data { flex: 1; }
 
         .btn-adicionar {
             background-color: var(--primary-color);
@@ -182,12 +183,32 @@
             width: 100%;
         }
 
+        /* Filtro de Categoria */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .filter-row select {
+            padding: 3px 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            background: #fff;
+            outline: none;
+        }
+
         /* Listas de Itens Lançados */
         .item-list {
             display: flex;
             flex-direction: column;
             gap: 3px;
-            max-height: 120px;
+            max-height: 130px;
             overflow-y: auto;
             margin-top: 5px;
         }
@@ -205,7 +226,7 @@
 
         .item-info {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -259,24 +280,39 @@
             <div class="form-row">
                 <input type="text" id="ganho-desc" class="input-descricao" placeholder="Ex: Salário, Extra...">
                 <input type="number" id="ganho-valor" class="input-valor" placeholder="Valor (¥)">
-                <button class="btn-adicionar" style="flex: 0.8;" onclick="adicionarGanho()">Adicionar</button>
+                <input type="date" id="ganho-data" class="input-data">
             </div>
-            <div class="item-list" id="lista-ganhos"></div>
+            <button class="btn-adicionar" onclick="adicionarGanho()">Adicionar Ganho</button>
+            <div class="item-list" id="lista-ganhos" style="max-height: 80px;"></div>
         </div>
 
         <div class="section-box">
             <div class="section-header">💸 Gastos do Mês</div>
+            
             <div class="form-row">
                 <input type="text" id="gasto-desc" class="input-descricao" placeholder="Descrição (ex: Supermercado)">
                 <select id="gasto-cat" class="input-categoria">
-                    <option value="Fixos">1 - Fixos (Aluguel, Água, Luz)</option>
-                    <option value="Compras">2 - Compras (Comidas)</option>
-                    <option value="Outros">3 - Outros (100shop)</option>
-                    <option value="Transporte">4 - Transporte (Gasolina, Ônibus)</option>
+                    <option value="Fixos">1 - Fixos</option>
+                    <option value="Compras">2 - Compras</option>
+                    <option value="Outros">3 - Outros</option>
+                    <option value="Transporte">4 - Transporte</option>
                 </select>
                 <input type="number" id="gasto-valor" class="input-valor" placeholder="Valor (¥)">
+                <input type="date" id="gasto-data" class="input-data">
             </div>
             <button class="btn-adicionar" onclick="adicionarGasto()">Adicionar Gasto</button>
+
+            <div class="filter-row" style="margin-top: 8px;">
+                <span>Filtrar categoria:</span>
+                <select id="filtro-cat" onchange="carregarDados()">
+                    <option value="Todos">Todas as Categorias</option>
+                    <option value="Fixos">1 - Fixos</option>
+                    <option value="Compras">2 - Compras</option>
+                    <option value="Outros">3 - Outros</option>
+                    <option value="Transporte">4 - Transporte</option>
+                </select>
+            </div>
+
             <div class="item-list" id="lista-gastos"></div>
         </div>
     </div>
@@ -286,8 +322,13 @@
         const anoAtual = dataHoje.getFullYear();
         const mesAtualStr = String(dataHoje.getMonth() + 1).padStart(2, '0');
         const mesAnoAtual = `${anoAtual}-${mesAtualStr}`;
+        
+        // Data padrão de hoje no formato YYYY-MM-DD
+        const diaHojeStr = dataHoje.toISOString().split('T')[0];
 
         document.getElementById('input-mes-ref').value = mesAnoAtual;
+        document.getElementById('ganho-data').value = diaHojeStr;
+        document.getElementById('gasto-data').value = diaHojeStr;
 
         function obterChaveGanhos() {
             const mesRef = document.getElementById('input-mes-ref').value;
@@ -303,12 +344,22 @@
             return '¥ ' + Number(valor).toLocaleString('ja-JP');
         }
 
+        function formatarDataBR(dataStr) {
+            if (!dataStr) return '';
+            const partes = dataStr.split('-');
+            if (partes.length === 3) {
+                return `${partes[2]}/${partes[1]}`;
+            }
+            return dataStr;
+        }
+
         function carregarDados() {
             const ganhosSalvos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
             const gastosSalvos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
 
             const listaGanhosEl = document.getElementById('lista-ganhos');
             const listaGastosEl = document.getElementById('lista-gastos');
+            const filtroCat = document.getElementById('filtro-cat').value;
 
             listaGanhosEl.innerHTML = '';
             listaGastosEl.innerHTML = '';
@@ -318,8 +369,14 @@
                 somaGanhos += Number(item.valor);
                 listaGanhosEl.innerHTML += `
                     <div class="item-row">
-                        <div class="item-info"><span><strong>${item.desc}</strong></span></div>
-                        <div><span style="color: #2e7d32; font-weight: bold; margin-right: 8px;">${formatarMoeda(item.valor)}</span><button class="item-delete" onclick="removerGanho(${index})">❌</button></div>
+                        <div class="item-info">
+                            <span style="color:#666;">${formatarDataBR(item.data)}</span>
+                            <span><strong>${item.desc}</strong></span>
+                        </div>
+                        <div>
+                            <span style="color: #2e7d32; font-weight: bold; margin-right: 8px;">${formatarMoeda(item.valor)}</span>
+                            <button class="item-delete" onclick="removerGanho(${index})">❌</button>
+                        </div>
                     </div>
                 `;
             });
@@ -327,6 +384,12 @@
             let somaGastos = 0;
             gastosSalvos.forEach((item, index) => {
                 somaGastos += Number(item.valor);
+
+                // Aplicar filtro de categoria se selecionado
+                if (filtroCat !== 'Todos' && item.cat !== filtroCat) {
+                    return; // Pula a exibição se não bater com o filtro
+                }
+
                 let nomeCatLabel = item.cat;
                 if(item.cat === 'Fixos') nomeCatLabel = '1 - Fixos';
                 if(item.cat === 'Compras') nomeCatLabel = '2 - Compras';
@@ -335,8 +398,14 @@
 
                 listaGastosEl.innerHTML += `
                     <div class="item-row">
-                        <div class="item-info"><span><strong>[${nomeCatLabel}]</strong> ${item.desc}</span></div>
-                        <div><span style="color: #c62828; font-weight: bold; margin-right: 8px;">${formatarMoeda(item.valor)}</span><button class="item-delete" onclick="removerGasto(${index})">❌</button></div>
+                        <div class="item-info">
+                            <span style="color:#666;">${formatarDataBR(item.data)}</span>
+                            <span><strong>[${nomeCatLabel}]</strong> ${item.desc}</span>
+                        </div>
+                        <div>
+                            <span style="color: #c62828; font-weight: bold; margin-right: 8px;">${formatarMoeda(item.valor)}</span>
+                            <button class="item-delete" onclick="removerGasto(${index})">❌</button>
+                        </div>
                     </div>
                 `;
             });
@@ -354,6 +423,7 @@
         function adicionarGanho() {
             const desc = document.getElementById('ganho-desc').value.trim();
             const valor = document.getElementById('ganho-valor').value;
+            const data = document.getElementById('ganho-data').value;
 
             if (!desc || !valor) {
                 alert('Preencha a descrição e o valor do ganho!');
@@ -361,7 +431,7 @@
             }
 
             const ganhos = JSON.parse(localStorage.getItem(obterChaveGanhos()) || '[]');
-            ganhos.push({ desc, valor: Number(valor) });
+            ganhos.push({ desc, valor: Number(valor), data });
             localStorage.setItem(obterChaveGanhos(), JSON.stringify(ganhos));
 
             document.getElementById('ganho-desc').value = '';
@@ -380,6 +450,7 @@
             const desc = document.getElementById('gasto-desc').value.trim();
             const cat = document.getElementById('gasto-cat').value;
             const valor = document.getElementById('gasto-valor').value;
+            const data = document.getElementById('gasto-data').value;
 
             if (!desc || !valor) {
                 alert('Preencha a descrição e o valor do gasto!');
@@ -387,7 +458,7 @@
             }
 
             const gastos = JSON.parse(localStorage.getItem(obterChaveGastos()) || '[]');
-            gastos.push({ desc, cat, valor: Number(valor) });
+            gastos.push({ desc, cat, valor: Number(valor), data });
             localStorage.setItem(obterChaveGastos(), JSON.stringify(gastos));
 
             document.getElementById('gasto-desc').value = '';
