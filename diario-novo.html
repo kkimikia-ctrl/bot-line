@@ -103,6 +103,8 @@
             justify-content: center;
             font-size: 0.7rem;
             cursor: pointer;
+            text-decoration: none;
+            color: inherit;
         }
 
         /* GRID: Coloca a Meta (Esquerda) e as Escalas (Direita) lado a lado */
@@ -205,6 +207,52 @@
             border-color: var(--primary-color);
         }
 
+        /* --- CARROSSEL INFINITO DINÂMICO --- */
+        .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 8px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 6px;
+            border-radius: 8px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 10px;
+            width: max-content;
+            animation: rolarInfinito 30s linear infinite;
+        }
+        .carousel-container:hover .carousel-track,
+        .carousel-container:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .carousel-track a {
+            display: block;
+            flex-shrink: 0;
+            width: 150px;
+            height: 85px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background: #eee;
+            border: 1px solid #ddd;
+        }
+        .carousel-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
+        }
+
         /* Área de Texto Principal Expandida */
         .text-area-container {
             flex-grow: 1;
@@ -224,7 +272,7 @@
             resize: none;
             color: var(--text-color);
             flex-grow: 1;
-            min-height: 170px;
+            min-height: 150px;
         }
 
         .footer-box {
@@ -358,6 +406,7 @@
                 <button class="btn-hoje" onclick="irParaHoje()" title="Voltar para Hoje">Hoje</button>
             </div>
             <div class="header-actions">
+                <a href="index.html" class="icon-btn" title="Voltar para o Índice">🏠</a>
                 <button class="icon-btn" onclick="abrirJanelaBusca()" title="Pesquisar Data">🔍</button>
                 <button class="icon-btn" title="Áudio Geral">🔊</button>
                 <button class="icon-btn" title="Configurações">⚙️</button>
@@ -416,6 +465,16 @@
                 </div>
             </div>
         </div>
+
+        <!-- Carrossel Infinito de Banners -->
+        <section class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
+                <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
+            </div>
+        </section>
 
         <!-- Área de Texto Principal -->
         <div class="text-area-container">
@@ -582,9 +641,20 @@
             }
         }
 
-        window.onload = function() {
+        // Script para duplicar os itens automaticamente e ajustar o carrossel infinito
+        const track = document.getElementById('carouselTrack');
+        const items = Array.from(track.children);
+        
+        items.forEach(item => {
+            const clone = item.cloneNode(true);
+            track.appendChild(clone);
+        });
+
+        window.addEventListener('load', () => {
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
             atualizarTela();
-        };
+        });
     </script>
 </body>
 </html>
