@@ -50,12 +50,12 @@
         }
 
         h1 {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-family: 'Caveat', cursive;
             margin: 0;
             color: #1a1a1a;
-            font-weight: 700; /* Mais negrito para destacar bem */
-            -webkit-text-stroke: 0.3px #1a1a1a; /* Garante máxima nitidez em telas mobile */
+            font-weight: 700;
+            -webkit-text-stroke: 0.3px #1a1a1a;
             white-space: nowrap;
         }
 
@@ -73,8 +73,22 @@
             color: #555;
         }
 
-        .header-icons {
+        /* Botão Hoje / Voltar */
+        .btn-hoje {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+
+        .header-actions {
             display: flex;
+            align-items: center;
             gap: 6px;
         }
 
@@ -245,7 +259,7 @@
             background-color: #3f5222;
         }
 
-        /* Modal Personalizado para o Alerta de Sucesso */
+        /* Janela Flutuante (Modal) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -318,6 +332,19 @@
         .modal-btn:active {
             background-color: #3f5222;
         }
+
+        /* Estilo do input de data dentro da janela flutuante */
+        .modal-date-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            outline: none;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -328,8 +355,10 @@
                 <button class="nav-date-btn" onclick="mudarDia(-1)" title="Dia Anterior">◀</button>
                 <h1 id="titulo-data">Quarta-feira, 2 de setembro</h1>
                 <button class="nav-date-btn" onclick="mudarDia(1)" title="Próximo Dia">▶</button>
+                <button class="btn-hoje" onclick="irParaHoje()" title="Voltar para Hoje">Hoje</button>
             </div>
-            <div class="header-icons">
+            <div class="header-actions">
+                <button class="icon-btn" onclick="abrirJanelaBusca()" title="Pesquisar Data">🔍</button>
                 <button class="icon-btn" title="Áudio Geral">🔊</button>
                 <button class="icon-btn" title="Configurações">⚙️</button>
             </div>
@@ -402,7 +431,16 @@
         <button class="save-btn" onclick="salvarDiario()">Salvar Diário</button>
     </div>
 
-    <!-- Modal Personalizado para Exibição -->
+    <!-- Janela Flutuante de Pesquisa por Data -->
+    <div id="modal-busca-data" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">🔍 Pesquisar Data</div>
+            <input type="date" id="input-modal-data" class="modal-date-input">
+            <button class="modal-btn" onclick="irParaDataModal()">Pesquisar</button>
+        </div>
+    </div>
+
+    <!-- Modal Personalizado para o Alerta de Sucesso -->
     <div id="modal-alerta" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-title">✨ Diário salvo com sucesso!</div>
@@ -412,7 +450,7 @@
     </div>
 
     <script>
-        let dataAtual = new Date(2026, 8, 4);
+        let dataAtual = new Date();
 
         const versiculos = [
             "\"O Senhor é a minha força e o meu escudo; nele o meu coração confia, e dele recebo ajuda.\" - Salmos 28:7",
@@ -446,6 +484,30 @@
         function mudarDia(dias) {
             dataAtual.setDate(dataAtual.getDate() + dias);
             atualizarTela();
+        }
+
+        function irParaHoje() {
+            dataAtual = new Date();
+            atualizarTela();
+        }
+
+        function abrirJanelaBusca() {
+            const ano = dataAtual.getFullYear();
+            const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+            const dia = String(dataAtual.getDate()).padStart(2, '0');
+            document.getElementById('input-modal-data').value = `${ano}-${mes}-${dia}`;
+            
+            document.getElementById('modal-busca-data').classList.add('ativo');
+        }
+
+        function irParaDataModal() {
+            const valorInput = document.getElementById('input-modal-data').value;
+            if (valorInput) {
+                const partes = valorInput.split('-');
+                dataAtual = new Date(partes[0], partes[1] - 1, partes[2]);
+                atualizarTela();
+                document.getElementById('modal-busca-data').classList.remove('ativo');
+            }
         }
 
         function limparFormulario() {
