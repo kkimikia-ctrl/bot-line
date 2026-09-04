@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Diário - Ajuda JP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #fdfbf7;
@@ -31,7 +32,7 @@
             padding-left: 20px;
             display: flex;
             flex-direction: column;
-            min-height: 95vh;
+            min-height: 94vh;
         }
 
         header {
@@ -41,11 +42,13 @@
             margin-bottom: 4px;
         }
 
+        /* Aplicando a fonte manuscrita solicitada */
         h1 {
-            font-size: 1.1rem;
-            font-family: 'Georgia', serif;
+            font-size: 1.6rem;
+            font-family: 'Caveat', cursive;
             margin: 0;
-            color: #333;
+            color: #3b3b3b;
+            font-weight: 600;
         }
 
         .header-icons {
@@ -78,9 +81,9 @@
 
         /* Meta em 2 Linhas */
         .meta-row-box {
-            padding-bottom: 4px;
-            margin-bottom: 4px;
-            border-bottom: 1px solid #f2ece4;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #dcd6ce; /* Linha pontilhada estilo caderno */
         }
 
         .meta-title {
@@ -97,8 +100,8 @@
         }
 
         .m-btn {
-            padding: 3px 4px;
-            font-size: 0.68rem;
+            padding: 4px 4px;
+            font-size: 0.7rem;
             text-align: center;
             background: #fff;
             border: 1px solid #ccc;
@@ -117,13 +120,13 @@
             border-color: var(--primary-color);
         }
 
-        /* Linhas das Escalas (3 itens) */
+        /* Linhas das Escalas (3 itens) com separadores */
         .compact-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 2px 0;
-            border-bottom: 1px solid #f2ece4;
+            padding: 3px 0;
+            border-bottom: 1px dashed #e8e2d8;
             font-size: 0.78rem;
         }
 
@@ -188,8 +191,8 @@
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 12px;
-            padding: 2px 8px;
-            font-size: 0.7rem;
+            padding: 3px 10px;
+            font-size: 0.75rem;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -235,7 +238,7 @@
 
     <div class="container">
         <header>
-            <h1>Sexta-feira, 4 de set</h1>
+            <h1>Sexta-feira, 4 de setembro</h1>
             <div class="header-icons">
                 <button class="icon-btn" title="Áudio Geral">🔊</button>
                 <button class="icon-btn" title="Configurações">⚙️</button>
@@ -305,14 +308,14 @@
             const btnFalar = document.getElementById('btn-falar');
             const textarea = document.getElementById('diario-texto');
 
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert('Seu navegador não suporta reconhecimento de voz.');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                alert('O reconhecimento de voz não é compatível com este navegador. Tente usar pelo Google Chrome no celular.');
                 return;
             }
 
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
-
             recognition.lang = 'pt-BR';
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
@@ -332,7 +335,7 @@
             };
 
             recognition.onerror = function(event) {
-                console.error('Erro no reconhecimento de voz:', event.error);
+                console.error('Erro de voz:', event.error);
                 btnFalar.textContent = '🎙️ Falar';
                 btnFalar.classList.remove('recording');
             };
@@ -342,7 +345,11 @@
                 btnFalar.classList.remove('recording');
             };
 
-            recognition.start();
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error(e);
+            }
         }
     </script>
 </body>
