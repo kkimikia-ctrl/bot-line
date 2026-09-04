@@ -471,12 +471,23 @@
                 metaAmanha: metaAmanha
             };
 
+            // Salva o diário na data que está selecionada na tela (passado, presente ou futuro)
             localStorage.setItem('diario_' + chave, JSON.stringify(dadosDiario));
 
-            const versiculoAleatorio = versiculos[Math.floor(Math.random() * versiculos.length)];
+            // Pega estritamente a data de HOJE real do sistema do aparelho
+            const hojeReal = new Date();
+            const chaveHoje = hojeReal.toISOString().split('T')[0];
+
+            // Gera um índice fixo e único baseado exclusivamente no dia de hoje real
+            let somaCaracteres = 0;
+            for (let i = 0; i < chaveHoje.length; i++) {
+                somaCaracteres += chaveHoje.charCodeAt(i);
+            }
+            const indiceVersiculo = somaCaracteres % versiculos.length;
+            const versiculoDoDia = versiculos[indiceVersiculo];
             
-            // Exibe o modal personalizado com o versículo dentro do quadrado destacado
-            document.getElementById('modal-texto-versiculo').textContent = versiculoAleatorio;
+            // Exibe o modal com o versículo exclusivo daquele dia real
+            document.getElementById('modal-texto-versiculo').textContent = versiculoDoDia;
             document.getElementById('modal-alerta').classList.add('ativo');
         }
 
