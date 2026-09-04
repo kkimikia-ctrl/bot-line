@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Diário - Ajuda JP</title>
     <!-- Importando fonte manuscrita/cursiva -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #fdfbf7;
@@ -50,11 +50,12 @@
         }
 
         h1 {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-family: 'Caveat', cursive;
             margin: 0;
-            color: #3b3b3b;
-            font-weight: 600;
+            color: #1a1a1a;
+            font-weight: 700; /* Mais negrito para destacar bem */
+            -webkit-text-stroke: 0.3px #1a1a1a; /* Garante máxima nitidez em telas mobile */
             white-space: nowrap;
         }
 
@@ -325,7 +326,7 @@
         <header>
             <div class="date-navigator">
                 <button class="nav-date-btn" onclick="mudarDia(-1)" title="Dia Anterior">◀</button>
-                <h1 id="titulo-data">Sexta-feira, 4 de setembro</h1>
+                <h1 id="titulo-data">Quarta-feira, 2 de setembro</h1>
                 <button class="nav-date-btn" onclick="mudarDia(1)" title="Próximo Dia">▶</button>
             </div>
             <div class="header-icons">
@@ -471,14 +472,11 @@
                 metaAmanha: metaAmanha
             };
 
-            // Salva o diário na data que está selecionada na tela (passado, presente ou futuro)
             localStorage.setItem('diario_' + chave, JSON.stringify(dadosDiario));
 
-            // Pega estritamente a data de HOJE real do sistema do aparelho
             const hojeReal = new Date();
             const chaveHoje = hojeReal.toISOString().split('T')[0];
 
-            // Gera um índice fixo e único baseado exclusivamente no dia de hoje real
             let somaCaracteres = 0;
             for (let i = 0; i < chaveHoje.length; i++) {
                 somaCaracteres += chaveHoje.charCodeAt(i);
@@ -486,7 +484,6 @@
             const indiceVersiculo = somaCaracteres % versiculos.length;
             const versiculoDoDia = versiculos[indiceVersiculo];
             
-            // Exibe o modal com o versículo exclusivo daquele dia real
             document.getElementById('modal-texto-versiculo').textContent = versiculoDoDia;
             document.getElementById('modal-alerta').classList.add('ativo');
         }
