@@ -206,6 +206,16 @@
             color: #111;
             font-size: 14px;
         }
+        
+        .product-title {
+            font-size: 13px;
+            color: #444;
+            margin-top: 4px;
+            margin-bottom: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
@@ -233,29 +243,33 @@
             <a href="#" class="tab">🎁 Doações (0円)</a>
         </div>
 
-        <input type="text" class="search-box" placeholder="O que você procura? (ex: carro, sofá...)">
+        <input type="text" id="searchInput" class="search-box" placeholder="O que você procura? (ex: carro, sofá...)" onkeyup="filtrarProdutos()">
 
         <div class="filters-row">
-            <select class="filter-select">
-                <option>Todas as Regiões</option>
+            <select id="regionSelect" class="filter-select" onchange="filtrarProdutos()">
+                <option value="">Todas as Regiões</option>
+                <option value="Toyohashi">Toyohashi</option>
+                <option value="Hamamatsu">Hamamatsu</option>
             </select>
-            <input type="text" class="filter-input" placeholder="Cidade (ex: Toyohashi)">
+            <input type="text" id="cityInput" class="filter-input" placeholder="Cidade (ex: Toyohashi)" onkeyup="filtrarProdutos()">
         </div>
 
-        <div class="products-grid">
-            <div class="product-card">
+        <div class="products-grid" id="productsGrid">
+            <div class="product-card" data-nome="carro mercedes" data-cidade="toyohashi">
                 <span class="product-tag">Toyohashi</span>
                 <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=300" alt="Carro">
                 <div class="product-info">
                     <div class="product-price">¥350,000</div>
+                    <p class="product-title">Carro Mercedes</p>
                 </div>
             </div>
 
-            <div class="product-card">
+            <div class="product-card" data-nome="sofa verde" data-cidade="hamamatsu">
                 <span class="product-tag">Hamamatsu</span>
                 <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300" alt="Sofá">
                 <div class="product-info">
                     <div class="product-price">¥8,000</div>
+                    <p class="product-title">Sofá Verde</p>
                 </div>
             </div>
         </div>
@@ -278,6 +292,30 @@
 
         window.addEventListener('load', initCarousel);
         setTimeout(initCarousel, 500);
+
+        // Função de Filtragem em Tempo Real (Busca e Cidade)
+        function filtrarProdutos() {
+            const termoBusca = document.getElementById('searchInput').value.toLowerCase();
+            const regiaoSelecionada = document.getElementById('regionSelect').value.toLowerCase();
+            const termoCidade = document.getElementById('cityInput').value.toLowerCase();
+            
+            const cards = document.querySelectorAll('.product-card');
+
+            cards.forEach(card => {
+                const nomeProduto = card.getAttribute('data-nome').toLowerCase();
+                const cidadeProduto = card.getAttribute('data-cidade').toLowerCase();
+
+                const correspondeBusca = nomeProduto.includes(termoBusca);
+                const correspondeRegiao = regiaoSelecionada === "" || cidadeProduto.includes(regiaoSelecionada);
+                const correspondeCidade = cidadeProduto.includes(termoCidade);
+
+                if (correspondeBusca && correspondeRegiao && correspondeCidade) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
     </script>
 
 </body>
