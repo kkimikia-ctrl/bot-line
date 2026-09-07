@@ -3,354 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Central de Jogos - Ranking Global</title>
+    <title>Ranking Global - Central de Jogos</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
-            color: #f8fafc;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px;
-            padding-top: 155px !important;
-            overscroll-behavior-y: none; /* Evita que o app feche/recarregue ao puxar para baixo */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            text-align: center;
         }
 
-        .ranking-container {
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .btn-voltar {
+            display: block;
             width: 100%;
-            max-width: 440px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            height: 82vh;
-            max-height: 700px;
-        }
-
-        .header-panel {
-            padding: 16px 20px;
-            background: rgba(15, 23, 42, 0.6);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .title-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #fbbf24;
-        }
-
-        /* Estilo do Botão Voltar no Ranking */
-        .btn-voltar-ranking {
-            background: #3b82f6;
+            background: #4b5563;
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: bold;
-            font-size: 13px;
             cursor: pointer;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            text-decoration: none;
+            text-align: center;
         }
 
-        .games-tabs {
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1e40af;
+            font-size: 20px;
+        }
+
+        /* Seletor de Jogo */
+        .seletor-jogo {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             overflow-x: auto;
-            padding-bottom: 4px;
-            scrollbar-width: none;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
         }
-
-        .games-tabs::-webkit-scrollbar {
+        .seletor-jogo::-webkit-scrollbar {
             display: none;
         }
-
-        .tab-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #94a3b8;
-            padding: 6px 12px;
+        .btn-jogo-tab {
+            background: #e5e7eb;
+            border: none;
+            padding: 8px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
-            white-space: nowrap;
+            font-weight: bold;
+            color: #4b5563;
             cursor: pointer;
-            transition: all 0.2s ease;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .btn-jogo-tab.active {
+            background: #2563eb;
+            color: white;
         }
 
-        .tab-btn.active {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            color: #ffffff;
-            border-color: #818cf8;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-
-        .ranking-scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-        }
-
-        .ranking-scroll-area::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .ranking-scroll-area::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-        }
-
-        .player-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .player-card.podium-1 {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
-            border-color: rgba(251, 191, 36, 0.4);
-        }
-
-        .player-card.podium-2 {
-            background: linear-gradient(135deg, rgba(148, 163, 184, 0.15) 0%, rgba(100, 116, 139, 0.05) 100%);
-            border-color: rgba(148, 163, 184, 0.4);
-        }
-
-        .player-card.podium-3 {
-            background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(180, 83, 9, 0.05) 100%);
-            border-color: rgba(217, 119, 6, 0.4);
-        }
-
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .player-rank {
-            font-weight: 700;
+        /* Tabela de Ranking */
+        table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 14px;
-            width: 28px;
+        }
+        th, td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            color: #6b7280;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        tr:nth-child(1) td { font-weight: bold; color: #b45309; }
+        tr:nth-child(2) td { font-weight: bold; color: #4b5563; }
+        tr:nth-child(3) td { font-weight: bold; color: #92400e; }
+        
+        .posicao {
+            width: 35px;
             text-align: center;
-            color: #94a3b8;
         }
-
-        .podium-1 .player-rank { color: #fbbf24; }
-        .podium-2 .player-rank { color: #cbd5e1; }
-        .podium-3 .player-rank { color: #f59e0b; }
-
-        .player-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: #f1f5f9;
+        .pontos {
+            text-align: right;
+            font-weight: bold;
         }
-
-        .player-score {
-            font-weight: 700;
-            font-size: 13px;
-            color: #34d399;
-            background: rgba(52, 211, 153, 0.1);
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #94a3b8;
-            padding: 40px 20px;
+        .sem-dados {
+            color: #6b7280;
+            padding: 20px;
             font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-<div class="ranking-container">
-    <div class="header-panel">
-        <div class="top-row">
-            <!-- Botão Voltar Inteligente -->
-            <button class="btn-voltar-ranking" onclick="voltarDoRanking()">⬅ Voltar</button>
-            <div class="title-area">
-                <span>🏆</span> <span>Top 100 Global</span>
-            </div>
-        </div>
-        <div class="games-tabs" id="gamesTabs"></div>
-    </div>
-    <div class="ranking-scroll-area" id="rankingList">
-        <div class="empty-state">Carregando painel...</div>
-    </div>
-</div>
+    <div class="container">
+        <a href="entretenimento.html" class="btn-voltar">⬅️ Voltar para o Início</a>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, query, orderBy, limit, getDocs, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
-      authDomain: "ajuda-jp.firebaseapp.com",
-      projectId: "ajuda-jp",
-      storageBucket: "ajuda-jp.firebasestorage.app",
-      messagingSenderId: "40121072206",
-      appId: "1:40121072206:web:8a844e632f004f61d0a11f"
-    };
-
-    let db = null;
-    const listContainer = document.getElementById('rankingList');
-
-    try {
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-    } catch (err) {
-        console.error("Erro Firebase:", err);
-    }
-
-    window.registrarCliqueBanner = async function(bannerId, urlDestino) {
-        try {
-            if (db) {
-                await updateDoc(doc(db, 'banners', bannerId), { cliques: increment(1) });
-            }
-        } catch (e) {
-            console.log(e);
-        } finally {
-            window.location.href = urlDestino;
-        }
-    };
-
-    const jogos = [
-        { id: 'minicraque', nome: '⚽ Mini Craque' },
-        { id: 'velha', nome: '❌ Jogo da Velha' },
-        { id: 'forca', nome: '🎯 Jogo da Forca' },
-        { id: 'memoria', nome: '🧠 Jogo da Memória' },
-        { id: 'jokenpo', nome: '🇧🇷 Jokenpô' },
-        { id: 'cobrinha', nome: '🐍 Cobrinha' }
-    ];
-
-    let jogoAtual = 'memoria';
-
-    function inicializarAbas() {
-        const tabsContainer = document.getElementById('gamesTabs');
-        if (!tabsContainer) return;
-        tabsContainer.innerHTML = '';
-
-        jogos.forEach(jogo => {
-            const btn = document.createElement('button');
-            btn.className = `tab-btn ${jogo.id === jogoAtual ? 'active' : ''}`;
-            btn.innerText = jogo.nome;
-            btn.onclick = () => {
-                jogoAtual = jogo.id;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                carregarRankingJogo(jogo.id);
-            };
-            tabsContainer.appendChild(btn);
-        });
-    }
-
-    async function carregarRankingJogo(idJogo) {
-        listContainer.innerHTML = '<div class="empty-state">Carregando Top 100...</div>';
-
-        if (!db) {
-            listContainer.innerHTML = '<div class="empty-state" style="color: #f87171;">Erro de conexão com o banco.</div>';
-            return;
-        }
-
-        try {
-            const q = query(collection(db, `ranking_${idJogo}`), orderBy("pontos", "desc"), limit(100));
-            const querySnapshot = await getDocs(q);
+        <div class="card">
+            <h2>🏆 Ranking Global</h2>
             
-            let dadosRanking = [];
-            querySnapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                dadosRanking.push({
-                    nome: data.nome || "Jogador Anônimo",
-                    pontos: Number(data.pontos) || 0
-                });
-            });
+            <div class="seletor-jogo" id="seletorJogos">
+                <button class="btn-jogo-tab active" onclick="mudarJogo('genius', this)">💡 Desafio das Cores</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('minicraque', this)">⚽ Mini Craque</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('velha', this)">❌ Jogo da Velha</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('forca', this)">🎯 Jogo da Forca</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('memoria', this)">🧠 Jogo da Memória</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('jokenpo', this)">🇧🇷 Jokenpô</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('cobrinha', this)">🐍 Cobrinha</button>
+            </div>
 
-            if (dadosRanking.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state">Nenhuma pontuação registrada ainda para este jogo.</div>';
+            <div id="conteudoRanking">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // Mapeamento das chaves de ranking no localStorage
+        const jogosRankings = {
+            'genius': 'ranking_genius',
+            'minicraque': 'ranking_minicraque',
+            'velha': 'ranking_velha',
+            'forca': 'ranking_forca',
+            'memoria': 'ranking_memoria',
+            'jokenpo': 'ranking_jokenpo',
+            'cobrinha': 'ranking_cobrinha'
+        };
+
+        function mudarJogo(jogoKey, elementoTab) {
+            // Atualiza abas ativas
+            document.querySelectorAll('.btn-jogo-tab').forEach(btn => btn.classList.remove('active'));
+            elementoTab.classList.add('active');
+
+            carregarRanking(jogoKey);
+        }
+
+        function carregarRanking(jogoKey) {
+            const storageKey = jogosRankings[jogoKey] || 'ranking_genius';
+            let dados = [];
+
+            try {
+                dados = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            } catch (e) {
+                dados = [];
+            }
+
+            const container = document.getElementById('conteudoRanking');
+
+            if (dados.length === 0) {
+                container.innerHTML = `<div class="sem-dados">Ainda não há pontuações salvas para este jogo. Seja o primeiro a jogar!</div>`;
                 return;
             }
 
-            let html = '';
-            dadosRanking.forEach((jogador, index) => {
-                let posicao = index + 1;
-                let podiumClass = '';
-                let iconePosicao = `#${posicao}`;
+            // Ordena do maior para o menor
+            dados.sort((a, b) => b.pontos - a.pontos);
 
-                if (posicao === 1) { podiumClass = 'podium-1'; iconePosicao = '🥇'; }
-                else if (posicao === 2) { podiumClass = 'podium-2'; iconePosicao = '🥈'; }
-                else if (posicao === 3) { podiumClass = 'podium-3'; iconePosicao = '🥉'; }
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="posicao">#</th>
+                            <th>Jogador</th>
+                            <th class="pontos">Pontos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
+            dados.slice(0, 10).forEach((item, index) => {
+                let iconePos = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}º`;
                 html += `
-                    <div class="player-card ${podiumClass}">
-                        <div class="player-info">
-                            <span class="player-rank">${iconePosicao}</span>
-                            <span class="player-name">${jogador.nome}</span>
-                        </div>
-                        <div class="player-score">⭐ ${jogador.pontos.toLocaleString()} pts</div>
-                    </div>
+                    <tr>
+                        <td class="posicao">${iconePos}</td>
+                        <td>${escapeHtml(item.nome || 'Anônimo')}</td>
+                        <td class="pontos">${item.pontos}</td>
+                    </tr>
                 `;
             });
 
-            listContainer.innerHTML = html;
-
-        } catch (error) {
-            console.error("Erro ranking:", error);
-            listContainer.innerHTML = `<div class="empty-state" style="color: #f87171;">Ainda não há dados na coleção <b>ranking_${idJogo}</b> ou falta o índice no Firebase.</div>`;
+            html += `</tbody></table>`;
+            container.innerHTML = html;
         }
-    }
 
-    // Função inteligente do Botão Voltar
-    window.voltarDoRanking = function() {
-        const ultimoJogo = localStorage.getItem('ultimoJogoRetorno') || 'index.html';
-        window.location.href = ultimoJogo;
-    };
-
-    document.addEventListener("DOMContentLoaded", () => {
-        inicializarAbas();
-        carregarRankingJogo(jogoAtual);
-    });
-</script>
-
-<script src="bannersjogo.js"></script>
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        if (typeof carregarSistemaDeBanners === 'function') {
-            carregarSistemaDeBanners("🏆 Ranking Global", "forca.html");
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
-    });
-</script>
 
+        // Carrega o ranking do Desafio das Cores por padrão ao abrir a página
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarRanking('genius');
+        });
+    </script>
 </body>
 </html>
