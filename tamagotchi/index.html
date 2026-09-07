@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Pet LINE - Tamagotchi</title>
+    <!-- Carregando o SDK do LINE LIFF -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #4a4a4a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        h2 {
+            margin-top: 0;
+            color: #ff69b4;
+        }
+        .pet-avatar {
+            font-size: 90px;
+            margin: 15px 0;
+            animation: float 2.5s ease-in-out infinite;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-12px) scale(1.05); }
+        }
+        .status-box {
+            text-align: left;
+            margin: 12px 0;
+            background: #fff5f8;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid #ffe0ec;
+        }
+        .status-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+        .bar-container {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #ff758c, #ff7eb3);
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        button {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 117, 140, 0.3);
+            transition: all 0.2s;
+        }
+        button:active {
+            transform: scale(0.94);
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #user-greeting {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="user-greeting">Conectando ao LINE...</div>
+        <h2 id="pet-name">Pompom</h2>
+        
+        <div class="pet-avatar" id="pet-emoji">🐱</div>
+        
+        <div class="status-box">
+            <div class="status-label"><span>🍗 Fome</span> <span id="txt-fome">80%</span></div>
+            <div class="bar-container"><div id="bar-fome" class="bar-fill" style="width: 80%;"></div></div>
+        </div>
+
+        <div class="status-box">
+            <div class="status-label"><span>💖 Felicidade</span> <span id="txt-felicidade">90%</span></div>
+            <div class="bar-container"><div id="bar-felicidade" class="bar-fill" style="width: 90%;"></div></div>
+        </div>
+
+        <div class="status-box">
+            <div class="status-label"><span>⚡ Energia</span> <span id="txt-energia">100%</span></div>
+            <div class="bar-container"><div id="bar-energia" class="bar-fill" style="width: 100%;"></div></div>
+        </div>
+
+        <div class="btn-grid">
+            <button onclick="alimentar()">🍽️ Alimentar</button>
+            <button onclick="brincar()">🎮 Brincar</button>
+            <button onclick="dormir()">💤 Dormir</button>
+            <button onclick="darBanho()">🛁 Banho</button>
+        </div>
+    </div>
+
+    <script>
+        // Estado local do Pet
+        let pet = {
+            nome: "Pompom",
+            fome: 80,
+            felicidade: 90,
+            energia: 100
+        };
+
+        function atualizarTela() {
+            document.getElementById('pet-name').innerText = pet.nome;
+            
+            document.getElementById('bar-fome').style.width = pet.fome + '%';
+            document.getElementById('txt-fome').innerText = pet.fome + '%';
+
+            document.getElementById('bar-felicidade').style.width = pet.felicidade + '%';
+            document.getElementById('txt-felicidade').innerText = pet.felicidade + '%';
+
+            document.getElementById('bar-energia').style.width = pet.energia + '%';
+            document.getElementById('txt-energia').innerText = pet.energia + '%';
+        }
+
+        function alimentar() {
+            pet.fome = Math.min(100, pet.fome + 15);
+            animarPet();
+            atualizarTela();
+        }
+
+        function brincar() {
+            if (pet.energia < 15) {
+                alert("Seu pet está muito cansado para brincar! Coloque-o para dormir 💤");
+                return;
+            }
+            pet.felicidade = Math.min(100, pet.felicidade + 15);
+            pet.energia = Math.max(0, pet.energia - 15);
+            animarPet();
+            atualizarTela();
+        }
+
+        function dormir() {
+            pet.energia = 100;
+            pet.fome = Math.max(0, pet.fome - 10);
+            animarTela();
+            atualizarTela();
+        }
+
+        function darBanho() {
+            pet.felicidade = Math.min(100, pet.felicidade + 10);
+            animarTela();
+            atualizarTela();
+        }
+
+        function animarPet() {
+            const emoji = document.getElementById('pet-emoji');
+            emoji.style.transform = "scale(1.2)";
+            setTimeout(() => {
+                emoji.style.transform = "scale(1)";
+            }, 200);
+        }
+
+        // Inicializa a tela localmente
+        atualizarTela();
+
+        // Inicialização do LIFF do LINE
+        initializeLiff();
+
+        function initializeLiff() {
+            // Insira seu LIFF ID gerado no LINE Developers quando tiver
+            const liffId = "SEU_LIFF_ID_AQUI"; 
+            
+            liff.init({ liffId: liffId })
+                .then(() => {
+                    if (!liff.isInClient()) {
+                        document.getElementById('user-greeting').innerText = "Modo Navegador Externo (Teste)";
+                    } else {
+                        liff.getProfile().then(profile => {
+                            document.getElementById('user-greeting').innerText = `Olá, ${profile.displayName}! 👋`;
+                            // Aqui depois vamos puxar os dados do Firebase usando o profile.userId
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.log("Erro ao inicializar o LIFF:", err);
+                    document.getElementById('user-greeting').innerText = "Erro ao carregar LINE SDK";
+                });
+        }
+    </script>
+</body>
+</html>
