@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Genius - Desafio de Memória</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        .container-jogo {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 380px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .btn-voltar {
+            display: block;
+            width: 100%;
+            background: #4b5563;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1e40af;
+            font-size: 20px;
+        }
+
+        #status-jogo {
+            font-size: 15px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 15px;
+            min-height: 22px;
+        }
+
+        /* Tabuleiro Circular do Genius */
+        .genius-board {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            background: #222;
+            border: 8px solid #222;
+            gap: 4px;
+        }
+
+        .pad {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.1s, transform 0.1s;
+        }
+
+        .pad:active {
+            transform: scale(0.98);
+        }
+
+        .pad.active {
+            opacity: 1 !important;
+            filter: brightness(1.4);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.8);
+        }
+
+        .pad-verde { background-color: #10b981; }
+        .pad-vermelho { background-color: #ef4444; }
+        .pad-amarelo { background-color: #f59e0b; }
+        .pad-azul { background-color: #3b82f6; }
+
+        .painel-pontos {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .btn-acao {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .btn-acao:active {
+            background-color: #1d4ed8;
+        }
+
+        .form-salvar {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 8px;
+            box-sizing: border-box;
+        }
+
+        .btn-salvar {
+            background-color: #059669;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-jogo">
+        <a href="../jogo-forca.html" class="btn-voltar">⬅️ Voltar para o Menu</a>
+        
+        <h2>🧠 Genius (Desafio de Cores)</h2>
+        <div id="status-jogo">Aperte em "Iniciar Jogo" para começar!</div>
+
+        <div class="genius-board">
+            <div class="pad pad-verde" id="0" onclick="clicarPad(0)"></div>
+            <div class="pad pad-vermelho" id="1" onclick="clicarPad(1)"></div>
+            <div class="pad pad-amarelo" id="2" onclick="clicarPad(2)"></div>
+            <div class="pad pad-azul" id="3" onclick="clicarPad(3)"></div>
+        </div>
+
+        <div class="painel-pontos">Pontuação: <span id="pontuacao">0</span></div>
+
+        <button class="btn-acao" id="btn-iniciar" onclick="iniciarJogo()">Iniciar Jogo</button>
+
+        <div class="form-salvar" id="formSalvar">
+            <p style="font-size: 13px; color: #4b5563; margin: 0 0 8px 0;">Fim de jogo! Salve sua pontuação no ranking:</p>
+            <input type="text" id="nomeJogador" placeholder="Digite seu nome ou apelido...">
+            <button class="btn-salvar" onclick="salvarPontuacaoRanking()">Salvar no Ranking</button>
+        </div>
+    </div>
+
+    <script>
+        let sequencia = [];
+        let sequenciaJogador = [];
+        let rodada = 0;
+        let jogando = false;
+        let aguardandoClique = false;
+
+        function iniciarJogo() {
+            sequencia = [];
+            sequenciaJogador = [];
+            rodada = 0;
+            document.getElementById('pontuacao').innerText = "0";
+            document.getElementById('formSalvar').style.display = 'none';
+            document.getElementById('btn-iniciar').style.display = 'none';
+            proximaRodada();
+        }
+
+        function proximaRodada() {
+            sequenciaJogador = [];
+            rodada++;
+            document.getElementById('status-jogo').innerText = `Rodada ${rodada} - Memorize a sequência!`;
+            
+            // Adiciona uma cor aleatória (0 a 3)
+            const corAleatoria = Math.floor(Math.random() * 4);
+            sequencia.push(corAleatoria);
+
+            tocarSequencia();
+        }
+
+        function tocarSequencia() {
+            aguardandoClique = false;
+            let i = 0;
+            let velocidade = Math.max(300, 800 - (rodada * 40)); // Fica mais rápido a cada rodada
+
+            const intervalo = setInterval(() => {
+                if (i < sequencia.length) {
+                    piscarPad(sequencia[i]);
+                    i++;
+                } else {
+                    clearInterval(intervalo);
+                    aguardandoClique = true;
+                    document.getElementById('status-jogo').innerText = "Sua vez! Repita a sequência:";
+                }
+            }, velocidade + 300);
+        }
+
+        function piscarPad(id) {
+            const pad = document.getElementById(id);
+            pad.classList.add('active');
+            setTimeout(() => {
+                pad.classList.remove('active');
+            }, 300);
+        }
+
+        function clicarPad(id) {
+            if (!aguardandoClique) return;
+
+            piscarPad(id);
+            sequenciaJogador.push(id);
+
+            const indexAtual = sequenciaJogador.length - 1;
+
+            // Verifica se o jogador errou a sequência
+            if (sequenciaJogador[indexAtual] !== sequencia[indexAtual]) {
+                fimDeJogo();
+                return;
+            }
+
+            // Se terminou de acertar a sequência desta rodada
+            if (sequenciaJogador.length === sequencia.length) {
+                aguardandoClique = false;
+                document.getElementById('pontuacao').innerText = rodada * 10;
+                document.getElementById('status-jogo').innerText = "Boa! Preparando próxima rodada...";
+                setTimeout(proximaRodada, 1200);
+            }
+        }
+
+        function fimDeJogo() {
+            aguardandoClique = false;
+            document.getElementById('status-jogo').innerText = "❌ Fim de jogo! Você errou a sequência.";
+            document.getElementById('btn-iniciar').style.display = 'block';
+            document.getElementById('btn-iniciar').innerText = "Jogar Novamente";
+            document.getElementById('formSalvar').style.display = 'block';
+        }
+
+        function salvarPontuacaoRanking() {
+            const nome = document.getElementById('nomeJogador').value.trim();
+            const pontos = rodada * 10;
+
+            if (!nome) {
+                alert("Por favor, digite seu nome!");
+                return;
+            }
+
+            // Salva no localStorage para simular o envio ao ranking geral
+            let ranking = JSON.parse(localStorage.getItem('ranking_genius') || '[]');
+            ranking.push({ nome: nome, pontos: pontos });
+            ranking.sort((a, b) => b.pontos - a.pontos);
+            localStorage.setItem('ranking_genius', JSON.stringify(ranking));
+
+            alert("Pontuação salva com sucesso!");
+            window.location.href = "../ranking.html";
+        }
+    </script>
+</body>
+</html>
