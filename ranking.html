@@ -122,7 +122,6 @@
         <div class="card">
             <h2>🏆 Ranking por Jogo</h2>
             
-            <!-- Botões / Abas para alternar os jogos -->
             <div class="seletor-jogo" id="seletorJogos">
                 <button class="btn-jogo-tab active" onclick="mudarJogo('genius', this)">💡 Desafio das Cores</button>
                 <button class="btn-jogo-tab" onclick="mudarJogo('minicraque', this)">⚽ Mini Craque</button>
@@ -134,39 +133,46 @@
             </div>
 
             <div id="conteudoRanking">
-                <!-- Tabela inserida dinamicamente -->
-            </div>
+                </div>
         </div>
     </div>
 
     <script>
-        // Mapeamento exato das chaves no localStorage de cada jogo
+        // Mapeia todas as variações possíveis de chaves que os jogos antigos podiam usar
         const jogosRankings = {
-            'genius': 'ranking_genius',
-            'minicraque': 'ranking_minicraque',
-            'velha': 'ranking_velha',
-            'forca': 'ranking_forca',
-            'memoria': 'ranking_memoria',
-            'jokenpo': 'ranking_jokenpo',
-            'cobrinha': 'ranking_cobrinha'
+            'genius': ['ranking_genius'],
+            'minicraque': ['ranking_minicraque', 'minicraque_ranking', 'ranking_mini_craque', 'minicraque'],
+            'velha': ['ranking_velha', 'velha_ranking', 'jogo_velha'],
+            'forca': ['ranking_forca', 'forca_ranking', 'jogo_forca'],
+            'memoria': ['ranking_memoria', 'memoria_ranking', 'jogo_memoria'],
+            'jokenpo': ['ranking_jokenpo', 'jokenpo_ranking', 'jokenpo'],
+            'cobrinha': ['ranking_cobrinha', 'cobrinha_ranking', 'snake_ranking']
         };
 
         function mudarJogo(jogoKey, elementoTab) {
-            // Remove a classe ativa de todos os botões e adiciona no clicado
             document.querySelectorAll('.btn-jogo-tab').forEach(btn => btn.classList.remove('active'));
             elementoTab.classList.add('active');
-
             carregarRanking(jogoKey);
         }
 
         function carregarRanking(jogoKey) {
-            const storageKey = jogosRankings[jogoKey] || 'ranking_genius';
+            const chavesPossiveis = jogosRankings[jogoKey] || [jogoKey];
             let dados = [];
 
-            try {
-                dados = JSON.parse(localStorage.getItem(storageKey) || '[]');
-            } catch (e) {
-                dados = [];
+            // Tenta ler todas as chaves possíveis para garantir que acha os dados salvos
+            for (let chave of chavesPossiveis) {
+                try {
+                    let salvo = localStorage.getItem(chave);
+                    if (salvo) {
+                        let parsed = JSON.parse(salvo);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            dados = parsed;
+                            break;
+                        }
+                    }
+                } catch (e) {
+                    // Ignora erros de leitura individuais
+                }
             }
 
             const container = document.getElementById('conteudoRanking');
@@ -177,7 +183,7 @@
             }
 
             // Ordena do maior para o menor
-            dados.sort((a, b) => b.pontos - a.pontos);
+            dados.sort((a, b) => (b.pontos || b.score || 0) - (a.pontos || a.score || 0));
 
             let html = `
                 <table>
@@ -191,14 +197,16 @@
                     <tbody>
             `;
 
-            // Exibe os 100 melhores do jogo selecionado
             dados.slice(0, 100).forEach((item, index) => {
                 let iconePos = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}º`;
+                let nomeJogador = item.nome || item.name || 'Anônimo';
+                let pontosJogador = item.pontos !== undefined ? item.pontos : (item.score !== undefined ? item.score : 0);
+
                 html += `
                     <tr>
                         <td class="posicao">${iconePos}</td>
-                        <td>${escapeHtml(item.nome || 'Anônimo')}</td>
-                        <td class="pontos">${item.pontos}</td>
+                        <td>${escapeHtml(nomeJogador)}</td>
+                        <td class="pontos">${pontosJogador}</td>
                     </tr>
                 `;
             });
@@ -208,10 +216,9 @@
         }
 
         function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // Carrega o ranking do Desafio das Cores por padrão ao abrir
         window.addEventListener('DOMContentLoaded', () => {
             carregarRanking('genius');
         });
