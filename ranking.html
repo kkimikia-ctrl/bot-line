@@ -50,7 +50,36 @@
             font-size: 20px;
         }
 
-        /* Tabela de Ranking Top 100 */
+        /* Seletor de Jogo por Abas */
+        .seletor-jogo {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .seletor-jogo::-webkit-scrollbar {
+            display: none;
+        }
+        .btn-jogo-tab {
+            background: #e5e7eb;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #4b5563;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .btn-jogo-tab.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Tabela de Ranking */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -83,14 +112,6 @@
             padding: 20px;
             font-size: 14px;
         }
-        .jogo-tag {
-            font-size: 10px;
-            background: #e5e7eb;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #4b5563;
-            margin-left: 5px;
-        }
     </style>
 </head>
 <body>
@@ -99,52 +120,64 @@
         <a href="entretenimento.html" class="btn-voltar">⬅️ Voltar para o Início</a>
 
         <div class="card">
-            <h2>🏆 Top 100 - Ranking Global</h2>
+            <h2>🏆 Ranking por Jogo</h2>
+            
+            <!-- Botões / Abas para alternar os jogos -->
+            <div class="seletor-jogo" id="seletorJogos">
+                <button class="btn-jogo-tab active" onclick="mudarJogo('genius', this)">💡 Desafio das Cores</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('minicraque', this)">⚽ Mini Craque</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('velha', this)">❌ Jogo da Velha</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('forca', this)">🎯 Jogo da Forca</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('memoria', this)">🧠 Jogo da Memória</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('jokenpo', this)">🇧🇷 Jokenpô</button>
+                <button class="btn-jogo-tab" onclick="mudarJogo('cobrinha', this)">🐍 Cobrinha</button>
+            </div>
+
             <div id="conteudoRanking">
-                </div>
+                <!-- Tabela inserida dinamicamente -->
+            </div>
         </div>
     </div>
 
     <script>
-        function carregarRankingGeral() {
-            // Lista todas as chaves de jogos salvas no navegador
-            const chavesJogos = [
-                { key: 'ranking_genius', nome: 'Desafio das Cores' },
-                { key: 'ranking_minicraque', nome: 'Mini Craque' },
-                { key: 'ranking_velha', nome: 'Jogo da Velha' },
-                { key: 'ranking_forca', nome: 'Jogo da Forca' },
-                { key: 'ranking_memoria', nome: 'Jogo da Memória' },
-                { key: 'ranking_jokenpo', nome: 'Jokenpô' },
-                { key: 'ranking_cobrinha', nome: 'Cobrinha' }
-            ];
+        // Mapeamento exato das chaves no localStorage de cada jogo
+        const jogosRankings = {
+            'genius': 'ranking_genius',
+            'minicraque': 'ranking_minicraque',
+            'velha': 'ranking_velha',
+            'forca': 'ranking_forca',
+            'memoria': 'ranking_memoria',
+            'jokenpo': 'ranking_jokenpo',
+            'cobrinha': 'ranking_cobrinha'
+        };
 
-            let todosRecordes = [];
+        function mudarJogo(jogoKey, elementoTab) {
+            // Remove a classe ativa de todos os botões e adiciona no clicado
+            document.querySelectorAll('.btn-jogo-tab').forEach(btn => btn.classList.remove('active'));
+            elementoTab.classList.add('active');
 
-            // Junta as pontuações de todos os jogos em uma única lista
-            chavesJogosforEachItem = chavesJogos.forEach(jogo => {
-                try {
-                    let dados = JSON.parse(localStorage.getItem(jogo.key) || '[]');
-                    dados.forEach(item => {
-                        todosRecordes.push({
-                            nome: item.nome || 'Anônimo',
-                            pontos: item.pontos || 0,
-                            jogo: jogo.nome
-                        });
-                    });
-                } catch (e) {
-                    // Ignora erros de leitura individuais
-                }
-            });
+            carregarRanking(jogoKey);
+        }
+
+        function carregarRanking(jogoKey) {
+            const storageKey = jogosRankings[jogoKey] || 'ranking_genius';
+            let dados = [];
+
+            try {
+                dados = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            } catch (e) {
+                dados = [];
+            }
 
             const container = document.getElementById('conteudoRanking');
 
-            if (todosRecordes.length === 0) {
-                container.innerHTML = `<div class="sem-dados">Ainda não há pontuações salvas. Jogue e seja o primeiro no Top 100!</div>`;
+            if (dados.length === 0) {
+                container.innerHTML = `<div class="sem-dados">Ainda não há pontuações salvas para este jogo. Seja o primeiro a jogar!</div>`;
                 return;
             }
 
-            // Ordena todos do maior para o menor
-            todosRecordes.sort((a, b) => b.pontos - a.pontos);
+            // Ordena do maior para o menor
+            dados.sort((a, b) => b.pontos - a.pontos);
 
             let html = `
                 <table>
@@ -158,13 +191,13 @@
                     <tbody>
             `;
 
-            // Pega até os 100 melhores
-            todosRecordes.slice(0, 100).forEach((item, index) => {
+            // Exibe os 100 melhores do jogo selecionado
+            dados.slice(0, 100).forEach((item, index) => {
                 let iconePos = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}º`;
                 html += `
                     <tr>
                         <td class="posicao">${iconePos}</td>
-                        <td>${escapeHtml(item.nome)} <span class="jogo-tag">${item.jogo}</span></td>
+                        <td>${escapeHtml(item.nome || 'Anônimo')}</td>
                         <td class="pontos">${item.pontos}</td>
                     </tr>
                 `;
@@ -178,8 +211,9 @@
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
+        // Carrega o ranking do Desafio das Cores por padrão ao abrir
         window.addEventListener('DOMContentLoaded', () => {
-            carregarRankingGeral();
+            carregarRanking('genius');
         });
     </script>
 </body>
