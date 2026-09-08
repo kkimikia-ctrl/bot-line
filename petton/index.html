@@ -65,6 +65,13 @@
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-8px) scale(1.03); }
         }
+        .shaking {
+            animation: shake 0.4s infinite alternate ease-in-out;
+        }
+        @keyframes shake {
+            0% { transform: rotate(-10deg) scale(1); }
+            100% { transform: rotate(10deg) scale(1.05); }
+        }
         .walking {
             animation: walk 0.6s infinite alternate ease-in-out;
         }
@@ -158,36 +165,41 @@
             margin: 6px 0;
             min-height: 25px;
         }
+        .oculto {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div id="user-greeting">Modo de Jogo Ativo! 🐾</div>
-        <h2 id="pet-name">Mimi 🐱</h2>
+        <h2 id="pet-name">Ovo Misterioso 🥚</h2>
         
         <div class="scenery" id="cenario-fundo">
-            <div class="pet-avatar floating" id="pet-emoji" onclick="tocarPet()">🐱</div>
+            <div class="pet-avatar shaking" id="pet-emoji" onclick="tocarPet()">🥚</div>
         </div>
 
-        <div id="texto-status">Mimi está descansando confortavelmente no quarto.</div>
+        <div id="texto-status">Um ovo misterioso está quentinho. Clique nele várias vezes para ajudar a chocar!</div>
         
-        <div class="status-box">
-            <div class="status-label"><span>🍗 Fome</span> <span id="txt-fome">80%</span></div>
-            <div class="bar-container"><div id="bar-fome" class="bar-fill" style="width: 80%;"></div></div>
+        <div id="painel-status" class="oculto">
+            <div class="status-box">
+                <div class="status-label"><span>🍗 Fome</span> <span id="txt-fome">80%</span></div>
+                <div class="bar-container"><div id="bar-fome" class="bar-fill" style="width: 80%;"></div></div>
+            </div>
+
+            <div class="status-box">
+                <div class="status-label"><span>💖 Felicidade</span> <span id="txt-felicidade">90%</span></div>
+                <div class="bar-container"><div id="bar-felicidade" class="bar-fill" style="width: 90%;"></div></div>
+            </div>
+
+            <div class="status-box">
+                <div class="status-label"><span>⚡ Energia</span> <span id="txt-energia">100%</span></div>
+                <div class="bar-container"><div id="bar-energia" class="bar-fill" style="width: 100%;"></div></div>
+            </div>
         </div>
 
-        <div class="status-box">
-            <div class="status-label"><span>💖 Felicidade</span> <span id="txt-felicidade">90%</span></div>
-            <div class="bar-container"><div id="bar-felicidade" class="bar-fill" style="width: 90%;"></div></div>
-        </div>
-
-        <div class="status-box">
-            <div class="status-label"><span>⚡ Energia</span> <span id="txt-energia">100%</span></div>
-            <div class="bar-container"><div id="bar-energia" class="bar-fill" style="width: 100%;"></div></div>
-        </div>
-
-        <div class="btn-grid">
+        <div id="painel-botoes" class="btn-grid oculto">
             <button onclick="alimentar()">🍽️ Alimentar</button>
             <button onclick="brincar()">🎮 Brincar</button>
             <button onclick="dormir()">💤 Dormir</button>
@@ -200,6 +212,8 @@
 
     <script>
         let pet = {
+            fase: "ovo", // "ovo" ou "nascido"
+            cliquesOvo: 0,
             nome: "Mimi",
             fome: 80,
             felicidade: 90,
@@ -208,22 +222,61 @@
         };
 
         function atualizarTela() {
-            document.getElementById('bar-fome').style.width = pet.fome + '%';
-            document.getElementById('txt-fome').innerText = pet.fome + '%';
+            if (pet.fase === "nascido") {
+                document.getElementById('bar-fome').style.width = pet.fome + '%';
+                document.getElementById('txt-fome').innerText = pet.fome + '%';
 
-            document.getElementById('bar-felicidade').style.width = pet.felicidade + '%';
-            document.getElementById('txt-felicidade').innerText = pet.felicidade + '%';
+                document.getElementById('bar-felicidade').style.width = pet.felicidade + '%';
+                document.getElementById('txt-felicidade').innerText = pet.felicidade + '%';
 
-            document.getElementById('bar-energia').style.width = pet.energia + '%';
-            document.getElementById('txt-energia').innerText = pet.energia + '%';
+                document.getElementById('bar-energia').style.width = pet.energia + '%';
+                document.getElementById('txt-energia').innerText = pet.energia + '%';
+            }
         }
 
         function mudarExpressao(emoji) {
             document.getElementById('pet-emoji').innerText = emoji;
         }
 
+        function tocarPet() {
+            if (pet.fase === "ovo") {
+                pet.cliquesOvo++;
+                animarEfeito();
+                
+                let restam = 5 - pet.cliquesOvo;
+                if (restam > 0) {
+                    document.getElementById('texto-status').innerText = `O ovo chacoalhou! Clique mais ${restam} vezes para chocar! 🥚✨`;
+                } else {
+                    chocarOvo();
+                }
+            } else {
+                mudarExpressao("😽");
+                document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ❤️`;
+                animarEfeito();
+                setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 1500);
+            }
+        }
+
+        function chocarOvo() {
+            pet.fase = "nascido";
+            document.getElementById('pet-name').innerText = "Mimi 🐱";
+            mudarExpressao("🐣");
+            document.getElementById('pet-emoji').classList.remove('shaking');
+            document.getElementById('pet-emoji').classList.add('floating');
+            document.getElementById('texto-status').innerText = `Parabéns! O ovo rachou e nasceu a sua gatinha ${pet.nome}! 🎉💖`;
+            
+            // Mostra os status e os botões de cuidado
+            document.getElementById('painel-status').classList.remove('oculto');
+            document.getElementById('painel-botoes').classList.remove('oculto');
+            
+            setTimeout(() => {
+                mudarExpressao("🐱");
+            }, 2500);
+            atualizarTela();
+        }
+
         function alimentar() {
-            if (pet.emPasseio) return;
+            if (pet.fase !== "nascido" || pet.emPasseio) return;
             pet.fome = Math.min(100, pet.fome + 15);
             document.getElementById('texto-status').innerText = `${pet.nome} comeu com muita alegria! 🐟`;
             mudarExpressao("😻");
@@ -233,7 +286,7 @@
         }
 
         function brincar() {
-            if (pet.emPasseio) return;
+            if (pet.fase !== "nascido" || pet.emPasseio) return;
             if (pet.energia < 15) {
                 alert("Seu pet está muito cansado para brincar! Coloque-o para dormir 💤");
                 return;
@@ -248,7 +301,7 @@
         }
 
         function dormir() {
-            if (pet.emPasseio) return;
+            if (pet.fase !== "nascido" || pet.emPasseio) return;
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca profunda e recuperou as energias 💤`;
@@ -258,7 +311,7 @@
         }
 
         function darBanho() {
-            if (pet.emPasseio) return;
+            if (pet.fase !== "nascido" || pet.emPasseio) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está cheirosinho(a) 🛁`;
             mudarExpressao("😽");
@@ -268,6 +321,7 @@
         }
 
         function alternarPasseio() {
+            if (pet.fase !== "nascido") return;
             const cenario = document.getElementById('cenario-fundo');
             const avatar = document.getElementById('pet-emoji');
             const btnPasseio = document.getElementById('btn-acao-passeio');
@@ -299,13 +353,6 @@
             atualizarTela();
         }
 
-        function tocarPet() {
-            mudarExpressao("😽");
-            document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ❤️`;
-            animarEfeito();
-            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 1500);
-        }
-
         function animarEfeito() {
             const emoji = document.getElementById('pet-emoji');
             emoji.style.transform = "scale(1.25) rotate(8deg)";
@@ -313,8 +360,6 @@
                 emoji.style.transform = "scale(1) rotate(0deg)";
             }, 300);
         }
-
-        atualizarTela();
     </script>
 </body>
 </html>
