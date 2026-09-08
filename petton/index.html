@@ -230,11 +230,12 @@
             fome: 80,
             felicidade: 90,
             energia: 100,
-            emPasseio: false
+            emPasseio: false,
+            dormindo: false
         };
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_save_cat_v2');
+            const salvo = localStorage.getItem('petton_save_cat_v3');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -242,12 +243,12 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_save_cat_v2', JSON.stringify(pet));
+            localStorage.setItem('petton_save_cat_v3', JSON.stringify(pet));
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja mesmo reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_save_cat_v2');
+                localStorage.removeItem('petton_save_cat_v3');
                 pet = {
                     fase: "ovo",
                     cliquesOvo: 0,
@@ -256,7 +257,8 @@
                     fome: 80,
                     felicidade: 90,
                     energia: 100,
-                    emPasseio: false
+                    emPasseio: false,
+                    dormindo: false
                 };
                 aplicarEstadoAtual();
                 document.getElementById('texto-status').innerText = "Um ovo misterioso está quentinho. Clique nele 15 vezes para chocar!";
@@ -270,13 +272,8 @@
                 document.getElementById('pet-emoji').className = "pet-avatar shaking";
                 document.getElementById('painel-status').classList.add('oculto');
                 document.getElementById('painel-botoes').classList.add('oculto');
-            } else if (pet.fase === "filhote") {
-                document.getElementById('pet-name').innerText = pet.nome + " 🐱 (Filhote)";
-                document.getElementById('painel-status').classList.remove('oculto');
-                document.getElementById('painel-botoes').classList.remove('oculto');
-                configurarVisualFase();
-            } else if (pet.fase === "adulto") {
-                document.getElementById('pet-name').innerText = pet.nome + " 🐈 (Adulto)";
+            } else {
+                document.getElementById('pet-name').innerText = pet.nome + (pet.fase === "filhote" ? " 🐱 (Filhote)" : " 🐈 (Adulto)");
                 document.getElementById('painel-status').classList.remove('oculto');
                 document.getElementById('painel-botoes').classList.remove('oculto');
                 configurarVisualFase();
@@ -288,6 +285,14 @@
             const avatar = document.getElementById('pet-emoji');
             avatar.classList.remove('shaking');
             
+            if (pet.dormindo) {
+                document.getElementById('cenario-fundo').classList.remove('outdoor');
+                avatar.classList.remove('walking');
+                avatar.classList.add('floating');
+                mudarExpressao("😽"); // Gatinho de olhos fechados dormindo
+                return;
+            }
+
             if (pet.emPasseio) {
                 document.getElementById('cenario-fundo').classList.add('outdoor');
                 avatar.classList.remove('floating');
@@ -336,6 +341,7 @@
                     aplicarEstadoAtual();
                 }
             } else {
+                if (pet.dormindo) return; // Não acorda se clicar dormindo
                 mudarExpressao("😻");
                 document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ✨💖`;
                 animarEfeito();
@@ -354,7 +360,7 @@
         }
 
         function alimentar() {
-            if (pet.fase === "ovo" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo) return;
             pet.fome = Math.min(100, pet.fome + 25);
             document.getElementById('texto-status').innerText = `${pet.nome} comeu peixinho com muita alegria! 🐟😋`;
             mudarExpressao("😽");
@@ -365,7 +371,7 @@
         }
 
         function brincar() {
-            if (pet.fase === "ovo" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo) return;
             if (pet.energia < 15) {
                 alert("Seu pet está muito cansado para brincar! Coloque-o para dormir 💤");
                 return;
@@ -383,18 +389,26 @@
 
         function dormir() {
             if (pet.fase === "ovo" || pet.emPasseio) return;
+            pet.dormindo = true;
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 5);
             document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca fofinha e ronronou... 💤🐾`;
-            // Gato com carinha feliz deitado/dormindo (usando o gato sorridente)
-            mudarExpressao("😸");
+            configurarVisualFase();
             verificarEvolucao();
-            setTimeout(() => { configurarVisualFase(); }, 3000);
+
+            // Acorda automaticamente após 3 segundos
+            setTimeout(() => {
+                pet.dormindo = false;
+                document.getElementById('texto-status').innerText = `${pet.nome} acordou revigorado(a) e cheio(a) de energia! ☀️`;
+                configurarVisualFase();
+                atualizarTela();
+            }, 3000);
+
             atualizarTela();
         }
 
         function darBanho() {
-            if (pet.fase === "ovo" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tomou banho de espuma e está cheirosinho(a)! 🛁🧼`;
             mudarExpressao("😽");
@@ -405,7 +419,7 @@
         }
 
         function alternarPasseio() {
-            if (pet.fase === "ovo") return;
+            if (pet.fase === "ovo" || pet.dormindo) return;
             const cenario = document.getElementById('cenario-fundo');
             const avatar = document.getElementById('pet-emoji');
             const btnPasseio = document.getElementById('btn-acao-passeio');
