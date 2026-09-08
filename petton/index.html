@@ -201,6 +201,15 @@
         .btn-central:hover {
             background-color: #607d8b;
         }
+
+        #minigame-box {
+            display: none;
+            background: #fff8e1;
+            border: 2px solid #ffd54f;
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -220,7 +229,16 @@
             <div id="extras-area"></div>
         </div>
 
-        <div class="message-box" id="msg">Toque na tela para o gatinho pular!</div>
+        <div class="message-box" id="msg">Toque na Mimi para interagir!</div>
+
+        <!-- Mini-jogo de Par ou Ímpar -->
+        <div id="minigame-box">
+            <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: bold; color: #f57f17;">Minigame: Par ou Ímpar com a Mimi!</p>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+                <button onclick="playMinigame('par')" style="background-color: #ffa726;">Par ✌️</button>
+                <button onclick="playMinigame('impar')" style="background-color: #ffa726;">Ímpar ☝️</button>
+            </div>
+        </div>
 
         <div class="stats">
             <div class="stat-bar">
@@ -236,17 +254,17 @@
             <div class="stat-bar">
                 <span>⚡ Energia</span>
                 <div class="progress"><div id="energy-bar" class="progress-fill"></div></div>
-                <span id="energy-val" style="font-size:0.75rem; width:35px; text-align:right;">70%</span>
+                <span id="energy-val" style="font-size:0.75rem; width:35px; text-align:right;">80%</span>
             </div>
         </div>
 
         <div class="actions">
             <button onclick="feedPet()">🍽️ Comer</button>
-            <button onclick="playPet()">🎮 Brincar</button>
+            <button onclick="toggleMinigame()">🎮 Brincar</button>
             <button onclick="sleepPet()">💤 Dormir</button>
             <button onclick="bathPet()">🛁 Banho</button>
             <button onclick="cleanPet()">🧹 Limpar</button>
-            <button onclick="brushPet()">🧹 Escovar</button>
+            <button onclick="brushPet()">✨ Escovar</button>
         </div>
 
         <button class="action-btn btn-full" style="background-color: #ab47bc;" onclick="openHospital()">🏥 Hospital</button>
@@ -261,7 +279,7 @@
             score: 57,
             hunger: 100,
             happiness: 100,
-            energy: 70,
+            energy: 80,
             isSleeping: false,
             isSick: false,
             hasPoop: false,
@@ -278,6 +296,7 @@
         const happinessVal = document.getElementById('happiness-val');
         const energyVal = document.getElementById('energy-val');
         const extrasArea = document.getElementById('extras-area');
+        const minigameBox = document.getElementById('minigame-box');
 
         function updateUI() {
             scoreEl.textContent = pet.score;
@@ -314,21 +333,44 @@
         }
 
         function feedPet() {
+            if (pet.isSleeping) {
+                msgBox.textContent = "Mimi está dormindo e não pode comer agora!";
+                return;
+            }
             pet.hunger = Math.min(100, pet.hunger + 20);
             pet.score += 2;
-            msgBox.textContent = "Mimi comeou com apetite!";
+            if (Math.random() > 0.6) pet.hasPoop = true;
+            msgBox.textContent = "Mimi comeu com apetite!";
             updateUI();
         }
 
-        function playPet() {
+        function toggleMinigame() {
+            if (pet.isSleeping) {
+                msgBox.textContent = "Mimi está dormindo!";
+                return;
+            }
+            minigameBox.style.display = minigameBox.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function playMinigame(choice) {
             if (pet.energy < 15) {
                 msgBox.textContent = "Mimi está cansada demais para brincar!";
+                minigameBox.style.display = 'none';
                 return;
             }
             pet.energy = Math.max(0, pet.energy - 15);
-            pet.happiness = Math.min(100, pet.happiness + 15);
-            pet.score += 5;
-            msgBox.textContent = "Mimi se divertiu muito brincando!";
+            const petChoice = Math.random() > 0.5 ? 'par' : 'impar';
+            
+            if (choice === petChoice) {
+                pet.happiness = Math.min(100, pet.happiness + 20);
+                pet.score += 15;
+                msgBox.textContent = "Você venceu o minigame! Mimi adorou!";
+            } else {
+                pet.happiness = Math.min(100, pet.happiness + 5);
+                pet.score += 5;
+                msgBox.textContent = "Mimi escolheu diferente, mas foi divertido!";
+            }
+            minigameBox.style.display = 'none';
             updateUI();
         }
 
@@ -336,7 +378,7 @@
             pet.isSleeping = !pet.isSleeping;
             if (pet.isSleeping) {
                 msgBox.textContent = "Mimi foi tirar uma soneca...";
-                pet.energy = Math.min(100, pet.energy + 30);
+                pet.energy = Math.min(100, pet.energy + 40);
             } else {
                 msgBox.textContent = "Mimi acordou revigorada!";
             }
@@ -344,7 +386,12 @@
         }
 
         function bathPet() {
+            if (pet.isSleeping) {
+                msgBox.textContent = "Mimi está dormindo!";
+                return;
+            }
             pet.happiness = Math.min(100, pet.happiness + 10);
+            pet.hasDirt = false;
             msgBox.textContent = "Banho tomado! Mimi está cheirosa.";
             updateUI();
         }
@@ -358,6 +405,10 @@
         }
 
         function brushPet() {
+            if (pet.isSleeping) {
+                msgBox.textContent = "Mimi está dormindo!";
+                return;
+            }
             pet.happiness = Math.min(100, pet.happiness + 10);
             msgBox.textContent = "Pelo escovado com sucesso!";
             updateUI();
@@ -366,6 +417,7 @@
         function openHospital() {
             if (pet.isSick) {
                 pet.isSick = false;
+                pet.score += 5;
                 msgBox.textContent = "Mimi foi tratada no hospital e está curada!";
             } else {
                 msgBox.textContent = "Mimi já está saudável, não precisa de hospital!";
@@ -374,10 +426,19 @@
         }
 
         function goWalk() {
+            if (pet.isSleeping) {
+                msgBox.textContent = "Mimi está dormindo!";
+                return;
+            }
+            if (pet.energy < 15) {
+                msgBox.textContent = "Mimi está sem energia para passear! Coloque para dormir.";
+                return;
+            }
             pet.happiness = Math.min(100, pet.happiness + 20);
-            pet.energy = Math.max(0, pet.energy - 10);
+            pet.energy = Math.max(0, pet.energy - 15);
             pet.score += 10;
-            if (Math.random() > 0.5) pet.hasPoop = true;
+            if (Math.random() > 0.4) pet.hasPoop = true;
+            if (Math.random() > 0.7) pet.hasDirt = true;
             msgBox.textContent = "Passeio divertido pelo parque concluído!";
             updateUI();
         }
@@ -400,15 +461,16 @@
 
         function resetGame() {
             if (confirm("Deseja realmente reiniciar o jogo?")) {
-                pet.score = 0;
+                pet.score = 57;
                 pet.hunger = 100;
                 pet.happiness = 100;
-                pet.energy = 70;
+                pet.energy = 80;
                 pet.isSleeping = false;
                 pet.isSick = false;
                 pet.hasPoop = false;
                 pet.hasDirt = false;
-                msgBox.textContent = "Jogo reiniciado!";
+                minigameBox.style.display = 'none';
+                msgBox.textContent = "Jogo reiniciado com a Mimi acordada!";
                 updateUI();
             }
         }
