@@ -210,7 +210,22 @@
             100% { transform: translateY(-4px); }
         }
 
-        /* Animação da Ambulância (Invertida para a frente apontar para a direita) */
+        /* Animação da Escova limpando */
+        .toothbrush-anim {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            font-size: 32px;
+            z-index: 12;
+            animation: brushScrub 0.4s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes brushScrub {
+            0% { transform: translate(0, 0) rotate(-15deg); }
+            100% { transform: translate(25px, 5px) rotate(15deg); }
+        }
+
+        /* Animação da Ambulância */
         .ambulance {
             position: absolute;
             bottom: 20px;
@@ -557,9 +572,61 @@
         let emJogos = false;
         let intervaloZzz = null;
 
+        // Gerador de Som usando Web Audio API (sem precisar de arquivos externos)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function tocarSom(tipo) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            let agora = audioCtx.currentTime;
+
+            if (tipo === 'clique') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, agora);
+                osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+                gain.gain.setValueAtTime(0.15, agora);
+                gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+                osc.start(agora);
+                osc.stop(agora + 0.1);
+            } else if (tipo === 'escova') {
+                // Som de escovação / fricção rápida
+                osc.type = 'triangle';
+                for (let i = 0; i < 5; i++) {
+                    osc.frequency.setValueAtTime(300 + (i % 2) * 200, agora + (i * 0.08));
+                }
+                gain.gain.setValueAtTime(0.2, agora);
+                gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+                osc.start(agora);
+                osc.stop(agora + 0.4);
+            } else if (tipo === 'sucesso') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, agora); // Dó
+                osc.frequency.setValueAtTime(659.25, agora + 0.1); // Mi
+                osc.frequency.setValueAtTime(783.99, agora + 0.2); // Sol
+                gain.gain.setValueAtTime(0.15, agora);
+                gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.35);
+                osc.start(agora);
+                osc.stop(agora + 0.35);
+            } else if (tipo === 'alarme') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(250, agora);
+                osc.frequency.setValueAtTime(180, agora + 0.15);
+                gain.gain.setValueAtTime(0.2, agora);
+                gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+                osc.start(agora);
+                osc.stop(agora + 0.3);
+            }
+        }
+
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v17');
+                const salvo = localStorage.getItem('petton_css_v18');
                 if (salvo) {
                     pet = JSON.parse(salvo);
                 }
@@ -571,7 +638,7 @@
 
         function salvarJogo() {
             try {
-                localStorage.setItem('petton_css_v17', JSON.stringify(pet));
+                localStorage.setItem('petton_css_v18', JSON.stringify(pet));
             } catch (e) {
                 console.error("Erro ao salvar", e);
             }
@@ -579,10 +646,11 @@
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v17');
+                localStorage.removeItem('petton_css_v18');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, comCarie: false, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
+                tocarSom('alarme');
                 aplicarEstadoAtual();
                 document.getElementById('texto-status').innerText = "Um ovo misterioso quentinho. Clique nele 12 vezes para chocar!";
             }
@@ -633,7 +701,6 @@
 
             if (pet.comCarie) {
                 catBox.classList.add('carie');
-                // Adiciona ícone de dor de dente se não existir
                 if (!catBox.querySelector('.toothache-icon')) {
                     let tooth = document.createElement('div');
                     tooth.className = 'toothache-icon';
@@ -695,6 +762,7 @@
         }
 
         function tocarPet() {
+            tocarSom('clique');
             if (pet.fase === "ovo") {
                 pet.cliquesOvo++;
                 let restam = 12 - pet.cliquesOvo;
@@ -703,6 +771,7 @@
                 } else {
                     pet.fase = "filhote";
                     pet.pontosGerais += 10;
+                    tocarSom('sucesso');
                     document.getElementById('texto-status').innerText = `Uhuuul! Nasceu o filhote ${pet.nome}! Ganhou 10 pontos! 🎉🍼`;
                     aplicarEstadoAtual();
                 }
@@ -724,15 +793,16 @@
                 desenharSujeirasNaTela();
             }
 
-            // Chance de dar cárie ao longo do tempo se comer muito
             if (Math.random() < 0.25 && !pet.comCarie && !pet.doente) {
                 pet.comCarie = true;
+                tocarSom('alarme');
                 document.getElementById('texto-status').innerText = `Ouch! ${pet.nome} comeu muito doce e ficou com cárie/dor de dente! 🦷💥`;
                 configurarVisualFase();
             }
 
             if ((pet.sujeiras >= 3 || pet.fome <= 10) && !pet.doente) {
                 pet.doente = true;
+                tocarSom('alarme');
                 document.getElementById('texto-status').innerText = `Oh não! ${pet.nome} ficou doentinho e precisa ir ao hospital! 🤒💊`;
                 configurarVisualFase();
             }
@@ -740,12 +810,14 @@
             if (pet.fase === "filhote" && pet.pontosCrescimento >= 12) {
                 pet.fase = "adulto";
                 pet.pontosGerais += 50;
+                tocarSom('sucesso');
                 document.getElementById('texto-status').innerText = `Incrível! ${pet.nome} virou adulto e ganhou 50 pontos! 🌟🐈`;
                 aplicarEstadoAtual();
             }
         }
 
         function alimentar() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.doente || pet.comCarie) {
                 alert("Seu gatinho não está bem (doente ou com dor de dente) e não consegue comer! Cuide dele primeiro 🏥🪥");
@@ -772,6 +844,7 @@
         }
 
         function darBanho() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             pet.pontosGerais += 5;
@@ -793,20 +866,37 @@
         }
 
         function escovarDentes() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || emJogos) return;
             if (!pet.comCarie) {
                 document.getElementById('texto-status').innerText = `Os dentes de ${pet.nome} já estão limpinhos e sem cárie! 🪥✨`;
                 return;
             }
-            pet.comCarie = false;
-            pet.felicidade = Math.min(100, pet.felicidade + 15);
-            pet.pontosGerais += 10;
-            document.getElementById('texto-status').innerText = `Dentes escovados! A cárie sumiu e a dor passou! (+10 Pontos) 🪥🦷`;
-            configurarVisualFase();
-            atualizarTela();
+
+            // Toca som de escovação
+            tocarSom('escova');
+
+            const cenario = document.getElementById('cenario-fundo');
+            let escovaEl = document.createElement('div');
+            escovaEl.className = 'toothbrush-anim';
+            escovaEl.innerText = '🪥✨';
+            cenario.appendChild(escovaEl);
+
+            // Aguarda a animação da escova acontecer (1.2 segundos) para limpar de vez
+            setTimeout(() => {
+                escovaEl.remove();
+                pet.comCarie = false;
+                pet.felicidade = Math.min(100, pet.felicidade + 15);
+                pet.pontosGerais += 10;
+                tocarSom('sucesso');
+                document.getElementById('texto-status').innerText = `Dentes escovados! A cárie sumiu e a dor passou! (+10 Pontos) 🪥🦷`;
+                configurarVisualFase();
+                atualizarTela();
+            }, 1200);
         }
 
         function limparSujeira() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || emJogos) return;
             if (pet.sujeiras === 0) {
                 document.getElementById('texto-status').innerText = `Está tudo limpinho por aqui! ✨🧹`;
@@ -815,18 +905,21 @@
             pet.sujeiras = 0;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             pet.pontosGerais += 5;
+            tocarSom('sucesso');
             desenharSujeirasNaTela();
             document.getElementById('texto-status').innerText = `Quartinho limpo e cheiroso! (+5 Pontos) 🧽✨`;
             atualizarTela();
         }
 
         function irHospital() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || emJogos) return;
             if (!pet.doente && !pet.comCarie) {
                 document.getElementById('texto-status').innerText = `${pet.nome} está saudável, não precisa de hospital agora! 💚`;
                 return;
             }
 
+            tocarSom('alarme');
             const cenario = document.getElementById('cenario-fundo');
             let amb = document.createElement('div');
             amb.className = 'ambulance';
@@ -840,6 +933,7 @@
                 pet.felicidade = Math.min(100, pet.felicidade + 30);
                 pet.energia = Math.min(100, pet.energia + 30);
                 pet.pontosGerais += 10;
+                tocarSom('sucesso');
                 configurarVisualFase();
                 document.getElementById('texto-status').innerText = `Ambulância chegou! Curado da cárie e da febre! (+10 Pontos) 💉 🏥`;
                 atualizarTela();
@@ -847,6 +941,7 @@
         }
 
         function escolherMiniGame() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.doente || pet.comCarie) {
                 alert("O gatinho está doente ou com dor de dente e não pode brincar agora. Cuide dele! 🏥🪥");
@@ -898,6 +993,7 @@
                 card.innerText = '?';
 
                 card.onclick = () => {
+                    tocarSom('clique');
                     if (bloqueio || card.classList.contains('flipped') || card.classList.contains('matched')) return;
                     
                     card.innerText = emoji;
@@ -960,6 +1056,7 @@
             let jogandoAtivo = true;
 
             jogoDiv.onclick = () => {
+                tocarSom('clique');
                 if (pulando || !jogandoAtivo) return;
                 pulando = true;
                 cat.style.bottom = "75px";
@@ -1001,6 +1098,16 @@
                     <button class="quiz-btn" onclick="responderQuiz(0, ${pSorteada.certa})">${pSorteada.opts[0]}</button>
                     <button class="quiz-btn" onclick="responderQuiz(1, ${pSorteada.certa})">${pSorteada.opts[1]}</button>
                     <button class="quiz-btn" onclick="responderQuiz(2, ${pSorteada.certa})">${pSorteada.opts[2]}</button>
+                    <button class="quiz-btn" onclick="responderQuiz(3, ${pSorteada.certa})">${pSoredadaOpts(pSorteada.opts[3])}</button>
+                </div>
+            `;
+            // Correção rápida para renderizar o botão sem erro na string acima:
+            quizDiv.innerHTML = `
+                <div class="quiz-question">${pSorteada.q}</div>
+                <div class="quiz-options">
+                    <button class="quiz-btn" onclick="responderQuiz(0, ${pSorteada.certa})">${pSorteada.opts[0]}</button>
+                    <button class="quiz-btn" onclick="responderQuiz(1, ${pSorteada.certa})">${pSorteada.opts[1]}</button>
+                    <button class="quiz-btn" onclick="responderQuiz(2, ${pSorteada.certa})">${pSorteada.opts[2]}</button>
                     <button class="quiz-btn" onclick="responderQuiz(3, ${pSorteada.certa})">${pSorteada.opts[3]}</button>
                 </div>
             `;
@@ -1008,6 +1115,7 @@
         }
 
         window.responderQuiz = function(escolha, certa) {
+            tocarSom('clique');
             const quizBox = document.getElementById('quiz-box-ativo');
             if (quizBox) quizBox.remove();
             let pontosGanho = (escolha === certa) ? 20 : 5;
@@ -1016,6 +1124,7 @@
 
         function finalizarMiniGame(pontosGanhos) {
             emJogos = false;
+            tocarSom('sucesso');
             
             const memoryGrid = document.getElementById('memory-grid-ativo');
             if (memoryGrid) memoryGrid.remove();
@@ -1064,6 +1173,7 @@
         }
 
         function dormir() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || pet.emPasseio || emJogos) return;
             pet.dormindo = true;
             pet.energia = 100;
@@ -1075,6 +1185,7 @@
                 if (!pet.dormindo) return;
                 pet.dormindo = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
+                tocarSom('sucesso');
                 document.getElementById('texto-status').innerText = `${pet.nome} acordou revigorado e cheio de energia! ☀️`;
                 configurarVisualFase();
                 atualizarTela();
@@ -1083,6 +1194,7 @@
         }
 
         function alternarPasseio() {
+            tocarSom('clique');
             if (pet.fase === "ovo" || pet.dormindo || emJogos) return;
             if (pet.doente || pet.comCarie) {
                 alert("O gatinho não está bem e não pode passear. Cuide dele! 🏥🪥");
