@@ -187,13 +187,14 @@
             border-bottom-color: #a3c1ad;
         }
 
-        /* Animação da Ambulância */
+        /* Animação da Ambulância (Invertida para a frente apontar para a direita) */
         .ambulance {
             position: absolute;
             bottom: 20px;
             left: -60px;
             font-size: 32px;
             z-index: 10;
+            transform: scaleX(-1);
             animation: driveAmbulance 3s linear forwards;
             pointer-events: none;
         }
@@ -533,7 +534,7 @@
 
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v15');
+                const salvo = localStorage.getItem('petton_css_v16');
                 if (salvo) {
                     pet = JSON.parse(salvo);
                 }
@@ -545,7 +546,7 @@
 
         function salvarJogo() {
             try {
-                localStorage.setItem('petton_css_v15', JSON.stringify(pet));
+                localStorage.setItem('petton_css_v16', JSON.stringify(pet));
             } catch (e) {
                 console.error("Erro ao salvar", e);
             }
@@ -553,7 +554,7 @@
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v15');
+                localStorage.removeItem('petton_css_v16');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
@@ -762,7 +763,6 @@
             atualizarTela();
         }
 
-        /* BOTÃO HOSPITAL COM A AMBULÂNCIA PASSANDO E CURANDO */
         function irHospital() {
             if (pet.fase === "ovo" || emJogos) return;
             if (!pet.doente) {
@@ -770,7 +770,6 @@
                 return;
             }
 
-            // Faz a ambulância passar da esquerda para a direita
             const cenario = document.getElementById('cenario-fundo');
             let amb = document.createElement('div');
             amb.className = 'ambulance';
@@ -778,7 +777,6 @@
             cenario.appendChild(amb);
             setTimeout(() => amb.remove(), 3000);
 
-            // Cura o gatinho após a ambulância passar
             setTimeout(() => {
                 pet.doente = false;
                 pet.felicidade = Math.min(100, pet.felicidade + 30);
