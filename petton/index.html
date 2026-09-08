@@ -357,7 +357,7 @@
             bottom: 10px;
             left: 30px;
             font-size: 30px;
-            transition: bottom 0.15s ease-out;
+            transition: bottom 0.2s ease-out;
         }
         .runner-obstacle {
             position: absolute;
@@ -1033,13 +1033,12 @@
             jogoDiv.id = 'jump-game-ativo';
             jogoDiv.className = 'jump-container';
             jogoDiv.innerHTML = `
-                <div id="runner-cat" class="runner-cat" style="left: 30px; bottom: 10px;">🐱</div>
-                <div id="runner-obs" class="runner-obstacle">🌵</div>
+                <div id="runner-cat" class="runner-cat">🐱</div>
+                <div class="runner-obstacle">🌵</div>
             `;
             cenario.appendChild(jogoDiv);
 
             let cat = document.getElementById('runner-cat');
-            let obs = document.getElementById('runner-obs');
             let pulando = false;
             let jogandoAtivo = true;
 
@@ -1054,33 +1053,9 @@
                 }, 450);
             };
 
-            let checagemColisao = setInterval(() => {
-                if (!jogandoAtivo) {
-                    clearInterval(checagemColisao);
-                    return;
-                }
-
-                let catRect = cat.getBoundingClientRect();
-                let obsRect = obs.getBoundingClientRect();
-
-                if (
-                    catRect.right > obsRect.left + 5 &&
-                    catRect.left < obsRect.right - 5 &&
-                    catRect.bottom > obsRect.top + 5 &&
-                    catRect.top < obsRect.bottom
-                ) {
-                    jogandoAtivo = false;
-                    clearInterval(checagemColisao);
-                    tocarSom('alarme');
-                    document.getElementById('texto-status').innerText = `💥 Ai! O gatinho bateu no cacto!`;
-                    setTimeout(() => finalizarMiniGame(5), 1000);
-                }
-            }, 50);
-
             setTimeout(() => {
                 if (!jogandoAtivo) return;
                 jogandoAtivo = false;
-                clearInterval(checagemColisao);
                 finalizarMiniGame(20);
             }, 10000);
         }
@@ -1205,14 +1180,14 @@
             const btnPasseio = document.getElementById('btn-acao-passeio');
 
             if (!pet.emPasseio) {
-                if (pet.energia < 25) {
+                if (pet.energia < 20) {
                     alert("Pet sem energia para passear. Coloque-o para dormir 💤");
                     return;
                 }
                 pet.emPasseio = true;
                 btnPasseio.innerText = "🏠 Voltar para Casa";
                 document.getElementById('texto-status').innerText = `${pet.nome} está dando uma voltinha no parque! 🌳🦋`;
-                pet.energia = Math.max(0, pet.energia - 25);
+                pet.energia = Math.max(0, pet.energia - 20);
                 pet.felicidade = Math.min(100, pet.felicidade + 20);
                 pet.pontosGerais += 10;
             } else {
