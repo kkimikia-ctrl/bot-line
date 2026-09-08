@@ -200,7 +200,7 @@
             100% { left: 10px; top: 10px; transform: scaleX(1); }
         }
 
-        /* Efeitos visuais na tela */
+        /* Efeitos visuais na tela (Comida e Banho) */
         .effect-overlay {
             position: absolute;
             font-size: 28px;
@@ -224,6 +224,22 @@
             0% { transform: translateY(-30px); opacity: 0; }
             50% { opacity: 1; }
             100% { transform: translateY(50px); opacity: 0; }
+        }
+
+        /* Zzz flutuantes do sono */
+        .zzz-effect {
+            position: absolute;
+            font-weight: bold;
+            color: #7b68ee;
+            text-shadow: 1px 1px #fff;
+            animation: floatZzz 2s linear infinite;
+            z-index: 8;
+            pointer-events: none;
+        }
+        @keyframes floatZzz {
+            0% { transform: translateY(0px) scale(0.8); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-45px) translateX(25px) scale(1.3); opacity: 0; }
         }
 
         /* Alvo do Mini-game */
@@ -436,9 +452,10 @@
         };
 
         let emJogos = false;
+        let intervaloZzz = null;
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_css_v6');
+            const salvo = localStorage.getItem('petton_css_v7');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -446,14 +463,15 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_css_v6', JSON.stringify(pet));
+            localStorage.setItem('petton_css_v7', JSON.stringify(pet));
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v6');
+                localStorage.removeItem('petton_css_v7');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, emPasseio: false, dormindo: false };
                 emJogos = false;
+                if(intervaloZzz) clearInterval(intervaloZzz);
                 aplicarEstadoAtual();
                 document.getElementById('texto-status').innerText = "Um ovo misterioso quentinho. Clique nele 12 vezes para chocar!";
             }
@@ -502,7 +520,10 @@
             if (pet.dormindo) {
                 catBox.classList.add('sleeping', 'floating');
                 document.getElementById('cenario-fundo').classList.remove('outdoor');
+                iniciarEfeitoZzz();
                 return;
+            } else {
+                if(intervaloZzz) clearInterval(intervaloZzz);
             }
 
             if (pet.emPasseio) {
@@ -603,7 +624,6 @@
             atualizarTela();
         }
 
-        /* ESCOLHE ALEATORIAMENTE UM DOS 3 MINI-GAMES */
         function escolherMiniGame() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.energia < 15) {
@@ -615,7 +635,7 @@
             pet.energia = Math.max(0, pet.energia - 15);
             document.getElementById('painel-botoes').style.pointerEvents = 'none';
 
-            let sorteio = Math.floor(Math.random() * 3); // Sorteia 0, 1 ou 2
+            let sorteio = Math.floor(Math.random() * 3);
             if (sorteio === 0) {
                 iniciarGameCaça();
             } else if (sorteio === 1) {
@@ -625,7 +645,6 @@
             }
         }
 
-        /* JOGO 1: CAÇA AOS ITENS */
         function iniciarGameCaça() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
@@ -672,7 +691,6 @@
             }, 1000);
         }
 
-        /* JOGO 2: ACERTE O RATINHO FUGASO */
         function iniciarGameRatinho() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
@@ -718,7 +736,6 @@
             }, 1000);
         }
 
-        /* JOGO 3: QUIZ FOFINHO DO PET */
         function iniciarGameQuiz() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
@@ -783,6 +800,29 @@
             atualizarTela();
         }
 
+        /* FUNÇÃO QUE CRIA OS EMOJIS DE ZZZ FLUTUANDO */
+        function iniciarEfeitoZzz() {
+            if(intervaloZzz) clearInterval(intervaloZzz);
+            const cenario = document.getElementById('cenario-fundo');
+            
+            intervaloZzz = setInterval(() => {
+                if (!pet.dormindo) {
+                    clearInterval(intervaloZzz);
+                    return;
+                }
+                let zzz = document.createElement('div');
+                zzz.className = 'zzz-effect';
+                zzz.innerText = 'Zzz';
+                // Posição perto da cabeça do gato dormindo
+                zzz.style.left = (Math.random() * 30 + 50) + '%';
+                zzz.style.top = (Math.random() * 20 + 30) + '%';
+                zzz.style.fontSize = (Math.random() * 10 + 16) + 'px';
+                cenario.appendChild(zzz);
+
+                setTimeout(() => zzz.remove(), 2000);
+            }, 900);
+        }
+
         function dormir() {
             if (pet.fase === "ovo" || pet.emPasseio || emJogos) return;
             pet.dormindo = true;
@@ -793,6 +833,7 @@
 
             setTimeout(() => {
                 pet.dormindo = false;
+                if(intervaloZzz) clearInterval(intervaloZzz);
                 document.getElementById('texto-status').innerText = `${pet.nome} acordou revigorado e cheio de energia! ☀️`;
                 configurarVisualFase();
                 atualizarTela();
