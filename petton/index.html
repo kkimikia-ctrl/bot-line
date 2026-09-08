@@ -221,6 +221,40 @@
             emPasseio: false
         };
 
+        // Carregar jogo salvo se existir
+        function carregarJogo() {
+            const salvo = localStorage.getItem('petton_save');
+            if (salvo) {
+                pet = JSON.parse(salvo);
+                if (pet.fase === "nascido") {
+                    aplicarEstadoNascido();
+                }
+            }
+        }
+
+        function salvarJogo() {
+            localStorage.setItem('petton_save', JSON.stringify(pet));
+        }
+
+        function aplicarEstadoNascido() {
+            document.getElementById('pet-name').innerText = "Mimi 🐱";
+            document.getElementById('pet-emoji').classList.remove('shaking');
+            document.getElementById('pet-emoji').classList.add('floating');
+            document.getElementById('painel-status').classList.remove('oculto');
+            document.getElementById('painel-botoes').classList.remove('oculto');
+            
+            if (pet.emPasseio) {
+                document.getElementById('cenario-fundo').classList.add('outdoor');
+                document.getElementById('pet-emoji').classList.remove('floating');
+                document.getElementById('pet-emoji').classList.add('walking');
+                document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
+                mudarExpressao("😺");
+            } else {
+                mudarExpressao("🐱");
+            }
+            atualizarTela();
+        }
+
         function atualizarTela() {
             if (pet.fase === "nascido") {
                 document.getElementById('bar-fome').style.width = pet.fome + '%';
@@ -232,6 +266,7 @@
                 document.getElementById('bar-energia').style.width = pet.energia + '%';
                 document.getElementById('txt-energia').innerText = pet.energia + '%';
             }
+            salvarJogo();
         }
 
         function mudarExpressao(emoji) {
@@ -255,24 +290,14 @@
                 animarEfeito();
                 setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 1500);
             }
+            salvarJogo();
         }
 
         function chocarOvo() {
             pet.fase = "nascido";
-            document.getElementById('pet-name').innerText = "Mimi 🐱";
-            mudarExpressao("🐣");
-            document.getElementById('pet-emoji').classList.remove('shaking');
-            document.getElementById('pet-emoji').classList.add('floating');
             document.getElementById('texto-status').innerText = `Parabéns! O ovo rachou e nasceu a sua gatinha ${pet.nome}! 🎉💖`;
-            
-            // Mostra os status e os botões de cuidado
-            document.getElementById('painel-status').classList.remove('oculto');
-            document.getElementById('painel-botoes').classList.remove('oculto');
-            
-            setTimeout(() => {
-                mudarExpressao("🐱");
-            }, 2500);
-            atualizarTela();
+            aplicarEstadoNascido();
+            salvarJogo();
         }
 
         function alimentar() {
@@ -360,6 +385,9 @@
                 emoji.style.transform = "scale(1) rotate(0deg)";
             }, 300);
         }
+
+        // Executa ao carregar a página
+        carregarJogo();
     </script>
 </body>
 </html>
