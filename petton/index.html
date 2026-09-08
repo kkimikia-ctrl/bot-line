@@ -533,7 +533,7 @@
 
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v14');
+                const salvo = localStorage.getItem('petton_css_v15');
                 if (salvo) {
                     pet = JSON.parse(salvo);
                 }
@@ -545,7 +545,7 @@
 
         function salvarJogo() {
             try {
-                localStorage.setItem('petton_css_v14', JSON.stringify(pet));
+                localStorage.setItem('petton_css_v15', JSON.stringify(pet));
             } catch (e) {
                 console.error("Erro ao salvar", e);
             }
@@ -553,7 +553,7 @@
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v14');
+                localStorage.removeItem('petton_css_v15');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
@@ -691,7 +691,6 @@
                 pet.doente = true;
                 document.getElementById('texto-status').innerText = `Oh não! ${pet.nome} ficou doentinho e precisa ir ao hospital! 🤒💊`;
                 configurarVisualFase();
-                passarAmbulancia();
             }
 
             if (pet.fase === "filhote" && pet.pontosCrescimento >= 12) {
@@ -700,16 +699,6 @@
                 document.getElementById('texto-status').innerText = `Incrível! ${pet.nome} virou adulto e ganhou 50 pontos! 🌟🐈`;
                 aplicarEstadoAtual();
             }
-        }
-
-        /* ANIMAÇÃO DA AMBULÂNCIA PASSANDO DA ESQUERDA PARA A DIREITA */
-        function passarAmbulancia() {
-            const cenario = document.getElementById('cenario-fundo');
-            let amb = document.createElement('div');
-            amb.className = 'ambulance';
-            amb.innerText = '🚑💨';
-            cenario.appendChild(amb);
-            setTimeout(() => amb.remove(), 3000);
         }
 
         function alimentar() {
@@ -773,19 +762,32 @@
             atualizarTela();
         }
 
+        /* BOTÃO HOSPITAL COM A AMBULÂNCIA PASSANDO E CURANDO */
         function irHospital() {
             if (pet.fase === "ovo" || emJogos) return;
             if (!pet.doente) {
                 document.getElementById('texto-status').innerText = `${pet.nome} está saudável, não precisa de hospital agora! 💚`;
                 return;
             }
-            pet.doente = false;
-            pet.felicidade = Math.min(100, pet.felicidade + 30);
-            pet.energia = Math.min(100, pet.energia + 30);
-            pet.pontosGerais += 10;
-            configurarVisualFase();
-            document.getElementById('texto-status').innerText = `Tomou a injeção no hospital e curou! (+10 Pontos) 💉 🏥`;
-            atualizarTela();
+
+            // Faz a ambulância passar da esquerda para a direita
+            const cenario = document.getElementById('cenario-fundo');
+            let amb = document.createElement('div');
+            amb.className = 'ambulance';
+            amb.innerText = '🚑💨';
+            cenario.appendChild(amb);
+            setTimeout(() => amb.remove(), 3000);
+
+            // Cura o gatinho após a ambulância passar
+            setTimeout(() => {
+                pet.doente = false;
+                pet.felicidade = Math.min(100, pet.felicidade + 30);
+                pet.energia = Math.min(100, pet.energia + 30);
+                pet.pontosGerais += 10;
+                configurarVisualFase();
+                document.getElementById('texto-status').innerText = `Ambulância chegou! Tomou injeção e ficou bem de novo! (+10 Pontos) 💉 🏥`;
+                atualizarTela();
+            }, 1200);
         }
 
         function escolherMiniGame() {
