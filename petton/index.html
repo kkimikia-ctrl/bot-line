@@ -221,7 +221,7 @@
         
         <div class="pet-title-area">
             <h1 id="pet-name">Mimi 🐱</h1>
-            <div class="stars-box">⭐ <span id="score">57</span></div>
+            <div class="stars-box">⭐ <span id="score">35</span></div>
         </div>
 
         <div class="screen" id="game-screen">
@@ -229,11 +229,10 @@
             <div id="extras-area"></div>
         </div>
 
-        <div class="message-box" id="msg">Toque na Mimi para interagir!</div>
+        <div class="message-box" id="msg">Toque na tela para o gatinho pular!</div>
 
-        <!-- Mini-jogo de Par ou Ímpar -->
         <div id="minigame-box">
-            <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: bold; color: #f57f17;">Minigame: Par ou Ímpar com a Mimi!</p>
+            <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: bold; color: #f57f17;">Minigame: Par ou Ímpar com o Petton!</p>
             <div style="display: flex; gap: 8px; justify-content: center;">
                 <button onclick="playMinigame('par')" style="background-color: #ffa726;">Par ✌️</button>
                 <button onclick="playMinigame('impar')" style="background-color: #ffa726;">Ímpar ☝️</button>
@@ -254,7 +253,7 @@
             <div class="stat-bar">
                 <span>⚡ Energia</span>
                 <div class="progress"><div id="energy-bar" class="progress-fill"></div></div>
-                <span id="energy-val" style="font-size:0.75rem; width:35px; text-align:right;">80%</span>
+                <span id="energy-val" style="font-size:0.75rem; width:35px; text-align:right;">85%</span>
             </div>
         </div>
 
@@ -276,10 +275,10 @@
     <script>
         let pet = {
             name: "Mimi",
-            score: 57,
+            score: 35,
             hunger: 100,
             happiness: 100,
-            energy: 80,
+            energy: 85,
             isSleeping: false,
             isSick: false,
             hasPoop: false,
@@ -309,9 +308,10 @@
 
             let extrasHTML = '';
             if (pet.hasPoop) extrasHTML += '<div class="item-spawn" style="bottom: 15px; left: 20px;" onclick="cleanPoop(event)">💩</div>';
-            if (pet.hasDirt) extrasHTML += '<div class="item-spawn" style="bottom: 15px; right: 20px;" onclick="cleanDirt(event)">🦠</div>';
+            if (pet.hasDirt) extrasHTML += '<div class="item-spawn" style="bottom: 15px; right: 20px;" onclick="cleanDirt(event)">🌵</div>';
             extrasArea.innerHTML = extrasHTML;
 
+            // Mantém o gato visível e ajusta o emoji conforme o estado
             if (pet.isSleeping) {
                 petAvatar.textContent = '😴';
             } else if (pet.isSick) {
@@ -323,7 +323,7 @@
 
         function interactPet() {
             if (pet.isSleeping) {
-                msgBox.textContent = "Mimi está dormindo, não perturbe!";
+                msgBox.textContent = "Mimi está dormindo, toque em Dormir para acordá-la!";
                 return;
             }
             pet.score += 1;
@@ -334,12 +334,11 @@
 
         function feedPet() {
             if (pet.isSleeping) {
-                msgBox.textContent = "Mimi está dormindo e não pode comer agora!";
+                msgBox.textContent = "Mimi está dormindo!";
                 return;
             }
             pet.hunger = Math.min(100, pet.hunger + 20);
             pet.score += 2;
-            if (Math.random() > 0.6) pet.hasPoop = true;
             msgBox.textContent = "Mimi comeu com apetite!";
             updateUI();
         }
@@ -431,7 +430,7 @@
                 return;
             }
             if (pet.energy < 15) {
-                msgBox.textContent = "Mimi está sem energia para passear! Coloque para dormir.";
+                msgBox.textContent = "Mimi está sem energia para passear!";
                 return;
             }
             pet.happiness = Math.min(100, pet.happiness + 20);
@@ -461,16 +460,16 @@
 
         function resetGame() {
             if (confirm("Deseja realmente reiniciar o jogo?")) {
-                pet.score = 57;
+                pet.score = 35;
                 pet.hunger = 100;
                 pet.happiness = 100;
-                pet.energy = 80;
+                pet.energy = 85;
                 pet.isSleeping = false;
                 pet.isSick = false;
                 pet.hasPoop = false;
                 pet.hasDirt = false;
                 minigameBox.style.display = 'none';
-                msgBox.textContent = "Jogo reiniciado com a Mimi acordada!";
+                msgBox.textContent = "Jogo reiniciado!";
                 updateUI();
             }
         }
