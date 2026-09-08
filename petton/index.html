@@ -257,46 +257,46 @@
             100% { transform: scale(1); }
         }
 
-        /* Estilo para o Quiz */
+        /* Estilo para o Quiz com mais opções */
         .quiz-box {
             position: absolute;
             top: 5px;
             left: 5px;
             right: 5px;
             bottom: 5px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 8px;
             z-index: 15;
             box-sizing: border-box;
         }
         .quiz-question {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-align: center;
         }
         .quiz-options {
-            display: flex;
-            gap: 6px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
             width: 100%;
-            justify-content: center;
         }
         .quiz-btn {
             background: #ff758c;
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 5px;
+            border-radius: 6px;
+            font-size: 10px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .status-box {
@@ -455,27 +455,27 @@
 
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v9');
+                const salvo = localStorage.getItem('petton_css_v11');
                 if (salvo) {
                     pet = JSON.parse(salvo);
                 }
             } catch (e) {
-                console.error("Erro ao carregar do localStorage", e);
+                console.error("Erro ao carregar", e);
             }
             aplicarEstadoAtual();
         }
 
         function salvarJogo() {
             try {
-                localStorage.setItem('petton_css_v9', JSON.stringify(pet));
+                localStorage.setItem('petton_css_v11', JSON.stringify(pet));
             } catch (e) {
-                console.error("Erro ao salvar no localStorage", e);
+                console.error("Erro ao salvar", e);
             }
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v9');
+                localStorage.removeItem('petton_css_v11');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
@@ -605,7 +605,8 @@
                 comida.style.left = (20 + (i * 30)) + '%';
                 comida.style.bottom = '15px';
                 cenario.appendChild(comida);
-                setTimeout(() => comida.remove(), 1200);
+                // TEMPO DA COMIDA AUMENTADO PARA 5 SEGUNDOS (5000ms)
+                setTimeout(() => comida.remove(), 5000);
             }
             atualizarTela();
         }
@@ -631,6 +632,7 @@
             atualizarTela();
         }
 
+        /* SORTEIA UM DOS 5 MINI-GAMES DIFERENTES */
         function escolherMiniGame() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.energia < 15) {
@@ -642,16 +644,21 @@
             pet.energia = Math.max(0, pet.energia - 15);
             document.getElementById('painel-botoes').style.pointerEvents = 'none';
 
-            let sorteio = Math.floor(Math.random() * 3);
+            let sorteio = Math.floor(Math.random() * 5);
             if (sorteio === 0) {
-                iniciarGameCaca();
+                iniciarGameCaca();       // 1. Caça aos brinquedos
             } else if (sorteio === 1) {
-                iniciarGameRatinho();
+                iniciarGameRatinho();   // 2. Ratinho fugitivo
+            } else if (sorteio === 2) {
+                iniciarGameQuiz();       // 3. Quiz fofinho com mais opções
+            } else if (sorteio === 3) {
+                iniciarGamePescaria();  // 4. Nova pesca de peixinhos
             } else {
-                iniciarGameQuiz();
+                iniciarGameEstrelas();  // 5. Nova coleta de estrelas
             }
         }
 
+        /* MINI-GAME 1: Caça */
         function iniciarGameCaca() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
@@ -693,6 +700,7 @@
             }, 1000);
         }
 
+        /* MINI-GAME 2: Ratinho */
         function iniciarGameRatinho() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
@@ -733,17 +741,19 @@
             }, 1000);
         }
 
+        /* MINI-GAME 3: Quiz com 4 Opções */
         function iniciarGameQuiz() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
             document.getElementById('cat-box').classList.add('oculto');
 
-            document.getElementById('texto-status').innerText = `🧠 Quiz Fofinho do Pet! Responda abaixo:`;
+            document.getElementById('texto-status').innerText = `🧠 Quiz Fofinho do Pet! Escolha a resposta certa:`;
 
             const perguntas = [
-                { q: "O que os gatos mais gostam de comer?", opts: ["Peixe 🐟", "Bolo 🍰"], certa: 0 },
-                { q: "O que o gato faz quando está muito feliz?", opts: ["Ronronar 🐾", "Latir 🐶"], certa: 0 },
-                { q: "Qual brinquedo os gatos adoram perseguir?", opts: ["Ratinho 🐭", "Chupeta 🍼"], certa: 0 }
+                { q: "O que os gatos mais gostam de comer?", opts: ["Peixe 🐟", "Bolo 🍰", "Pedra 🪨", "Ferro 🔩"], certa: 0 },
+                { q: "O que o gato faz quando está muito feliz?", opts: ["Latir 🐶", "Ronronar 🐾", "Gritar 📢", "Voar 🦅"], certa: 1 },
+                { q: "Qual o animal favorito de estimação felino?", opts: ["Cachorro 🐕", "Gato 🐈", "Tartaruga 🐢", "Tubarão 🦈"], certa: 1 },
+                { q: "Onde os gatinhos gostam de dormir bastante?", opts: ["Na lama 💧", "Na grama molhada 🌿", "No sol / caminha ☀️", "No teto 🏠"], certa: 2 }
             ];
             let pSorteada = perguntas[Math.floor(Math.random() * perguntas.length)];
 
@@ -755,6 +765,8 @@
                 <div class="quiz-options">
                     <button class="quiz-btn" onclick="responderQuiz(0, ${pSorteada.certa})">${pSorteada.opts[0]}</button>
                     <button class="quiz-btn" onclick="responderQuiz(1, ${pSorteada.certa})">${pSorteada.opts[1]}</button>
+                    <button class="quiz-btn" onclick="responderQuiz(2, ${pSorteada.certa})">${pSorteada.opts[2]}</button>
+                    <button class="quiz-btn" onclick="responderQuiz(3, ${pSorteada.certa})">${pSorteada.opts[3]}</button>
                 </div>
             `;
             cenario.appendChild(quizDiv);
@@ -773,6 +785,84 @@
                 document.getElementById('texto-status').innerText = `🧠 Errou, mas ganhou 2 pontos pela tentativa!`;
             }
             finalizarMiniGame(acertos, pontosGanho);
+        }
+
+        /* MINI-GAME 4: Pescaria de Peixinhos */
+        function iniciarGamePescaria() {
+            const cenario = document.getElementById('cenario-fundo');
+            cenario.classList.add('minigame-bg');
+            document.getElementById('cat-box').classList.add('oculto');
+            
+            let peixes = 0;
+            let tempoRestante = 10;
+            document.getElementById('texto-status').innerText = `🎣 Pescarias! Clique nos peixinhos saltando!`;
+
+            let loopPeixes = setInterval(() => {
+                if (!emJogos) return;
+                const alvo = document.createElement('div');
+                alvo.className = 'game-target';
+                alvo.innerText = '🐟';
+                alvo.style.left = Math.floor(Math.random() * (cenario.clientWidth - 50)) + 'px';
+                alvo.style.top = Math.floor(Math.random() * (cenario.clientHeight - 50)) + 'px';
+
+                alvo.onclick = () => {
+                    peixes++;
+                    alvo.remove();
+                    document.getElementById('texto-status').innerText = `🎣 Peixes pescados: ${peixes}`;
+                };
+                cenario.appendChild(alvo);
+                setTimeout(() => { if(alvo.parentNode) alvo.remove(); }, 900);
+            }, 600);
+
+            let relogio = setInterval(() => {
+                tempoRestante--;
+                if (tempoRestante > 0) {
+                    document.getElementById('texto-status').innerText = `🎣 Pescaria! Tempo: ${tempoRestante}s | Peixes: ${peixes}`;
+                } else {
+                    clearInterval(relogio);
+                    clearInterval(loopPeixes);
+                    finalizarMiniGame(peixes, peixes * 2);
+                }
+            }, 1000);
+        }
+
+        /* MINI-GAME 5: Apanha-Estrelas */
+        function iniciarGameEstrelas() {
+            const cenario = document.getElementById('cenario-fundo');
+            cenario.classList.add('minigame-bg');
+            document.getElementById('cat-box').classList.add('oculto');
+            
+            let estrelas = 0;
+            let tempoRestante = 10;
+            document.getElementById('texto-status').innerText = `🌟 Apanha-Estrelas! Colete o máximo de brilhos!`;
+
+            let loopEstrelas = setInterval(() => {
+                if (!emJogos) return;
+                const alvo = document.createElement('div');
+                alvo.className = 'game-target';
+                alvo.innerText = '⭐';
+                alvo.style.left = Math.floor(Math.random() * (cenario.clientWidth - 50)) + 'px';
+                alvo.style.top = Math.floor(Math.random() * (cenario.clientHeight - 50)) + 'px';
+
+                alvo.onclick = () => {
+                    estrelas++;
+                    alvo.remove();
+                    document.getElementById('texto-status').innerText = `🌟 Estrelas coletadas: ${estrelas}`;
+                };
+                cenario.appendChild(alvo);
+                setTimeout(() => { if(alvo.parentNode) alvo.remove(); }, 850);
+            }, 600);
+
+            let relogio = setInterval(() => {
+                tempoRestante--;
+                if (tempoRestante > 0) {
+                    document.getElementById('texto-status').innerText = `🌟 Apanha-Estrelas! Tempo: ${tempoRestante}s | Estrelas: ${estrelas}`;
+                } else {
+                    clearInterval(relogio);
+                    clearInterval(loopEstrelas);
+                    finalizarMiniGame(estrelas, estrelas * 2);
+                }
+            }, 1000);
         }
 
         function finalizarMiniGame(desempenho, pontosGanhos) {
@@ -828,7 +918,7 @@
             document.getElementById('texto-status').innerText = `${pet.nome} dormiu e ganhou +5 pontos... zZz 💤`;
             configurarVisualFase();
 
-            // TEMPO DE SONO CONFIGURADO PARA 30 SEGUNDOS (30000ms)
+            // SONO EM 15 SEGUNDOS (15000ms)
             setTimeout(() => {
                 if (!pet.dormindo) return;
                 pet.dormindo = false;
@@ -836,7 +926,7 @@
                 document.getElementById('texto-status').innerText = `${pet.nome} acordou revigorado e cheio de energia! ☀️`;
                 configurarVisualFase();
                 atualizarTela();
-            }, 30000);
+            }, 15000);
             atualizarTela();
         }
 
