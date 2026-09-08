@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Petton - Gatinho Kawaii</title>
+    <title>Petton - Gatinho Estilo Tamagotchi</title>
     <style>
         body {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
@@ -180,6 +180,25 @@
         .cat-container.adult .cat-ear {
             border-bottom-color: #e08250;
         }
+        .cat-container.sick .cat-head {
+            background-color: #a3c1ad; /* tom esverdeado/doentio */
+        }
+        .cat-container.sick .cat-ear {
+            border-bottom-color: #a3c1ad;
+        }
+
+        /* Sujeira (Cocô / Xixi) na tela */
+        .poop-item {
+            position: absolute;
+            font-size: 24px;
+            z-index: 6;
+            cursor: pointer;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
 
         /* Animações gerais */
         .floating { animation: float 2.5s ease-in-out infinite; }
@@ -200,7 +219,6 @@
             100% { left: 10px; top: 10px; transform: scaleX(1); }
         }
 
-        /* Efeitos visuais na tela */
         .effect-overlay {
             position: absolute;
             font-size: 28px;
@@ -226,7 +244,6 @@
             100% { transform: translateY(50px); opacity: 0; }
         }
 
-        /* Zzz flutuantes do sono */
         .zzz-effect {
             position: absolute;
             font-weight: bold;
@@ -242,7 +259,7 @@
             100% { transform: translateY(-45px) translateX(25px) scale(1.3); opacity: 0; }
         }
 
-        /* TELA DE JOGO 1: MEMÓRIA */
+        /* JOGO 1: MEMÓRIA */
         .memory-grid {
             position: absolute;
             top: 5px; left: 5px; right: 5px; bottom: 5px;
@@ -272,7 +289,7 @@
             border: 1px solid #ff758c;
         }
 
-        /* TELA DE JOGO 2: PULAR OBSTÁCULOS */
+        /* JOGO 2: PULAR */
         .jump-container {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -301,7 +318,7 @@
             100% { right: 380px; }
         }
 
-        /* TELA DE JOGO 3: QUIZ */
+        /* JOGO 3: QUIZ */
         .quiz-box {
             position: absolute;
             top: 5px; left: 5px; right: 5px; bottom: 5px;
@@ -342,14 +359,14 @@
 
         .status-box {
             text-align: left;
-            margin: 8px 0;
+            margin: 6px 0;
             background: #fff5f8;
-            padding: 7px 12px;
+            padding: 6px 10px;
             border-radius: 12px;
             border: 1px solid #ffe0ec;
         }
         .status-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #666;
             display: flex;
@@ -358,7 +375,7 @@
         .bar-container {
             background: #e0e0e0;
             border-radius: 10px;
-            height: 7px;
+            height: 6px;
             width: 100%;
             overflow: hidden;
             margin-top: 3px;
@@ -372,28 +389,29 @@
         }
         .btn-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
         }
         button {
             background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
             color: white;
             border: none;
-            padding: 11px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 9px 4px;
+            border-radius: 10px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(255, 117, 140, 0.3);
+            box-shadow: 0 3px 8px rgba(255, 117, 140, 0.3);
             transition: transform 0.1s;
         }
         button:active { transform: scale(0.95); }
         .btn-passeio {
-            grid-column: span 2;
+            grid-column: span 3;
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            box-shadow: 0 4px 10px rgba(67, 233, 123, 0.3);
+            box-shadow: 0 3px 8px rgba(67, 233, 123, 0.3);
             color: #2c3e50;
+            padding: 10px;
         }
         .btn-voltar-menu {
             display: block;
@@ -403,10 +421,10 @@
             text-decoration: none;
             box-sizing: border-box;
             text-align: center;
-            padding: 10px;
+            padding: 9px;
             border-radius: 12px;
             color: white;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         .btn-reset {
@@ -426,11 +444,11 @@
 <body>
 
     <div class="container">
-        <div id="user-greeting">Cantinho do Pet 🐾</div>
+        <div id="user-greeting">Cantinho Tamagotchi 🐾</div>
         
         <div class="header-top">
             <h2 id="pet-name">Ovo Misterioso 🥚</h2>
-            <div id="painel-pontos-topo" class="score-board oculto">⭐ Pontos: <span id="txt-pontos">0</span></div>
+            <div id="painel-pontos-topo" class="score-board oculto">⭐ <span id="txt-pontos">0</span></div>
         </div>
         
         <div class="scenery" id="cenario-fundo">
@@ -446,6 +464,8 @@
                     <div class="cat-mouth"></div>
                 </div>
             </div>
+            <!-- Espaço reservado para o cocô aparecer no cenário -->
+            <div id="area-sujeira"></div>
         </div>
 
         <div id="texto-status">Um ovo misterioso quentinho. Clique nele 12 vezes para chocar!</div>
@@ -466,10 +486,12 @@
         </div>
 
         <div id="painel-botoes" class="btn-grid oculto">
-            <button onclick="alimentar()">🍽️ Alimentar</button>
+            <button onclick="alimentar()">🍽️ Comer</button>
             <button onclick="escolherMiniGame()">🎮 Brincar</button>
             <button onclick="dormir()">💤 Dormir</button>
             <button onclick="darBanho()">🛁 Banho</button>
+            <button onclick="limparSujeira()">🧹 Limpar</button>
+            <button onclick="irHospital()">🏥 Hospital</button>
             <button class="btn-passeio" id="btn-acao-passeio" onclick="alternarPasseio()">🌳 Ir Passear</button>
         </div>
 
@@ -487,6 +509,8 @@
             fome: 80,
             felicidade: 90,
             energia: 100,
+            sujeiras: 0, // quantidade de cocôs na tela
+            doente: false,
             emPasseio: false,
             dormindo: false
         };
@@ -496,7 +520,7 @@
 
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v12');
+                const salvo = localStorage.getItem('petton_css_v13');
                 if (salvo) {
                     pet = JSON.parse(salvo);
                 }
@@ -508,7 +532,7 @@
 
         function salvarJogo() {
             try {
-                localStorage.setItem('petton_css_v12', JSON.stringify(pet));
+                localStorage.setItem('petton_css_v13', JSON.stringify(pet));
             } catch (e) {
                 console.error("Erro ao salvar", e);
             }
@@ -516,8 +540,8 @@
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v12');
-                pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, emPasseio: false, dormindo: false };
+                localStorage.removeItem('petton_css_v13');
+                pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
                 aplicarEstadoAtual();
@@ -533,6 +557,7 @@
                 document.getElementById('painel-status').classList.add('oculto');
                 document.getElementById('painel-botoes').classList.add('oculto');
                 document.getElementById('painel-pontos-topo').classList.add('oculto');
+                document.getElementById('area-sujeira').innerHTML = '';
             } else {
                 restaurarTemplateGato();
                 document.getElementById('pet-name').innerText = pet.nome + (pet.fase === "filhote" ? " 🐱" : " 🐈");
@@ -540,6 +565,7 @@
                 document.getElementById('painel-botoes').classList.remove('oculto');
                 document.getElementById('painel-pontos-topo').classList.remove('oculto');
                 configurarVisualFase();
+                desenharSujeirasNaTela();
             }
             atualizarTela();
         }
@@ -564,6 +590,7 @@
             catBox.className = "cat-container";
             
             if (pet.fase === "adulto") catBox.classList.add('adult');
+            if (pet.doente) catBox.classList.add('sick');
 
             if (pet.dormindo) {
                 catBox.classList.add('sleeping', 'floating');
@@ -598,6 +625,26 @@
             salvarJogo();
         }
 
+        function desenharSujeirasNaTela() {
+            let area = document.getElementById('area-sujeira');
+            area.innerHTML = '';
+            // Posiciona emojis de cocô de acordo com a quantidade acumulada
+            const posricoes = [
+                {bottom: '10px', left: '15px'},
+                {bottom: '15px', right: '20px'},
+                {bottom: '40px', left: '35px'}
+            ];
+            for (let i = 0; i < pet.sujeiras && i < 3; i++) {
+                let p = document.createElement('div');
+                p.className = 'poop-item';
+                p.innerText = '💩';
+                p.style.bottom = posricoes[i].bottom;
+                if (posricoes[i].left) p.style.left = posricoes[i].left;
+                if (posricoes[i].right) p.style.right = posricoes[i].right;
+                area.appendChild(p);
+            }
+        }
+
         function tocarPet() {
             if (pet.fase === "ovo") {
                 pet.cliquesOvo++;
@@ -621,6 +668,21 @@
 
         function verificarEvolucao() {
             pet.pontosCrescimento++;
+            
+            // Chance aleatória de sujar a cada ação se descuidar
+            if (Math.random() < 0.4 && pet.sujeiras < 3) {
+                pet.sujeiras++;
+                document.getElementById('texto-status').innerText = `Oops! ${pet.nome} fez sujeira no quartinho! 💩`;
+                desenharSujeirasNaTela();
+            }
+
+            // Se acumular muita sujeira ou fome baixa, fica doente igual Tamagotchi!
+            if ((pet.sujeiras >= 3 || pet.fome <= 10) && !pet.doente) {
+                pet.doente = true;
+                document.getElementById('texto-status').innerText = `Oh não! ${pet.nome} ficou doentinho e precisa ir ao hospital! 🤒💊`;
+                configurarVisualFase();
+            }
+
             if (pet.fase === "filhote" && pet.pontosCrescimento >= 12) {
                 pet.fase = "adulto";
                 pet.pontosGerais += 50;
@@ -631,6 +693,10 @@
 
         function alimentar() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
+            if (pet.doente) {
+                alert("Seu gatinho está doente e não consegue comer direito! Leve-o ao hospital 🏥");
+                return;
+            }
             pet.fome = Math.min(100, pet.fome + 25);
             pet.pontosGerais += 5;
             document.getElementById('texto-status').innerText = `${pet.nome} comeu a ração! (+5 Pontos) 🐟😋`;
@@ -655,7 +721,7 @@
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             pet.pontosGerais += 5;
-            document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está limpinho! (+5 Pontos) 🛁✨`;
+            document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está cheiroso! (+5 Pontos) 🛁✨`;
             animarEfeito();
             verificarEvolucao();
 
@@ -672,9 +738,42 @@
             atualizarTela();
         }
 
-        /* SORTEIA UM DOS 3 JOGOS COMPLETAMENTE DIFERENTES */
+        function limparSujeira() {
+            if (pet.fase === "ovo" || emJogos) return;
+            if (pet.sujeiras === 0) {
+                document.getElementById('texto-status').innerText = `Está tudo limpinho por aqui! ✨🧹`;
+                return;
+            }
+            pet.sujeiras = 0;
+            pet.felicidade = Math.min(100, pet.felicidade + 10);
+            pet.pontosGerais += 5;
+            desenharSujeirasNaTela();
+            document.getElementById('texto-status').innerText = `Quartinho limpo e cheiroso! (+5 Pontos) 🧽✨`;
+            atualizarTela();
+        }
+
+        function irHospital() {
+            if (pet.fase === "ovo" || emJogos) return;
+            if (!pet.doente) {
+                document.getElementById('texto-status').innerText = `${pet.nome} está saudável, não precisa de hospital agora! 💚`;
+                return;
+            }
+            pet.doente = false;
+            pet.felicidade = Math.min(100, pet.felicidade + 30);
+            pet.energia = Math.min(100, pet.energia + 30);
+            pet.pontosGerais += 10;
+            configurarVisualFase();
+            document.getElementById('texto-status').innerText = `Tomou a injeção no hospital e curou! (+10 Pontos) 💉 🏥`;
+            atualizarTela();
+        }
+
+        /* SORTEIA UM DOS 3 MINIGAMES */
         function escolherMiniGame() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
+            if (pet.doente) {
+                alert("O gatinho está doente e não pode brincar agora. Leve-o ao hospital! 🏥");
+                return;
+            }
             if (pet.energia < 15) {
                 alert("Seu gatinho está cansado e precisa dormir um pouco 💤");
                 return;
@@ -686,19 +785,19 @@
 
             let sorteio = Math.floor(Math.random() * 3);
             if (sorteio === 0) {
-                iniciarJogoMemoria();   // Jogo 1: Memória de pares
+                iniciarJogoMemoria();
             } else if (sorteio === 1) {
-                iniciarJogoPulo();      // Jogo 2: Pular obstáculo
+                iniciarJogoPulo();
             } else {
-                iniciarJogoQuiz();      // Jogo 3: Quiz de perguntas
+                iniciarJogoQuiz();
             }
         }
 
-        /* JOGO 1: MEMÓRIA DE PARES 🃏 */
         function iniciarJogoMemoria() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
             document.getElementById('cat-box').classList.add('oculto');
+            document.getElementById('area-sujeira').classList.add('oculto');
             
             document.getElementById('texto-status').innerText = `🃏 Jogo da Memória: Encontre os 4 pares!`;
 
@@ -714,7 +813,7 @@
             let paresEncontrados = 0;
             let bloqueio = false;
 
-            icones.forEach((emoji, index) => {
+            icones.forEach((emoji) => {
                 let card = document.createElement('div');
                 card.className = 'memory-card';
                 card.dataset.emoji = emoji;
@@ -741,9 +840,7 @@
                             bloqueio = false;
 
                             if (paresEncontrados === 4) {
-                                setTimeout(() => {
-                                    finalizarMiniGame(4, 25);
-                                }, 600);
+                                setTimeout(() => { finalizarMiniGame(25); }, 600);
                             }
                         } else {
                             setTimeout(() => {
@@ -763,13 +860,13 @@
             cenario.appendChild(gridDiv);
         }
 
-        /* JOGO 2: PULAR OBSTÁCULOS (ESTILO DINOSSAURO) 🏃 */
         function iniciarJogoPulo() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
             document.getElementById('cat-box').classList.add('oculto');
+            document.getElementById('area-sujeira').classList.add('oculto');
 
-            document.getElementById('texto-status').innerText = `🏃 Toque na tela para o gatinho pular os cactos!`;
+            document.getElementById('texto-status').innerText = `🏃 Toque na tela para o gatinho pular!`;
 
             let jogoDiv = document.createElement('div');
             jogoDiv.id = 'jump-game-ativo';
@@ -782,10 +879,8 @@
 
             let cat = document.getElementById('runner-cat');
             let pulando = false;
-            let pontuacao = 0;
             let jogandoAtivo = true;
 
-            // Ao clicar na tela, o gato pula
             jogoDiv.onclick = () => {
                 if (pulando || !jogandoAtivo) return;
                 pulando = true;
@@ -796,27 +891,26 @@
                 }, 450);
             };
 
-            // Loop para contar pontos e verificar colisão simples
-            let tempoFim = setTimeout(() => {
+            setTimeout(() => {
                 if (!jogandoAtivo) return;
                 jogandoAtivo = false;
-                finalizarMiniGame(3, 20);
+                finalizarMiniGame(20);
             }, 10000);
         }
 
-        /* JOGO 3: QUIZ COM OPÇÕES 🧠 */
         function iniciarJogoQuiz() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
             document.getElementById('cat-box').classList.add('oculto');
+            document.getElementById('area-sujeira').classList.add('oculto');
 
-            document.getElementById('texto-status').innerText = `🧠 Quiz Fofinho do Pet! Escolha a resposta certa:`;
+            document.getElementById('texto-status').innerText = `🧠 Quiz Fofinho do Pet! Responda:`;
 
             const perguntas = [
                 { q: "O que os gatos mais gostam de comer?", opts: ["Peixe 🐟", "Bolo 🍰", "Pedra 🪨", "Ferro 🔩"], certa: 0 },
-                { q: "O que o gato faz quando está muito feliz?", opts: ["Latir 🐶", "Ronronar 🐾", "Gritar 📢", "Voar 🦅"], certa: 1 },
-                { q: "Qual o animal favorito de estimação felino?", opts: ["Cachorro 🐕", "Gato 🐈", "Tartaruga 🐢", "Tubarão 🦈"], certa: 1 },
-                { q: "Onde os gatinhos gostam de dormir bastante?", opts: ["Na lama 💧", "Na grama molhada 🌿", "No sol / caminha ☀️", "No teto 🏠"], certa: 2 }
+                { q: "O que o gato faz quando está feliz?", opts: ["Latir 🐶", "Ronronar 🐾", "Gritar 📢", "Voar 🦅"], certa: 1 },
+                { q: "Qual o animal favorito felino?", opts: ["Cachorro 🐕", "Gato 🐈", "Tartaruga 🐢", "Tubarão 🦈"], certa: 1 },
+                { q: "Onde os gatinhos gostam de dormir?", opts: ["Na lama 💧", "Na grama 🌿", "No sol / caminha ☀️", "No teto 🏠"], certa: 2 }
             ];
             let pSorteada = perguntas[Math.floor(Math.random() * perguntas.length)];
 
@@ -838,22 +932,13 @@
         window.responderQuiz = function(escolha, certa) {
             const quizBox = document.getElementById('quiz-box-ativo');
             if (quizBox) quizBox.remove();
-
-            let acertos = (escolha === certa) ? 1 : 0;
             let pontosGanho = (escolha === certa) ? 20 : 5;
-            
-            if (escolha === certa) {
-                document.getElementById('texto-status').innerText = `🧠 Resposta certa! Ganhou 20 pontos! 🎉`;
-            } else {
-                document.getElementById('texto-status').innerText = `🧠 Errou, mas ganhou 5 pontos pela tentativa!`;
-            }
-            finalizarMiniGame(acertos, pontosGanho);
+            finalizarMiniGame(pontosGanho);
         }
 
-        function finalizarMiniGame(desempenho, pontosGanhos) {
+        function finalizarMiniGame(pontosGanhos) {
             emJogos = false;
             
-            // Limpa elementos dos jogos ativos
             const memoryGrid = document.getElementById('memory-grid-ativo');
             if (memoryGrid) memoryGrid.remove();
 
@@ -866,12 +951,13 @@
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.remove('minigame-bg');
             document.getElementById('cat-box').classList.remove('oculto');
+            document.getElementById('area-sujeira').classList.remove('oculto');
             document.getElementById('painel-botoes').style.pointerEvents = 'auto';
 
             pet.felicidade = Math.min(100, pet.felicidade + 20);
             pet.pontosGerais += pontosGanhos;
 
-            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! ${pet.nome} se divertiu e ganhou +${pontosGanhos} pontos! ✨`;
+            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! Ganhou +${pontosGanhos} pontos! ✨`;
             
             configurarVisualFase();
             verificarEvolucao();
@@ -920,6 +1006,10 @@
 
         function alternarPasseio() {
             if (pet.fase === "ovo" || pet.dormindo || emJogos) return;
+            if (pet.doente) {
+                alert("O gatinho está doente e não pode passear. Vá ao hospital! 🏥");
+                return;
+            }
             const btnPasseio = document.getElementById('btn-acao-passeio');
 
             if (!pet.emPasseio) {
