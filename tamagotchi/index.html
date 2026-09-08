@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Pet LINE - Tamagotchi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Meu Pet LINE - TamaPet</title>
     <!-- Carregando o SDK do LINE LIFF -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
@@ -18,6 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            box-sizing: border-box;
         }
         .container {
             width: 100%;
@@ -26,31 +27,66 @@
             padding: 25px;
             border-radius: 25px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
         }
         h2 {
             margin-top: 0;
             color: #ff69b4;
+            font-size: 22px;
+        }
+        /* Cenário que muda de Indoor (Quarto) para Outdoor (Parque) */
+        .scenery {
+            width: 100%;
+            height: 130px;
+            border-radius: 18px;
+            background: #fff5f8;
+            border: 2px dashed #ffe0ec;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 12px 0;
+            position: relative;
+            transition: background 0.5s ease;
+        }
+        .scenery.outdoor {
+            background: linear-gradient(180deg, #bbf2f6 0%, #e1fed3 100%);
+            border: 2px solid #a3e4d7;
         }
         .pet-avatar {
-            font-size: 90px;
-            margin: 15px 0;
+            font-size: 80px;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        /* Animação de flutuação padrão no quarto */
+        .floating {
             animation: float 2.5s ease-in-out infinite;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         @keyframes float {
             0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-12px) scale(1.05); }
+            50% { transform: translateY(-8px) scale(1.03); }
+        }
+        /* Animação de caminhada no passeio */
+        .walking {
+            animation: walk 0.6s infinite alternate ease-in-out;
+        }
+        @keyframes walk {
+            0% { transform: translateY(0px) rotate(-5deg); }
+            100% { transform: translateY(-6px) rotate(5deg); }
         }
         .status-box {
             text-align: left;
-            margin: 12px 0;
+            margin: 10px 0;
             background: #fff5f8;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 12px;
             border: 1px solid #ffe0ec;
         }
         .status-label {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #666;
             display: flex;
@@ -59,10 +95,10 @@
         .bar-container {
             background: #e0e0e0;
             border-radius: 10px;
-            height: 10px;
+            height: 8px;
             width: 100%;
             overflow: hidden;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         .bar-fill {
             height: 100%;
@@ -74,16 +110,16 @@
         .btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 25px;
+            gap: 10px;
+            margin-top: 15px;
         }
         button {
             background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
             color: white;
             border: none;
-            padding: 14px;
+            padding: 12px;
             border-radius: 14px;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(255, 117, 140, 0.3);
@@ -95,10 +131,22 @@
         button:hover {
             opacity: 0.9;
         }
+        .btn-passeio {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            box-shadow: 0 4px 10px rgba(67, 233, 123, 0.3);
+            color: #2c3e50;
+        }
         #user-greeting {
-            font-size: 12px;
+            font-size: 11px;
             color: #888;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+        }
+        #texto-status {
+            font-size: 12px;
+            color: #666;
+            margin: 6px 0;
+            min-height: 25px;
         }
     </style>
 </head>
@@ -106,9 +154,14 @@
 
     <div class="container">
         <div id="user-greeting">Conectando ao LINE...</div>
-        <h2 id="pet-name">Pompom</h2>
+        <h2 id="pet-name">Mimi 🐱</h2>
         
-        <div class="pet-avatar" id="pet-emoji">🐱</div>
+        <!-- Cenário que muda de cor (Quarto vs Parque) -->
+        <div class="scenery" id="cenario-fundo">
+            <div class="pet-avatar floating" id="pet-emoji" onclick="animarPet()">🐱</div>
+        </div>
+
+        <div id="texto-status">Mimi está descansando confortavelmente no quarto.</div>
         
         <div class="status-box">
             <div class="status-label"><span>🍗 Fome</span> <span id="txt-fome">80%</span></div>
@@ -130,21 +183,20 @@
             <button onclick="brincar()">🎮 Brincar</button>
             <button onclick="dormir()">💤 Dormir</button>
             <button onclick="darBanho()">🛁 Banho</button>
+            <button class="btn-passeio" id="btn-acao-passeio" onclick="alternarPasseio()">🌳 Ir Passear</button>
         </div>
     </div>
 
     <script>
-        // Estado local do Pet
         let pet = {
-            nome: "Pompom",
+            nome: "Mimi",
             fome: 80,
             felicidade: 90,
-            energia: 100
+            energia: 100,
+            emPasseio: false
         };
 
         function atualizarTela() {
-            document.getElementById('pet-name').innerText = pet.nome;
-            
             document.getElementById('bar-fome').style.width = pet.fome + '%';
             document.getElementById('txt-fome').innerText = pet.fome + '%';
 
@@ -156,40 +208,79 @@
         }
 
         function alimentar() {
+            if (pet.emPasseio) return;
             pet.fome = Math.min(100, pet.fome + 15);
+            document.getElementById('texto-status').innerText = `${pet.nome} comeu com muita alegria! 🐟`;
             animarPet();
             atualizarTela();
         }
 
         function brincar() {
+            if (pet.emPasseio) return;
             if (pet.energia < 15) {
                 alert("Seu pet está muito cansado para brincar! Coloque-o para dormir 💤");
                 return;
             }
             pet.felicidade = Math.min(100, pet.felicidade + 15);
             pet.energia = Math.max(0, pet.energia - 15);
+            document.getElementById('texto-status').innerText = `Você brincou bastante com ${pet.nome}! ✨`;
             animarPet();
             atualizarTela();
         }
 
         function dormir() {
+            if (pet.emPasseio) return;
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 10);
-            animarTela();
+            document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca profunda e recuperou as energias 💤`;
             atualizarTela();
         }
 
         function darBanho() {
+            if (pet.emPasseio) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
-            animarTela();
+            document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está cheirosinho(a) 🛁`;
+            animarPet();
+            atualizarTela();
+        }
+
+        function alternarPasseio() {
+            const cenario = document.getElementById('cenario-fundo');
+            const avatar = document.getElementById('pet-emoji');
+            const btnPasseio = document.getElementById('btn-acao-passeio');
+
+            if (!pet.emPasseio) {
+                // Ir para o passeio
+                if (pet.energia < 20) {
+                    alert("Seu pet está muito cansado para passear! Deixe-o descansar um pouco primeiro 💤");
+                    return;
+                }
+                pet.emPasseio = true;
+                cenario.classList.add('outdoor');
+                avatar.classList.remove('floating');
+                avatar.classList.add('walking');
+                btnPasseio.innerText = "🏠 Voltar para Casa";
+                document.getElementById('texto-status').innerText = `${pet.nome} está passeando no parque ao ar livre! 🌳☀️`;
+                
+                pet.energia = Math.max(0, pet.energia - 20);
+                pet.felicidade = Math.min(100, pet.felicidade + 20);
+            } else {
+                // Voltar para casa
+                pet.emPasseio = false;
+                cenario.classList.remove('outdoor');
+                avatar.classList.remove('walking');
+                avatar.classList.add('floating');
+                btnPasseio.innerText = "🌳 Ir Passear";
+                document.getElementById('texto-status').innerText = `${pet.nome} voltou para o conforto do apartamento. 🏡`;
+            }
             atualizarTela();
         }
 
         function animarPet() {
             const emoji = document.getElementById('pet-emoji');
-            emoji.style.transform = "scale(1.2)";
+            emoji.style.transform = "scale(1.2) rotate(5deg)";
             setTimeout(() => {
-                emoji.style.transform = "scale(1)";
+                emoji.style.transform = "scale(1) rotate(0deg)";
             }, 200);
         }
 
@@ -200,7 +291,6 @@
         initializeLiff();
 
         function initializeLiff() {
-            // Insira seu LIFF ID gerado no LINE Developers quando tiver
             const liffId = "SEU_LIFF_ID_AQUI"; 
             
             liff.init({ liffId: liffId })
@@ -210,13 +300,12 @@
                     } else {
                         liff.getProfile().then(profile => {
                             document.getElementById('user-greeting').innerText = `Olá, ${profile.displayName}! 👋`;
-                            // Aqui depois vamos puxar os dados do Firebase usando o profile.userId
                         });
                     }
                 })
                 .catch((err) => {
-                    console.log("Erro ao inicializar o LIFF:", err);
-                    document.getElementById('user-greeting').innerText = "Erro ao carregar LINE SDK";
+                    console.log("Erro ao inicializar o LINE LIFF:", err);
+                    document.getElementById('user-greeting').innerText = "Modo de Teste Local";
                 });
         }
     </script>
