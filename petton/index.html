@@ -167,7 +167,7 @@
         <h2 id="pet-name">Mimi 🐱</h2>
         
         <div class="scenery" id="cenario-fundo">
-            <div class="pet-avatar floating" id="pet-emoji" onclick="animarPet()">🐱</div>
+            <div class="pet-avatar floating" id="pet-emoji" onclick="tocarPet()">🐱</div>
         </div>
 
         <div id="texto-status">Mimi está descansando confortavelmente no quarto.</div>
@@ -218,11 +218,17 @@
             document.getElementById('txt-energia').innerText = pet.energia + '%';
         }
 
+        function mudarExpressao(emoji) {
+            document.getElementById('pet-emoji').innerText = emoji;
+        }
+
         function alimentar() {
             if (pet.emPasseio) return;
             pet.fome = Math.min(100, pet.fome + 15);
             document.getElementById('texto-status').innerText = `${pet.nome} comeu com muita alegria! 🐟`;
-            animarPet();
+            mudarExpressao("😻");
+            animarEfeito();
+            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 2000);
             atualizarTela();
         }
 
@@ -235,7 +241,9 @@
             pet.felicidade = Math.min(100, pet.felicidade + 15);
             pet.energia = Math.max(0, pet.energia - 15);
             document.getElementById('texto-status').innerText = `Você brincou bastante com ${pet.nome}! ✨`;
-            animarPet();
+            mudarExpressao("😸");
+            animarEfeito();
+            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 2000);
             atualizarTela();
         }
 
@@ -244,6 +252,8 @@
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca profunda e recuperou as energias 💤`;
+            mudarExpressao("😴");
+            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 3000);
             atualizarTela();
         }
 
@@ -251,7 +261,9 @@
             if (pet.emPasseio) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está cheirosinho(a) 🛁`;
-            animarPet();
+            mudarExpressao("😽");
+            animarEfeito();
+            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 2000);
             atualizarTela();
         }
 
@@ -271,6 +283,7 @@
                 avatar.classList.add('walking');
                 btnPasseio.innerText = "🏠 Voltar para Casa";
                 document.getElementById('texto-status').innerText = `${pet.nome} está passeando no parque ao ar livre! 🌳☀️`;
+                mudarExpressao("😺");
                 
                 pet.energia = Math.max(0, pet.energia - 20);
                 pet.felicidade = Math.min(100, pet.felicidade + 20);
@@ -281,16 +294,24 @@
                 avatar.classList.add('floating');
                 btnPasseio.innerText = "🌳 Ir Passear";
                 document.getElementById('texto-status').innerText = `${pet.nome} voltou para o conforto do apartamento. 🏡`;
+                mudarExpressao("🐱");
             }
             atualizarTela();
         }
 
-        function animarPet() {
+        function tocarPet() {
+            mudarExpressao("😽");
+            document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ❤️`;
+            animarEfeito();
+            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 1500);
+        }
+
+        function animarEfeito() {
             const emoji = document.getElementById('pet-emoji');
-            emoji.style.transform = "scale(1.2) rotate(5deg)";
+            emoji.style.transform = "scale(1.25) rotate(8deg)";
             setTimeout(() => {
                 emoji.style.transform = "scale(1) rotate(0deg)";
-            }, 200);
+            }, 300);
         }
 
         atualizarTela();
