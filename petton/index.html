@@ -181,13 +181,28 @@
             border-bottom-color: #e08250;
         }
         .cat-container.sick .cat-head {
-            background-color: #a3c1ad; /* tom esverdeado/doentio */
+            background-color: #a3c1ad;
         }
         .cat-container.sick .cat-ear {
             border-bottom-color: #a3c1ad;
         }
 
-        /* Sujeira (Cocô / Xixi) na tela */
+        /* Animação da Ambulância */
+        .ambulance {
+            position: absolute;
+            bottom: 20px;
+            left: -60px;
+            font-size: 32px;
+            z-index: 10;
+            animation: driveAmbulance 3s linear forwards;
+            pointer-events: none;
+        }
+        @keyframes driveAmbulance {
+            0% { left: -60px; }
+            100% { left: 380px; }
+        }
+
+        /* Sujeira na tela */
         .poop-item {
             position: absolute;
             font-size: 24px;
@@ -200,7 +215,6 @@
             100% { transform: scale(1); }
         }
 
-        /* Animações gerais */
         .floating { animation: float 2.5s ease-in-out infinite; }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -464,7 +478,6 @@
                     <div class="cat-mouth"></div>
                 </div>
             </div>
-            <!-- Espaço reservado para o cocô aparecer no cenário -->
             <div id="area-sujeira"></div>
         </div>
 
@@ -509,7 +522,7 @@
             fome: 80,
             felicidade: 90,
             energia: 100,
-            sujeiras: 0, // quantidade de cocôs na tela
+            sujeiras: 0,
             doente: false,
             emPasseio: false,
             dormindo: false
@@ -520,7 +533,7 @@
 
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v13');
+                const salvo = localStorage.getItem('petton_css_v14');
                 if (salvo) {
                     pet = JSON.parse(salvo);
                 }
@@ -532,7 +545,7 @@
 
         function salvarJogo() {
             try {
-                localStorage.setItem('petton_css_v13', JSON.stringify(pet));
+                localStorage.setItem('petton_css_v14', JSON.stringify(pet));
             } catch (e) {
                 console.error("Erro ao salvar", e);
             }
@@ -540,7 +553,7 @@
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v13');
+                localStorage.removeItem('petton_css_v14');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
@@ -628,7 +641,6 @@
         function desenharSujeirasNaTela() {
             let area = document.getElementById('area-sujeira');
             area.innerHTML = '';
-            // Posiciona emojis de cocô de acordo com a quantidade acumulada
             const posricoes = [
                 {bottom: '10px', left: '15px'},
                 {bottom: '15px', right: '20px'},
@@ -669,18 +681,17 @@
         function verificarEvolucao() {
             pet.pontosCrescimento++;
             
-            // Chance aleatória de sujar a cada ação se descuidar
             if (Math.random() < 0.4 && pet.sujeiras < 3) {
                 pet.sujeiras++;
                 document.getElementById('texto-status').innerText = `Oops! ${pet.nome} fez sujeira no quartinho! 💩`;
                 desenharSujeirasNaTela();
             }
 
-            // Se acumular muita sujeira ou fome baixa, fica doente igual Tamagotchi!
             if ((pet.sujeiras >= 3 || pet.fome <= 10) && !pet.doente) {
                 pet.doente = true;
                 document.getElementById('texto-status').innerText = `Oh não! ${pet.nome} ficou doentinho e precisa ir ao hospital! 🤒💊`;
                 configurarVisualFase();
+                passarAmbulancia();
             }
 
             if (pet.fase === "filhote" && pet.pontosCrescimento >= 12) {
@@ -689,6 +700,16 @@
                 document.getElementById('texto-status').innerText = `Incrível! ${pet.nome} virou adulto e ganhou 50 pontos! 🌟🐈`;
                 aplicarEstadoAtual();
             }
+        }
+
+        /* ANIMAÇÃO DA AMBULÂNCIA PASSANDO DA ESQUERDA PARA A DIREITA */
+        function passarAmbulancia() {
+            const cenario = document.getElementById('cenario-fundo');
+            let amb = document.createElement('div');
+            amb.className = 'ambulance';
+            amb.innerText = '🚑💨';
+            cenario.appendChild(amb);
+            setTimeout(() => amb.remove(), 3000);
         }
 
         function alimentar() {
@@ -767,7 +788,6 @@
             atualizarTela();
         }
 
-        /* SORTEIA UM DOS 3 MINIGAMES */
         function escolherMiniGame() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.doente) {
