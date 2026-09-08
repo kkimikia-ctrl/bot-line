@@ -180,7 +180,7 @@
             <div class="pet-avatar shaking" id="pet-emoji" onclick="tocarPet()">🥚</div>
         </div>
 
-        <div id="texto-status">Um ovo misterioso está quentinho. Clique nele várias vezes para ajudar a chocar!</div>
+        <div id="texto-status">Um ovo misterioso está quentinho. Clique nele para ajudar a chocar!</div>
         
         <div id="painel-status" class="oculto">
             <div class="status-box">
@@ -212,8 +212,9 @@
 
     <script>
         let pet = {
-            fase: "ovo", // "ovo" ou "nascido"
+            fase: "ovo", // "ovo", "filhote" ou "adulto"
             cliquesOvo: 0,
+            pontosCrescimento: 0,
             nome: "Mimi",
             fome: 80,
             felicidade: 90,
@@ -221,42 +222,60 @@
             emPasseio: false
         };
 
-        // Carregar jogo salvo se existir
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_save');
+            const salvo = localStorage.getItem('petton_save_evolucao');
             if (salvo) {
                 pet = JSON.parse(salvo);
-                if (pet.fase === "nascido") {
-                    aplicarEstadoNascido();
-                }
+                aplicarEstadoAtual();
             }
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_save', JSON.stringify(pet));
+            localStorage.setItem('petton_save_evolucao', JSON.stringify(pet));
         }
 
-        function aplicarEstadoNascido() {
-            document.getElementById('pet-name').innerText = "Mimi 🐱";
-            document.getElementById('pet-emoji').classList.remove('shaking');
-            document.getElementById('pet-emoji').classList.add('floating');
-            document.getElementById('painel-status').classList.remove('oculto');
-            document.getElementById('painel-botoes').classList.remove('oculto');
-            
-            if (pet.emPasseio) {
-                document.getElementById('cenario-fundo').classList.add('outdoor');
-                document.getElementById('pet-emoji').classList.remove('floating');
-                document.getElementById('pet-emoji').classList.add('walking');
-                document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
-                mudarExpressao("😺");
-            } else {
-                mudarExpressao("🐱");
+        function aplicarEstadoAtual() {
+            if (pet.fase === "ovo") {
+                document.getElementById('pet-name').innerText = "Ovo Misterioso 🥚";
+                document.getElementById('pet-emoji').innerText = "🥚";
+                document.getElementById('pet-emoji').className = "pet-avatar shaking";
+                document.getElementById('painel-status').classList.add('oculto');
+                document.getElementById('painel-botoes').classList.add('oculto');
+            } else if (pet.fase === "filhote") {
+                document.getElementById('pet-name').innerText = pet.nome + " (Filhote) 🐱";
+                document.getElementById('painel-status').classList.remove('oculto');
+                document.getElementById('painel-botoes').classList.remove('oculto');
+                configurarVisualFase();
+            } else if (pet.fase === "adulto") {
+                document.getElementById('pet-name').innerText = pet.nome + " (Adulto) 🐈";
+                document.getElementById('painel-status').classList.remove('oculto');
+                document.getElementById('painel-botoes').classList.remove('oculto');
+                configurarVisualFase();
             }
             atualizarTela();
         }
 
+        function configurarVisualFase() {
+            const avatar = document.getElementById('pet-emoji');
+            avatar.classList.remove('shaking');
+            
+            if (pet.emPasseio) {
+                document.getElementById('cenario-fundo').classList.add('outdoor');
+                avatar.classList.remove('floating');
+                avatar.classList.add('walking');
+                document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
+                mudarExpressao(pet.fase === "filhote" ? "😺" : "🐱");
+            } else {
+                document.getElementById('cenario-fundo').classList.remove('outdoor');
+                avatar.classList.remove('walking');
+                avatar.classList.add('floating');
+                document.getElementById('btn-acao-passeio').innerText = "🌳 Ir Passear";
+                mudarExpressao(pet.fase === "filhote" ? "🐱" : "🐈");
+            }
+        }
+
         function atualizarTela() {
-            if (pet.fase === "nascido") {
+            if (pet.fase !== "ovo") {
                 document.getElementById('bar-fome').style.width = pet.fome + '%';
                 document.getElementById('txt-fome').innerText = pet.fome + '%';
 
@@ -277,41 +296,46 @@
             if (pet.fase === "ovo") {
                 pet.cliquesOvo++;
                 animarEfeito();
-                
                 let restam = 5 - pet.cliquesOvo;
                 if (restam > 0) {
                     document.getElementById('texto-status').innerText = `O ovo chacoalhou! Clique mais ${restam} vezes para chocar! 🥚✨`;
                 } else {
-                    chocarOvo();
+                    pet.fase = "filhote";
+                    document.getElementById('texto-status').innerText = `Parabéns! Nasceu o filhote ${pet.nome}! 🎉🍼`;
+                    aplicarEstadoAtual();
                 }
             } else {
-                mudarExpressao("😽");
+                mudarExpressao(pet.fase === "filhote" ? "😽" : "😻");
                 document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ❤️`;
                 animarEfeito();
-                setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 1500);
+                setTimeout(() => { configurarVisualFase(); }, 1500);
             }
             salvarJogo();
         }
 
-        function chocarOvo() {
-            pet.fase = "nascido";
-            document.getElementById('texto-status').innerText = `Parabéns! O ovo rachou e nasceu a sua gatinha ${pet.nome}! 🎉💖`;
-            aplicarEstadoNascido();
-            salvarJogo();
+        function verificarEvolucao() {
+            pet.pontosCrescimento++;
+            // Se acumular 4 ações cuidadosas, cresce para adulto!
+            if (pet.fase === "filhote" && pet.pontosCrescimento >= 4) {
+                pet.fase = "adulto";
+                document.getElementById('texto-status').innerText = `Uau! ${pet.nome} cresceu e se tornou um belo gato adulto! 🌟🐈`;
+                aplicarEstadoAtual();
+            }
         }
 
         function alimentar() {
-            if (pet.fase !== "nascido" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio) return;
             pet.fome = Math.min(100, pet.fome + 15);
             document.getElementById('texto-status').innerText = `${pet.nome} comeu com muita alegria! 🐟`;
-            mudarExpressao("😻");
+            mudarExpressao(pet.fase === "filhote" ? "😻" : "🐈");
             animarEfeito();
-            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 2000);
+            verificarEvolucao();
+            setTimeout(() => { configurarVisualFase(); }, 2000);
             atualizarTela();
         }
 
         function brincar() {
-            if (pet.fase !== "nascido" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio) return;
             if (pet.energia < 15) {
                 alert("Seu pet está muito cansado para brincar! Coloque-o para dormir 💤");
                 return;
@@ -319,34 +343,37 @@
             pet.felicidade = Math.min(100, pet.felicidade + 15);
             pet.energia = Math.max(0, pet.energia - 15);
             document.getElementById('texto-status').innerText = `Você brincou bastante com ${pet.nome}! ✨`;
-            mudarExpressao("😸");
+            mudarExpressao(pet.fase === "filhote" ? "😸" : "🐈");
             animarEfeito();
-            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 2000);
+            verificarEvolucao();
+            setTimeout(() => { configurarVisualFase(); }, 2000);
             atualizarTela();
         }
 
         function dormir() {
-            if (pet.fase !== "nascido" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio) return;
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca profunda e recuperou as energias 💤`;
             mudarExpressao("😴");
-            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 3000);
+            verificarEvolucao();
+            setTimeout(() => { configurarVisualFase(); }, 3000);
             atualizarTela();
         }
 
         function darBanho() {
-            if (pet.fase !== "nascido" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está cheirosinho(a) 🛁`;
-            mudarExpressao("😽");
+            mudarExpressao(pet.fase === "filhote" ? "😽" : "🐈");
             animarEfeito();
-            setTimeout(() => { if(!pet.emPasseio) mudarExpressao("🐱"); }, 2000);
+            verificarEvolucao();
+            setTimeout(() => { configurarVisualFase(); }, 2000);
             atualizarTela();
         }
 
         function alternarPasseio() {
-            if (pet.fase !== "nascido") return;
+            if (pet.fase === "ovo") return;
             const cenario = document.getElementById('cenario-fundo');
             const avatar = document.getElementById('pet-emoji');
             const btnPasseio = document.getElementById('btn-acao-passeio');
@@ -362,7 +389,7 @@
                 avatar.classList.add('walking');
                 btnPasseio.innerText = "🏠 Voltar para Casa";
                 document.getElementById('texto-status').innerText = `${pet.nome} está passeando no parque ao ar livre! 🌳☀️`;
-                mudarExpressao("😺");
+                mudarExpressao(pet.fase === "filhote" ? "😺" : "🐈");
                 
                 pet.energia = Math.max(0, pet.energia - 20);
                 pet.felicidade = Math.min(100, pet.felicidade + 20);
@@ -373,7 +400,7 @@
                 avatar.classList.add('floating');
                 btnPasseio.innerText = "🌳 Ir Passear";
                 document.getElementById('texto-status').innerText = `${pet.nome} voltou para o conforto do apartamento. 🏡`;
-                mudarExpressao("🐱");
+                configurarVisualFase();
             }
             atualizarTela();
         }
@@ -386,7 +413,6 @@
             }, 300);
         }
 
-        // Executa ao carregar a página
         carregarJogo();
     </script>
 </body>
