@@ -181,7 +181,7 @@
             border-bottom-color: #e08250;
         }
 
-        /* Animações */
+        /* Animações gerais */
         .floating { animation: float 2.5s ease-in-out infinite; }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -200,7 +200,7 @@
             100% { left: 10px; top: 10px; transform: scaleX(1); }
         }
 
-        /* Efeitos visuais na tela (Comida piscando e Gotas de banho) */
+        /* Efeitos visuais na tela */
         .effect-overlay {
             position: absolute;
             font-size: 28px;
@@ -239,6 +239,48 @@
             0% { transform: scale(0); }
             80% { transform: scale(1.2); }
             100% { transform: scale(1); }
+        }
+
+        /* Estilo para o Quiz */
+        .quiz-box {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            z-index: 15;
+            box-sizing: border-box;
+        }
+        .quiz-question {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .quiz-options {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            justify-content: center;
+        }
+        .quiz-btn {
+            background: #ff758c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .status-box {
@@ -369,7 +411,7 @@
 
         <div id="painel-botoes" class="btn-grid oculto">
             <button onclick="alimentar()">🍽️ Alimentar</button>
-            <button onclick="iniciarMiniGame()">🎮 Brincar</button>
+            <button onclick="escolherMiniGame()">🎮 Brincar</button>
             <button onclick="dormir()">💤 Dormir</button>
             <button onclick="darBanho()">🛁 Banho</button>
             <button class="btn-passeio" id="btn-acao-passeio" onclick="alternarPasseio()">🌳 Ir Passear</button>
@@ -384,7 +426,7 @@
             fase: "ovo",
             cliquesOvo: 0,
             pontosCrescimento: 0,
-            pontosGerais: 0, // Onde ficam salvos os pontos do pet
+            pontosGerais: 0,
             nome: "Mimi",
             fome: 80,
             felicidade: 90,
@@ -394,10 +436,9 @@
         };
 
         let emJogos = false;
-        let intervaloGame = null;
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_css_v5');
+            const salvo = localStorage.getItem('petton_css_v6');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -405,15 +446,14 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_css_v5', JSON.stringify(pet));
+            localStorage.setItem('petton_css_v6', JSON.stringify(pet));
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v5');
+                localStorage.removeItem('petton_css_v6');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, emPasseio: false, dormindo: false };
                 emJogos = false;
-                if(intervaloGame) clearInterval(intervaloGame);
                 aplicarEstadoAtual();
                 document.getElementById('texto-status').innerText = "Um ovo misterioso quentinho. Clique nele 12 vezes para chocar!";
             }
@@ -520,7 +560,6 @@
             }
         }
 
-        /* ALIMENTAR COM COMIDA PISCANDO NA TELA */
         function alimentar() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             pet.fome = Math.min(100, pet.fome + 25);
@@ -529,7 +568,6 @@
             animarEfeito();
             verificarEvolucao();
 
-            // Efeito de alimentos piscando no cenário
             const cenario = document.getElementById('cenario-fundo');
             const alimentos = ['🐟', '🥩', '🥛', '🍤'];
             for (let i = 0; i < 3; i++) {
@@ -541,11 +579,9 @@
                 cenario.appendChild(comida);
                 setTimeout(() => comida.remove(), 1200);
             }
-
             atualizarTela();
         }
 
-        /* BANHO COM GOTAS DE ÁGUA CAINDO */
         function darBanho() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
@@ -554,7 +590,6 @@
             animarEfeito();
             verificarEvolucao();
 
-            // Efeito de gotinhas de água caindo
             const cenario = document.getElementById('cenario-fundo');
             for (let i = 0; i < 5; i++) {
                 let gota = document.createElement('div');
@@ -565,11 +600,11 @@
                 cenario.appendChild(gota);
                 setTimeout(() => gota.remove(), 1000);
             }
-
             atualizarTela();
         }
 
-        function iniciarMiniGame() {
+        /* ESCOLHE ALEATORIAMENTE UM DOS 3 MINI-GAMES */
+        function escolherMiniGame() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.energia < 15) {
                 alert("Seu gatinho está cansado e precisa dormir um pouco 💤");
@@ -578,43 +613,47 @@
 
             emJogos = true;
             pet.energia = Math.max(0, pet.energia - 15);
-            
+            document.getElementById('painel-botoes').style.pointerEvents = 'none';
+
+            let sorteio = Math.floor(Math.random() * 3); // Sorteia 0, 1 ou 2
+            if (sorteio === 0) {
+                iniciarGameCaça();
+            } else if (sorteio === 1) {
+                iniciarGameRatinho();
+            } else {
+                iniciarGameQuiz();
+            }
+        }
+
+        /* JOGO 1: CAÇA AOS ITENS */
+        function iniciarGameCaça() {
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.add('minigame-bg');
+            document.getElementById('cat-box').classList.add('oculto');
             
             let acertos = 0;
-            let tempoRestante = 15;
-            
-            document.getElementById('cat-box').classList.add('oculto');
-            document.getElementById('texto-status').innerText = `🎯 Mini-game! Clique rápido nos itens! (${tempoRestante}s)`;
-
-            document.getElementById('painel-botoes').style.pointerEvents = 'none';
+            let tempoRestante = 12;
+            document.getElementById('texto-status').innerText = `🎯 Caça aos Brinquedos! Clique rápido! (${tempoRestante}s)`;
 
             function spawnAlvo() {
                 if (!emJogos) return;
-                
                 const antigo = document.getElementById('alvo-ativo');
                 if (antigo) antigo.remove();
 
                 const itens = ['🧶', '🐟', '🐭', '✨'];
-                const itemSorteado = itens[Math.floor(Math.random() * itens.length)];
-
                 const alvo = document.createElement('div');
                 alvo.id = 'alvo-ativo';
                 alvo.className = 'game-target';
-                alvo.innerText = itemSorteado;
+                alvo.innerText = itens[Math.floor(Math.random() * itens.length)];
 
-                const maxX = cenario.clientWidth - 50;
-                const maxY = cenario.clientHeight - 50;
-                alvo.style.left = Math.floor(Math.random() * maxX) + 'px';
-                alvo.style.top = Math.floor(Math.random() * maxY) + 'px';
+                alvo.style.left = Math.floor(Math.random() * (cenario.clientWidth - 50)) + 'px';
+                alvo.style.top = Math.floor(Math.random() * (cenario.clientHeight - 50)) + 'px';
 
                 alvo.onclick = () => {
                     acertos++;
                     alvo.remove();
                     document.getElementById('texto-status').innerText = `🎯 Pegou! Total: ${acertos} pontos!`;
                 };
-
                 cenario.appendChild(alvo);
             }
 
@@ -624,32 +663,120 @@
             let relogio = setInterval(() => {
                 tempoRestante--;
                 if (tempoRestante > 0) {
-                    document.getElementById('texto-status').innerText = `🎯 Mini-game! Tempo: ${tempoRestante}s | Acertos: ${acertos}`;
+                    document.getElementById('texto-status').innerText = `🎯 Caça aos Brinquedos! Tempo: ${tempoRestante}s | Acertos: ${acertos}`;
                 } else {
                     clearInterval(relogio);
                     clearInterval(tempoLoop);
-                    fimMiniGame(acertos);
+                    finalizarMiniGame(acertos, acertos * 2);
                 }
             }, 1000);
         }
 
-        function fimMiniGame(acertos) {
+        /* JOGO 2: ACERTE O RATINHO FUGASO */
+        function iniciarGameRatinho() {
+            const cenario = document.getElementById('cenario-fundo');
+            cenario.classList.add('minigame-bg');
+            document.getElementById('cat-box').classList.add('oculto');
+
+            let capturas = 0;
+            let tempoRestante = 10;
+            document.getElementById('texto-status').innerText = `🐭 Pegue o Ratinho fugitivo! (${tempoRestante}s)`;
+
+            function moverRatinho() {
+                if (!emJogos) return;
+                const antigo = document.getElementById('alvo-ativo');
+                if (antigo) antigo.remove();
+
+                const alvo = document.createElement('div');
+                alvo.id = 'alvo-ativo';
+                alvo.className = 'game-target';
+                alvo.innerText = '🐭';
+
+                alvo.style.left = Math.floor(Math.random() * (cenario.clientWidth - 50)) + 'px';
+                alvo.style.top = Math.floor(Math.random() * (cenario.clientHeight - 50)) + 'px';
+
+                alvo.onclick = () => {
+                    capturas++;
+                    alvo.remove();
+                    document.getElementById('texto-status').innerText = `🐭 Capturas: ${capturas}!`;
+                };
+                cenario.appendChild(alvo);
+            }
+
+            moverRatinho();
+            let loopRato = setInterval(moverRatinho, 700);
+
+            let relogio = setInterval(() => {
+                tempoRestante--;
+                if (tempoRestante > 0) {
+                    document.getElementById('texto-status').innerText = `🐭 Ratinho! Tempo: ${tempoRestante}s | Capturas: ${capturas}`;
+                } else {
+                    clearInterval(relogio);
+                    clearInterval(loopRato);
+                    finalizarMiniGame(capturas, capturas * 3);
+                }
+            }, 1000);
+        }
+
+        /* JOGO 3: QUIZ FOFINHO DO PET */
+        function iniciarGameQuiz() {
+            const cenario = document.getElementById('cenario-fundo');
+            cenario.classList.add('minigame-bg');
+            document.getElementById('cat-box').classList.add('oculto');
+
+            document.getElementById('texto-status').innerText = `🧠 Quiz Fofinho respondendo à pergunta abaixo!`;
+
+            const perguntas = [
+                { q: "O que os gatos mais gostam de comer?", opts: ["Peixe 🐟", "Bolo 🍰"], certa: 0 },
+                { q: "O que o gato faz quando está feliz?", opts: ["Ronronar 🐾", "Latir 🐶"], certa: 0 },
+                { q: "Qual brinquedo os gatos adoram caçar?", opts: ["Ratinho 🐭", "Chupeta 🍼"], certa: 0 }
+            ];
+            let pSorteada = perguntas[Math.floor(Math.random() * perguntas.length)];
+
+            let quizDiv = document.createElement('div');
+            quizDiv.id = 'quiz-box-ativo';
+            quizDiv.className = 'quiz-box';
+            quizDiv.innerHTML = `
+                <div class="quiz-question">${pSorteada.q}</div>
+                <div class="quiz-options">
+                    <button class="quiz-btn" onclick="responderQuiz(0, ${pSorteada.certa})">${pSorteada.opts[0]}</button>
+                    <button class="quiz-btn" onclick="responderQuiz(1, ${pSorteada.certa})">${pSorteada.opts[1]}</button>
+                </div>
+            `;
+            cenario.appendChild(quizDiv);
+        }
+
+        window.responderQuiz = function(escolha, certa) {
+            const quizBox = document.getElementById('quiz-box-ativo');
+            if (quizBox) quizBox.remove();
+
+            let acertos = (escolha === certa) ? 1 : 0;
+            let pontosGanho = (escolha === certa) ? 15 : 2;
+            
+            if (escolha === certa) {
+                document.getElementById('texto-status').innerText = `🧠 Resposta certa! Ganhou 15 pontos! 🎉`;
+            } else {
+                document.getElementById('texto-status').innerText = `🧠 Ah, errou! Mas ganhou 2 pontos pela tentativa!`;
+            }
+            finalizarMiniGame(acertos, pontosGanho);
+        }
+
+        function finalizarMiniGame(desempenho, pontosGanhos) {
             emJogos = false;
             const antigo = document.getElementById('alvo-ativo');
             if (antigo) antigo.remove();
+            const quizBox = document.getElementById('quiz-box-ativo');
+            if (quizBox) quizBox.remove();
 
             const cenario = document.getElementById('cenario-fundo');
             cenario.classList.remove('minigame-bg');
             document.getElementById('cat-box').classList.remove('oculto');
             document.getElementById('painel-botoes').style.pointerEvents = 'auto';
 
-            let ganhoFelicidade = acertos * 5;
-            let pontosGanhoGame = acertos * 2;
-            pet.felicidade = Math.min(100, pet.felicidade + ganhoFelicidade);
-            pet.pontosGerais += pontosGanhoGame;
-            pet.fome = Math.max(0, pet.fome - (acertos * 1));
+            pet.felicidade = Math.min(100, pet.felicidade + (desempenho * 5 > 0 ? desempenho * 5 : 10));
+            pet.pontosGerais += pontosGanhos;
 
-            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! Pegou ${acertos} itens e ganhou +${pontosGanhoGame} pontos! ✨`;
+            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! ${pet.nome} se divertiu muito e ganhou +${pontosGanhos} pontos! ✨`;
             
             configurarVisualFase();
             verificarEvolucao();
