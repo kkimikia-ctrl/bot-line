@@ -51,6 +51,10 @@
             background: linear-gradient(180deg, #bbf2f6 0%, #d4edbc 100%);
             border: 2px solid #82e0aa;
         }
+        .scenery.minigame-bg {
+            background: #fff9c4;
+            border: 2px solid #fbc02d;
+        }
         
         /* GATO DESENHADO EM CSS (KAWAII) */
         .cat-container {
@@ -147,7 +151,7 @@
         .cat-blush.left { left: 12px; }
         .cat-blush.right { right: 12px; }
 
-        /* Estados do Gato (Dormindo, Adulto, etc) */
+        /* Estados do Gato */
         .cat-container.sleeping .cat-eye {
             height: 2px;
             background: none;
@@ -155,13 +159,13 @@
             top: 32px;
         }
         .cat-container.adult .cat-head {
-            background-color: #e08250; /* Tom mais alaranjado adulto */
+            background-color: #e08250;
         }
         .cat-container.adult .cat-ear {
             border-bottom-color: #e08250;
         }
 
-        /* Animações de Ação */
+        /* Animações */
         .floating { animation: float 2.5s ease-in-out infinite; }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -171,6 +175,21 @@
         @keyframes walk {
             0% { transform: translateX(-10px) rotate(-3deg); }
             100% { transform: translateX(10px) rotate(3deg); }
+        }
+
+        /* Alvo do Mini-game */
+        .game-target {
+            position: absolute;
+            font-size: 32px;
+            cursor: pointer;
+            user-select: none;
+            animation: popIn 0.3s ease-out;
+            z-index: 10;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         .status-box {
@@ -263,7 +282,7 @@
         <h2 id="pet-name">Ovo Misterioso 🥚</h2>
         
         <div class="scenery" id="cenario-fundo">
-            <!-- Gatinho renderizado graficamente em CSS -->
+            <!-- Gatinho renderizado em CSS -->
             <div class="cat-container floating" id="cat-box" onclick="tocarPet()">
                 <div class="cat-head" id="cat-head-bg">
                     <div class="cat-ear left"></div>
@@ -297,7 +316,7 @@
 
         <div id="painel-botoes" class="btn-grid oculto">
             <button onclick="alimentar()">🍽️ Alimentar</button>
-            <button onclick="brincar()">🎮 Brincar</button>
+            <button onclick="iniciarMiniGame()">🎮 Brincar</button>
             <button onclick="dormir()">💤 Dormir</button>
             <button onclick="darBanho()">🛁 Banho</button>
             <button class="btn-passeio" id="btn-acao-passeio" onclick="alternarPasseio()">🌳 Ir Passear</button>
@@ -320,8 +339,11 @@
             dormindo: false
         };
 
+        let emJogos = false;
+        let intervaloGame = null;
+
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_css_v1');
+            const salvo = localStorage.getItem('petton_css_v2');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -329,13 +351,15 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_css_v1', JSON.stringify(pet));
+            localStorage.setItem('petton_css_v2', JSON.stringify(pet));
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v1');
+                localStorage.removeItem('petton_css_v2');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, emPasseio: false, dormindo: false };
+                emJogos = false;
+                if(intervaloGame) clearInterval(intervaloGame);
                 aplicarEstadoAtual();
                 document.getElementById('texto-status').innerText = "Um ovo misterioso quentinho. Clique nele 12 vezes para chocar!";
             }
@@ -373,12 +397,11 @@
         }
 
         function configurarVisualFase() {
+            if (emJogos) return;
             const catBox = document.getElementById('cat-box');
             catBox.className = "cat-container";
             
-            if (pet.fase === "adulto") {
-                catBox.classList.add('adult');
-            }
+            if (pet.fase === "adulto") catBox.classList.add('adult');
 
             if (pet.dormindo) {
                 catBox.classList.add('sleeping', 'floating');
@@ -421,7 +444,7 @@
                     aplicarEstadoAtual();
                 }
             } else {
-                if (pet.dormindo) return;
+                if (pet.dormindo || emJogos) return;
                 document.getElementById('texto-status').innerText = `${pet.nome} ronronou feliz com seu carinho! 💖🐾`;
                 animarEfeito();
             }
@@ -438,7 +461,7 @@
         }
 
         function alimentar() {
-            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo) return;
+            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             pet.fome = Math.min(100, pet.fome + 25);
             document.getElementById('texto-status').innerText = `${pet.nome} comeu a ração com muita vontade! 🐟😋`;
             animarEfeito();
@@ -446,23 +469,97 @@
             atualizarTela();
         }
 
-        function brincar() {
-            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo) return;
+        /* MINI-GAME DE BRINCAR */
+        function iniciarMiniGame() {
+            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.energia < 15) {
                 alert("Seu gatinho está cansado e precisa dormir um pouco 💤");
                 return;
             }
-            pet.felicidade = Math.min(100, pet.felicidade + 15);
+
+            emJogos = true;
             pet.energia = Math.max(0, pet.energia - 15);
-            pet.fome = Math.max(0, pet.fome - 5);
-            document.getElementById('texto-status').innerText = `Você brincou de caçar o laser com ${pet.nome}! 🧶✨`;
-            animarEfeito();
+            
+            const cenario = document.getElementById('cenario-fundo');
+            cenario.classList.add('minigame-bg');
+            
+            let acertos = 0;
+            let tempoRestante = 5; // 5 segundos de mini-game
+            
+            document.getElementById('cat-box').classList.add('oculto');
+            document.getElementById('texto-status').innerText = `🎯 Mini-game! Clique rápido nos itens que aparecem! (${tempoRestante}s)`;
+
+            // Habilitar botões desativados temporariamente
+            document.getElementById('painel-botoes').style.pointerEvents = 'none';
+
+            function spawnAlvo() {
+                if (!emJogos) return;
+                
+                // Remove alvo anterior se houver
+                const antigo = document.getElementById('alvo-ativo');
+                if (antigo) antigo.remove();
+
+                const itens = ['🧶', '🐟', '🐭', '✨'];
+                const itemSorteado = itens[Math.floor(Math.random() * itens.length)];
+
+                const alvo = document.createElement('div');
+                alvo.id = 'alvo-ativo';
+                alvo.className = 'game-target';
+                alvo.innerText = itemSorteado;
+
+                // Posição randômica dentro do cenário
+                const maxX = cenario.clientWidth - 50;
+                const maxY = cenario.clientHeight - 50;
+                alvo.style.left = Math.floor(Math.random() * maxX) + 'px';
+                alvo.style.top = Math.floor(Math.random() * maxY) + 'px';
+
+                alvo.onclick = () => {
+                    acertos++;
+                    alvo.remove();
+                    document.getElementById('texto-status').innerText = `🎯 Pegou! Total: ${acertos} pontos!`;
+                };
+
+                cenario.appendChild(alvo);
+            }
+
+            spawnAlvo();
+            let tempoLoop = setInterval(spawnAlvo, 800);
+
+            let relogio = setInterval(() => {
+                tempoRestante--;
+                if (tempoRestante > 0) {
+                    document.getElementById('texto-status').innerText = `🎯 Mini-game! Clique rápido! Tempo: ${tempoRestante}s | Pontos: ${acertos}`;
+                } else {
+                    clearInterval(relogio);
+                    clearInterval(tempoLoop);
+                    fimMiniGame(acertos);
+                }
+            }, 1000);
+        }
+
+        function fimMiniGame(acertos) {
+            emJogos = false;
+            const antigo = document.getElementById('alvo-ativo');
+            if (antigo) antigo.remove();
+
+            const cenario = document.getElementById('cenario-fundo');
+            cenario.classList.remove('minigame-bg');
+            document.getElementById('cat-box').classList.remove('oculto');
+            document.getElementById('painel-botoes').style.pointerEvents = 'auto';
+
+            let ganhoFelicidade = acertos * 8;
+            pet.felicidade = Math.min(100, pet.felicidade + ganhoFelicidade);
+            pet.fome = Math.max(0, pet.fome - (acertos * 2));
+
+            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! ${pet.nome} pegou ${acertos} itens e ganhou muita felicidade! ✨`;
+            
+            configurarVisualFase();
             verificarEvolucao();
             atualizarTela();
         }
 
         function dormir() {
-            if (pet.fase === "ovo" || pet.emPasseio) return;
+            if (pet.fase === "ovo" || pet.emPasseio || emJogos) return;
             pet.dormindo = true;
             pet.energia = 100;
             document.getElementById('texto-status').innerText = `${pet.nome} fechou os olhinhos e pegou no sono... zZz 💤`;
@@ -478,7 +575,7 @@
         }
 
         function darBanho() {
-            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo) return;
+            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tomou banho de gato e está limpinho! 🛁✨`;
             animarEfeito();
@@ -487,7 +584,7 @@
         }
 
         function alternarPasseio() {
-            if (pet.fase === "ovo" || pet.dormindo) return;
+            if (pet.fase === "ovo" || pet.dormindo || emJogos) return;
             const btnPasseio = document.getElementById('btn-acao-passeio');
 
             if (!pet.emPasseio) {
