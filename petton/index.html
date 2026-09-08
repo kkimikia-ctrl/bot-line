@@ -343,7 +343,7 @@
         let intervaloGame = null;
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_css_v2');
+            const salvo = localStorage.getItem('petton_css_v3');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -351,12 +351,12 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_css_v2', JSON.stringify(pet));
+            localStorage.setItem('petton_css_v3', JSON.stringify(pet));
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v2');
+                localStorage.removeItem('petton_css_v3');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloGame) clearInterval(intervaloGame);
@@ -469,7 +469,7 @@
             atualizarTela();
         }
 
-        /* MINI-GAME DE BRINCAR */
+        /* MINI-GAME DE BRINCAR (DURAÇÃO DE 15 SEGUNDOS) */
         function iniciarMiniGame() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.energia < 15) {
@@ -484,18 +484,16 @@
             cenario.classList.add('minigame-bg');
             
             let acertos = 0;
-            let tempoRestante = 5; // 5 segundos de mini-game
+            let tempoRestante = 15; // Aumentado para 15 segundos para durar mais tempo!
             
             document.getElementById('cat-box').classList.add('oculto');
-            document.getElementById('texto-status').innerText = `🎯 Mini-game! Clique rápido nos itens que aparecem! (${tempoRestante}s)`;
+            document.getElementById('texto-status').innerText = `🎯 Mini-game! Clique rápido nos itens! (${tempoRestante}s)`;
 
-            // Habilitar botões desativados temporariamente
             document.getElementById('painel-botoes').style.pointerEvents = 'none';
 
             function spawnAlvo() {
                 if (!emJogos) return;
                 
-                // Remove alvo anterior se houver
                 const antigo = document.getElementById('alvo-ativo');
                 if (antigo) antigo.remove();
 
@@ -507,7 +505,6 @@
                 alvo.className = 'game-target';
                 alvo.innerText = itemSorteado;
 
-                // Posição randômica dentro do cenário
                 const maxX = cenario.clientWidth - 50;
                 const maxY = cenario.clientHeight - 50;
                 alvo.style.left = Math.floor(Math.random() * maxX) + 'px';
@@ -523,12 +520,12 @@
             }
 
             spawnAlvo();
-            let tempoLoop = setInterval(spawnAlvo, 800);
+            let tempoLoop = setInterval(spawnAlvo, 900);
 
             let relogio = setInterval(() => {
                 tempoRestante--;
                 if (tempoRestante > 0) {
-                    document.getElementById('texto-status').innerText = `🎯 Mini-game! Clique rápido! Tempo: ${tempoRestante}s | Pontos: ${acertos}`;
+                    document.getElementById('texto-status').innerText = `🎯 Mini-game! Tempo: ${tempoRestante}s | Pontos: ${acertos}`;
                 } else {
                     clearInterval(relogio);
                     clearInterval(tempoLoop);
@@ -547,11 +544,11 @@
             document.getElementById('cat-box').classList.remove('oculto');
             document.getElementById('painel-botoes').style.pointerEvents = 'auto';
 
-            let ganhoFelicidade = acertos * 8;
+            let ganhoFelicidade = acertos * 5;
             pet.felicidade = Math.min(100, pet.felicidade + ganhoFelicidade);
-            pet.fome = Math.max(0, pet.fome - (acertos * 2));
+            pet.fome = Math.max(0, pet.fome - (acertos * 1));
 
-            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! ${pet.nome} pegou ${acertos} itens e ganhou muita felicidade! ✨`;
+            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! ${pet.nome} pegou ${acertos} itens e ficou super feliz! ✨`;
             
             configurarVisualFase();
             verificarEvolucao();
