@@ -171,10 +171,18 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
         }
-        .walking { animation: walk 0.6s infinite alternate ease-in-out; }
-        @keyframes walk {
-            0% { transform: translateX(-10px) rotate(-3deg); }
-            100% { transform: translateX(10px) rotate(3deg); }
+
+        /* Animação de Passeio pelos 4 cantos */
+        .walking-path {
+            position: absolute;
+            animation: walkSquare 8s linear infinite;
+        }
+        @keyframes walkSquare {
+            0%   { left: 10px; top: 10px; transform: scaleX(1); }
+            25%  { left: calc(100% - 120px); top: 10px; transform: scaleX(1); }
+            50%  { left: calc(100% - 120px); top: 50px; transform: scaleX(-1); }
+            75%  { left: 10px; top: 50px; transform: scaleX(-1); }
+            100% { left: 10px; top: 10px; transform: scaleX(1); }
         }
 
         /* Alvo do Mini-game */
@@ -343,7 +351,7 @@
         let intervaloGame = null;
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_css_v3');
+            const salvo = localStorage.getItem('petton_css_v4');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -351,12 +359,12 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_css_v3', JSON.stringify(pet));
+            localStorage.setItem('petton_css_v4', JSON.stringify(pet));
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v3');
+                localStorage.removeItem('petton_css_v4');
                 pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, emPasseio: false, dormindo: false };
                 emJogos = false;
                 if(intervaloGame) clearInterval(intervaloGame);
@@ -411,7 +419,7 @@
 
             if (pet.emPasseio) {
                 document.getElementById('cenario-fundo').classList.add('outdoor');
-                catBox.classList.add('walking');
+                catBox.classList.add('walking-path'); // Gato andando pelos cantos do cenário
                 document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
             } else {
                 document.getElementById('cenario-fundo').classList.remove('outdoor');
@@ -469,7 +477,6 @@
             atualizarTela();
         }
 
-        /* MINI-GAME DE BRINCAR (DURAÇÃO DE 15 SEGUNDOS) */
         function iniciarMiniGame() {
             if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
             if (pet.energia < 15) {
@@ -484,7 +491,7 @@
             cenario.classList.add('minigame-bg');
             
             let acertos = 0;
-            let tempoRestante = 15; // Aumentado para 15 segundos para durar mais tempo!
+            let tempoRestante = 15;
             
             document.getElementById('cat-box').classList.add('oculto');
             document.getElementById('texto-status').innerText = `🎯 Mini-game! Clique rápido nos itens! (${tempoRestante}s)`;
@@ -559,15 +566,16 @@
             if (pet.fase === "ovo" || pet.emPasseio || emJogos) return;
             pet.dormindo = true;
             pet.energia = 100;
-            document.getElementById('texto-status').innerText = `${pet.nome} fechou os olhinhos e pegou no sono... zZz 💤`;
+            document.getElementById('texto-status').innerText = `${pet.nome} fechou os olhinhos e pegou no sono profundo... zZz 💤`;
             configurarVisualFase();
 
+            // Aumentado para 8 segundos para dormir bastante tempo
             setTimeout(() => {
                 pet.dormindo = false;
-                document.getElementById('texto-status').innerText = `${pet.nome} acordou revigorado e cheio de energia! ☀️`;
+                document.getElementById('texto-status').innerText = `${pet.nome} acordou revigorado e cheio de energia após um bom descanso! ☀️`;
                 configurarVisualFase();
                 atualizarTela();
-            }, 3500);
+            }, 8000);
             atualizarTela();
         }
 
@@ -591,7 +599,7 @@
                 }
                 pet.emPasseio = true;
                 btnPasseio.innerText = "🏠 Voltar para Casa";
-                document.getElementById('texto-status').innerText = `${pet.nome} está caçando borboletas no parque! 🌳🦋`;
+                document.getElementById('texto-status').innerText = `${pet.nome} está dando uma voltinha no parque! 🌳🦋`;
                 pet.energia = Math.max(0, pet.energia - 20);
                 pet.felicidade = Math.min(100, pet.felicidade + 20);
             } else {
