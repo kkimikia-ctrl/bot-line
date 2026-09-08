@@ -223,7 +223,7 @@
         };
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_save_evolucao_v2');
+            const salvo = localStorage.getItem('petton_save_kawaii_v4');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -231,7 +231,7 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_save_evolucao_v2', JSON.stringify(pet));
+            localStorage.setItem('petton_save_kawaii_v4', JSON.stringify(pet));
         }
 
         function aplicarEstadoAtual() {
@@ -242,12 +242,12 @@
                 document.getElementById('painel-status').classList.add('oculto');
                 document.getElementById('painel-botoes').classList.add('oculto');
             } else if (pet.fase === "filhote") {
-                document.getElementById('pet-name').innerText = pet.nome + " 🐱";
+                document.getElementById('pet-name').innerText = pet.nome + " 🐱 (Filhote)";
                 document.getElementById('painel-status').classList.remove('oculto');
                 document.getElementById('painel-botoes').classList.remove('oculto');
                 configurarVisualFase();
             } else if (pet.fase === "adulto") {
-                document.getElementById('pet-name').innerText = pet.nome + " 🐈";
+                document.getElementById('pet-name').innerText = pet.nome + " 🐈 (Adulto)";
                 document.getElementById('painel-status').classList.remove('oculto');
                 document.getElementById('painel-botoes').classList.remove('oculto');
                 configurarVisualFase();
@@ -264,7 +264,7 @@
                 avatar.classList.remove('floating');
                 avatar.classList.add('walking');
                 document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
-                mudarExpressao(pet.fase === "filhote" ? "😺" : "🐈");
+                mudarExpressao("😺");
             } else {
                 document.getElementById('cenario-fundo').classList.remove('outdoor');
                 avatar.classList.remove('walking');
@@ -296,7 +296,9 @@
             if (pet.fase === "ovo") {
                 pet.cliquesOvo++;
                 animarEfeito();
-                let restam = 5 - pet.cliquesOvo;
+                let metaOvo = 15; // Exige 15 cliques para chocar
+                let restam = metaOvo - pet.cliquesOvo;
+                
                 if (restam > 0) {
                     document.getElementById('texto-status').innerText = `O ovo chacoalhou! Clique mais ${restam} vezes para chocar! 🥚✨`;
                 } else {
@@ -305,8 +307,8 @@
                     aplicarEstadoAtual();
                 }
             } else {
-                mudarExpressao(pet.fase === "filhote" ? "😽" : "😻");
-                document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ❤️`;
+                mudarExpressao("😽");
+                document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ✨💖`;
                 animarEfeito();
                 setTimeout(() => { configurarVisualFase(); }, 1500);
             }
@@ -315,9 +317,9 @@
 
         function verificarEvolucao() {
             pet.pontosCrescimento++;
-            if (pet.fase === "filhote" && pet.pontosCrescimento >= 4) {
+            if (pet.fase === "filhote" && pet.pontosCrescimento >= 15) {
                 pet.fase = "adulto";
-                document.getElementById('texto-status').innerText = `Uau! ${pet.nome} cresceu e se tornou um belo gato adulto! 🌟🐈`;
+                document.getElementById('texto-status').innerText = `Uau! ${pet.nome} cresceu e se tornou um gato adulto super estiloso! 🌟🐈`;
                 aplicarEstadoAtual();
             }
         }
@@ -325,8 +327,8 @@
         function alimentar() {
             if (pet.fase === "ovo" || pet.emPasseio) return;
             pet.fome = Math.min(100, pet.fome + 15);
-            document.getElementById('texto-status').innerText = `${pet.nome} comeu com muita alegria! 🐟`;
-            mudarExpressao(pet.fase === "filhote" ? "😻" : "🐈");
+            document.getElementById('texto-status').innerText = `${pet.nome} comeu peixinho com muita alegria! 🐟😋`;
+            mudarExpressao("😻");
             animarEfeito();
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 2000);
@@ -341,8 +343,8 @@
             }
             pet.felicidade = Math.min(100, pet.felicidade + 15);
             pet.energia = Math.max(0, pet.energia - 15);
-            document.getElementById('texto-status').innerText = `Você brincou bastante com ${pet.nome}! ✨`;
-            mudarExpressao(pet.fase === "filhote" ? "😸" : "🐈");
+            document.getElementById('texto-status').innerText = `Você brincou com o novelo de lã com ${pet.nome}! 🧶✨`;
+            mudarExpressao("😸");
             animarEfeito();
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 2000);
@@ -353,9 +355,8 @@
             if (pet.fase === "ovo" || pet.emPasseio) return;
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 10);
-            document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca profunda e recuperou as energias 💤`;
-            // Corrigido para manter a feição de gato com os olhos fechados/dormindo
-            mudarExpressao(pet.fase === "filhote" ? "😽" : "🐈");
+            document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca fofinha e ronronou... 💤🐾`;
+            mudarExpressao("😽");
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 3000);
             atualizarTela();
@@ -364,8 +365,8 @@
         function darBanho() {
             if (pet.fase === "ovo" || pet.emPasseio) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
-            document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está cheirosinho(a) 🛁`;
-            mudarExpressao(pet.fase === "filhote" ? "😽" : "🐈");
+            document.getElementById('texto-status').innerText = `${pet.nome} tomou banho de espuma e está cheirosinho(a)! 🛁🧼`;
+            mudarExpressao("😻");
             animarEfeito();
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 2000);
@@ -389,7 +390,7 @@
                 avatar.classList.add('walking');
                 btnPasseio.innerText = "🏠 Voltar para Casa";
                 document.getElementById('texto-status').innerText = `${pet.nome} está passeando no parque ao ar livre! 🌳☀️`;
-                mudarExpressao(pet.fase === "filhote" ? "😺" : "🐈");
+                mudarExpressao("😺");
                 
                 pet.energia = Math.max(0, pet.energia - 20);
                 pet.felicidade = Math.min(100, pet.felicidade + 20);
