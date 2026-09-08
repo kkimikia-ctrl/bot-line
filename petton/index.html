@@ -223,7 +223,7 @@
         };
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_save_evolucao');
+            const salvo = localStorage.getItem('petton_save_evolucao_v2');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -231,7 +231,7 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_save_evolucao', JSON.stringify(pet));
+            localStorage.setItem('petton_save_evolucao_v2', JSON.stringify(pet));
         }
 
         function aplicarEstadoAtual() {
@@ -242,12 +242,12 @@
                 document.getElementById('painel-status').classList.add('oculto');
                 document.getElementById('painel-botoes').classList.add('oculto');
             } else if (pet.fase === "filhote") {
-                document.getElementById('pet-name').innerText = pet.nome + " (Filhote) 🐱";
+                document.getElementById('pet-name').innerText = pet.nome + " 🐱";
                 document.getElementById('painel-status').classList.remove('oculto');
                 document.getElementById('painel-botoes').classList.remove('oculto');
                 configurarVisualFase();
             } else if (pet.fase === "adulto") {
-                document.getElementById('pet-name').innerText = pet.nome + " (Adulto) 🐈";
+                document.getElementById('pet-name').innerText = pet.nome + " 🐈";
                 document.getElementById('painel-status').classList.remove('oculto');
                 document.getElementById('painel-botoes').classList.remove('oculto');
                 configurarVisualFase();
@@ -264,7 +264,7 @@
                 avatar.classList.remove('floating');
                 avatar.classList.add('walking');
                 document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
-                mudarExpressao(pet.fase === "filhote" ? "😺" : "🐱");
+                mudarExpressao(pet.fase === "filhote" ? "😺" : "🐈");
             } else {
                 document.getElementById('cenario-fundo').classList.remove('outdoor');
                 avatar.classList.remove('walking');
@@ -315,7 +315,6 @@
 
         function verificarEvolucao() {
             pet.pontosCrescimento++;
-            // Se acumular 4 ações cuidadosas, cresce para adulto!
             if (pet.fase === "filhote" && pet.pontosCrescimento >= 4) {
                 pet.fase = "adulto";
                 document.getElementById('texto-status').innerText = `Uau! ${pet.nome} cresceu e se tornou um belo gato adulto! 🌟🐈`;
@@ -355,7 +354,8 @@
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca profunda e recuperou as energias 💤`;
-            mudarExpressao("😴");
+            // Corrigido para manter a feição de gato com os olhos fechados/dormindo
+            mudarExpressao(pet.fase === "filhote" ? "😽" : "🐈");
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 3000);
             atualizarTela();
