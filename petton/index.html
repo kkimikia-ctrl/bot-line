@@ -3,51 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petton - Seu Gatinho Virtual</title>
+    <title>Petton - Gatinho Estilo Tamagotchi</title>
     <style>
         :root {
-            --bg-color: #fce4ec;
+            --bg-color: #ffb6c1;
             --container-bg: #ffffff;
-            --primary-color: #ff80ab;
-            --primary-hover: #ff4081;
+            --primary-color: #ff69b4;
+            --primary-hover: #ff1493;
             --text-color: #4a4a4a;
             --border-radius: 20px;
         }
 
         body {
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
+            padding: 10px;
+            background: linear-gradient(to bottom, #ff9a9e, #fecfef);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             color: var(--text-color);
+            box-sizing: border-box;
         }
 
         .game-container {
             background-color: var(--container-bg);
-            width: 380px;
-            padding: 20px;
+            width: 100%;
+            max-width: 380px;
+            padding: 15px;
             border-radius: var(--border-radius);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             text-align: center;
             position: relative;
             overflow: hidden;
         }
 
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .pet-title-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
         h1 {
-            margin: 0 0 10px 0;
-            color: var(--primary-hover);
+            margin: 0;
+            color: #d81b60;
+            font-size: 1.6rem;
+        }
+
+        .stars-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #ffa000;
+        }
+
+        .screen {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to bottom, #e0f7fa, #b2ebf2);
+            border: 2px dashed #ff80ab;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        #pet-avatar {
+            font-size: 4.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        #pet-avatar:active {
+            transform: scale(0.9);
+        }
+
+        .item-spawn {
+            position: absolute;
             font-size: 1.8rem;
+            z-index: 3;
+            cursor: pointer;
+        }
+
+        .message-box {
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            min-height: 20px;
+            color: #d81b60;
+            font-weight: 500;
         }
 
         .stats {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 6px;
+            margin-bottom: 12px;
             text-align: left;
             background: #fff0f5;
             padding: 10px;
@@ -62,14 +133,14 @@
         }
 
         .stat-bar span {
-            width: 70px;
+            width: 85px;
         }
 
         .progress {
             flex-grow: 1;
             background-color: #ddd;
             border-radius: 10px;
-            height: 12px;
+            height: 10px;
             overflow: hidden;
             margin-left: 8px;
         }
@@ -77,77 +148,26 @@
         .progress-fill {
             height: 100%;
             width: 100%;
-            background-color: #4caf50;
-            transition: width 0.3s ease, background-color 0.3s ease;
-        }
-
-        .screen {
-            width: 100%;
-            height: 220px;
-            background: linear-gradient(to bottom, #e0f7fa, #80deea);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        /* Avatar e Estados */
-        #pet-avatar {
-            font-size: 5rem;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.2s;
-            position: relative;
-            z-index: 2;
-        }
-
-        #pet-avatar:active {
-            transform: scale(0.9);
-        }
-
-        .poop {
-            position: absolute;
-            bottom: 20px;
-            right: 40px;
-            font-size: 2rem;
-            z-index: 3;
-            cursor: pointer;
-        }
-
-        .zzz {
-            position: absolute;
-            top: 20px;
-            right: 80px;
-            font-size: 1.5rem;
-            animation: floatZzz 1.5s infinite;
-            display: none;
-        }
-
-        @keyframes floatZzz {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-20px); opacity: 0; }
+            background-color: #ff4081;
+            transition: width 0.3s ease;
         }
 
         .actions {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
 
         button {
             background-color: var(--primary-color);
             border: none;
             color: white;
-            padding: 10px 5px;
+            padding: 8px 4px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             transition: background-color 0.2s, transform 0.1s;
         }
 
@@ -159,291 +179,244 @@
             transform: scale(0.95);
         }
 
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+        .btn-full {
+            width: 100%;
+            margin-bottom: 6px;
+            background-color: #26a69a;
+        }
+        .btn-full:hover {
+            background-color: #00897b;
         }
 
-        .score-board {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #555;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
+        .btn-reset {
+            background-color: #e57373;
+        }
+        .btn-reset:hover {
+            background-color: #d32f2f;
         }
 
-        /* Mini-janela de Minigame */
-        #minigame-container {
-            display: none;
-            margin-top: 10px;
-            background: #fff;
-            border: 2px dashed var(--primary-color);
-            padding: 10px;
-            border-radius: 10px;
+        .btn-central {
+            background-color: #78909c;
+        }
+        .btn-central:hover {
+            background-color: #607d8b;
         }
     </style>
 </head>
 <body>
 
     <div class="game-container">
-        <h1>Petton 🐾</h1>
+        <div class="header-top">
+            <span>Cantinho Tamagotchi 🐾</span>
+        </div>
         
-        <div class="stats">
-            <div class="stat-bar">
-                <span>Fome:</span>
-                <div class="progress"><div id="hunger-bar" class="progress-fill"></div></div>
-            </div>
-            <div class="stat-bar">
-                <span>Felicidade:</span>
-                <div class="progress"><div id="happiness-bar" class="progress-fill"></div></div>
-            </div>
-            <div class="stat-bar">
-                <span>Energia:</span>
-                <div class="progress"><div id="energy-bar" class="progress-fill"></div></div>
-            </div>
+        <div class="pet-title-area">
+            <h1 id="pet-name">Mimi 🐱</h1>
+            <div class="stars-box">⭐ <span id="score">57</span></div>
         </div>
 
         <div class="screen" id="game-screen">
-            <div id="zzz" class="zzz">💤</div>
-            <div id="pet-avatar">🥚</div>
-            <div id="poop-area"></div>
+            <div id="pet-avatar" onclick="interactPet()">🐱</div>
+            <div id="extras-area"></div>
+        </div>
+
+        <div class="message-box" id="msg">Toque na tela para o gatinho pular!</div>
+
+        <div class="stats">
+            <div class="stat-bar">
+                <span>🍗 Fome</span>
+                <div class="progress"><div id="hunger-bar" class="progress-fill"></div></div>
+                <span id="hunger-val" style="font-size:0.75rem; width:35px; text-align:right;">100%</span>
+            </div>
+            <div class="stat-bar">
+                <span>💖 Felicidade</span>
+                <div class="progress"><div id="happiness-bar" class="progress-fill"></div></div>
+                <span id="happiness-val" style="font-size:0.75rem; width:35px; text-align:right;">100%</span>
+            </div>
+            <div class="stat-bar">
+                <span>⚡ Energia</span>
+                <div class="progress"><div id="energy-bar" class="progress-fill"></div></div>
+                <span id="energy-val" style="font-size:0.75rem; width:35px; text-align:right;">70%</span>
+            </div>
         </div>
 
         <div class="actions">
-            <button id="btn-feed" onclick="feedPet()">Alimentar</button>
-            <button id="btn-play" onclick="openMinigame()">Brincar</button>
-            <button id="btn-sleep" onclick="toggleSleep()">Dormir</button>
-            <button id="btn-clean" onclick="cleanPoop()">Limpar</button>
-            <button id="btn-heal" onclick="healPet()">Médico</button>
-            <button id="btn-reset" onclick="resetGame()" style="background-color: #e57373;">Reiniciar</button>
+            <button onclick="feedPet()">🍽️ Comer</button>
+            <button onclick="playPet()">🎮 Brincar</button>
+            <button onclick="sleepPet()">💤 Dormir</button>
+            <button onclick="bathPet()">🛁 Banho</button>
+            <button onclick="cleanPet()">🧹 Limpar</button>
+            <button onclick="brushPet()">🧹 Escovar</button>
         </div>
 
-        <div id="minigame-container">
-            <p id="minigame-text" style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: bold;">Escolha par ou ímpar com o Petton!</p>
-            <button onclick="playMinigame('par')">Par ✌️</button>
-            <button onclick="playMinigame('impar')">Ímpar ☝️</button>
-        </div>
-
-        <div class="score-board">
-            Pontos Gerais: <span id="score">0</span> | Fase: <span id="stage">Ovo</span>
-        </div>
+        <button class="action-btn btn-full" style="background-color: #ab47bc;" onclick="openHospital()">🏥 Hospital</button>
+        <button class="action-btn btn-full" onclick="goWalk()">🌳 Ir Passear</button>
+        <button class="action-btn btn-full btn-reset" onclick="resetGame()">🔄 Reiniciar Jogo</button>
+        <button class="action-btn btn-full btn-central" onclick="goCentral()">⬅️ Voltar para a Central</button>
     </div>
 
     <script>
-        // Sistema de Áudio Simples (Web Audio API)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(freq, type, duration) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            let osc = audioCtx.createOscillator();
-            let gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.value = freq;
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-            osc.stop(audioCtx.currentTime + duration);
-        }
-
-        // Variáveis do Jogo
         let pet = {
+            name: "Mimi",
+            score: 57,
             hunger: 100,
             happiness: 100,
-            energy: 100,
-            score: 0,
-            stage: 'egg', // egg, baby, adult
-            clicksToHatch: 12,
+            energy: 70,
             isSleeping: false,
             isSick: false,
-            hasPoop: false
+            hasPoop: false,
+            hasDirt: false
         };
-
-        const avatars = {
-            egg: '🥚',
-            baby: '🐱',
-            adult: '🐈',
-            sick: '🤒',
-            sleeping: '😴'
-        };
-
-        // Carregar do LocalStorage se houver
-        if (localStorage.getItem('petton_save')) {
-            try {
-                pet = JSON.parse(localStorage.getItem('petton_save'));
-            } catch(e) { console.error("Erro ao carregar save"); }
-        }
-
-        function saveGame() {
-            localStorage.setItem('petton_save', JSON.stringify(pet));
-        }
 
         const petAvatar = document.getElementById('pet-avatar');
+        const msgBox = document.getElementById('msg');
+        const scoreEl = document.getElementById('score');
         const hungerBar = document.getElementById('hunger-bar');
         const happinessBar = document.getElementById('happiness-bar');
         const energyBar = document.getElementById('energy-bar');
-        const scoreDisplay = document.getElementById('score');
-        const stageDisplay = document.getElementById('stage');
-        const zzzElement = document.getElementById('zzz');
-        const poopArea = document.getElementById('poop-area');
-        const minigameContainer = document.getElementById('minigame-container');
-
-        petAvatar.addEventListener('click', () => {
-            playSound(400, 'sine', 0.1);
-            if (pet.stage === 'egg') {
-                pet.clicksToHatch--;
-                pet.score += 5;
-                if (pet.clicksToHatch <= 0) {
-                    pet.stage = 'baby';
-                    playSound(600, 'triangle', 0.4);
-                }
-                updateUI();
-                saveGame();
-            } else if (!pet.isSleeping) {
-                pet.happiness = Math.min(100, pet.happiness + 2);
-                updateUI();
-            }
-        });
-
-        function feedPet() {
-            if (pet.isSleeping || pet.stage === 'egg') return;
-            playSound(300, 'square', 0.2);
-            pet.hunger = Math.min(100, pet.hunger + 25);
-            pet.score += 10;
-            
-            // Chance de fazer cocô ao comer
-            if (Math.random() > 0.5 && !pet.hasPoop) {
-                pet.hasPoop = true;
-            }
-
-            // Crescer para adulto se tiver pontos suficientes
-            if (pet.stage === 'baby' && pet.score > 150) {
-                pet.stage = 'adult';
-                playSound(800, 'sine', 0.5);
-            }
-            updateUI();
-            saveGame();
-        }
-
-        function openMinigame() {
-            if (pet.isSleeping || pet.stage === 'egg') return;
-            minigameContainer.style.display = minigameContainer.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function playMinigame(choice) {
-            playSound(500, 'sine', 0.15);
-            const petChoice = Math.random() > 0.5 ? 'par' : 'impar';
-            if (choice === petChoice) {
-                pet.happiness = Math.min(100, pet.happiness + 20);
-                pet.score += 30;
-                alert("Você venceu o minigame! O Petton adorou!");
-            } else {
-                pet.happiness = Math.min(100, pet.happiness + 5);
-                alert("O Petton escolheu diferente, mas foi divertido!");
-            }
-            minigameContainer.style.display = 'none';
-            updateUI();
-            saveGame();
-        }
-
-        function toggleSleep() {
-            if (pet.stage === 'egg') return;
-            pet.isSleeping = !pet.isSleeping;
-            if (pet.isSleeping) {
-                playSound(200, 'sine', 0.4);
-                zzzElement.style.display = 'block';
-            } else {
-                zzzElement.style.display = 'none';
-            }
-            updateUI();
-            saveGame();
-        }
-
-        function cleanPoop() {
-            if (pet.hasPoop) {
-                playSound(450, 'sawtooth', 0.2);
-                pet.hasPoop = false;
-                pet.score += 15;
-                updateUI();
-                saveGame();
-            }
-        }
-
-        function healPet() {
-            if (pet.isSick) {
-                playSound(700, 'sine', 0.3);
-                pet.isSick = false;
-                pet.happiness = Math.min(100, pet.happiness + 15);
-                updateUI();
-                saveGame();
-            }
-        }
-
-        function resetGame() {
-            if (confirm("Tem certeza que deseja reiniciar o seu Petton?")) {
-                localStorage.removeItem('petton_save');
-                pet = { hunger: 100, happiness: 100, energy: 100, score: 0, stage: 'egg', clicksToHatch: 12, isSleeping: false, isSick: false, hasPoop: false };
-                zzzElement.style.display = 'none';
-                minigameContainer.style.display = 'none';
-                updateUI();
-            }
-        }
-
-        // Loop principal de tempo (diminui status)
-        setInterval(() => {
-            if (pet.stage === 'egg') return;
-
-            if (pet.isSleeping) {
-                pet.energy = Math.min(100, pet.energy + 10);
-                if (pet.energy >= 100) {
-                    pet.isSleeping = false;
-                    zzzElement.style.display = 'none';
-                }
-            } else {
-                pet.hunger = Math.max(0, pet.hunger - 3);
-                pet.happiness = Math.max(0, pet.happiness - 2);
-                pet.energy = Math.max(0, pet.energy - 2);
-
-                // Chance de ficar doente se a fome estiver zerada
-                if (pet.hunger === 0 && Math.random() > 0.7) {
-                    pet.isSick = true;
-                }
-            }
-            updateUI();
-            saveGame();
-        }, 10000);
+        const hungerVal = document.getElementById('hunger-val');
+        const happinessVal = document.getElementById('happiness-val');
+        const energyVal = document.getElementById('energy-val');
+        const extrasArea = document.getElementById('extras-area');
 
         function updateUI() {
+            scoreEl.textContent = pet.score;
             hungerBar.style.width = pet.hunger + '%';
             happinessBar.style.width = pet.happiness + '%';
             energyBar.style.width = pet.energy + '%';
+            hungerVal.textContent = pet.hunger + '%';
+            happinessVal.textContent = pet.happiness + '%';
+            energyVal.textContent = pet.energy + '%';
 
-            // Cores das barras
-            hungerBar.style.backgroundColor = pet.hunger < 30 ? '#e57373' : '#4caf50';
-            happinessBar.style.backgroundColor = pet.happiness < 30 ? '#e57373' : '#4caf50';
-            energyBar.style.backgroundColor = pet.energy < 30 ? '#e57373' : '#4caf50';
+            let extrasHTML = '';
+            if (pet.hasPoop) extrasHTML += '<div class="item-spawn" style="bottom: 15px; left: 20px;" onclick="cleanPoop(event)">💩</div>';
+            if (pet.hasDirt) extrasHTML += '<div class="item-spawn" style="bottom: 15px; right: 20px;" onclick="cleanDirt(event)">🦠</div>';
+            extrasArea.innerHTML = extrasHTML;
 
-            scoreDisplay.textContent = pet.score;
-            
-            let stageName = "Ovo";
-            if (pet.stage === 'baby') stageName = "Filhote";
-            if (pet.stage === 'adult') stageName = "Adulto";
-            stageDisplay.textContent = stageName;
-
-            // Atualizar avatar na tela
-            if (pet.isSick) {
-                petAvatar.textContent = avatars.sick;
-            } else if (pet.isSleeping) {
-                petAvatar.textContent = avatars.sleeping;
+            if (pet.isSleeping) {
+                petAvatar.textContent = '😴';
+            } else if (pet.isSick) {
+                petAvatar.textContent = '🤒';
             } else {
-                petAvatar.textContent = avatars[pet.stage];
+                petAvatar.textContent = '🐱';
             }
-
-            // Exibir cocô se houver
-            poopArea.innerHTML = pet.hasPoop ? '<div class="poop" onclick="cleanPoop()" title="Limpar cocô">💩</div>' : '';
         }
 
-        // Inicializar UI na primeira abertura
+        function interactPet() {
+            if (pet.isSleeping) {
+                msgBox.textContent = "Mimi está dormindo, não perturbe!";
+                return;
+            }
+            pet.score += 1;
+            pet.happiness = Math.min(100, pet.happiness + 2);
+            msgBox.textContent = "Mimi ronronou feliz! (+1 Ponto)";
+            updateUI();
+        }
+
+        function feedPet() {
+            pet.hunger = Math.min(100, pet.hunger + 20);
+            pet.score += 2;
+            msgBox.textContent = "Mimi comeou com apetite!";
+            updateUI();
+        }
+
+        function playPet() {
+            if (pet.energy < 15) {
+                msgBox.textContent = "Mimi está cansada demais para brincar!";
+                return;
+            }
+            pet.energy = Math.max(0, pet.energy - 15);
+            pet.happiness = Math.min(100, pet.happiness + 15);
+            pet.score += 5;
+            msgBox.textContent = "Mimi se divertiu muito brincando!";
+            updateUI();
+        }
+
+        function sleepPet() {
+            pet.isSleeping = !pet.isSleeping;
+            if (pet.isSleeping) {
+                msgBox.textContent = "Mimi foi tirar uma soneca...";
+                pet.energy = Math.min(100, pet.energy + 30);
+            } else {
+                msgBox.textContent = "Mimi acordou revigorada!";
+            }
+            updateUI();
+        }
+
+        function bathPet() {
+            pet.happiness = Math.min(100, pet.happiness + 10);
+            msgBox.textContent = "Banho tomado! Mimi está cheirosa.";
+            updateUI();
+        }
+
+        function cleanPet() {
+            pet.hasPoop = false;
+            pet.hasDirt = false;
+            pet.score += 3;
+            msgBox.textContent = "Ambiente limpo e higienizado!";
+            updateUI();
+        }
+
+        function brushPet() {
+            pet.happiness = Math.min(100, pet.happiness + 10);
+            msgBox.textContent = "Pelo escovado com sucesso!";
+            updateUI();
+        }
+
+        function openHospital() {
+            if (pet.isSick) {
+                pet.isSick = false;
+                msgBox.textContent = "Mimi foi tratada no hospital e está curada!";
+            } else {
+                msgBox.textContent = "Mimi já está saudável, não precisa de hospital!";
+            }
+            updateUI();
+        }
+
+        function goWalk() {
+            pet.happiness = Math.min(100, pet.happiness + 20);
+            pet.energy = Math.max(0, pet.energy - 10);
+            pet.score += 10;
+            if (Math.random() > 0.5) pet.hasPoop = true;
+            msgBox.textContent = "Passeio divertido pelo parque concluído!";
+            updateUI();
+        }
+
+        function cleanPoop(e) {
+            e.stopPropagation();
+            pet.hasPoop = false;
+            pet.score += 2;
+            msgBox.textContent = "Cocô limpo com sucesso!";
+            updateUI();
+        }
+
+        function cleanDirt(e) {
+            e.stopPropagation();
+            pet.hasDirt = false;
+            pet.score += 2;
+            msgBox.textContent = "Sujeira limpa com sucesso!";
+            updateUI();
+        }
+
+        function resetGame() {
+            if (confirm("Deseja realmente reiniciar o jogo?")) {
+                pet.score = 0;
+                pet.hunger = 100;
+                pet.happiness = 100;
+                pet.energy = 70;
+                pet.isSleeping = false;
+                pet.isSick = false;
+                pet.hasPoop = false;
+                pet.hasDirt = false;
+                msgBox.textContent = "Jogo reiniciado!";
+                updateUI();
+            }
+        }
+
+        function goCentral() {
+            alert("Voltando para a Central...");
+        }
+
         updateUI();
     </script>
 </body>
