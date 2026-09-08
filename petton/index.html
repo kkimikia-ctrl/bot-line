@@ -210,7 +210,35 @@
             100% { transform: translateY(-4px); }
         }
 
-        /* Animação da Ambulância (Invertida para a frente apontar para a direita) */
+        /* Ferramentas / Animações de Ação */
+        .broom-tool {
+            position: absolute;
+            font-size: 32px;
+            z-index: 10;
+            animation: sweepAction 1s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes sweepAction {
+            0% { bottom: 10px; left: 10px; transform: rotate(0deg); }
+            50% { bottom: 10px; left: 60px; transform: rotate(-25deg); }
+            100% { bottom: 10px; left: 10px; transform: rotate(0deg); }
+        }
+
+        .toothbrush-tool {
+            position: absolute;
+            top: 42px;
+            left: 45px;
+            font-size: 24px;
+            z-index: 10;
+            animation: brushAction 0.3s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes brushAction {
+            0% { transform: translateX(0) rotate(0deg); }
+            100% { transform: translateX(8px) rotate(15deg); }
+        }
+
+        /* Animação da Ambulância */
         .ambulance {
             position: absolute;
             bottom: 20px;
@@ -633,7 +661,6 @@
 
             if (pet.comCarie) {
                 catBox.classList.add('carie');
-                // Adiciona ícone de dor de dente se não existir
                 if (!catBox.querySelector('.toothache-icon')) {
                     let tooth = document.createElement('div');
                     tooth.className = 'toothache-icon';
@@ -724,7 +751,6 @@
                 desenharSujeirasNaTela();
             }
 
-            // Chance de dar cárie ao longo do tempo se comer muito
             if (Math.random() < 0.25 && !pet.comCarie && !pet.doente) {
                 pet.comCarie = true;
                 document.getElementById('texto-status').innerText = `Ouch! ${pet.nome} comeu muito doce e ficou com cárie/dor de dente! 🦷💥`;
@@ -798,12 +824,23 @@
                 document.getElementById('texto-status').innerText = `Os dentes de ${pet.nome} já estão limpinhos e sem cárie! 🪥✨`;
                 return;
             }
-            pet.comCarie = false;
-            pet.felicidade = Math.min(100, pet.felicidade + 15);
-            pet.pontosGerais += 10;
-            document.getElementById('texto-status').innerText = `Dentes escovados! A cárie sumiu e a dor passou! (+10 Pontos) 🪥🦷`;
-            configurarVisualFase();
-            atualizarTela();
+
+            // Exibir a escova de dentes temporariamente na tela
+            const cenario = document.getElementById('cenario-fundo');
+            let escova = document.createElement('div');
+            escova.className = 'toothbrush-tool';
+            escova.innerText = '🪥';
+            cenario.appendChild(escova);
+
+            setTimeout(() => {
+                escova.remove();
+                pet.comCarie = false;
+                pet.felicidade = Math.min(100, pet.felicidade + 15);
+                pet.pontosGerais += 10;
+                document.getElementById('texto-status').innerText = `Dentes escovados! A cárie sumiu e a dor passou! (+10 Pontos) 🪥🦷`;
+                configurarVisualFase();
+                atualizarTela();
+            }, 1200);
         }
 
         function limparSujeira() {
@@ -812,12 +849,23 @@
                 document.getElementById('texto-status').innerText = `Está tudo limpinho por aqui! ✨🧹`;
                 return;
             }
-            pet.sujeiras = 0;
-            pet.felicidade = Math.min(100, pet.felicidade + 10);
-            pet.pontosGerais += 5;
-            desenharSujeirasNaTela();
-            document.getElementById('texto-status').innerText = `Quartinho limpo e cheiroso! (+5 Pontos) 🧽✨`;
-            atualizarTela();
+
+            // Exibir a vassoura temporariamente limpando os cocôs
+            const cenario = document.getElementById('cenario-fundo');
+            let vassoura = document.createElement('div');
+            vassoura.className = 'broom-tool';
+            vassoura.innerText = '🧹';
+            cenario.appendChild(vassoura);
+
+            setTimeout(() => {
+                vassoura.remove();
+                pet.sujeiras = 0;
+                pet.felicidade = Math.min(100, pet.felicidade + 10);
+                pet.pontosGerais += 5;
+                desenharSujeirasNaTela();
+                document.getElementById('texto-status').innerText = `Quartinho limpo e cheiroso! (+5 Pontos) 🧽✨`;
+                atualizarTela();
+            }, 1500);
         }
 
         function irHospital() {
