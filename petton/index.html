@@ -234,7 +234,7 @@
         };
 
         function carregarJogo() {
-            const salvo = localStorage.getItem('petton_save_stable_v1');
+            const salvo = localStorage.getItem('petton_save_cat_v2');
             if (salvo) {
                 pet = JSON.parse(salvo);
                 aplicarEstadoAtual();
@@ -242,12 +242,12 @@
         }
 
         function salvarJogo() {
-            localStorage.setItem('petton_save_stable_v1', JSON.stringify(pet));
+            localStorage.setItem('petton_save_cat_v2', JSON.stringify(pet));
         }
 
         function reiniciarJogo() {
             if (confirm("Deseja mesmo reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_save_stable_v1');
+                localStorage.removeItem('petton_save_cat_v2');
                 pet = {
                     fase: "ovo",
                     cliquesOvo: 0,
@@ -293,7 +293,7 @@
                 avatar.classList.remove('floating');
                 avatar.classList.add('walking');
                 document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
-                mudarExpressao("🐈‍⬛");
+                mudarExpressao("🐈");
             } else {
                 document.getElementById('cenario-fundo').classList.remove('outdoor');
                 avatar.classList.remove('walking');
@@ -336,7 +336,7 @@
                     aplicarEstadoAtual();
                 }
             } else {
-                mudarExpressao("😽");
+                mudarExpressao("😻");
                 document.getElementById('texto-status').innerText = `${pet.nome} adorou o carinho! ✨💖`;
                 animarEfeito();
                 setTimeout(() => { configurarVisualFase(); }, 1500);
@@ -355,9 +355,9 @@
 
         function alimentar() {
             if (pet.fase === "ovo" || pet.emPasseio) return;
-            pet.fome = Math.min(100, pet.fome + 25); // Sobe bem a fome
+            pet.fome = Math.min(100, pet.fome + 25);
             document.getElementById('texto-status').innerText = `${pet.nome} comeu peixinho com muita alegria! 🐟😋`;
-            mudarExpressao("😻");
+            mudarExpressao("😽");
             animarEfeito();
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 2000);
@@ -372,9 +372,9 @@
             }
             pet.felicidade = Math.min(100, pet.felicidade + 15);
             pet.energia = Math.max(0, pet.energia - 15);
-            pet.fome = Math.max(0, pet.fome - 5); // Consome um pouco menos de fome ao brincar
+            pet.fome = Math.max(0, pet.fome - 5);
             document.getElementById('texto-status').innerText = `Você brincou com o novelo de lã com ${pet.nome}! 🧶✨`;
-            mudarExpressao("😸");
+            mudarExpressao("😺");
             animarEfeito();
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 2000);
@@ -386,7 +386,8 @@
             pet.energia = 100;
             pet.fome = Math.max(0, pet.fome - 5);
             document.getElementById('texto-status').innerText = `${pet.nome} tirou uma soneca fofinha e ronronou... 💤🐾`;
-            mudarExpressao("😴");
+            // Gato com carinha feliz deitado/dormindo (usando o gato sorridente)
+            mudarExpressao("😸");
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 3000);
             atualizarTela();
@@ -396,7 +397,7 @@
             if (pet.fase === "ovo" || pet.emPasseio) return;
             pet.felicidade = Math.min(100, pet.felicidade + 10);
             document.getElementById('texto-status').innerText = `${pet.nome} tomou banho de espuma e está cheirosinho(a)! 🛁🧼`;
-            mudarExpressao("✨");
+            mudarExpressao("😽");
             animarEfeito();
             verificarEvolucao();
             setTimeout(() => { configurarVisualFase(); }, 2000);
@@ -420,7 +421,7 @@
                 avatar.classList.add('walking');
                 btnPasseio.innerText = "🏠 Voltar para Casa";
                 document.getElementById('texto-status').innerText = `${pet.nome} está passeando no parque ao ar livre! 🌳☀️`;
-                mudarExpressao("🐈‍⬛");
+                mudarExpressao("🐈");
                 
                 pet.energia = Math.max(0, pet.energia - 20);
                 pet.felicidade = Math.min(100, pet.felicidade + 20);
