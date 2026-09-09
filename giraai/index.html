@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GiraAí - Conexões Casuais</title>
+    <title>Espaço de Comunicação</title>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
@@ -23,7 +23,6 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
         }
 
         body { 
@@ -90,12 +89,11 @@
             100% { transform: translateX(var(--scroll-amount)); }
         }
 
-        /* Container Principal das Telas */
-        .gira-container {
+        /* Container Principal */
+        .main-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            flex-grow: 1;
+            gap: 14px;
             max-width: 480px;
             width: 100%;
             margin: 0 auto;
@@ -104,128 +102,105 @@
             padding: 16px;
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-            overflow-y: auto;
         }
 
-        .step-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-grow: 1;
+        .header-title {
             text-align: center;
-            gap: 12px;
+            margin-bottom: 5px;
         }
-        .step-screen.active {
+        .header-title h2 {
+            font-size: 20px;
+            color: #1e3a8a;
+            margin: 0;
+        }
+        .header-title p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 4px 0 0 0;
+        }
+
+        /* Cartões de Opções */
+        .option-card {
             display: flex;
-        }
-
-        /* Formulários e Botões */
-        .input-box {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            outline: none;
-            text-align: center;
-        }
-        .btn-main {
-            background: var(--accent-gradient);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-            transition: opacity 0.3s ease, transform 0.2s ease;
-        }
-        .btn-main:active { transform: scale(0.98); }
-        .btn-disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* Botão de Voltar Padrão */
-        .btn-voltar-topo {
-            align-self: flex-start;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 4px;
-        }
-
-        /* Grade de Fotos */
-        .grid-fotos {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            width: 100%;
-            max-height: 220px;
-            overflow-y: auto;
-            padding: 4px;
-        }
-        .foto-card {
-            background: #f1f5f9;
-            border-radius: 8px;
-            padding: 10px 4px;
-            text-align: center;
-            font-size: 12px;
-            border: 1px solid #cbd5e1;
-        }
-        .foto-card span { font-size: 24px; display: block; margin-bottom: 4px; }
-
-        /* Estilo da Tela de Chat */
-        .chat-box {
-            width: 100%;
-            flex-grow: 1;
+            align-items: center;
             background: #f8fafc;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            padding: 10px;
+            padding: 14px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .option-card:active { transform: scale(0.98); }
+        .option-card.vip {
+            border: 2px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        .option-icon {
+            font-size: 28px;
+            background: white;
+            width: 48px;
+            height: 48px;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-right: 12px;
+            flex-shrink: 0;
         }
-        .chat-messages {
+
+        .option-info {
             flex-grow: 1;
-            overflow-y: auto;
-            text-align: left;
-            font-size: 14px;
-            padding: 5px;
-            color: #334155;
         }
-        .chat-input-area {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-        }
-        .chat-input-area input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-        }
-        .chat-input-area button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 10px 14px;
-            border-radius: 6px;
+        .option-title {
+            font-size: 15px;
             font-weight: bold;
-            font-size: 13px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
+        .option-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .option-arrow {
+            font-size: 18px;
+            color: #64748b;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .badge-vip {
+            background: #f59e0b;
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botão Voltar Rodapé */
+        .btn-voltar {
+            background: #e2e8f0;
+            color: #334155;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            margin-top: 6px;
+            transition: background 0.2s;
+        }
+        .btn-voltar:active { background: #cbd5e1; }
     </style>
 </head>
 <body>
@@ -233,145 +208,56 @@
     <!-- Carrossel de Anúncios Fixo -->
     <div class="banner-carousel">
         <div class="carousel-track" id="carouselTrack">
-            <div class="ad-banner-card"><div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888;">Gira 1</span></div></div>
-            <div class="ad-banner-card"><div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888;">Gira 2</span></div></div>
+            <div class="ad-banner-card"><div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888;">Espaço 1</span></div></div>
+            <div class="ad-banner-card"><div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888;">Espaço 2</span></div></div>
+            <div class="ad-banner-card"><div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888;">Espaço 3</span></div></div>
         </div>
     </div>
 
-    <div class="gira-container">
-
-        <!-- ETAPA 1: TERMOS DE USO E REGRAS -->
-        <div id="stepTermos" class="step-screen active">
-            <!-- Botão Voltar ajustado para exibir apenas "Voltar" -->
-            <button class="btn-voltar-topo" onclick="location.href='../entretenimento-e-lazer.html'">Voltar</button>
-            <h2 style="font-size: 20px; margin: 0 0 5px 0;">📜 Termos e Regras do GiraAí</h2>
-            <p style="font-size: 12px; color: #d97706; margin: 0 0 5px 0; font-weight: bold;">👇 Role até o final para liberar o botão</p>
-            
-            <div id="caixaTermos" onscroll="checarFimRolagem()" style="font-size: 13.5px; color: var(--text-secondary); text-align: left; background: #f1f5f9; padding: 14px; border-radius: 8px; height: 210px; overflow-y: auto; line-height: 1.5; border: 1px solid #cbd5e1;">
-                <p style="margin-top: 0; color: #1e3a8a; font-weight: bold; font-size: 15px;">Seja bem-vindo(a)!</p>
-                O <strong>GiraAí</strong> foi criado para que todos tenham a oportunidade de conversar com pessoas de perto ou de longe — de jovens a idosos, independente de gênero —, trocando experiências, boas conversas e compartilhando lugares bonitos e divertidos.<br><br>
-                <strong>1. Boa Convivência e Respeito:</strong> É proibido qualquer tipo de ofensa, comentários inadequados, assédio ou compartilhamento de conteúdos impróprios. A violação resulta no encerramento imediato do acesso.<br><br>
-                <strong>2. Privacidade e Responsabilidade Individual:</strong> Cada usuário é responsável pelas informações que decide compartilhar. Evite a exposição precipitada de dados pessoais, zelando sempre pela própria segurança.<br><br>
-                <strong>3. Rodadas e Intervalo (*Kyukei*):</strong> Cada conversa dura 15 minutos. Você tem direito a 2 rodadas consecutivas. Após a 2ª rodada, haverá um descanso obrigatório de 1 hora antes de novas rodadas.<br><br>
-                <div style="text-align: center; color: #1e3a8a; font-weight: bold; padding: 10px 0;">✨ Fim dos Termos. Agora você pode prosseguir! ✨</div>
-            </div>
-
-            <button id="btnAceitar" class="btn-main btn-disabled" onclick="irParaPerfil()">Li e Aceito os Termos ✅</button>
+    <div class="main-container">
+        
+        <div class="header-title">
+            <h2>Área de Comunicação</h2>
+            <p>Escolha como você deseja interagir hoje no Japão</p>
         </div>
 
-        <!-- ETAPA 2: CONFIGURAR PERFIL -->
-        <div id="stepPerfil" class="step-screen">
-            <button class="btn-voltar-topo" onclick="mudarTela('stepTermos')">Voltar</button>
-            <h2 style="font-size: 20px;">👤 Seu Perfil</h2>
-            <p style="font-size: 12px; color: var(--text-secondary);">Puxado automaticamente do LINE. Você pode alterar se desejar:</p>
-            
-            <div style="position: relative; width: 75px; height: 75px; margin: 0 auto;">
-                <div id="userAvatarPreview" style="font-size: 38px; background: #e2e8f0; width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6;">👤</div>
+        <!-- Opção 1: Chat da Comunidade -->
+        <a href="chat-comunidade.html" class="option-card">
+            <div class="option-icon">💬</div>
+            <div class="option-info">
+                <div class="option-title">Chat da Comunidade</div>
+                <div class="option-desc">Salas abertas para conversar livremente em grupo.</div>
             </div>
-            
-            <div style="width: 100%; text-align: left;">
-                <label style="font-size: 12px; font-weight: bold; color: var(--text-secondary);">Seu Nome / Apelido:</label>
-                <input type="text" id="inputNome" class="input-box" value="Convidado LINE" placeholder="Digite seu nome ou apelido">
-            </div>
+            <div class="option-arrow">→</div>
+        </a>
 
-            <div style="width: 100%; text-align: left;">
-                <label style="font-size: 12px; font-weight: bold; color: var(--text-secondary);">Escolher Ícone / Avatar Rápido:</label>
-                <select id="selectAvatar" class="input-box" onchange="mudarAvatar(this.value)">
-                    <option value="👤">Padrão (👤)</option>
-                    <option value="👨‍💻">Homem Tech (👨‍💻)</option>
-                    <option value="👩‍💻">Mulher Tech (👩‍💻)</option>
-                    <option value="🧑‍🎤">Estiloso(a) (🧑‍🎤)</option>
-                    <option value="🦊">Raposa (🦊)</option>
-                    <option value="⭐">Estrela (⭐)</option>
-                </select>
+        <!-- Opção 2: GiraAí -->
+        <a href="gira-ai.html" class="option-card">
+            <div class="option-icon">🎲</div>
+            <div class="option-info">
+                <div class="option-title">GiraAí</div>
+                <div class="option-desc">Conexões casuais 1x1 de 15 minutos com pessoas de várias regiões.</div>
             </div>
+            <div class="option-arrow">→</div>
+        </a>
 
-            <button class="btn-main" onclick="irParaGrade()">Salvar e Ver Pessoas Online 🚀</button>
-        </div>
-
-        <!-- ETAPA 3: GRADE DE FOTOS DAS PESSOAS ONLINE -->
-        <div id="stepGrade" class="step-screen">
-            <button class="btn-voltar-topo" onclick="mudarTela('stepPerfil')">Voltar</button>
-            <h2 style="font-size: 20px;">👥 Pessoas Online Agora</h2>
-            <p style="font-size: 12px; color: var(--text-secondary);">Usuários aguardando na rede</p>
-            <div class="grid-fotos" id="gridFotos">
-                <!-- Preenchido dinamicamente via script -->
+        <!-- Opção 3: Omiai -->
+        <a href="omiai.html" class="option-card vip">
+            <div class="option-icon">💍</div>
+            <div class="option-info">
+                <div class="option-title">Omiai <span class="badge-vip">SEGURO / VIP</span></div>
+                <div class="option-desc">Ambiente exclusivo e verificado para relacionamentos sérios.</div>
             </div>
-            <button class="btn-main" onclick="iniciarRoleta()">Girar Roleta Agora 🎲</button>
-        </div>
+            <div class="option-arrow">→</div>
+        </a>
 
-        <!-- ETAPA 4: ROLETA COM SUSPENSE -->
-        <div id="stepRoleta" class="step-screen">
-            <div style="font-size: 60px;" id="roletaIcone">🎰</div>
-            <h2 id="roletaTexto" style="font-size: 20px;">Sorteando Região...</h2>
-            <p style="font-size: 13px; color: var(--text-secondary);">Gerando conexão surpresa pelo Japão...</p>
-        </div>
-
-        <!-- ETAPA 5: TELA DE CHAT -->
-        <div id="stepChat" class="step-screen" style="justify-content: flex-start; height: 100%;">
-            
-            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 6px 10px; border-radius: 6px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span id="chatInfoRodada" style="font-size: 12px; font-weight: bold; background: #fff; padding: 3px 8px; border-radius: 4px;">Rodada 1/2</span>
-                    <button id="btnCronometro" onclick="mostrarTempoRestante()" style="background: #1e3a8a; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;">⏳</button>
-                </div>
-                <button onclick="mudarTela('stepGrade')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">Voltar</button>
-            </div>
-
-            <div style="width: 100%; display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; text-align: left;">
-                <span id="chatAvatarConectado" style="font-size: 26px; background: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👤</span>
-                <div>
-                    <div id="chatNomeConectado" style="font-size: 13px; font-weight: bold; color: #1e3a8a;">Nome do Usuário</div>
-                    <div id="chatRegiaoConectada" style="font-size: 11px; color: #64748b;">📍 Região</div>
-                </div>
-            </div>
-            
-            <div class="chat-box">
-                <div class="chat-messages" id="chatMessages">
-                    <p style="color: #64748b; text-align: center; font-style: italic;">Conexão estabelecida! Troque ideias e compartilhe lugares legais 👋</p>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="inputMensagem" placeholder="Digite sua mensagem...">
-                    <button onclick="enviarMensagem()">Enviar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ETAPA 6: FIM DA RODADA 1 -->
-        <div id="stepFimRodada1" class="step-screen">
-            <button class="btn-voltar-topo" onclick="mudarTela('stepChat')">Voltar</button>
-            <h2 style="font-size: 22px;">🔔 Fim da 1ª Rodada!</h2>
-            <p style="font-size: 14px; color: var(--text-secondary);">Seu tempo de 15 minutos nesta conversa terminou.</p>
-            <div style="background: #eff6ff; border: 1px solid #3b82f6; padding: 14px; border-radius: 8px; font-size: 13px; color: #1e40af; font-weight: bold;">
-                Você ainda tem direito a mais <strong>1 rodada</strong> de conversa!
-            </div>
-            <button class="btn-main" onclick="irParaGrade()">Iniciar 2ª Rodada 🎲</button>
-        </div>
-
-        <!-- ETAPA 7: FIM DA RODADA 2 (KYUKEI) -->
-        <div id="stepKyukei" class="step-screen">
-            <button class="btn-voltar-topo" onclick="location.href='../entretenimento-e-lazer.html'">Voltar</button>
-            <h2 style="font-size: 22px;">☕ Hora do Descanso (Kyukei)</h2>
-            <p style="font-size: 14px; color: var(--text-secondary);">Você concluiu suas 2 rodadas permitidas.</p>
-            <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 14px; border-radius: 8px; font-size: 13.5px; color: #92400e; font-weight: bold;">
-                Aguarde o intervalo de <strong>1 hora</strong> para liberar novas rodadas.
-            </div>
-            <div id="timerKyukei" style="font-size: 24px; font-weight: bold; color: #d97706; margin: 8px 0;">60:00</div>
-            <button class="btn-main" style="margin-top: 10px;" onclick="location.href='../entretenimento-e-lazer.html'">Voltar ao Menu Principal</button>
-        </div>
+        <!-- Botão Voltar ajustado para entretenimento.html e escrito apenas "Voltar" -->
+        <button class="btn-voltar" onclick="location.href='entretenimento.html'">Voltar</button>
 
     </div>
 
     <script>
-        let rodadaAtual = 1;
-        let segundosRestantes = 15 * 60;
-        let timerInterval;
-
-        const estadosJapao = ["Aichi", "Nagano", "Tóquio", "Hokkaido", "Gumma", "Ibaraki", "Shizuoka", "Kanagawa", "Saitama", "Kyoto"];
-        const avataresDisponiveis = ["👨‍💻", "👩‍💻", "🧑‍🎤", "👩‍🦰", "👨‍🔧", "👩‍🎓", "👨‍🍳", "👩‍🎨", "👨‍🌾", "👩‍💼"];
-        let pessoaSorteada = { nome: "Usuário 1", avatar: "👨‍💻", regiao: "Aichi" };
-
-        // Carrossel Infinito
+        // Configuração do carrossel infinito de anúncios
         function configurarCarrossel() {
             const track = document.getElementById('carouselTrack');
             if (!track || track.dataset.initialized === "true") return;
@@ -381,132 +267,6 @@
             track.dataset.initialized = "true";
         }
         window.addEventListener('load', configurarCarrossel);
-
-        // Validação de rolagem dos termos
-        function checarFimRolagem() {
-            const caixa = document.getElementById('caixaTermos');
-            const btn = document.getElementById('btnAceitar');
-            if (caixa.scrollTop + caixa.clientHeight >= caixa.scrollHeight - 10) {
-                btn.classList.remove('btn-disabled');
-            }
-        }
-
-        function mudarTela(idTela) {
-            document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(idTela).classList.add('active');
-        }
-
-        function irParaPerfil() { mudarTela('stepPerfil'); }
-
-        function mudarAvatar(emoji) {
-            document.getElementById('userAvatarPreview').innerText = emoji;
-        }
-        
-        function irParaGrade() {
-            const grid = document.getElementById('gridFotos');
-            grid.innerHTML = '';
-            
-            for(let i=1; i<=20; i++) {
-                const reg = estadosJapao[i % estadosJapao.length];
-                const av = avataresDisponiveis[i % avataresDisponiveis.length];
-                grid.innerHTML += `<div class="foto-card"><span>${av}</span>User ${i}<br><small style="color:#666;">📍 ${reg}</small></div>`;
-            }
-            mudarTela('stepGrade');
-        }
-
-        function iniciarRoleta() {
-            mudarTela('stepRoleta');
-            const txt = document.getElementById('roletaTexto');
-            
-            const regAleatoria = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
-            const avAleatorio = avataresDisponiveis[Math.floor(Math.random() * avataresDisponiveis.length)];
-            pessoaSorteada.regiao = regAleatoria;
-            pessoaSorteada.avatar = avAleatorio;
-            pessoaSorteada.nome = "Colega " + Math.floor(Math.random() * 100);
-
-            let tempoDecorrido = 0;
-            const intervalo = setInterval(() => {
-                const tempReg = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
-                txt.innerHTML = `Sorteando região... <br><strong style="font-size:24px; color:#1e3a8a;">📍 ${tempReg}</strong>`;
-                tempoDecorrido += 200;
-
-                if(tempoDecorrido >= 4000) {
-                    clearInterval(intervalo);
-                    txt.innerHTML = `🎉 Conexão Encontrada em <strong>${pessoaSorteada.regiao}!</strong>`;
-                    setTimeout(iniciarChat, 1500);
-                }
-            }, 200);
-        }
-
-        function iniciarChat() {
-            mudarTela('stepChat');
-            
-            document.getElementById('chatAvatarConectado').innerText = pessoaSorteada.avatar;
-            document.getElementById('chatNomeConectado').innerText = pessoaSorteada.nome;
-            document.getElementById('chatRegiaoConectada').innerText = `📍 ${pessoaSorteada.regiao}`;
-            document.getElementById('chatInfoRodada').innerText = `Rodada ${rodadaAtual}/2`;
-
-            segundosRestantes = 15 * 60; 
-            
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                segundosRestantes--;
-                if(segundosRestantes <= 0) {
-                    clearInterval(timerInterval);
-                    if(rodadaAtual === 1) {
-                        rodadaAtual = 2;
-                        mudarTela('stepFimRodada1');
-                    } else {
-                        iniciarKyukei();
-                    }
-                }
-            }, 1000);
-        }
-
-        function mostrarTempoRestante() {
-            const btn = document.getElementById('btnCronometro');
-            const mins = Math.floor(segundosRestantes / 60);
-            const secs = segundosRestantes % 60;
-            const tempoFormatado = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-
-            btn.innerText = `⏳ ${tempoFormatado}`;
-            btn.style.background = '#d97706';
-
-            setTimeout(() => {
-                btn.innerText = `⏳`;
-                btn.style.background = '#1e3a8a';
-            }, 2000);
-        }
-
-        function enviarMensagem() {
-            const input = document.getElementById('inputMensagem');
-            const msgs = document.getElementById('chatMessages');
-            if(input.value.trim() === "") return;
-
-            msgs.innerHTML += `<p><b>Você:</b> ${input.value}</p>`;
-            input.value = "";
-            msgs.scrollTop = msgs.scrollHeight;
-        }
-
-        function iniciarKyukei() {
-            mudarTela('stepKyukei');
-            let tempoKyukei = 60 * 60;
-            const timerEl = document.getElementById('timerKyukei');
-
-            const kyukeiInterval = setInterval(() => {
-                tempoKyukei--;
-                const m = Math.floor(tempoKyukei / 60);
-                const s = tempoKyukei % 60;
-                timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-
-                if(tempoKyukei <= 0) {
-                    clearInterval(kyukeiInterval);
-                    rodadaAtual = 1;
-                    alert("Seu tempo de descanso acabou! Você já pode usar novas rodadas.");
-                    location.reload();
-                }
-            }, 1000);
-        }
     </script>
 </body>
 </html>
