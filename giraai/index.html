@@ -32,7 +32,7 @@
             display: flex;
             flex-direction: column;
             padding: 10px;
-            padding-top: 130px;
+            padding-top: 125px;
             color: var(--text-main);
         }
 
@@ -88,44 +88,6 @@
         @keyframes rolarInfinito {
             0% { transform: translateX(0); }
             100% { transform: translateX(var(--scroll-amount)); }
-        }
-
-        /* Cabeçalho com Título no Meio e Botão Voltar no Canto Direito */
-        .main-header {
-            position: relative;
-            text-align: center;
-            margin-bottom: 10px;
-            flex-shrink: 0;
-            padding: 0 50px; /* Espaço para o botão absoluto não sobrepor o texto em telas estreitas */
-        }
-        .main-header h1 {
-            font-size: 18px;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 2px 0;
-            font-weight: 800;
-        }
-        .main-header p {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-        .btn-header-voltar {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--surface);
-            color: #3b82f6;
-            border: 1px solid #bfdbfe;
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 11px;
-            cursor: pointer;
-            text-decoration: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         /* Container Principal das Telas */
@@ -199,6 +161,7 @@
             text-align: center;
             font-size: 11px;
             border: 1px solid #cbd5e1;
+            cursor: pointer;
         }
         .foto-card span { font-size: 22px; display: block; margin-bottom: 2px; }
 
@@ -254,13 +217,6 @@
         </div>
     </div>
 
-    <!-- Cabeçalho com Título no Meio e Botão Voltar no Canto Direito -->
-    <div class="main-header">
-        <h1>GiraAí 🎲</h1>
-        <p>Conexões casuais e divertidas</p>
-        <a href="../chatindex.html" class="btn-header-voltar">⬅️ Voltar</a>
-    </div>
-
     <div class="gira-container">
 
         <!-- ETAPA 1: TERMOS DE USO E REGRAS -->
@@ -276,7 +232,7 @@
             <button class="btn-main" onclick="irParaPerfil()">Li e Aceito os Termos ✅</button>
         </div>
 
-        <!-- ETAPA 2: CONFIGURAR PERFIL (LINE AUTOMÁTICO COM OPÇÃO DE MUDAR) -->
+        <!-- ETAPA 2: CONFIGURAR PERFIL -->
         <div id="stepPerfil" class="step-screen">
             <h2>👤 Seu Perfil</h2>
             <p style="font-size: 11px; color: var(--text-secondary);">Puxado automaticamente do LINE. Você pode alterar se desejar:</p>
@@ -315,19 +271,32 @@
             <button class="btn-main" onclick="iniciarRoleta()">Girar Roleta Agora 🎲</button>
         </div>
 
-        <!-- ETAPA 4: ROLETA COM SUSPENSE (ESTADOS DO JAPÃO) -->
+        <!-- ETAPA 4: ROLETA COM SUSPENSE -->
         <div id="stepRoleta" class="step-screen">
             <div style="font-size: 52px;" id="roletaIcone">🎰</div>
             <h2 id="roletaTexto">Sorteando Região...</h2>
             <p style="font-size: 12px; color: var(--text-secondary);">Gerando conexão surpresa pelo Japão...</p>
         </div>
 
-        <!-- ETAPA 5: TELA DE CHAT COM CRONÔMETRO DE 15 MIN -->
+        <!-- ETAPA 5: TELA DE CHAT COM IDENTIFICAÇÃO E BOTÃO VOLTAR AZUL -->
         <div id="stepChat" class="step-screen" style="justify-content: flex-start; height: 100%;">
-            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 6px 10px; border-radius: 8px;">
-                <span style="font-size: 12px; font-weight: bold;" id="chatInfoRodada">Rodada 1/2</span>
-                <!-- Botão de Tempo com apenas a ampulheta -->
-                <button id="btnCronometro" onclick="mostrarTempoRestante()" style="background: #1e3a8a; color: white; border: none; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">⏳</button>
+            
+            <!-- Barra Superior Compacta da Rodada com Botão Voltar Azul -->
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 4px 8px; border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span id="chatInfoRodada" style="font-size: 11px; font-weight: bold; background: #fff; padding: 2px 6px; border-radius: 4px;">Rodada 1/2</span>
+                    <button id="btnCronometro" onclick="mostrarTempoRestante()" style="background: #1e3a8a; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">⏳</button>
+                </div>
+                <button onclick="irParaGrade()" style="background: #3b82f6; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">⬅️ Voltar</button>
+            </div>
+
+            <!-- Dados da Pessoa Conectada -->
+            <div style="width: 100%; display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 10px; border-radius: 8px; text-align: left;">
+                <span id="chatAvatarConectado" style="font-size: 22px; background: #fff; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👤</span>
+                <div>
+                    <div id="chatNomeConectado" style="font-size: 11px; font-weight: bold; color: #1e3a8a;">Nome do Usuário</div>
+                    <div id="chatRegiaoConectada" style="font-size: 9px; color: #64748b;">📍 Região</div>
+                </div>
             </div>
             
             <div class="chat-box">
@@ -341,7 +310,7 @@
             </div>
         </div>
 
-        <!-- ETAPA 6: FIM DA RODADA 1 (VAI PARA A RODADA 2) -->
+        <!-- ETAPA 6: FIM DA RODADA 1 -->
         <div id="stepFimRodada1" class="step-screen">
             <h2>🔔 Fim da 1ª Rodada!</h2>
             <p style="font-size: 13px; color: var(--text-secondary);">Seu tempo de 15 minutos nesta conversa terminou.</p>
@@ -351,7 +320,7 @@
             <button class="btn-main" onclick="irParaGrade()">Iniciar 2ª Rodada 🎲</button>
         </div>
 
-        <!-- ETAPA 7: FIM DA RODADA 2 (INTERVALO KYUKEI DE 1 HORA) -->
+        <!-- ETAPA 7: FIM DA RODADA 2 (KYUKEI) -->
         <div id="stepKyukei" class="step-screen">
             <h2>☕ Hora do Descanso (Kyukei)</h2>
             <p style="font-size: 13px; color: var(--text-secondary);">Você concluiu suas 2 rodadas permitidas.</p>
@@ -366,8 +335,12 @@
 
     <script>
         let rodadaAtual = 1;
-        let segundosRestantes = 15 * 60; // 15 minutos
+        let segundosRestantes = 15 * 60;
         let timerInterval;
+
+        const estadosJapao = ["Aichi", "Nagano", "Tóquio", "Hokkaido", "Gumma", "Ibaraki", "Shizuoka", "Kanagawa", "Saitama", "Kyoto"];
+        const avataresDisponiveis = ["👨‍💻", "👩‍💻", "🧑‍🎤", "👩‍🦰", "👨‍🔧", "👩‍🎓", "👨‍🍳", "👩‍🎨", "👨‍🌾", "👩‍💼"];
+        let pessoaSorteada = { nome: "Usuário 1", avatar: "👨‍💻", regiao: "Aichi" };
 
         // Carrossel Infinito
         function configurarCarrossel() {
@@ -380,7 +353,6 @@
         }
         window.addEventListener('load', configurarCarrossel);
 
-        // Troca de Telas
         function mudarTela(idTela) {
             document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
             document.getElementById(idTela).classList.add('active');
@@ -395,32 +367,39 @@
         function irParaGrade() {
             const grid = document.getElementById('gridFotos');
             grid.innerHTML = '';
-            const estadosJapao = ["Aichi", "Nagano", "Tóquio", "Hokkaido", "Gumma", "Ibaraki", "Shizuoka", "Kanagawa", "Saitama", "Kyoto"];
-            const avatares = ["👨‍💻", "👩‍💻", "🧑‍🎤", "👩‍🦰", "👨‍🔧", "👩‍🎓", "👨‍🍳", "👩‍🎨", "👨‍🌾", "👩‍💼"];
             
             for(let i=1; i<=20; i++) {
-                const estadoSorteado = estadosJapao[i % estadosJapao.length];
-                const avatarSorteado = avatares[i % avatares.length];
-                grid.innerHTML += `<div class="foto-card"><span>${avatarSorteado}</span>User ${i}<br><small style="color:#666;">📍 ${estadoSorteado}</small></div>`;
+                const reg = estadosJapao[i % estadosJapao.length];
+                const av = avataresDisponiveis[i % avataresDisponiveis.length];
+                grid.innerHTML += `<div class="foto-card" onclick="selecionarPessoa('${av}', 'User ${i}', '${reg}')"><span>${av}</span>User ${i}<br><small style="color:#666;">📍 ${reg}</small></div>`;
             }
             mudarTela('stepGrade');
         }
 
-        // Roleta com suspense (4 a 5 seg piscando estados)
+        function selecionarPessoa(avatar, nome, regiao) {
+            pessoaSorteada = { avatar, nome, regiao };
+            iniciarRoleta();
+        }
+
         function iniciarRoleta() {
             mudarTela('stepRoleta');
-            const estados = ["Aichi", "Nagano", "Tóquio", "Hokkaido", "Gumma", "Ibaraki", "Shizuoka", "Kanagawa", "Saitama", "Kyoto"];
             const txt = document.getElementById('roletaTexto');
             
+            const regAleatoria = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
+            const avAleatorio = avataresDisponiveis[Math.floor(Math.random() * avataresDisponiveis.length)];
+            pessoaSorteada.regiao = regAleatoria;
+            pessoaSorteada.avatar = avAleatorio;
+            pessoaSorteada.nome = "Colega " + Math.floor(Math.random() * 100);
+
             let tempoDecorrido = 0;
             const intervalo = setInterval(() => {
-                const aleatorio = estados[Math.floor(Math.random() * estados.length)];
-                txt.innerHTML = `Sorteando região... <br><strong style="font-size:22px; color:#1e3a8a;">📍 ${aleatorio}</strong>`;
+                const tempReg = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
+                txt.innerHTML = `Sorteando região... <br><strong style="font-size:22px; color:#1e3a8a;">📍 ${tempReg}</strong>`;
                 tempoDecorrido += 200;
 
-                if(tempoDecorrido >= 4500) { // ~4.5 segundos de suspense
+                if(tempoDecorrido >= 4000) {
                     clearInterval(intervalo);
-                    txt.innerHTML = `🎉 Conexão Encontrada em <strong>${aleatorio}!</strong>`;
+                    txt.innerHTML = `🎉 Conexão Encontrada em <strong>${pessoaSorteada.regiao}!</strong>`;
                     setTimeout(iniciarChat, 1500);
                 }
             }, 200);
@@ -428,9 +407,15 @@
 
         function iniciarChat() {
             mudarTela('stepChat');
-            document.getElementById('chatInfoRodada').innerText = `Rodada ${rodadaAtual}/2`;
-            segundosRestantes = 15 * 60; // Reseta para 15 min
             
+            document.getElementById('chatAvatarConectado').innerText = pessoaSorteada.avatar;
+            document.getElementById('chatNomeConectado').innerText = pessoaSorteada.nome;
+            document.getElementById('chatRegiaoConectada').innerText = `📍 ${pessoaSorteada.regiao}`;
+            document.getElementById('chatInfoRodada').innerText = `Rodada ${rodadaAtual}/2`;
+
+            segundosRestantes = 15 * 60; 
+            
+            clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 segundosRestantes--;
                 if(segundosRestantes <= 0) {
@@ -445,7 +430,6 @@
             }, 1000);
         }
 
-        // Clica na ampulheta: mostra o tempo restante por 2 seg e volta a ser só ⏳
         function mostrarTempoRestante() {
             const btn = document.getElementById('btnCronometro');
             const mins = Math.floor(segundosRestantes / 60);
@@ -471,7 +455,6 @@
             msgs.scrollTop = msgs.scrollHeight;
         }
 
-        // Intervalo Kyukei de 1 hora (3600 segundos)
         function iniciarKyukei() {
             mudarTela('stepKyukei');
             let tempoKyukei = 60 * 60;
@@ -485,7 +468,7 @@
 
                 if(tempoKyukei <= 0) {
                     clearInterval(kyukeiInterval);
-                    rodadaAtual = 1; // Reseta as rodadas após o descanso
+                    rodadaAtual = 1;
                     alert("Seu tempo de descanso acabou! Você já pode usar novas rodadas.");
                     location.reload();
                 }
