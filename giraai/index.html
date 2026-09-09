@@ -11,7 +11,7 @@
             --bg-color: #f8fafc;
             --surface: #ffffff;
             --text-main: #1e293b;
-            --text-secondary: #64748b;
+            --text-secondary: #475569;
             --border-color: #e2e8f0;
             --radius-md: 14px;
             --radius-sm: 10px;
@@ -123,10 +123,10 @@
         /* Formulários e Botões */
         .input-box {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            font-size: 13px;
+            font-size: 14px;
             outline: none;
             text-align: center;
         }
@@ -134,15 +134,21 @@
             background: var(--accent-gradient);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: var(--radius-sm);
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             width: 100%;
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: opacity 0.3s ease, transform 0.2s ease;
         }
         .btn-main:active { transform: scale(0.98); }
+        .btn-disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
         /* Grade de Fotos */
         .grid-fotos {
@@ -150,20 +156,20 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             width: 100%;
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
             padding: 4px;
         }
         .foto-card {
             background: #f1f5f9;
             border-radius: 8px;
-            padding: 8px 4px;
+            padding: 10px 4px;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             border: 1px solid #cbd5e1;
             cursor: pointer;
         }
-        .foto-card span { font-size: 22px; display: block; margin-bottom: 2px; }
+        .foto-card span { font-size: 24px; display: block; margin-bottom: 4px; }
 
         /* Estilo da Tela de Chat */
         .chat-box {
@@ -181,7 +187,7 @@
             flex-grow: 1;
             overflow-y: auto;
             text-align: left;
-            font-size: 13px;
+            font-size: 14px;
             padding: 5px;
             color: #334155;
         }
@@ -192,18 +198,19 @@
         }
         .chat-input-area input {
             flex-grow: 1;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 13px;
         }
         .chat-input-area button {
             background: #3b82f6;
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-radius: 6px;
             font-weight: bold;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -221,33 +228,37 @@
 
         <!-- ETAPA 1: TERMOS DE USO E REGRAS -->
         <div id="stepTermos" class="step-screen active">
-            <h2>📜 Termos e Regras do GiraAí</h2>
-            <div style="font-size: 11.5px; color: var(--text-secondary); text-align: left; background: #f1f5f9; padding: 12px; border-radius: 8px; max-height: 180px; overflow-y: auto; line-height: 1.4;">
-                <p style="margin-top: 0; color: #1e3a8a; font-weight: bold;">Seja bem-vindo(a)!</p>
+            <h2 style="font-size: 20px; margin: 0 0 5px 0;">📜 Termos e Regras do GiraAí</h2>
+            <p style="font-size: 12px; color: #d97706; margin: 0 0 5px 0; font-weight: bold;">👇 Role até o final para liberar o botão</p>
+            
+            <div id="caixaTermos" onscroll="checarFimRolagem()" style="font-size: 13.5px; color: var(--text-secondary); text-align: left; background: #f1f5f9; padding: 14px; border-radius: 8px; height: 210px; overflow-y: auto; line-height: 1.5; border: 1px solid #cbd5e1;">
+                <p style="margin-top: 0; color: #1e3a8a; font-weight: bold; font-size: 15px;">Seja bem-vindo(a)!</p>
                 O <strong>GiraAí</strong> foi criado para que todos tenham a oportunidade de conversar com pessoas de perto ou de longe — de jovens a idosos —, trocando experiências, boas conversas e compartilhando lugares bonitos e divertidos.<br><br>
                 <strong>1. Boa Convivência e Respeito:</strong> É proibido qualquer tipo de ofensa, comentários inadequados, assédio ou compartilhamento de conteúdos impróprios. A violação resulta no encerramento imediato do acesso.<br><br>
                 <strong>2. Privacidade e Responsabilidade Individual:</strong> Cada usuário é responsável pelas informações que decide compartilhar. Evite a exposição precipitada de dados pessoais, zelando sempre pela própria segurança.<br><br>
-                <strong>3. Rodadas e Intervalo (*Kyukei*):</strong> Cada conversa dura 15 minutos. Você tem direito a 2 rodadas consecutivas. Após a 2ª rodada, haverá um descanso obrigatório de 1 hora antes de novas rodadas.
+                <strong>3. Rodadas e Intervalo (*Kyukei*):</strong> Cada conversa dura 15 minutos. Você tem direito a 2 rodadas consecutivas. Após a 2ª rodada, haverá um descanso obrigatório de 1 hora antes de novas rodadas.<br><br>
+                <div style="text-align: center; color: #1e3a8a; font-weight: bold; padding: 10px 0;">✨ Fim dos Termos. Agora você pode prosseguir! ✨</div>
             </div>
-            <button class="btn-main" onclick="irParaPerfil()">Li e Aceito os Termos ✅</button>
+
+            <button id="btnAceitar" class="btn-main btn-disabled" onclick="irParaPerfil()">Li e Aceito os Termos ✅</button>
         </div>
 
         <!-- ETAPA 2: CONFIGURAR PERFIL -->
         <div id="stepPerfil" class="step-screen">
-            <h2>👤 Seu Perfil</h2>
-            <p style="font-size: 11px; color: var(--text-secondary);">Puxado automaticamente do LINE. Você pode alterar se desejar:</p>
+            <h2 style="font-size: 20px;">👤 Seu Perfil</h2>
+            <p style="font-size: 12px; color: var(--text-secondary);">Puxado automaticamente do LINE. Você pode alterar se desejar:</p>
             
-            <div style="position: relative; width: 70px; height: 70px; margin: 0 auto;">
-                <div id="userAvatarPreview" style="font-size: 35px; background: #e2e8f0; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6;">👤</div>
+            <div style="position: relative; width: 75px; height: 75px; margin: 0 auto;">
+                <div id="userAvatarPreview" style="font-size: 38px; background: #e2e8f0; width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6;">👤</div>
             </div>
             
             <div style="width: 100%; text-align: left;">
-                <label style="font-size: 11px; font-weight: bold; color: var(--text-secondary);">Seu Nome / Apelido:</label>
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-secondary);">Seu Nome / Apelido:</label>
                 <input type="text" id="inputNome" class="input-box" value="Convidado LINE" placeholder="Digite seu nome ou apelido">
             </div>
 
             <div style="width: 100%; text-align: left;">
-                <label style="font-size: 11px; font-weight: bold; color: var(--text-secondary);">Escolher Ícone / Avatar Rápido:</label>
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-secondary);">Escolher Ícone / Avatar Rápido:</label>
                 <select id="selectAvatar" class="input-box" onchange="mudarAvatar(this.value)">
                     <option value="👤">Padrão (👤)</option>
                     <option value="👨‍💻">Homem Tech (👨‍💻)</option>
@@ -263,8 +274,8 @@
 
         <!-- ETAPA 3: GRADE DE FOTOS DAS PESSOAS ONLINE -->
         <div id="stepGrade" class="step-screen">
-            <h2>👥 Pessoas Online Agora</h2>
-            <p style="font-size: 11px; color: var(--text-secondary);">Usuários aguardando na rede</p>
+            <h2 style="font-size: 20px;">👥 Pessoas Online Agora</h2>
+            <p style="font-size: 12px; color: var(--text-secondary);">Usuários aguardando na rede</p>
             <div class="grid-fotos" id="gridFotos">
                 <!-- Preenchido dinamicamente via script -->
             </div>
@@ -273,29 +284,29 @@
 
         <!-- ETAPA 4: ROLETA COM SUSPENSE -->
         <div id="stepRoleta" class="step-screen">
-            <div style="font-size: 52px;" id="roletaIcone">🎰</div>
-            <h2 id="roletaTexto">Sorteando Região...</h2>
-            <p style="font-size: 12px; color: var(--text-secondary);">Gerando conexão surpresa pelo Japão...</p>
+            <div style="font-size: 60px;" id="roletaIcone">🎰</div>
+            <h2 id="roletaTexto" style="font-size: 20px;">Sorteando Região...</h2>
+            <p style="font-size: 13px; color: var(--text-secondary);">Gerando conexão surpresa pelo Japão...</p>
         </div>
 
         <!-- ETAPA 5: TELA DE CHAT COM IDENTIFICAÇÃO E BOTÃO VOLTAR AZUL -->
         <div id="stepChat" class="step-screen" style="justify-content: flex-start; height: 100%;">
             
             <!-- Barra Superior Compacta da Rodada com Botão Voltar Azul -->
-            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 4px 8px; border-radius: 6px;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <span id="chatInfoRodada" style="font-size: 11px; font-weight: bold; background: #fff; padding: 2px 6px; border-radius: 4px;">Rodada 1/2</span>
-                    <button id="btnCronometro" onclick="mostrarTempoRestante()" style="background: #1e3a8a; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">⏳</button>
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 6px 10px; border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="chatInfoRodada" style="font-size: 12px; font-weight: bold; background: #fff; padding: 3px 8px; border-radius: 4px;">Rodada 1/2</span>
+                    <button id="btnCronometro" onclick="mostrarTempoRestante()" style="background: #1e3a8a; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;">⏳</button>
                 </div>
-                <button onclick="irParaGrade()" style="background: #3b82f6; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">⬅️ Voltar</button>
+                <button onclick="irParaGrade()" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">⬅️ Voltar</button>
             </div>
 
             <!-- Dados da Pessoa Conectada -->
-            <div style="width: 100%; display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 10px; border-radius: 8px; text-align: left;">
-                <span id="chatAvatarConectado" style="font-size: 22px; background: #fff; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👤</span>
+            <div style="width: 100%; display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; text-align: left;">
+                <span id="chatAvatarConectado" style="font-size: 26px; background: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👤</span>
                 <div>
-                    <div id="chatNomeConectado" style="font-size: 11px; font-weight: bold; color: #1e3a8a;">Nome do Usuário</div>
-                    <div id="chatRegiaoConectada" style="font-size: 9px; color: #64748b;">📍 Região</div>
+                    <div id="chatNomeConectado" style="font-size: 13px; font-weight: bold; color: #1e3a8a;">Nome do Usuário</div>
+                    <div id="chatRegiaoConectada" style="font-size: 11px; color: #64748b;">📍 Região</div>
                 </div>
             </div>
             
@@ -312,9 +323,9 @@
 
         <!-- ETAPA 6: FIM DA RODADA 1 -->
         <div id="stepFimRodada1" class="step-screen">
-            <h2>🔔 Fim da 1ª Rodada!</h2>
-            <p style="font-size: 13px; color: var(--text-secondary);">Seu tempo de 15 minutos nesta conversa terminou.</p>
-            <div style="background: #eff6ff; border: 1px solid #3b82f6; padding: 12px; border-radius: 8px; font-size: 12px; color: #1e40af; font-weight: bold;">
+            <h2 style="font-size: 22px;">🔔 Fim da 1ª Rodada!</h2>
+            <p style="font-size: 14px; color: var(--text-secondary);">Seu tempo de 15 minutos nesta conversa terminou.</p>
+            <div style="background: #eff6ff; border: 1px solid #3b82f6; padding: 14px; border-radius: 8px; font-size: 13px; color: #1e40af; font-weight: bold;">
                 Você ainda tem direito a mais <strong>1 rodada</strong> de conversa!
             </div>
             <button class="btn-main" onclick="irParaGrade()">Iniciar 2ª Rodada 🎲</button>
@@ -322,12 +333,12 @@
 
         <!-- ETAPA 7: FIM DA RODADA 2 (KYUKEI) -->
         <div id="stepKyukei" class="step-screen">
-            <h2>☕ Hora do Descanso (Kyukei)</h2>
-            <p style="font-size: 13px; color: var(--text-secondary);">Você concluiu suas 2 rodadas permitidas.</p>
-            <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 12px; border-radius: 8px; font-size: 12px; color: #92400e; font-weight: bold;">
+            <h2 style="font-size: 22px;">☕ Hora do Descanso (Kyukei)</h2>
+            <p style="font-size: 14px; color: var(--text-secondary);">Você concluiu suas 2 rodadas permitidas.</p>
+            <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 14px; border-radius: 8px; font-size: 13px; color: #92400e; font-weight: bold;">
                 Aguarde o intervalo de <strong>1 hora</strong> para liberar novas rodadas.
             </div>
-            <div id="timerKyukei" style="font-size: 20px; font-weight: bold; color: #d97706; margin: 5px 0;">60:00</div>
+            <div id="timerKyukei" style="font-size: 24px; font-weight: bold; color: #d97706; margin: 8px 0;">60:00</div>
             <button class="btn-main" style="margin-top: 10px;" onclick="location.href='../chatindex.html'">Voltar ao Menu Principal</button>
         </div>
 
@@ -352,6 +363,16 @@
             track.dataset.initialized = "true";
         }
         window.addEventListener('load', configurarCarrossel);
+
+        // Validação de rolagem dos termos
+        function checarFimRolagem() {
+            const caixa = document.getElementById('caixaTermos');
+            const btn = document.getElementById('btnAceitar');
+            // Se chegou perto do fim (margem de 10 pixels)
+            if (caixa.scrollTop + caixa.clientHeight >= caixa.scrollHeight - 10) {
+                btn.classList.remove('btn-disabled');
+            }
+        }
 
         function mudarTela(idTela) {
             document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
@@ -394,7 +415,7 @@
             let tempoDecorrido = 0;
             const intervalo = setInterval(() => {
                 const tempReg = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
-                txt.innerHTML = `Sorteando região... <br><strong style="font-size:22px; color:#1e3a8a;">📍 ${tempReg}</strong>`;
+                txt.innerHTML = `Sorteando região... <br><strong style="font-size:24px; color:#1e3a8a;">📍 ${tempReg}</strong>`;
                 tempoDecorrido += 200;
 
                 if(tempoDecorrido >= 4000) {
