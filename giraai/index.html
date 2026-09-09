@@ -167,7 +167,7 @@
             text-align: center;
             font-size: 12px;
             border: 1px solid #cbd5e1;
-            cursor: pointer;
+            /* Removido o cursor pointer para indicar que não é clicável */
         }
         .foto-card span { font-size: 24px; display: block; margin-bottom: 4px; }
 
@@ -233,7 +233,7 @@
             
             <div id="caixaTermos" onscroll="checarFimRolagem()" style="font-size: 13.5px; color: var(--text-secondary); text-align: left; background: #f1f5f9; padding: 14px; border-radius: 8px; height: 210px; overflow-y: auto; line-height: 1.5; border: 1px solid #cbd5e1;">
                 <p style="margin-top: 0; color: #1e3a8a; font-weight: bold; font-size: 15px;">Seja bem-vindo(a)!</p>
-                O <strong>GiraAí</strong> foi criado para que todos tenham a oportunidade de conversar com pessoas de perto ou de longe — de jovens a idosos —, trocando experiências, boas conversas e compartilhando lugares bonitos e divertidos.<br><br>
+                O <strong>GiraAí</strong> foi criado para que todos tenham a oportunidade de conversar com pessoas de perto ou de longe — de jovens a idosos, independente de gênero —, trocando experiências, boas conversas e compartilhando lugares bonitos e divertidos.<br><br>
                 <strong>1. Boa Convivência e Respeito:</strong> É proibido qualquer tipo de ofensa, comentários inadequados, assédio ou compartilhamento de conteúdos impróprios. A violação resulta no encerramento imediato do acesso.<br><br>
                 <strong>2. Privacidade e Responsabilidade Individual:</strong> Cada usuário é responsável pelas informações que decide compartilhar. Evite a exposição precipitada de dados pessoais, zelando sempre pela própria segurança.<br><br>
                 <strong>3. Rodadas e Intervalo (*Kyukei*):</strong> Cada conversa dura 15 minutos. Você tem direito a 2 rodadas consecutivas. Após a 2ª rodada, haverá um descanso obrigatório de 1 hora antes de novas rodadas.<br><br>
@@ -277,7 +277,7 @@
             <h2 style="font-size: 20px;">👥 Pessoas Online Agora</h2>
             <p style="font-size: 12px; color: var(--text-secondary);">Usuários aguardando na rede</p>
             <div class="grid-fotos" id="gridFotos">
-                <!-- Preenchido dinamicamente via script -->
+                <!-- Preenchido dinamicamente via script (sem clique individual) -->
             </div>
             <button class="btn-main" onclick="iniciarRoleta()">Girar Roleta Agora 🎲</button>
         </div>
@@ -289,10 +289,9 @@
             <p style="font-size: 13px; color: var(--text-secondary);">Gerando conexão surpresa pelo Japão...</p>
         </div>
 
-        <!-- ETAPA 5: TELA DE CHAT COM IDENTIFICAÇÃO E BOTÃO VOLTAR AZUL -->
+        <!-- ETAPA 5: TELA DE CHAT -->
         <div id="stepChat" class="step-screen" style="justify-content: flex-start; height: 100%;">
             
-            <!-- Barra Superior Compacta da Rodada com Botão Voltar Azul -->
             <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 6px 10px; border-radius: 6px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span id="chatInfoRodada" style="font-size: 12px; font-weight: bold; background: #fff; padding: 3px 8px; border-radius: 4px;">Rodada 1/2</span>
@@ -301,7 +300,6 @@
                 <button onclick="irParaGrade()" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">⬅️ Voltar</button>
             </div>
 
-            <!-- Dados da Pessoa Conectada -->
             <div style="width: 100%; display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; text-align: left;">
                 <span id="chatAvatarConectado" style="font-size: 26px; background: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👤</span>
                 <div>
@@ -368,7 +366,6 @@
         function checarFimRolagem() {
             const caixa = document.getElementById('caixaTermos');
             const btn = document.getElementById('btnAceitar');
-            // Se chegou perto do fim (margem de 10 pixels)
             if (caixa.scrollTop + caixa.clientHeight >= caixa.scrollHeight - 10) {
                 btn.classList.remove('btn-disabled');
             }
@@ -389,17 +386,13 @@
             const grid = document.getElementById('gridFotos');
             grid.innerHTML = '';
             
+            // Preenche a grade apenas visualmente (sem evento de clique)
             for(let i=1; i<=20; i++) {
                 const reg = estadosJapao[i % estadosJapao.length];
                 const av = avataresDisponiveis[i % avataresDisponiveis.length];
-                grid.innerHTML += `<div class="foto-card" onclick="selecionarPessoa('${av}', 'User ${i}', '${reg}')"><span>${av}</span>User ${i}<br><small style="color:#666;">📍 ${reg}</small></div>`;
+                grid.innerHTML += `<div class="foto-card"><span>${av}</span>User ${i}<br><small style="color:#666;">📍 ${reg}</small></div>`;
             }
             mudarTela('stepGrade');
-        }
-
-        function selecionarPessoa(avatar, nome, regiao) {
-            pessoaSorteada = { avatar, nome, regiao };
-            iniciarRoleta();
         }
 
         function iniciarRoleta() {
