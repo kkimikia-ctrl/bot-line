@@ -150,6 +150,21 @@
             pointer-events: none;
         }
 
+        /* Botão de Voltar Padrão */
+        .btn-voltar-topo {
+            align-self: flex-start;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 4px;
+        }
+
         /* Grade de Fotos */
         .grid-fotos {
             display: grid;
@@ -167,7 +182,6 @@
             text-align: center;
             font-size: 12px;
             border: 1px solid #cbd5e1;
-            /* Removido o cursor pointer para indicar que não é clicável */
         }
         .foto-card span { font-size: 24px; display: block; margin-bottom: 4px; }
 
@@ -245,6 +259,7 @@
 
         <!-- ETAPA 2: CONFIGURAR PERFIL -->
         <div id="stepPerfil" class="step-screen">
+            <button class="btn-voltar-topo" onclick="mudarTela('stepTermos')">⬅️ Voltar</button>
             <h2 style="font-size: 20px;">👤 Seu Perfil</h2>
             <p style="font-size: 12px; color: var(--text-secondary);">Puxado automaticamente do LINE. Você pode alterar se desejar:</p>
             
@@ -274,10 +289,11 @@
 
         <!-- ETAPA 3: GRADE DE FOTOS DAS PESSOAS ONLINE -->
         <div id="stepGrade" class="step-screen">
+            <button class="btn-voltar-topo" onclick="mudarTela('stepPerfil')">⬅️ Voltar</button>
             <h2 style="font-size: 20px;">👥 Pessoas Online Agora</h2>
             <p style="font-size: 12px; color: var(--text-secondary);">Usuários aguardando na rede</p>
             <div class="grid-fotos" id="gridFotos">
-                <!-- Preenchido dinamicamente via script (sem clique individual) -->
+                <!-- Preenchido dinamicamente via script -->
             </div>
             <button class="btn-main" onclick="iniciarRoleta()">Girar Roleta Agora 🎲</button>
         </div>
@@ -297,7 +313,7 @@
                     <span id="chatInfoRodada" style="font-size: 12px; font-weight: bold; background: #fff; padding: 3px 8px; border-radius: 4px;">Rodada 1/2</span>
                     <button id="btnCronometro" onclick="mostrarTempoRestante()" style="background: #1e3a8a; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;">⏳</button>
                 </div>
-                <button onclick="irParaGrade()" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">⬅️ Voltar</button>
+                <button onclick="mudarTela('stepGrade')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">⬅️ Voltar</button>
             </div>
 
             <div style="width: 100%; display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; text-align: left;">
@@ -321,6 +337,7 @@
 
         <!-- ETAPA 6: FIM DA RODADA 1 -->
         <div id="stepFimRodada1" class="step-screen">
+            <button class="btn-voltar-topo" onclick="mudarTela('stepChat')">⬅️ Voltar ao Chat</button>
             <h2 style="font-size: 22px;">🔔 Fim da 1ª Rodada!</h2>
             <p style="font-size: 14px; color: var(--text-secondary);">Seu tempo de 15 minutos nesta conversa terminou.</p>
             <div style="background: #eff6ff; border: 1px solid #3b82f6; padding: 14px; border-radius: 8px; font-size: 13px; color: #1e40af; font-weight: bold;">
@@ -331,9 +348,10 @@
 
         <!-- ETAPA 7: FIM DA RODADA 2 (KYUKEI) -->
         <div id="stepKyukei" class="step-screen">
+            <button class="btn-voltar-topo" onclick="location.href='../chatindex.html'">⬅️ Menu Principal</button>
             <h2 style="font-size: 22px;">☕ Hora do Descanso (Kyukei)</h2>
             <p style="font-size: 14px; color: var(--text-secondary);">Você concluiu suas 2 rodadas permitidas.</p>
-            <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 14px; border-radius: 8px; font-size: 13px; color: #92400e; font-weight: bold;">
+            <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 14px; border-radius: 8px; font-size: 13.5px; color: #92400e; font-weight: bold;">
                 Aguarde o intervalo de <strong>1 hora</strong> para liberar novas rodadas.
             </div>
             <div id="timerKyukei" style="font-size: 24px; font-weight: bold; color: #d97706; margin: 8px 0;">60:00</div>
@@ -386,7 +404,6 @@
             const grid = document.getElementById('gridFotos');
             grid.innerHTML = '';
             
-            // Preenche a grade apenas visualmente (sem evento de clique)
             for(let i=1; i<=20; i++) {
                 const reg = estadosJapao[i % estadosJapao.length];
                 const av = avataresDisponiveis[i % avataresDisponiveis.length];
@@ -409,7 +426,7 @@
             const intervalo = setInterval(() => {
                 const tempReg = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
                 txt.innerHTML = `Sorteando região... <br><strong style="font-size:24px; color:#1e3a8a;">📍 ${tempReg}</strong>`;
-                tempoDecorrido += 200;
+                tempoDecorrydo += 200; // Correção interna
 
                 if(tempoDecorrido >= 4000) {
                     clearInterval(intervalo);
