@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat da Comunidade</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+            --secondary-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --line-green: #06C755;
+            --bg-color: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(180deg, #f0f4ff 0%, #f8fafc 100%); 
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            padding-top: 160px; /* Ajustado proporcionalmente para a altura padrão de 100px do carrossel */
+            color: var(--text-main);
+        }
+
+        /* --- CARROSSEL INFINITO AUTOMÁTICO DE BANNERS (TAMANHO PADRÃO) --- */
+        .banner-carousel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #e4e4e9;
+            padding: 10px 0;
+            z-index: 1000;
+            overflow-x: auto;
+            display: flex;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            -webkit-overflow-scrolling: touch;
+            box-sizing: border-box;
+        }
+        .banner-carousel::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            padding: 0 12px;
+            animation: rolarInfinito 35s linear infinite;
+        }
+        .banner-carousel:hover .carousel-track,
+        .banner-carousel:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .ad-banner-card {
+            flex: 0 0 160px; /* Mesma largura padrão do outro código */
+            height: 100px; /* Mesma altura padrão de 100px */
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #b0bec5;
+            cursor: pointer;
+        }
+        .ad-banner-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .ad-placeholder-text {
+            font-size: 11px;
+            color: #555;
+            font-weight: bold;
+            z-index: 2;
+            text-align: center;
+            padding: 0 5px;
+            background: rgba(255, 255, 255, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
+        }
+        
+        /* Header Colorido e Moderno */
+        .chat-header-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .header-icon {
+            font-size: 18px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        h1 { 
+            font-size: 18px; 
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0; 
+            font-weight: 800;
+        }
+
+        /* Ações do Topo */
+        .acoes-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn-topo {
+            background: var(--surface);
+            color: #3b82f6;
+            border: 1px solid #bfdbfe;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(59, 130, 246, 0.08);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-topo:active { transform: scale(0.96); }
+
+        .btn-criar { 
+            background: var(--primary-gradient); 
+            color: white; 
+            border: none; 
+            padding: 7px 16px; 
+            border-radius: var(--radius-sm); 
+            font-weight: 700; 
+            font-size: 12px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-criar:active { transform: scale(0.96); }
+
+        /* Salas em Lista Vertical com Cores Vivas */
+        .sala-atual-titulo {
+            font-size: 11px;
+            font-weight: 800;
+            color: #475569;
+            margin: 0 0 4px 2px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .salas-lista-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 8px;
+            max-height: 110px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            padding-right: 2px;
+        }
+        .salas-lista-vertical::-webkit-scrollbar { width: 4px; }
+        .salas-lista-vertical::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        .sala-item {
+            background: var(--surface);
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        
+        .sala-item:hover {
+            border-color: #cbd5e1;
+            background: #faf5ff;
+        }
+
+        .sala-item.ativa {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        .sala-item.ativa .seta { color: rgba(255,255,255,0.9); }
+        .seta { color: #94a3b8; font-size: 13px; font-weight: bold; }
+
+        /* Info da Sala Ativa Colorida */
+        .info-sala-ativa {
+            background: linear-gradient(135deg, #eff6ff, #f3e8ff);
+            border-left: 4px solid #8b5cf6;
+            padding: 7px 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 11.5px;
+            color: #581c87;
+            font-weight: 600;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(139, 92, 246, 0.08);
+        }
+        .info-sala-ativa b { color: #6d28d9; }
+
+        /* Container do Chat */
+        .chat-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            padding: 12px; 
+            background: var(--surface); 
+            border-radius: var(--radius-md); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04); 
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .chat-container::-webkit-scrollbar { width: 4px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        .mensagem-linha {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            max-width: 88%;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mensagem-linha.minha-mensagem {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar-usuario {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e2e8f0;
+            flex-shrink: 0;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .conteudo-balao {
+            display: flex;
+            flex-direction: column;
+        }
+        .mensagem-linha.minha-mensagem .conteudo-balao {
+            align-items: flex-end;
+        }
+
+        .nome-usuario {
+            font-size: 10px;
+            color: #64748b;
+            margin-bottom: 2px;
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        .mensagem-balao {
+            padding: 9px 13px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            background-color: #f1f5f9; 
+            color: #1e293b; 
+            border-bottom-left-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        
+        .minha-mensagem .mensagem-balao {
+            background-color: var(--line-green) !important;
+            color: #ffffff !important;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 3px;
+            box-shadow: 0 3px 10px rgba(6, 199, 85, 0.3);
+        }
+
+        /* Rodapé / Input */
+        .footer-fixed {
+            background: var(--surface); 
+            padding: 8px 10px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05); 
+            flex-shrink: 0;
+            border: 1px solid #e2e8f0;
+        }
+        .chat-input-area { display: flex; gap: 8px; align-items: center; }
+        
+        input[type="text"] { 
+            flex-grow: 1; 
+            padding: 10px 14px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            outline: none; 
+            background: #f8fafc;
+            color: #1e293b;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #8b5cf6;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+        }
+
+        button#enviar-btn { 
+            background-color: var(--line-green); 
+            color: white; 
+            border: none; 
+            padding: 0 16px; 
+            height: 38px;
+            border-radius: 20px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 13px;
+            box-shadow: 0 3px 10px rgba(6, 199, 85, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        button#enviar-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <!-- Carrossel de Banners Fixo no Topo (Tamanho Padrão) -->
+    <div class="banner-carousel">
+        <div class="carousel-track" id="carouselTrack">
+            <!-- Banner 1 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-chat-1', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Chat 1</span></div>
+            </div>
+            <!-- Banner 2 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-chat-2', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Chat 2</span></div>
+            </div>
+            <!-- Banner 3 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-chat-3', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Chat 3</span></div>
+            </div>
+            <!-- Banner 4 -->
+            <div class="ad-banner-card" onclick="registrarCliqueBanner('banner-chat-4', 'fale-conosco.html')">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Chat 4</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-header-main">
+        <div class="header-icon">💬</div>
+        <h1>Chat da Comunidade</h1>
+    </div>
+    
+    <div class="acoes-topo">
+        <a href="javascript:history.back()" class="btn-topo">⬅️ Voltar</a>
+        <button id="btn-criar-sala" class="btn-criar">+ Criar Sala</button>
+        <a href="index.html" class="btn-topo">🏠 Home</a>
+    </div>
+
+    <span class="sala-atual-titulo">Salas Disponíveis:</span>
+    <div id="salas-lista" class="salas-lista-vertical">
+        <div style="font-size: 13px; color: #64748b; padding: 10px; text-align: center;">Carregando salas...</div>
+    </div>
+
+    <div id="info-sala-container">
+        <div id="nome-sala-ativa" class="info-sala-ativa">💬 <b>Geral</b> — Aberta por: Sistema</div>
+    </div>
+
+    <div id="mensagens-lista" class="chat-container">
+        <div style="font-size: 13px; color: #64748b; text-align: center; padding: 15px;">Selecione uma sala acima para ver as mensagens.</div>
+    </div>
+
+    <div class="footer-fixed">
+        <div class="chat-input-area">
+            <input type="text" id="mensagem-input" placeholder="Digite sua mensagem...">
+            <button id="enviar-btn">Enviar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+          authDomain: "ajuda-jp.firebaseapp.com",
+          projectId: "ajuda-jp",
+          storageBucket: "ajuda-jp.firebasestorage.app",
+          messagingSenderId: "40121072206",
+          appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- INICIALIZAÇÃO DO CARROSSEL INFINITO ---
+        function configurarCarrosselInfinito() {
+            const track = document.getElementById('carouselTrack');
+            if (!track || track.dataset.initialized === "true") return;
+            
+            const items = Array.from(track.children);
+            items.forEach(item => {
+                const clone = item.cloneNode(true);
+                track.appendChild(clone);
+            });
+            
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+            track.dataset.initialized = "true";
+        }
+
+        window.addEventListener('load', () => {
+            configurarCarrosselInfinito();
+        });
+
+        // --- FUNÇÃO DE REGISTRO DE CLIQUES NO FIREBASE ---
+        window.registrarCliqueBanner = async function(bannerId, urlDestino) {
+            try {
+                const bannerRef = doc(db, 'banners', bannerId);
+                await updateDoc(bannerRef, {
+                    cliques: increment(1)
+                });
+            } catch (error) {
+                console.log("Erro ao contabilizar clique ou documento não criado ainda: ", error);
+            } finally {
+                window.location.href = urlDestino;
+            }
+        };
+
+        let meuNome = "Participante";
+        let minhaFoto = "https://api.dicebear.com/7.x/bottts/svg?seed=Participante";
+
+        try {
+            await liff.init({ liffId: "2010902449-KWNNNsxn" });
+            if (!liff.isLoggedIn()) {
+                liff.login();
+            } else {
+                const profile = await liff.getProfile();
+                if (profile.displayName) meuNome = profile.displayName;
+                if (profile.pictureUrl) minhaFoto = profile.pictureUrl;
+            }
+        } catch (error) {
+            console.warn("LIFF fallback ativo.", error);
+            let savedName = localStorage.getItem('chat_nome');
+            if (!savedName || savedName === "Anônimo") {
+                savedName = prompt("Digite seu apelido para o chat:") || ("Usuário_" + Math.floor(Math.random() * 1000));
+                localStorage.setItem('chat_nome', savedName);
+            }
+            meuNome = savedName;
+            minhaFoto = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(meuNome)}`;
+        }
+
+        const inputMensagem = document.getElementById('mensagem-input');
+        const botaoEnviar = document.getElementById('enviar-btn');
+        const listaMensagens = document.getElementById('mensagens-lista');
+        const botaoCriarSala = document.getElementById('btn-criar-sala');
+        const listaSalas = document.getElementById('salas-lista');
+        const divInfoSala = document.getElementById('nome-sala-ativa');
+
+        let salaAtualId = "geral";
+        let unsubMensagens = null;
+
+        function carregarMensagensDaSala(salaId, nomeSala, criadoPor) {
+            salaAtualId = salaId;
+            const autorCriacao = criadoPor || "Sistema";
+            divInfoSala.innerHTML = `💬 <b>${nomeSala}</b> — Aberta por: ${autorCriacao}`;
+
+            if (unsubMensagens) unsubMensagens();
+
+            const qMensagens = query(collection(db, "mensagens"), where("salaId", "==", salaId));
+            
+            unsubMensagens = onSnapshot(qMensagens, (snapshot) => {
+                listaMensagens.innerHTML = ""; 
+                if (snapshot.empty) {
+                    listaMensagens.innerHTML = '<div style="font-size: 13px; color: #64748b; text-align: center; padding: 15px;">Nenhuma mensagem nesta sala ainda. Seja o primeiro a escrever!</div>';
+                    return;
+                }
+                
+                const mensagensArray = [];
+                snapshot.forEach((doc) => mensagensArray.push(doc.data()));
+                mensagensArray.sort((a, b) => (a.data || 0) - (b.data || 0));
+
+                mensagensArray.forEach((mensagem) => {
+                    const linhaDiv = document.createElement('div');
+                    linhaDiv.classList.add('mensagem-linha');
+
+                    const ehMinha = mensagem.autor === meuNome;
+                    if (ehMinha) linhaDiv.classList.add('minha-mensagem');
+
+                    const fotoUrl = mensagem.foto || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(mensagem.autor || 'User')}`;
+
+                    linhaDiv.innerHTML = `
+                        <img src="${fotoUrl}" class="avatar-usuario" alt="Avatar">
+                        <div class="conteudo-balao">
+                            <span class="nome-usuario">${mensagem.autor || 'Anônimo'}</span>
+                            <div class="mensagem-balao">${mensagem.texto}</div>
+                        </div>
+                    `;
+                    listaMensagens.appendChild(linhaDiv);
+                });
+                listaMensagens.scrollTop = listaMensagens.scrollHeight;
+            });
+        }
+
+        botaoEnviar.addEventListener('click', async () => {
+            const texto = inputMensagem.value.trim();
+            if (texto === "") return;
+
+            try {
+                await addDoc(collection(db, "mensagens"), {
+                    texto: texto,
+                    salaId: salaAtualId,
+                    autor: meuNome,
+                    foto: minhaFoto,
+                    data: new Date().getTime()
+                });
+                inputMensagem.value = "";
+            } catch (e) {
+                console.error("Erro ao enviar mensagem: ", e);
+            }
+        });
+
+        inputMensagem.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') botaoEnviar.click();
+        });
+
+        botaoCriarSala.addEventListener('click', async () => {
+            const nomeSala = prompt("Digite o nome da nova sala:");
+            if (nomeSala && nomeSala.trim() !== "") {
+                try {
+                    await addDoc(collection(db, "salas"), {
+                        nome: nomeSala.trim(),
+                        criador: meuNome,
+                        criadoEm: new Date().getTime()
+                    });
+                } catch (e) {
+                    console.error("Erro ao criar sala: ", e);
+                }
+            }
+        });
+
+        onSnapshot(collection(db, "salas"), (snapshot) => {
+            listaSalas.innerHTML = "";
+            const salasArray = [{ id: "geral", nome: "Geral", criador: "Sistema", criadoEm: 0 }];
+
+            snapshot.forEach((doc) => salasArray.push({ id: doc.id, ...doc.data() }));
+            salasArray.sort((a, b) => (b.criadoEm || 0) - (a.criadoEm || 0));
+
+            let primeiraVez = true;
+            salasArray.forEach((sala) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('sala-item');
+                itemDiv.innerHTML = `<span># ${sala.nome}</span><span class="seta">➔</span>`;
+                
+                if (sala.id === salaAtualId) itemDiv.classList.add('ativa');
+
+                itemDiv.addEventListener('click', () => {
+                    document.querySelectorAll('.sala-item').forEach(i => i.classList.remove('ativa'));
+                    itemDiv.classList.add('ativa');
+                    carregarMensagensDaSala(sala.id, sala.nome, sala.criador);
+                });
+
+                listaSalas.appendChild(itemDiv);
+
+                if (primeiraVez && salaAtualId === "geral" && sala.id === "geral") {
+                    carregarMensagensDaSala(sala.id, sala.nome, sala.criador);
+                    primeiraVez = false;
+                }
+            });
+
+            const salaAtualObj = salasArray.find(s => s.id === salaAtualId);
+            if (salaAtualObj) {
+                carregarMensagensDaSala(salaAtualObj.id, salaAtualObj.nome, salaAtualObj.criador);
+            } else if (salasArray.length > 0) {
+                carregarMensagensDaSala(salasArray[0].id, salasArray[0].nome, salasArray[0].criador);
+            }
+        });
+    </script>
+</body>
+</html>
