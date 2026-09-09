@@ -201,7 +201,7 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            font-size: 18px;
+            font-size: 24px;
             z-index: 7;
             animation: bounceTooth 0.6s infinite alternate;
         }
@@ -210,10 +210,23 @@
             100% { transform: translateY(-4px); }
         }
 
-        /* Ferramentas / Animações de Ação */
+        /* Babá Ativa indicador visual */
+        .nanny-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 22px;
+            z-index: 7;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3px 7px;
+            border-radius: 10px;
+            border: 1px solid #ffb6c1;
+        }
+
+        /* Ferramentas / Animações de Ação (Aumentadas para melhor visualização) */
         .broom-tool {
             position: absolute;
-            font-size: 32px;
+            font-size: 45px;
             z-index: 10;
             animation: sweepAction 1s ease-in-out infinite;
             pointer-events: none;
@@ -226,16 +239,16 @@
 
         .toothbrush-tool {
             position: absolute;
-            top: 42px;
-            left: 45px;
-            font-size: 24px;
+            top: 35px;
+            left: 35px;
+            font-size: 46px;
             z-index: 10;
             animation: brushAction 0.3s ease-in-out infinite alternate;
             pointer-events: none;
         }
         @keyframes brushAction {
             0% { transform: translateX(0) rotate(0deg); }
-            100% { transform: translateX(8px) rotate(15deg); }
+            100% { transform: translateX(12px) rotate(20deg); }
         }
 
         /* Animação da Ambulância */
@@ -243,7 +256,7 @@
             position: absolute;
             bottom: 20px;
             left: -60px;
-            font-size: 32px;
+            font-size: 40px;
             z-index: 10;
             transform: scaleX(-1);
             animation: driveAmbulance 3s linear forwards;
@@ -257,7 +270,7 @@
         /* Sujeira na tela */
         .poop-item {
             position: absolute;
-            font-size: 24px;
+            font-size: 28px;
             z-index: 6;
             cursor: pointer;
             animation: popIn 0.3s ease;
@@ -287,7 +300,7 @@
 
         .effect-overlay {
             position: absolute;
-            font-size: 28px;
+            font-size: 32px;
             animation: blinkEffect 0.4s ease-in-out infinite alternate;
             z-index: 5;
             pointer-events: none;
@@ -299,7 +312,7 @@
 
         .drop-water {
             position: absolute;
-            font-size: 24px;
+            font-size: 30px;
             animation: fallDrop 0.6s linear infinite;
             z-index: 5;
             pointer-events: none;
@@ -479,6 +492,13 @@
             color: #2c3e50;
             padding: 10px;
         }
+        .btn-baba {
+            grid-column: span 3;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 3px 8px rgba(250, 112, 154, 0.3);
+            color: #fff;
+            padding: 10px;
+        }
         .btn-voltar-menu {
             display: block;
             width: 100%;
@@ -559,6 +579,7 @@
             <button onclick="escovarDentes()">🪥 Escovar</button>
             <button onclick="irHospital()">🏥 Hospital</button>
             <button class="btn-passeio" id="btn-acao-passeio" onclick="alternarPasseio()">🌳 Ir Passear</button>
+            <button class="btn-baba" id="btn-acao-baba" onclick="alternarBaba()">👩‍🍼 Ativar Babá</button>
         </div>
 
         <button class="btn-reset" onclick="reiniciarJogo()">🔄 Reiniciar Jogo</button>
@@ -580,6 +601,7 @@
             comCarie: false,
             emPasseio: false,
             dormindo: false,
+            temBaba: false,
             ultimaAtualizacao: Date.now()
         };
 
@@ -588,7 +610,7 @@
 
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v18');
+                const salvo = localStorage.getItem('petton_css_v20');
                 if (salvo) {
                     pet = JSON.parse(salvo);
                     calcularTempoAusente();
@@ -602,34 +624,37 @@
         function salvarJogo() {
             try {
                 pet.ultimaAtualizacao = Date.now();
-                localStorage.setItem('petton_css_v18', JSON.stringify(pet));
+                localStorage.setItem('petton_css_v20', JSON.stringify(pet));
             } catch (e) {
                 console.error("Erro ao salvar", e);
             }
         }
 
-        // Lógica que calcula o tempo que passou offline
         function calcularTempoAusente() {
             if (pet.fase === "ovo") return;
 
             const agora = Date.now();
             const diferencaMs = agora - (pet.ultimaAtualizacao || agora);
-            const minutosPassados = Math.floor(diferencaMs / (1000 * 60)); // Converte para minutos
+            const minutosPassados = Math.floor(diferencaMs / (1000 * 60));
 
             if (minutosPassados > 0) {
-                // Diminui a fome e a felicidade gradualmente de acordo com os minutos longe
+                if (pet.temBaba) {
+                    setTimeout(() => {
+                        document.getElementById('texto-status').innerText = `A Babá cuidou de ${pet.nome} perfeitamente enquanto você se ausentou por ${minutosPassados} min! 👩‍🍼✨`;
+                    }, 500);
+                    return;
+                }
+
                 let perdaFome = minutosPassados * 2; 
                 pet.fome = Math.max(0, pet.fome - perdaFome);
 
-                // Se estiver dormindo, recupera energia; se acordado, gasta bem devagar
                 if (pet.dormindo) {
                     pet.energia = Math.min(100, pet.energia + (minutosPassados * 5));
-                    if (pet.energia >= 100) pet.dormindo = false; // Acorda se encher
+                    if (pet.energia >= 100) pet.dormindo = false;
                 } else {
                     pet.energia = Math.max(0, pet.energia - Math.floor(minutosPassados * 0.5));
                 }
 
-                // Chance de acumular sujeira ou ficar doente dependendo do tempo fora
                 if (minutosPassados >= 5 && pet.sujeiras < 3) {
                     let novasSujeiras = Math.min(3, pet.sujeiras + Math.floor(minutosPassados / 10));
                     pet.sujeiras = novasSujeiras;
@@ -639,7 +664,6 @@
                     pet.doente = true;
                 }
 
-                // Mensagem informativa ao retornar
                 setTimeout(() => {
                     document.getElementById('texto-status').innerText = `Você ficou fora por ${minutosPassados} min. ${pet.nome} sentiu sua falta! 🐾`;
                 }, 500);
@@ -648,8 +672,8 @@
 
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v18');
-                pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, comCarie: false, emPasseio: false, dormindo: false, ultimaAtualizacao: Date.now() };
+                localStorage.removeItem('petton_css_v20');
+                pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, comCarie: false, emPasseio: false, dormindo: false, temBaba: false, ultimaAtualizacao: Date.now() };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
                 aplicarEstadoAtual();
@@ -700,6 +724,19 @@
             if (pet.fase === "adulto") catBox.classList.add('adult');
             if (pet.doente) catBox.classList.add('sick');
 
+            // Ícone da Babá atualizado para emoji de mulher com bebê/cuidadora
+            let existingNanny = catBox.querySelector('.nanny-badge');
+            if (pet.temBaba) {
+                if (!existingNanny) {
+                    let nannyBadge = document.createElement('div');
+                    nannyBadge.className = 'nanny-badge';
+                    nannyBadge.innerText = '👩‍🍼';
+                    catBox.appendChild(nannyBadge);
+                }
+            } else if (existingNanny) {
+                existingNanny.remove();
+            }
+
             if (pet.comCarie) {
                 catBox.classList.add('carie');
                 if (!catBox.querySelector('.toothache-icon')) {
@@ -731,6 +768,13 @@
                 document.getElementById('cenario-fundo').classList.remove('outdoor');
                 catBox.classList.add('floating');
                 document.getElementById('btn-acao-passeio').innerText = "🌳 Ir Passear";
+            }
+
+            const btnBaba = document.getElementById('btn-acao-baba');
+            if (pet.temBaba) {
+                btnBaba.innerText = "🛑 Desativar Babá";
+            } else {
+                btnBaba.innerText = "👩‍🍼 Ativar Babá";
             }
         }
 
@@ -1196,6 +1240,19 @@
                 pet.emPasseio = false;
                 btnPasseio.innerText = "🌳 Ir Passear";
                 document.getElementById('texto-status').innerText = `${pet.nome} voltou seguro para casa. (+10 Pontos) 🏡`;
+            }
+            configurarVisualFase();
+            atualizarTela();
+        }
+
+        function alternarBaba() {
+            if (pet.fase === "ovo" || emJogos) return;
+            pet.temBaba = !pet.temBaba;
+            
+            if (pet.temBaba) {
+                document.getElementById('texto-status').innerText = `Babá contratada! Ela vai cuidar de ${pet.nome} enquanto você estiver ausente. 👩‍🍼👶`;
+            } else {
+                document.getElementById('texto-status').innerText = `Babá dispensada. O gatinho voltará a sentir a ausência normalmente. 🐾`;
             }
             configurarVisualFase();
             atualizarTela();
