@@ -579,7 +579,8 @@
             doente: false,
             comCarie: false,
             emPasseio: false,
-            dormindo: false
+            dormindo: false,
+            ultimaAtualizacao: Date.now()
         };
 
         let emJogos = false;
@@ -587,9 +588,10 @@
 
         function carregarJogo() {
             try {
-                const salvo = localStorage.getItem('petton_css_v17');
+                const salvo = localStorage.getItem('petton_css_v18');
                 if (salvo) {
                     pet = JSON.parse(salvo);
+                    calcularTempoAusente();
                 }
             } catch (e) {
                 console.error("Erro ao carregar", e);
@@ -599,16 +601,55 @@
 
         function salvarJogo() {
             try {
-                localStorage.setItem('petton_css_v17', JSON.stringify(pet));
+                pet.ultimaAtualizacao = Date.now();
+                localStorage.setItem('petton_css_v18', JSON.stringify(pet));
             } catch (e) {
                 console.error("Erro ao salvar", e);
             }
         }
 
+        // Lógica que calcula o tempo que passou offline
+        function calcularTempoAusente() {
+            if (pet.fase === "ovo") return;
+
+            const agora = Date.now();
+            const diferencaMs = agora - (pet.ultimaAtualizacao || agora);
+            const minutosPassados = Math.floor(diferencaMs / (1000 * 60)); // Converte para minutos
+
+            if (minutosPassados > 0) {
+                // Diminui a fome e a felicidade gradualmente de acordo com os minutos longe
+                let perdaFome = minutosPassados * 2; 
+                pet.fome = Math.max(0, pet.fome - perdaFome);
+
+                // Se estiver dormindo, recupera energia; se acordado, gasta bem devagar
+                if (pet.dormindo) {
+                    pet.energia = Math.min(100, pet.energia + (minutosPassados * 5));
+                    if (pet.energia >= 100) pet.dormindo = false; // Acorda se encher
+                } else {
+                    pet.energia = Math.max(0, pet.energia - Math.floor(minutosPassados * 0.5));
+                }
+
+                // Chance de acumular sujeira ou ficar doente dependendo do tempo fora
+                if (minutosPassados >= 5 && pet.sujeiras < 3) {
+                    let novasSujeiras = Math.min(3, pet.sujeiras + Math.floor(minutosPassados / 10));
+                    pet.sujeiras = novasSujeiras;
+                }
+
+                if ((pet.sujeiras >= 3 || pet.fome <= 10) && !pet.doente) {
+                    pet.doente = true;
+                }
+
+                // Mensagem informativa ao retornar
+                setTimeout(() => {
+                    document.getElementById('texto-status').innerText = `Você ficou fora por ${minutosPassados} min. ${pet.nome} sentiu sua falta! 🐾`;
+                }, 500);
+            }
+        }
+
         function reiniciarJogo() {
             if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v17');
-                pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, comCarie: false, emPasseio: false, dormindo: false };
+                localStorage.removeItem('petton_css_v18');
+                pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, comCarie: false, emPasseio: false, dormindo: false, ultimaAtualizacao: Date.now() };
                 emJogos = false;
                 if(intervaloZzz) clearInterval(intervaloZzz);
                 aplicarEstadoAtual();
@@ -1050,7 +1091,7 @@
                 <div class="quiz-options">
                     <button class="quiz-btn" onclick="responderQuiz(0, ${pSorteada.certa})">${pSorteada.opts[0]}</button>
                     <button class="quiz-btn" onclick="responderQuiz(1, ${pSorteada.certa})">${pSorteada.opts[1]}</button>
-                    <button class="quiz-btn" onclick="responderQuiz(2, ${pSorteada.certa})">${pSorteadas?.opts?.[2] ?? pSorteada.opts[2]}</button>
+                    <button class="quiz-btn" onclick="responderQuiz(2, ${pSorteada.certa})">${pSorteada.opts[2]}</button>
                     <button class="quiz-btn" onclick="responderQuiz(3, ${pSorteada.certa})">${pSorteada.opts[3]}</button>
                 </div>
             `;
@@ -1061,7 +1102,7 @@
             const quizBox = document.getElementById('quiz-box-ativo');
             if (quizBox) quizBox.remove();
             let pontosGanho = (escolha === certa) ? 20 : 5;
-            finalizarMiniGame(pontosGan호);
+            finalizarMiniGame(pontosGanho);
         }
 
         function finalizarMiniGame(pontosGanhos) {
