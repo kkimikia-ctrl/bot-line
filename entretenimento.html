@@ -2,247 +2,148 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Entretenimento e Lazer</title>
     <style>
-        /* Trava a tela inteira (sem rolagem e sem elástico) */
-        html, body {
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #f4f4f9;
-            font-family: Arial, sans-serif;
-            text-align: center;
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+            --bg-color: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --radius-md: 14px;
+            --radius-sm: 10px;
         }
 
-        /* Cabeçalho fixo no topo (Aprovado) */
-        .header {
-            background-color: #0d47a1;
-            color: white;
-            padding: 12px;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(180deg, #f0f4ff 0%, #f8fafc 100%); 
+            margin: 0;
+            padding: 16px;
+            color: var(--text-main);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            position: relative;
-            width: 100%;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            box-sizing: border-box;
         }
-        .header h1 {
-            font-size: 16px;
-            margin: 0;
-            flex-grow: 1;
+
+        .header {
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 20px;
             text-align: center;
         }
-        .header-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            white-space: nowrap;
+
+        .header h1 {
+            font-size: 20px;
+            color: #1e3a8a;
+            margin: 0;
+            font-weight: 800;
         }
 
-        /* --- CARROSSEL INFINITO (Mantido perfeito) --- */
-        .carousel-container {
-            width: 100%;
-            overflow-x: auto;
-            background: #ffffff;
-            padding: 10px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 10px;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-        }
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-        .carousel-track {
-            display: flex;
-            gap: 10px;
-            width: max-content;
-            animation: rolarInfinito 30s linear infinite;
-        }
-        .carousel-container:hover .carousel-track,
-        .carousel-container:active .carousel-track {
-            animation-play-state: paused;
-        }
-        .carousel-track a {
-            display: block;
-            flex-shrink: 0;
-            width: 150px;
-            height: 85px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #eee;
-            border: 1px solid #ddd;
-        }
-        .carousel-track img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        @keyframes rolarInfinito {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(var(--scroll-amount)); }
-        }
-
-        /* Container dos botões com rolagem interna compacta caso precise em telas menores */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 15px 20px 15px;
-            box-sizing: border-box;
-            height: calc(100vh - 170px);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .container::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Grid com todos os botões restaurados */
-        .grid-menu {
+        .menu-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding-bottom: 20px;
+            gap: 12px;
+            width: 100%;
+            max-width: 480px;
         }
 
-        .card-btn {
-            background: white;
-            border: none;
-            padding: 12px 10px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            cursor: pointer;
+        .menu-card {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            width: 100%;
-            transition: transform 0.1s, box-shadow 0.1s;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            text-decoration: none;
         }
-        .card-btn:active {
-            transform: scale(0.97);
+
+        .menu-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
         }
-        .card-btn .icon {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 4px;
+
+        .menu-card:active { transform: scale(0.98); }
+
+        .menu-icon {
+            font-size: 28px;
+            width: 50px;
+            height: 50px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
         }
-        .card-btn .title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #0d47a1;
-            display: block;
-            margin-bottom: 2px;
+
+        .menu-info h2 {
+            font-size: 14px;
+            margin: 0 0 4px 0;
+            color: var(--text-main);
+            font-weight: 700;
         }
-        .card-btn .subtitle {
-            font-size: 10px;
-            color: #666;
-            display: block;
+
+        .menu-info p {
+            font-size: 11px;
+            margin: 0;
+            color: var(--text-secondary);
+            line-height: 1.2;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <a href="index.html" class="header-btn">◀ Voltar</a>
         <h1>Entretenimento e Lazer</h1>
-        <div style="width: 55px;"></div>
     </div>
 
-    <section class="carousel-container">
-        <div class="carousel-track" id="carouselTrack">
-            <a href="lives.html"><img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" alt="Destaque 1"></a>
-            <a href="radio.html"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" alt="Destaque 2"></a>
-            <a href="karaoke.html"><img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" alt="Destaque 3"></a>
-            <a href="omikuji.html"><img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=400&auto=format&fit=crop&q=60" alt="Destaque 4"></a>
-        </div>
-    </section>
+    <div class="menu-grid">
+        <!-- 1. Karaokê -->
+        <a href="karaoke.html" class="menu-card">
+            <div class="menu-icon">🎤</div>
+            <div class="menu-info">
+                <h2>Karaokê</h2>
+                <p>Cante com a Gente</p>
+            </div>
+        </a>
 
-    <div class="container">
-        <div class="grid-menu">
-            <button class="card-btn" onclick="window.location.href='lives.html'">
-                <span class="icon">🔴</span>
-                <span class="title">Lives</span>
-                <span class="subtitle">Transmissões e Prêmios</span>
-            </button>
+        <!-- 2. Horóscopo -->
+        <a href="horoscopo.html" class="menu-card">
+            <div class="menu-icon">🔮</div>
+            <div class="menu-info">
+                <h2>Horóscopo</h2>
+                <p>Omikuji do Dia</p>
+            </div>
+        </a>
 
-            <button class="card-btn" onclick="window.location.href='radio.html'">
-                <span class="icon">📻</span>
-                <span class="title">Rádios & Som</span>
-                <span class="subtitle">Todas as Opções</span>
-            </button>
+        <!-- 3. Comunicação & Conexões (Novo Hub Atualizado) -->
+        <a href="chatindex.html" class="menu-card" style="grid-column: span 2; background: linear-gradient(135deg, #eff6ff, #f3e8ff); border-color: #c084fc;">
+            <div class="menu-icon" style="background: rgba(255,255,255,0.8);">💬</div>
+            <div class="menu-info">
+                <h2>Comunicação & Conexões</h2>
+                <p>Chat da Comunidade, GiraAí & Omiai</p>
+            </div>
+        </a>
 
-            <button class="card-btn" onclick="window.location.href='karaoke.html'">
-                <span class="icon">🎤</span>
-                <span class="title">Karaokê</span>
-                <span class="subtitle">Cante com a Gente</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='omikuji.html'">
-                <span class="icon">🔮</span>
-                <span class="title">Horóscopo</span>
-                <span class="subtitle">Omikuji do Dia</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='chat.html'">
-                <span class="icon">💬</span>
-                <span class="title">Chat</span>
-                <span class="subtitle">Comunidade Online</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='viagens.html'">
-                <span class="icon">🗺️</span>
-                <span class="title">Lazer & Viagens</span>
-                <span class="subtitle">Dicas e pontos turísticos</span>
-            </button>
-
-            <button class="card-btn" onclick="alert('Descontos em breve!')">
-                <span class="icon">🎟️</span>
-                <span class="title">Descontos</span>
-                <span class="subtitle">Cupons em Loja</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='forca.html'">
-                <span class="icon">🎮</span>
-                <span class="title">Jogos</span>
-                <span class="subtitle">Sorteios e Diversão</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='agenda.html'">
-                <span class="icon">📅</span>
-                <span class="title">Agenda de Eventos</span>
-                <span class="subtitle">Festivais e Feiras</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='meus-eventos.html'">
-                <span class="icon">⭐</span>
-                <span class="title">Meus Eventos</span>
-                <span class="subtitle">Salvos e "Vou ir"</span>
-            </button>
-        </div>
+        <!-- 4. Lazer & Viagens -->
+        <a href="viagens.html" class="menu-card">
+            <div class="menu-icon">🗺️</div>
+            <div class="menu-info">
+                <h2>Lazer & Viagens</h2>
+                <p>Dicas e pontos turísticos</p>
+            </div>
+        </a>
     </div>
 
-    <script>
-        const track = document.getElementById('carouselTrack');
-        const items = Array.from(track.children);
-        
-        items.forEach(item => {
-            const clone = item.cloneNode(true);
-            track.appendChild(clone);
-        });
-
-        window.addEventListener('load', () => {
-            const totalWidth = track.scrollWidth / 2;
-            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
-        });
-    </script>
 </body>
 </html>
