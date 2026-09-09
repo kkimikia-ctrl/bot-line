@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Espaço de Comunicação</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+            --bg-color: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(180deg, #f0f4ff 0%, #f8fafc 100%); 
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            padding-top: 130px;
+            color: var(--text-main);
+        }
+
+        .banner-carousel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #e4e4e9;
+            padding: 10px 0;
+            z-index: 1000;
+            overflow-x: auto;
+            display: flex;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            -webkit-overflow-scrolling: touch;
+            box-sizing: border-box;
+        }
+        .banner-carousel::-webkit-scrollbar { display: none; }
+        .carousel-track {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            padding: 0 12px;
+            animation: rolarInfinito 35s linear infinite;
+        }
+        .banner-carousel:hover .carousel-track,
+        .banner-carousel:active .carousel-track {
+            animation-play-state: paused;
+        }
+        .ad-banner-card {
+            flex: 0 0 160px;
+            height: 100px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #b0bec5;
+            cursor: pointer;
+        }
+        .ad-placeholder-text {
+            font-size: 11px;
+            color: #555;
+            font-weight: bold;
+            z-index: 2;
+            text-align: center;
+            padding: 0 5px;
+            background: rgba(255, 255, 255, 0.85);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        @keyframes rolarInfinito {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-amount)); }
+        }
+
+        .main-header {
+            text-align: center;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .main-header h1 {
+            font-size: 20px;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 4px 0;
+            font-weight: 800;
+        }
+
+        .main-header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-grow: 1;
+            justify-content: center;
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .menu-card {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
+        }
+
+        .menu-card:active { transform: scale(0.98); }
+
+        .menu-icon {
+            font-size: 28px;
+            width: 50px;
+            height: 50px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .menu-info { flex-grow: 1; }
+
+        .menu-info h2 {
+            font-size: 15px;
+            margin: 0 0 4px 0;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .menu-info p {
+            font-size: 12px;
+            margin: 0;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .menu-arrow {
+            font-size: 16px;
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        .menu-card.chat-card .menu-icon { background: #e0f2fe; color: #0284c7; }
+        .menu-card.giraai-card .menu-icon { background: #fae8ff; color: #c084fc; }
+        .menu-card.omiai-card {
+            border: 2px solid #fcd34d;
+            background: linear-gradient(135deg, #fffbeb, #ffffff);
+        }
+        .menu-card.omiai-card .menu-icon { background: #fef3c7; color: #d97706; }
+
+        .badge-vip {
+            background: #f59e0b;
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+            text-transform: uppercase;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            flex-shrink: 0;
+        }
+
+        .btn-footer {
+            background: var(--surface);
+            color: #3b82f6;
+            border: 1px solid #bfdbfe;
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(59, 130, 246, 0.08);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-footer:active { transform: scale(0.96); }
+    </style>
+</head>
+<body>
+
+    <div class="banner-carousel">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="ad-banner-card">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Espaço 1</span></div>
+            </div>
+            <div class="ad-banner-card">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Espaço 2</span></div>
+            </div>
+            <div class="ad-banner-card">
+                <div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888; margin-top: 2px;">Espaço 3</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-header">
+        <h1>Área de Comunicação</h1>
+        <p>Escolha como você deseja interagir hoje no Japão</p>
+    </div>
+
+    <div class="menu-container">
+        <!-- 1. Chat da Comunidade (Acessa a pasta chat/index.html) -->
+        <a href="chat/index.html" class="menu-card chat-card">
+            <div class="menu-icon">💬</div>
+            <div class="menu-info">
+                <h2>Chat da Comunidade</h2>
+                <p>Salas abertas para conversar livremente em grupo.</p>
+            </div>
+            <div class="menu-arrow">➔</div>
+        </a>
+
+        <!-- 2. GiraAí (Acessa a pasta giraai/index.html) -->
+        <a href="giraai/index.html" class="menu-card giraai-card">
+            <div class="menu-icon">🎲</div>
+            <div class="menu-info">
+                <h2>GiraAí</h2>
+                <p>Conexões casuais 1x1 de 15 minutos com pessoas de várias regiões.</p>
+            </div>
+            <div class="menu-arrow">➔</div>
+        </a>
+
+        <!-- 3. Omiai (Encontros Sérios / VIP) -->
+        <div class="menu-card omiai-card" onclick="alert('Módulo Omiai em breve!')">
+            <div class="menu-icon">💍</div>
+            <div class="menu-info">
+                <h2>Omiai <span class="badge-vip">Seguro / VIP</span></h2>
+                <p>Ambiente exclusivo e verificado para relacionamentos sérios.</p>
+            </div>
+            <div class="menu-arrow">➔</div>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <a href="../index.html" class="btn-footer">⬅️ Voltar para o Início</a>
+    </div>
+
+    <script>
+        function configurarCarrosselInfinito() {
+            const track = document.getElementById('carouselTrack');
+            if (!track || track.dataset.initialized === "true") return;
+            
+            const items = Array.from(track.children);
+            items.forEach(item => {
+                const clone = item.cloneNode(true);
+                track.appendChild(clone);
+            });
+            
+            const totalWidth = track.scrollWidth / 2;
+            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
+            track.dataset.initialized = "true";
+        }
+
+        window.addEventListener('load', configurarCarrosselInfinito);
+    </script>
+</body>
+</html>
