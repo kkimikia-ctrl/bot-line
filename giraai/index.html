@@ -146,29 +146,31 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            transition: all 0.3s ease;
         }
 
         .match-avatar {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: #cbd5e1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 36px;
             border: 3px solid white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            object-fit: cover;
         }
 
         .match-info h2 {
-            font-size: 16px;
+            font-size: 18px;
             margin: 0 0 4px 0;
             color: var(--text-main);
         }
 
         .match-info p {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-secondary);
             margin: 0;
         }
@@ -229,18 +231,18 @@
 
     <div class="main-header">
         <h1>🎲 GiraAí</h1>
-        <p>Conexões rápidas de 15 minutos</p>
+        <p>Conexões rápidas de 15 minutos (Modo de Teste: 20 Pessoas)</p>
     </div>
 
     <div class="gira-container">
-        <div class="card-match">
-            <div class="match-avatar">✨</div>
-            <div class="match-info">
+        <div class="card-match" id="cardMatch">
+            <div class="match-avatar" id="matchAvatar">✨</div>
+            <div class="match-info" id="matchInfo">
                 <h2>Pronto para girar?</h2>
-                <p>Encontre alguém online agora para um papo casual.</p>
+                <p>Clique abaixo para testar o sorteio entre os 20 usuários simulados.</p>
             </div>
         </div>
-        <button class="btn-girar" onclick="alert('Procurando conexão...')">Girar Agora 🎲</button>
+        <button class="btn-girar" onclick="girarRoleta()">Girar Agora 🎲</button>
     </div>
 
     <div class="footer-nav">
@@ -249,6 +251,54 @@
     </div>
 
     <script>
+        // Lista com 20 pessoas de teste para simulação
+        const pessoasTeste = [
+            { nome: "Mariana Silva", idade: 28, emoji: "👩‍🦰", recado: "Curte um bom churrasco e música sertaneja!" },
+            { nome: "Carlos Eduardo", idade: 32, emoji: "👨‍💻", trabajador: "Toyohashi - Fã de tecnologia e viagens." },
+            { nome: "Juliana Santos", idade: 25, emoji: "👩‍🎓", recado: "Estudando japonês e amando culinária." },
+            { nome: "Rafael Souza", idade: 30, emoji: "👨‍ sport", recado: "Praticante de futebol e churrasco aos domingos." },
+            { nome: "Ana Paula", idade: 27, emoji: "👩‍🎨", recado: "Adoro café, fotografia e dias ensolarados." },
+            { nome: "Lucas Mendes", idade: 26, emoji: "👨‍🔧", recado: "Trabalha com montagem e curte carros antigos." },
+            { nome: "Beatriz Lima", idade: 29, emoji: "👩‍💼", recado: "Buscando novas amizades na região de Aichi." },
+            { nome: "Diego Ferreira", idade: 34, emoji: "👨‍🎤", recado: "Karaokê é meu forte! Quem topa cantar?" },
+            { nome: "Camila Rocha", idade: 24, emoji: "👩‍⚕️", recado: "Amadora de pets e caminhadas ao ar livre." },
+            { nome: "Gabriel Costa", idade: 31, emoji: "👨‍🍳", recado: "Mestre cuca nas horas vagas. Adoro cozinhar." },
+            { nome: "Larissa Martins", idade: 26, emoji: "👩‍💻", recado: "Curto maratonar séries e trocar ideia." },
+            { nome: "Bruno Ribeiro", idade: 33, emoji: "👨‍🌾", recado: "Curto plantar frutas em vaso e cuidar de plantas." },
+            { nome: "Fernanda Dias", idade: 28, emoji: "👩‍🏫", recado: "Professora, adoro ler e conhecer lugares novos." },
+            { nome: "Thiago Cardoso", idade: 29, emoji: "👨‍🎨", recado: "Curto design, arte urbana e café forte." },
+            { nome: "Patrícia Ramos", idade: 35, emoji: "👩‍🍳", recado: "Fã de doces caseiros e boa conversa." },
+            { nome: "Rodrigo Nunes", idade: 27, emoji: "👨‍🚀", recado: "Fascinado por astronomia e tecnologia." },
+            { nome: "Vanessa Melo", idade: 26, emoji: "👩‍🎤", recado: "Sempre ouvindo música boa e curtindo o fim de semana." },
+            { nome: "Marcos Vinicius", idade: 30, emoji: "👨‍🔧", recado: "Apaixonado por motos e viagens longas." },
+            { nome: "Renata Souza", idade: 32, emoji: "👩‍🌾", recado: "Amante da natureza e cultivo orgânico." },
+            { nome: "Alexandre Pinto", idade: 28, emoji: "👨‍💻", recado: "Bate-papo leve e descontraído por 15 minutos!" }
+        ];
+
+        function girarRoleta() {
+            const avatarEl = document.getElementById('matchAvatar');
+            const infoEl = document.getElementById('matchInfo');
+            const cardEl = document.getElementById('cardMatch');
+
+            // Efeito visual rápido de sorteio
+            cardEl.style.opacity = '0.5';
+            infoEl.innerHTML = `<h2>🎲 Sorteando entre 20 pessoas...</h2><p>Buscando conexão compatível...</p>`;
+            avatarEl.innerHTML = '💫';
+
+            setTimeout(() => {
+                // Sorteia aleatoriamente uma das 20 pessoas
+                const pessoaSorteada = pessoasTeste[Math.floor(Math.random() * pessoasTeste.length)];
+
+                cardEl.style.opacity = '1';
+                avatarEl.innerHTML = pessoaSorteada.emoji;
+                infoEl.innerHTML = `
+                    <h2>${pessoa Sorteada = pessoaSorteada.nome}, ${pessoa Sorteada.idade || pessoaSorteada.idade} anos</h2>
+                    <p style="margin-top: 4px; color: #1e3a8a; font-weight: 600;">"${pessoa Sorteada.recado}"</p>
+                    <p style="margin-top: 8px; font-size: 11px; color: #059669;">🟢 Disponível para papo de 15 min</p>
+                `;
+            }, 500);
+        }
+
         function configurarCarrosselInfinito() {
             const track = document.getElementById('carouselTrack');
             if (!track || track.dataset.initialized === "true") return;
