@@ -8,9 +8,9 @@
     <!-- SDKs do Firebase (Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração do Firebase
+        // Configuração do Firebase (Mesma usada na Home)
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "SEU_AUTH_DOMAIN",
@@ -23,44 +23,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Função para buscar o saldo real do Firebase ao abrir a página
-        async function carregarPerfilFirebase() {
-            const idSalvo = localStorage.getItem('line_user_id');
-            const nomeSalvo = localStorage.getItem('line_user_name');
-            const fotoSalva = localStorage.getItem('line_user_picture');
-
-            if (nomeSalvo) {
-                document.getElementById('userName').innerText = nomeSalvo;
-            }
-            if (idSalvo) {
-                document.getElementById('userEmail').innerText = "ID: " + idSalvo.substring(0, 8) + "...";
-                
-                try {
-                    const userRef = doc(db, "creditos_usuario", idSalvo);
-                    const userSnap = await getDoc(userRef);
-
-                    if (userSnap.exists()) {
-                        const dados = userSnap.data();
-                        const saldoReal = dados.saldo !== undefined ? dados.saldo : 0;
-                        document.getElementById('saldoDisplay').innerText = saldoReal + " pts";
-                        localStorage.setItem('saldo_atual', saldoReal);
-                    } else {
-                        document.getElementById('saldoDisplay').innerText = "0 pts";
-                    }
-                } catch (error) {
-                    console.error("Erro ao buscar saldo:", error);
-                }
-            } else {
-                document.getElementById('userEmail').innerText = "Conta conectada via Web";
-            }
-
-            if (fotoSalva) {
-                const avatarContainer = document.getElementById('userAvatarContainer');
-                avatarContainer.innerHTML = `<img src="${fotoSalva}" alt="Foto de Perfil">`;
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", carregarPerfilFirebase);
+        window.db = db;
+        window.firebaseDocs = { doc, getDoc, setDoc };
     </script>
 
     <style>
@@ -107,10 +71,6 @@
             font-size: 13px;
             font-weight: 500;
             text-decoration: none;
-            transition: background 0.2s;
-        }
-        .btn-voltar:active {
-            background-color: rgba(255, 255, 255, 0.4);
         }
         .card {
             background: white;
@@ -180,9 +140,6 @@
             cursor: pointer;
             text-decoration: none;
         }
-        .btn-buy:active {
-            background-color: #15803d;
-        }
         .menu-list {
             background: white;
             border-radius: 12px;
@@ -203,9 +160,6 @@
         .menu-item-link:last-child {
             border-bottom: none;
         }
-        .menu-item-link:active {
-            background-color: #f8fafc;
-        }
         button.btn-danger {
             background-color: #dc2626;
             color: white;
@@ -216,9 +170,6 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-        }
-        button.btn-danger:active {
-            background-color: #b91c1c;
         }
     </style>
 </head>
@@ -240,7 +191,7 @@
         <div class="credit-badge">
             <div class="credit-info">
                 <span>Seus Créditos</span>
-                <strong id="saldoDisplay">Carregando...</strong>
+                <strong id="saldoDisplay">0 pts</strong>
             </div>
             <a href="historicocreditos.html" class="btn-buy">+ Comprar</a>
         </div>
@@ -270,6 +221,51 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const nomeSalvo = localStorage.getItem('line_user_name');
+            const idSalvo = localStorage.getItem('line_user_id');
+            const fotoSalva = localStorage.getItem('line_user_picture');
+
+            if (nomeSalvo) {
+                document.getElementById('userName').innerText = nomeSalvo;
+            }
+            if (idSalvo) {
+                document.getElementById('userEmail').innerText = "ID: " + idSalvo.substring(0, 8) + "...";
+            } else {
+                document.getElementById('userEmail').innerText = "Conta conectada via Web";
+            }
+
+            if (fotoSalva) {
+                const avatarContainer = document.getElementById('userAvatarContainer');
+                avatarContainer.innerHTML = `<img src="${fotoSalva}" alt="Foto de Perfil">`;
+            }
+
+            // Buscar saldo no Firebase de forma segura
+            if (idSalvo) {
+                try {
+                    while (!window.db) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+
+                    const { doc, getDoc } = window.firebaseDocs;
+                    const userRef = doc(window.db, "creditos_usuario", idSalvo);
+                    const userSnap = await getDoc(userRef);
+
+                    if (userSnap.exists()) {
+                        const saldoReal = userSnap.data().saldo !== undefined ? userSnap.data().saldo : 0;
+                        document.getElementById('saldoDisplay').innerText = saldoReal + " pts";
+                        localStorage.setItem('saldo_atual', saldoReal);
+                    } else {
+                        document.getElementById('saldoDisplay').innerText = "0 pts";
+                    }
+                } catch (e) {
+                    console.log("Erro ao buscar saldo no perfil:", e);
+                    const saldoLocal = localStorage.getItem('saldo_atual') || '0';
+                    document.getElementById('saldoDisplay').innerText = saldoLocal + " pts";
+                }
+            }
+        });
+
         function sairDaConta() {
             localStorage.removeItem('line_user_id');
             localStorage.removeItem('line_user_name');
