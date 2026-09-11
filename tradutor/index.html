@@ -6,6 +6,31 @@
     <title>Ajuda JP - Início</title>
     <!-- SDK do LINE LIFF -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
+    <!-- SDKs do Firebase (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuração do Firebase (Substitua pelas credenciais do seu projeto)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Tornar acessível globalmente
+        window.db = db;
+        window.firebaseDocs = { doc, getDoc, setDoc };
+    </script>
+
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -83,6 +108,19 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .saldo-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: normal;
         }
         .logo-img {
             width: 38px;
@@ -298,8 +336,11 @@
 
     <div id="app-content">
         <div class="header">
-            <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-            Ajuda JP - Início
+            <div class="header-left">
+                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
+                <span>Ajuda JP - Início</span>
+            </div>
+            <div id="saldoBadge" class="saldo-badge">Créditos: 0</div>
         </div>
 
         <div class="destaques-container">
@@ -420,33 +461,88 @@
 
     <script>
         const liffId = "2010902449-KWNNNsxn";
+
         async function inicializarApp() {
             try {
                 await liff.init({ liffId: liffId });
                 if (liff.isLoggedIn() || localStorage.getItem('line_user_id')) {
-                    if (liff.isLoggedIn() && !localStorage.getItem('line_user_id')) {
+                    let userId = localStorage.getItem('line_user_id');
+                    let userName = localStorage.getItem('line_user_name');
+
+                    if (liff.isLoggedIn() && !userId) {
                         const profile = await liff.getProfile();
-                        localStorage.setItem('line_user_id', profile.userId);
-                        localStorage.setItem('line_user_name', profile.displayName);
+                        userId = profile.userId;
+                        userName = profile.displayName;
+                        localStorage.setItem('line_user_id', userId);
+                        localStorage.setItem('line_user_name', userName);
                     }
+
+                    // Buscar ou criar dados do usuário no Firestore (`creditos_usuario`) com saldo inicial 0
+                    if (userId) {
+                        await carregarOuCriarSaldoFirebase(userId, userName || "Usuário LINE");
+                    }
+
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('app-content').style.display = 'block';
                 } else {
                     document.getElementById('login-overlay').style.display = 'flex';
                 }
             } catch (err) {
+                console.log("Erro no LIFF/Login:", err);
                 if (localStorage.getItem('line_user_id')) {
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('app-content').style.display = 'block';
                 }
             }
         }
+
+        async function carregarOuCriarSaldoFirebase(userId, userName) {
+            try {
+                while (!window.db) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                const { doc, getDoc, setDoc } = window.firebaseDocs;
+                const userRef = doc(window.db, "creditos_usuario", userId);
+                const userSnap = await getDoc(userRef);
+
+                let saldoAtual = 0;
+
+                if (userSnap.exists()) {
+                    saldoAtual = userSnap.data().saldo || 0;
+                } else {
+                    // Novo usuário começa com saldo 0
+                    saldoAtual = 0;
+                    await setDoc(userRef, {
+                        nome: userName,
+                        saldo: saldoAtual,
+                        ultimaAtualizacao: new Date().toISOString()
+                    });
+                }
+
+                document.getElementById('saldoBadge').innerText = `Créditos: ${saldoAtual}`;
+                localStorage.setItem('saldo_atual', saldoAtual);
+
+            } catch (error) {
+                console.error("Erro ao carregar saldo do Firebase:", error);
+                document.getElementById('saldoBadge').innerText = `Créditos: 0`;
+            }
+        }
+
         function fazerLoginLine() {
             if (!liff.isLoggedIn()) { liff.login(); }
         }
+
         function verificarSaldoEChamar() {
+            const saldo = parseInt(localStorage.getItem('saldo_atual') || '0');
+            if (saldo <= 0) {
+                alert('Você não possui créditos suficientes. Adquira um bloco de créditos (1500, 3000 ou 5000) na sua carteira.');
+                window.location.href = 'perfil.html';
+                return;
+            }
             document.getElementById('modalTradutor').style.display = 'flex';
         }
+
         function fecharModalTradutor() {
             document.getElementById('modalTradutor').style.display = 'none';
         }
@@ -494,7 +590,6 @@
             }
         }
 
-        // Função de tradução real com suporte a Romaji (leitura em japonês romanizado)
         async function traduzirTexto() {
             const texto = document.getElementById('textoInput').value.trim();
             const box = document.getElementById('resultadoBox');
@@ -522,12 +617,8 @@
                         if (item[0]) traducaoReal += item[0];
                     });
 
-                    // Se traduziu para japonês, busca também o Romaji para colocar entre parênteses
                     if (langTarget === 'ja') {
-                        const urlRomaji = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q=` + encodeURIComponent(traducaoReal);
-                        // Como parâmetro de leitura, o Google às vezes retorna o Romaji na resposta auxiliar (data[3])
                         let romajiText = data[3] && data[3][0] && data[3][0][2] ? data[3][0][2] : "";
-                        
                         if (romajiText && romajiText !== traducaoReal) {
                             box.innerText = `${traducaoReal} (${romajiText})`;
                         } else {
