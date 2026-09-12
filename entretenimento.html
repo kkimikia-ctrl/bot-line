@@ -2,247 +2,449 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entretenimento e Lazer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GiraAí - Conexões Casuais</title>
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
     <style>
-        /* Trava a tela inteira (sem rolagem e sem elástico) */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --accent-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+            --bg-color: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         html, body {
-            height: 100vh;
+            height: 100%;
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #f4f4f9;
-            font-family: Arial, sans-serif;
-            text-align: center;
         }
 
-        /* Cabeçalho fixo no topo (Aprovado) */
-        .header {
-            background-color: #0d47a1;
-            color: white;
-            padding: 12px;
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(180deg, #f0f4ff 0%, #f8fafc 100%); 
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
+            flex-direction: column;
+            padding: 10px;
+            padding-top: 125px;
+            color: var(--text-main);
+        }
+
+        /* Banner Carrossel Fixo */
+        .banner-carousel {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            background: #e4e4e9;
+            padding: 10px 0;
             z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            overflow-x: auto;
+            display: flex;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            -webkit-overflow-scrolling: touch;
             box-sizing: border-box;
         }
-        .header h1 {
-            font-size: 16px;
-            margin: 0;
-            flex-grow: 1;
-            text-align: center;
-        }
-        .header-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-
-        /* --- CARROSSEL INFINITO (Mantido perfeito) --- */
-        .carousel-container {
-            width: 100%;
-            overflow-x: auto;
-            background: #ffffff;
-            padding: 10px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 10px;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-        }
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
+        .banner-carousel::-webkit-scrollbar { display: none; }
         .carousel-track {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             width: max-content;
-            animation: rolarInfinito 30s linear infinite;
+            padding: 0 12px;
+            animation: rolarInfinito 35s linear infinite;
         }
-        .carousel-container:hover .carousel-track,
-        .carousel-container:active .carousel-track {
-            animation-play-state: paused;
+        .ad-banner-card {
+            flex: 0 0 160px;
+            height: 100px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #b0bec5;
         }
-        .carousel-track a {
-            display: block;
-            flex-shrink: 0;
-            width: 150px;
-            height: 85px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #eee;
-            border: 1px solid #ddd;
-        }
-        .carousel-track img {
+        .ad-placeholder-text {
+            font-size: 11px;
+            color: #555;
+            font-weight: bold;
+            text-align: center;
+            padding: 0 5px;
+            background: rgba(255, 255, 255, 0.85);
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
         @keyframes rolarInfinito {
             0% { transform: translateX(0); }
             100% { transform: translateX(var(--scroll-amount)); }
         }
 
-        /* Container dos botões com rolagem interna compacta caso precise em telas menores */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 15px 20px 15px;
-            box-sizing: border-box;
-            height: calc(100vh - 170px);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .container::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Grid com todos os botões restaurados */
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .gira-container {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
-            padding-bottom: 20px;
+            flex-grow: 1;
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            overflow-y: auto;
         }
 
-        .card-btn {
-            background: white;
-            border: none;
-            padding: 12px 10px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            cursor: pointer;
+        .step-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
             text-align: center;
+            gap: 12px;
+        }
+        .step-screen.active {
+            display: flex;
+        }
+
+        .input-box {
             width: 100%;
-            transition: transform 0.1s, box-shadow 0.1s;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            outline: none;
+            text-align: center;
         }
-        .card-btn:active {
-            transform: scale(0.97);
+        .btn-main {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
         }
-        .card-btn .icon {
-            font-size: 22px;
-            display: block;
+        .btn-disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .btn-voltar-topo {
+            align-self: flex-start;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
             margin-bottom: 4px;
         }
-        .card-btn .title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #0d47a1;
-            display: block;
-            margin-bottom: 2px;
+
+        .chat-box {
+            width: 100%;
+            flex-grow: 1;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .card-btn .subtitle {
-            font-size: 10px;
-            color: #666;
-            display: block;
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 14px;
+            padding: 5px;
+            color: #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .chat-input-area input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .chat-input-area button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="index.html" class="header-btn">◀ Voltar</a>
-        <h1>Entretenimento e Lazer</h1>
-        <div style="width: 55px;"></div>
+    <div class="banner-carousel">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="ad-banner-card"><div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888;">Gira 1</span></div></div>
+            <div class="ad-banner-card"><div class="ad-placeholder-text"><span>🖼️ Anuncie Aqui</span><span style="font-size: 9px; color: #888;">Gira 2</span></div></div>
+        </div>
     </div>
 
-    <section class="carousel-container">
-        <div class="carousel-track" id="carouselTrack">
-            <a href="lives.html"><img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?w=400&auto=format&fit=crop&q=60" alt="Destaque 1"></a>
-            <a href="radio.html"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop&q=60" alt="Destaque 2"></a>
-            <a href="karaoke.html"><img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400&auto=format&fit=crop&q=60" alt="Destaque 3"></a>
-            <a href="omikuji.html"><img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=400&auto=format&fit=crop&q=60" alt="Destaque 4"></a>
+    <div class="gira-container">
+
+        <!-- ETAPA 1: TERMOS -->
+        <div id="stepTermos" class="step-screen active">
+            <button class="btn-voltar-topo" onclick="location.href='../index.html'">⬅️ Voltar</button>
+            <h2 style="font-size: 20px; margin: 0 0 5px 0;">📜 Termos e Regras do GiraAí</h2>
+            <p style="font-size: 12px; color: #d97706; margin: 0 0 5px 0; font-weight: bold;">👇 Role até o final para liberar o botão</p>
+            
+            <div id="caixaTermos" onscroll="checarFimRolagem()" style="font-size: 13.5px; color: var(--text-secondary); text-align: left; background: #f1f5f9; padding: 14px; border-radius: 8px; height: 210px; overflow-y: auto; line-height: 1.5; border: 1px solid #cbd5e1;">
+                <p style="margin-top: 0; color: #1e3a8a; font-weight: bold; font-size: 15px;">Seja bem-vindo(a)!</p>
+                O <strong>GiraAí</strong> foi criado para conversas reais e casuais entre pessoas no Japão.<br><br>
+                <strong>1. Respeito Mútuo:</strong> Proibido ofensas ou assédio.<br><br>
+                <strong>2. Privacidade:</strong> Não compartilhe dados pessoais sensíveis.<br><br>
+                <strong>3. Rodadas:</strong> 15 minutos por conversa.<br><br>
+            </div>
+
+            <button id="btnAceitar" class="btn-main btn-disabled" onclick="mudarTela('stepPerfil')">Li e Aceito os Termos ✅</button>
         </div>
-    </section>
 
-    <div class="container">
-        <div class="grid-menu">
-            <button class="card-btn" onclick="window.location.href='lives.html'">
-                <span class="icon">🔴</span>
-                <span class="title">Lives</span>
-                <span class="subtitle">Transmissões e Prêmios</span>
-            </button>
+        <!-- ETAPA 2: PERFIL -->
+        <div id="stepPerfil" class="step-screen">
+            <button class="btn-voltar-topo" onclick="mudarTela('stepTermos')">⬅️ Voltar</button>
+            <h2 style="font-size: 20px;">👤 Seu Perfil</h2>
+            
+            <div style="font-size: 38px; background: #e2e8f0; width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;" id="userAvatarPreview">👤</div>
+            
+            <input type="text" id="inputNome" class="input-box" placeholder="Seu Nome ou Apelido" value="Usuário">
+            
+            <select id="selectAvatar" class="input-box" onchange="document.getElementById('userAvatarPreview').innerText=this.value">
+                <option value="👤">👤 Padrão</option>
+                <option value="👨‍💻">👨‍💻 Homem Tech</option>
+                <option value="👩‍💻">👩‍💻 Mulher Tech</option>
+                <option value="🦊">🦊 Raposa</option>
+                <option value="⭐">⭐ Estrela</option>
+            </select>
 
-            <button class="card-btn" onclick="window.location.href='radio.html'">
-                <span class="icon">📻</span>
-                <span class="title">Rádios & Som</span>
-                <span class="subtitle">Todas as Opções</span>
-            </button>
+            <select id="selectRegiao" class="input-box">
+                <option value="Aichi">📍 Aichi</option>
+                <option value="Shizuoka">📍 Shizuoka</option>
+                <option value="Tóquio">📍 Tóquio</option>
+                <option value="Nagano">📍 Nagano</option>
+            </select>
 
-            <button class="card-btn" onclick="window.location.href='karaoke.html'">
-                <span class="icon">🎤</span>
-                <span class="title">Karaokê</span>
-                <span class="subtitle">Cante com a Gente</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='omikuji.html'">
-                <span class="icon">🔮</span>
-                <span class="title">Horóscopo</span>
-                <span class="subtitle">Omikuji do Dia</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='chatindex.html'">
-                <span class="icon">💬</span>
-                <span class="title">Comunicação & Conexões</span>
-                <span class="subtitle">Chat, GiraAí & Omiai</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='viagens.html'">
-                <span class="icon">🗺️</span>
-                <span class="title">Lazer & Viagens</span>
-                <span class="subtitle">Dicas e pontos turísticos</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='giraai/index.html?token=linha_segura_2026'">
-                <span class="icon">🥂</span>
-                <span class="title">Conexão 20+</span>
-                <span class="subtitle">GiraAí • Bate-papo exclusivo</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='forca.html'">
-                <span class="icon">🎮</span>
-                <span class="title">Jogos</span>
-                <span class="subtitle">Sorteios e Diversão</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='agenda.html'">
-                <span class="icon">📅</span>
-                <span class="title">Agenda de Eventos</span>
-                <span class="subtitle">Festivais e Feiras</span>
-            </button>
-
-            <button class="card-btn" onclick="window.location.href='meus-eventos.html'">
-                <span class="icon">⭐</span>
-                <span class="title">Meus Eventos</span>
-                <span class="subtitle">Salvos e "Vou ir"</span>
-            </button>
+            <button class="btn-main" onclick="entrarNaFila()">Procurar Alguém Online 🚀</button>
         </div>
+
+        <!-- ETAPA 3: BUSCANDO / ROLETA -->
+        <div id="stepRoleta" class="step-screen">
+            <div style="font-size: 60px;">🎰</div>
+            <h2 style="font-size: 20px;">Procurando parceiro(a) real...</h2>
+            <p style="font-size: 13px; color: var(--text-secondary);">Aguarde alguém entrar na mesma frequência...</p>
+        </div>
+
+        <!-- ETAPA 4: CHAT REAL -->
+        <div id="stepChat" class="step-screen" style="justify-content: flex-start; height: 100%;">
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 6px 10px; border-radius: 6px;">
+                <span style="font-size: 12px; font-weight: bold;" id="chatInfoRodada">Chat Ativo 🟢</span>
+                <button onclick="sairDoChat()" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">Sair</button>
+            </div>
+
+            <div style="width: 100%; display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; text-align: left;">
+                <span id="chatAvatarConectado" style="font-size: 26px;">👤</span>
+                <div>
+                    <div id="chatNomeConectado" style="font-size: 13px; font-weight: bold; color: #1e3a8a;">Aguardando...</div>
+                    <div id="chatRegiaoConectada" style="font-size: 11px; color: #64748b;">📍 ---</div>
+                </div>
+            </div>
+            
+            <div class="chat-box">
+                <div class="chat-messages" id="chatMessages">
+                    <p style="color: #64748b; text-align: center; font-style: italic;">Conexão estabelecida! Diga olá 👋</p>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="inputMensagem" placeholder="Digite sua mensagem...">
+                    <button onclick="enviarMensagemReal()">Enviar</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const track = document.getElementById('carouselTrack');
-        const items = Array.from(track.children);
-        
-        items.forEach(item => {
-            const clone = item.cloneNode(true);
-            track.appendChild(clone);
+        // CONFIGURAÇÃO DO FIREBASE (Substitua pelos dados do seu projeto gratuito do Firebase)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto",
+            storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "SEU_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let meuId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let salaId = null;
+        let unsubscribeMensagens = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('token') !== "linha_segura_2026") {
+                document.body.innerHTML = `<div style="padding: 40px; text-align: center;"><h2>⚠️ Acesso Restrito</h2><p>Abra através do botão oficial no LINE.</p></div>`;
+                return;
+            }
+            configurarCarrossel();
         });
 
-        window.addEventListener('load', () => {
-            const totalWidth = track.scrollWidth / 2;
-            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
-        });
+        function configurarCarrossel() {
+            const track = document.getElementById('carouselTrack');
+            if (!track || track.dataset.initialized === "true") return;
+            const items = Array.from(track.children);
+            items.forEach(item => track.appendChild(item.cloneNode(true)));
+            track.style.setProperty('--scroll-amount', `-${track.scrollWidth / 2}px`);
+            track.dataset.initialized = "true";
+        }
+
+        function checarFimRolagem() {
+            const caixa = document.getElementById('caixaTermos');
+            const btn = document.getElementById('btnAceitar');
+            if (caixa.scrollTop + caixa.clientHeight >= caixa.scrollHeight - 10) {
+                btn.classList.remove('btn-disabled');
+            }
+        }
+
+        function mudarTela(idTela) {
+            document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(idTela).classList.add('active');
+        }
+
+        async function entrarNaFila() {
+            mudarTela('stepRoleta');
+            
+            const nome = document.icoVal = document.getElementById('inputNome').value || "Convidado";
+            const avatar = document.getElementById('selectAvatar').value;
+            const regiao = document.getElementById('selectRegiao').value;
+
+            // Procura alguém na fila que não seja você
+            const filaRef = db.collection('fila_espera');
+            const snapshot = await filaRef.where('status', '==', 'procurando').get();
+
+            let parceiroEncontrado = null;
+
+            snapshot.forEach(doc => {
+                const dados = doc.data();
+                if (dados.userId !== meuId && !parceiroEncontrado) {
+                    parceiroEncontrado = { id: doc.id, ...dados };
+                }
+            });
+
+            if (parceiroEncontrado) {
+                // Cria uma sala de chat compartilhada
+                salaId = 'sala_' + Date.now();
+                
+                await db.collection('salas').doc(salaId).set({
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+                    usuario1: { id: meuId, nome, avatar, regiao },
+                    usuario2: { id: parceiroEncontrado.userId, nome: parceiroEncondadoNome = parceiroEncontrado.nome, avatar: parceiroEncontrado.avatar, regiao: parceiroEncontrado.regiao }
+                });
+
+                // Remove o parceiro da fila
+                await filaRef.doc(parceiroEncontrado.id).delete();
+                conectarChat(salaId, { nome: parceiroEncontrado.nome, avatar: parceiroEncontrado.avatar, regiao: parceiroEncontrado.regiao });
+            } else {
+                // Se não achar ninguém, entra na fila e fica ouvindo
+                const meuDocRef = await filaRef.add({
+                    userId: meuId,
+                    nome,
+                    avatar,
+                    regiao,
+                    status: 'procurando',
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Fica escutando se alguém criou uma sala com a gente
+                const listener = db.collection('salas').where('usuario2.id', '==', meuId).onSnapshot(snapshot => {
+                    snapshot.forEach(doc => {
+                        salaId = doc.id;
+                        const dados = doc.data();
+                        listener();
+                        meuDocRef.delete();
+                        conectarChat(salaId, dados.usuario1);
+                    });
+                });
+            }
+        }
+
+        function conectarChat(idSala, parceiro) {
+            mudarTela('stepChat');
+            document.getElementById('chatAvatarConectado').innerText = parceiro.avatar;
+            document.getElementById('chatNomeConectado').innerText = parceiro.nome;
+            document.getElementById('chatRegiaoConectada').innerText = `📍 ${parceiro.regiao}`;
+
+            const msgsContainer = document.getElementById('chatMessages');
+            msgsContainer.innerHTML = `<p style="color: #64748b; text-align: center; font-style: italic;">Conectado com ${parceiro.nome}! 👋</p>`;
+
+            // Ouve as mensagens da sala em tempo real
+            unsubscribeMensagens = db.collection('salas').doc(idSala).collection('mensagens').orderBy('enviadoEm')
+                .onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const msg = change.doc.data();
+                            const estilo = msg.senderId === meuId ? 'text-align: right; color: #1d4ed8;' : 'text-align: left; color: #334155;';
+                            const remetente = msg.senderId === meuId ? 'Você' : parceiro.nome;
+                            msgsContainer.innerHTML += `<div style="${estilo}"><b>${remetente}:</b> ${msg.texto}</div>`;
+                            msgsContainer.scrollTop = msgsContainer.scrollHeight;
+                        }
+                    });
+                });
+        }
+
+        function enviarMensagemReal() {
+            const input = document.getElementById('inputMensagem');
+            if (!input.value.trim() || !salaId) return;
+
+            db.collection('salas').doc(salaId).collection('mensagens').add({
+                senderId: meuId,
+                texto: input.value,
+                enviadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            input.value = "";
+        }
+
+        function sairDoChat() {
+            if (unsubscribeMensagens) unsubscribeMensagens();
+            location.reload();
+        }
     </script>
 </body>
 </html>
