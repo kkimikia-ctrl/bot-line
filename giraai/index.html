@@ -242,17 +242,16 @@
 
         <!-- ETAPA 1: TERMOS DE USO E REGRAS -->
         <div id="stepTermos" class="step-screen active">
-            <!-- Botão Voltar ajustado para retornar ao menu principal -->
             <button class="btn-voltar-topo" onclick="location.href='../index.html'">⬅️ Voltar</button>
             <h2 style="font-size: 20px; margin: 0 0 5px 0;">📜 Termos e Regras do GiraAí</h2>
             <p style="font-size: 12px; color: #d97706; margin: 0 0 5px 0; font-weight: bold;">👇 Role até o final para liberar o botão</p>
             
             <div id="caixaTermos" onscroll="checarFimRolagem()" style="font-size: 13.5px; color: var(--text-secondary); text-align: left; background: #f1f5f9; padding: 14px; border-radius: 8px; height: 210px; overflow-y: auto; line-height: 1.5; border: 1px solid #cbd5e1;">
                 <p style="margin-top: 0; color: #1e3a8a; font-weight: bold; font-size: 15px;">Seja bem-vindo(a)!</p>
-                O <strong>GiraAí</strong> foi criado para que todos tenham a oportunidade de conversar com pessoas de perto ou de longe — de jovens a idosos, independente de gênero —, trocando experiências, boas conversas e compartilhando lugares bonitos e divertidos.<br><br>
-                <strong>1. Boa Convivência e Respeito:</strong> É proibido qualquer tipo de ofensa, comentários inadequados, assédio ou compartilhamento de conteúdos impróprios. A violação resulta no encerramento imediato do acesso.<br><br>
-                <strong>2. Privacidade e Responsabilidade Individual:</strong> Cada usuário é responsável pelas informações que decide compartilhar. Evite a exposição precipitada de dados pessoais, zelando sempre pela própria segurança.<br><br>
-                <strong>3. Rodadas e Intervalo (*Kyukei*):</strong> Cada conversa dura 15 minutos. Você tem direito a 2 rodadas consecutivas. Após a 2ª rodada, haverá um descanso obrigatório de 1 hora antes de novas rodadas.<br><br>
+                O <strong>GiraAí</strong> foi criado para conversas casuais e passatempo, independente de gênero ou idade, trocando experiências e boas conversas.<br><br>
+                <strong>1. Boa Convivência e Respeito:</strong> É proibido qualquer tipo de ofensa, comentários inadequados ou assédio. A violação resulta no encerramento imediato do acesso.<br><br>
+                <strong>2. Privacidade e Responsabilidade Individual:</strong> Cada usuário é responsável pelas informações que decide compartilhar. Evite exposição de dados pessoais.<br><br>
+                <strong>3. Rodadas e Intervalo (*Kyukei*):</strong> Cada conversa dura 15 minutos. Você tem direito a 2 rodadas consecutivas. Após a 2ª rodada, haverá um descanso obrigatório de 1 hora.<br><br>
                 <div style="text-align: center; color: #1e3a8a; font-weight: bold; padding: 10px 0;">✨ Fim dos Termos. Agora você pode prosseguir! ✨</div>
             </div>
 
@@ -294,9 +293,7 @@
             <button class="btn-voltar-topo" onclick="mudarTela('stepPerfil')">⬅️ Voltar</button>
             <h2 style="font-size: 20px;">👥 Pessoas Online Agora</h2>
             <p style="font-size: 12px; color: var(--text-secondary);">Usuários aguardando na rede</p>
-            <div class="grid-fotos" id="gridFotos">
-                <!-- Preenchido dinamicamente via script -->
-            </div>
+            <div class="grid-fotos" id="gridFotos"></div>
             <button class="btn-main" onclick="iniciarRoleta()">Girar Roleta Agora 🎲</button>
         </div>
 
@@ -328,7 +325,7 @@
             
             <div class="chat-box">
                 <div class="chat-messages" id="chatMessages">
-                    <p style="color: #64748b; text-align: center; font-style: italic;">Conexão estabelecida! Troque ideias e compartilhe lugares legais 👋</p>
+                    <p style="color: #64748b; text-align: center; font-style: italic;">Conexão estabelecida! Troque ideias e divirta-se 👋</p>
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="inputMensagem" placeholder="Digite sua mensagem...">
@@ -363,6 +360,31 @@
     </div>
 
     <script>
+        // VALIDAÇÃO DE SEGURANÇA: Garante acesso apenas via LINE
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const tokenValido = "linha_segura_2026"; 
+
+            // Se quiser testar direto no navegador sem o LINE durante o desenvolvimento, comente a linha abaixo (adicione // na frente)
+            if (token !== tokenValido) {
+                document.body.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 20px; font-family: sans-serif; background: #f8fafc; color: #1e293b;">
+                        <h2 style="color: #d97706; margin-bottom: 10px;">⚠️ Acesso Restrito</h2>
+                        <p style="font-size: 14px; color: #475569; max-width: 400px; line-height: 1.5;">
+                            Por motivos de segurança e conformidade, este espaço só pode ser acessado através do link oficial no nosso bot do LINE.
+                        </p>
+                        <a href="https://line.me/R/ti/p/@seu_bot" style="margin-top: 20px; background: #06c755; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 12px rgba(6,199,85,0.3);">
+                            Abrir pelo LINE 🟢
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            configurarCarrossel();
+        });
+
         let rodadaAtual = 1;
         let segundosRestantes = 15 * 60;
         let timerInterval;
@@ -371,7 +393,6 @@
         const avataresDisponiveis = ["👨‍💻", "👩‍💻", "🧑‍🎤", "👩‍🦰", "👨‍🔧", "👩‍🎓", "👨‍🍳", "👩‍🎨", "👨‍🌾", "👩‍💼"];
         let pessoaSorteada = { nome: "Usuário 1", avatar: "👨‍💻", regiao: "Aichi" };
 
-        // Carrossel Infinito
         function configurarCarrossel() {
             const track = document.getElementById('carouselTrack');
             if (!track || track.dataset.initialized === "true") return;
@@ -380,9 +401,7 @@
             track.style.setProperty('--scroll-amount', `-${track.scrollWidth / 2}px`);
             track.dataset.initialized = "true";
         }
-        window.addEventListener('load', configurarCarrossel);
 
-        // Validação de rolagem dos termos
         function checarFimRolagem() {
             const caixa = document.getElementById('caixaTermos');
             const btn = document.getElementById('btnAceitar');
