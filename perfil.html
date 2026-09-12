@@ -8,7 +8,7 @@
     <!-- SDKs do Firebase (Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Configuração do Firebase com as suas chaves reais
         const firebaseConfig = {
@@ -25,6 +25,7 @@
 
         window.db = db;
         window.firebaseDocs = { doc, getDoc, setDoc };
+        window.firebaseTransacao = { collection, addDoc, serverTimestamp };
     </script>
 
     <style>
@@ -140,6 +141,18 @@
             cursor: pointer;
             text-decoration: none;
         }
+        .btn-test-buy {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
         .menu-list {
             background: white;
             border-radius: 12px;
@@ -195,6 +208,9 @@
             </div>
             <a href="historicocreditos.html" class="btn-buy">+ Comprar</a>
         </div>
+
+        <!-- Botão auxiliar de teste para simular uma compra real e testar o histórico -->
+        <button class="btn-test-buy" onclick="simularCompraTeste()">🧪 Simular Compra Real (+1500 pts)</button>
     </div>
 
     <div class="menu-list">
@@ -265,6 +281,37 @@
                 }
             }
         });
+
+        // Função para simular a compra e gravar na coleção 'transacoes' do Firebase
+        async function simularCompraTeste() {
+            const idSalvo = localStorage.getItem('line_user_id');
+            if (!idSalvo) {
+                alert("Usuário não identificado!");
+                return;
+            }
+
+            try {
+                while (!window.db || !window.firebaseTransacao) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                const { collection, addDoc, serverTimestamp } = window.firebaseTransacao;
+
+                // Adiciona o registro real na coleção 'transacoes'
+                await addDoc(collection(window.db, "transacoes"), {
+                    userId: idSalvo,
+                    descricao: "Compra de Créditos (30 minutos)",
+                    valor: 1500,
+                    data: serverTimestamp()
+                });
+
+                alert("Compra registrada com sucesso no banco de dados!");
+                window.location.href = "historicocreditos.html";
+            } catch (error) {
+                console.error("Erro ao registrar compra:", error);
+                alert("Erro ao salvar transação.");
+            }
+        }
 
         function sairDaConta() {
             localStorage.removeItem('line_user_id');
