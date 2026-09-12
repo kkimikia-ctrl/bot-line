@@ -4,6 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ajuda JP - Histórico de Créditos</title>
+    
+    <!-- SDKs do Firebase (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuração do Firebase com as suas chaves reais
+        const firebaseConfig = {
+            apiKey: "AIzaSyCTQTWEyj8f-Ddk",
+            authDomain: "ajuda-jp.firebaseapp.com",
+            projectId: "ajuda-jp",
+            storageBucket: "ajuda-jp.appspot.com",
+            messagingSenderId: "40121072206",
+            appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.firebaseQuery = { collection, query, where, getDocs };
+    </script>
+
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -88,38 +111,67 @@
     <div class="header">
         <a href="perfil.html" class="btn-voltar">← Voltar</a>
         <span>Histórico de Créditos</span>
-        <div style="width: 60px;"></div> <!-- Elemento invisível para centralizar o título -->
+        <div style="width: 60px;"></div>
     </div>
 
     <div class="container" id="listaHistorico">
-        <!-- O histórico será carregado aqui dinamicamente ou exibirá os registros -->
-        
-        <div class="historico-card">
-            <div class="info-transacao">
-                <h4>Compra de Créditos (30 minutos)</h4>
-                <p>Data: 28/08/2026 - 14:32</p>
-            </div>
-            <div class="valor-transacao">
-                +1,500円
-            </div>
-        </div>
-
-        <div class="historico-card">
-            <div class="info-transacao">
-                <h4>Compra de Créditos (1 hora)</h4>
-                <p>Data: 15/08/2026 - 10:15</p>
-            </div>
-            <div class="valor-transacao">
-                +3,000円
-            </div>
-        </div>
+        <div class="sem-historico">Carregando histórico...</div>
     </div>
 
     <script>
-        // Aqui você pode integrar futuramente a busca do histórico real do usuário usando o ID salvo no localStorage
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const userId = localStorage.getItem('line_user_id');
-            console.log("Carregando histórico para o usuário:", userId);
+            const container = document.getElementById('listaHistorico');
+
+            if (!userId) {
+                container.innerHTML = `<div class="sem-historico">Usuário não identificado. Faça login novamente.</div>`;
+                return;
+            }
+
+            try {
+                while (!window.db) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                const { collection, query, where, getDocs } = window.firebaseQuery;
+                const q = query(collection(window.db, "transacoes"), where("userId", "==", userId));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = `<div class="sem-historico">Nenhuma compra ou transação real registrada ainda.</div>`;
+                    return;
+                }
+
+                let html = "";
+                querySnapshot.forEach((doc) => {
+                    const dados = doc.data();
+                    const descricao = dados.descricao || "Compra de Créditos";
+                    const valor = dados.valor || 0;
+                    
+                    let dataFormatada = "Data recente";
+                    if (dados.data && dados.data.toDate) {
+                        dataFormatada = dados.data.toDate().toLocaleString('pt-BR');
+                    }
+
+                    html += `
+                        <div class="historico-card">
+                            <div class="info-transacao">
+                                <h4>${descricao}</h4>
+                                <p>Data: ${dataFormatada}</p>
+                            </div>
+                            <div class="valor-transacao">
+                                +${valor} pts
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error("Erro ao buscar histórico:", error);
+                container.innerHTML = `<div class="sem-historico">Erro ao carregar o histórico.</div>`;
+            }
         });
     </script>
 </body>
