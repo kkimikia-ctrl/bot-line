@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GiraAí - Conexões Casuais</title>
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
@@ -150,7 +155,6 @@
             pointer-events: none;
         }
 
-        /* Botão de Voltar Padrão */
         .btn-voltar-topo {
             align-self: flex-start;
             background: #3b82f6;
@@ -165,27 +169,7 @@
             margin-bottom: 4px;
         }
 
-        /* Grade de Fotos */
-        .grid-fotos {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            width: 100%;
-            max-height: 220px;
-            overflow-y: auto;
-            padding: 4px;
-        }
-        .foto-card {
-            background: #f1f5f9;
-            border-radius: 8px;
-            padding: 10px 4px;
-            text-align: center;
-            font-size: 12px;
-            border: 1px solid #cbd5e1;
-        }
-        .foto-card span { font-size: 24px; display: block; margin-bottom: 4px; }
-
-        /* Estilo da Tela de Chat */
+        /* Estilo da Tela de Chat Real */
         .chat-box {
             width: 100%;
             flex-grow: 1;
@@ -204,6 +188,9 @@
             font-size: 14px;
             padding: 5px;
             color: #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
         .chat-input-area {
             display: flex;
@@ -255,7 +242,7 @@
                 <div style="text-align: center; color: #1e3a8a; font-weight: bold; padding: 10px 0;">✨ Fim dos Termos. Agora você pode prosseguir! ✨</div>
             </div>
 
-            <button id="btnAceitar" class="btn-main btn-disabled" onclick="irParaPerfil()">Li e Aceito os Termos ✅</button>
+            <button id="btnAceitar" class="btn-main btn-disabled" onclick="mudarTela('stepPerfil')">Li e Aceito os Termos ✅</button>
         </div>
 
         <!-- ETAPA 2: CONFIGURAR PERFIL -->
@@ -275,7 +262,7 @@
 
             <div style="width: 100%; text-align: left;">
                 <label style="font-size: 12px; font-weight: bold; color: var(--text-secondary);">Escolher Ícone / Avatar Rápido:</label>
-                <select id="selectAvatar" class="input-box" onchange="mudarAvatar(this.value)">
+                <select id="selectAvatar" class="input-box" onchange="document.getElementById('userAvatarPreview').innerText=this.value">
                     <option value="👤">Padrão (👤)</option>
                     <option value="👨‍💻">Homem Tech (👨‍💻)</option>
                     <option value="👩‍💻">Mulher Tech (👩‍💻)</option>
@@ -285,26 +272,29 @@
                 </select>
             </div>
 
-            <button class="btn-main" onclick="irParaGrade()">Salvar e Ver Pessoas Online 🚀</button>
+            <div style="width: 100%; text-align: left;">
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-secondary);">Sua Região no Japão:</label>
+                <select id="selectRegiao" class="input-box">
+                    <option value="Aichi">📍 Aichi</option>
+                    <option value="Shizuoka">📍 Shizuoka</option>
+                    <option value="Tóquio">📍 Tóquio</option>
+                    <option value="Nagano">📍 Nagano</option>
+                    <option value="Gumma">📍 Gumma</option>
+                </select>
+            </div>
+
+            <button class="btn-main" onclick="entrarNaFilaReal()">Procurar Alguém Online 🚀</button>
         </div>
 
-        <!-- ETAPA 3: GRADE DE FOTOS DAS PESSOAS ONLINE -->
-        <div id="stepGrade" class="step-screen">
-            <button class="btn-voltar-topo" onclick="mudarTela('stepPerfil')">⬅️ Voltar</button>
-            <h2 style="font-size: 20px;">👥 Pessoas Online Agora</h2>
-            <p style="font-size: 12px; color: var(--text-secondary);">Usuários aguardando na rede</p>
-            <div class="grid-fotos" id="gridFotos"></div>
-            <button class="btn-main" onclick="iniciarRoleta()">Girar Roleta Agora 🎲</button>
-        </div>
-
-        <!-- ETAPA 4: ROLETA COM SUSPENSE -->
+        <!-- ETAPA 3: ROLETA / BUSCA REAL NO FIRESTORE -->
         <div id="stepRoleta" class="step-screen">
-            <div style="font-size: 60px;" id="roletaIcone">🎰</div>
-            <h2 id="roletaTexto" style="font-size: 20px;">Sorteando Região...</h2>
-            <p style="font-size: 13px; color: var(--text-secondary);">Gerando conexão surpresa pelo Japão...</p>
+            <div style="font-size: 60px;">🎰</div>
+            <h2 style="font-size: 20px;">Procurando parceiro(a) real...</h2>
+            <p style="font-size: 13px; color: var(--text-secondary);">Aguarde alguém entrar na mesma frequência pelo Japão...</p>
+            <button class="btn-voltar-topo" style="margin-top: 20px;" onclick="cancelarBusca()">Cancelar Busca</button>
         </div>
 
-        <!-- ETAPA 5: TELA DE CHAT -->
+        <!-- ETAPA 4: TELA DE CHAT REAL COM FIREBASE -->
         <div id="stepChat" class="step-screen" style="justify-content: flex-start; height: 100%;">
             
             <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #e2e8f0; padding: 6px 10px; border-radius: 6px;">
@@ -312,42 +302,40 @@
                     <span id="chatInfoRodada" style="font-size: 12px; font-weight: bold; background: #fff; padding: 3px 8px; border-radius: 4px;">Rodada 1/2</span>
                     <button id="btnCronometro" onclick="mostrarTempoRestante()" style="background: #1e3a8a; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;">⏳</button>
                 </div>
-                <button onclick="mudarTela('stepGrade')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">⬅️ Voltar</button>
+                <button onclick="sairDoChat()" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">Sair</button>
             </div>
 
             <div style="width: 100%; display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; text-align: left;">
                 <span id="chatAvatarConectado" style="font-size: 26px; background: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👤</span>
                 <div>
-                    <div id="chatNomeConectado" style="font-size: 13px; font-weight: bold; color: #1e3a8a;">Nome do Usuário</div>
-                    <div id="chatRegiaoConectada" style="font-size: 11px; color: #64748b;">📍 Região</div>
+                    <div id="chatNomeConectado" style="font-size: 13px; font-weight: bold; color: #1e3a8a;">Aguardando...</div>
+                    <div id="chatRegiaoConectada" style="font-size: 11px; color: #64748b;">📍 ---</div>
                 </div>
             </div>
             
             <div class="chat-box">
                 <div class="chat-messages" id="chatMessages">
-                    <p style="color: #64748b; text-align: center; font-style: italic;">Conexão estabelecida! Troque ideias e divirta-se 👋</p>
+                    <p style="color: #64748b; text-align: center; font-style: italic;">Conexão estabelecida! Diga olá 👋</p>
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="inputMensagem" placeholder="Digite sua mensagem...">
-                    <button onclick="enviarMensagem()">Enviar</button>
+                    <button onclick="enviarMensagemReal()">Enviar</button>
                 </div>
             </div>
         </div>
 
-        <!-- ETAPA 6: FIM DA RODADA 1 -->
+        <!-- ETAPA 5: FIM DA RODADA 1 -->
         <div id="stepFimRodada1" class="step-screen">
-            <button class="btn-voltar-topo" onclick="mudarTela('stepChat')">⬅️ Voltar ao Chat</button>
             <h2 style="font-size: 22px;">🔔 Fim da 1ª Rodada!</h2>
             <p style="font-size: 14px; color: var(--text-secondary);">Seu tempo de 15 minutos nesta conversa terminou.</p>
             <div style="background: #eff6ff; border: 1px solid #3b82f6; padding: 14px; border-radius: 8px; font-size: 13px; color: #1e40af; font-weight: bold;">
                 Você ainda tem direito a mais <strong>1 rodada</strong> de conversa!
             </div>
-            <button class="btn-main" onclick="irParaGrade()">Iniciar 2ª Rodada 🎲</button>
+            <button class="btn-main" onclick="rodadaAtual = 2; entrarNaFilaReal();">Iniciar 2ª Rodada 🎲</button>
         </div>
 
-        <!-- ETAPA 7: FIM DA RODADA 2 (KYUKEI) -->
+        <!-- ETAPA 6: FIM DA RODADA 2 (KYUKEI) -->
         <div id="stepKyukei" class="step-screen">
-            <button class="btn-voltar-topo" onclick="location.href='../index.html'">⬅️ Menu Principal</button>
             <h2 style="font-size: 22px;">☕ Hora do Descanso (Kyukei)</h2>
             <p style="font-size: 14px; color: var(--text-secondary);">Você concluiu suas 2 rodadas permitidas.</p>
             <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 14px; border-radius: 8px; font-size: 13.5px; color: #92400e; font-weight: bold;">
@@ -360,7 +348,30 @@
     </div>
 
     <script>
-        // VALIDAÇÃO DE SEGURANÇA: Garante acesso apenas via LINE (com token corrigido)
+        // CONFIGURAÇÃO DO FIREBASE (Insira os dados do seu projeto gratuito do Firebase)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto",
+            storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "SEU_ID",
+            appId: "SUA_APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let meuId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let salaId = null;
+        let meuDocFilaRef = null;
+        let unsubscribeMensagens = null;
+        let unsubscribeSalaListener = null;
+        
+        let rodadaAtual = 1;
+        let segundosRestantes = 15 * 60;
+        let timerInterval;
+
+        // VALIDAÇÃO DE SEGURANÇA: Garante acesso apenas via LINE
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');
@@ -384,14 +395,6 @@
             configurarCarrossel();
         });
 
-        let rodadaAtual = 1;
-        let segundosRestantes = 15 * 60;
-        let timerInterval;
-
-        const estadosJapao = ["Aichi", "Nagano", "Tóquio", "Hokkaido", "Gumma", "Ibaraki", "Shizuoka", "Kanagawa", "Saitama", "Kyoto"];
-        const avataresDisponiveis = ["👨‍💻", "👩‍💻", "🧑‍🎤", "👩‍🦰", "👨‍🔧", "👩‍🎓", "👨‍🍳", "👩‍🎨", "👨‍🌾", "👩‍💼"];
-        let pessoaSorteada = { nome: "Usuário 1", avatar: "👨‍💻", regiao: "Aichi" };
-
         function configurarCarrossel() {
             const track = document.getElementById('carouselTrack');
             if (!track || track.dataset.initialized === "true") return;
@@ -414,71 +417,125 @@
             document.getElementById(idTela).classList.add('active');
         }
 
-        function irParaPerfil() { mudarTela('stepPerfil'); }
-
-        function mudarAvatar(emoji) {
-            document.getElementById('userAvatarPreview').innerText = emoji;
-        }
-        
-        function irParaGrade() {
-            const grid = document.getElementById('gridFotos');
-            grid.innerHTML = '';
-            
-            for(let i=1; i<=20; i++) {
-                const reg = estadosJapao[i % estadosJapao.length];
-                const av = avataresDisponiveis[i % avataresDisponiveis.length];
-                grid.innerHTML += `<div class="foto-card"><span>${av}</span>User ${i}<br><small style="color:#666;">📍 ${reg}</small></div>`;
-            }
-            mudarTela('stepGrade');
-        }
-
-        function iniciarRoleta() {
+        // SISTEMA REAL DE FILA E PARELHAMENTO (FIRESTORE)
+        async function entrarNaFilaReal() {
             mudarTela('stepRoleta');
-            const txt = document.getElementById('roletaTexto');
             
-            const regAleatoria = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
-            const avAleatorio = avataresDisponiveis[Math.floor(Math.random() * avataresDisponiveis.length)];
-            pessoaSorteada.regiao = regAleatoria;
-            pessoaSorteada.avatar = avAleatorio;
-            pessoaSorteada.nome = "Colega " + Math.floor(Math.random() * 100);
+            const nome = document.getElementById('inputNome').value || "Convidado";
+            const avatar = document.getElementById('selectAvatar').value;
+            const regiao = document.getElementById('selectRegiao').value;
 
-            let tempoDecorrido = 0;
-            const intervalo = setInterval(() => {
-                const tempReg = estadosJapao[Math.floor(Math.random() * estadosJapao.length)];
-                txt.innerHTML = `Sorteando região... <br><strong style="font-size:24px; color:#1e3a8a;">📍 ${tempReg}</strong>`;
-                tempoDecorrido += 200;
+            const filaRef = db.collection('fila_espera');
+            const snapshot = await filaRef.where('status', '==', 'procurando').get();
 
-                if(tempoDecorrido >= 4000) {
-                    clearInterval(intervalo);
-                    txt.innerHTML = `🎉 Conexão Encontrada em <strong>${pessoaSorteada.regiao}!</strong>`;
-                    setTimeout(iniciarChat, 1500);
+            let parceiroEncontrado = null;
+
+            snapshot.forEach(doc => {
+                const dados = doc.data();
+                if (dados.userId !== meuId && !parceiroEncontrado) {
+                    parceiroEncontrado = { id: doc.id, ...dados };
                 }
-            }, 200);
+            });
+
+            if (parceiroEncontrado) {
+                // Se encontrou alguém na fila, cria a sala compartilhada
+                salaId = 'sala_' + Date.now();
+                
+                await db.collection('salas').doc(salaId).set({
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+                    usuario1: { id: meuId, nome, avatar, regiao },
+                    usuario2: { id: parceiroEncontrado.userId, nome: parceiroEncontrado.nome, avatar: parceiroEncontrado.avatar, regiao: parceiroEncontrado.regiao }
+                });
+
+                // Remove o parceiro da fila
+                await filaRef.doc(parceiroEncontrado.id).delete();
+                conectarChatReal(salaId, { nome: parceiroEncontrado.nome, avatar: parceiroEncontrado.avatar, regiao: parceiroEncontrado.regiao });
+            } else {
+                // Se não achar ninguém, entra na fila e aguarda outro usuário chegar
+                const meuDocRef = await filaRef.add({
+                    userId: meuId,
+                    nome,
+                    avatar,
+                    regiao,
+                    status: 'procurando',
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                meuDocFilaRef = meuDocRef;
+
+                // Fica escutando se alguém criou uma sala puxando a gente
+                unsubscribeSalaListener = db.collection('salas').where('usuario2.id', '==', meuId).onSnapshot(snapshot => {
+                    snapshot.forEach(doc => {
+                        salaId = doc.id;
+                        const dados = doc.data();
+                        if (unsubscribeSalaListener) unsubscribeSalaListener();
+                        if (meuDocFilaRef) meuDocFilaRef.delete();
+                        conectarChatReal(salaId, dados.usuario1);
+                    });
+                });
+            }
         }
 
-        function iniciarChat() {
+        async function cancelarBusca() {
+            if (meuDocFilaRef) {
+                await meuDocFilaRef.delete().catch(() => {});
+                meuDocFilaRef = null;
+            }
+            if (unsubscribeSalaListener) unsubscribeSalaListener();
+            mudarTela('stepPerfil');
+        }
+
+        function conectarChatReal(idSala, parceiro) {
             mudarTela('stepChat');
-            
-            document.getElementById('chatAvatarConectado').innerText = pessoaSorteada.avatar;
-            document.getElementById('chatNomeConectado').innerText = pessoaSorteada.nome;
-            document.getElementById('chatRegiaoConectada').innerText = `📍 ${pessoaSorteada.regiao}`;
+            document.getElementById('chatAvatarConectado').innerText = parceiro.avatar;
+            document.getElementById('chatNomeConectado').innerText = parceiro.nome;
+            document.getElementById('chatRegiaoConectada').innerText = `📍 ${parceiro.regiao}`;
             document.getElementById('chatInfoRodada').innerText = `Rodada ${rodadaAtual}/2`;
 
+            const msgsContainer = document.getElementById('chatMessages');
+            msgsContainer.innerHTML = `<p style="color: #64748b; text-align: center; font-style: italic;">Conectado com ${parceiro.nome}! 👋</p>`;
+
+            // Ouve as mensagens do chat em tempo real no Firestore
+            unsubscribeMensagens = db.collection('salas').doc(idSala).collection('mensagens').orderBy('enviadoEm')
+                .onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const msg = change.doc.data();
+                            const estilo = msg.senderId === meuId ? 'text-align: right; color: #1d4ed8;' : 'text-align: left; color: #334155;';
+                            const remetente = msg.senderId === meuId ? 'Você' : parceiro.nome;
+                            msgsContainer.innerHTML += `<div style="${estilo}"><b>${remetente}:</b> ${msg.texto}</div>`;
+                            msgsContainer.scrollTop = msgsContainer.scrollHeight;
+                        }
+                    });
+                });
+
+            // Controle do tempo de 15 minutos por rodada
             segundosRestantes = 15 * 60; 
-            
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 segundosRestantes--;
                 if(segundosRestantes <= 0) {
                     clearInterval(timerInterval);
+                    if(unsubscribeMensagens) unsubscribeMensagens();
                     if(rodadaAtual === 1) {
-                        rodadaAtual = 2;
                         mudarTela('stepFimRodada1');
                     } else {
                         iniciarKyukei();
                     }
                 }
             }, 1000);
+        }
+
+        function enviarMensagemReal() {
+            const input = document.getElementById('inputMensagem');
+            if (!input.value.trim() || !salaId) return;
+
+            db.collection('salas').doc(salaId).collection('mensagens').add({
+                senderId: meuId,
+                texto: input.value,
+                enviadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            input.value = "";
         }
 
         function mostrarTempoRestante() {
@@ -496,14 +553,10 @@
             }, 2000);
         }
 
-        function enviarMensagem() {
-            const input = document.getElementById('inputMensagem');
-            const msgs = document.getElementById('chatMessages');
-            if(input.value.trim() === "") return;
-
-            msgs.innerHTML += `<p><b>Você:</b> ${input.value}</p>`;
-            input.value = "";
-            msgs.scrollTop = msgs.scrollHeight;
+        function sairDoChat() {
+            if (unsubscribeMensagens) unsubscribeMensagens();
+            if (unsubscribeSalaListener) unsubscribeSalaListener();
+            location.reload();
         }
 
         function iniciarKyukei() {
