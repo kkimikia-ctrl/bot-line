@@ -7,7 +7,7 @@
 <!-- Tailwind CSS para deixar o design moderno -->
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
 <!-- TELA DE LOGIN (Aparece primeiro) -->
 <div id="login-container" class="bg-gray-800 p-8 rounded-xl shadow-lg w-96 border border-gray-700">
 <h2 class="text-2xl font-bold mb-6 text-center text-indigo-400">Painel Admin</h2>
@@ -30,7 +30,7 @@ Entrar
 <p id="error-message" class="text-red-400 text-sm mt-4 text-center hidden"></p>
 </div>
 <!-- CONTEÚDO DO PAINEL (Fica oculto até você fazer o login com sucesso) -->
-<div id="dashboard-container" class="hidden w-full max-w-4xl p-6">
+<div id="dashboard-container" class="hidden w-full max-w-4xl p-2">
 <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
 <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
 <h1 class="text-2xl font-bold text-indigo-400">Painel Administrativo</h1>
@@ -61,7 +61,7 @@ Sair
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 const firebaseConfig = {
 apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
 authDomain: "ajuda-jp.firebaseapp.com",
@@ -90,7 +90,6 @@ const botUsersRef = ref(db, 'bot_users');
 onValue(botUsersRef, (snapshot) => {
 const data = snapshot.val();
 if (data) {
-// Conta quantos usuários estão com status 'online'
 let ativos = 0;
 Object.values(data).forEach(userObj => {
 if (userObj.state === 'online') {
