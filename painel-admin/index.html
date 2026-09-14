@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Login</title>
-    <!-- Tailwind CSS para deixar bonito rápido -->
+    <title>Painel Administrativo</title>
+    <!-- Tailwind CSS para deixar o design moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
 
-    <div class="bg-gray-800 p-8 rounded-xl shadow-lg w-96 border border-gray-700">
+    <!-- TELA DE LOGIN (Aparece primeiro) -->
+    <div id="login-container" class="bg-gray-800 p-8 rounded-xl shadow-lg w-96 border border-gray-700">
         <h2 class="text-2xl font-bold mb-6 text-center text-indigo-400">Painel Admin</h2>
         
-        <!-- Formulário de Login -->
         <form id="login-form" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">E-mail</label>
@@ -33,12 +33,37 @@
         <p id="error-message" class="text-red-400 text-sm mt-4 text-center hidden"></p>
     </div>
 
-    <!-- Scripts do Firebase (versão modular compatível) -->
+    <!-- CONTEÚDO DO PAINEL (Fica oculto até você fazer o login com sucesso) -->
+    <div id="dashboard-container" class="hidden w-full max-w-4xl p-6">
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+                <h1 class="text-2xl font-bold text-indigo-400">Painel Administrativo</h1>
+                <button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition">
+                    Sair
+                </button>
+            </div>
+            
+            <p class="text-gray-300 mb-4">Bem-vindo de volta! Autenticado com sucesso.</p>
+            
+            <!-- Aqui você poderá adicionar as tabelas, botões e controles do seu bot do Line no futuro -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
+                    <h3 class="font-semibold text-indigo-300 mb-2">Status do Sistema</h3>
+                    <p class="text-sm text-green-400">● Conectado ao Firebase</p>
+                </div>
+                <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
+                    <h3 class="font-semibold text-indigo-300 mb-2">Ações Rápidas</h3>
+                    <p class="text-sm text-gray-400">Painel pronto para uso.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts do Firebase e Lógica de Autenticação -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Configurações do Firebase do seu projeto
         const firebaseConfig = {
             apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
             authDomain: "ajuda-jp.firebaseapp.com",
@@ -48,14 +73,32 @@
             appId: "1:40121072206:web:8a844e632f004f61d0a11f"
         };
 
-        // Inicializa o Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        const form = document.getElementById('login-form');
+        const loginContainer = document.getElementById('login-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
+        const logoutBtn = document.getElementById('logout-btn');
 
-        form.addEventListener('submit', async (e) => {
+        const meuEmailAdmin = "miha28@outlook.jp";
+
+        // Monitora o estado da sessão
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email === meuEmailAdmin) {
+                // Se estiver logado e for o e-mail correto, mostra o painel e esconde o login
+                loginContainer.classList.add('hidden');
+                dashboardContainer.classList.remove('hidden');
+            } else {
+                // Caso contrário, mostra a tela de login
+                loginContainer.classList.remove('hidden');
+                dashboardContainer.classList.add('hidden');
+            }
+        });
+
+        // Ação de envio do formulário de login
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMessage.classList.add('hidden');
 
@@ -63,25 +106,24 @@
             const password = document.getElementById('password').value;
 
             try {
-                // Tenta fazer o login no Firebase
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                // CAMADA EXTRA DE SEGURANÇA: Restrito apenas ao seu e-mail
-                const meuEmailAdmin = "miha28@outlook.jp"; 
-
                 if (user.email !== meuEmailAdmin) {
+                    await signOut(auth);
                     throw new Error("Acesso não autorizado para este e-mail.");
                 }
 
-                // Se deu tudo certo, redireciona para a página interna do painel
-                alert("Login realizado com sucesso!");
-                window.location.href = "dashboard.html"; // Página interna que criaremos depois
-
+                // Sucesso! O listener onAuthStateChanged vai alternar a tela automaticamente.
             } catch (error) {
                 errorMessage.textContent = "Erro ao entrar: " + error.message;
                 errorMessage.classList.remove('hidden');
             }
+        });
+
+        // Botão de Sair / Logout
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
         });
     </script>
 </body>
