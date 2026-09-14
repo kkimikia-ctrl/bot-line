@@ -1,153 +1,134 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo</title>
-    <!-- Tailwind CSS para deixar o design moderno -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Administrativo</title>
+<!-- Tailwind CSS para deixar o design moderno -->
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
-
-    <!-- TELA DE LOGIN (Aparece primeiro) -->
-    <div id="login-container" class="bg-gray-800 p-8 rounded-xl shadow-lg w-96 border border-gray-700">
-        <h2 class="text-2xl font-bold mb-6 text-center text-indigo-400">Painel Admin</h2>
-        
-        <form id="login-form" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">E-mail</label>
-                <input type="email" id="email" required 
-                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
-                <input type="password" id="password" required 
-                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white">
-            </div>
-            <button type="submit" 
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition duration-200">
-                Entrar
-            </button>
-        </form>
-
-        <p id="error-message" class="text-red-400 text-sm mt-4 text-center hidden"></p>
-    </div>
-
-    <!-- CONTEÚDO DO PAINEL (Fica oculto até você fazer o login com sucesso) -->
-    <div id="dashboard-container" class="hidden w-full max-w-4xl p-6">
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
-            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                <h1 class="text-2xl font-bold text-indigo-400">Painel Administrativo</h1>
-                <button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition">
-                    Sair
-                </button>
-            </div>
-            
-            <p class="text-gray-300 mb-4">Bem-vindo de volta! Autenticado com sucesso.</p>
-            
-            <!-- Cards de Informação -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <!-- Status do Sistema -->
-                <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
-                    <h3 class="font-semibold text-indigo-300 mb-2">Status do Sistema</h3>
-                    <p class="text-sm text-green-400">● Conectado ao Firebase</p>
-                </div>
-
-                <!-- Quem está online / Atividade -->
-                <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
-                    <h3 class="font-semibold text-indigo-300 mb-2">Usuários / Sistema Online</h3>
-                    <div id="online-status-box" class="text-sm text-gray-300 flex items-center space-x-2">
-                        <span class="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-                        <span id="online-text">Verificando conexões...</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts do Firebase e Lógica de Autenticação -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
-            authDomain: "ajuda-jp.firebaseapp.com",
-            projectId: "ajuda-jp",
-            storageBucket: "ajuda-jp.firebasestorage.app",
-            messagingSenderId: "40121072206",
-            appId: "1:40121072206:web:8a844e632f004f61d0a11f"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-
-        const loginContainer = document.getElementById('login-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const loginForm = document.getElementById('login-form');
-        const errorMessage = document.getElementById('error-message');
-        const logoutBtn = document.getElementById('logout-btn');
-        const onlineText = document.getElementById('online-text');
-
-        const meuEmailAdmin = "miha28@outlook.jp";
-
-        // Monitora o estado da sessão
-        onAuthStateChanged(auth, (user) => {
-            if (user && user.email === meuEmailAdmin) {
-                loginContainer.classList.add('hidden');
-                dashboardContainer.classList.remove('hidden');
-
-                // Regista a presença do Admin como online no Realtime Database
-                const userStatusRef = ref(db, 'status/admin_painel');
-                set(userStatusRef, { state: 'online', last_changed: Date.now() });
-                onDisconnect(userStatusRef).set({ state: 'offline', last_changed: Date.now() });
-
-                // Monitora quantos elementos/usuários estão online na base de dados
-                const allStatusRef = ref(db, 'status');
-                onValue(allStatusRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        let count = Object.values(data).filter(item => item.state === 'online').length;
-                        onlineText.textContent = `${count} conectado(s) no momento`;
-                    } else {
-                        onlineText.textContent = `1 conectado (Você)`;
-                    }
-                });
-
-            } else {
-                loginContainer.classList.remove('hidden');
-                dashboardContainer.classList.add('hidden');
-            }
-        });
-
-        // Ação de envio do formulário de login
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            errorMessage.classList.add('hidden');
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                if (user.email !== meuEmailAdmin) {
-                    await signOut(auth);
-                    throw new Error("Acesso não autorizado para este e-mail.");
-                }
-            } catch (error) {
-                errorMessage.textContent = "Erro ao entrar: " + error.message;
-                errorMessage.classList.remove('hidden');
-            }
-        });
-
-        // Botão de Sair / Logout
-        logoutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-        });
-    </script>
+<!-- TELA DE LOGIN (Aparece primeiro) -->
+<div id="login-container" class="bg-gray-800 p-8 rounded-xl shadow-lg w-96 border border-gray-700">
+<h2 class="text-2xl font-bold mb-6 text-center text-indigo-400">Painel Admin</h2>
+<form id="login-form" class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-300 mb-1">E-mail</label>
+<input type="email" id="email" required 
+class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+<input type="password" id="password" required 
+class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white">
+</div>
+<button type="submit" 
+class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition duration-200">
+Entrar
+</button>
+</form>
+<p id="error-message" class="text-red-400 text-sm mt-4 text-center hidden"></p>
+</div>
+<!-- CONTEÚDO DO PAINEL (Fica oculto até você fazer o login com sucesso) -->
+<div id="dashboard-container" class="hidden w-full max-w-4xl p-6">
+<div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
+<div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+<h1 class="text-2xl font-bold text-indigo-400">Painel Administrativo</h1>
+<button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition">
+Sair
+</button>
+</div>
+<p class="text-gray-300 mb-4">Bem-vindo de volta! Autenticado com sucesso.</p>
+<!-- Cards de Informação -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+<!-- Status do Sistema -->
+<div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
+<h3 class="font-semibold text-indigo-300 mb-2">Status do Sistema</h3>
+<p class="text-sm text-green-400">● Conectado ao Firebase</p>
+</div>
+<!-- Usuários do Mini App Online -->
+<div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
+<h3 class="font-semibold text-indigo-300 mb-2">Usuários Online no App</h3>
+<div class="text-sm text-gray-300 flex items-center space-x-2">
+<span class="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+<span id="bot-users-text">Carregando usuários...</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Scripts do Firebase e Lógica de Autenticação -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+const firebaseConfig = {
+apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+authDomain: "ajuda-jp.firebaseapp.com",
+projectId: "ajuda-jp",
+storageBucket: "ajuda-jp.firebasestorage.app",
+messagingSenderId: "40121072206",
+appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const loginContainer = document.getElementById('login-container');
+const dashboardContainer = document.getElementById('dashboard-container');
+const loginForm = document.getElementById('login-form');
+const errorMessage = document.getElementById('error-message');
+const logoutBtn = document.getElementById('logout-btn');
+const botUsersText = document.getElementById('bot-users-text');
+const meuEmailAdmin = "miha28@outlook.jp";
+// Monitora o estado da sessão do Admin
+onAuthStateChanged(auth, (user) => {
+if (user && user.email === meuEmailAdmin) {
+loginContainer.classList.add('hidden');
+dashboardContainer.classList.remove('hidden');
+// Monitora a pasta de usuários conectados do LINE Mini App
+const botUsersRef = ref(db, 'bot_users');
+onValue(botUsersRef, (snapshot) => {
+const data = snapshot.val();
+if (data) {
+// Conta quantos usuários estão com status 'online'
+let ativos = 0;
+Object.values(data).forEach(userObj => {
+if (userObj.state === 'online') {
+ativos++;
+}
+});
+botUsersText.textContent = ⁠${ativos} usuário(s) online agora⁠;
+} else {
+botUsersText.textContent = ⁠0 usuários online no momento⁠;
+}
+});
+} else {
+loginContainer.classList.remove('hidden');
+dashboardContainer.classList.add('hidden');
+}
+});
+// Ação de envio do formulário de login
+loginForm.addEventListener('submit', async (e) => {
+e.preventDefault();
+errorMessage.classList.add('hidden');
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
+try {
+const userCredential = await signInWithEmailAndPassword(auth, email, password);
+const user = userCredential.user;
+if (user.email !== meuEmailAdmin) {
+await signOut(auth);
+throw new Error("Acesso não autorizado para este e-mail.");
+}
+} catch (error) {
+errorMessage.textContent = "Erro ao entrar: " + error.message;
+errorMessage.classList.remove('hidden');
+}
+});
+// Botão de Sair / Logout
+logoutBtn.addEventListener('click', async () => {
+await signOut(auth);
+});
+</script>
 </body>
 </html>
