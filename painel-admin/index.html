@@ -45,15 +45,21 @@
             
             <p class="text-gray-300 mb-4">Bem-vindo de volta! Autenticado com sucesso.</p>
             
-            <!-- Aqui você poderá adicionar as tabelas, botões e controles do seu bot do Line no futuro -->
+            <!-- Cards de Informação -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <!-- Status do Sistema -->
                 <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
                     <h3 class="font-semibold text-indigo-300 mb-2">Status do Sistema</h3>
                     <p class="text-sm text-green-400">● Conectado ao Firebase</p>
                 </div>
+
+                <!-- Quem está online / Atividade -->
                 <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
-                    <h3 class="font-semibold text-indigo-300 mb-2">Ações Rápidas</h3>
-                    <p class="text-sm text-gray-400">Painel pronto para uso.</p>
+                    <h3 class="font-semibold text-indigo-300 mb-2">Usuários / Sistema Online</h3>
+                    <div id="online-status-box" class="text-sm text-gray-300 flex items-center space-x-2">
+                        <span class="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                        <span id="online-text">Verificando conexões...</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,6 +69,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
@@ -75,23 +82,41 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getDatabase(app);
 
         const loginContainer = document.getElementById('login-container');
         const dashboardContainer = document.getElementById('dashboard-container');
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
         const logoutBtn = document.getElementById('logout-btn');
+        const onlineText = document.getElementById('online-text');
 
         const meuEmailAdmin = "miha28@outlook.jp";
 
         // Monitora o estado da sessão
         onAuthStateChanged(auth, (user) => {
             if (user && user.email === meuEmailAdmin) {
-                // Se estiver logado e for o e-mail correto, mostra o painel e esconde o login
                 loginContainer.classList.add('hidden');
                 dashboardContainer.classList.remove('hidden');
+
+                // Regista a presença do Admin como online no Realtime Database
+                const userStatusRef = ref(db, 'status/admin_painel');
+                set(userStatusRef, { state: 'online', last_changed: Date.now() });
+                onDisconnect(userStatusRef).set({ state: 'offline', last_changed: Date.now() });
+
+                // Monitora quantos elementos/usuários estão online na base de dados
+                const allStatusRef = ref(db, 'status');
+                onValue(allStatusRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        let count = Object.values(data).filter(item => item.state === 'online').length;
+                        onlineText.textContent = `${count} conectado(s) no momento`;
+                    } else {
+                        onlineText.textContent = `1 conectado (Você)`;
+                    }
+                });
+
             } else {
-                // Caso contrário, mostra a tela de login
                 loginContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
             }
@@ -113,8 +138,6 @@
                     await signOut(auth);
                     throw new Error("Acesso não autorizado para este e-mail.");
                 }
-
-                // Sucesso! O listener onAuthStateChanged vai alternar a tela automaticamente.
             } catch (error) {
                 errorMessage.textContent = "Erro ao entrar: " + error.message;
                 errorMessage.classList.remove('hidden');
