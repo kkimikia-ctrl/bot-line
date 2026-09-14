@@ -14,6 +14,7 @@ padding: 12px;
 color: #333;
 padding-bottom: 80px;
 }
+/* Tela de Bloqueio / Aviso para Web / Login LINE */
 #login-overlay {
 position: fixed;
 top: 0;
@@ -68,6 +69,7 @@ background-color: #05b24c;
 #app-content {
 display: none;
 }
+/* Barra superior mais fina */
 .header {
 background-color: #0047ab;
 color: white;
@@ -89,6 +91,7 @@ background: white;
 border: 2px solid white;
 flex-shrink: 0;
 }
+/* --- CARROSSEL INFINITO DINÂMICO --- */
 .carousel-container {
 width: 100%;
 overflow-x: auto;
@@ -144,6 +147,7 @@ h3 {
 margin-top: 0;
 font-size: 15px;
 }
+/* Texto explicativo menor para caber em 1 linha */
 .subtext-oneline {
 font-size: 11.5px;
 color: #666;
@@ -188,6 +192,7 @@ font-size: 14px;
 white-space: pre-wrap;
 display: none;
 }
+/* Menu em grade com botões mais finos/compactos */
 .grid-menu {
 display: grid;
 grid-template-columns: 1fr 1fr;
@@ -214,6 +219,7 @@ white-space: nowrap;
 overflow: hidden;
 text-overflow: ellipsis;
 }
+/* Cores dos 8 botões */
 .btn-tradutor { background-color: #2563eb; }
 .btn-carteira { background-color: #059669; }
 .btn-entretenimento { background-color: #7c3aed; }
@@ -336,19 +342,7 @@ Ajuda JP - Início
 </a>
 </nav>
 </div>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, set, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-const firebaseConfig = {
-apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
-authDomain: "ajuda-jp.firebaseapp.com",
-projectId: "ajuda-jp",
-storageBucket: "ajuda-jp.firebasestorage.app",
-messagingSenderId: "40121072206",
-appId: "1:40121072206:web:8a844e632f004f61d0a11f"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+<script>
 const liffId = "2010902449-KWNNNsxn";
 async function inicializarApp() {
 try {
@@ -366,8 +360,6 @@ document.getElementById('login-overlay').style.display = 'flex';
 } catch (err) {
 if (localStorage.getItem('line_user_id')) {
 liberarApp();
-} else {
-liberarApp();
 }
 }
 }
@@ -375,17 +367,6 @@ function liberarApp() {
 document.getElementById('login-overlay').style.display = 'none';
 document.getElementById('app-content').style.display = 'block';
 ativarCarrossel();
-registrarPresencaOnline();
-}
-function registrarPresencaOnline() {
-try {
-const userId = localStorage.getItem('line_user_id') || ('sessao_' + Math.random().toString(36).substr(2, 9));
-const userStatusRef = ref(db, ⁠status/usuario_${userId}⁠);
-set(userStatusRef, { state: 'online', last_changed: Date.now() });
-onDisconnect(userStatusRef).set({ state: 'offline', last_changed: Date.now() });
-} catch (e) {
-console.log("Erro ao registrar presença:", e);
-}
 }
 function fazerLoginLine() {
 if (!liff.isLoggedIn()) { liff.login(); }
