@@ -89,7 +89,8 @@ body {
     margin: 8px 0;
 }
 
-/* CONTROLES */
+/* BOTÕES DE MOVIMENTO */
+
 .controles {
     width: 190px;
     margin: 15px auto;
@@ -138,6 +139,8 @@ body {
     grid-row: 2;
 }
 
+/* REINICIAR */
+
 #botaoReiniciar {
     display: block;
     margin: 5px auto 18px;
@@ -150,6 +153,8 @@ body {
     font-weight: bold;
     touch-action: manipulation;
 }
+
+/* RANKING */
 
 #ranking {
     width: 94%;
@@ -289,71 +294,37 @@ onclick="iniciarJogo()">
 
 </div>
 
-<script type="module">
-
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-import {
-    getFirestore,
-    collection,
-    addDoc,
-    query,
-    orderBy,
-    limit,
-    getDocs
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-
-// ==================================================
-// FIREBASE
-// ==================================================
-
-const firebaseConfig = {
-
-    apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JCVVjmkS_o",
-
-    authDomain: "ajuda-jp.firebaseapp.com",
-
-    projectId: "ajuda-jp",
-
-    storageBucket: "ajuda-jp.firebasestorage.app",
-
-    messagingSenderId: "40121072206",
-
-    appId: "1:40121072206:web:8a844e632f004f61d0a11f"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-
-// ==================================================
-// ELEMENTOS
-// ==================================================
-
-const canvas = document.getElementById("canvas");
-
-const ctx = canvas.getContext("2d");
-
-const status = document.getElementById("status");
-
-const mensagem = document.getElementById("mensagem");
+<script>
 
 
 // ==================================================
 // CONFIGURAÇÃO
 // ==================================================
 
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const status =
+    document.getElementById("status");
+
+const mensagem =
+    document.getElementById("mensagem");
+
+const listaRanking =
+    document.getElementById("listaRanking");
+
+
 const TAMANHO = 16;
 
-const QUADRO = canvas.width / TAMANHO;
+const QUADRO =
+    canvas.width / TAMANHO;
 
 
 // ==================================================
-// VARIÁVEIS
+// VARIÁVEIS DO JOGO
 // ==================================================
 
 let snake = [];
@@ -370,25 +341,13 @@ let nivel = 1;
 
 let jogoAtivo = false;
 
-let nomeJogador = "Jogador";
-
 let temporizador = null;
 
-let salvando = false;
-
-/*
-   ESTA VARIÁVEL É MUITO IMPORTANTE.
-
-   Cada partida recebe um número diferente.
-   Assim, se existir algum loop antigo,
-   ele não poderá continuar controlando
-   a nova partida.
-*/
 let idDaPartida = 0;
 
 
 // ==================================================
-// NÍVEIS
+// NÍVEL
 // ==================================================
 
 function calcularNivel() {
@@ -440,31 +399,31 @@ function calcularVelocidade() {
 
 
 // ==================================================
-// STATUS
+// ATUALIZAR STATUS
 // ==================================================
 
 function atualizarStatus() {
 
-    const novoNivel = calcularNivel();
+    const novoNivel =
+        calcularNivel();
+
 
     if (novoNivel !== nivel) {
 
         nivel = novoNivel;
 
         mensagem.textContent =
-            "🎉 Você chegou ao Nível " + nivel + "!";
+            "🎉 Você chegou ao Nível " +
+            nivel +
+            "!";
 
         setTimeout(function() {
 
-            if (
-                mensagem.textContent ===
-                "🎉 Você chegou ao Nível " + nivel + "!"
-            ) {
-                mensagem.textContent = "";
-            }
+            mensagem.textContent = "";
 
         }, 2000);
     }
+
 
     status.textContent =
         "🐍 Nível " +
@@ -486,13 +445,17 @@ function gerarComida() {
 
         novaComida = {
 
-            x: Math.floor(
-                Math.random() * TAMANHO
-            ),
+            x:
+                Math.floor(
+                    Math.random() *
+                    TAMANHO
+                ),
 
-            y: Math.floor(
-                Math.random() * TAMANHO
-            )
+            y:
+                Math.floor(
+                    Math.random() *
+                    TAMANHO
+                )
         };
 
     } while (
@@ -506,7 +469,9 @@ function gerarComida() {
         })
     );
 
-    comida = novaComida;
+
+    comida =
+        novaComida;
 }
 
 
@@ -526,7 +491,8 @@ function desenhar() {
 
     // FUNDO
 
-    ctx.fillStyle = "#050505";
+    ctx.fillStyle =
+        "#050505";
 
     ctx.fillRect(
         0,
@@ -543,7 +509,8 @@ function desenhar() {
         comida.y !== undefined
     ) {
 
-        ctx.fillStyle = "#ff3333";
+        ctx.fillStyle =
+            "#ff3333";
 
         ctx.beginPath();
 
@@ -558,7 +525,6 @@ function desenhar() {
             QUADRO * 0.35,
 
             0,
-
             Math.PI * 2
 
         );
@@ -569,38 +535,43 @@ function desenhar() {
 
     // COBRA
 
-    snake.forEach(function(parte, index) {
+    snake.forEach(
+        function(parte, index) {
 
-        if (index === 0) {
+            if (index === 0) {
 
-            ctx.fillStyle = "#65e665";
+                ctx.fillStyle =
+                    "#65e665";
 
-        } else {
+            } else {
 
-            ctx.fillStyle = "#25a825";
+                ctx.fillStyle =
+                    "#25a825";
+            }
+
+
+            ctx.fillRect(
+
+                parte.x * QUADRO + 1,
+
+                parte.y * QUADRO + 1,
+
+                QUADRO - 2,
+
+                QUADRO - 2
+            );
+
         }
-
-
-        ctx.fillRect(
-
-            parte.x * QUADRO + 1,
-
-            parte.y * QUADRO + 1,
-
-            QUADRO - 2,
-
-            QUADRO - 2
-        );
-
-    });
+    );
 }
 
 
 // ==================================================
-// MUDAR DIREÇÃO
+// DIREÇÃO
 // ==================================================
 
-window.mudarDirecao = function(novaDirecao) {
+window.mudarDirecao =
+function(novaDirecao) {
 
     if (!jogoAtivo) {
         return;
@@ -612,7 +583,8 @@ window.mudarDirecao = function(novaDirecao) {
         direcao !== "baixo"
     ) {
 
-        proximaDirecao = "cima";
+        proximaDirecao =
+            "cima";
     }
 
 
@@ -621,7 +593,8 @@ window.mudarDirecao = function(novaDirecao) {
         direcao !== "cima"
     ) {
 
-        proximaDirecao = "baixo";
+        proximaDirecao =
+            "baixo";
     }
 
 
@@ -630,7 +603,8 @@ window.mudarDirecao = function(novaDirecao) {
         direcao !== "direita"
     ) {
 
-        proximaDirecao = "esquerda";
+        proximaDirecao =
+            "esquerda";
     }
 
 
@@ -639,7 +613,8 @@ window.mudarDirecao = function(novaDirecao) {
         direcao !== "esquerda"
     ) {
 
-        proximaDirecao = "direita";
+        proximaDirecao =
+            "direita";
     }
 
 };
@@ -674,19 +649,22 @@ document.addEventListener(
 
 
 // ==================================================
-// MOVER COBRA
+// MOVIMENTO
 // ==================================================
 
 function moverCobra() {
 
-    direcao = proximaDirecao;
+    direcao =
+        proximaDirecao;
 
 
     const cabeca = {
 
-        x: snake[0].x,
+        x:
+            snake[0].x,
 
-        y: snake[0].y
+        y:
+            snake[0].y
 
     };
 
@@ -714,7 +692,8 @@ function moverCobra() {
 
     if (cabeca.x < 0) {
 
-        cabeca.x = TAMANHO - 1;
+        cabeca.x =
+            TAMANHO - 1;
     }
 
     if (cabeca.x >= TAMANHO) {
@@ -724,7 +703,8 @@ function moverCobra() {
 
     if (cabeca.y < 0) {
 
-        cabeca.y = TAMANHO - 1;
+        cabeca.y =
+            TAMANHO - 1;
     }
 
     if (cabeca.y >= TAMANHO) {
@@ -742,9 +722,9 @@ function moverCobra() {
         cabeca.y === comida.y;
 
 
-    // Se não comeu, o último pedaço
-    // vai sair. Então não precisamos
-    // considerar a cauda como colisão.
+    // ==================================================
+    // COLISÃO COM O CORPO
+    // ==================================================
 
     const corpoParaVerificar =
         comeu
@@ -752,19 +732,17 @@ function moverCobra() {
             : snake.slice(0, -1);
 
 
-    // ==================================================
-    // BATEU NO PRÓPRIO CORPO
-    // ==================================================
-
     if (
-        corpoParaVerificar.some(function(parte) {
+        corpoParaVerificar.some(
+            function(parte) {
 
-            return (
-                parte.x === cabeca.x &&
-                parte.y === cabeca.y
-            );
+                return (
+                    parte.x === cabeca.x &&
+                    parte.y === cabeca.y
+                );
 
-        })
+            }
+        )
     ) {
 
         finalizarJogo();
@@ -773,11 +751,11 @@ function moverCobra() {
     }
 
 
-    // ==================================================
-    // ADICIONAR CABEÇA
-    // ==================================================
+    // ADICIONA CABEÇA
 
-    snake.unshift(cabeca);
+    snake.unshift(
+        cabeca
+    );
 
 
     // ==================================================
@@ -802,15 +780,10 @@ function moverCobra() {
 
 
 // ==================================================
-// LOOP DO JOGO
+// LOOP
 // ==================================================
 
 function loop(partidaAtual) {
-
-    /*
-       Se esta não for mais a partida atual,
-       o loop antigo é simplesmente ignorado.
-    */
 
     if (
         !jogoAtivo ||
@@ -831,14 +804,15 @@ function loop(partidaAtual) {
         partidaAtual === idDaPartida
     ) {
 
-        temporizador = setTimeout(
-            function() {
+        temporizador =
+            setTimeout(
+                function() {
 
-                loop(partidaAtual);
+                    loop(partidaAtual);
 
-            },
-            calcularVelocidade()
-        );
+                },
+                calcularVelocidade()
+            );
 
     }
 
@@ -849,460 +823,9 @@ function loop(partidaAtual) {
 // INICIAR / REINICIAR
 // ==================================================
 
-window.iniciarJogo = function() {
+window.iniciarJogo =
+function() {
 
-    /*
-       PRIMEIRO:
-       para completamente a partida anterior.
-    */
 
-    jogoAtivo = false;
-
-
-    /*
-       Cancela o temporizador anterior.
-    */
-
-    if (temporizador !== null) {
-
-        clearTimeout(temporizador);
-
-        temporizador = null;
-    }
-
-
-    /*
-       Cria uma nova identificação
-       para esta partida.
-    */
-
-    idDaPartida++;
-
-
-    const novaPartida = idDaPartida;
-
-
-    /*
-       ZERA TUDO.
-    */
-
-    snake = [
-
-        {
-            x: 8,
-            y: 8
-        },
-
-        {
-            x: 7,
-            y: 8
-        },
-
-        {
-            x: 6,
-            y: 8
-        }
-
-    ];
-
-
-    direcao = "direita";
-
-    proximaDirecao = "direita";
-
-    pontos = 0;
-
-    nivel = 1;
-
-
-    /*
-       Nova partida ativa.
-    */
-
-    jogoAtivo = true;
-
-
-    mensagem.textContent = "";
-
-
-    gerarComida();
-
-    atualizarStatus();
-
-    desenhar();
-
-
-    /*
-       COMEÇA APENAS UM LOOP.
-    */
-
-    loop(novaPartida);
-
-};
-
-
-// ==================================================
-// FINALIZAR JOGO
-// ==================================================
-
-function finalizarJogo() {
-
-    jogoAtivo = false;
-
-
-    if (temporizador !== null) {
-
-        clearTimeout(temporizador);
-
-        temporizador = null;
-    }
-
-
-    /*
-       Invalida qualquer loop antigo.
-    */
-
-    idDaPartida++;
-
-
-    desenhar();
-
-
-    mensagem.textContent =
-        "💥 Fim de jogo! Pontos: " +
-        pontos;
-
-
-    if (pontos > 0) {
-
-        salvarNoFirebase(
-            nomeJogador,
-            pontos
-        );
-
-    }
-
-}
-
-
-// ==================================================
-// SALVAR FIREBASE
-// ==================================================
-
-async function salvarNoFirebase(
-    nome,
-    pontosSalvos
-) {
-
-    if (
-        pontosSalvos <= 0 ||
-        salvando
-    ) {
-
-        return false;
-    }
-
-
-    salvando = true;
-
-
-    try {
-
-        await addDoc(
-
-            collection(
-                db,
-                "ranking_cobrinha"
-            ),
-
-            {
-
-                nome:
-                    nome || "Jogador",
-
-                pontos:
-                    pontosSalvos,
-
-                nivel:
-                    calcularNivel(),
-
-                data:
-                    new Date()
-
-            }
-
-        );
-
-
-        await carregarRanking();
-
-
-        return true;
-
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao salvar:",
-            erro
-        );
-
-
-        return false;
-
-
-    } finally {
-
-        salvando = false;
-
-    }
-
-}
-
-
-// ==================================================
-// BOTÃO SALVAR
-// ==================================================
-
-window.salvarManual = async function() {
-
-    if (pontos <= 0) {
-
-        mensagem.textContent =
-            "⚠️ Você ainda não fez pontos.";
-
-        return;
-    }
-
-
-    if (salvando) {
-
-        mensagem.textContent =
-            "⏳ Salvando...";
-
-        return;
-    }
-
-
-    mensagem.textContent =
-        "⏳ Salvando pontuação...";
-
-
-    const salvou =
-        await salvarNoFirebase(
-            nomeJogador,
-            pontos
-        );
-
-
-    if (salvou) {
-
-        mensagem.textContent =
-            "✅ Pontuação salva!";
-
-    } else {
-
-        mensagem.textContent =
-            "❌ Não foi possível salvar.";
-    }
-
-};
-
-
-// ==================================================
-// CARREGAR RANKING
-// ==================================================
-
-async function carregarRanking() {
-
-    const lista =
-        document.getElementById(
-            "listaRanking"
-        );
-
-
-    try {
-
-        const q = query(
-
-            collection(
-                db,
-                "ranking_cobrinha"
-            ),
-
-            orderBy(
-                "pontos",
-                "desc"
-            ),
-
-            limit(100)
-
-        );
-
-
-        const resultado =
-            await getDocs(q);
-
-
-        lista.innerHTML = "";
-
-
-        let posicao = 1;
-
-
-        resultado.forEach(function(doc) {
-
-            const dados =
-                doc.data();
-
-
-            const linha =
-                document.createElement(
-                    "div"
-                );
-
-
-            linha.className =
-                "linha-ranking";
-
-
-            const nome =
-                document.createElement(
-                    "span"
-                );
-
-
-            nome.textContent =
-                "#" +
-                posicao +
-                " " +
-                (
-                    dados.nome ||
-                    "Jogador"
-                );
-
-
-            const pontosTexto =
-                document.createElement(
-                    "strong"
-                );
-
-
-            pontosTexto.textContent =
-                (
-                    dados.pontos ||
-                    0
-                ) +
-                " pts";
-
-
-            linha.appendChild(nome);
-
-            linha.appendChild(
-                pontosTexto
-            );
-
-
-            lista.appendChild(
-                linha
-            );
-
-
-            posicao++;
-
-        });
-
-
-        if (resultado.empty) {
-
-            lista.textContent =
-                "Nenhuma pontuação ainda.";
-
-        }
-
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao carregar ranking:",
-            erro
-        );
-
-
-        lista.textContent =
-            "Não foi possível carregar o ranking.";
-
-    }
-
-}
-
-
-// ==================================================
-// NOME DO JOGADOR
-// ==================================================
-
-try {
-
-    const nomeSalvo =
-        localStorage.getItem(
-            "lineUserName"
-        );
-
-
-    if (nomeSalvo) {
-
-        nomeJogador =
-            nomeSalvo;
-
-    }
-
-} catch (e) {}
-
-
-// ==================================================
-// VOLTAR PARA FORCA
-// ==================================================
-
-window.voltarMenu = function() {
-
-    /*
-       Para a cobra antes de sair.
-    */
-
-    jogoAtivo = false;
-
-
-    if (temporizador !== null) {
-
-        clearTimeout(temporizador);
-
-        temporizador = null;
-    }
-
-
-    idDaPartida++;
-
-
-    /*
-       VOLTA DIRETAMENTE PARA
-       forca.html
-    */
-
-    window.location.href =
-        "forca.html";
-
-};
-
-
-// ==================================================
-// INICIALIZAÇÃO
-// ==================================================
-
-carregarRanking();
-
-iniciarJogo();
-
-</script>
-
-</body>
-</html>
+    // PARA COMPLETAMENTE
+    // O J
