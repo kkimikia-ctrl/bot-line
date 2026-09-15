@@ -1,274 +1,828 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jogo da Cobrinha - Central de Jogos</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        body {
-            background-color: #f4f6f9;
-            padding: 10px;
-            color: #333;
-            padding-bottom: 50px;
-            text-align: center;
-            padding-top: 60px;
-            overscroll-behavior-y: none;
-        }
+<title>Jogo da Cobrinha</title>
 
-        .container { max-width: 600px; margin: 0 auto; }
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        .topo-personalizado {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #1e293b;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 15px;
-            z-index: 99999;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
+    body {
+        margin: 0;
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
 
-        .topo-personalizado button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-        }
+    .topo {
+        height: 55px;
+        background: #222;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
 
-        .card-game {
-            background: white;
-            padding: 15px;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-top: 10px;
-            margin-bottom: 25px;
-        }
+    .topo button {
+        background: #333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 14px;
+    }
 
-        canvas#canvas {
-            background: #111;
-            border-radius: 8px;
-            display: block;
-            margin: 0 auto 15px auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+    .titulo {
+        font-size: 18px;
+        font-weight: bold;
+    }
 
-        .control-btn {
-            background: #e2e8f0;
-            border: none;
-            font-size: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #0047ab;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-    </style>
+    #status {
+        margin: 12px 0 8px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    #canvas {
+        background: #050505;
+        border: 3px solid #555;
+        border-radius: 10px;
+        width: 280px;
+        height: 280px;
+        max-width: 90vw;
+        max-height: 90vw;
+        touch-action: none;
+    }
+
+    .info {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #bbb;
+    }
+
+    .controles {
+        width: 210px;
+        margin: 18px auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .controle {
+        height: 55px;
+        border: none;
+        border-radius: 12px;
+        background: #333;
+        color: white;
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .controle:active {
+        background: #555;
+        transform: scale(0.95);
+    }
+
+    .vazio {
+        visibility: hidden;
+    }
+
+    #botaoReiniciar {
+        background: #16823b;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 22px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    #ranking {
+        width: 94%;
+        max-width: 450px;
+        margin: 15px auto 30px;
+        background: #1c1c1c;
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    #ranking h3 {
+        margin-top: 0;
+    }
+
+    .linha-ranking {
+        display: flex;
+        justify-content: space-between;
+        padding: 7px 5px;
+        border-bottom: 1px solid #333;
+        font-size: 14px;
+    }
+
+    .mensagem {
+        color: #ffd54a;
+        font-weight: bold;
+        min-height: 22px;
+    }
+</style>
+
 </head>
+
 <body>
 
-    <div class="topo-personalizado">
-        <button onclick="voltarParaCentral()">⬅ Voltar</button>
-        <span style="font-weight: bold; font-size: 14px;">🐍 Jogo da Cobrinha</span>
-        <span style="font-size: 13px; font-weight: bold; color: #34d399;">Pontos: <span id="snake-score">0</span></span>
-    </div>
+<div class="topo">
+    <button onclick="voltarMenu()">⬅ Voltar</button>
+    <div class="titulo">🐍 Cobrinha</div>
+    <button onclick="salvarManual()">💾 Salvar</button>
+</div>
 
-    <div class="container">
-        <div class="card-game">
-            <canvas id="canvas" width="280" height="280"></canvas>
-            
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-width: 210px; margin: 0 auto;">
-                <div></div>
-                <button class="control-btn" onclick="MudarDirecao('UP')">⬆️</button>
-                <div></div>
-                <button class="control-btn" onclick="MudarDirecao('LEFT')">⬅️</button>
-                <button class="control-btn" onclick="MudarDirecao('DOWN')">⬇️</button>
-                <button class="control-btn" onclick="MudarDirecao('RIGHT')">➡️</button>
-            </div>
-        </div>
-    </div>
+<div id="status">🐍 Nível 1 | Pontos: 0</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, limit, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<canvas id="canvas" width="280" height="280"></canvas>
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
-          authDomain: "ajuda-jp.firebaseapp.com",
-          projectId: "ajuda-jp",
-          storageBucket: "ajuda-jp.firebasestorage.app",
-          messagingSenderId: "40121072206",
-          appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+<div class="info">
+    Atravesse as paredes e continue o jogo!
+</div>
+
+<div id="mensagem" class="mensagem"></div>
+
+<div class="controles">
+
+```
+<button class="controle vazio"></button>
+
+<button class="controle" onclick="mudarDirecao('cima')">⬆️</button>
+
+<button class="controle vazio"></button>
+
+<button class="controle" onclick="mudarDirecao('esquerda')">⬅️</button>
+
+<button class="controle" onclick="mudarDirecao('baixo')">⬇️</button>
+
+<button class="controle" onclick="mudarDirecao('direita')">➡️</button>
+```
+
+</div>
+
+<button id="botaoReiniciar" onclick="iniciarJogo()">
+    🔄 Reiniciar
+</button>
+
+<div id="ranking">
+    <h3>🏆 Ranking</h3>
+    <div id="listaRanking">Carregando...</div>
+</div>
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    orderBy,
+    limit,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+// ===============================
+// FIREBASE
+// ===============================
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JCVVjmkS_o",
+    authDomain: "ajuda-jp.firebaseapp.com",
+    projectId: "ajuda-jp",
+    storageBucket: "ajuda-jp.firebasestorage.app",
+    messagingSenderId: "40121072206",
+    appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+// ===============================
+// ELEMENTOS
+// ===============================
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const status = document.getElementById("status");
+const mensagem = document.getElementById("mensagem");
+
+
+// ===============================
+// CONFIGURAÇÃO
+// ===============================
+
+const TAMANHO = 16;
+const QUADRO = canvas.width / TAMANHO;
+
+let snake = [];
+let comida = {};
+
+let direcao = "direita";
+let proximaDirecao = "direita";
+
+let pontos = 0;
+let nivel = 1;
+
+let jogoAtivo = false;
+let jogoIniciado = false;
+
+let nomeJogador = "Jogador";
+
+
+// ===============================
+// NÍVEIS
+// ===============================
+
+function calcularNivel() {
+
+    if (pontos <= 50) {
+        return 1;
+    }
+
+    if (pontos <= 100) {
+        return 2;
+    }
+
+    if (pontos <= 200) {
+        return 3;
+    }
+
+    if (pontos <= 300) {
+        return 4;
+    }
+
+    return 5;
+}
+
+
+// ===============================
+// VELOCIDADE
+// ===============================
+
+function calcularVelocidade() {
+
+    if (nivel === 1) {
+        return 150;
+    }
+
+    if (nivel === 2) {
+        return 135;
+    }
+
+    if (nivel === 3) {
+        return 120;
+    }
+
+    if (nivel === 4) {
+        return 105;
+    }
+
+    return 90;
+}
+
+
+// ===============================
+// STATUS
+// ===============================
+
+function atualizarStatus() {
+
+    const novoNivel = calcularNivel();
+
+    if (novoNivel !== nivel) {
+
+        nivel = novoNivel;
+
+        mensagem.textContent =
+            "🎉 Você chegou ao Nível " + nivel + "!";
+
+        setTimeout(() => {
+            mensagem.textContent = "";
+        }, 2000);
+    }
+
+    status.textContent =
+        "🐍 Nível " + nivel + " | Pontos: " + pontos;
+}
+
+
+// ===============================
+// COMIDA
+// ===============================
+
+function gerarComida() {
+
+    let novaComida;
+
+    do {
+
+        novaComida = {
+            x: Math.floor(Math.random() * TAMANHO),
+            y: Math.floor(Math.random() * TAMANHO)
         };
 
-        let db = null;
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            window.dbFirebase = db;
-        } catch (err) {
-            console.error("Erro Firebase:", err);
+    } while (
+        snake.some(
+            parte =>
+                parte.x === novaComida.x &&
+                parte.y === novaComida.y
+        )
+    );
+
+    comida = novaComida;
+}
+
+
+// ===============================
+// DESENHAR
+// ===============================
+
+function desenhar() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    // fundo
+    ctx.fillStyle = "#050505";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    // comida
+    ctx.fillStyle = "#ff3333";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        comida.x * QUADRO + QUADRO / 2,
+        comida.y * QUADRO + QUADRO / 2,
+        QUADRO * 0.35,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    // cobra
+    snake.forEach((parte, index) => {
+
+        if (index === 0) {
+            ctx.fillStyle = "#65e665";
+        } else {
+            ctx.fillStyle = "#25a825";
         }
 
-        window.salvarNoFirebase = async function(nomeJogador, pontosJogador) {
-            if (!window.dbFirebase) {
-                alert("Erro de conexão com o banco de dados do Ranking Global.");
-                return;
+        ctx.fillRect(
+            parte.x * QUADRO + 1,
+            parte.y * QUADRO + 1,
+            QUADRO - 2,
+            QUADRO - 2
+        );
+
+    });
+}
+
+
+// ===============================
+// MUDAR DIREÇÃO
+// ===============================
+
+window.mudarDirecao = function(novaDirecao) {
+
+    if (!jogoAtivo) return;
+
+
+    if (
+        novaDirecao === "cima" &&
+        direcao !== "baixo"
+    ) {
+        proximaDirecao = "cima";
+    }
+
+
+    if (
+        novaDirecao === "baixo" &&
+        direcao !== "cima"
+    ) {
+        proximaDirecao = "baixo";
+    }
+
+
+    if (
+        novaDirecao === "esquerda" &&
+        direcao !== "direita"
+    ) {
+        proximaDirecao = "esquerda";
+    }
+
+
+    if (
+        novaDirecao === "direita" &&
+        direcao !== "esquerda"
+    ) {
+        proximaDirecao = "direita";
+    }
+
+};
+
+
+// ===============================
+// TECLADO
+// ===============================
+
+document.addEventListener("keydown", function(e) {
+
+    if (e.key === "ArrowUp") {
+        mudarDirecao("cima");
+    }
+
+    if (e.key === "ArrowDown") {
+        mudarDirecao("baixo");
+    }
+
+    if (e.key === "ArrowLeft") {
+        mudarDirecao("esquerda");
+    }
+
+    if (e.key === "ArrowRight") {
+        mudarDirecao("direita");
+    }
+
+});
+
+
+// ===============================
+// MOVIMENTO
+// ===============================
+
+function moverCobra() {
+
+    direcao = proximaDirecao;
+
+    const cabeca = {
+        x: snake[0].x,
+        y: snake[0].y
+    };
+
+
+    if (direcao === "cima") {
+        cabeca.y--;
+    }
+
+    if (direcao === "baixo") {
+        cabeca.y++;
+    }
+
+    if (direcao === "esquerda") {
+        cabeca.x--;
+    }
+
+    if (direcao === "direita") {
+        cabeca.x++;
+    }
+
+
+    // ==================================
+    // ATRAVESSAR A PAREDE
+    // ==================================
+
+    if (cabeca.x < 0) {
+        cabeca.x = TAMANHO - 1;
+    }
+
+    if (cabeca.x >= TAMANHO) {
+        cabeca.x = 0;
+    }
+
+    if (cabeca.y < 0) {
+        cabeca.y = TAMANHO - 1;
+    }
+
+    if (cabeca.y >= TAMANHO) {
+        cabeca.y = 0;
+    }
+
+
+    // ==================================
+    // BATEU NO PRÓPRIO CORPO
+    // ==================================
+
+    if (
+        snake.some(
+            parte =>
+                parte.x === cabeca.x &&
+                parte.y === cabeca.y
+        )
+    ) {
+
+        finalizarJogo();
+        return;
+    }
+
+
+    snake.unshift(cabeca);
+
+
+    // ==================================
+    // COMEU
+    // ==================================
+
+    if (
+        cabeca.x === comida.x &&
+        cabeca.y === comida.y
+    ) {
+
+        pontos += 10;
+
+        atualizarStatus();
+
+        gerarComida();
+
+    } else {
+
+        snake.pop();
+
+    }
+
+}
+
+
+// ===============================
+// LOOP
+// ===============================
+
+function loop() {
+
+    if (!jogoAtivo) return;
+
+    moverCobra();
+
+    desenhar();
+
+    if (jogoAtivo) {
+
+        setTimeout(
+            loop,
+            calcularVelocidade()
+        );
+
+    }
+
+}
+
+
+// ===============================
+// INICIAR
+// ===============================
+
+window.iniciarJogo = function() {
+
+    snake = [
+        { x: 8, y: 8 },
+        { x: 7, y: 8 },
+        { x: 6, y: 8 }
+    ];
+
+    direcao = "direita";
+    proximaDirecao = "direita";
+
+    pontos = 0;
+    nivel = 1;
+
+    jogoAtivo = true;
+    jogoIniciado = true;
+
+    mensagem.textContent = "";
+
+    gerarComida();
+
+    atualizarStatus();
+
+    desenhar();
+
+    loop();
+
+};
+
+
+// ===============================
+// FINALIZAR
+// ===============================
+
+function finalizarJogo() {
+
+    jogoAtivo = false;
+
+    desenhar();
+
+    mensagem.textContent =
+        "💥 Fim de jogo! Pontos: " + pontos;
+
+    salvarNoFirebase(nomeJogador, pontos);
+
+}
+
+
+// ===============================
+// SALVAR RANKING
+// ===============================
+
+async function salvarNoFirebase(nome, pontosSalvos) {
+
+    if (pontosSalvos <= 0) return;
+
+    try {
+
+        await addDoc(
+            collection(db, "ranking_cobrinha"),
+            {
+                nome: nome || "Jogador",
+                pontos: pontosSalvos,
+                nivel: calcularNivel(),
+                data: new Date()
             }
-            try {
-                const colecaoRef = collection(window.dbFirebase, "ranking_cobrinha");
+        );
 
-                // 1. Busca os atuais melhores do ranking ordenados por pontos (máximo de 100)
-                const q = query(colecaoRef, orderBy("pontos", "desc"), limit(100));
-                const querySnapshot = await getDocs(q);
-                
-                let pontuacoesTop = [];
-                querySnapshot.forEach((docSnap) => {
-                    pontuacoesTop.push(docSnap.data().pontos);
-                });
+        carregarRanking();
 
-                // 2. Se já completou 100 jogadores, aplica a regra de corte
-                if (pontuacoesTop.length >= 100) {
-                    const menorPontuacaoTop100 = pontuacoesTop[pontuacoesTop.length - 1]; // O 100º colocado
-                    
-                    if (pontosJogador <= menorPontuacaoTop100) {
-                        alert(`Sua pontuação (${pontosJogador}) não atingiu o mínimo necessário para entrar no Top 100 (mínimo atual: ${menorPontuacaoTop100} pts). Tente novamente!`);
-                        return;
-                    }
-                }
+    } catch (erro) {
 
-                // 3. Se passou na regra, salva o novo recorde no Firebase
-                const idUnicoDoc = `${nomeJogador}_${Date.now()}`;
-                await setDoc(doc(colecaoRef, idUnicoDoc), {
-                    nome: nomeJogador,
-                    pontos: Number(pontosJogador),
-                    data: new Date().toISOString()
-                });
-                
-                localStorage.setItem('ultimoJogoRetorno', 'jogo-cobrinha.html');
+        console.error(
+            "Erro ao salvar ranking:",
+            erro
+        );
 
-                alert("✅ Parabéns! Sua pontuação entrou para o Top 100 Global!");
-                window.location.href = "ranking.html";
-            } catch (e) {
-                console.error("Erro ao salvar no Firebase:", e);
-                alert("Erro ao salvar pontuação online.");
-            }
-        };
-    </script>
+    }
 
-    <script>
-        function voltarParaCentral() {
-            if (document.referrer && document.referrer.includes(window.location.hostname)) {
-                window.history.back();
-            } else {
-                window.location.href = 'index.html'; 
-            }
-        }
+}
 
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let snake = [{x:8, y:8}];
-        let comida = {x:5, y:5};
-        let dir = 'RIGHT';
-        let nextDir = 'RIGHT';
-        let score = 0;
-        let jogoAtivo = true;
 
-        window.MudarDirecao = function(novaDir) {
-            if (novaDir === 'UP' && dir !== 'DOWN') nextDir = 'UP';
-            if (novaDir === 'DOWN' && dir !== 'UP') nextDir = 'DOWN';
-            if (novaDir === 'LEFT' && dir !== 'RIGHT') nextDir = 'LEFT';
-            if (novaDir === 'RIGHT' && dir !== 'LEFT') nextDir = 'RIGHT';
-        };
+// ===============================
+// SALVAR MANUALMENTE
+// ===============================
 
-        // Controles por teclado também
-        document.addEventListener('keydown', e => {
-            if (e.key === 'ArrowUp') MudarDirecao('UP');
-            if (e.key === 'ArrowDown') MudarDirecao('DOWN');
-            if (e.key === 'ArrowLeft') MudarDirecao('LEFT');
-            if (e.key === 'ArrowRight') MudarDirecao('RIGHT');
+window.salvarManual = function() {
+
+    if (pontos <= 0) {
+
+        mensagem.textContent =
+            "⚠️ Você ainda não fez pontos.";
+
+        return;
+    }
+
+    salvarNoFirebase(
+        nomeJogador,
+        pontos
+    );
+
+    mensagem.textContent =
+        "✅ Pontuação salva!";
+
+};
+
+
+// ===============================
+// RANKING
+// ===============================
+
+async function carregarRanking() {
+
+    const lista =
+        document.getElementById("listaRanking");
+
+    try {
+
+        const q = query(
+            collection(db, "ranking_cobrinha"),
+            orderBy("pontos", "desc"),
+            limit(100)
+        );
+
+        const resultado =
+            await getDocs(q);
+
+        lista.innerHTML = "";
+
+        let posicao = 1;
+
+        resultado.forEach(doc => {
+
+            const dados = doc.data();
+
+            const linha =
+                document.createElement("div");
+
+            linha.className =
+                "linha-ranking";
+
+            linha.innerHTML =
+                "<span>#" +
+                posicao +
+                " " +
+                (dados.nome || "Jogador") +
+                "</span>" +
+
+                "<strong>" +
+                (dados.pontos || 0) +
+                " pts</strong>";
+
+            lista.appendChild(linha);
+
+            posicao++;
+
         });
 
-        let gameInterval = setInterval(() => {
-            if (!jogoAtivo) return;
 
-            dir = nextDir;
-            let cabeca = {...snake[0]};
+        if (resultado.empty) {
 
-            if (dir === 'UP') cabeca.y--;
-            if (dir === 'DOWN') cabeca.y++;
-            if (dir === 'LEFT') cabeca.x--;
-            if (dir === 'RIGHT') cabeca.x++;
+            lista.innerHTML =
+                "Nenhuma pontuação ainda.";
 
-            // Condição de colisão com as paredes ou com o próprio corpo
-            if (cabeca.x < 0 || cabeca.x >= 16 || cabeca.y < 0 || cabeca.y >= 16 || snake.some(p => p.x === cabeca.x && p.y === cabeca.y)) {
-                jogoAtivo = false;
-                alert(`Fim de jogo! Sua pontuação: ${score}`);
-                
-                if (score > 0) {
-                    let nome = prompt("🏆 Digite seu nome para o Ranking Global:", "Jogador") || "Jogador";
-                    if (window.salvarNoFirebase) {
-                        window.salvarNoFirebase(nome, score);
-                    }
-                }
-                
-                // Reinicia o jogo após fechar os alertas
-                resetarJogo();
-                return;
-            }
-
-            if (cabeca.x === comida.x && cabeca.y === comida.y) {
-                score += 10;
-                document.getElementById('snake-score').innerText = score;
-                comida = {
-                    x: Math.floor(Math.random() * 16),
-                    y: Math.floor(Math.random() * 16)
-                };
-            } else {
-                snake.pop();
-            }
-
-            snake.unshift(cabeca);
-
-            // Desenhar tela
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, 280, 280);
-
-            // Desenhar comida
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(comida.x * 17.5, comida.y * 17.5, 16, 16);
-
-            // Desenhar cobrinha
-            ctx.fillStyle = '#10b981';
-            snake.forEach(p => ctx.fillRect(p.x * 17.5, p.y * 17.5, 16, 16));
-
-        }, 150);
-
-        function resetarJogo() {
-            snake = [{x:8, y:8}];
-            comida = {x:5, y:5};
-            dir = 'RIGHT';
-            nextDir = 'RIGHT';
-            score = 0;
-            document.getElementById('snake-score').innerText = score;
-            jogoAtivo = true;
         }
-    </script>
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar ranking:",
+            erro
+        );
+
+        lista.innerHTML =
+            "Não foi possível carregar o ranking.";
+
+    }
+
+}
+
+
+// ===============================
+// NOME DO JOGADOR
+// ===============================
+
+try {
+
+    const nomeSalvo =
+        localStorage.getItem("lineUserName");
+
+    if (nomeSalvo) {
+        nomeJogador = nomeSalvo;
+    }
+
+} catch (e) {}
+
+
+// ===============================
+// VOLTAR
+// ===============================
+
+window.voltarMenu = function() {
+
+    window.location.href =
+        "entretenimento.html";
+
+};
+
+
+// ===============================
+// COMEÇAR AUTOMATICAMENTE
+// ===============================
+
+carregarRanking();
+
+iniciarJogo();
+
+</script>
+
 </body>
 </html>
