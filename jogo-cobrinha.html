@@ -1,204 +1,341 @@
 <!DOCTYPE html>
 
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Jogo da Cobrinha</title>
 
 <style>
+
 * {
+
     box-sizing: border-box;
+
 }
 
 body {
+
     margin: 0;
+
     background: #111;
+
     color: white;
+
     font-family: Arial, sans-serif;
+
     text-align: center;
+
 }
 
 .topo {
+
     min-height: 60px;
+
     background: #222;
+
     display: grid;
+
     grid-template-columns: 1fr auto 1fr;
+
     align-items: center;
+
     gap: 8px;
+
     padding: 8px 10px;
+
     position: sticky;
+
     top: 0;
+
     z-index: 10;
+
 }
 
 .topo button {
+
     background: #333;
+
     color: white;
+
     border: none;
+
     border-radius: 8px;
+
     padding: 10px 12px;
+
     font-size: 14px;
+
     white-space: nowrap;
+
 }
 
 .topo button:first-child {
+
     justify-self: start;
+
 }
 
 .topo button:last-child {
+
     justify-self: end;
+
 }
 
 .titulo {
+
     font-size: 18px;
+
     font-weight: bold;
+
     white-space: nowrap;
+
 }
 
 #status {
+
     margin: 14px 0 8px;
+
     font-size: 18px;
+
     font-weight: bold;
+
 }
 
 #canvas {
+
     display: block;
+
     margin: 0 auto;
+
     background: #050505;
+
     border: 3px solid #555;
+
     border-radius: 10px;
+
     width: 280px;
+
     height: 280px;
+
     max-width: 90vw;
+
     max-height: 90vw;
+
     touch-action: none;
+
 }
 
 .info {
+
     margin-top: 8px;
+
     font-size: 13px;
+
     color: #bbb;
+
 }
 
 .mensagem {
+
     color: #ffd54a;
+
     font-weight: bold;
+
     min-height: 22px;
+
     margin: 8px 0;
+
 }
 
-/* BOTÕES DE MOVIMENTO */
+/* CONTROLES */
 
 .controles {
+
     width: 190px;
+
     margin: 15px auto;
+
     display: grid;
+
     grid-template-columns: repeat(3, 58px);
+
     grid-template-rows: repeat(3, 58px);
+
     gap: 7px;
+
     justify-content: center;
+
 }
 
 .controle {
+
     width: 58px;
+
     height: 58px;
+
     border: none;
+
     border-radius: 12px;
+
     background: #333;
+
     color: white;
+
     font-size: 25px;
+
     font-weight: bold;
+
     touch-action: manipulation;
+
     -webkit-tap-highlight-color: transparent;
+
 }
 
 .controle:active {
+
     background: #555;
+
     transform: scale(0.94);
+
 }
 
 .cima {
+
     grid-column: 2;
+
     grid-row: 1;
+
 }
 
 .esquerda {
+
     grid-column: 1;
+
     grid-row: 2;
+
 }
 
 .baixo {
+
     grid-column: 2;
-    grid-row: 2;
+
+    grid-row: 3;
+
 }
 
 .direita {
+
     grid-column: 3;
+
     grid-row: 2;
+
 }
 
 /* REINICIAR */
 
 #botaoReiniciar {
+
     display: block;
+
     margin: 5px auto 18px;
+
     background: #16823b;
+
     color: white;
+
     border: none;
+
     border-radius: 10px;
+
     padding: 12px 22px;
+
     font-size: 16px;
+
     font-weight: bold;
+
     touch-action: manipulation;
+
 }
 
 /* RANKING */
 
 #ranking {
+
     width: 94%;
+
     max-width: 450px;
+
     margin: 15px auto 30px;
+
     background: #1c1c1c;
+
     border-radius: 12px;
+
     padding: 15px;
+
 }
 
 #ranking h3 {
+
     margin-top: 0;
+
 }
 
 .linha-ranking {
+
     display: flex;
+
     justify-content: space-between;
+
     padding: 8px 5px;
+
     border-bottom: 1px solid #333;
+
     font-size: 14px;
+
 }
 
 @media (max-width: 380px) {
 
     .topo {
+
         padding-left: 6px;
+
         padding-right: 6px;
+
     }
 
     .topo button {
+
         padding: 9px 8px;
+
         font-size: 12px;
+
     }
 
     .titulo {
+
         font-size: 16px;
+
     }
 
     .controles {
+
         transform: scale(0.92);
+
         margin-top: 8px;
+
         margin-bottom: 8px;
+
     }
+
 }
+
 </style>
 
 </head>
@@ -207,30 +344,38 @@ body {
 
 <div class="topo">
 
-```
-<button type="button" onclick="voltarMenu()">
-    ⬅ Voltar
-</button>
+    <button type="button" onclick="voltarMenu()">
 
-<div class="titulo">
-    🐍 Cobrinha
-</div>
+        ⬅ Voltar
 
-<button type="button" onclick="salvarManual()">
-    💾 Salvar
-</button>
-```
+    </button>
+
+    <div class="titulo">
+
+        🐍 Cobrinha
+
+    </div>
+
+    <button type="button" onclick="salvarManual()">
+
+        💾 Salvar
+
+    </button>
 
 </div>
 
 <div id="status">
+
     🐍 Nível 1 | Pontos: 0
+
 </div>
 
 <canvas id="canvas" width="280" height="280"></canvas>
 
 <div class="info">
+
     Atravesse as paredes e continue o jogo!
+
 </div>
 
 <div id="mensagem" class="mensagem"></div>
@@ -239,93 +384,109 @@ body {
 
 <div class="controles">
 
-```
-<button
-    type="button"
-    class="controle cima"
-    onclick="mudarDirecao('cima')">
-    ⬆️
-</button>
+    <button
 
-<button
-    type="button"
-    class="controle esquerda"
-    onclick="mudarDirecao('esquerda')">
-    ⬅️
-</button>
+        type="button"
 
-<button
-    type="button"
-    class="controle baixo"
-    onclick="mudarDirecao('baixo')">
-    ⬇️
-</button>
+        class="controle cima"
 
-<button
-    type="button"
-    class="controle direita"
-    onclick="mudarDirecao('direita')">
-    ➡️
-</button>
-```
+        onclick="mudarDirecao('cima')">
+
+        ⬆️
+
+    </button>
+
+    <button
+
+        type="button"
+
+        class="controle esquerda"
+
+        onclick="mudarDirecao('esquerda')">
+
+        ⬅️
+
+    </button>
+
+    <button
+
+        type="button"
+
+        class="controle baixo"
+
+        onclick="mudarDirecao('baixo')">
+
+        ⬇️
+
+    </button>
+
+    <button
+
+        type="button"
+
+        class="controle direita"
+
+        onclick="mudarDirecao('direita')">
+
+        ➡️
+
+    </button>
 
 </div>
 
 <button
-id="botaoReiniciar"
-type="button"
-onclick="iniciarJogo()">
 
-```
-🔄 Reiniciar
-```
+    id="botaoReiniciar"
+
+    type="button"
+
+    onclick="iniciarJogo()">
+
+    🔄 Reiniciar
 
 </button>
+
+<!-- RANKING -->
 
 <div id="ranking">
 
-```
-<h3>🏆 Ranking</h3>
+    <h3>🏆 Ranking</h3>
 
-<div id="listaRanking">
-    Carregando...
-</div>
-```
+    <div id="listaRanking">
+
+        Carregando...
+
+    </div>
 
 </div>
 
 <script>
 
+/* ==================================================
 
-// ==================================================
-// CONFIGURAÇÃO
-// ==================================================
+   CONFIGURAÇÃO
 
-const canvas =
-    document.getElementById("canvas");
+================================================== */
 
-const ctx =
-    canvas.getContext("2d");
+const canvas = document.getElementById("canvas");
 
-const status =
-    document.getElementById("status");
+const ctx = canvas.getContext("2d");
 
-const mensagem =
-    document.getElementById("mensagem");
+const status = document.getElementById("status");
 
-const listaRanking =
-    document.getElementById("listaRanking");
+const mensagem = document.getElementById("mensagem");
 
+const listaRanking = document.getElementById("listaRanking");
 
 const TAMANHO = 16;
 
-const QUADRO =
-    canvas.width / TAMANHO;
+const QUADRO = canvas.width / TAMANHO;
 
+/* ==================================================
 
-// ==================================================
-// VARIÁVEIS DO JOGO
-// ==================================================
+   VARIÁVEIS
+
+================================================== */
 
 let snake = [];
 
@@ -345,97 +506,129 @@ let temporizador = null;
 
 let idDaPartida = 0;
 
+/* ==================================================
 
-// ==================================================
-// NÍVEL
-// ==================================================
+   VOLTAR
+
+================================================== */
+
+window.voltarMenu = function() {
+
+    window.location.href = "forca.html";
+
+};
+
+/* ==================================================
+
+   NÍVEL
+
+================================================== */
 
 function calcularNivel() {
 
     if (pontos <= 50) {
+
         return 1;
+
     }
 
     if (pontos <= 100) {
+
         return 2;
+
     }
 
     if (pontos <= 200) {
+
         return 3;
+
     }
 
     if (pontos <= 300) {
+
         return 4;
+
     }
 
     return 5;
+
 }
 
+/* ==================================================
 
-// ==================================================
-// VELOCIDADE
-// ==================================================
+   VELOCIDADE
+
+================================================== */
 
 function calcularVelocidade() {
 
     if (nivel === 1) {
+
         return 150;
+
     }
 
     if (nivel === 2) {
+
         return 135;
+
     }
 
     if (nivel === 3) {
+
         return 120;
+
     }
 
     if (nivel === 4) {
+
         return 105;
+
     }
 
     return 90;
+
 }
 
+/* ==================================================
 
-// ==================================================
-// ATUALIZAR STATUS
-// ==================================================
+   STATUS
+
+================================================== */
 
 function atualizarStatus() {
 
-    const novoNivel =
-        calcularNivel();
-
+    const novoNivel = calcularNivel();
 
     if (novoNivel !== nivel) {
 
         nivel = novoNivel;
 
         mensagem.textContent =
-            "🎉 Você chegou ao Nível " +
-            nivel +
-            "!";
+
+            "🎉 Você chegou ao Nível " + nivel + "!";
 
         setTimeout(function() {
 
             mensagem.textContent = "";
 
         }, 2000);
+
     }
 
-
     status.textContent =
-        "🐍 Nível " +
-        nivel +
-        " | Pontos: " +
-        pontos;
+
+        "🐍 Nível " + nivel +
+
+        " | Pontos: " + pontos;
+
 }
 
+/* ==================================================
 
-// ==================================================
-// GERAR COMIDA
-// ==================================================
+   GERAR COMIDA
+
+================================================== */
 
 function gerarComida() {
 
@@ -445,322 +638,389 @@ function gerarComida() {
 
         novaComida = {
 
-            x:
-                Math.floor(
-                    Math.random() *
-                    TAMANHO
-                ),
+            x: Math.floor(Math.random() * TAMANHO),
 
-            y:
-                Math.floor(
-                    Math.random() *
-                    TAMANHO
-                )
+            y: Math.floor(Math.random() * TAMANHO)
+
         };
 
     } while (
+
         snake.some(function(parte) {
 
             return (
+
                 parte.x === novaComida.x &&
+
                 parte.y === novaComida.y
+
             );
 
         })
+
     );
 
+    comida = novaComida;
 
-    comida =
-        novaComida;
 }
 
+/* ==================================================
 
-// ==================================================
-// DESENHAR
-// ==================================================
+   DESENHAR
+
+================================================== */
 
 function desenhar() {
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    /* FUNDO */
 
-
-    // FUNDO
-
-    ctx.fillStyle =
-        "#050505";
+    ctx.fillStyle = "#050505";
 
     ctx.fillRect(
+
         0,
+
         0,
+
         canvas.width,
+
         canvas.height
+
     );
 
+    /* GRADE */
 
-    // COMIDA
+    ctx.strokeStyle = "#151515";
+
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= TAMANHO; i++) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(i * QUADRO, 0);
+
+        ctx.lineTo(i * QUADRO, canvas.height);
+
+        ctx.stroke();
+
+        ctx.beginPath();
+
+        ctx.moveTo(0, i * QUADRO);
+
+        ctx.lineTo(canvas.width, i * QUADRO);
+
+        ctx.stroke();
+
+    }
+
+    /* COMIDA */
 
     if (
+
+        comida &&
+
         comida.x !== undefined &&
+
         comida.y !== undefined
+
     ) {
 
-        ctx.fillStyle =
-            "#ff3333";
+        ctx.fillStyle = "#ff3333";
 
         ctx.beginPath();
 
         ctx.arc(
 
-            comida.x * QUADRO +
-            QUADRO / 2,
+            comida.x * QUADRO + QUADRO / 2,
 
-            comida.y * QUADRO +
-            QUADRO / 2,
+            comida.y * QUADRO + QUADRO / 2,
 
             QUADRO * 0.35,
 
             0,
+
             Math.PI * 2
 
         );
 
         ctx.fill();
+
     }
 
+    /* COBRA */
 
-    // COBRA
+    snake.forEach(function(parte, index) {
 
-    snake.forEach(
-        function(parte, index) {
+        if (index === 0) {
 
-            if (index === 0) {
+            ctx.fillStyle = "#65e665";
 
-                ctx.fillStyle =
-                    "#65e665";
+        } else {
 
-            } else {
-
-                ctx.fillStyle =
-                    "#25a825";
-            }
-
-
-            ctx.fillRect(
-
-                parte.x * QUADRO + 1,
-
-                parte.y * QUADRO + 1,
-
-                QUADRO - 2,
-
-                QUADRO - 2
-            );
+            ctx.fillStyle = "#25a825";
 
         }
-    );
+
+        ctx.fillRect(
+
+            parte.x * QUADRO + 1,
+
+            parte.y * QUADRO + 1,
+
+            QUADRO - 2,
+
+            QUADRO - 2
+
+        );
+
+    });
+
 }
 
+/* ==================================================
 
-// ==================================================
-// DIREÇÃO
-// ==================================================
+   DIREÇÃO
 
-window.mudarDirecao =
-function(novaDirecao) {
+================================================== */
+
+window.mudarDirecao = function(novaDirecao) {
 
     if (!jogoAtivo) {
+
         return;
+
     }
 
-
     if (
+
         novaDirecao === "cima" &&
+
         direcao !== "baixo"
+
     ) {
 
-        proximaDirecao =
-            "cima";
+        proximaDirecao = "cima";
+
     }
 
-
     if (
+
         novaDirecao === "baixo" &&
+
         direcao !== "cima"
+
     ) {
 
-        proximaDirecao =
-            "baixo";
+        proximaDirecao = "baixo";
+
     }
 
-
     if (
+
         novaDirecao === "esquerda" &&
+
         direcao !== "direita"
+
     ) {
 
-        proximaDirecao =
-            "esquerda";
+        proximaDirecao = "esquerda";
+
     }
 
-
     if (
+
         novaDirecao === "direita" &&
+
         direcao !== "esquerda"
+
     ) {
 
-        proximaDirecao =
-            "direita";
+        proximaDirecao = "direita";
+
     }
 
 };
 
+/* ==================================================
 
-// ==================================================
-// TECLADO
-// ==================================================
+   TECLADO
+
+================================================== */
 
 document.addEventListener(
+
     "keydown",
+
     function(e) {
 
         if (e.key === "ArrowUp") {
+
             mudarDirecao("cima");
+
         }
 
         if (e.key === "ArrowDown") {
+
             mudarDirecao("baixo");
+
         }
 
         if (e.key === "ArrowLeft") {
+
             mudarDirecao("esquerda");
+
         }
 
         if (e.key === "ArrowRight") {
+
             mudarDirecao("direita");
+
         }
 
     }
+
 );
 
+/* ==================================================
 
-// ==================================================
-// MOVIMENTO
-// ==================================================
+   MOVIMENTO
+
+================================================== */
 
 function moverCobra() {
 
-    direcao =
-        proximaDirecao;
-
+    direcao = proximaDirecao;
 
     const cabeca = {
 
-        x:
-            snake[0].x,
+        x: snake[0].x,
 
-        y:
-            snake[0].y
+        y: snake[0].y
 
     };
 
+    /* MOVIMENTO */
 
     if (direcao === "cima") {
+
         cabeca.y--;
+
     }
 
     if (direcao === "baixo") {
+
         cabeca.y++;
+
     }
 
     if (direcao === "esquerda") {
+
         cabeca.x--;
+
     }
 
     if (direcao === "direita") {
+
         cabeca.x++;
+
     }
 
+    /* ==================================================
 
-    // ==================================================
-    // ATRAVESSAR PAREDES
-    // ==================================================
+       ATRAVESSAR PAREDES
+
+    ================================================== */
 
     if (cabeca.x < 0) {
 
-        cabeca.x =
-            TAMANHO - 1;
+        cabeca.x = TAMANHO - 1;
+
     }
 
     if (cabeca.x >= TAMANHO) {
 
         cabeca.x = 0;
+
     }
 
     if (cabeca.y < 0) {
 
-        cabeca.y =
-            TAMANHO - 1;
+        cabeca.y = TAMANHO - 1;
+
     }
 
     if (cabeca.y >= TAMANHO) {
 
         cabeca.y = 0;
+
     }
 
+    /* ==================================================
 
-    // ==================================================
-    // VERIFICAR COMIDA
-    // ==================================================
+       VERIFICAR COMIDA
+
+    ================================================== */
 
     const comeu =
+
         cabeca.x === comida.x &&
+
         cabeca.y === comida.y;
 
+    /* ==================================================
 
-    // ==================================================
-    // COLISÃO COM O CORPO
-    // ==================================================
+       COLISÃO COM O CORPO
+
+    ================================================== */
 
     const corpoParaVerificar =
+
         comeu
+
             ? snake
+
             : snake.slice(0, -1);
 
-
     if (
+
         corpoParaVerificar.some(
+
             function(parte) {
 
                 return (
+
                     parte.x === cabeca.x &&
+
                     parte.y === cabeca.y
+
                 );
 
             }
+
         )
+
     ) {
 
         finalizarJogo();
 
         return;
+
     }
 
+    /* ==================================================
 
-    // ADICIONA CABEÇA
+       ADICIONAR CABEÇA
 
-    snake.unshift(
-        cabeca
-    );
+    ================================================== */
 
+    snake.unshift(cabeca);
 
-    // ==================================================
-    // COMEU
-    // ==================================================
+    /* ==================================================
+
+       COMEU
+
+    ================================================== */
 
     if (comeu) {
 
@@ -778,54 +1038,516 @@ function moverCobra() {
 
 }
 
+/* ==================================================
 
-// ==================================================
-// LOOP
-// ==================================================
+   LOOP
+
+================================================== */
 
 function loop(partidaAtual) {
 
     if (
+
         !jogoAtivo ||
+
         partidaAtual !== idDaPartida
+
     ) {
 
         return;
-    }
 
+    }
 
     moverCobra();
 
     desenhar();
 
-
     if (
+
         jogoAtivo &&
+
         partidaAtual === idDaPartida
+
     ) {
 
-        temporizador =
-            setTimeout(
-                function() {
+        temporizador = setTimeout(
 
-                    loop(partidaAtual);
+            function() {
 
-                },
-                calcularVelocidade()
-            );
+                loop(partidaAtual);
+
+            },
+
+            calcularVelocidade()
+
+        );
 
     }
 
 }
 
+/* ==================================================
 
-// ==================================================
-// INICIAR / REINICIAR
-// ==================================================
+   INICIAR / REINICIAR
 
-window.iniciarJogo =
-function() {
+================================================== */
 
+window.iniciarJogo = function() {
 
-    // PARA COMPLETAMENTE
-    // O J
+    /* CANCELA LOOP ANTERIOR */
+
+    if (temporizador !== null) {
+
+        clearTimeout(temporizador);
+
+        temporizador = null;
+
+    }
+
+    /* NOVA PARTIDA */
+
+    idDaPartida++;
+
+    const partidaAtual = idDaPartida;
+
+    snake = [
+
+        {
+
+            x: 8,
+
+            y: 8
+
+        },
+
+        {
+
+            x: 7,
+
+            y: 8
+
+        },
+
+        {
+
+            x: 6,
+
+            y: 8
+
+        }
+
+    ];
+
+    comida = {};
+
+    direcao = "direita";
+
+    proximaDirecao = "direita";
+
+    pontos = 0;
+
+    nivel = 1;
+
+    jogoAtivo = true;
+
+    mensagem.textContent = "";
+
+    gerarComida();
+
+    atualizarStatus();
+
+    desenhar();
+
+    /* COMEÇA O JOGO */
+
+    temporizador = setTimeout(
+
+        function() {
+
+            loop(partidaAtual);
+
+        },
+
+        calcularVelocidade()
+
+    );
+
+};
+
+/* ==================================================
+
+   FINALIZAR JOGO
+
+================================================== */
+
+function finalizarJogo() {
+
+    jogoAtivo = false;
+
+    if (temporizador !== null) {
+
+        clearTimeout(temporizador);
+
+        temporizador = null;
+
+    }
+
+    mensagem.textContent =
+
+        "💥 Fim de jogo! Pontos: " + pontos;
+
+}
+
+/* ==================================================
+
+   SALVAR PONTUAÇÃO
+
+================================================== */
+
+window.salvarManual = function() {
+
+    if (pontos <= 0) {
+
+        alert(
+
+            "⚠️ Você ainda não fez pontos.\n\n" +
+
+            "Jogue um pouco antes de salvar!"
+
+        );
+
+        return;
+
+    }
+
+    /* PEDIR NOME */
+
+    const nomeDigitado = prompt(
+
+        "🏆 Digite seu nome para o Ranking:"
+
+    );
+
+    if (nomeDigitado === null) {
+
+        return;
+
+    }
+
+    let nome = nomeDigitado.trim();
+
+    if (nome === "") {
+
+        nome = "Anônimo";
+
+    }
+
+    /* ==================================================
+
+       LER RANKING EXISTENTE
+
+    ================================================== */
+
+    let ranking = [];
+
+    try {
+
+        const dados =
+
+            localStorage.getItem(
+
+                "ranking_cobrinha"
+
+            );
+
+        if (dados) {
+
+            ranking =
+
+                JSON.parse(dados);
+
+        }
+
+    } catch (erro) {
+
+        ranking = [];
+
+    }
+
+    if (!Array.isArray(ranking)) {
+
+        ranking = [];
+
+    }
+
+    /* ==================================================
+
+       ADICIONAR PONTUAÇÃO
+
+    ================================================== */
+
+    ranking.push({
+
+        nome: nome,
+
+        pontos: Number(pontos)
+
+    });
+
+    /* ==================================================
+
+       ORDENAR
+
+    ================================================== */
+
+    ranking.sort(function(a, b) {
+
+        return (
+
+            Number(b.pontos || b.score || 0) -
+
+            Number(a.pontos || a.score || 0)
+
+        );
+
+    });
+
+    /* ==================================================
+
+       SALVAR
+
+    ================================================== */
+
+    localStorage.setItem(
+
+        "ranking_cobrinha",
+
+        JSON.stringify(ranking)
+
+    );
+
+    /* ATUALIZAR RANKING NA TELA */
+
+    carregarRanking();
+
+    /* ==================================================
+
+       MENSAGEM
+
+    ================================================== */
+
+    alert(
+
+        "✅ Pontuação salva com sucesso!\n\n" +
+
+        nome +
+
+        ": " +
+
+        pontos +
+
+        " pontos."
+
+    );
+
+    /* ==================================================
+
+       PERGUNTAR SE QUER IR AO RANKING
+
+    ================================================== */
+
+    const irRanking = confirm(
+
+        "🏆 Pontuação salva!\n\n" +
+
+        "Quer ir para o Ranking Global agora?"
+
+    );
+
+    if (irRanking) {
+
+        window.location.href =
+
+            "ranking.html";
+
+    }
+
+};
+
+/* ==================================================
+
+   CARREGAR RANKING
+
+================================================== */
+
+function carregarRanking() {
+
+    let ranking = [];
+
+    try {
+
+        const dados =
+
+            localStorage.getItem(
+
+                "ranking_cobrinha"
+
+            );
+
+        if (dados) {
+
+            ranking =
+
+                JSON.parse(dados);
+
+        }
+
+    } catch (erro) {
+
+        ranking = [];
+
+    }
+
+    if (!Array.isArray(ranking)) {
+
+        ranking = [];
+
+    }
+
+    /* ORDENAR */
+
+    ranking.sort(function(a, b) {
+
+        return (
+
+            Number(b.pontos || b.score || 0) -
+
+            Number(a.pontos || a.score || 0)
+
+        );
+
+    });
+
+    /* SEM PONTUAÇÕES */
+
+    if (ranking.length === 0) {
+
+        listaRanking.innerHTML =
+
+            "Ainda não há pontuações salvas.";
+
+        return;
+
+    }
+
+    /* MOSTRAR ATÉ 10 */
+
+    const melhores =
+
+        ranking.slice(0, 10);
+
+    listaRanking.innerHTML =
+
+        melhores.map(
+
+            function(jogador, index) {
+
+                const nome =
+
+                    jogador.nome ||
+
+                    jogador.name ||
+
+                    "Anônimo";
+
+                const pontosJogador =
+
+                    Number(
+
+                        jogador.pontos ||
+
+                        jogador.score ||
+
+                        0
+
+                    );
+
+                return (
+
+                    '<div class="linha-ranking">' +
+
+                    '<span>' +
+
+                    (index + 1) +
+
+                    "º " +
+
+                    escapeHTML(nome) +
+
+                    '</span>' +
+
+                    '<strong>' +
+
+                    pontosJogador +
+
+                    " pts" +
+
+                    '</strong>' +
+
+                    '</div>'
+
+                );
+
+            }
+
+        ).join("");
+
+}
+
+/* ==================================================
+
+   SEGURANÇA DO NOME
+
+================================================== */
+
+function escapeHTML(texto) {
+
+    return String(texto)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+/* ==================================================
+
+   INICIAR AUTOMATICAMENTE
+
+================================================== */
+
+window.addEventListener(
+
+    "load",
+
+    function() {
+
+        carregarRanking();
+
+        iniciarJogo();
+
+    }
+
+);
+
+</script>
+
+</body>
+
+</html>
