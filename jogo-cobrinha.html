@@ -8,131 +8,192 @@
 <title>Jogo da Cobrinha</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    body {
-        margin: 0;
-        background: #111;
-        color: white;
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
+body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.topo {
+    min-height: 60px;
+    background: #222;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.topo button {
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.topo button:first-child {
+    justify-self: start;
+}
+
+.topo button:last-child {
+    justify-self: end;
+}
+
+.titulo {
+    font-size: 18px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#status {
+    margin: 14px 0 8px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#canvas {
+    display: block;
+    margin: 0 auto;
+    background: #050505;
+    border: 3px solid #555;
+    border-radius: 10px;
+    width: 280px;
+    height: 280px;
+    max-width: 90vw;
+    max-height: 90vw;
+    touch-action: none;
+}
+
+.info {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #bbb;
+}
+
+.mensagem {
+    color: #ffd54a;
+    font-weight: bold;
+    min-height: 22px;
+    margin: 8px 0;
+}
+
+/* CONTROLES */
+.controles {
+    width: 190px;
+    margin: 15px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 58px);
+    grid-template-rows: repeat(3, 58px);
+    gap: 7px;
+    justify-content: center;
+}
+
+.controle {
+    width: 58px;
+    height: 58px;
+    border: none;
+    border-radius: 12px;
+    background: #333;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.controle:active {
+    background: #555;
+    transform: scale(0.94);
+}
+
+.cima {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.esquerda {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.baixo {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.direita {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+#botaoReiniciar {
+    display: block;
+    margin: 5px auto 18px;
+    background: #16823b;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 16px;
+    font-weight: bold;
+    touch-action: manipulation;
+}
+
+#ranking {
+    width: 94%;
+    max-width: 450px;
+    margin: 15px auto 30px;
+    background: #1c1c1c;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+#ranking h3 {
+    margin-top: 0;
+}
+
+.linha-ranking {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 5px;
+    border-bottom: 1px solid #333;
+    font-size: 14px;
+}
+
+@media (max-width: 380px) {
 
     .topo {
-        height: 55px;
-        background: #222;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 10px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
+        padding-left: 6px;
+        padding-right: 6px;
     }
 
     .topo button {
-        background: #333;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 9px 12px;
-        font-size: 14px;
+        padding: 9px 8px;
+        font-size: 12px;
     }
 
     .titulo {
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    #status {
-        margin: 12px 0 8px;
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    #canvas {
-        background: #050505;
-        border: 3px solid #555;
-        border-radius: 10px;
-        width: 280px;
-        height: 280px;
-        max-width: 90vw;
-        max-height: 90vw;
-        touch-action: none;
-    }
-
-    .info {
-        margin-top: 8px;
-        font-size: 13px;
-        color: #bbb;
+        font-size: 16px;
     }
 
     .controles {
-        width: 210px;
-        margin: 18px auto;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        transform: scale(0.92);
+        margin-top: 8px;
+        margin-bottom: 8px;
     }
-
-    .controle {
-        height: 55px;
-        border: none;
-        border-radius: 12px;
-        background: #333;
-        color: white;
-        font-size: 25px;
-        font-weight: bold;
-    }
-
-    .controle:active {
-        background: #555;
-        transform: scale(0.95);
-    }
-
-    .vazio {
-        visibility: hidden;
-    }
-
-    #botaoReiniciar {
-        background: #16823b;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 12px 22px;
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
-
-    #ranking {
-        width: 94%;
-        max-width: 450px;
-        margin: 15px auto 30px;
-        background: #1c1c1c;
-        border-radius: 12px;
-        padding: 15px;
-    }
-
-    #ranking h3 {
-        margin-top: 0;
-    }
-
-    .linha-ranking {
-        display: flex;
-        justify-content: space-between;
-        padding: 7px 5px;
-        border-bottom: 1px solid #333;
-        font-size: 14px;
-    }
-
-    .mensagem {
-        color: #ffd54a;
-        font-weight: bold;
-        min-height: 22px;
-    }
+}
 </style>
 
 </head>
@@ -140,12 +201,26 @@
 <body>
 
 <div class="topo">
-    <button onclick="voltarMenu()">⬅ Voltar</button>
-    <div class="titulo">🐍 Cobrinha</div>
-    <button onclick="salvarManual()">💾 Salvar</button>
+
+```
+<button type="button" onclick="voltarMenu()">
+    ⬅ Voltar
+</button>
+
+<div class="titulo">
+    🐍 Cobrinha
 </div>
 
-<div id="status">🐍 Nível 1 | Pontos: 0</div>
+<button type="button" onclick="salvarManual()">
+    💾 Salvar
+</button>
+```
+
+</div>
+
+<div id="status">
+    🐍 Nível 1 | Pontos: 0
+</div>
 
 <canvas id="canvas" width="280" height="280"></canvas>
 
@@ -155,31 +230,63 @@
 
 <div id="mensagem" class="mensagem"></div>
 
+<!-- CONTROLES -->
+
 <div class="controles">
 
 ```
-<button class="controle vazio"></button>
+<button
+    type="button"
+    class="controle cima"
+    onclick="mudarDirecao('cima')">
+    ⬆️
+</button>
 
-<button class="controle" onclick="mudarDirecao('cima')">⬆️</button>
+<button
+    type="button"
+    class="controle esquerda"
+    onclick="mudarDirecao('esquerda')">
+    ⬅️
+</button>
 
-<button class="controle vazio"></button>
+<button
+    type="button"
+    class="controle baixo"
+    onclick="mudarDirecao('baixo')">
+    ⬇️
+</button>
 
-<button class="controle" onclick="mudarDirecao('esquerda')">⬅️</button>
-
-<button class="controle" onclick="mudarDirecao('baixo')">⬇️</button>
-
-<button class="controle" onclick="mudarDirecao('direita')">➡️</button>
+<button
+    type="button"
+    class="controle direita"
+    onclick="mudarDirecao('direita')">
+    ➡️
+</button>
 ```
 
 </div>
 
-<button id="botaoReiniciar" onclick="iniciarJogo()">
-    🔄 Reiniciar
+<button
+id="botaoReiniciar"
+type="button"
+onclick="iniciarJogo()">
+
+```
+🔄 Reiniciar
+```
+
 </button>
 
 <div id="ranking">
-    <h3>🏆 Ranking</h3>
-    <div id="listaRanking">Carregando...</div>
+
+```
+<h3>🏆 Ranking</h3>
+
+<div id="listaRanking">
+    Carregando...
+</div>
+```
+
 </div>
 
 <script type="module">
@@ -199,59 +306,90 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
-// ===============================
+// ==================================================
 // FIREBASE
-// ===============================
+// ==================================================
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JCVVjmkS_o",
+
     authDomain: "ajuda-jp.firebaseapp.com",
+
     projectId: "ajuda-jp",
+
     storageBucket: "ajuda-jp.firebasestorage.app",
+
     messagingSenderId: "40121072206",
+
     appId: "1:40121072206:web:8a844e632f004f61d0a11f"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
 
-// ===============================
+// ==================================================
 // ELEMENTOS
-// ===============================
+// ==================================================
 
 const canvas = document.getElementById("canvas");
+
 const ctx = canvas.getContext("2d");
 
 const status = document.getElementById("status");
+
 const mensagem = document.getElementById("mensagem");
 
 
-// ===============================
+// ==================================================
 // CONFIGURAÇÃO
-// ===============================
+// ==================================================
 
 const TAMANHO = 16;
+
 const QUADRO = canvas.width / TAMANHO;
 
+
+// ==================================================
+// VARIÁVEIS
+// ==================================================
+
 let snake = [];
+
 let comida = {};
 
 let direcao = "direita";
+
 let proximaDirecao = "direita";
 
 let pontos = 0;
+
 let nivel = 1;
 
 let jogoAtivo = false;
-let jogoIniciado = false;
 
 let nomeJogador = "Jogador";
 
+let temporizador = null;
 
-// ===============================
+let salvando = false;
+
+/*
+   ESTA VARIÁVEL É MUITO IMPORTANTE.
+
+   Cada partida recebe um número diferente.
+   Assim, se existir algum loop antigo,
+   ele não poderá continuar controlando
+   a nova partida.
+*/
+let idDaPartida = 0;
+
+
+// ==================================================
 // NÍVEIS
-// ===============================
+// ==================================================
 
 function calcularNivel() {
 
@@ -275,9 +413,9 @@ function calcularNivel() {
 }
 
 
-// ===============================
+// ==================================================
 // VELOCIDADE
-// ===============================
+// ==================================================
 
 function calcularVelocidade() {
 
@@ -301,9 +439,9 @@ function calcularVelocidade() {
 }
 
 
-// ===============================
+// ==================================================
 // STATUS
-// ===============================
+// ==================================================
 
 function atualizarStatus() {
 
@@ -316,19 +454,29 @@ function atualizarStatus() {
         mensagem.textContent =
             "🎉 Você chegou ao Nível " + nivel + "!";
 
-        setTimeout(() => {
-            mensagem.textContent = "";
+        setTimeout(function() {
+
+            if (
+                mensagem.textContent ===
+                "🎉 Você chegou ao Nível " + nivel + "!"
+            ) {
+                mensagem.textContent = "";
+            }
+
         }, 2000);
     }
 
     status.textContent =
-        "🐍 Nível " + nivel + " | Pontos: " + pontos;
+        "🐍 Nível " +
+        nivel +
+        " | Pontos: " +
+        pontos;
 }
 
 
-// ===============================
-// COMIDA
-// ===============================
+// ==================================================
+// GERAR COMIDA
+// ==================================================
 
 function gerarComida() {
 
@@ -337,25 +485,34 @@ function gerarComida() {
     do {
 
         novaComida = {
-            x: Math.floor(Math.random() * TAMANHO),
-            y: Math.floor(Math.random() * TAMANHO)
+
+            x: Math.floor(
+                Math.random() * TAMANHO
+            ),
+
+            y: Math.floor(
+                Math.random() * TAMANHO
+            )
         };
 
     } while (
-        snake.some(
-            parte =>
+        snake.some(function(parte) {
+
+            return (
                 parte.x === novaComida.x &&
                 parte.y === novaComida.y
-        )
+            );
+
+        })
     );
 
     comida = novaComida;
 }
 
 
-// ===============================
+// ==================================================
 // DESENHAR
-// ===============================
+// ==================================================
 
 function desenhar() {
 
@@ -366,7 +523,9 @@ function desenhar() {
         canvas.height
     );
 
-    // fundo
+
+    // FUNDO
+
     ctx.fillStyle = "#050505";
 
     ctx.fillRect(
@@ -377,35 +536,59 @@ function desenhar() {
     );
 
 
-    // comida
-    ctx.fillStyle = "#ff3333";
+    // COMIDA
 
-    ctx.beginPath();
+    if (
+        comida.x !== undefined &&
+        comida.y !== undefined
+    ) {
 
-    ctx.arc(
-        comida.x * QUADRO + QUADRO / 2,
-        comida.y * QUADRO + QUADRO / 2,
-        QUADRO * 0.35,
-        0,
-        Math.PI * 2
-    );
+        ctx.fillStyle = "#ff3333";
 
-    ctx.fill();
+        ctx.beginPath();
+
+        ctx.arc(
+
+            comida.x * QUADRO +
+            QUADRO / 2,
+
+            comida.y * QUADRO +
+            QUADRO / 2,
+
+            QUADRO * 0.35,
+
+            0,
+
+            Math.PI * 2
+
+        );
+
+        ctx.fill();
+    }
 
 
-    // cobra
-    snake.forEach((parte, index) => {
+    // COBRA
+
+    snake.forEach(function(parte, index) {
 
         if (index === 0) {
+
             ctx.fillStyle = "#65e665";
+
         } else {
+
             ctx.fillStyle = "#25a825";
         }
 
+
         ctx.fillRect(
+
             parte.x * QUADRO + 1,
+
             parte.y * QUADRO + 1,
+
             QUADRO - 2,
+
             QUADRO - 2
         );
 
@@ -413,19 +596,22 @@ function desenhar() {
 }
 
 
-// ===============================
+// ==================================================
 // MUDAR DIREÇÃO
-// ===============================
+// ==================================================
 
 window.mudarDirecao = function(novaDirecao) {
 
-    if (!jogoAtivo) return;
+    if (!jogoAtivo) {
+        return;
+    }
 
 
     if (
         novaDirecao === "cima" &&
         direcao !== "baixo"
     ) {
+
         proximaDirecao = "cima";
     }
 
@@ -434,6 +620,7 @@ window.mudarDirecao = function(novaDirecao) {
         novaDirecao === "baixo" &&
         direcao !== "cima"
     ) {
+
         proximaDirecao = "baixo";
     }
 
@@ -442,6 +629,7 @@ window.mudarDirecao = function(novaDirecao) {
         novaDirecao === "esquerda" &&
         direcao !== "direita"
     ) {
+
         proximaDirecao = "esquerda";
     }
 
@@ -450,48 +638,56 @@ window.mudarDirecao = function(novaDirecao) {
         novaDirecao === "direita" &&
         direcao !== "esquerda"
     ) {
+
         proximaDirecao = "direita";
     }
 
 };
 
 
-// ===============================
+// ==================================================
 // TECLADO
-// ===============================
+// ==================================================
 
-document.addEventListener("keydown", function(e) {
+document.addEventListener(
+    "keydown",
+    function(e) {
 
-    if (e.key === "ArrowUp") {
-        mudarDirecao("cima");
+        if (e.key === "ArrowUp") {
+            mudarDirecao("cima");
+        }
+
+        if (e.key === "ArrowDown") {
+            mudarDirecao("baixo");
+        }
+
+        if (e.key === "ArrowLeft") {
+            mudarDirecao("esquerda");
+        }
+
+        if (e.key === "ArrowRight") {
+            mudarDirecao("direita");
+        }
+
     }
-
-    if (e.key === "ArrowDown") {
-        mudarDirecao("baixo");
-    }
-
-    if (e.key === "ArrowLeft") {
-        mudarDirecao("esquerda");
-    }
-
-    if (e.key === "ArrowRight") {
-        mudarDirecao("direita");
-    }
-
-});
+);
 
 
-// ===============================
-// MOVIMENTO
-// ===============================
+// ==================================================
+// MOVER COBRA
+// ==================================================
 
 function moverCobra() {
 
     direcao = proximaDirecao;
 
+
     const cabeca = {
+
         x: snake[0].x,
+
         y: snake[0].y
+
     };
 
 
@@ -512,55 +708,83 @@ function moverCobra() {
     }
 
 
-    // ==================================
-    // ATRAVESSAR A PAREDE
-    // ==================================
+    // ==================================================
+    // ATRAVESSAR PAREDES
+    // ==================================================
 
     if (cabeca.x < 0) {
+
         cabeca.x = TAMANHO - 1;
     }
 
     if (cabeca.x >= TAMANHO) {
+
         cabeca.x = 0;
     }
 
     if (cabeca.y < 0) {
+
         cabeca.y = TAMANHO - 1;
     }
 
     if (cabeca.y >= TAMANHO) {
+
         cabeca.y = 0;
     }
 
 
-    // ==================================
+    // ==================================================
+    // VERIFICAR COMIDA
+    // ==================================================
+
+    const comeu =
+        cabeca.x === comida.x &&
+        cabeca.y === comida.y;
+
+
+    // Se não comeu, o último pedaço
+    // vai sair. Então não precisamos
+    // considerar a cauda como colisão.
+
+    const corpoParaVerificar =
+        comeu
+            ? snake
+            : snake.slice(0, -1);
+
+
+    // ==================================================
     // BATEU NO PRÓPRIO CORPO
-    // ==================================
+    // ==================================================
 
     if (
-        snake.some(
-            parte =>
+        corpoParaVerificar.some(function(parte) {
+
+            return (
                 parte.x === cabeca.x &&
                 parte.y === cabeca.y
-        )
+            );
+
+        })
     ) {
 
         finalizarJogo();
+
         return;
     }
 
 
+    // ==================================================
+    // ADICIONAR CABEÇA
+    // ==================================================
+
     snake.unshift(cabeca);
 
 
-    // ==================================
+    // ==================================================
     // COMEU
-    // ==================================
+    // ==================================================
 
-    if (
-        cabeca.x === comida.x &&
-        cabeca.y === comida.y
-    ) {
+    if (comeu) {
 
         pontos += 10;
 
@@ -577,22 +801,42 @@ function moverCobra() {
 }
 
 
-// ===============================
-// LOOP
-// ===============================
+// ==================================================
+// LOOP DO JOGO
+// ==================================================
 
-function loop() {
+function loop(partidaAtual) {
 
-    if (!jogoAtivo) return;
+    /*
+       Se esta não for mais a partida atual,
+       o loop antigo é simplesmente ignorado.
+    */
+
+    if (
+        !jogoAtivo ||
+        partidaAtual !== idDaPartida
+    ) {
+
+        return;
+    }
+
 
     moverCobra();
 
     desenhar();
 
-    if (jogoAtivo) {
 
-        setTimeout(
-            loop,
+    if (
+        jogoAtivo &&
+        partidaAtual === idDaPartida
+    ) {
+
+        temporizador = setTimeout(
+            function() {
+
+                loop(partidaAtual);
+
+            },
             calcularVelocidade()
         );
 
@@ -601,28 +845,85 @@ function loop() {
 }
 
 
-// ===============================
-// INICIAR
-// ===============================
+// ==================================================
+// INICIAR / REINICIAR
+// ==================================================
 
 window.iniciarJogo = function() {
 
+    /*
+       PRIMEIRO:
+       para completamente a partida anterior.
+    */
+
+    jogoAtivo = false;
+
+
+    /*
+       Cancela o temporizador anterior.
+    */
+
+    if (temporizador !== null) {
+
+        clearTimeout(temporizador);
+
+        temporizador = null;
+    }
+
+
+    /*
+       Cria uma nova identificação
+       para esta partida.
+    */
+
+    idDaPartida++;
+
+
+    const novaPartida = idDaPartida;
+
+
+    /*
+       ZERA TUDO.
+    */
+
     snake = [
-        { x: 8, y: 8 },
-        { x: 7, y: 8 },
-        { x: 6, y: 8 }
+
+        {
+            x: 8,
+            y: 8
+        },
+
+        {
+            x: 7,
+            y: 8
+        },
+
+        {
+            x: 6,
+            y: 8
+        }
+
     ];
 
+
     direcao = "direita";
+
     proximaDirecao = "direita";
 
     pontos = 0;
+
     nivel = 1;
 
+
+    /*
+       Nova partida ativa.
+    */
+
     jogoAtivo = true;
-    jogoIniciado = true;
+
 
     mensagem.textContent = "";
+
 
     gerarComida();
 
@@ -630,56 +931,53 @@ window.iniciarJogo = function() {
 
     desenhar();
 
-    loop();
+
+    /*
+       COMEÇA APENAS UM LOOP.
+    */
+
+    loop(novaPartida);
 
 };
 
 
-// ===============================
-// FINALIZAR
-// ===============================
+// ==================================================
+// FINALIZAR JOGO
+// ==================================================
 
 function finalizarJogo() {
 
     jogoAtivo = false;
 
+
+    if (temporizador !== null) {
+
+        clearTimeout(temporizador);
+
+        temporizador = null;
+    }
+
+
+    /*
+       Invalida qualquer loop antigo.
+    */
+
+    idDaPartida++;
+
+
     desenhar();
 
+
     mensagem.textContent =
-        "💥 Fim de jogo! Pontos: " + pontos;
-
-    salvarNoFirebase(nomeJogador, pontos);
-
-}
+        "💥 Fim de jogo! Pontos: " +
+        pontos;
 
 
-// ===============================
-// SALVAR RANKING
-// ===============================
+    if (pontos > 0) {
 
-async function salvarNoFirebase(nome, pontosSalvos) {
-
-    if (pontosSalvos <= 0) return;
-
-    try {
-
-        await addDoc(
-            collection(db, "ranking_cobrinha"),
-            {
-                nome: nome || "Jogador",
-                pontos: pontosSalvos,
-                nivel: calcularNivel(),
-                data: new Date()
-            }
-        );
-
-        carregarRanking();
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao salvar ranking:",
-            erro
+        salvarNoFirebase(
+            nomeJogador,
+            pontos
         );
 
     }
@@ -687,11 +985,86 @@ async function salvarNoFirebase(nome, pontosSalvos) {
 }
 
 
-// ===============================
-// SALVAR MANUALMENTE
-// ===============================
+// ==================================================
+// SALVAR FIREBASE
+// ==================================================
 
-window.salvarManual = function() {
+async function salvarNoFirebase(
+    nome,
+    pontosSalvos
+) {
+
+    if (
+        pontosSalvos <= 0 ||
+        salvando
+    ) {
+
+        return false;
+    }
+
+
+    salvando = true;
+
+
+    try {
+
+        await addDoc(
+
+            collection(
+                db,
+                "ranking_cobrinha"
+            ),
+
+            {
+
+                nome:
+                    nome || "Jogador",
+
+                pontos:
+                    pontosSalvos,
+
+                nivel:
+                    calcularNivel(),
+
+                data:
+                    new Date()
+
+            }
+
+        );
+
+
+        await carregarRanking();
+
+
+        return true;
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao salvar:",
+            erro
+        );
+
+
+        return false;
+
+
+    } finally {
+
+        salvando = false;
+
+    }
+
+}
+
+
+// ==================================================
+// BOTÃO SALVAR
+// ==================================================
+
+window.salvarManual = async function() {
 
     if (pontos <= 0) {
 
@@ -701,63 +1074,139 @@ window.salvarManual = function() {
         return;
     }
 
-    salvarNoFirebase(
-        nomeJogador,
-        pontos
-    );
+
+    if (salvando) {
+
+        mensagem.textContent =
+            "⏳ Salvando...";
+
+        return;
+    }
+
 
     mensagem.textContent =
-        "✅ Pontuação salva!";
+        "⏳ Salvando pontuação...";
+
+
+    const salvou =
+        await salvarNoFirebase(
+            nomeJogador,
+            pontos
+        );
+
+
+    if (salvou) {
+
+        mensagem.textContent =
+            "✅ Pontuação salva!";
+
+    } else {
+
+        mensagem.textContent =
+            "❌ Não foi possível salvar.";
+    }
 
 };
 
 
-// ===============================
-// RANKING
-// ===============================
+// ==================================================
+// CARREGAR RANKING
+// ==================================================
 
 async function carregarRanking() {
 
     const lista =
-        document.getElementById("listaRanking");
+        document.getElementById(
+            "listaRanking"
+        );
+
 
     try {
 
         const q = query(
-            collection(db, "ranking_cobrinha"),
-            orderBy("pontos", "desc"),
+
+            collection(
+                db,
+                "ranking_cobrinha"
+            ),
+
+            orderBy(
+                "pontos",
+                "desc"
+            ),
+
             limit(100)
+
         );
+
 
         const resultado =
             await getDocs(q);
 
+
         lista.innerHTML = "";
+
 
         let posicao = 1;
 
-        resultado.forEach(doc => {
 
-            const dados = doc.data();
+        resultado.forEach(function(doc) {
+
+            const dados =
+                doc.data();
+
 
             const linha =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
+
 
             linha.className =
                 "linha-ranking";
 
-            linha.innerHTML =
-                "<span>#" +
+
+            const nome =
+                document.createElement(
+                    "span"
+                );
+
+
+            nome.textContent =
+                "#" +
                 posicao +
                 " " +
-                (dados.nome || "Jogador") +
-                "</span>" +
+                (
+                    dados.nome ||
+                    "Jogador"
+                );
 
-                "<strong>" +
-                (dados.pontos || 0) +
-                " pts</strong>";
 
-            lista.appendChild(linha);
+            const pontosTexto =
+                document.createElement(
+                    "strong"
+                );
+
+
+            pontosTexto.textContent =
+                (
+                    dados.pontos ||
+                    0
+                ) +
+                " pts";
+
+
+            linha.appendChild(nome);
+
+            linha.appendChild(
+                pontosTexto
+            );
+
+
+            lista.appendChild(
+                linha
+            );
+
 
             posicao++;
 
@@ -766,10 +1215,11 @@ async function carregarRanking() {
 
         if (resultado.empty) {
 
-            lista.innerHTML =
+            lista.textContent =
                 "Nenhuma pontuação ainda.";
 
         }
+
 
     } catch (erro) {
 
@@ -778,7 +1228,8 @@ async function carregarRanking() {
             erro
         );
 
-        lista.innerHTML =
+
+        lista.textContent =
             "Não foi possível carregar o ranking.";
 
     }
@@ -786,37 +1237,66 @@ async function carregarRanking() {
 }
 
 
-// ===============================
+// ==================================================
 // NOME DO JOGADOR
-// ===============================
+// ==================================================
 
 try {
 
     const nomeSalvo =
-        localStorage.getItem("lineUserName");
+        localStorage.getItem(
+            "lineUserName"
+        );
+
 
     if (nomeSalvo) {
-        nomeJogador = nomeSalvo;
+
+        nomeJogador =
+            nomeSalvo;
+
     }
 
 } catch (e) {}
 
 
-// ===============================
-// VOLTAR
-// ===============================
+// ==================================================
+// VOLTAR PARA FORCA
+// ==================================================
 
 window.voltarMenu = function() {
 
+    /*
+       Para a cobra antes de sair.
+    */
+
+    jogoAtivo = false;
+
+
+    if (temporizador !== null) {
+
+        clearTimeout(temporizador);
+
+        temporizador = null;
+    }
+
+
+    idDaPartida++;
+
+
+    /*
+       VOLTA DIRETAMENTE PARA
+       forca.html
+    */
+
     window.location.href =
-        "entretenimento.html";
+        "forca.html";
 
 };
 
 
-// ===============================
-// COMEÇAR AUTOMATICAMENTE
-// ===============================
+// ==================================================
+// INICIALIZAÇÃO
+// ==================================================
 
 carregarRanking();
 
