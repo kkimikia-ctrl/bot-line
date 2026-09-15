@@ -1,1144 +1,2745 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Petton - Gatinho Estilo Tamagotchi</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-            color: #4a4a4a;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-sizing: border-box;
-        }
-        .container {
-            width: 100%;
-            max-width: 380px;
-            background: rgba(255, 255, 255, 0.96);
-            padding: 22px;
-            border-radius: 28px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            box-sizing: border-box;
-            position: relative;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        h2 {
-            margin: 0;
-            color: #ff5295;
-            font-size: 17px;
-            text-align: left;
-        }
-        .score-board {
-            background: #fff0f5;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: bold;
-            color: #ff5295;
-            border: 1px solid #ffb6c1;
-        }
-        .scenery {
-            width: 100%;
-            height: 160px;
-            border-radius: 20px;
-            background: #fff0f5;
-            border: 2px dashed #ffb6c1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 12px 0;
-            position: relative;
-            overflow: hidden;
-            transition: background 0.5s ease;
-        }
-        .scenery.outdoor {
-            background: linear-gradient(180deg, #bbf2f6 0%, #d4edbc 100%);
-            border: 2px solid #82e0aa;
-        }
-        .scenery.minigame-bg {
-            background: #fff9c4;
-            border: 2px solid #fbc02d;
-        }
-        
-        /* GATO DESENHADO EM CSS (KAWAII) */
-        .cat-container {
-            position: relative;
-            width: 110px;
-            height: 100px;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.2s;
-        }
-        
-        /* OVO */
-        .ovo-box {
-            font-size: 75px;
-            line-height: 160px;
-        }
 
-        /* --- FASE 1: BEBÊ (Cabeça super redonda, olhinhos grandes e orelhas pontudas) --- */
-        .cat-container.fase-bebe .cat-head {
-            width: 75px;
-            height: 65px;
-            background-color: #ffd1dc;
-            border-radius: 38px 38px 32px 32px;
-            bottom: 12px;
-            left: 17px;
-        }
-        .cat-container.fase-bebe .cat-ear.left {
-            top: -12px; left: 2px;
-            border-left: 14px solid transparent;
-            border-right: 14px solid transparent;
-            border-bottom: 24px solid #ffd1dc;
-        }
-        .cat-container.fase-bebe .cat-ear.right {
-            top: -12px; right: 2px;
-            border-left: 14px solid transparent;
-            border-right: 14px solid transparent;
-            border-bottom: 24px solid #ffd1dc;
-        }
-        .cat-container.fase-bebe .cat-eye { top: 22px; width: 9px; height: 11px; }
-        .cat-container.fase-bebe .cat-eye.left { left: 20px; }
-        .cat-container.fase-bebe .cat-eye.right { right: 20px; }
-        .cat-container.fase-bebe .cat-nose { top: 35px; left: 33px; width: 6px; height: 5px; }
-        .cat-container.fase-bebe .cat-mouth { top: 40px; left: 30px; width: 14px; height: 6px; }
-        .cat-container.fase-bebe .cat-blush { top: 33px; width: 11px; height: 6px; }
-        .cat-container.fase-bebe .cat-blush.left { left: 10px; }
-        .cat-container.fase-bebe .cat-blush.right { right: 10px; }
+<meta charset="UTF-8">
 
-        /* --- FASE 2: CRIANÇA (Tamanho médio, tom amarelado fofo) --- */
-        .cat-container.fase-crianca .cat-head {
-            width: 85px;
-            height: 72px;
-            background-color: #ffb347;
-            border-radius: 42px 42px 35px 35px;
-            bottom: 8px;
-            left: 12px;
-        }
-        .cat-container.fase-crianca .cat-ear.left {
-            top: -14px; left: 3px;
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-bottom: 28px solid #ffb347;
-        }
-        .cat-container.fase-crianca .cat-ear.right {
-            top: -14px; right: 3px;
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-bottom: 28px solid #ffb347;
-        }
-        .cat-container.fase-crianca .cat-eye { top: 26px; width: 10px; height: 12px; }
-        .cat-container.fase-crianca .cat-eye.left { left: 22px; }
-        .cat-container.fase-crianca .cat-eye.right { right: 22px; }
-        .cat-container.fase-crianca .cat-nose { top: 40px; left: 38px; width: 7px; height: 5px; }
-        .cat-container.fase-crianca .cat-mouth { top: 45px; left: 34px; width: 16px; height: 7px; }
-        .cat-container.fase-crianca .cat-blush { top: 38px; width: 13px; height: 7px; }
-        .cat-container.fase-crianca .cat-blush.left { left: 11px; }
-        .cat-container.fase-crianca .cat-blush.right { right: 11px; }
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
-        /* --- FASE 3: ADULTO (Gato maior, tom mais forte/alaranjado e maduro) --- */
-        .cat-container.fase-adulto .cat-head {
-            width: 96px;
-            height: 80px;
-            background-color: #e08250;
-            border-radius: 48px 48px 40px 40px;
-            bottom: 5px;
-            left: 7px;
-        }
-        .cat-container.fase-adulto .cat-ear.left {
-            top: -16px; left: 4px;
-            border-left: 19px solid transparent;
-            border-right: 19px solid transparent;
-            border-bottom: 32px solid #e08250;
-        }
-        .cat-container.fase-adulto .cat-ear.right {
-            top: -16px; right: 4px;
-            border-left: 19px solid transparent;
-            border-right: 19px solid transparent;
-            border-bottom: 32px solid #e08250;
-        }
-        .cat-container.fase-adulto .cat-eye { top: 30px; width: 11px; height: 13px; }
-        .cat-container.fase-adulto .cat-eye.left { left: 26px; }
-        .cat-container.fase-adulto .cat-eye.right { right: 26px; }
-        .cat-container.fase-adulto .cat-nose { top: 44px; left: 44px; width: 8px; height: 6px; }
-        .cat-container.fase-adulto .cat-mouth { top: 50px; left: 40px; width: 18px; height: 8px; }
-        .cat-container.fase-adulto .cat-blush { top: 42px; width: 14px; height: 8px; }
-        .cat-container.fase-adulto .cat-blush.left { left: 13px; }
-        .cat-container.fase-adulto .cat-blush.right { right: 13px; }
+<title>Petton 2.0 🐾</title>
 
-        /* Base comum do rostinho em CSS */
-        .cat-head {
-            position: absolute;
-            box-shadow: inset -4px -4px 0px rgba(0,0,0,0.08);
-            animation: breathe 3s ease-in-out infinite;
-        }
-        @keyframes breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03) translateY(-2px); }
-        }
-        .cat-ear {
-            position: absolute;
-        }
-        .cat-ear::after {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: -9px;
-            width: 0;
-            height: 0;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            border-bottom: 16px solid #ffcccc;
-        }
-        .cat-eye {
-            position: absolute;
-            background-color: #333;
-            border-radius: 50%;
-            animation: blink 4s infinite;
-        }
-        @keyframes blink {
-            0%, 96%, 98% { transform: scaleY(1); }
-            97%, 99% { transform: scaleY(0.1); }
-        }
-        .cat-nose {
-            position: absolute;
-            background-color: #ff69b4;
-            border-radius: 50%;
-        }
-        .cat-mouth {
-            position: absolute;
-            border-bottom: 2px solid #333;
-            border-radius: 0 0 10px 10px;
-            transition: all 0.3s;
-        }
-        .cat-blush {
-            position: absolute;
-            background-color: rgba(255, 105, 180, 0.4);
-            border-radius: 50%;
-        }
+<style>
 
-        /* Estados Especiais (Dormindo, Doente, Cárie) */
-        .cat-container.sleeping .cat-eye {
-            height: 2px;
-            background: none;
-            border-top: 2px solid #333;
-        }
-        .cat-container.sick .cat-head {
-            background-color: #a3c1ad !important;
-        }
-        .cat-container.sick .cat-ear {
-            border-bottom-color: #a3c1ad !important;
-        }
-        .cat-container.carie .cat-mouth {
-            width: 12px;
-            height: 10px;
-            background-color: #333;
-            border-radius: 50%;
-            border: none;
-        }
-        .toothache-icon {
-            position: absolute;
-            top: 15px; right: 15px;
-            font-size: 24px;
-            z-index: 7;
-            animation: bounceTooth 0.6s infinite alternate;
-        }
-        @keyframes bounceTooth {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-4px); }
-        }
-        .nanny-badge {
-            position: absolute;
-            top: 10px; left: 10px;
-            font-size: 22px;
-            z-index: 7;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 3px 7px;
-            border-radius: 10px;
-            border: 1px solid #ffb6c1;
-        }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-        /* Ferramentas e Animações */
-        .broom-tool {
-            position: absolute; font-size: 45px; z-index: 10;
-            animation: sweepAction 1s ease-in-out infinite; pointer-events: none;
-        }
-        @keyframes sweepAction {
-            0% { bottom: 10px; left: 10px; transform: rotate(0deg); }
-            50% { bottom: 10px; left: 60px; transform: rotate(-25deg); }
-            100% { bottom: 10px; left: 10px; transform: rotate(0deg); }
-        }
-        .toothbrush-tool {
-            position: absolute; top: 35px; left: 35px; font-size: 46px; z-index: 10;
-            animation: brushAction 0.3s ease-in-out infinite alternate; pointer-events: none;
-        }
-        @keyframes brushAction {
-            0% { transform: translateX(0) rotate(0deg); }
-            100% { transform: translateX(12px) rotate(20deg); }
-        }
-        .ambulance {
-            position: absolute; bottom: 20px; left: -60px; font-size: 40px; z-index: 10;
-            transform: scaleX(-1); animation: driveAmbulance 3s linear forwards; pointer-events: none;
-        }
-        @keyframes driveAmbulance {
-            0% { left: -60px; }
-            100% { left: 380px; }
-        }
-        .poop-item {
-            position: absolute; font-size: 28px; z-index: 6; cursor: pointer; animation: popIn 0.3s ease;
-        }
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        .floating { animation: float 2.5s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-        .walking-path {
-            position: absolute; animation: walkSquare 8s linear infinite;
-        }
-        @keyframes walkSquare {
-            0%   { left: 10px; top: 10px; transform: scaleX(1); }
-            25%  { left: calc(100% - 120px); top: 10px; transform: scaleX(1); }
-            50%  { left: calc(100% - 120px); top: 50px; transform: scaleX(-1); }
-            75%  { left: 10px; top: 50px; transform: scaleX(-1); }
-            100% { left: 10px; top: 10px; transform: scaleX(1); }
-        }
-        .effect-overlay {
-            position: absolute; font-size: 32px; animation: blinkEffect 0.4s ease-in-out infinite alternate; z-index: 5; pointer-events: none;
-        }
-        @keyframes blinkEffect { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
-        .drop-water {
-            position: absolute; font-size: 30px; animation: fallDrop 0.6s linear infinite; z-index: 5; pointer-events: none;
-        }
-        @keyframes fallDrop { 0% { transform: translateY(-30px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(50px); opacity: 0; } }
-        .zzz-effect {
-            position: absolute; font-weight: bold; color: #7b68ee; text-shadow: 1px 1px #fff; animation: floatZzz 2s linear infinite; z-index: 8; pointer-events: none;
-        }
-        @keyframes floatZzz {
-            0% { transform: translateY(0px) scale(0.8); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(-45px) translateX(25px) scale(1.3); opacity: 0; }
-        }
+body{
 
-        /* MINI-GAMES */
-        .memory-grid {
-            position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; z-index: 15;
-            background: rgba(255,255,255,0.95); padding: 6px; border-radius: 15px; box-sizing: border-box;
-        }
-        .memory-card {
-            background: #ff758c; border-radius: 6px; font-size: 18px;
-            display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; color: white; font-weight: bold;
-        }
-        .memory-card.flipped { background: #fff; border: 1px solid #ff758c; }
-        .jump-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #e0f7fa; z-index: 15; overflow: hidden; border-radius: 18px; cursor: pointer;
-        }
-        .runner-cat { position: absolute; bottom: 10px; left: 30px; font-size: 30px; transition: bottom 0.2s ease-out; }
-        .runner-obstacle { position: absolute; bottom: 10px; right: -30px; font-size: 26px; animation: moveObstacle 1.5s linear infinite; }
-        @keyframes moveObstacle { 0% { right: -30px; } 100% { right: 380px; } }
-        .quiz-box {
-            position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
-            background: rgba(255, 255, 255, 0.96); border-radius: 15px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; z-index: 15; box-sizing: border-box;
-        }
-        .quiz-question { font-size: 11px; font-weight: bold; color: #333; margin-bottom: 6px; text-align: center; }
-        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 100%; }
-        .quiz-btn {
-            background: #ff758c; color: white; border: none; padding: 5px;
-            border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+    margin:0;
 
-        .status-box {
-            text-align: left; margin: 6px 0; background: #fff5f8; padding: 6px 10px; border-radius: 12px; border: 1px solid #ffe0ec;
-        }
-        .status-label { font-size: 11px; font-weight: bold; color: #666; display: flex; justify-content: space-between; }
-        .bar-container { background: #e0e0e0; border-radius: 10px; height: 6px; width: 100%; overflow: hidden; margin-top: 3px; }
-        .bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff758c, #ff7eb3); transition: width 0.4s ease; border-radius: 10px; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px; }
-        button {
-            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%); color: white; border: none;
-            padding: 9px 4px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 3px 8px rgba(255, 117, 140, 0.3); transition: transform 0.1s;
-        }
-        button:active { transform: scale(0.95); }
-        .btn-passeio {
-            grid-column: span 3; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            box-shadow: 0 3px 8px rgba(67, 233, 123, 0.3); color: #2c3e50; padding: 10px;
-        }
-        .btn-baba {
-            grid-column: span 3; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            box-shadow: 0 3px 8px rgba(250, 112, 154, 0.3); color: #fff; padding: 10px;
-        }
-        .btn-voltar-menu {
-            display: block; width: 100%; margin-top: 8px; background: #6b7280; text-decoration: none;
-            box-sizing: border-box; text-align: center; padding: 9px; border-radius: 12px; color: white; font-size: 11px; font-weight: bold;
-        }
-        .btn-reset { background: #e57373; font-size: 10px; padding: 5px; margin-top: 6px; width: 100%; border-radius: 8px; box-shadow: none; }
-        #user-greeting { font-size: 10px; color: #888; margin-bottom: 3px; text-align: left; }
-        #texto-status { font-size: 11px; color: #555; margin: 6px 0; min-height: 24px; }
-        .oculto { display: none !important; }
-    </style>
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+
+    background:linear-gradient(180deg,#fce7f3,#ede9fe,#dbeafe);
+
+    color:#333;
+
+    min-height:100vh;
+
+}
+
+.container{
+
+    width:100%;
+
+    max-width:460px;
+
+    margin:auto;
+
+    padding:12px;
+
+}
+
+.header{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:14px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.10);
+
+    margin-bottom:10px;
+
+}
+
+.header-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.logo{
+
+    font-size:25px;
+
+    font-weight:900;
+
+    color:#db2777;
+
+}
+
+.coins{
+
+    background:#fef3c7;
+
+    color:#92400e;
+
+    border-radius:20px;
+
+    padding:7px 12px;
+
+    font-weight:900;
+
+}
+
+.pet-name{
+
+    text-align:center;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    margin:5px 0 2px;
+
+}
+
+.level{
+
+    text-align:center;
+
+    color:#6b7280;
+
+    font-size:13px;
+
+}
+
+.xp-box{
+
+    height:8px;
+
+    background:#e5e7eb;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-top:8px;
+
+}
+
+.xp{
+
+    height:100%;
+
+    background:#8b5cf6;
+
+    width:0%;
+
+    transition:.3s;
+
+}
+
+.scene{
+
+    position:relative;
+
+    height:310px;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    background:linear-gradient(#7dd3fc 0 58%,#86efac 58%);
+
+    box-shadow:0 5px 18px rgba(0,0,0,.15);
+
+    margin-bottom:10px;
+
+}
+
+.sun{
+
+    position:absolute;
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:50%;
+
+    background:#fde047;
+
+    top:20px;
+
+    right:25px;
+
+    box-shadow:0 0 25px rgba(253,224,71,.7);
+
+}
+
+.cloud{
+
+    position:absolute;
+
+    font-size:45px;
+
+    opacity:.8;
+
+}
+
+.cloud.one{top:30px;left:20px}
+
+.cloud.two{top:75px;left:180px}
+
+.tree{
+
+    position:absolute;
+
+    bottom:55px;
+
+    font-size:65px;
+
+}
+
+.tree.left{left:5px}
+
+.tree.right{right:5px}
+
+.house{
+
+    position:absolute;
+
+    bottom:42px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    font-size:75px;
+
+}
+
+.cat-area{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:28px;
+
+    transform:translateX(-50%);
+
+    width:180px;
+
+    text-align:center;
+
+}
+
+.cat{
+
+    font-size:105px;
+
+    line-height:1;
+
+    filter:drop-shadow(0 6px 3px rgba(0,0,0,.18));
+
+    animation:float 2s ease-in-out infinite;
+
+}
+
+.cat.happy{animation:bounce .7s}
+
+.cat.sleep{animation:none;opacity:.75}
+
+.cat.sad{filter:grayscale(.25)}
+
+@keyframes float{
+
+    0%,100%{transform:translateY(0)}
+
+    50%{transform:translateY(-7px)}
+
+}
+
+@keyframes bounce{
+
+    0%{transform:scale(1)}
+
+    50%{transform:scale(1.25) rotate(-5deg)}
+
+    100%{transform:scale(1)}
+
+}
+
+.egg{
+
+    font-size:125px;
+
+    cursor:pointer;
+
+    animation:eggFloat 1.5s ease-in-out infinite;
+
+    user-select:none;
+
+}
+
+@keyframes eggFloat{
+
+    0%,100%{transform:translateY(0) rotate(-2deg)}
+
+    50%{transform:translateY(-8px) rotate(2deg)}
+
+}
+
+.egg-text{
+
+    background:rgba(255,255,255,.9);
+
+    border-radius:15px;
+
+    padding:8px;
+
+    font-weight:800;
+
+}
+
+.stats{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:12px;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+    margin-bottom:10px;
+
+}
+
+.stat{
+
+    margin-bottom:9px;
+
+}
+
+.stat:last-child{margin-bottom:0}
+
+.stat-head{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:13px;
+
+    font-weight:800;
+
+    margin-bottom:3px;
+
+}
+
+.bar{
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+.fill{
+
+    height:100%;
+
+    border-radius:10px;
+
+    transition:.4s;
+
+}
+
+.hunger{background:#f59e0b}
+
+.happiness{background:#ec4899}
+
+.energy{background:#22c55e}
+
+.health{background:#ef4444}
+
+.clean{background:#06b6d4}
+
+.buttons{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+
+    margin-bottom:10px;
+
+}
+
+button{
+
+    border:0;
+
+    border-radius:14px;
+
+    padding:12px 7px;
+
+    font-size:14px;
+
+    font-weight:900;
+
+    color:white;
+
+    cursor:pointer;
+
+    box-shadow:0 3px 7px rgba(0,0,0,.12);
+
+}
+
+button:active{
+
+    transform:scale(.96);
+
+}
+
+.food{background:#f59e0b}
+
+.play{background:#8b5cf6}
+
+.sleep{background:#4f46e5}
+
+.bath{background:#0891b2}
+
+.clean{background:#0ea5e9}
+
+.teeth{background:#14b8a6}
+
+.hospital{background:#dc2626}
+
+.walk{background:#16a34a}
+
+.shop{background:#be185d}
+
+.achievements{background:#ca8a04}
+
+.daily{background:#7c3aed}
+
+.panel{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:13px;
+
+    margin-bottom:10px;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+}
+
+.panel h3{
+
+    margin:0 0 10px;
+
+    text-align:center;
+
+    color:#374151;
+
+}
+
+.message{
+
+    min-height:40px;
+
+    background:#fdf2f8;
+
+    border-radius:14px;
+
+    padding:10px;
+
+    text-align:center;
+
+    font-weight:800;
+
+    color:#9d174d;
+
+    margin-bottom:10px;
+
+}
+
+.hidden{display:none!important}
+
+.back{
+
+    display:block;
+
+    text-decoration:none;
+
+    background:#4b5563;
+
+    color:white;
+
+    text-align:center;
+
+    padding:12px;
+
+    border-radius:13px;
+
+    font-weight:900;
+
+    margin-top:10px;
+
+}
+
+.shop-grid,.achievement-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+
+}
+
+.item{
+
+    border:2px solid #f3f4f6;
+
+    border-radius:14px;
+
+    padding:10px;
+
+    text-align:center;
+
+    background:#fafafa;
+
+}
+
+.item-icon{
+
+    font-size:35px;
+
+}
+
+.item-name{
+
+    font-weight:900;
+
+    font-size:13px;
+
+}
+
+.item-price{
+
+    color:#92400e;
+
+    font-weight:800;
+
+    margin:4px;
+
+}
+
+.item button{
+
+    width:100%;
+
+    padding:8px;
+
+    background:#db2777;
+
+}
+
+.achievement{
+
+    border-radius:12px;
+
+    padding:10px;
+
+    background:#f3f4f6;
+
+    text-align:center;
+
+    opacity:.45;
+
+}
+
+.achievement.unlocked{
+
+    opacity:1;
+
+    background:#fef3c7;
+
+}
+
+.achievement-icon{
+
+    font-size:28px;
+
+}
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.6);
+
+    z-index:100;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:15px;
+
+}
+
+.modal-box{
+
+    width:100%;
+
+    max-width:430px;
+
+    max-height:90vh;
+
+    overflow:auto;
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:18px;
+
+}
+
+.modal-title{
+
+    font-size:21px;
+
+    font-weight:900;
+
+    text-align:center;
+
+    margin-bottom:12px;
+
+}
+
+.close{
+
+    background:#6b7280;
+
+    width:100%;
+
+    margin-top:10px;
+
+}
+
+.game-card{
+
+    text-align:center;
+
+}
+
+.game-question{
+
+    font-size:24px;
+
+    font-weight:900;
+
+    margin:15px 0;
+
+}
+
+.game-options{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+
+}
+
+.game-options button{
+
+    background:#8b5cf6;
+
+}
+
+.memory-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:7px;
+
+}
+
+.memory-card{
+
+    aspect-ratio:1;
+
+    font-size:25px;
+
+    background:#6366f1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+}
+
+.memory-card.open{
+
+    background:#fef3c7;
+
+}
+
+#jumpCanvas{
+
+    width:100%;
+
+    background:linear-gradient(#bae6fd,#dcfce7);
+
+    border-radius:15px;
+
+    display:block;
+
+}
+
+.small{
+
+    font-size:12px;
+
+    color:#6b7280;
+
+    text-align:center;
+
+}
+
+.notice{
+
+    background:#ecfdf5;
+
+    color:#166534;
+
+    padding:9px;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    font-weight:800;
+
+    margin-bottom:8px;
+
+}
+
+</style>
+
 </head>
+
 <body>
 
-    <div class="container">
-        <div id="user-greeting">Cantinho Tamagotchi 🐾</div>
-        
+<div class="container">
+
+    <div class="header">
+
         <div class="header-top">
-            <h2 id="pet-name">Ovo Misterioso</h2>
-            <div id="painel-pontos-topo" class="score-board oculto">⭐ <span id="txt-pontos">0</span></div>
-        </div>
-        
-        <div class="scenery" id="cenario-fundo">
-            <div class="cat-container floating" id="cat-box" onclick="tocarPet()">
-                <div class="cat-head" id="cat-head-bg">
-                    <div class="cat-ear left"></div>
-                    <div class="cat-ear right"></div>
-                    <div class="cat-eye left"></div>
-                    <div class="cat-eye right"></div>
-                    <div class="cat-blush left"></div>
-                    <div class="cat-blush right"></div>
-                    <div class="cat-nose"></div>
-                    <div class="cat-mouth"></div>
-                </div>
-            </div>
-            <div id="area-sujeira"></div>
+
+            <div class="logo">🐾 Petton 2.0</div>
+
+            <div class="coins">🪙 <span id="coins">0</span></div>
+
         </div>
 
-        <div id="texto-status">Um ovo misterioso quentinho. Clique nele 12 vezes para chocar!</div>
-        
-        <div id="painel-status" class="oculto">
-            <div class="status-box">
-                <div class="status-label"><span>🍗 Fome</span> <span id="txt-fome">80%</span></div>
-                <div class="bar-container"><div id="bar-fome" class="bar-fill" style="width: 80%;"></div></div>
-            </div>
-            <div class="status-box">
-                <div class="status-label"><span>💖 Felicidade</span> <span id="txt-felicidade">90%</span></div>
-                <div class="bar-container"><div id="bar-felicidade" class="bar-fill" style="width: 90%;"></div></div>
-            </div>
-            <div class="status-box">
-                <div class="status-label"><span>⚡ Energia</span> <span id="txt-energia">100%</span></div>
-                <div class="bar-container"><div id="bar-energia" class="bar-fill" style="width: 100%;"></div></div>
-            </div>
+        <div class="pet-name" id="petName">Ovo Misterioso</div>
+
+        <div class="level" id="levelText">Nível 1</div>
+
+        <div class="xp-box">
+
+            <div class="xp" id="xpBar"></div>
+
         </div>
 
-        <div id="painel-botoes" class="btn-grid oculto">
-            <button onclick="alimentar()">🍽️ Comer</button>
-            <button onclick="escolherMiniGame()">🎮 Brincar</button>
-            <button onclick="dormir()">💤 Dormir</button>
-            <button onclick="darBanho()">🛁 Banho</button>
-            <button onclick="limparSujeira()">🧹 Limpar</button>
-            <button onclick="escovarDentes()">🪥 Escovar</button>
-            <button onclick="irHospital()">🏥 Hospital</button>
-            <button class="btn-passeio" id="btn-acao-passeio" onclick="alternarPasseio()">🌳 Ir Passear</button>
-            <button class="btn-baba" id="btn-acao-baba" onclick="alternarBaba()">👩‍🍼 Ativar Babá</button>
-        </div>
-
-        <button class="btn-reset" onclick="reiniciarJogo()">🔄 Reiniciar Jogo</button>
-        <a href="forca.html" class="btn-voltar-menu">⬅️ Voltar para a Central</a>
     </div>
 
-    <script>
-        let pet = {
-            fase: "ovo",
-            cliquesOvo: 0,
-            pontosCrescimento: 0,
-            pontosGerais: 0,
-            nome: "Mimi",
-            fome: 80,
-            felicidade: 90,
-            energia: 100,
-            sujeiras: 0,
-            doente: false,
-            comCarie: false,
-            emPasseio: false,
-            dormindo: false,
-            temBaba: false,
-            ultimaAtualizacao: Date.now()
-        };
+    <div class="scene">
 
-        let emJogos = false;
-        let intervaloZzz = null;
+        <div class="sun">☀️</div>
 
-        function carregarJogo() {
-            try {
-                const salvo = localStorage.getItem('petton_css_v22');
-                if (salvo) {
-                    pet = JSON.parse(salvo);
-                    calcularTempoAusente();
+        <div class="cloud one">☁️</div>
+
+        <div class="cloud two">☁️</div>
+
+        <div class="tree left">🌳</div>
+
+        <div class="tree right">🌳</div>
+
+        <div class="house">🏠</div>
+
+        <div class="cat-area" id="petArea">
+
+            <div class="egg" id="egg" onclick="chocarOvo()">🥚</div>
+
+            <div class="egg-text" id="eggText">Toque no ovo!</div>
+
+        </div>
+
+    </div>
+
+    <div id="message" class="message">
+
+        Seu Petton está esperando por você! 🐾
+
+    </div>
+
+    <div id="stats" class="stats hidden">
+
+        <div class="stat">
+
+            <div class="stat-head">
+
+                <span>🍖 Fome</span>
+
+                <span id="hungerValue">80</span>
+
+            </div>
+
+            <div class="bar">
+
+                <div id="hungerBar" class="fill hunger"></div>
+
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div class="stat-head">
+
+                <span>😊 Felicidade</span>
+
+                <span id="happyValue">90</span>
+
+            </div>
+
+            <div class="bar">
+
+                <div id="happyBar" class="fill happiness"></div>
+
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div class="stat-head">
+
+                <span>⚡ Energia</span>
+
+                <span id="energyValue">100</span>
+
+            </div>
+
+            <div class="bar">
+
+                <div id="energyBar" class="fill energy"></div>
+
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div class="stat-head">
+
+                <span>❤️ Saúde</span>
+
+                <span id="healthValue">100</span>
+
+            </div>
+
+            <div class="bar">
+
+                <div id="healthBar" class="fill health"></div>
+
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div class="stat-head">
+
+                <span>🧼 Higiene</span>
+
+                <span id="cleanValue">100</span>
+
+            </div>
+
+            <div class="bar">
+
+                <div id="cleanBar" class="fill clean"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="buttons" class="buttons hidden">
+
+        <button class="food" onclick="alimentar()">🍖 Alimentar</button>
+
+        <button class="play" onclick="abrirJogos()">🎮 Jogar</button>
+
+        <button class="sleep" onclick="dormir()">😴 Dormir</button>
+
+        <button class="bath" onclick="banho()">🛁 Banho</button>
+
+        <button class="clean" onclick="limpar()">🧹 Limpar</button>
+
+        <button class="teeth" onclick="dentes()">🦷 Escovar</button>
+
+        <button class="hospital" onclick="hospital()">🏥 Hospital</button>
+
+        <button class="walk" onclick="passeio()">🌳 Passeio</button>
+
+        <button class="shop" onclick="abrirLoja()">🛍️ Loja</button>
+
+        <button class="achievements" onclick="abrirConquistas()">🏆 Conquistas</button>
+
+        <button class="daily" onclick="bonusDiario()">🎁 Bônus diário</button>
+
+    </div>
+
+    <a href="../forca.html" class="back">
+
+        ⬅️ Voltar para a Central
+
+    </a>
+
+</div>
+
+<!-- LOJA -->
+
+<div id="shopModal" class="modal hidden">
+
+    <div class="modal-box">
+
+        <div class="modal-title">🛍️ Loja do Petton</div>
+
+        <div class="notice">
+
+            Suas moedas: 🪙 <span id="shopCoins">0</span>
+
+        </div>
+
+        <div class="shop-grid">
+
+            <div class="item">
+
+                <div class="item-icon">🍗</div>
+
+                <div class="item-name">Comida especial</div>
+
+                <div class="item-price">🪙 10</div>
+
+                <button onclick="comprar('comida')">Comprar</button>
+
+            </div>
+
+            <div class="item">
+
+                <div class="item-icon">🧸</div>
+
+                <div class="item-name">Brinquedo</div>
+
+                <div class="item-price">🪙 20</div>
+
+                <button onclick="comprar('brinquedo')">Comprar</button>
+
+            </div>
+
+            <div class="item">
+
+                <div class="item-icon">🎀</div>
+
+                <div class="item-name">Acessório</div>
+
+                <div class="item-price">🪙 30</div>
+
+                <button onclick="comprar('acessorio')">Comprar</button>
+
+            </div>
+
+            <div class="item">
+
+                <div class="item-icon">💎</div>
+
+                <div class="item-name">Comida premium</div>
+
+                <div class="item-price">🪙 50</div>
+
+                <button onclick="comprar('premium')">Comprar</button>
+
+            </div>
+
+        </div>
+
+        <button class="close" onclick="fecharModais()">Fechar</button>
+
+    </div>
+
+</div>
+
+<!-- CONQUISTAS -->
+
+<div id="achievementModal" class="modal hidden">
+
+    <div class="modal-box">
+
+        <div class="modal-title">🏆 Conquistas</div>
+
+        <div class="achievement-grid" id="achievementList"></div>
+
+        <button class="close" onclick="fecharModais()">Fechar</button>
+
+    </div>
+
+</div>
+
+<!-- JOGOS -->
+
+<div id="gameModal" class="modal hidden">
+
+    <div class="modal-box">
+
+        <div class="modal-title">🎮 Minijogos</div>
+
+        <div id="gameMenu">
+
+            <button class="play" style="width:100%;margin-bottom:8px" onclick="jogoQuiz()">
+
+                🧠 Quiz
+
+            </button>
+
+            <button class="play" style="width:100%;margin-bottom:8px" onclick="jogoMemoria()">
+
+                🃏 Memória
+
+            </button>
+
+            <button class="play" style="width:100%;margin-bottom:8px" onclick="jogoPulo()">
+
+                🐾 Pulo
+
+            </button>
+
+            <button class="close" onclick="fecharModais()">Fechar</button>
+
+        </div>
+
+        <div id="gameContent"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================
+
+   DADOS DO PET
+
+========================= */
+
+let pet = {
+
+    fase:"ovo",
+
+    cliquesOvo:0,
+
+    pontosCrescimento:0,
+
+    pontosGerais:0,
+
+    nome:"Mimi",
+
+    moedas:30,
+
+    nivel:1,
+
+    xp:0,
+
+    fome:80,
+
+    felicidade:90,
+
+    energia:100,
+
+    saude:100,
+
+    higiene:100,
+
+    sujeiras:0,
+
+    doente:false,
+
+    comCarie:false,
+
+    ultimaAtualizacao:Date.now(),
+
+    ultimoBonus:"",
+
+    conquistas:[],
+
+    inventario:{
+
+        comida:0,
+
+        brinquedo:0,
+
+        acessorio:0,
+
+        premium:0
+
+    }
+
+};
+
+const SAVE_KEY="petton_css_v30";
+
+/* =========================
+
+   CARREGAR
+
+========================= */
+
+function salvar(){
+
+    localStorage.setItem(
+
+        SAVE_KEY,
+
+        JSON.stringify(pet)
+
+    );
+
+}
+
+function carregar(){
+
+    try{
+
+        const salvo=localStorage.getItem(SAVE_KEY);
+
+        if(salvo){
+
+            const dados=JSON.parse(salvo);
+
+            pet={
+
+                ...pet,
+
+                ...dados,
+
+                inventario:{
+
+                    ...pet.inventario,
+
+                    ...(dados.inventario||{})
+
                 }
-            } catch (e) {
-                console.error("Erro ao carregar", e);
-            }
-            aplicarEstadoAtual();
-        }
 
-        function salvarJogo() {
-            try {
-                pet.ultimaAtualizacao = Date.now();
-                localStorage.setItem('petton_css_v22', JSON.stringify(pet));
-            } catch (e) {
-                console.error("Erro ao salvar", e);
-            }
-        }
-
-        function calcularTempoAusente() {
-            if (pet.fase === "ovo") return;
-
-            const agora = Date.now();
-            const diferencaMs = agora - (pet.ultimaAtualizacao || agora);
-            const minutosPassados = Math.floor(diferencaMs / (1000 * 60));
-
-            if (minutosPassados > 0) {
-                if (pet.temBaba) {
-                    setTimeout(() => {
-                        document.getElementById('texto-status').innerText = `A Babá cuidou de ${pet.nome} perfeitamente enquanto esteve ausente por ${minutosPassados} min!`;
-                    }, 500);
-                    return;
-                }
-
-                let perdaFome = minutosPassados * 2; 
-                pet.fome = Math.max(0, pet.fome - perdaFome);
-
-                if (pet.dormindo) {
-                    pet.energia = Math.min(100, pet.energia + (minutosPassados * 5));
-                    if (pet.energia >= 100) pet.dormindo = false;
-                } else {
-                    pet.energia = Math.max(0, pet.energia - Math.floor(minutosPassados * 0.5));
-                }
-
-                if (minutosPassados >= 5 && pet.sujeiras < 3) {
-                    let novasSujeiras = Math.min(3, pet.sujeiras + Math.floor(minutosPassados / 10));
-                    pet.sujeiras = novasSujeiras;
-                }
-
-                if ((pet.sujeiras >= 3 || pet.fome <= 10) && !pet.doente) {
-                    pet.doente = true;
-                }
-
-                setTimeout(() => {
-                    document.getElementById('texto-status').innerText = `Ficou fora por ${minutosPassados} min. ${pet.nome} sentiu a sua falta!`;
-                }, 500);
-            }
-        }
-
-        function reiniciarJogo() {
-            if (confirm("Deseja reiniciar o jogo e voltar a ser um ovo?")) {
-                localStorage.removeItem('petton_css_v22');
-                pet = { fase: "ovo", cliquesOvo: 0, pontosCrescimento: 0, pontosGerais: 0, nome: "Mimi", fome: 80, felicidade: 90, energia: 100, sujeiras: 0, doente: false, comCarie: false, emPasseio: false, dormindo: false, temBaba: false, ultimaAtualizacao: Date.now() };
-                emJogos = false;
-                if(intervaloZzz) clearInterval(intervaloZzz);
-                aplicarEstadoAtual();
-                document.getElementById('texto-status').innerText = "Um ovo misterioso quentinho. Clique nele 12 vezes para chocar!";
-            }
-        }
-
-        function aplicarEstadoAtual() {
-            const catBox = document.getElementById('cat-box');
-            if (pet.fase === "ovo") {
-                document.getElementById('pet-name').innerText = "Ovo Misterioso";
-                catBox.innerHTML = '<div class="ovo-box floating">🥚</div>';
-                document.getElementById('painel-status').classList.add('oculto');
-                document.getElementById('painel-botoes').classList.add('oculto');
-                document.getElementById('painel-pontos-topo').classList.add('oculto');
-                document.getElementById('area-sujeira').innerHTML = '';
-            } else {
-                restaurarTemplateGato();
-                let textoFase = " - Fase: Bebê";
-                if (pet.fase === "crianca") textoFase = " - Fase: Criança";
-                if (pet.fase === "adulto") textoFase = " - Fase: Adulto";
-
-                document.getElementById('pet-name').innerText = pet.nome + textoFase;
-                document.getElementById('painel-status').classList.remove('oculto');
-                document.getElementById('painel-botoes').classList.remove('oculto');
-                document.getElementById('painel-pontos-topo').classList.remove('oculto');
-                configurarVisualFase();
-                desenharSujeirasNaTela();
-            }
-            atualizarTela();
-        }
-
-        function restaurarTemplateGato() {
-            document.getElementById('cat-box').innerHTML = `
-                <div class="cat-head" id="cat-head-bg">
-                    <div class="cat-ear left"></div>
-                    <div class="cat-ear right"></div>
-                    <div class="cat-eye left"></div>
-                    <div class="cat-eye right"></div>
-                    <div class="cat-blush left"></div>
-                    <div class="cat-blush right"></div>
-                    <div class="cat-nose"></div>
-                    <div class="cat-mouth"></div>
-                </div>`;
-        }
-
-        function configurarVisualFase() {
-            if (emJogos) return;
-            const catBox = document.getElementById('cat-box');
-            catBox.className = "cat-container";
-            
-            if (pet.fase === "bebe") catBox.classList.add('fase-bebe');
-            if (pet.fase === "crianca") catBox.classList.add('fase-crianca');
-            if (pet.fase === "adulto") catBox.classList.add('fase-adulto');
-            
-            if (pet.doente) catBox.classList.add('sick');
-
-            let existingNanny = catBox.querySelector('.nanny-badge');
-            if (pet.temBaba) {
-                if (!existingNanny) {
-                    let nannyBadge = document.createElement('div');
-                    nannyBadge.className = 'nanny-badge';
-                    nannyBadge.innerText = '👩‍🍼';
-                    catBox.appendChild(nannyBadge);
-                }
-            } else if (existingNanny) {
-                existingNanny.remove();
-            }
-
-            if (pet.comCarie) {
-                catBox.classList.add('carie');
-                if (!catBox.querySelector('.toothache-icon')) {
-                    let tooth = document.createElement('div');
-                    tooth.className = 'toothache-icon';
-                    tooth.innerText = '🦷💥';
-                    catBox.appendChild(tooth);
-                }
-            } else {
-                catBox.classList.remove('carie');
-                let existingTooth = catBox.querySelector('.toothache-icon');
-                if (existingTooth) existingTooth.remove();
-            }
-
-            if (pet.dormindo) {
-                catBox.classList.add('sleeping', 'floating');
-                document.getElementById('cenario-fundo').classList.remove('outdoor');
-                iniciarEfeitoZzz();
-                return;
-            } else {
-                if(intervaloZzz) clearInterval(intervaloZzz);
-            }
-
-            if (pet.emPasseio) {
-                document.getElementById('cenario-fundo').classList.add('outdoor');
-                catBox.classList.add('walking-path');
-                document.getElementById('btn-acao-passeio').innerText = "🏠 Voltar para Casa";
-            } else {
-                document.getElementById('cenario-fundo').classList.remove('outdoor');
-                catBox.classList.add('floating');
-                document.getElementById('btn-acao-passeio').innerText = "🌳 Ir Passear";
-            }
-
-            const btnBaba = document.getElementById('btn-acao-baba');
-            if (pet.temBaba) {
-                btnBaba.innerText = "🛑 Desativar Babá";
-            } else {
-                btnBaba.innerText = "👩‍🍼 Ativar Babá";
-            }
-        }
-
-        function atualizarTela() {
-            if (pet.fase !== "ovo") {
-                document.getElementById('bar-fome').style.width = pet.fome + '%';
-                document.getElementById('txt-fome').innerText = pet.fome + '%';
-                document.getElementById('bar-felicidade').style.width = pet.felicidade + '%';
-                document.getElementById('txt-felicidade').innerText = pet.felicidade + '%';
-                document.getElementById('bar-energia').style.width = pet.energia + '%';
-                document.getElementById('txt-energia').innerText = pet.energia + '%';
-                document.getElementById('txt-pontos').innerText = pet.pontosGerais;
-            }
-            salvarJogo();
-        }
-
-        function desenharSujeirasNaTela() {
-            let area = document.getElementById('area-sujeira');
-            area.innerHTML = '';
-            const posricoes = [
-                {bottom: '10px', left: '15px'},
-                {bottom: '15px', right: '20px'},
-                {bottom: '40px', left: '35px'}
-            ];
-            for (let i = 0; i < pet.sujeiras && i < 3; i++) {
-                let p = document.createElement('div');
-                p.className = 'poop-item';
-                p.innerText = '💩';
-                p.style.bottom = posricoes[i].bottom;
-                if (posricoes[i].left) p.style.left = posricoes[i].left;
-                if (posricoes[i].right) p.style.right = posricoes[i].right;
-                area.appendChild(p);
-            }
-        }
-
-        function tocarPet() {
-            if (pet.fase === "ovo") {
-                pet.cliquesOvo++;
-                let restam = 12 - pet.cliquesOvo;
-                if (restam > 0) {
-                    document.getElementById('texto-status').innerText = `O ovo balançou! Faltam ${restam} cliques para nascer!`;
-                } else {
-                    pet.fase = "bebe";
-                    pet.pontosGerais += 10;
-                    document.getElementById('texto-status').innerText = `Uhuuul! Nasceu o bebê ${pet.nome}! Ganhou 10 pontos!`;
-                    aplicarEstadoAtual();
-                }
-            } else {
-                if (pet.dormindo || emJogos) return;
-                pet.pontosGerais += 1;
-                document.getElementById('texto-status').innerText = `${pet.nome} ronronou feliz! (+1 Ponto)`;
-                animarEfeito();
-            }
-            atualizarTela();
-        }
-
-        function verificarEvolucao() {
-            pet.pontosCrescimento++;
-            
-            if (Math.random() < 0.35 && pet.sujeiras < 3) {
-                pet.sujeiras++;
-                document.getElementById('texto-status').innerText = `Oops! ${pet.nome} fez sujeira no quartinho!`;
-                desenharSujeirasNaTela();
-            }
-
-            if (Math.random() < 0.2 && !pet.comCarie && !pet.doente) {
-                pet.comCarie = true;
-                document.getElementById('texto-status').innerText = `Ouch! ${pet.nome} comeu muito doce e ficou com cárie/dor de dente!`;
-                configurarVisualFase();
-            }
-
-            if ((pet.sujeiras >= 3 || pet.fome <= 10) && !pet.doente) {
-                pet.doente = true;
-                document.getElementById('texto-status').innerText = `Oh não! ${pet.nome} ficou doente e precisa ir ao hospital!`;
-                configurarVisualFase();
-            }
-
-            if (pet.fase === "bebe" && pet.pontosCrescimento >= 8) {
-                pet.fase = "crianca";
-                pet.pontosGerais += 25;
-                document.getElementById('texto-status').innerText = `Oba! ${pet.nome} cresceu e virou uma criança! (+25 Pontos)`;
-                aplicarEstadoAtual();
-            } else if (pet.fase === "crianca" && pet.pontosCrescimento >= 20) {
-                pet.fase = "adulto";
-                pet.pontosGerais += 50;
-                document.getElementById('texto-status').innerText = `Incrível! ${pet.nome} virou adulto e ganhou 50 pontos!`;
-                aplicarEstadoAtual();
-            }
-        }
-
-        function alimentar() {
-            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
-            if (pet.doente || pet.comCarie) {
-                alert("O seu gatinho não está bem (doente ou com dor de dente) e não consegue comer! Cuide dele primeiro.");
-                return;
-            }
-            pet.fome = Math.min(100, pet.fome + 25);
-            pet.pontosGerais += 5;
-            document.getElementById('texto-status').innerText = `${pet.nome} comeu a ração! (+5 Pontos)`;
-            animarEfeito();
-            verificarEvolucao();
-
-            const cenario = document.getElementById('cenario-fundo');
-            const alimentos = ['🐟', '🥩', '🥛', '🍤'];
-            for (let i = 0; i < 3; i++) {
-                let comida = document.createElement('div');
-                comida.className = 'effect-overlay';
-                comida.innerText = alimentos[Math.floor(Math.random() * alimentos.length)];
-                comida.style.left = (20 + (i * 30)) + '%';
-                comida.style.bottom = '15px';
-                cenario.appendChild(comida);
-                setTimeout(() => comida.remove(), 5000);
-            }
-            atualizarTela();
-        }
-
-        function darBanho() {
-            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
-            pet.felicidade = Math.min(100, pet.felicidade + 10);
-            pet.pontosGerais += 5;
-            document.getElementById('texto-status').innerText = `${pet.nome} tomou banho e está cheiroso! (+5 Pontos)`;
-            animarEfeito();
-            verificarEvolucao();
-
-            const cenario = document.getElementById('cenario-fundo');
-            for (let i = 0; i < 5; i++) {
-                let gota = document.createElement('div');
-                gota.className = 'drop-water';
-                gota.innerText = '💧';
-                gota.style.left = (15 + (i * 18)) + '%';
-                gota.style.top = '10px';
-                cenario.appendChild(gota);
-                setTimeout(() => gota.remove(), 1000);
-            }
-            atualizarTela();
-        }
-
-        function escovarDentes() {
-            if (pet.fase === "ovo" || emJogos) return;
-            if (!pet.comCarie) {
-                document.getElementById('texto-status').innerText = `Os dentes de ${pet.nome} já estão limpinhos e sem cárie!`;
-                return;
-            }
-
-            const cenario = document.getElementById('cenario-fundo');
-            let escova = document.createElement('div');
-            escova.className = 'toothbrush-tool';
-            escova.innerText = '🪥';
-            cenario.appendChild(escova);
-
-            setTimeout(() => {
-                escova.remove();
-                pet.comCarie = false;
-                pet.felicidade = Math.min(100, pet.felicidade + 15);
-                pet.pontosGerais += 10;
-                document.getElementById('texto-status').innerText = `Dentes escovados! A cárie sumiu e a dor passou! (+10 Pontos)`;
-                configurarVisualFase();
-                atualizarTela();
-            }, 1200);
-        }
-
-        function limparSujeira() {
-            if (pet.fase === "ovo" || emJogos) return;
-            if (pet.sujeiras === 0) {
-                document.getElementById('texto-status').innerText = `Está tudo limpinho por aqui!`;
-                return;
-            }
-
-            const cenario = document.getElementById('cenario-fundo');
-            let vassoura = document.createElement('div');
-            vassoura.className = 'broom-tool';
-            vassoura.innerText = '🧹';
-            cenario.appendChild(vassoura);
-
-            setTimeout(() => {
-                vassoura.remove();
-                pet.sujeiras = 0;
-                pet.felicidade = Math.min(100, pet.felicidade + 10);
-                pet.pontosGerais += 5;
-                desenharSujeirasNaTela();
-                document.getElementById('texto-status').innerText = `Quartinho limpo e cheiroso! (+5 Pontos)`;
-                atualizarTela();
-            }, 1500);
-        }
-
-        function irHospital() {
-            if (pet.fase === "ovo" || emJogos) return;
-            if (!pet.doente && !pet.comCarie) {
-                document.getElementById('texto-status').innerText = `${pet.nome} está saudável, não precisa de hospital agora!`;
-                return;
-            }
-
-            const cenario = document.getElementById('cenario-fundo');
-            let amb = document.createElement('div');
-            amb.className = 'ambulance';
-            amb.innerText = '🚑💨';
-            cenario.appendChild(amb);
-            setTimeout(() => amb.remove(), 3000);
-
-            setTimeout(() => {
-                pet.doente = false;
-                pet.comCarie = false;
-                pet.felicidade = Math.min(100, pet.felicidade + 30);
-                pet.energia = Math.min(100, pet.energia + 30);
-                pet.pontosGerais += 10;
-                configurarVisualFase();
-                document.getElementById('texto-status').innerText = `Ambulância chegou! Curado e saudável! (+10 Pontos)`;
-                atualizarTela();
-            }, 1200);
-        }
-
-        function escolherMiniGame() {
-            if (pet.fase === "ovo" || pet.emPasseio || pet.dormindo || emJogos) return;
-            if (pet.doente || pet.comCarie) {
-                alert("O gatinho está doente ou com dor de dente e não pode brincar agora. Cuide dele!");
-                return;
-            }
-            if (pet.energia < 15) {
-                alert("O seu gatinho está cansado e precisa de dormir um pouco.");
-                return;
-            }
-
-            emJogos = true;
-            pet.energia = Math.max(0, pet.energia - 15);
-            document.getElementById('painel-botoes').style.pointerEvents = 'none';
-
-            let sorteio = Math.floor(Math.random() * 3);
-            if (sorteio === 0) {
-                iniciarJogoMemoria();
-            } else if (sorteio === 1) {
-                iniciarJogoPulo();
-            } else {
-                iniciarJogoQuiz();
-            }
-        }
-
-        function iniciarJogoMemoria() {
-            const cenario = document.getElementById('cenario-fundo');
-            cenario.classList.add('minigame-bg');
-            document.getElementById('cat-box').classList.add('oculto');
-            document.getElementById('area-sujeira').classList.add('oculto');
-            
-            document.getElementById('texto-status').innerText = `🃏 Jogo da Memória: Encontre os 4 pares!`;
-
-            let icones = ['🐟', '🐟', '🧶', '🧶', '🐾', '🐾', '⭐', '⭐'];
-            icones.sort(() => Math.random() - 0.5);
-
-            let gridDiv = document.createElement('div');
-            gridDiv.id = 'memory-grid-ativo';
-            gridDiv.className = 'memory-grid';
-
-            let carta1 = null;
-            let carta2 = null;
-            let paresEncontrados = 0;
-            let bloqueio = false;
-
-            icones.forEach((emoji) => {
-                let card = document.createElement('div');
-                card.className = 'memory-card';
-                card.dataset.emoji = emoji;
-                card.innerText = '?';
-
-                card.onclick = () => {
-                    if (bloqueio || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-                    
-                    card.innerText = emoji;
-                    card.classList.add('flipped');
-
-                    if (!carta1) {
-                        carta1 = card;
-                    } else {
-                        carta2 = card;
-                        bloqueio = true;
-
-                        if (carta1.dataset.emoji === carta2.dataset.emoji) {
-                            carta1.classList.add('matched');
-                            carta2.classList.add('matched');
-                            paresEncontrados++;
-                            carta1 = null;
-                            carta2 = null;
-                            bloqueio = false;
-
-                            if (paresEncontrados === 4) {
-                                setTimeout(() => { finalizarMiniGame(25); }, 600);
-                            }
-                        } else {
-                            setTimeout(() => {
-                                carta1.innerText = '?';
-                                carta1.classList.remove('flipped');
-                                carta2.innerText = '?';
-                                carta2.classList.remove('flipped');
-                                carta1 = null;
-                                carta2 = null;
-                                bloqueio = false;
-                            }, 800);
-                        }
-                    }
-                };
-                gridDiv.appendChild(card);
-            });
-            cenario.appendChild(gridDiv);
-        }
-
-        function iniciarJogoPulo() {
-            const cenario = document.getElementById('cenario-fundo');
-            cenario.classList.add('minigame-bg');
-            document.getElementById('cat-box').classList.add('oculto');
-            document.getElementById('area-sujeira').classList.add('oculto');
-
-            document.getElementById('texto-status').innerText = `🏃 Toque na tela para o gatinho pular!`;
-
-            let jogoDiv = document.createElement('div');
-            jogoDiv.id = 'jump-game-ativo';
-            jogoDiv.className = 'jump-container';
-            jogoDiv.innerHTML = `
-                <div id="runner-cat" class="runner-cat">🐱</div>
-                <div class="runner-obstacle">🌵</div>
-            `;
-            cenario.appendChild(jogoDiv);
-
-            let cat = document.getElementById('runner-cat');
-            let pulando = false;
-            let jogandoAtivo = true;
-
-            jogoDiv.onclick = () => {
-                if (pulando || !jogandoAtivo) return;
-                pulando = true;
-                cat.style.bottom = "75px";
-                setTimeout(() => {
-                    cat.style.bottom = "10px";
-                    pulando = false;
-                }, 450);
             };
 
-            setTimeout(() => {
-                if (!jogandoAtivo) return;
-                jogandoAtivo = false;
-                finalizarMiniGame(20);
-            }, 10000);
         }
 
-        function iniciarJogoQuiz() {
-            const cenario = document.getElementById('cenario-fundo');
-            cenario.classList.add('minigame-bg');
-            document.getElementById('cat-box').classList.add('oculto');
-            document.getElementById('area-sujeira').classList.add('oculto');
+    }catch(e){
 
-            document.getElementById('texto-status').innerText = `🧠 Quiz do Pet! Responda:`;
+        console.log("Erro ao carregar Petton",e);
 
-            const perguntas = [
-                { q: "O que os gatos mais gostam de comer?", opts: ["Peixe 🐟", "Bolo 🍰", "Pedra 🪨", "Ferro 🔩"], certa: 0 },
-                { q: "O que o gato faz quando está feliz?", opts: ["Latir 🐶", "Ronronar 🐾", "Gritar 📢", "Voar 🦅"], certa: 1 },
-                { q: "Qual o animal favorito felino?", opts: ["Cachorro 🐕", "Gato 🐈", "Tartaruga 🐢", "Tubarão 🦈"], certa: 1 },
-                { q: "Onde os gatinhos gostam de dormir?", opts: ["Na lama 💧", "Na grama 🌿", "No sol / caminha ☀️", "No teto 🏠"], certa: 2 }
-            ];
-            let pSorteada = perguntas[Math.floor(Math.random() * perguntas.length)];
+    }
 
-            let quizDiv = document.createElement('div');
-            quizDiv.id = 'quiz-box-ativo';
-            quizDiv.className = 'quiz-box';
-            quizDiv.innerHTML = `
-                <div class="quiz-question">${pSorteada.q}</div>
-                <div class="quiz-options">
-                    <button class="quiz-btn" onclick="responderQuiz(0, ${pSorteada.certa})">${pSorteada.opts[0]}</button>
-                    <button class="quiz-btn" onclick="responderQuiz(1, ${pSorteada.certa})">${pSorteada.opts[1]}</button>
-                    <button class="quiz-btn" onclick="responderQuiz(2, ${pSorteada.certa})">${pSorteada.opts[2]}</button>
-                    <button class="quiz-btn" onclick="responderQuiz(3, ${pSorteada.certa})">${pSorteada.opts[3]}</button>
+    atualizarTempo();
+
+    aplicarTela();
+
+}
+
+/* =========================
+
+   TEMPO
+
+========================= */
+
+function atualizarTempo(){
+
+    if(!pet.ultimaAtualizacao)return;
+
+    const agora=Date.now();
+
+    let minutos=Math.floor(
+
+        (agora-pet.ultimaAtualizacao)/60000
+
+    );
+
+    if(minutos<=0)return;
+
+    minutos=Math.min(minutos,720);
+
+    if(pet.fase!=="ovo"){
+
+        pet.fome-=Math.floor(minutos/10);
+
+        pet.felicidade-=Math.floor(minutos/15);
+
+        pet.higiene-=Math.floor(minutos/12);
+
+        if(!pet.dormindo){
+
+            pet.energia-=Math.floor(minutos/15);
+
+        }
+
+        limitar();
+
+    }
+
+    pet.ultimaAtualizacao=agora;
+
+}
+
+/* =========================
+
+   LIMITES
+
+========================= */
+
+function limitar(){
+
+    pet.fome=Math.max(0,Math.min(100,pet.fome));
+
+    pet.felicidade=Math.max(0,Math.min(100,pet.felicidade));
+
+    pet.energia=Math.max(0,Math.min(100,pet.energia));
+
+    pet.saude=Math.max(0,Math.min(100,pet.saude));
+
+    pet.higiene=Math.max(0,Math.min(100,pet.higiene));
+
+}
+
+/* =========================
+
+   TELA
+
+========================= */
+
+function aplicarTela(){
+
+    limitar();
+
+    document.getElementById("coins").textContent=pet.moedas;
+
+    if(pet.fase==="ovo"){
+
+        document.getElementById("petName").textContent="Ovo Misterioso";
+
+        document.getElementById("stats").classList.add("hidden");
+
+        document.getElementById("buttons").classList.add("hidden");
+
+        document.getElementById("petArea").innerHTML=`
+
+            <div class="egg" onclick="chocarOvo()">🥚</div>
+
+            <div class="egg-text">
+
+                Toque no ovo!<br>
+
+                ${pet.cliquesOvo}/12
+
+            </div>
+
+        `;
+
+        document.getElementById("levelText").textContent=
+
+            "Preparando para nascer...";
+
+        document.getElementById("xpBar").style.width="0%";
+
+        return;
+
+    }
+
+    document.getElementById("stats").classList.remove("hidden");
+
+    document.getElementById("buttons").classList.remove("hidden");
+
+    document.getElementById("petName").textContent=pet.nome;
+
+    document.getElementById("levelText").textContent=
+
+        "Nível "+pet.nivel+" • "+nomeFase();
+
+    document.getElementById("xpBar").style.width=
+
+        pet.xp+"%";
+
+    let emoji="🐱";
+
+    if(pet.fase==="bebe")emoji="🐱";
+
+    if(pet.fase==="crianca")emoji="😺";
+
+    if(pet.fase==="adulto")emoji="😸";
+
+    if(pet.dormindo)emoji="😴";
+
+    else if(pet.saude<30)emoji="🤒";
+
+    else if(pet.fome<20)emoji="😿";
+
+    else if(pet.felicidade<25)emoji="😿";
+
+    document.getElementById("petArea").innerHTML=`
+
+        <div class="cat ${pet.dormindo?'sleep':''}">
+
+            ${emoji}
+
+        </div>
+
+    `;
+
+    atualizarBarra("hunger",pet.fome);
+
+    atualizarBarra("happy",pet.felicidade);
+
+    atualizarBarra("energy",pet.energia);
+
+    atualizarBarra("health",pet.saude);
+
+    atualizarBarra("clean",pet.higiene);
+
+    document.getElementById("hungerValue").textContent=Math.round(pet.fome);
+
+    document.getElementById("happyValue").textContent=Math.round(pet.felicidade);
+
+    document.getElementById("energyValue").textContent=Math.round(pet.energia);
+
+    document.getElementById("healthValue").textContent=Math.round(pet.saude);
+
+    document.getElementById("cleanValue").textContent=Math.round(pet.higiene);
+
+    verificarConquistas();
+
+    salvar();
+
+}
+
+function atualizarBarra(nome,valor){
+
+    document.getElementById(nome+"Bar").style.width=
+
+        Math.max(0,Math.min(100,valor))+"%";
+
+}
+
+function nomeFase(){
+
+    if(pet.fase==="bebe")return"🐱 Bebê";
+
+    if(pet.fase==="crianca")return"😺 Criança";
+
+    if(pet.fase==="adulto")return"😸 Adulto";
+
+    return"Ovo";
+
+}
+
+/* =========================
+
+   OVO
+
+========================= */
+
+function chocarOvo(){
+
+    if(pet.fase!=="ovo")return;
+
+    pet.cliquesOvo++;
+
+    if(pet.cliquesOvo>=12){
+
+        pet.fase="bebe";
+
+        pet.nome="Mimi";
+
+        pet.pontosGerais+=10;
+
+        pet.moedas+=20;
+
+        mensagem("🎉 O ovo chocou! Nasceu o Mimi! 🐱❤️");
+
+        ganharXP(20);
+
+    }else{
+
+        mensagem(
+
+            "🥚 O ovo está se mexendo! "+
+
+            pet.cliquesOvo+"/12"
+
+        );
+
+    }
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+/* =========================
+
+   AÇÕES
+
+========================= */
+
+function alimentar(){
+
+    if(pet.fase==="ovo")return;
+
+    if(pet.inventario.comida>0){
+
+        pet.inventario.comida--;
+
+        pet.fome+=30;
+
+        pet.felicidade+=8;
+
+        pet.saude+=3;
+
+        ganharXP(5);
+
+        mensagem("🍗 Mimi adorou a comida especial!");
+
+    }else{
+
+        if(pet.moedas<5){
+
+            mensagem("🪙 Você precisa de 5 moedas para comprar comida.");
+
+            return;
+
+        }
+
+        pet.moedas-=5;
+
+        pet.fome+=20;
+
+        pet.felicidade+=5;
+
+        ganharXP(3);
+
+        mensagem("🍖 Mimi comeu e ficou feliz!");
+
+    }
+
+    limitar();
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+function banho(){
+
+    if(pet.energia<10){
+
+        mensagem("⚡ Mimi está cansado demais.");
+
+        return;
+
+    }
+
+    pet.higiene+=35;
+
+    pet.felicidade+=8;
+
+    pet.energia-=8;
+
+    pet.sujeiras=0;
+
+    ganharXP(5);
+
+    mensagem("🛁 Banho tomado! Mimi está limpinho! ✨");
+
+    limitar();
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+function limpar(){
+
+    pet.higiene+=20;
+
+    pet.felicidade+=4;
+
+    pet.sujeiras=0;
+
+    ganharXP(3);
+
+    mensagem("🧹 Tudo limpo! A casa ficou bonita!");
+
+    limitar();
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+function dentes(){
+
+    pet.higiene+=5;
+
+    pet.saude+=6;
+
+    pet.felicidade-=2;
+
+    pet.comCarie=false;
+
+    ganharXP(4);
+
+    mensagem("🦷 Dentes limpos! Que sorriso bonito! 😁");
+
+    limitar();
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+function hospital(){
+
+    if(pet.moedas<15){
+
+        mensagem("🏥 O tratamento custa 15 moedas.");
+
+        return;
+
+    }
+
+    pet.moedas-=15;
+
+    pet.saude=100;
+
+    pet.doente=false;
+
+    pet.comCarie=false;
+
+    ganharXP(8);
+
+    mensagem("🏥 Mimi recebeu tratamento e está saudável! ❤️");
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+function passeio(){
+
+    if(pet.energia<20){
+
+        mensagem("⚡ Mimi precisa descansar antes do passeio.");
+
+        return;
+
+    }
+
+    pet.energia-=20;
+
+    pet.felicidade+=25;
+
+    pet.higiene-=10;
+
+    pet.moedas+=5;
+
+    ganharXP(10);
+
+    mensagem("🌳 Passeio maravilhoso! Mimi ganhou 5 moedas!");
+
+    limitar();
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+function dormir(){
+
+    if(pet.dormindo){
+
+        pet.dormindo=false;
+
+        mensagem("☀️ Mimi acordou cheio de energia!");
+
+    }else{
+
+        pet.dormindo=true;
+
+        mensagem("😴 Mimi foi dormir...");
+
+        setTimeout(()=>{
+
+            if(pet.dormindo){
+
+                pet.energia=100;
+
+                pet.felicidade+=10;
+
+                pet.dormindo=false;
+
+                mensagem("☀️ Mimi acordou descansado!");
+
+                salvar();
+
+                aplicarTela();
+
+            }
+
+        },8000);
+
+    }
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+/* =========================
+
+   XP / NÍVEL / EVOLUÇÃO
+
+========================= */
+
+function ganharXP(valor){
+
+    pet.xp+=valor;
+
+    if(pet.xp>=100){
+
+        pet.xp-=100;
+
+        pet.nivel++;
+
+        pet.moedas+=10;
+
+        mensagem(
+
+            "⭐ Subiu para o nível "+
+
+            pet.nivel+"! +10 moedas!"
+
+        );
+
+    }
+
+    pet.pontosGerais+=valor;
+
+    verificarEvolucao();
+
+}
+
+function verificarEvolucao(){
+
+    if(pet.fase==="bebe" && pet.pontosCrescimento>=8){
+
+        pet.fase="crianca";
+
+        mensagem("🎉 Mimi cresceu! Agora é uma criança! 😺");
+
+    }
+
+    if(pet.fase==="crianca" && pet.pontosCrescimento>=20){
+
+        pet.fase="adulto";
+
+        mensagem("🎉 Mimi virou adulto! 😸❤️");
+
+    }
+
+}
+
+function adicionarCrescimento(){
+
+    pet.pontosCrescimento++;
+
+    ganharXP(2);
+
+}
+
+/* =========================
+
+   MENSAGEM
+
+========================= */
+
+function mensagem(texto){
+
+    document.getElementById("message").textContent=texto;
+
+}
+
+/* =========================
+
+   LOJA
+
+========================= */
+
+function abrirLoja(){
+
+    document.getElementById("shopCoins").textContent=pet.moedas;
+
+    document.getElementById("shopModal").classList.remove("hidden");
+
+}
+
+function comprar(tipo){
+
+    const precos={
+
+        comida:10,
+
+        brinquedo:20,
+
+        acessorio:30,
+
+        premium:50
+
+    };
+
+    if(pet.moedas<precos[tipo]){
+
+        mensagem("🪙 Você não tem moedas suficientes.");
+
+        return;
+
+    }
+
+    pet.moedas-=precos[tipo];
+
+    pet.inventario[tipo]++;
+
+    document.getElementById("shopCoins").textContent=pet.moedas;
+
+    salvar();
+
+    aplicarTela();
+
+    mensagem("🛍️ Compra realizada!");
+
+}
+
+/* =========================
+
+   BONUS DIÁRIO
+
+========================= */
+
+function bonusDiario(){
+
+    const hoje=new Date().toDateString();
+
+    if(pet.ultimoBonus===hoje){
+
+        mensagem("🎁 Você já pegou o bônus de hoje!");
+
+        return;
+
+    }
+
+    pet.ultimoBonus=hoje;
+
+    pet.moedas+=25;
+
+    pet.felicidade+=10;
+
+    pet.energia+=10;
+
+    mensagem("🎁 Bônus diário! Você ganhou 25 moedas! 🪙");
+
+    salvar();
+
+    aplicarTela();
+
+}
+
+/* =========================
+
+   CONQUISTAS
+
+========================= */
+
+const conquistas=[
+
+    {
+
+        id:"nasceu",
+
+        icon:"🥚",
+
+        nome:"Primeiro nascimento",
+
+        desc:"Chocar o ovo"
+
+    },
+
+    {
+
+        id:"jogar",
+
+        icon:"🎮",
+
+        nome:"Gamer",
+
+        desc:"Jogar um minijogo"
+
+    },
+
+    {
+
+        id:"100",
+
+        icon:"🪙",
+
+        nome:"Rico",
+
+        desc:"Ter 100 moedas"
+
+    },
+
+    {
+
+        id:"adulto",
+
+        icon:"😸",
+
+        nome:"Adulto",
+
+        desc:"Fazer o Petton crescer"
+
+    },
+
+    {
+
+        id:"saude",
+
+        icon:"❤️",
+
+        nome:"Saudável",
+
+        desc:"Saúde em 100"
+
+    },
+
+    {
+
+        id:"nivel5",
+
+        icon:"⭐",
+
+        nome:"Experiente",
+
+        desc:"Chegar ao nível 5"
+
+    },
+
+    {
+
+        id:"passeio",
+
+        icon:"🌳",
+
+        nome:"Aventureiro",
+
+        desc:"Fazer um passeio"
+
+    },
+
+    {
+
+        id:"loja",
+
+        icon:"🛍️",
+
+        nome:"Comprador",
+
+        desc:"Comprar um item"
+
+    }
+
+];
+
+function verificarConquistas(){
+
+    if(pet.fase!=="ovo")
+
+        desbloquear("nasceu");
+
+    if(pet.moedas>=100)
+
+        desbloquear("100");
+
+    if(pet.fase==="adulto")
+
+        desbloquear("adulto");
+
+    if(pet.saude>=100)
+
+        desbloquear("saude");
+
+    if(pet.nivel>=5)
+
+        desbloquear("nivel5");
+
+}
+
+function desbloquear(id){
+
+    if(!pet.conquistas.includes(id)){
+
+        pet.conquistas.push(id);
+
+        const item=conquistas.find(x=>x.id===id);
+
+        if(item){
+
+            mensagem(
+
+                "🏆 Conquista desbloqueada: "+
+
+                item.nome+"!"
+
+            );
+
+        }
+
+        salvar();
+
+    }
+
+}
+
+function abrirConquistas(){
+
+    const lista=document.getElementById("achievementList");
+
+    lista.innerHTML="";
+
+    conquistas.forEach(c=>{
+
+        const liberada=
+
+            pet.conquistas.includes(c.id);
+
+        lista.innerHTML+=`
+
+            <div class="achievement ${liberada?'unlocked':''}">
+
+                <div class="achievement-icon">
+
+                    ${c.icon}
+
                 </div>
-            `;
-            cenario.appendChild(quizDiv);
+
+                <strong>${c.nome}</strong>
+
+                <div class="small">
+
+                    ${c.desc}
+
+                </div>
+
+                ${liberada?"✅":"🔒"}
+
+            </div>
+
+        `;
+
+    });
+
+    document
+
+        .getElementById("achievementModal")
+
+        .classList.remove("hidden");
+
+}
+
+/* =========================
+
+   JOGOS
+
+========================= */
+
+function abrirJogos(){
+
+    document.getElementById("gameModal").classList.remove("hidden");
+
+    document.getElementById("gameMenu").classList.remove("hidden");
+
+    document.getElementById("gameContent").innerHTML="";
+
+}
+
+/* =========================
+
+   QUIZ
+
+========================= */
+
+const perguntas=[
+
+    {
+
+        q:"Qual animal é o Petton?",
+
+        op:["🐱 Gato","🐶 Cachorro","🐰 Coelho","🦁 Leão"],
+
+        r:0
+
+    },
+
+    {
+
+        q:"O que o Petton precisa quando está com fome?",
+
+        op:["🍖 Comida","🛏️ Cama","🎮 Jogo","🚗 Carro"],
+
+        r:0
+
+    },
+
+    {
+
+        q:"O que aumenta a energia?",
+
+        op:["😴 Dormir","🧼 Banho","🍰 Bolo","🧹 Limpar"],
+
+        r:0
+
+    },
+
+    {
+
+        q:"Onde o Petton pode passear?",
+
+        op:["🌳 Parque","🌋 Vulcão","🌊 Oceano","🌙 Lua"],
+
+        r:0
+
+    }
+
+];
+
+function jogoQuiz(){
+
+    document.getElementById("gameMenu").classList.add("hidden");
+
+    const p=
+
+        perguntas[
+
+            Math.floor(Math.random()*perguntas.length)
+
+        ];
+
+    let html=`
+
+        <div class="game-card">
+
+            <div class="game-question">${p.q}</div>
+
+            <div class="game-options">
+
+    `;
+
+    p.op.forEach((op,i)=>{
+
+        html+=`
+
+            <button onclick="responderQuiz(${i},${p.r})">
+
+                ${op}
+
+            </button>
+
+        `;
+
+    });
+
+    html+=`
+
+            </div>
+
+            <button class="close" onclick="abrirJogos()">Voltar</button>
+
+        </div>
+
+    `;
+
+    document.getElementById("gameContent").innerHTML=html;
+
+}
+
+function responderQuiz(escolha,resposta){
+
+    if(escolha===resposta){
+
+        pet.moedas+=10;
+
+        pet.felicidade+=8;
+
+        adicionarCrescimento();
+
+        desbloquear("jogar");
+
+        mensagem("🎉 Resposta certa! +10 moedas!");
+
+    }else{
+
+        pet.felicidade-=5;
+
+        mensagem("😿 Resposta errada! Tente novamente.");
+
+    }
+
+    limitar();
+
+    salvar();
+
+    aplicarTela();
+
+    document.getElementById("gameContent").innerHTML=`
+
+        <div class="game-card">
+
+            <div class="game-question">
+
+                ${escolha===resposta?"🎉 CORRETO!":"❌ ERRADO!"}
+
+            </div>
+
+            <button class="play" style="width:100%" onclick="jogoQuiz()">
+
+                🔄 Jogar novamente
+
+            </button>
+
+            <button class="close" onclick="fecharModais()">
+
+                Fechar
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+/* =========================
+
+   MEMÓRIA
+
+========================= */
+
+let memoriaPrimeira=null;
+
+let memoriaBloqueada=false;
+
+let memoriaPares=0;
+
+function jogoMemoria(){
+
+    document.getElementById("gameMenu").classList.add("hidden");
+
+    memoriaPrimeira=null;
+
+    memoriaBloqueada=false;
+
+    memoriaPares=0;
+
+    const emojis=["🐱","🍖","❤️","⭐","🎁","🌳","🧸","⚽"];
+
+    let cartas=[...emojis,...emojis];
+
+    cartas.sort(()=>Math.random()-.5);
+
+    let html=`
+
+        <div class="game-card">
+
+            <div class="small">
+
+                Encontre todos os pares!
+
+            </div>
+
+            <div class="memory-grid">
+
+    `;
+
+    cartas.forEach((emoji,i)=>{
+
+        html+=`
+
+            <div
+
+                class="memory-card"
+
+                id="memory-${i}"
+
+                data-emoji="${emoji}"
+
+                onclick="virarCarta(${i})">
+
+                ❓
+
+            </div>
+
+        `;
+
+    });
+
+    html+=`
+
+            </div>
+
+            <button class="close" onclick="fecharModais()">
+
+                Fechar
+
+            </button>
+
+        </div>
+
+    `;
+
+    document.getElementById("gameContent").innerHTML=html;
+
+}
+
+function virarCarta(i){
+
+    if(memoriaBloqueada)return;
+
+    const carta=
+
+        document.getElementById("memory-"+i);
+
+    if(carta.classList.contains("open"))return;
+
+    carta.classList.add("open");
+
+    carta.textContent=carta.dataset.emoji;
+
+    if(memoriaPrimeira===null){
+
+        memoriaPrimeira=i;
+
+        return;
+
+    }
+
+    const primeira=
+
+        document.getElementById(
+
+            "memory-"+memoriaPrimeira
+
+        );
+
+    if(
+
+        primeira.dataset.emoji===
+
+        carta.dataset.emoji
+
+    ){
+
+        memoriaPares++;
+
+        memoriaPrimeira=null;
+
+        pet.moedas+=5;
+
+        pet.felicidade+=3;
+
+        if(memoriaPares===8){
+
+            adicionarCrescimento();
+
+            desbloquear("jogar");
+
+            mensagem(
+
+                "🏆 Memória completa! +40 moedas!"
+
+            );
+
+            pet.moedas+=35;
+
+            salvar();
+
+            aplicarTela();
+
         }
 
-        window.responderQuiz = function(escolha, certa) {
-            const quizBox = document.getElementById('quiz-box-ativo');
-            if (quizBox) quizBox.remove();
-            let pontosGanho = (escolha === certa) ? 20 : 5;
-            finalizarMiniGame(pontosGanho);
-        }
+    }else{
 
-        function finalizarMiniGame(pontosGanhos) {
-            emJogos = false;
-            
-            const memoryGrid = document.getElementById('memory-grid-ativo');
-            if (memoryGrid) memoryGrid.remove();
+        memoriaBloqueada=true;
 
-            const jumpGame = document.getElementById('jump-game-ativo');
-            if (jumpGame) jumpGame.remove();
+        setTimeout(()=>{
 
-            const quizBox = document.getElementById('quiz-box-ativo');
-            if (quizBox) quizBox.remove();
+            primeira.classList.remove("open");
 
-            const cenario = document.getElementById('cenario-fundo');
-            cenario.classList.remove('minigame-bg');
-            document.getElementById('cat-box').classList.remove('oculto');
-            document.getElementById('area-sujeira').classList.remove('oculto');
-            document.getElementById('painel-botoes').style.pointerEvents = 'auto';
+            primeira.textContent="❓";
 
-            pet.felicidade = Math.min(100, pet.felicidade + 20);
-            pet.pontosGerais += pontosGanhos;
+            carta.classList.remove("open");
 
-            document.getElementById('texto-status').innerText = `🎉 Fim do jogo! Ganhou +${pontosGanhos} pontos!`;
-            
-            configurarVisualFase();
-            verificarEvolucao();
-            atualizarTela();
-        }
+            carta.textContent="❓";
 
-        function iniciarEfeitoZzz() {
-            if(intervaloZzz) clearInterval(intervaloZzz);
-            const cenario = document.getElementById('cenario-fundo');
-            
-            intervaloZzz = setInterval(() => {
-                if (!pet.dormindo) {
-                    clearInterval(intervaloZzz);
-                    return;
-                }
-                let zzz = document.createElement('div');
-                zzz.className = 'zzz-effect';
-                zzz.innerText = 'Zzz';
-                zzz.style.left = (Math.random() * 30 + 50) + '%';
-                zzz.style.top = (Math.random() * 20 + 30) + '%';
-                zzz.style.fontSize = (Math.random() * 10 + 16) + 'px';
-                cenario.appendChild(zzz);
+            memoriaPrimeira=null;
 
-                setTimeout(() => zzz.remove(), 2000);
-            }, 900);
-        }
+            memoriaBloqueada=false;
 
-        function dormir() {
-            if (pet.fase === "ovo" || pet.emPasseio || emJogos) return;
-            pet.dormindo = true;
-            pet.energia = 100;
-            pet.pontosGerais += 5;
-            document.getElementById('texto-status').innerText = `${pet.nome} adormeceu e ganhou +5 pontos... zZz`;
-            configurarVisualFase();
+        },700);
 
-            setTimeout(() => {
-                if (!pet.dormindo) return;
-                pet.dormindo = false;
-                if(intervaloZzz) clearInterval(intervaloZzz);
-                document.getElementById('texto-status').innerText = `${pet.nome} acordou revigorado e cheio de energia!`;
-                configurarVisualFase();
-                atualizarTela();
-            }, 15000);
-            atualizarTela();
-        }
+    }
 
-        function alternarPasseio() {
-            if (pet.fase === "ovo" || pet.dormindo || emJogos) return;
-            if (pet.doente || pet.comCarie) {
-                alert("O gatinho não está bem e não pode passear. Cuide dele!");
-                return;
+}
+
+/* =========================
+
+   JOGO DE PULO
+
+========================= */
+
+let jumpInterval=null;
+
+let jumpPos=0;
+
+let obstacle=400;
+
+let jumping=false;
+
+let jumpScore=0;
+
+function jogoPulo(){
+
+    document.getElementById("gameMenu").classList.add("hidden");
+
+    document.getElementById("gameContent").innerHTML=`
+
+        <div class="game-card">
+
+            <div class="small">
+
+                Toque em PULAR para desviar!
+
+            </div>
+
+            <canvas id="jumpCanvas"
+
+                    width="380"
+
+                    height="220"></canvas>
+
+            <button
+
+                class="play"
+
+                style="width:100%;margin-top:8px"
+
+                onclick="pular()">
+
+                🐾 PULAR
+
+            </button>
+
+            <div id="jumpScore">
+
+                Pontos: 0
+
+            </div>
+
+            <button
+
+                class="close"
+
+                onclick="pararPulo()">
+
+                Sair
+
+            </button>
+
+        </div>
+
+    `;
+
+    iniciarPulo();
+
+}
+
+function iniciarPulo(){
+
+    clearInterval(jumpInterval);
+
+    jumpPos=0;
+
+    obstacle=380;
+
+    jumping=false;
+
+    jumpScore=0;
+
+    jumpInterval=setInterval(()=>{
+
+        obstacle-=6;
+
+        if(obstacle<-30){
+
+            obstacle=380;
+
+            jumpScore++;
+
+            pet.moedas++;
+
+            if(jumpScore%5===0){
+
+                pet.felicidade+=3;
+
             }
-            const btnPasseio = document.getElementById('btn-acao-passeio');
 
-            if (!pet.emPasseio) {
-                if (pet.energia < 20) {
-                    alert("O pet não tem energia para passear. Coloque-o a dormir.");
-                    return;
-                }
-                pet.emPasseio = true;
-                btnPasseio.innerText = "🏠 Voltar para Casa";
-                document.getElementById('texto-status').innerText = `${pet.nome} está a dar uma voltinha no parque!`;
-                pet.energia = Math.max(0, pet.energia - 20);
-                pet.felicidade = Math.min(100, pet.felicidade + 20);
-                pet.pontosGerais += 10;
-            } else {
-                pet.emPasseio = false;
-                btnPasseio.innerText = "🌳 Ir Passear";
-                document.getElementById('texto-status').innerText = `${pet.nome} voltou seguro para casa. (+10 Pontos)`;
+        }
+
+        if(jumping){
+
+            jumpPos-=8;
+
+            if(jumpPos<=-75){
+
+                jumping=false;
+
             }
-            configurarVisualFase();
-            atualizarTela();
+
+        }else if(jumpPos<0){
+
+            jumpPos+=8;
+
         }
 
-        function alternarBaba() {
-            if (pet.fase === "ovo" || emJogos) return;
-            pet.temBaba = !pet.temBaba;
-            
-            if (pet.temBaba) {
-                document.getElementById('texto-status').innerText = `Babá contratada! Ela vai cuidar de ${pet.nome} enquanto estiver ausente.`;
-            } else {
-                document.getElementById('texto-status').innerText = `Babá dispensada. O gatinho voltará a sentir a ausência normalmente.`;
-            }
-            configurarVisualFase();
-            atualizarTela();
+        if(
+
+            obstacle<105 &&
+
+            obstacle>45 &&
+
+            jumpPos>-35
+
+        ){
+
+            fimPulo();
+
+            return;
+
         }
 
-        function animarEfeito() {
-            const el = document.getElementById('cat-box');
-            el.style.transform = "scale(1.15) rotate(5deg)";
-            setTimeout(() => { el.style.transform = "scale(1) rotate(0deg)"; }, 300);
-        }
+        desenharPulo();
 
-        carregarJogo();
-    </script>
+        const score=
+
+            document.getElementById("jumpScore");
+
+        if(score)
+
+            score.textContent=
+
+                "Pontos: "+jumpScore;
+
+    },40);
+
+}
+
+function desenharPulo(){
+
+    const canvas=
+
+        document.getElementById("jumpCanvas");
+
+    if(!canvas)return;
+
+    const ctx=canvas.getContext("2d");
+
+    ctx.clearRect(
+
+        0,0,
+
+        canvas.width,
+
+        canvas.height
+
+    );
+
+    ctx.font="60px Arial";
+
+    ctx.fillText(
+
+        "🐱",
+
+        55,
+
+        170+jumpPos
+
+    );
+
+    ctx.font="42px Arial";
+
+    ctx.fillText(
+
+        "🌵",
+
+        obstacle,
+
+        175
+
+    );
+
+    ctx.font="25px Arial";
+
+    ctx.fillText(
+
+        "🏁",
+
+        335,
+
+        45
+
+    );
+
+}
+
+function pular(){
+
+    if(!jumping){
+
+        jumping=true;
+
+        jumpPos=-5;
+
+    }
+
+}
+
+function fimPulo(){
+
+    clearInterval(jumpInterval);
+
+    pet.moedas+=Math.max(1,jumpScore);
+
+    pet.pontosGerais+=jumpScore;
+
+    if(jumpScore>=5){
+
+        adicionarCrescimento();
+
+    }
+
+    desbloquear("jogar");
+
+    salvar();
+
+    aplicarTela();
+
+    const content=
+
+        document.getElementById("gameContent");
+
+    content.innerHTML=`
+
+        <div class="game-card">
+
+            <div class="game-question">
+
+                💥 Fim de jogo!
+
+            </div>
+
+            <p>
+
+                Você fez <strong>${jumpScore}</strong> pontos!
+
+            </p>
+
+            <p>
+
+                🪙 Moedas ganhas: ${Math.max(1,jumpScore)}
+
+            </p>
+
+            <button
+
+                class="play"
+
+                style="width:100%"
+
+                onclick="jogoPulo()">
+
+                🔄 Jogar novamente
+
+            </button>
+
+            <button
+
+                class="close"
+
+                onclick="fecharModais()">
+
+                Fechar
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+function pararPulo(){
+
+    clearInterval(jumpInterval);
+
+    fecharModais();
+
+}
+
+/* =========================
+
+   FECHAR
+
+========================= */
+
+function fecharModais(){
+
+    clearInterval(jumpInterval);
+
+    document
+
+        .getElementById("shopModal")
+
+        .classList.add("hidden");
+
+    document
+
+        .getElementById("achievementModal")
+
+        .classList.add("hidden");
+
+    document
+
+        .getElementById("gameModal")
+
+        .classList.add("hidden");
+
+}
+
+/* =========================
+
+   CUIDADOS AUTOMÁTICOS
+
+========================= */
+
+setInterval(()=>{
+
+    if(pet.fase==="ovo")return;
+
+    if(pet.dormindo)return;
+
+    pet.fome-=1;
+
+    pet.higiene-=1;
+
+    if(pet.fome<20)
+
+        pet.felicidade-=1;
+
+    if(pet.higiene<20)
+
+        pet.saude-=1;
+
+    if(pet.fome<=0)
+
+        pet.saude-=1;
+
+    if(pet.saude<30)
+
+        pet.doente=true;
+
+    limitar();
+
+    pet.ultimaAtualizacao=Date.now();
+
+    salvar();
+
+    aplicarTela();
+
+},60000);
+
+/* =========================
+
+   INICIALIZAÇÃO
+
+========================= */
+
+carregar();
+
+</script>
+
 </body>
+
 </html>
