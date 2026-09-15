@@ -818,187 +818,443 @@ onclick="window.location.href='fale-conosco.html'"
 
 </div>
 
-<script>
+<script type="module">
+
+/* =========================================
+
+   CONFIGURAÇÃO
+
+========================================= */
 
 const liffId = "2010902449-KWNNNsxn";
 
+const firebaseConfig = {
+
+    apiKey: "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+
+    authDomain: "ajuda-jp.firebaseapp.com",
+
+    projectId: "ajuda-jp",
+
+    storageBucket: "ajuda-jp.firebasestorage.app",
+
+    messagingSenderId: "40121072206",
+
+    appId: "1:40121072206:web:8a844e632f004f61d0a11f"
+
+};
+
+/* =========================================
+
+   FIREBASE
+
+========================================= */
+
+import {
+
+    initializeApp
+
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+
+    getAuth,
+
+    signInAnonymously
+
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+
+    getDatabase,
+
+    ref,
+
+    set,
+
+    onDisconnect,
+
+    serverTimestamp
+
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+const firebaseApp =
+
+    initializeApp(firebaseConfig);
+
+const firebaseAuth =
+
+    getAuth(firebaseApp);
+
+const database =
+
+    getDatabase(firebaseApp);
+
+/* =========================================
+
+   INICIALIZAÇÃO DO LIFF
+
+========================================= */
+
 async function inicializarApp() {
 
-try {
+    try {
 
-await liff.init({
+        await liff.init({
 
-liffId: liffId
+            liffId: liffId
 
-});
+        });
 
-console.log("LIFF inicializado.");
+        console.log(
 
-if (liff.isLoggedIn()) {
+            "LIFF inicializado."
 
-try {
+        );
 
-const profile = await liff.getProfile();
+        if (liff.isLoggedIn()) {
 
-localStorage.setItem(
+            try {
 
-"line_user_id",
+                const profile =
 
-profile.userId
+                    await liff.getProfile();
 
-);
+                localStorage.setItem(
 
-localStorage.setItem(
+                    "line_user_id",
 
-"line_user_name",
+                    profile.userId
 
-profile.displayName
+                );
 
-);
+                localStorage.setItem(
 
-} catch (profileError) {
+                    "line_user_name",
 
-console.error(
+                    profile.displayName
 
-"Erro ao obter perfil:",
+                );
 
-profileError
+                /* REGISTRA NO FIREBASE */
 
-);
+                await registrarUsuarioOnline(
+
+                    profile.userId,
+
+                    profile.displayName
+
+                );
+
+            } catch (profileError) {
+
+                console.error(
+
+                    "Erro ao obter perfil:",
+
+                    profileError
+
+                );
+
+            }
+
+            liberarApp();
+
+        } else {
+
+            document.getElementById(
+
+                "login-overlay"
+
+            ).style.display = "flex";
+
+        }
+
+    } catch (err) {
+
+        console.error(
+
+            "Erro ao inicializar LIFF:",
+
+            err
+
+        );
+
+        document.getElementById(
+
+            "login-overlay"
+
+        ).style.display = "flex";
+
+    }
 
 }
 
-liberarApp();
+/* =========================================
 
-} else {
+   REGISTRA USUÁRIO ONLINE
 
-document.getElementById(
+========================================= */
 
-"login-overlay"
+async function registrarUsuarioOnline(
 
-).style.display = "flex";
+    lineUserId,
+
+    nome
+
+) {
+
+    try {
+
+        /*
+
+         * Login anônimo no Firebase.
+
+         * Isso permite registrar a presença
+
+         * sem criar uma conta Firebase para
+
+         * cada usuário do LINE.
+
+         */
+
+        if (!firebaseAuth.currentUser) {
+
+            await signInAnonymously(
+
+                firebaseAuth
+
+            );
+
+        }
+
+        /*
+
+         * Cada usuário fica dentro de:
+
+         *
+
+         * bot_users
+
+         *     └── ID_DO_LINE
+
+         */
+
+        const usuarioRef = ref(
+
+            database,
+
+            "bot_users/" + lineUserId
+
+        );
+
+        /*
+
+         * Marca o usuário como ONLINE.
+
+         */
+
+        await set(
+
+            usuarioRef,
+
+            {
+
+                lineUserId: lineUserId,
+
+                name: nome || "Usuário",
+
+                state: "online",
+
+                lastSeen: serverTimestamp()
+
+            }
+
+        );
+
+        /*
+
+         * Se a conexão cair,
+
+         * Firebase muda automaticamente
+
+         * para OFFLINE.
+
+         */
+
+        onDisconnect(
+
+            usuarioRef
+
+        ).set({
+
+            lineUserId: lineUserId,
+
+            name: nome || "Usuário",
+
+            state: "offline",
+
+            lastSeen: serverTimestamp()
+
+        });
+
+        console.log(
+
+            "Usuário registrado como ONLINE."
+
+        );
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro ao registrar usuário:",
+
+            erro
+
+        );
+
+    }
 
 }
 
-} catch (err) {
+/* =========================================
 
-console.error(
+   LIBERAR APLICATIVO
 
-"Erro ao inicializar LIFF:",
-
-err
-
-);
-
-document.getElementById(
-
-"login-overlay"
-
-).style.display = "flex";
-
-}
-
-}
+========================================= */
 
 function liberarApp() {
 
-document.getElementById(
+    document.getElementById(
 
-"login-overlay"
+        "login-overlay"
 
-).style.display = "none";
+    ).style.display = "none";
 
-document.getElementById(
+    document.getElementById(
 
-"app-content"
+        "app-content"
 
-).style.display = "block";
+    ).style.display = "block";
 
-ativarCarrossel();
-
-}
-
-function fazerLoginLine() {
-
-try {
-
-if (!liff.isLoggedIn()) {
-
-liff.login();
-
-} else {
-
-liberarApp();
+    ativarCarrossel();
 
 }
 
-} catch (erro) {
+/* =========================================
 
-console.error(
+   LOGIN DO LINE
 
-"Erro no login LINE:",
+========================================= */
 
-erro
+window.fazerLoginLine = function() {
 
-);
+    try {
 
-alert(
+        if (!liff.isLoggedIn()) {
 
-"Não foi possível iniciar o login do LINE. Tente novamente."
+            liff.login();
 
-);
+        } else {
 
-}
+            liberarApp();
 
-}
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro no login LINE:",
+
+            erro
+
+        );
+
+        alert(
+
+            "Não foi possível iniciar o login do LINE. Tente novamente."
+
+        );
+
+    }
+
+};
+
+/* =========================================
+
+   CARROSSEL
+
+========================================= */
 
 function ativarCarrossel() {
 
-const track = document.getElementById(
+    const track =
 
-"carouselTrack"
+        document.getElementById(
 
-);
+            "carouselTrack"
 
-if (!track || track.dataset.iniciado) {
+        );
 
-return;
+    if (
+
+        !track ||
+
+        track.dataset.iniciado
+
+    ) {
+
+        return;
+
+    }
+
+    track.dataset.iniciado = "true";
+
+    const items =
+
+        Array.from(
+
+            track.children
+
+        );
+
+    items.forEach(function(item) {
+
+        const clone =
+
+            item.cloneNode(true);
+
+        track.appendChild(clone);
+
+    });
+
+    const totalWidth =
+
+        track.scrollWidth / 2;
+
+    track.style.setProperty(
+
+        "--scroll-amount",
+
+        `-${totalWidth}px`
+
+    );
 
 }
 
-track.dataset.iniciado = "true";
+/* =========================================
 
-const items = Array.from(
+   INICIAR
 
-track.children
-
-);
-
-items.forEach(function(item) {
-
-const clone = item.cloneNode(true);
-
-track.appendChild(clone);
-
-});
-
-const totalWidth = track.scrollWidth / 2;
-
-track.style.setProperty(
-
-"--scroll-amount",
-
-`-${totalWidth}px`
-
-);
-
-}
+========================================= */
 
 document.addEventListener(
 
-"DOMContentLoaded",
+    "DOMContentLoaded",
 
-inicializarApp
+    inicializarApp
 
 );
 
@@ -1006,4 +1262,4 @@ inicializarApp
 
 </body>
 
-</html>
+</html
