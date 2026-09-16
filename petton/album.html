@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Álbum do Petton</title>
+
+<style>
+
+*{
+
+    box-sizing:border-box;
+
+}
+
+body{
+
+    margin:0;
+
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+
+    background:linear-gradient(180deg,#fff7ed,#fdf2f8,#f5f3ff);
+
+    color:#333;
+
+    min-height:100vh;
+
+}
+
+.container{
+
+    max-width:700px;
+
+    margin:auto;
+
+    padding:18px;
+
+}
+
+.topo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:18px;
+
+}
+
+.voltar{
+
+    width:42px;
+
+    height:42px;
+
+    border:0;
+
+    border-radius:14px;
+
+    background:white;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+    font-size:22px;
+
+}
+
+.titulo{
+
+    flex:1;
+
+}
+
+.titulo h1{
+
+    margin:0;
+
+    font-size:23px;
+
+}
+
+.titulo p{
+
+    margin:3px 0 0;
+
+    color:#777;
+
+    font-size:13px;
+
+}
+
+.card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:20px;
+
+    margin-bottom:16px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.07);
+
+}
+
+.resumo{
+
+    text-align:center;
+
+}
+
+.pet-emoji{
+
+    font-size:78px;
+
+    line-height:1;
+
+    margin:5px 0 12px;
+
+}
+
+.nome{
+
+    font-size:25px;
+
+    font-weight:800;
+
+}
+
+.sub{
+
+    color:#777;
+
+    font-size:14px;
+
+    margin-top:5px;
+
+}
+
+.contador{
+
+    display:inline-block;
+
+    margin-top:12px;
+
+    padding:8px 15px;
+
+    border-radius:20px;
+
+    background:#fce7f3;
+
+    color:#be185d;
+
+    font-weight:700;
+
+    font-size:13px;
+
+}
+
+.album{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:13px;
+
+}
+
+.momento{
+
+    border-radius:20px;
+
+    background:#fafafa;
+
+    padding:12px;
+
+    border:2px solid #eee;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.momento.liberado{
+
+    border-color:#ddd6fe;
+
+    background:#faf9ff;
+
+}
+
+.momento.atual{
+
+    border-color:#f9a8d4;
+
+    background:#fff7fb;
+
+}
+
+.momento.bloqueado{
+
+    opacity:.55;
+
+}
+
+.momento-topo{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:5px;
+
+}
+
+.dia{
+
+    font-size:17px;
+
+    font-weight:800;
+
+}
+
+.status{
+
+    font-size:18px;
+
+}
+
+.foto{
+
+    height:145px;
+
+    margin-top:10px;
+
+    border-radius:16px;
+
+    background:linear-gradient(180deg,#f8fafc,#f1f5f9);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.pet-foto{
+
+    font-size:72px;
+
+    transition:.3s;
+
+}
+
+.bloqueio{
+
+    font-size:38px;
+
+}
+
+.data{
+
+    margin-top:9px;
+
+    font-size:12px;
+
+    color:#888;
+
+}
+
+.descricao{
+
+    margin-top:5px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.detalhe{
+
+    margin-top:3px;
+
+    font-size:11px;
+
+    color:#888;
+
+    line-height:1.4;
+
+}
+
+.info{
+
+    line-height:1.6;
+
+    color:#666;
+
+    font-size:14px;
+
+}
+
+.botao{
+
+    display:block;
+
+    width:100%;
+
+    border:0;
+
+    border-radius:16px;
+
+    padding:14px;
+
+    background:#ec4899;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    margin-top:15px;
+
+}
+
+.rodape{
+
+    text-align:center;
+
+    color:#999;
+
+    font-size:12px;
+
+    padding:5px 0 25px;
+
+}
+
+@media(max-width:390px){
+
+    .album{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo">
+
+        <button class="voltar" onclick="history.back()">
+
+            ←
+
+        </button>
+
+        <div class="titulo">
+
+            <h1>📖 Álbum do Petton</h1>
+
+            <p>Os momentos que você nunca vai esquecer</p>
+
+        </div>
+
+    </div>
+
+    <div id="conteudo">
+
+        <div class="card resumo">
+
+            <div class="pet-emoji">🐾</div>
+
+            <p>Carregando...</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="petton.js"></script>
+
+<script>
+
+let dados = null;
+
+const momentos = [
+
+    {
+
+        dia:0,
+
+        emoji:"🥚",
+
+        titulo:"O começo",
+
+        descricao:"O ovo",
+
+        detalhe:"Tudo começa aqui."
+
+    },
+
+    {
+
+        dia:3,
+
+        emoji:"🐣",
+
+        titulo:"3 dias",
+
+        descricao:"Primeiros momentos",
+
+        detalhe:"O pequeno Petton começa a mostrar sua personalidade."
+
+    },
+
+    {
+
+        dia:7,
+
+        emoji:"🐾",
+
+        titulo:"1 semana",
+
+        descricao:"Primeiras descobertas",
+
+        detalhe:"Mais ativo e curioso."
+
+    },
+
+    {
+
+        dia:15,
+
+        emoji:"🐱",
+
+        titulo:"15 dias",
+
+        descricao:"Crescendo rápido",
+
+        detalhe:"O corpo e as características começam a mudar bastante."
+
+    },
+
+    {
+
+        dia:30,
+
+        emoji:"🐈",
+
+        titulo:"1 mês",
+
+        descricao:"Grande mudança",
+
+        detalhe:"Já parece muito mais com um verdadeiro filhote."
+
+    },
+
+    {
+
+        dia:60,
+
+        emoji:"🐈‍⬛",
+
+        titulo:"2 meses",
+
+        descricao:"Petton jovem",
+
+        detalhe:"A aparência está cada vez mais definida."
+
+    },
+
+    {
+
+        dia:90,
+
+        emoji:"✨",
+
+        titulo:"3 meses",
+
+        descricao:"Jovem",
+
+        detalhe:"Uma nova fase começa."
+
+    },
+
+    {
+
+        dia:120,
+
+        emoji:"👑",
+
+        titulo:"120 dias",
+
+        descricao:"Adulto desenvolvido",
+
+        detalhe:"Uma grande etapa da vida do Petton."
+
+    }
+
+];
+
+function carregar(){
+
+    try{
+
+        if(typeof Petton !== "undefined"){
+
+            if(Petton.carregar){
+
+                Petton.carregar();
+
+            }
+
+            if(Petton.dados){
+
+                dados = Petton.dados;
+
+            }
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+    if(!dados){
+
+        try{
+
+            const salvo =
+
+                localStorage.getItem("petton_dados_v2") ||
+
+                localStorage.getItem("petton_dados_v1");
+
+            if(salvo){
+
+                dados = JSON.parse(salvo);
+
+            }
+
+        }catch(e){
+
+            console.log(e);
+
+        }
+
+    }
+
+}
+
+function idadeAtual(){
+
+    if(!dados){
+
+        return 0;
+
+    }
+
+    if(typeof Petton !== "undefined" && Petton.idadeDias){
+
+        return Petton.idadeDias();
+
+    }
+
+    if(!dados.dataNascimento){
+
+        return 0;
+
+    }
+
+    const nascimento =
+
+        new Date(dados.dataNascimento);
+
+    const agora =
+
+        new Date();
+
+    return Math.max(
+
+        0,
+
+        Math.floor(
+
+            (agora - nascimento) / 86400000
+
+        )
+
+    );
+
+}
+
+function especieEmoji(){
+
+    if(!dados){
+
+        return "🐾";
+
+    }
+
+    const especie =
+
+        dados.especie || "gato";
+
+    if(especie === "cachorro"){
+
+        return "🐶";
+
+    }
+
+    if(especie === "coelho"){
+
+        return "🐰";
+
+    }
+
+    return "🐱";
+
+}
+
+function formatarData(dia){
+
+    if(!dados || !dados.dataNascimento){
+
+        return "Aguardando nascimento";
+
+    }
+
+    const nascimento =
+
+        new Date(dados.dataNascimento);
+
+    const data =
+
+        new Date(nascimento);
+
+    data.setDate(
+
+        data.getDate() + dia
+
+    );
+
+    return data.toLocaleDateString(
+
+        "pt-BR",
+
+        {
+
+            day:"2-digit",
+
+            month:"2-digit",
+
+            year:"numeric"
+
+        }
+
+    );
+
+}
+
+function tamanhoVisual(dia){
+
+    if(dia === 0){
+
+        return "52px";
+
+    }
+
+    if(dia <= 3){
+
+        return "58px";
+
+    }
+
+    if(dia <= 7){
+
+        return "65px";
+
+    }
+
+    if(dia <= 15){
+
+        return "72px";
+
+    }
+
+    if(dia <= 30){
+
+        return "80px";
+
+    }
+
+    if(dia <= 60){
+
+        return "88px";
+
+    }
+
+    return "94px";
+
+}
+
+function renderizar(){
+
+    carregar();
+
+    const area =
+
+        document.getElementById("conteudo");
+
+    if(!dados){
+
+        area.innerHTML = `
+
+            <div class="card resumo">
+
+                <div class="pet-emoji">
+
+                    🥚
+
+                </div>
+
+                <h2>Nenhum Petton encontrado</h2>
+
+                <p class="info">
+
+                    Quando seu Petton começar sua jornada,
+
+                    os momentos importantes aparecerão
+
+                    automaticamente neste álbum.
+
+                </p>
+
+                <button
+
+                    class="botao"
+
+                    onclick="location.href='nascimento.html'"
+
+                >
+
+                    🥚 Ir para o nascimento
+
+                </button>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    const idade =
+
+        idadeAtual();
+
+    const nome =
+
+        dados.nome || "Meu Petton";
+
+    let liberados = 0;
+
+    momentos.forEach(momento => {
+
+        if(idade >= momento.dia){
+
+            liberados++;
+
+        }
+
+    });
+
+    area.innerHTML = `
+
+        <div class="card resumo">
+
+            <div class="pet-emoji">
+
+                ${especieEmoji()}
+
+            </div>
+
+            <div class="nome">
+
+                ${nome}
+
+            </div>
+
+            <div class="sub">
+
+                ${idade === 0
+
+                    ? "Ainda não nasceu"
+
+                    : idade + (idade === 1
+
+                        ? " dia de vida"
+
+                        : " dias de vida")
+
+                }
+
+            </div>
+
+            <div class="contador">
+
+                📸 ${liberados} de ${momentos.length} momentos desbloqueados
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2 style="margin-top:0;">
+
+                📸 Momentos especiais
+
+            </h2>
+
+            <p class="info">
+
+                Conforme o tempo passa, novos momentos
+
+                do seu Petton ficam disponíveis.
+
+            </p>
+
+            <div class="album">
+
+                ${momentos.map(momento => {
+
+                    const liberado =
+
+                        idade >= momento.dia;
+
+                    const atual =
+
+                        liberado &&
+
+                        (
+
+                            momento.dia ===
+
+                            momentos
+
+                                .filter(m => m.dia <= idade)
+
+                                .slice(-1)[0]
+
+                                ?.dia
+
+                        );
+
+                    let classe =
+
+                        liberado
+
+                        ? "liberado"
+
+                        : "bloqueado";
+
+                    if(atual){
+
+                        classe += " atual";
+
+                    }
+
+                    return `
+
+                        <div class="momento ${classe}">
+
+                            <div class="momento-topo">
+
+                                <div class="dia">
+
+                                    ${momento.dia === 0
+
+                                        ? "Dia 0"
+
+                                        : "Dia " + momento.dia
+
+                                    }
+
+                                </div>
+
+                                <div class="status">
+
+                                    ${liberado
+
+                                        ? "📸"
+
+                                        : "🔒"
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                            <div class="foto">
+
+                                ${
+
+                                    liberado
+
+                                    ?
+
+                                    `<div
+
+                                        class="pet-foto"
+
+                                        style="font-size:${tamanhoVisual(momento.dia)}"
+
+                                    >
+
+                                        ${momento.dia === 0
+
+                                            ? "🥚"
+
+                                            : especieEmoji()
+
+                                        }
+
+                                    </div>`
+
+                                    :
+
+                                    `<div class="bloqueio">
+
+                                        🔒
+
+                                    </div>`
+
+                                }
+
+                            </div>
+
+                            <div class="data">
+
+                                ${
+
+                                    liberado
+
+                                    ? formatarData(momento.dia)
+
+                                    : "Ainda não desbloqueado"
+
+                                }
+
+                            </div>
+
+                            <div class="descricao">
+
+                                ${
+
+                                    liberado
+
+                                    ? momento.titulo
+
+                                    : "Momento futuro"
+
+                                }
+
+                            </div>
+
+                            <div class="detalhe">
+
+                                ${
+
+                                    liberado
+
+                                    ? momento.detalhe
+
+                                    : "Continue cuidando do seu Petton."
+
+                                }
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }).join("")}
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2 style="margin-top:0;">
+
+                💖 O álbum cresce com ele
+
+            </h2>
+
+            <p class="info">
+
+                Os momentos são desbloqueados conforme
+
+                os dias passam. A ideia é que, daqui a
+
+                alguns meses, você consiga olhar para trás
+
+                e acompanhar toda a história do seu Petton.
+
+            </p>
+
+        </div>
+
+        <div class="rodape">
+
+            Cada fase é uma lembrança. 🐾
+
+        </div>
+
+    `;
+
+}
+
+renderizar();
+
+setInterval(renderizar,10000);
+
+</script>
+
+</body>
+
+</html>
