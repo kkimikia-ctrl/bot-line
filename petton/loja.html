@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Loja do Petton</title>
+
+<style>
+
+*{
+
+    box-sizing:border-box;
+
+}
+
+body{
+
+    margin:0;
+
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+
+    background:linear-gradient(180deg,#fff7ed,#fdf2f8,#f5f3ff);
+
+    color:#333;
+
+    min-height:100vh;
+
+}
+
+.container{
+
+    max-width:700px;
+
+    margin:auto;
+
+    padding:18px;
+
+}
+
+.topo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:16px;
+
+}
+
+.voltar{
+
+    width:42px;
+
+    height:42px;
+
+    border:0;
+
+    border-radius:14px;
+
+    background:white;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+    font-size:22px;
+
+}
+
+.titulo{
+
+    flex:1;
+
+}
+
+.titulo h1{
+
+    margin:0;
+
+    font-size:23px;
+
+}
+
+.titulo p{
+
+    margin:3px 0 0;
+
+    color:#777;
+
+    font-size:13px;
+
+}
+
+.moedas{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:13px 16px;
+
+    margin-bottom:16px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.07);
+
+}
+
+.moedas strong{
+
+    font-size:20px;
+
+    color:#d97706;
+
+}
+
+.moedas span{
+
+    color:#777;
+
+    font-size:13px;
+
+}
+
+.categorias{
+
+    display:flex;
+
+    gap:8px;
+
+    overflow-x:auto;
+
+    padding-bottom:7px;
+
+    margin-bottom:15px;
+
+}
+
+.categoria{
+
+    flex:none;
+
+    border:0;
+
+    border-radius:18px;
+
+    padding:10px 14px;
+
+    background:white;
+
+    color:#666;
+
+    font-weight:700;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.categoria.ativa{
+
+    background:#ec4899;
+
+    color:white;
+
+}
+
+.card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:18px;
+
+    margin-bottom:16px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.07);
+
+}
+
+.produtos{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+}
+
+.produto{
+
+    background:#fafafa;
+
+    border-radius:20px;
+
+    padding:14px;
+
+    text-align:center;
+
+    border:2px solid #eee;
+
+}
+
+.produto.comprado{
+
+    border-color:#bbf7d0;
+
+    background:#f0fdf4;
+
+}
+
+.produto-emoji{
+
+    height:75px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:55px;
+
+}
+
+.produto h3{
+
+    margin:8px 0 4px;
+
+    font-size:15px;
+
+}
+
+.produto p{
+
+    margin:0;
+
+    color:#888;
+
+    font-size:12px;
+
+    min-height:32px;
+
+    line-height:1.35;
+
+}
+
+.preco{
+
+    margin-top:10px;
+
+    font-size:14px;
+
+    font-weight:800;
+
+    color:#d97706;
+
+}
+
+.comprar{
+
+    width:100%;
+
+    border:0;
+
+    border-radius:13px;
+
+    padding:10px;
+
+    margin-top:9px;
+
+    background:#ec4899;
+
+    color:white;
+
+    font-weight:800;
+
+}
+
+.comprar:active{
+
+    transform:scale(.97);
+
+}
+
+.comprar:disabled{
+
+    background:#bbb;
+
+}
+
+.comprado-label{
+
+    margin-top:9px;
+
+    color:#16a34a;
+
+    font-size:12px;
+
+    font-weight:800;
+
+}
+
+.mensagem{
+
+    text-align:center;
+
+    min-height:22px;
+
+    margin:4px 0 12px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+    font-size:14px;
+
+}
+
+.vazio{
+
+    text-align:center;
+
+    padding:25px 10px;
+
+    color:#888;
+
+}
+
+.inventario{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:9px;
+
+}
+
+.item-inventario{
+
+    background:#fafafa;
+
+    border-radius:15px;
+
+    padding:10px 5px;
+
+    text-align:center;
+
+}
+
+.item-inventario div{
+
+    font-size:30px;
+
+}
+
+.item-inventario span{
+
+    display:block;
+
+    font-size:10px;
+
+    color:#777;
+
+    margin-top:4px;
+
+}
+
+.aviso{
+
+    background:#fff7ed;
+
+    color:#92400e;
+
+    border-radius:17px;
+
+    padding:14px;
+
+    font-size:13px;
+
+    line-height:1.5;
+
+}
+
+.rodape{
+
+    text-align:center;
+
+    color:#999;
+
+    font-size:12px;
+
+    padding:5px 0 25px;
+
+}
+
+@media(max-width:390px){
+
+    .produtos{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .inventario{
+
+        grid-template-columns:repeat(3,1fr);
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo">
+
+        <button class="voltar" onclick="history.back()">
+
+            ←
+
+        </button>
+
+        <div class="titulo">
+
+            <h1>🛍️ Loja do Petton</h1>
+
+            <p>Deixe o cantinho dele com a sua cara</p>
+
+        </div>
+
+    </div>
+
+    <div class="moedas">
+
+        <span>💰 Suas moedas</span>
+
+        <strong id="saldo">
+
+            0
+
+        </strong>
+
+    </div>
+
+    <div class="categorias">
+
+        <button
+
+            class="categoria ativa"
+
+            onclick="selecionarCategoria('todos')"
+
+        >
+
+            ✨ Todos
+
+        </button>
+
+        <button
+
+            class="categoria"
+
+            onclick="selecionarCategoria('cama')"
+
+        >
+
+            🛏️ Camas
+
+        </button>
+
+        <button
+
+            class="categoria"
+
+            onclick="selecionarCategoria('brinquedo')"
+
+        >
+
+            🎾 Brinquedos
+
+        </button>
+
+        <button
+
+            class="categoria"
+
+            onclick="selecionarCategoria('comida')"
+
+        >
+
+            🥣 Comida
+
+        </button>
+
+        <button
+
+            class="categoria"
+
+            onclick="selecionarCategoria('decoracao')"
+
+        >
+
+            🌱 Decoração
+
+        </button>
+
+    </div>
+
+    <div
+
+        id="mensagem"
+
+        class="mensagem"
+
+    ></div>
+
+    <div class="card">
+
+        <h2 style="margin-top:0;">
+
+            🛒 Itens da loja
+
+        </h2>
+
+        <div
+
+            id="produtos"
+
+            class="produtos"
+
+        ></div>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top:0;">
+
+            🎒 Meus itens
+
+        </h2>
+
+        <div
+
+            id="inventario"
+
+            class="inventario"
+
+        ></div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="aviso">
+
+            💡 <strong>Como funciona:</strong><br><br>
+
+            Compre objetos para deixar o quarto
+
+            do seu Petton cada vez mais bonito.
+
+            Os itens comprados ficam guardados
+
+            no inventário e poderão ser usados
+
+            na decoração do quarto.
+
+        </div>
+
+    </div>
+
+    <div class="rodape">
+
+        O quarto do seu Petton é único, assim como ele. 🐾
+
+    </div>
+
+</div>
+
+<script src="petton.js"></script>
+
+<script>
+
+const CHAVE_LOJA =
+
+    "petton_loja_v1";
+
+const CHAVE_MOEDAS =
+
+    "petton_moedas_v1";
+
+let saldo = 500;
+
+let inventario = [];
+
+let categoriaAtual = "todos";
+
+const produtos = [
+
+    {
+
+        id:"cama_basica",
+
+        nome:"Caminha simples",
+
+        categoria:"cama",
+
+        emoji:"🛏️",
+
+        preco:100,
+
+        descricao:"Uma caminha confortável."
+
+    },
+
+    {
+
+        id:"cama_rosa",
+
+        nome:"Caminha fofa",
+
+        categoria:"cama",
+
+        emoji:"🛌",
+
+        preco:180,
+
+        descricao:"Mais macia e aconchegante."
+
+    },
+
+    {
+
+        id:"cama_casinha",
+
+        nome:"Casinha",
+
+        categoria:"cama",
+
+        emoji:"🏠",
+
+        preco:300,
+
+        descricao:"Um cantinho só dele."
+
+    },
+
+    {
+
+        id:"bola",
+
+        nome:"Bola",
+
+        categoria:"brinquedo",
+
+        emoji:"⚽",
+
+        preco:60,
+
+        descricao:"Um brinquedo para correr."
+
+    },
+
+    {
+
+        id:"bolinha",
+
+        nome:"Bolinha colorida",
+
+        categoria:"brinquedo",
+
+        emoji:"🔴",
+
+        preco:80,
+
+        descricao:"Pequena e divertida."
+
+    },
+
+    {
+
+        id:"ratinho",
+
+        nome:"Ratinho de brinquedo",
+
+        categoria:"brinquedo",
+
+        emoji:"🐭",
+
+        preco:120,
+
+        descricao:"Perfeito para brincar."
+
+    },
+
+    {
+
+        id:"arranhador",
+
+        nome:"Arranhador",
+
+        categoria:"brinquedo",
+
+        emoji:"🪵",
+
+        preco:220,
+
+        descricao:"Para gastar energia."
+
+    },
+
+    {
+
+        id:"pote",
+
+        nome:"Pote de comida",
+
+        categoria:"comida",
+
+        emoji:"🥣",
+
+        preco:70,
+
+        descricao:"Um potinho para as refeições."
+
+    },
+
+    {
+
+        id:"pote_agua",
+
+        nome:"Pote de água",
+
+        categoria:"comida",
+
+        emoji:"💧",
+
+        preco:70,
+
+        descricao:"Água sempre disponível."
+
+    },
+
+    {
+
+        id:"planta",
+
+        nome:"Plantinha",
+
+        categoria:"decoracao",
+
+        emoji:"🌱",
+
+        preco:90,
+
+        descricao:"Deixa o quarto mais bonito."
+
+    },
+
+    {
+
+        id:"flor",
+
+        nome:"Vaso de flores",
+
+        categoria:"decoracao",
+
+        emoji:"🌷",
+
+        preco:130,
+
+        descricao:"Um toque especial."
+
+    },
+
+    {
+
+        id:"tapete",
+
+        nome:"Tapete",
+
+        categoria:"decoracao",
+
+        emoji:"🟫",
+
+        preco:160,
+
+        descricao:"Um piso mais confortável."
+
+    },
+
+    {
+
+        id:"abajur",
+
+        nome:"Abajur",
+
+        categoria:"decoracao",
+
+        emoji:"💡",
+
+        preco:200,
+
+        descricao:"Uma luz aconchegante."
+
+    },
+
+    {
+
+        id:"quadro",
+
+        nome:"Quadro decorativo",
+
+        categoria:"decoracao",
+
+        emoji:"🖼️",
+
+        preco:150,
+
+        descricao:"Para decorar a parede."
+
+    },
+
+    {
+
+        id:"pelucia",
+
+        nome:"Bichinho de pelúcia",
+
+        categoria:"brinquedo",
+
+        emoji:"🧸",
+
+        preco:250,
+
+        descricao:"Um companheiro para o Petton."
+
+    }
+
+];
+
+function carregarLoja(){
+
+    try{
+
+        const moedas =
+
+            localStorage.getItem(
+
+                CHAVE_MOEDAS
+
+            );
+
+        if(moedas !== null){
+
+            saldo =
+
+                Number(moedas);
+
+        }
+
+    }catch(e){}
+
+    try{
+
+        const itens =
+
+            localStorage.getItem(
+
+                CHAVE_LOJA
+
+            );
+
+        if(itens){
+
+            inventario =
+
+                JSON.parse(itens);
+
+        }
+
+    }catch(e){
+
+        inventario = [];
+
+    }
+
+}
+
+function salvarLoja(){
+
+    try{
+
+        localStorage.setItem(
+
+            CHAVE_MOEDAS,
+
+            String(saldo)
+
+        );
+
+        localStorage.setItem(
+
+            CHAVE_LOJA,
+
+            JSON.stringify(
+
+                inventario
+
+            )
+
+        );
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+function possui(id){
+
+    return inventario.includes(id);
+
+}
+
+function selecionarCategoria(categoria){
+
+    categoriaAtual =
+
+        categoria;
+
+    document
+
+        .querySelectorAll(".categoria")
+
+        .forEach(botao => {
+
+            botao.classList.remove(
+
+                "ativa"
+
+            );
+
+        });
+
+    event.currentTarget
+
+        .classList.add(
+
+            "ativa"
+
+        );
+
+    renderizarProdutos();
+
+}
+
+function comprar(id){
+
+    const produto =
+
+        produtos.find(
+
+            item => item.id === id
+
+        );
+
+    if(!produto){
+
+        return;
+
+    }
+
+    if(possui(id)){
+
+        mostrarMensagem(
+
+            "✅ Você já possui este item."
+
+        );
+
+        return;
+
+    }
+
+    if(saldo < produto.preco){
+
+        mostrarMensagem(
+
+            "💰 Você não tem moedas suficientes."
+
+        );
+
+        return;
+
+    }
+
+    saldo -=
+
+        produto.preco;
+
+    inventario.push(
+
+        id
+
+    );
+
+    salvarLoja();
+
+    mostrarMensagem(
+
+        "🎉 " +
+
+        produto.nome +
+
+        " foi comprado!"
+
+    );
+
+    renderizar();
+
+}
+
+function renderizarProdutos(){
+
+    const area =
+
+        document.getElementById(
+
+            "produtos"
+
+        );
+
+    let lista =
+
+        produtos;
+
+    if(categoriaAtual !== "todos"){
+
+        lista =
+
+            produtos.filter(
+
+                produto =>
+
+                    produto.categoria ===
+
+                    categoriaAtual
+
+            );
+
+    }
+
+    if(lista.length === 0){
+
+        area.innerHTML = `
+
+            <div class="vazio">
+
+                Nenhum item nesta categoria.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    area.innerHTML =
+
+        lista.map(
+
+            produto => {
+
+                const comprado =
+
+                    possui(
+
+                        produto.id
+
+                    );
+
+                return `
+
+                    <div
+
+                        class="produto ${
+
+                            comprado
+
+                            ? "comprado"
+
+                            : ""
+
+                        }"
+
+                    >
+
+                        <div class="produto-emoji">
+
+                            ${produto.emoji}
+
+                        </div>
+
+                        <h3>
+
+                            ${produto.nome}
+
+                        </h3>
+
+                        <p>
+
+                            ${produto.descricao}
+
+                        </p>
+
+                        ${
+
+                            comprado
+
+                            ?
+
+                            `
+
+                                <div class="comprado-label">
+
+                                    ✓ Já comprado
+
+                                </div>
+
+                            `
+
+                            :
+
+                            `
+
+                                <div class="preco">
+
+                                    💰 ${produto.preco}
+
+                                </div>
+
+                                <button
+
+                                    class="comprar"
+
+                                    onclick="
+
+                                        comprar('${produto.id}')
+
+                                    "
+
+                                >
+
+                                    Comprar
+
+                                </button>
+
+                            `
+
+                        }
+
+                    </div>
+
+                `;
+
+            }
+
+        ).join("");
+
+}
+
+function renderizarInventario(){
+
+    const area =
+
+        document.getElementById(
+
+            "inventario"
+
+        );
+
+    if(inventario.length === 0){
+
+        area.innerHTML = `
+
+            <div
+
+                class="vazio"
+
+                style="grid-column:1/-1;"
+
+            >
+
+                Você ainda não comprou nenhum item.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    const itens =
+
+        inventario
+
+            .map(
+
+                id =>
+
+                    produtos.find(
+
+                        produto =>
+
+                            produto.id === id
+
+                    )
+
+            )
+
+            .filter(Boolean);
+
+    area.innerHTML =
+
+        itens.map(
+
+            produto => {
+
+                return `
+
+                    <div class="item-inventario">
+
+                        <div>
+
+                            ${produto.emoji}
+
+                        </div>
+
+                        <span>
+
+                            ${produto.nome}
+
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+        ).join("");
+
+}
+
+function mostrarMensagem(texto){
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagem"
+
+        );
+
+    elemento.textContent =
+
+        texto;
+
+    setTimeout(()=>{
+
+        if(
+
+            elemento.textContent ===
+
+            texto
+
+        ){
+
+            elemento.textContent =
+
+                "";
+
+        }
+
+    },3000);
+
+}
+
+function renderizar(){
+
+    document.getElementById(
+
+        "saldo"
+
+    ).textContent =
+
+        saldo;
+
+    renderizarProdutos();
+
+    renderizarInventario();
+
+}
+
+carregarLoja();
+
+renderizar();
+
+</script>
+
+</body>
+
+</html>
