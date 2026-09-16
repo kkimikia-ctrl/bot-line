@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Cuidados do Petton</title>
+
+<style>
+
+*{
+
+    box-sizing:border-box;
+
+}
+
+body{
+
+    margin:0;
+
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+
+    background:linear-gradient(180deg,#eff6ff,#fdf2f8,#f5f3ff);
+
+    color:#333;
+
+    min-height:100vh;
+
+}
+
+.container{
+
+    max-width:650px;
+
+    margin:auto;
+
+    padding:18px;
+
+}
+
+.topo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:18px;
+
+}
+
+.voltar{
+
+    width:42px;
+
+    height:42px;
+
+    border:0;
+
+    border-radius:14px;
+
+    background:white;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+    font-size:22px;
+
+}
+
+.titulo{
+
+    flex:1;
+
+}
+
+.titulo h1{
+
+    margin:0;
+
+    font-size:23px;
+
+}
+
+.titulo p{
+
+    margin:3px 0 0;
+
+    color:#777;
+
+    font-size:13px;
+
+}
+
+.card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:20px;
+
+    margin-bottom:16px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.07);
+
+}
+
+.pet{
+
+    text-align:center;
+
+}
+
+.pet-emoji{
+
+    font-size:78px;
+
+    line-height:1;
+
+    margin:5px 0 10px;
+
+}
+
+.nome{
+
+    font-size:25px;
+
+    font-weight:800;
+
+}
+
+.idade{
+
+    color:#777;
+
+    margin-top:5px;
+
+    font-size:14px;
+
+}
+
+.estado{
+
+    display:inline-block;
+
+    margin-top:12px;
+
+    padding:8px 15px;
+
+    border-radius:20px;
+
+    background:#dcfce7;
+
+    color:#166534;
+
+    font-weight:700;
+
+    font-size:13px;
+
+}
+
+.estado.atencao{
+
+    background:#fef3c7;
+
+    color:#92400e;
+
+}
+
+.estado.urgente{
+
+    background:#fee2e2;
+
+    color:#b91c1c;
+
+}
+
+.barra-area{
+
+    margin-top:14px;
+
+}
+
+.barra-topo{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:13px;
+
+    margin-bottom:7px;
+
+}
+
+.barra{
+
+    height:13px;
+
+    background:#eee;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.barra-interna{
+
+    height:100%;
+
+    width:0%;
+
+    border-radius:20px;
+
+    transition:width .4s;
+
+}
+
+.acoes{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+}
+
+.acao{
+
+    border:0;
+
+    border-radius:19px;
+
+    background:#fafafa;
+
+    padding:16px 10px;
+
+    min-height:125px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.acao:active{
+
+    transform:scale(.97);
+
+}
+
+.acao .emoji{
+
+    font-size:38px;
+
+    line-height:1;
+
+}
+
+.acao strong{
+
+    display:block;
+
+    margin-top:9px;
+
+    font-size:15px;
+
+}
+
+.acao span{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#888;
+
+    font-size:12px;
+
+    line-height:1.35;
+
+}
+
+.acao:disabled{
+
+    opacity:.45;
+
+}
+
+.mensagem{
+
+    text-align:center;
+
+    min-height:23px;
+
+    margin-top:14px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+    font-size:14px;
+
+}
+
+.lista{
+
+    display:grid;
+
+    gap:10px;
+
+}
+
+.item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:13px;
+
+    border-radius:17px;
+
+    background:#fafafa;
+
+}
+
+.item-emoji{
+
+    width:43px;
+
+    height:43px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:white;
+
+    font-size:25px;
+
+}
+
+.item-texto{
+
+    flex:1;
+
+}
+
+.item-texto strong{
+
+    display:block;
+
+    font-size:14px;
+
+}
+
+.item-texto span{
+
+    display:block;
+
+    color:#888;
+
+    font-size:12px;
+
+    margin-top:3px;
+
+}
+
+.ponto{
+
+    width:10px;
+
+    height:10px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+}
+
+.ponto.amarelo{
+
+    background:#f59e0b;
+
+}
+
+.ponto.vermelho{
+
+    background:#ef4444;
+
+}
+
+.aviso{
+
+    background:#eff6ff;
+
+    color:#1e40af;
+
+    border-radius:17px;
+
+    padding:14px;
+
+    font-size:13px;
+
+    line-height:1.55;
+
+}
+
+.rodape{
+
+    text-align:center;
+
+    color:#999;
+
+    font-size:12px;
+
+    padding:5px 0 25px;
+
+}
+
+@media(max-width:390px){
+
+    .acoes{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo">
+
+        <button class="voltar" onclick="history.back()">
+
+            ←
+
+        </button>
+
+        <div class="titulo">
+
+            <h1>🛁 Cuidados</h1>
+
+            <p>Seu Petton precisa de você</p>
+
+        </div>
+
+    </div>
+
+    <div id="conteudo">
+
+        <div class="card pet">
+
+            <div class="pet-emoji">🐾</div>
+
+            <p>Carregando...</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="petton.js"></script>
+
+<script>
+
+let dados = null;
+
+const CHAVE_CUIDADOS =
+
+    "petton_cuidados_v1";
+
+let cuidados = {
+
+    higiene: 80,
+
+    energia: 80,
+
+    humor: 80,
+
+    saude: 100,
+
+    sono: 80,
+
+    ultimoBanho: null,
+
+    ultimoSono: null,
+
+    ultimoLimpeza: null,
+
+    ultimaNecessidade: null,
+
+    cocô: 0,
+
+    xixi: 0
+
+};
+
+function carregarDados(){
+
+    try{
+
+        if(typeof Petton !== "undefined"){
+
+            if(Petton.carregar){
+
+                Petton.carregar();
+
+            }
+
+            if(Petton.dados){
+
+                dados = Petton.dados;
+
+            }
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+    if(!dados){
+
+        try{
+
+            const salvo =
+
+                localStorage.getItem(
+
+                    "petton_dados_v2"
+
+                ) ||
+
+                localStorage.getItem(
+
+                    "petton_dados_v1"
+
+                );
+
+            if(salvo){
+
+                dados = JSON.parse(salvo);
+
+            }
+
+        }catch(e){}
+
+    }
+
+    try{
+
+        const salvo =
+
+            localStorage.getItem(
+
+                CHAVE_CUIDADOS
+
+            );
+
+        if(salvo){
+
+            const dadosCuidados =
+
+                JSON.parse(salvo);
+
+            cuidados = {
+
+                ...cuidados,
+
+                ...dadosCuidados
+
+            };
+
+        }
+
+    }catch(e){}
+
+}
+
+function salvarCuidados(){
+
+    try{
+
+        localStorage.setItem(
+
+            CHAVE_CUIDADOS,
+
+            JSON.stringify(cuidados)
+
+        );
+
+    }catch(e){}
+
+}
+
+function idadeDias(){
+
+    if(!dados){
+
+        return 0;
+
+    }
+
+    try{
+
+        if(
+
+            typeof Petton !== "undefined" &&
+
+            Petton.idadeDias
+
+        ){
+
+            return Petton.idadeDias();
+
+        }
+
+    }catch(e){}
+
+    if(!dados.dataNascimento){
+
+        return 0;
+
+    }
+
+    const nascimento =
+
+        new Date(
+
+            dados.dataNascimento
+
+        );
+
+    return Math.max(
+
+        0,
+
+        Math.floor(
+
+            (new Date() - nascimento) /
+
+            86400000
+
+        )
+
+    );
+
+}
+
+function especieEmoji(){
+
+    if(!dados){
+
+        return "🐾";
+
+    }
+
+    const especie =
+
+        dados.especie || "gato";
+
+    if(especie === "cachorro"){
+
+        return "🐶";
+
+    }
+
+    if(especie === "coelho"){
+
+        return "🐰";
+
+    }
+
+    return "🐱";
+
+}
+
+function reduzirCuidados(){
+
+    if(!dados){
+
+        return;
+
+    }
+
+    const agora =
+
+        Date.now();
+
+    const chave =
+
+        "petton_ultima_atualizacao_cuidados";
+
+    let ultima = null;
+
+    try{
+
+        ultima =
+
+            Number(
+
+                localStorage.getItem(chave)
+
+            );
+
+    }catch(e){}
+
+    if(!ultima){
+
+        try{
+
+            localStorage.setItem(
+
+                chave,
+
+                String(agora)
+
+            );
+
+        }catch(e){}
+
+        return;
+
+    }
+
+    const horas =
+
+        Math.max(
+
+            0,
+
+            (agora - ultima) /
+
+            3600000
+
+        );
+
+    if(horas < 1){
+
+        return;
+
+    }
+
+    /*
+
+        O Petton continua vivendo mesmo
+
+        quando o jogador está fora.
+
+        As quedas são lentas para evitar
+
+        punição exagerada.
+
+    */
+
+    cuidados.higiene =
+
+        Math.max(
+
+            0,
+
+            cuidados.higiene -
+
+            horas * 2
+
+        );
+
+    cuidados.energia =
+
+        Math.max(
+
+            0,
+
+            cuidados.energia -
+
+            horas * 1.2
+
+        );
+
+    cuidados.humor =
+
+        Math.max(
+
+            0,
+
+            cuidados.humor -
+
+            horas * 1
+
+        );
+
+    cuidados.sono =
+
+        Math.max(
+
+            0,
+
+            cuidados.sono -
+
+            horas * .8
+
+        );
+
+    /*
+
+        Saúde só começa a cair quando
+
+        vários cuidados estão ruins.
+
+    */
+
+    const mediaRuim =
+
+        (
+
+            cuidados.higiene +
+
+            cuidados.energia +
+
+            cuidados.humor +
+
+            cuidados.sono
+
+        ) / 4;
+
+    if(mediaRuim < 35){
+
+        cuidados.saude =
+
+            Math.max(
+
+                25,
+
+                cuidados.saude -
+
+                horas * .5
+
+            );
+
+    }
+
+    /*
+
+        Pequenas necessidades podem aparecer
+
+        com o passar do tempo.
+
+    */
+
+    const idade =
+
+        idadeDias();
+
+    const intervalo =
+
+        idade <= 3 ? 2 :
+
+        idade <= 7 ? 3 :
+
+        idade <= 30 ? 5 :
+
+        7;
+
+    if(
+
+        !cuidados.ultimaNecessidade ||
+
+        (
+
+            agora -
+
+            new Date(
+
+                cuidados.ultimaNecessidade
+
+            ).getTime()
+
+        ) / 3600000 > intervalo
+
+    ){
+
+        if(Math.random() < .7){
+
+            cuidados.xixi += 1;
+
+        }
+
+        if(Math.random() < .45){
+
+            cuidados.cocô += 1;
+
+        }
+
+        cuidados.ultimaNecessidade =
+
+            new Date().toISOString();
+
+    }
+
+    try{
+
+        localStorage.setItem(
+
+            chave,
+
+            String(agora)
+
+        );
+
+    }catch(e){}
+
+    salvarCuidados();
+
+}
+
+function estadoGeral(){
+
+    const media =
+
+        (
+
+            cuidados.higiene +
+
+            cuidados.energia +
+
+            cuidados.humor +
+
+            cuidados.saude +
+
+            cuidados.sono
+
+        ) / 5;
+
+    if(media >= 75){
+
+        return {
+
+            texto:"🥰 Muito bem cuidado",
+
+            classe:""
+
+        };
+
+    }
+
+    if(media >= 50){
+
+        return {
+
+            texto:"🙂 Está tudo bem",
+
+            classe:""
+
+        };
+
+    }
+
+    if(media >= 30){
+
+        return {
+
+            texto:"😟 Precisa de atenção",
+
+            classe:"atencao"
+
+        };
+
+    }
+
+    return {
+
+        texto:"🥺 Precisa de cuidados",
+
+        classe:"urgente"
+
+    };
+
+}
+
+function barraHTML(nome,valor){
+
+    let classe =
+
+        "";
+
+    if(valor < 40){
+
+        classe = "vermelho";
+
+    }else if(valor < 70){
+
+        classe = "amarelo";
+
+    }
+
+    let cor =
+
+        "#22c55e";
+
+    if(valor < 40){
+
+        cor = "#ef4444";
+
+    }else if(valor < 70){
+
+        cor = "#f59e0b";
+
+    }
+
+    return `
+
+        <div class="barra-area">
+
+            <div class="barra-topo">
+
+                <span>${nome}</span>
+
+                <strong>
+
+                    ${Math.round(valor)}%
+
+                </strong>
+
+            </div>
+
+            <div class="barra">
+
+                <div
+
+                    class="barra-interna"
+
+                    style="
+
+                        width:${Math.max(
+
+                            0,
+
+                            Math.min(
+
+                                100,
+
+                                valor
+
+                            )
+
+                        )}%;
+
+                        background:${cor};
+
+                    "
+
+                ></div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function executarAcao(acao){
+
+    reduzirCuidados();
+
+    if(acao === "banho"){
+
+        cuidados.higiene =
+
+            Math.min(
+
+                100,
+
+                cuidados.higiene + 35
+
+            );
+
+        cuidados.humor =
+
+            Math.min(
+
+                100,
+
+                cuidados.humor + 5
+
+            );
+
+        cuidados.ultimoBanho =
+
+            new Date().toISOString();
+
+        mostrarMensagem(
+
+            "🛁 Banho tomado! O Petton está limpinho."
+
+        );
+
+    }
+
+    if(acao === "limpar"){
+
+        let quantidade =
+
+            cuidados.xixi +
+
+            cuidados.cocô;
+
+        if(quantidade <= 0){
+
+            mostrarMensagem(
+
+                "✨ O cantinho já está limpo!"
+
+            );
+
+        }else{
+
+            cuidados.xixi = 0;
+
+            cuidados.cocô = 0;
+
+            cuidados.higiene =
+
+                Math.min(
+
+                    100,
+
+                    cuidados.higiene + 15
+
+                );
+
+            cuidados.humor =
+
+                Math.min(
+
+                    100,
+
+                    cuidados.humor + 5
+
+                );
+
+            cuidados.ultimoLimpeza =
+
+                new Date().toISOString();
+
+            mostrarMensagem(
+
+                "🧹 Tudo limpinho novamente!"
+
+            );
+
+        }
+
+    }
+
+    if(acao === "carinho"){
+
+        cuidados.humor =
+
+            Math.min(
+
+                100,
+
+                cuidados.humor + 20
+
+            );
+
+        cuidados.energia =
+
+            Math.min(
+
+                100,
+
+                cuidados.energia + 5
+
+            );
+
+        mostrarMensagem(
+
+            "❤️ Seu Petton adorou o carinho!"
+
+        );
+
+    }
+
+    if(acao === "dormir"){
+
+        cuidados.energia =
+
+            Math.min(
+
+                100,
+
+                cuidados.energia + 30
+
+            );
+
+        cuidados.sono =
+
+            Math.min(
+
+                100,
+
+                cuidados.sono + 40
+
+            );
+
+        cuidados.humor =
+
+            Math.min(
+
+                100,
+
+                cuidados.humor + 5
+
+            );
+
+        cuidados.ultimoSono =
+
+            new Date().toISOString();
+
+        mostrarMensagem(
+
+            "😴 Seu Petton descansou bastante!"
+
+        );
+
+    }
+
+    if(acao === "brincar"){
+
+        if(cuidados.energia < 15){
+
+            mostrarMensagem(
+
+                "😴 Ele está cansado demais para brincar."
+
+            );
+
+            return;
+
+        }
+
+        cuidados.energia =
+
+            Math.max(
+
+                0,
+
+                cuidados.energia - 15
+
+            );
+
+        cuidados.sono =
+
+            Math.max(
+
+                0,
+
+                cuidados.sono - 8
+
+            );
+
+        cuidados.humor =
+
+            Math.min(
+
+                100,
+
+                cuidados.humor + 20
+
+            );
+
+        mostrarMensagem(
+
+            "🎾 Foi divertido! Seu Petton adorou brincar."
+
+        );
+
+    }
+
+    if(acao === "saude"){
+
+        if(
+
+            cuidados.higiene >= 60 &&
+
+            cuidados.energia >= 40
+
+        ){
+
+            cuidados.saude =
+
+                Math.min(
+
+                    100,
+
+                    cuidados.saude + 10
+
+                );
+
+            mostrarMensagem(
+
+                "❤️ Seu Petton está se recuperando."
+
+            );
+
+        }else{
+
+            mostrarMensagem(
+
+                "🩺 Primeiro cuide da alimentação, higiene e descanso."
+
+            );
+
+        }
+
+    }
+
+    salvarCuidados();
+
+    renderizar();
+
+}
+
+function mostrarMensagem(texto){
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagem"
+
+        );
+
+    if(elemento){
+
+        elemento.textContent =
+
+            texto;
+
+        setTimeout(()=>{
+
+            if(
+
+                elemento.textContent ===
+
+                texto
+
+            ){
+
+                elemento.textContent =
+
+                    "";
+
+            }
+
+        },3000);
+
+    }
+
+}
+
+function necessidadeTexto(){
+
+    const total =
+
+        cuidados.xixi +
+
+        cuidados.cocô;
+
+    if(total === 0){
+
+        return "O cantinho está limpo.";
+
+    }
+
+    if(total === 1){
+
+        return "Há uma pequena sujeirinha para limpar.";
+
+    }
+
+    return (
+
+        "Há " +
+
+        total +
+
+        " necessidades esperando limpeza."
+
+    );
+
+}
+
+function renderizar(){
+
+    carregarDados();
+
+    reduzirCuidados();
+
+    const area =
+
+        document.getElementById(
+
+            "conteudo"
+
+        );
+
+    if(!dados){
+
+        area.innerHTML = `
+
+            <div class="card pet">
+
+                <div class="pet-emoji">
+
+                    🐾
+
+                </div>
+
+                <h2>Nenhum Petton encontrado</h2>
+
+                <p>
+
+                    Comece a jornada do seu Petton
+
+                    primeiro.
+
+                </p>
+
+                <button
+
+                    class="acao"
+
+                    onclick="
+
+                        location.href='nascimento.html'
+
+                    "
+
+                >
+
+                    🥚 Começar
+
+                </button>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    const estado =
+
+        estadoGeral();
+
+    const temSujeira =
+
+        (
+
+            cuidados.xixi +
+
+            cuidados.cocô
+
+        ) > 0;
+
+    area.innerHTML = `
+
+        <div class="card pet">
+
+            <div class="pet-emoji">
+
+                ${especieEmoji()}
+
+            </div>
+
+            <div class="nome">
+
+                ${dados.nome || "Meu Petton"}
+
+            </div>
+
+            <div class="idade">
+
+                ${
+
+                    idadeDias() === 0
+
+                    ? "Ainda não nasceu"
+
+                    : idadeDias() +
+
+                      (
+
+                        idadeDias() === 1
+
+                        ? " dia"
+
+                        : " dias"
+
+                      ) +
+
+                      " de vida"
+
+                }
+
+            </div>
+
+            <div class="estado ${estado.classe}">
+
+                ${estado.texto}
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2 style="margin-top:0;">
+
+                ❤️ Estado do Petton
+
+            </h2>
+
+            ${barraHTML(
+
+                "🛁 Higiene",
+
+                cuidados.higiene
+
+            )}
+
+            ${barraHTML(
+
+                "⚡ Energia",
+
+                cuidados.energia
+
+            )}
+
+            ${barraHTML(
+
+                "😊 Humor",
+
+                cuidados.humor
+
+            )}
+
+            ${barraHTML(
+
+                "😴 Descanso",
+
+                cuidados.sono
+
+            )}
+
+            ${barraHTML(
+
+                "❤️ Saúde",
+
+                cuidados.saude
+
+            )}
+
+        </div>
+
+        <div class="card">
+
+            <h2 style="margin-top:0;">
+
+                🐾 Cuide dele
+
+            </h2>
+
+            <div class="acoes">
+
+                <button
+
+                    class="acao"
+
+                    onclick="executarAcao('banho')"
+
+                >
+
+                    <div class="emoji">
+
+                        🛁
+
+                    </div>
+
+                    <strong>
+
+                        Dar banho
+
+                    </strong>
+
+                    <span>
+
+                        Deixa o Petton limpinho.
+
+                    </span>
+
+                </button>
+
+                <button
+
+                    class="acao"
+
+                    onclick="executarAcao('limpar')"
+
+                >
+
+                    <div class="emoji">
+
+                        🧹
+
+                    </div>
+
+                    <strong>
+
+                        Limpar
+
+                    </strong>
+
+                    <span>
+
+                        ${necessidadeTexto()}
+
+                    </span>
+
+                </button>
+
+                <button
+
+                    class="acao"
+
+                    onclick="executarAcao('carinho')"
+
+                >
+
+                    <div class="emoji">
+
+                        ❤️
+
+                    </div>
+
+                    <strong>
+
+                        Dar carinho
+
+                    </strong>
+
+                    <span>
+
+                        Aumenta o humor.
+
+                    </span>
+
+                </button>
+
+                <button
+
+                    class="acao"
+
+                    onclick="executarAcao('brincar')"
+
+                >
+
+                    <div class="emoji">
+
+                        🎾
+
+                    </div>
+
+                    <strong>
+
+                        Brincar
+
+                    </strong>
+
+                    <span>
+
+                        Gasta energia, mas deixa feliz.
+
+                    </span>
+
+                </button>
+
+                <button
+
+                    class="acao"
+
+                    onclick="executarAcao('dormir')"
+
+                >
+
+                    <div class="emoji">
+
+                        😴
+
+                    </div>
+
+                    <strong>
+
+                        Colocar para dormir
+
+                    </strong>
+
+                    <span>
+
+                        Recupera energia e descanso.
+
+                    </span>
+
+                </button>
+
+                <button
+
+                    class="acao"
+
+                    onclick="executarAcao('saude')"
+
+                >
+
+                    <div class="emoji">
+
+                        🩺
+
+                    </div>
+
+                    <strong>
+
+                        Cuidar da saúde
+
+                    </strong>
+
+                    <span>
+
+                        Ajuda quando ele está debilitado.
+
+                    </span>
+
+                </button>
+
+            </div>
+
+            <div
+
+                id="mensagem"
+
+                class="mensagem"
+
+            ></div>
+
+        </div>
+
+        <div class="card">
+
+            <h2 style="margin-top:0;">
+
+                🧹 Necessidades
+
+            </h2>
+
+            <div class="lista">
+
+                <div class="item">
+
+                    <div class="item-emoji">
+
+                        💧
+
+                    </div>
+
+                    <div class="item-texto">
+
+                        <strong>
+
+                            Xixi
+
+                        </strong>
+
+                        <span>
+
+                            ${cuidados.xixi > 0
+
+                                ? cuidados.xixi +
+
+                                  " para limpar"
+
+                                : "Tudo limpo"
+
+                            }
+
+                        </span>
+
+                    </div>
+
+                    <div
+
+                        class="ponto ${
+
+                            cuidados.xixi > 0
+
+                            ? "amarelo"
+
+                            : ""
+
+                        }"
+
+                    ></div>
+
+                </div>
+
+                <div class="item">
+
+                    <div class="item-emoji">
+
+                        💩
+
+                    </div>
+
+                    <div class="item-texto">
+
+                        <strong>
+
+                            Cocô
+
+                        </strong>
+
+                        <span>
+
+                            ${cuidados.cocô > 0
+
+                                ? cuidados.cocô +
+
+                                  " para limpar"
+
+                                : "Tudo limpo"
+
+                            }
+
+                        </span>
+
+                    </div>
+
+                    <div
+
+                        class="ponto ${
+
+                            cuidados.cocô > 0
+
+                            ? "amarelo"
+
+                            : ""
+
+                        }"
+
+                    ></div>
+
+                </div>
+
+                <div class="item">
+
+                    <div class="item-emoji">
+
+                        🧼
+
+                    </div>
+
+                    <div class="item-texto">
+
+                        <strong>
+
+                            Higiene
+
+                        </strong>
+
+                        <span>
+
+                            ${
+
+                                cuidados.higiene >= 70
+
+                                ? "Muito boa"
+
+                                : cuidados.higiene >= 40
+
+                                ? "Precisa de atenção"
+
+                                : "Precisa de banho"
+
+                            }
+
+                        </span>
+
+                    </div>
+
+                    <div
+
+                        class="ponto ${
+
+                            cuidados.higiene < 40
+
+                            ? "vermelho"
+
+                            : cuidados.higiene < 70
+
+                            ? "amarelo"
+
+                            : ""
+
+                        }"
+
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="aviso">
+
+                💡 <strong>Importante:</strong><br><br>
+
+                Seu Petton continua vivendo enquanto
+
+                você está fora. Se passar muitos dias
+
+                sem cuidados, ele pode ficar com fome,
+
+                cansado, triste e sujo.<br><br>
+
+                Mas não se preocupe: ele não morre.
+
+                Quando você voltar, poderá cuidar dele
+
+                e ajudá-lo a se recuperar. ❤️
+
+            </div>
+
+        </div>
+
+        <div class="rodape">
+
+            Cuidar todos os dias faz seu Petton confiar ainda mais em você. 🐾
+
+        </div>
+
+    `;
+
+}
+
+renderizar();
+
+setInterval(
+
+    renderizar,
+
+    10000
+
+);
+
+</script>
+
+</body>
+
+</html>
