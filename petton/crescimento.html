@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Crescimento do Petton</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+}
+
+body {
+
+    margin: 0;
+
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    background: linear-gradient(#fffaf5, #ead9c8);
+
+    color: #3d2c25;
+
+}
+
+header {
+
+    text-align: center;
+
+    padding: 22px 15px 10px;
+
+}
+
+header h1 {
+
+    margin: 0;
+
+    font-size: 26px;
+
+}
+
+header p {
+
+    margin: 7px 0 0;
+
+    color: #806b5f;
+
+}
+
+.card {
+
+    width: calc(100% - 30px);
+
+    max-width: 500px;
+
+    margin: 15px auto;
+
+    padding: 20px;
+
+    background: rgba(255,255,255,.9);
+
+    border-radius: 24px;
+
+    box-shadow: 0 8px 25px rgba(60,40,30,.12);
+
+}
+
+.petton-box {
+
+    text-align: center;
+
+    padding: 15px 0 10px;
+
+}
+
+.petton-emoji {
+
+    font-size: 105px;
+
+    line-height: 1;
+
+    display: inline-block;
+
+    animation: respirar 3s infinite ease-in-out;
+
+}
+
+@keyframes respirar {
+
+    0%,100% {
+
+        transform: translateY(0) scale(1);
+
+    }
+
+    50% {
+
+        transform: translateY(-5px) scale(1.03);
+
+    }
+
+}
+
+.nome {
+
+    margin-top: 12px;
+
+    font-size: 25px;
+
+    font-weight: 800;
+
+}
+
+.fase {
+
+    margin-top: 5px;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+}
+
+.idade {
+
+    margin-top: 5px;
+
+    color: #806b5f;
+
+}
+
+.progresso-titulo {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+.barra {
+
+    height: 13px;
+
+    background: #eadfd6;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+}
+
+.progresso {
+
+    height: 100%;
+
+    width: 0%;
+
+    border-radius: 20px;
+
+    transition: width .5s ease;
+
+    background: #78aa76;
+
+}
+
+.info-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(2,1fr);
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+.info {
+
+    background: #faf5ef;
+
+    border-radius: 15px;
+
+    padding: 12px;
+
+}
+
+.info span {
+
+    display: block;
+
+    font-size: 12px;
+
+    color: #806b5f;
+
+}
+
+.info strong {
+
+    display: block;
+
+    margin-top: 4px;
+
+    font-size: 15px;
+
+}
+
+.timeline {
+
+    margin-top: 10px;
+
+}
+
+.etapa {
+
+    position: relative;
+
+    display: flex;
+
+    gap: 13px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #eee3da;
+
+}
+
+.etapa:last-child {
+
+    border-bottom: 0;
+
+}
+
+.icone {
+
+    width: 45px;
+
+    height: 45px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #f6eee7;
+
+    border-radius: 50%;
+
+    font-size: 24px;
+
+}
+
+.etapa-conteudo {
+
+    flex: 1;
+
+}
+
+.etapa-conteudo strong {
+
+    display: block;
+
+    font-size: 15px;
+
+}
+
+.etapa-conteudo span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #806b5f;
+
+    font-size: 13px;
+
+}
+
+.etapa.atual .icone {
+
+    box-shadow: 0 0 0 3px rgba(120,170,118,.25);
+
+}
+
+.etapa.atual strong {
+
+    color: #548052;
+
+}
+
+.botao {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 15px;
+
+    border: 0;
+
+    border-radius: 17px;
+
+    background: white;
+
+    box-shadow: 0 5px 15px rgba(60,40,30,.1);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #4c382f;
+
+}
+
+.botao:active {
+
+    transform: scale(.98);
+
+}
+
+.aviso {
+
+    text-align: center;
+
+    margin-top: 15px;
+
+    color: #8b7467;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>🌱 Crescimento</h1>
+
+    <p>
+
+        Acompanhe cada fase da vida do seu Petton
+
+    </p>
+
+</header>
+
+<div class="card">
+
+    <div class="petton-box">
+
+        <div
+
+            class="petton-emoji"
+
+            id="pettonEmoji"
+
+        >
+
+            🐾
+
+        </div>
+
+        <div
+
+            class="nome"
+
+            id="nome"
+
+        >
+
+            Petton
+
+        </div>
+
+        <div
+
+            class="fase"
+
+            id="fase"
+
+        >
+
+            —
+
+        </div>
+
+        <div
+
+            class="idade"
+
+            id="idade"
+
+        >
+
+            —
+
+        </div>
+
+    </div>
+
+    <div>
+
+        <div class="progresso-titulo">
+
+            <span>
+
+                Progresso da fase
+
+            </span>
+
+            <span id="progressoTexto">
+
+                0%
+
+            </span>
+
+        </div>
+
+        <div class="barra">
+
+            <div
+
+                class="progresso"
+
+                id="progresso"
+
+            ></div>
+
+        </div>
+
+    </div>
+
+    <div class="info-grid">
+
+        <div class="info">
+
+            <span>
+
+                🎂 Nascimento
+
+            </span>
+
+            <strong id="nascimento">
+
+                —
+
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+
+                🧬 Espécie
+
+            </span>
+
+            <strong id="especie">
+
+                —
+
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+
+                ✨ Raridade
+
+            </span>
+
+            <strong id="raridade">
+
+                —
+
+            </strong>
+
+        </div>
+
+        <div class="info">
+
+            <span>
+
+                📅 Próxima fase
+
+            </span>
+
+            <strong id="proxima">
+
+                —
+
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2 style="margin-top:0;">
+
+        🐾 Fases da vida
+
+    </h2>
+
+    <div class="timeline">
+
+        <div
+
+            class="etapa"
+
+            id="etapaBebe"
+
+        >
+
+            <div class="icone">
+
+                🐣
+
+            </div>
+
+            <div class="etapa-conteudo">
+
+                <strong>
+
+                    Recém-nascido
+
+                </strong>
+
+                <span>
+
+                    Dias 0–3
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div
+
+            class="etapa"
+
+            id="etapaPequeno"
+
+        >
+
+            <div class="icone">
+
+                🐾
+
+            </div>
+
+            <div class="etapa-conteudo">
+
+                <strong>
+
+                    Bebê
+
+                </strong>
+
+                <span>
+
+                    Dias 4–7
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div
+
+            class="etapa"
+
+            id="etapaFilhote"
+
+        >
+
+            <div class="icone">
+
+                🐱
+
+            </div>
+
+            <div class="etapa-conteudo">
+
+                <strong>
+
+                    Filhote
+
+                </strong>
+
+                <span>
+
+                    Dias 8–30
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div
+
+            class="etapa"
+
+            id="etapaJovem"
+
+        >
+
+            <div class="icone">
+
+                🐈
+
+            </div>
+
+            <div class="etapa-conteudo">
+
+                <strong>
+
+                    Jovem
+
+                </strong>
+
+                <span>
+
+                    Dias 31–90
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div
+
+            class="etapa"
+
+            id="etapaAdulto"
+
+        >
+
+            <div class="icone">
+
+                ❤️
+
+            </div>
+
+            <div class="etapa-conteudo">
+
+                <strong>
+
+                    Adulto
+
+                </strong>
+
+                <span>
+
+                    A partir de 91 dias
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <button
+
+        class="botao"
+
+        onclick="location.href='bebe.html'"
+
+    >
+
+        🐾 Ver meu Petton
+
+    </button>
+
+    <button
+
+        class="botao"
+
+        onclick="location.href='index.html'"
+
+    >
+
+        🏠 Voltar para o quarto
+
+    </button>
+
+</div>
+
+<div class="aviso">
+
+    O crescimento acontece com o tempo real.
+
+    <br>
+
+    Seu Petton não precisa ganhar XP para crescer. ❤️
+
+</div>
+
+<script src="petton.js"></script>
+
+<script>
+
+function idadeEmDias() {
+
+    const nascimento =
+
+        new Date(
+
+            Petton.dados.dateNascimento
+
+        );
+
+    const agora =
+
+        new Date();
+
+    const diferenca =
+
+        agora.getTime() -
+
+        nascimento.getTime();
+
+    return Math.max(
+
+        0,
+
+        diferenca / 86400000
+
+    );
+
+}
+
+/* =========================
+
+   FASE
+
+========================= */
+
+function descobrirFase(dias) {
+
+    if (dias < 4) {
+
+        return {
+
+            nome: "Recém-nascido",
+
+            emoji: "🐣",
+
+            inicio: 0,
+
+            fim: 4
+
+        };
+
+    }
+
+    if (dias < 8) {
+
+        return {
+
+            nome: "Bebê",
+
+            emoji: "🐾",
+
+            inicio: 4,
+
+            fim: 8
+
+        };
+
+    }
+
+    if (dias < 31) {
+
+        return {
+
+            nome: "Filhote",
+
+            emoji: "🐱",
+
+            inicio: 8,
+
+            fim: 31
+
+        };
+
+    }
+
+    if (dias < 91) {
+
+        return {
+
+            nome: "Jovem",
+
+            emoji: "🐈",
+
+            inicio: 31,
+
+            fim: 91
+
+        };
+
+    }
+
+    return {
+
+        nome: "Adulto",
+
+        emoji: "❤️",
+
+        inicio: 91,
+
+        fim: 180
+
+    };
+
+}
+
+/* =========================
+
+   ESPÉCIE
+
+========================= */
+
+function nomeEspecie(especie) {
+
+    if (especie === "gato") {
+
+        return "🐱 Gato";
+
+    }
+
+    if (especie === "cachorro") {
+
+        return "🐶 Cachorro";
+
+    }
+
+    if (especie === "coelho") {
+
+        return "🐰 Coelho";
+
+    }
+
+    return "🐾 Petton";
+
+}
+
+function emojiEspecie(especie) {
+
+    if (especie === "gato") {
+
+        return "🐱";
+
+    }
+
+    if (especie === "cachorro") {
+
+        return "🐶";
+
+    }
+
+    if (especie === "coelho") {
+
+        return "🐰";
+
+    }
+
+    return "🐾";
+
+}
+
+/* =========================
+
+   RARIDADE
+
+========================= */
+
+function nomeRaridade(raridade) {
+
+    if (raridade === "especial") {
+
+        return "✨ Especial";
+
+    }
+
+    if (raridade === "raro") {
+
+        return "💎 Raro";
+
+    }
+
+    if (raridade === "incomum") {
+
+        return "⭐ Incomum";
+
+    }
+
+    return "🌱 Comum";
+
+}
+
+/* =========================
+
+   DATA
+
+========================= */
+
+function formatarData(data) {
+
+    if (!data) {
+
+        return "Ainda não nasceu";
+
+    }
+
+    const d =
+
+        new Date(data);
+
+    if (isNaN(d.getTime())) {
+
+        return "—";
+
+    }
+
+    return d.toLocaleDateString(
+
+        "pt-BR"
+
+    );
+
+}
+
+/* =========================
+
+   PRÓXIMA FASE
+
+========================= */
+
+function proximaFase(dias) {
+
+    if (dias < 4) {
+
+        return "Bebê em " +
+
+            formatarTempo(4 - dias);
+
+    }
+
+    if (dias < 8) {
+
+        return "Filhote em " +
+
+            formatarTempo(8 - dias);
+
+    }
+
+    if (dias < 31) {
+
+        return "Jovem em " +
+
+            formatarTempo(31 - dias);
+
+    }
+
+    if (dias < 91) {
+
+        return "Adulto em " +
+
+            formatarTempo(91 - dias);
+
+    }
+
+    return "Fase adulta";
+
+}
+
+/* =========================
+
+   TEMPO
+
+========================= */
+
+function formatarTempo(dias) {
+
+    if (dias < 1) {
+
+        const horas =
+
+            Math.max(
+
+                1,
+
+                Math.ceil(
+
+                    dias * 24
+
+                )
+
+            );
+
+        return horas + "h";
+
+    }
+
+    return Math.ceil(dias) + " dias";
+
+}
+
+/* =========================
+
+   ATUALIZAR
+
+========================= */
+
+function atualizar() {
+
+    if (
+
+        !Petton ||
+
+        !Petton.dados
+
+    ) {
+
+        return;
+
+    }
+
+    const dados =
+
+        Petton.dados;
+
+    if (
+
+        dados.fase === "ovo" ||
+
+        !dados.dateNascimento
+
+    ) {
+
+        document.getElementById(
+
+            "pettonEmoji"
+
+        ).textContent = "🥚";
+
+        document.getElementById(
+
+            "nome"
+
+        ).textContent =
+
+            dados.nome || "Petton";
+
+        document.getElementById(
+
+            "fase"
+
+        ).textContent =
+
+            "Ainda no ovo";
+
+        document.getElementById(
+
+            "idade"
+
+        ).textContent =
+
+            "Aguardando nascimento";
+
+        document.getElementById(
+
+            "proxima"
+
+        ).textContent =
+
+            "Nascimento";
+
+        return;
+
+    }
+
+    const dias =
+
+        idadeEmDias();
+
+    const fase =
+
+        descobrirFase(dias);
+
+    /*
+
+     * NOME
+
+     */
+
+    document.getElementById(
+
+        "nome"
+
+    ).textContent =
+
+        dados.nome;
+
+    /*
+
+     * FASE
+
+     */
+
+    document.getElementById(
+
+        "fase"
+
+    ).textContent =
+
+        fase.nome;
+
+    /*
+
+     * IDADE
+
+     */
+
+    const diasInteiros =
+
+        Math.floor(dias);
+
+    document.getElementById(
+
+        "idade"
+
+    ).textContent =
+
+        diasInteiros === 0
+
+        ? "Nasceu hoje ❤️"
+
+        : "Idade: " +
+
+          diasInteiros +
+
+          (
+
+            diasInteiros === 1
+
+            ? " dia"
+
+            : " dias"
+
+          );
+
+    /*
+
+     * EMOJI
+
+     */
+
+    document.getElementById(
+
+        "pettonEmoji"
+
+    ).textContent =
+
+        fase.emoji;
+
+    /*
+
+     * NASCIMENTO
+
+     */
+
+    document.getElementById(
+
+        "nascimento"
+
+    ).textContent =
+
+        formatarData(
+
+            dados.dateNascimento
+
+        );
+
+    /*
+
+     * ESPÉCIE
+
+     */
+
+    document.getElementById(
+
+        "especie"
+
+    ).textContent =
+
+        nomeEspecie(
+
+            dados.especie
+
+        );
+
+    /*
+
+     * RARIDADE
+
+     */
+
+    document.getElementById(
+
+        "raridade"
+
+    ).textContent =
+
+        nomeRaridade(
+
+            dados.caracteristicas &&
+
+            dados.caracteristicas.raridade
+
+        );
+
+    /*
+
+     * PRÓXIMA FASE
+
+     */
+
+    document.getElementById(
+
+        "proxima"
+
+    ).textContent =
+
+        proximaFase(dias);
+
+    /*
+
+     * PROGRESSO
+
+     */
+
+    let porcentagem;
+
+    if (dias >= 91) {
+
+        porcentagem = 100;
+
+    } else {
+
+        porcentagem =
+
+            (
+
+                (dias - fase.inicio) /
+
+                (fase.fim - fase.inicio)
+
+            ) * 100;
+
+        porcentagem =
+
+            Math.max(
+
+                0,
+
+                Math.min(
+
+                    100,
+
+                    porcentagem
+
+                )
+
+            );
+
+    }
+
+    document.getElementById(
+
+        "progresso"
+
+    ).style.width =
+
+        porcentagem + "%";
+
+    document.getElementById(
+
+        "progressoTexto"
+
+    ).textContent =
+
+        Math.floor(
+
+            porcentagem
+
+        ) + "%";
+
+    /*
+
+     * DESTACA FASE ATUAL
+
+     */
+
+    document
+
+        .querySelectorAll(".etapa")
+
+        .forEach(
+
+            elemento => {
+
+                elemento.classList.remove(
+
+                    "atual"
+
+                );
+
+            }
+
+        );
+
+    if (dias < 4) {
+
+        document
+
+            .getElementById(
+
+                "etapaBebe"
+
+            )
+
+            .classList.add(
+
+                "atual"
+
+            );
+
+    } else if (dias < 8) {
+
+        document
+
+            .getElementById(
+
+                "etapaPequeno"
+
+            )
+
+            .classList.add(
+
+                "atual"
+
+            );
+
+    } else if (dias < 31) {
+
+        document
+
+            .getElementById(
+
+                "etapaFilhote"
+
+            )
+
+            .classList.add(
+
+                "atual"
+
+            );
+
+    } else if (dias < 91) {
+
+        document
+
+            .getElementById(
+
+                "etapaJovem"
+
+            )
+
+            .classList.add(
+
+                "atual"
+
+            );
+
+    } else {
+
+        document
+
+            .getElementById(
+
+                "etapaAdulto"
+
+            )
+
+            .classList.add(
+
+                "atual"
+
+            );
+
+    }
+
+}
+
+/* =========================
+
+   INÍCIO
+
+========================= */
+
+atualizar();
+
+setInterval(
+
+    atualizar,
+
+    10000
+
+);
+
+</script>
+
+</body>
+
+</html>
