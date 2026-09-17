@@ -52,11 +52,11 @@ body {
 
 }
 
-/* ==============================
+/* =========================================
 
    TOPO
 
-============================== */
+========================================= */
 
 .topo {
 
@@ -106,11 +106,11 @@ body {
 
 }
 
-/* ==============================
+/* =========================================
 
    CENA
 
-============================== */
+========================================= */
 
 .cena {
 
@@ -128,11 +128,11 @@ body {
 
 }
 
-/* ==============================
+/* =========================================
 
    TEXTOS
 
-============================== */
+========================================= */
 
 #titulo {
 
@@ -164,11 +164,11 @@ body {
 
 }
 
-/* ==============================
+/* =========================================
 
    OVO
 
-============================== */
+========================================= */
 
 #ovo {
 
@@ -220,8 +220,6 @@ body {
 
     z-index: 10;
 
-    opacity: 1;
-
 }
 
 /* brilho */
@@ -252,11 +250,11 @@ body {
 
 }
 
-/* ==============================
+/* =========================================
 
    RACHADURAS
 
-============================== */
+========================================= */
 
 .risco {
 
@@ -314,11 +312,11 @@ body {
 
 }
 
-/* ==============================
+/* =========================================
 
    RACHANDO
 
-============================== */
+========================================= */
 
 body.rachando .risco {
 
@@ -388,21 +386,23 @@ body.rachando #ovo {
 
 }
 
-/* ==============================
+/* =========================================
 
-   ABRINDO
+   OVO ABRINDO
 
-============================== */
+========================================= */
 
 body.abrindo #ovo {
 
     animation:
 
-        abrir .9s forwards;
+        abrirOvo 1s
+
+        forwards;
 
 }
 
-@keyframes abrir {
+@keyframes abrirOvo {
 
     0% {
 
@@ -442,21 +442,23 @@ body.abrindo #ovo {
 
 }
 
-/* ==============================
+/* =========================================
 
    PETTON
 
-============================== */
+========================================= */
 
 #petton {
 
+    display: none;
+
     position: absolute;
+
+    width: 145px;
 
     left: 50%;
 
     top: 50%;
-
-    width: 145px;
 
     transform:
 
@@ -465,8 +467,6 @@ body.abrindo #ovo {
         scale(.2);
 
     opacity: 0;
-
-    display: none;
 
     z-index: 5;
 
@@ -482,11 +482,11 @@ body.abrindo #ovo {
 
 }
 
-/* ==============================
+/* =========================================
 
-   PETTON NASCE
+   PETTON NASCENDO
 
-============================== */
+========================================= */
 
 body.nascido #ovo {
 
@@ -500,7 +500,11 @@ body.nascido #petton {
 
     animation:
 
-        nascer 1.3s ease-out forwards;
+        nascer 1.3s
+
+        ease-out
+
+        forwards;
 
 }
 
@@ -514,7 +518,7 @@ body.nascido #petton {
 
             translate(-50%, -50%)
 
-            scale(.2);
+            scale(.20);
 
     }
 
@@ -526,17 +530,17 @@ body.nascido #petton {
 
             translate(-50%, -50%)
 
-            scale(.6);
+            scale(.60);
 
     }
 
 }
 
-/* ==============================
+/* =========================================
 
    FINAL
 
-============================== */
+========================================= */
 
 #final {
 
@@ -562,11 +566,11 @@ body.finalizado #final {
 
 }
 
-/* ==============================
+/* =========================================
 
    BOTÃO
 
-============================== */
+========================================= */
 
 #continuar {
 
@@ -605,6 +609,42 @@ body.finalizado #continuar {
     opacity: 1;
 
     pointer-events: auto;
+
+}
+
+/* =========================================
+
+   CELULAR
+
+========================================= */
+
+@media (max-width: 380px) {
+
+    #titulo {
+
+        font-size: 22px;
+
+    }
+
+    #subtitulo {
+
+        font-size: 13px;
+
+    }
+
+    #petton {
+
+        width: 135px;
+
+    }
+
+    #ovo {
+
+        width: 115px;
+
+        height: 150px;
+
+    }
 
 }
 
@@ -650,11 +690,11 @@ body.finalizado #continuar {
 
 </div>
 
-<!-- ==============================
+<!-- =====================================
 
      OVO
 
-============================== -->
+===================================== -->
 
 <div id="ovo">
 
@@ -666,11 +706,11 @@ body.finalizado #continuar {
 
 </div>
 
-<!-- ==============================
+<!-- =====================================
 
-     PETTON
+     PETTON ORIGINAL
 
-============================== -->
+===================================== -->
 
 <img
 
@@ -700,59 +740,47 @@ body.finalizado #continuar {
 
 </div>
 
+<!-- =====================================
+
+     CARREGA O SISTEMA DO PETTON
+
+===================================== -->
+
+<script src="petton.js"></script>
+
 <script>
 
 /*
 
-==================================================
+====================================================
 
-IMPORTANTE
+NASCIMENTO REAL
 
-==================================================
+====================================================
 
-O nascimento NÃO depende do petton.js
+O ovo é apenas a parte visual.
 
-para executar a animação.
+Quando o Petton aparece:
 
-Primeiro fazemos toda a animação.
+1. Petton.nascer() é executado.
 
-Depois tentamos registrar o nascimento.
+2. O nascimento é gravado no localStorage.
 
-==================================================
+3. A fase deixa de ser "ovo".
+
+4. bebe.html consegue reconhecer o Petton.
+
+====================================================
 
 */
 
-/* ==============================
+/* =========================================
 
-   ELEMENTOS
+   5 SEGUNDOS
 
-============================== */
+   OVO COMEÇA A RACHAR
 
-var ovo =
-
-    document.getElementById("ovo");
-
-var petton =
-
-    document.getElementById("petton");
-
-var titulo =
-
-    document.getElementById("titulo");
-
-var subtitulo =
-
-    document.getElementById("subtitulo");
-
-var final =
-
-    document.getElementById("final");
-
-/* ==============================
-
-   OVO
-
-============================== */
+========================================= */
 
 setTimeout(function() {
 
@@ -762,17 +790,23 @@ setTimeout(function() {
 
     );
 
-    subtitulo.textContent =
+    document.getElementById(
+
+        "subtitulo"
+
+    ).textContent =
 
         "O ovo começou a rachar...";
 
 }, 5000);
 
-/* ==============================
+/* =========================================
 
-   ABRINDO
+   8 SEGUNDOS
 
-============================== */
+   OVO ABRE
+
+========================================= */
 
 setTimeout(function() {
 
@@ -782,17 +816,23 @@ setTimeout(function() {
 
     );
 
-    subtitulo.textContent =
+    document.getElementById(
+
+        "subtitulo"
+
+    ).textContent =
 
         "Está nascendo!";
 
 }, 8000);
 
-/* ==============================
+/* =========================================
+
+   9 SEGUNDOS
 
    PETTON APARECE
 
-============================== */
+========================================= */
 
 setTimeout(function() {
 
@@ -802,33 +842,33 @@ setTimeout(function() {
 
     );
 
-    titulo.textContent =
+    document.getElementById(
+
+        "titulo"
+
+    ).textContent =
 
         "🐾 Seu Petton nasceu!";
 
-    subtitulo.textContent =
+    document.getElementById(
+
+        "subtitulo"
+
+    ).textContent =
 
         "Bem-vindo ao mundo!";
 
 }, 9000);
 
-/* ==============================
+/* =========================================
 
-   REGISTRAR NASCIMENTO
+   9,2 SEGUNDOS
 
-============================== */
+   REGISTRA O NASCIMENTO
+
+========================================= */
 
 setTimeout(function() {
-
-    /*
-
-       Tenta registrar no sistema.
-
-       Se petton.js não estiver disponível,
-
-       a animação continua normalmente.
-
-    */
 
     try {
 
@@ -844,7 +884,15 @@ setTimeout(function() {
 
             console.log(
 
-                "Nascimento registrado."
+                "🐾 NASCIMENTO REGISTRADO!"
+
+            );
+
+        } else {
+
+            console.error(
+
+                "Petton.nascer() não está disponível."
 
             );
 
@@ -852,9 +900,9 @@ setTimeout(function() {
 
     } catch (erro) {
 
-        console.log(
+        console.error(
 
-            "Registro será tentado novamente.",
+            "Erro ao registrar nascimento:",
 
             erro
 
@@ -862,31 +910,57 @@ setTimeout(function() {
 
     }
 
+}, 9200);
+
+/* =========================================
+
+   11 SEGUNDOS
+
+   FINAL
+
+========================================= */
+
+setTimeout(function() {
+
     document.body.classList.add(
 
         "finalizado"
 
     );
 
-    final.textContent =
+    document.getElementById(
+
+        "titulo"
+
+    ).textContent =
+
+        "🐾 Nasceu!";
+
+    document.getElementById(
+
+        "subtitulo"
+
+    ).textContent =
+
+        "Seu novo Petton está pronto.";
+
+    document.getElementById(
+
+        "final"
+
+    ).textContent =
 
         "💕 Seu Petton nasceu!";
 
 }, 11000);
 
-/* ==============================
+/* =========================================
 
-   CONTINUAR
+   CONHECER MEU PETTON
 
-============================== */
+========================================= */
 
 function continuar() {
-
-    /*
-
-       Vai diretamente para bebe.html.
-
-    */
 
     window.location.href =
 
@@ -894,11 +968,11 @@ function continuar() {
 
 }
 
-/* ==============================
+/* =========================================
 
    VOLTAR
 
-============================== */
+========================================= */
 
 function voltar() {
 
