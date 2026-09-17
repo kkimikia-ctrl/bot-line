@@ -3,16 +3,73 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
 
-```
+<meta charset="UTF-8">
+
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Petton</title>
 
 <link rel="stylesheet" href="petton.css">
-```
+
+<style>
+
+/* =====================================================
+   IMAGEM REAL DO PETTON
+===================================================== */
+
+.petton-imagem-container {
+    position: relative;
+    width: 100%;
+    min-height: 230px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 20px;
+}
+
+.petton-imagem {
+    display: block;
+    width: 190px;
+    max-width: 70%;
+    height: auto;
+    object-fit: contain;
+    position: relative;
+    z-index: 3;
+    animation: pettonRespirar 2.5s ease-in-out infinite;
+}
+
+.petton-imagem-sombra {
+    position: absolute;
+    bottom: 18px;
+    width: 130px;
+    height: 24px;
+    background: rgba(0,0,0,0.18);
+    border-radius: 50%;
+    filter: blur(5px);
+    z-index: 2;
+}
+
+@keyframes pettonRespirar {
+
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+
+}
+
+/* Esconde o Petton antigo desenhado por CSS */
+
+#pettonContainer {
+    display: none !important;
+}
+
+</style>
 
 </head>
 
@@ -20,586 +77,697 @@
 
 <div class="app">
 
-```
 <!-- =====================================================
      TOPO
-====================================================== -->
+===================================================== -->
 
 <header class="topo">
 
-    <div class="marca">
+```
+<div class="marca">
 
-        <div class="logo-petton">🐾</div>
+    <div class="logo-petton">
+        🐾
+    </div>
 
-        <div>
+    <div>
 
-            <div class="titulo">
-                Petton
-            </div>
+        <div class="titulo">
+            Petton
+        </div>
 
-            <div class="subtitulo"
-                 id="fasePetton">
-                Meu Petton
-            </div>
+        <div class="subtitulo"
+             id="fasePetton">
+            Meu Petton
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="moedas">
+
+    <span>🪙</span>
+
+    <strong id="moedas">
+        100
+    </strong>
+
+</div>
+```
+
+</header>
+
+<!-- =====================================================
+     IDENTIDADE
+===================================================== -->
+
+<section class="identidade">
+
+```
+<div>
+
+    <div class="nome"
+         id="nomePetton">
+        Mimi
+    </div>
+
+    <div class="idade"
+         id="idadePetton">
+        Ainda no ovo
+    </div>
+
+</div>
+
+
+<button class="btn-editar"
+        onclick="renomear()">
+
+    ✏️
+
+</button>
+```
+
+</section>
+
+<!-- =====================================================
+     QUARTO
+===================================================== -->
+
+<main class="quarto">
+
+```
+<div class="janela">
+
+    <div class="ceu"></div>
+
+    <div class="sol"></div>
+
+    <div class="nuvem nuvem1"></div>
+
+    <div class="nuvem nuvem2"></div>
+
+    <div class="montanhas"></div>
+
+</div>
+
+
+<div class="parede-decoracao">
+
+    <div class="quadrinho">
+        🐾
+    </div>
+
+    <div class="quadrinho pequeno">
+        ❤️
+    </div>
+
+</div>
+
+
+<div class="tapete"></div>
+
+
+<!-- =================================================
+     ÁREA DO PETTON
+================================================== -->
+
+<div class="area-petton">
+
+
+    <!-- OVO -->
+
+    <div id="ovoContainer"
+         class="ovo-container">
+
+        <div id="ovo"
+             class="ovo"
+             onclick="interagirOvo()">
+
+            <div class="ovo-brilho"></div>
+
+            <div class="ovo-mancha mancha1"></div>
+
+            <div class="ovo-mancha mancha2"></div>
+
+            <div class="rachadura rachadura1"></div>
+
+            <div class="rachadura rachadura2"></div>
+
+            <div class="rachadura rachadura3"></div>
+
+        </div>
+
+
+        <div class="sombra-ovo"></div>
+
+
+        <div class="texto-ovo"
+             id="textoOvo">
+
+            Seu Petton está aqui...
 
         </div>
 
     </div>
 
-    <div class="moedas">
 
-        <span>🪙</span>
+    <!-- =================================================
+         PETTON REAL
+    ================================================== -->
 
-        <strong id="moedas">
+    <div id="pettonImagemContainer"
+         class="petton-imagem-container hidden">
+
+        <div class="petton-imagem-sombra"></div>
+
+        <img id="pettonImagem"
+             class="petton-imagem"
+             src="petton-original.png"
+             alt="Petton">
+
+    </div>
+
+
+    <!-- CONTAINER ANTIGO MANTIDO PARA COMPATIBILIDADE -->
+
+    <div id="pettonContainer"
+         class="petton-container hidden">
+
+    </div>
+
+
+</div>
+
+
+<div class="moveis-quarto">
+
+    <div class="slot-movel slot1">
+        <span>＋</span>
+    </div>
+
+    <div class="slot-movel slot2">
+        <span>＋</span>
+    </div>
+
+</div>
+
+
+<div class="piso"></div>
+```
+
+</main>
+
+<!-- =====================================================
+     STATUS
+===================================================== -->
+
+<section class="status-area">
+
+```
+<div class="status-card">
+
+    <div class="status-topo">
+
+        <span>🍗 Fome</span>
+
+        <strong id="fomeValor">
+            80
+        </strong>
+
+    </div>
+
+    <div class="barra">
+
+        <div id="barraFome"
+             class="barra-preenchimento fome">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="status-card">
+
+    <div class="status-topo">
+
+        <span>❤️ Felicidade</span>
+
+        <strong id="felicidadeValor">
             100
         </strong>
 
     </div>
 
-</header>
+    <div class="barra">
 
-
-<!-- =====================================================
-     IDENTIDADE
-====================================================== -->
-
-<section class="identidade">
-
-    <div>
-
-        <div class="nome"
-             id="nomePetton">
-            Mimi
-        </div>
-
-        <div class="idade"
-             id="idadePetton">
-            Ainda no ovo
+        <div id="barraFelicidade"
+             class="barra-preenchimento felicidade">
         </div>
 
     </div>
 
-    <button class="btn-editar"
-            onclick="renomear()">
+</div>
 
-        ✏️
 
-    </button>
+<div class="status-card">
+
+    <div class="status-topo">
+
+        <span>⚡ Energia</span>
+
+        <strong id="energiaValor">
+            100
+        </strong>
+
+    </div>
+
+    <div class="barra">
+
+        <div id="barraEnergia"
+             class="barra-preenchimento energia">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="status-card">
+
+    <div class="status-topo">
+
+        <span>✨ Saúde</span>
+
+        <strong id="saudeValor">
+            100
+        </strong>
+
+    </div>
+
+    <div class="barra">
+
+        <div id="barraSaude"
+             class="barra-preenchimento saude">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="status-card">
+
+    <div class="status-topo">
+
+        <span>🫧 Higiene</span>
+
+        <strong id="higieneValor">
+            100
+        </strong>
+
+    </div>
+
+    <div class="barra">
+
+        <div id="barraHigiene"
+             class="barra-preenchimento higiene">
+        </div>
+
+    </div>
+
+</div>
+```
 
 </section>
-
-
-<!-- =====================================================
-     QUARTO
-====================================================== -->
-
-<main class="quarto">
-
-    <div class="janela">
-
-        <div class="ceu"></div>
-
-        <div class="sol"></div>
-
-        <div class="nuvem nuvem1"></div>
-
-        <div class="nuvem nuvem2"></div>
-
-        <div class="montanhas"></div>
-
-    </div>
-
-
-    <div class="parede-decoracao">
-
-        <div class="quadrinho">
-            🐾
-        </div>
-
-        <div class="quadrinho pequeno">
-            ❤️
-        </div>
-
-    </div>
-
-
-    <div class="tapete"></div>
-
-
-    <!-- =================================================
-         OVO
-    ================================================== -->
-
-    <div class="area-petton">
-
-        <div id="ovoContainer"
-             class="ovo-container">
-
-            <div id="ovo"
-                 class="ovo"
-                 onclick="interagirOvo()">
-
-                <div class="ovo-brilho"></div>
-
-                <div class="ovo-mancha mancha1"></div>
-
-                <div class="ovo-mancha mancha2"></div>
-
-                <div class="rachadura rachadura1"></div>
-
-                <div class="rachadura rachadura2"></div>
-
-                <div class="rachadura rachadura3"></div>
-
-            </div>
-
-            <div class="sombra-ovo"></div>
-
-            <div class="texto-ovo"
-                 id="textoOvo">
-
-                Seu Petton está aqui...
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             PETTON
-        ================================================== -->
-
-        <div id="pettonContainer"
-             class="petton-container hidden">
-
-            <div class="petton-sombra"></div>
-
-            <div class="petton-corpo">
-
-                <div class="orelha orelha-esq"></div>
-
-                <div class="orelha orelha-dir"></div>
-
-                <div class="cabeca">
-
-                    <div class="mancha-face"></div>
-
-                    <div class="olho olho-esq">
-                        <span></span>
-                    </div>
-
-                    <div class="olho olho-dir">
-                        <span></span>
-                    </div>
-
-                    <div class="nariz"></div>
-
-                    <div class="boca"></div>
-
-                </div>
-
-                <div class="corpo"></div>
-
-                <div class="pata pata1"></div>
-
-                <div class="pata pata2"></div>
-
-                <div class="pata pata3"></div>
-
-                <div class="pata pata4"></div>
-
-                <div class="rabo"></div>
-
-            </div>
-
-            <div class="petton-coracao"
-                 id="coracao">
-
-                ❤️
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="moveis-quarto">
-
-        <div class="slot-movel slot1">
-            <span>＋</span>
-        </div>
-
-        <div class="slot-movel slot2">
-            <span>＋</span>
-        </div>
-
-    </div>
-
-
-    <div class="piso"></div>
-
-</main>
-
-
-<!-- =====================================================
-     STATUS
-====================================================== -->
-
-<section class="status-area">
-
-    <div class="status-card">
-
-        <div class="status-topo">
-            <span>🍗 Fome</span>
-            <strong id="fomeValor">80</strong>
-        </div>
-
-        <div class="barra">
-            <div id="barraFome"
-                 class="barra-preenchimento fome">
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status-card">
-
-        <div class="status-topo">
-            <span>❤️ Felicidade</span>
-            <strong id="felicidadeValor">100</strong>
-        </div>
-
-        <div class="barra">
-            <div id="barraFelicidade"
-                 class="barra-preenchimento felicidade">
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status-card">
-
-        <div class="status-topo">
-            <span>⚡ Energia</span>
-            <strong id="energiaValor">100</strong>
-        </div>
-
-        <div class="barra">
-            <div id="barraEnergia"
-                 class="barra-preenchimento energia">
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status-card">
-
-        <div class="status-topo">
-            <span>✨ Saúde</span>
-            <strong id="saudeValor">100</strong>
-        </div>
-
-        <div class="barra">
-            <div id="barraSaude"
-                 class="barra-preenchimento saude">
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status-card">
-
-        <div class="status-topo">
-            <span>🫧 Higiene</span>
-            <strong id="higieneValor">100</strong>
-        </div>
-
-        <div class="barra">
-            <div id="barraHigiene"
-                 class="barra-preenchimento higiene">
-            </div>
-        </div>
-
-    </div>
-
-</section>
-
 
 <!-- =====================================================
      AÇÕES
-====================================================== -->
+===================================================== -->
 
 <section class="acoes">
 
-    <button class="acao"
-            onclick="alimentar()">
+```
+<button class="acao"
+        onclick="alimentar()">
 
-        <div class="icone">🍗</div>
-        <span>Alimentar</span>
+    <div class="icone">
+        🍗
+    </div>
 
-    </button>
+    <span>
+        Alimentar
+    </span>
 
-
-    <button class="acao"
-            onclick="brincar()">
-
-        <div class="icone">🧸</div>
-        <span>Brincar</span>
-
-    </button>
+</button>
 
 
-    <button class="acao"
-            onclick="banho()">
+<button class="acao"
+        onclick="brincar()">
 
-        <div class="icone">🫧</div>
-        <span>Banho</span>
+    <div class="icone">
+        🧸
+    </div>
 
-    </button>
+    <span>
+        Brincar
+    </span>
 
-
-    <button class="acao"
-            onclick="limpar()">
-
-        <div class="icone">🧹</div>
-        <span>Limpar</span>
-
-    </button>
+</button>
 
 
-    <button class="acao"
-            onclick="dormir()">
+<button class="acao"
+        onclick="banho()">
 
-        <div class="icone">😴</div>
-        <span>Dormir</span>
+    <div class="icone">
+        🫧
+    </div>
 
-    </button>
+    <span>
+        Banho
+    </span>
+
+</button>
 
 
-    <button class="acao"
-            onclick="carinho()">
+<button class="acao"
+        onclick="limpar()">
 
-        <div class="icone">❤️</div>
-        <span>Carinho</span>
+    <div class="icone">
+        🧹
+    </div>
 
-    </button>
+    <span>
+        Limpar
+    </span>
+
+</button>
+
+
+<button class="acao"
+        onclick="dormir()">
+
+    <div class="icone">
+        😴
+    </div>
+
+    <span>
+        Dormir
+    </span>
+
+</button>
+
+
+<button class="acao"
+        onclick="carinho()">
+
+    <div class="icone">
+        ❤️
+    </div>
+
+    <span>
+        Carinho
+    </span>
+
+</button>
+```
 
 </section>
-
 
 <!-- =====================================================
      MENU
-====================================================== -->
+===================================================== -->
 
 <section class="menu">
 
-    <a href="album.html"
-       class="menu-item">
+```
+<a href="album.html"
+   class="menu-item">
 
-        <div class="menu-icone album">
-            📖
-        </div>
+    <div class="menu-icone album">
+        📖
+    </div>
 
-        <div>
-            <strong>Álbum do Petton</strong>
-            <small>Veja os momentos especiais</small>
-        </div>
+    <div>
 
-        <span class="seta">›</span>
+        <strong>
+            Álbum do Petton
+        </strong>
 
-    </a>
+        <small>
+            Veja os momentos especiais
+        </small>
 
+    </div>
 
-    <a href="alimentacao.html"
-       class="menu-item">
+    <span class="seta">
+        ›
+    </span>
 
-        <div class="menu-icone comida">
-            🍎
-        </div>
-
-        <div>
-            <strong>Alimentação</strong>
-            <small>Comidas e alimentação</small>
-        </div>
-
-        <span class="seta">›</span>
-
-    </a>
+</a>
 
 
-    <a href="cuidados.html"
-       class="menu-item">
+<a href="alimentacao.html"
+   class="menu-item">
 
-        <div class="menu-icone cuidados">
-            🩷
-        </div>
+    <div class="menu-icone comida">
+        🍎
+    </div>
 
-        <div>
-            <strong>Cuidados</strong>
-            <small>Saúde, higiene e necessidades</small>
-        </div>
+    <div>
 
-        <span class="seta">›</span>
+        <strong>
+            Alimentação
+        </strong>
 
-    </a>
+        <small>
+            Comidas e alimentação
+        </small>
 
+    </div>
 
-    <a href="loja.html"
-       class="menu-item">
+    <span class="seta">
+        ›
+    </span>
 
-        <div class="menu-icone loja">
-            🛍️
-        </div>
-
-        <div>
-            <strong>Loja</strong>
-            <small>Móveis, brinquedos e decoração</small>
-        </div>
-
-        <span class="seta">›</span>
-
-    </a>
+</a>
 
 
-    <a href="crescimento.html"
-       class="menu-item">
+<a href="cuidados.html"
+   class="menu-item">
 
-        <div class="menu-icone crescimento">
-            🌱
-        </div>
+    <div class="menu-icone cuidados">
+        🩷
+    </div>
 
-        <div>
-            <strong>Crescimento</strong>
-            <small>Idade e evolução do Petton</small>
-        </div>
+    <div>
 
-        <span class="seta">›</span>
+        <strong>
+            Cuidados
+        </strong>
 
-    </a>
+        <small>
+            Saúde, higiene e necessidades
+        </small>
+
+    </div>
+
+    <span class="seta">
+        ›
+    </span>
+
+</a>
 
 
-    <a href="visitas.html"
-       class="menu-item">
+<a href="loja.html"
+   class="menu-item">
 
-        <div class="menu-icone visitas">
-            🐾
-        </div>
+    <div class="menu-icone loja">
+        🛍️
+    </div>
 
-        <div>
-            <strong>Visitar Pettons</strong>
-            <small>Conheça outros Pettons</small>
-        </div>
+    <div>
 
-        <span class="seta">›</span>
+        <strong>
+            Loja
+        </strong>
 
-    </a>
+        <small>
+            Móveis, brinquedos e decoração
+        </small>
+
+    </div>
+
+    <span class="seta">
+        ›
+    </span>
+
+</a>
+
+
+<a href="crescimento.html"
+   class="menu-item">
+
+    <div class="menu-icone crescimento">
+        🌱
+    </div>
+
+    <div>
+
+        <strong>
+            Crescimento
+        </strong>
+
+        <small>
+            Idade e evolução do Petton
+        </small>
+
+    </div>
+
+    <span class="seta">
+        ›
+    </span>
+
+</a>
+
+
+<a href="visitas.html"
+   class="menu-item">
+
+    <div class="menu-icone visitas">
+        🐾
+    </div>
+
+    <div>
+
+        <strong>
+            Visitar Pettons
+        </strong>
+
+        <small>
+            Conheça outros Pettons
+        </small>
+
+    </div>
+
+    <span class="seta">
+        ›
+    </span>
+
+</a>
+```
 
 </section>
-
 
 <!-- =====================================================
      BÔNUS
-====================================================== -->
+===================================================== -->
 
 <section class="bonus-card">
 
-    <div class="bonus-icone">
-        🎁
-    </div>
+```
+<div class="bonus-icone">
+    🎁
+</div>
 
-    <div class="bonus-texto">
+<div class="bonus-texto">
 
-        <strong>Bônus diário</strong>
+    <strong>
+        Bônus diário
+    </strong>
 
-        <span>
-            Entre todos os dias e ganhe moedas.
-        </span>
+    <span>
+        Entre todos os dias e ganhe moedas.
+    </span>
 
-    </div>
+</div>
 
-    <button onclick="bonus()"
-            id="btnBonus">
+<button onclick="bonus()"
+        id="btnBonus">
 
-        Pegar
+    Pegar
 
-    </button>
+</button>
+```
 
 </section>
-
 
 <!-- =====================================================
      CONQUISTAS
-====================================================== -->
+===================================================== -->
 
 <section class="conquistas-card">
 
-    <div class="conquistas-titulo">
+```
+<div class="conquistas-titulo">
 
-        <span>🏆</span>
+    <span>
+        🏆
+    </span>
 
-        <div>
+    <div>
 
-            <strong>Conquistas</strong>
+        <strong>
+            Conquistas
+        </strong>
 
-            <small id="contadorConquistas">
-                0 conquistas
-            </small>
-
-        </div>
-
-    </div>
-
-
-    <div class="mini-conquistas">
-
-        <div class="conquista bloqueada">
-            🥚
-        </div>
-
-        <div class="conquista bloqueada">
-            ❤️
-        </div>
-
-        <div class="conquista bloqueada">
-            🌱
-        </div>
-
-        <div class="conquista bloqueada">
-            🏠
-        </div>
+        <small id="contadorConquistas">
+            0 conquistas
+        </small>
 
     </div>
+
+</div>
+
+
+<div class="mini-conquistas">
+
+    <div class="conquista bloqueada">
+        🥚
+    </div>
+
+    <div class="conquista bloqueada">
+        ❤️
+    </div>
+
+    <div class="conquista bloqueada">
+        🌱
+    </div>
+
+    <div class="conquista bloqueada">
+        🏠
+    </div>
+
+</div>
+```
 
 </section>
 
-
 <!-- =====================================================
      RODAPÉ
-====================================================== -->
+===================================================== -->
 
 <footer>
 
-    <a href="../index.html">
-        ← Voltar ao Ajuda JP
-    </a>
+```
+<a href="../index.html">
+    ← Voltar ao Ajuda JP
+</a>
 
-    <span>
-        Petton • Seu pequeno amigo
-    </span>
+<span>
+    Petton • Seu pequeno amigo
+</span>
+```
 
 </footer>
-```
 
 </div>
 
 <!-- =====================================================
      TOAST
-====================================================== -->
+===================================================== -->
 
 <div id="toast"
      class="toast">
@@ -614,7 +782,7 @@
 
 <!-- =====================================================
      MODAL NOME
-====================================================== -->
+===================================================== -->
 
 <div id="modalNome"
      class="modal hidden">
@@ -624,27 +792,37 @@
      onclick="fecharNome()">
 </div>
 
+
 <div class="modal-caixa">
 
     <button class="fechar"
             onclick="fecharNome()">
+
         ×
+
     </button>
+
 
     <div class="modal-icone">
         🐾
     </div>
 
-    <h2>Nome do Petton</h2>
+
+    <h2>
+        Nome do Petton
+    </h2>
+
 
     <p>
         Escolha um nome para seu pequeno amigo.
     </p>
 
+
     <input id="novoNome"
            type="text"
            maxlength="20"
            placeholder="Nome do Petton">
+
 
     <button class="btn-confirmar"
             onclick="salvarNome()">
@@ -660,72 +838,174 @@
 
 <!-- =====================================================
      PETTON.JS
-====================================================== -->
+===================================================== -->
 
 <script src="petton.js"></script>
 
 <script>
 
 /* =====================================================
-   TELA
+   TELAS
 ===================================================== */
 
 function atualizarTela() {
 
-    if (!window.Petton) {
-        console.error("petton.js não carregou.");
+    if (typeof Petton === "undefined") {
+
+        console.error(
+            "petton.js não carregou."
+        );
+
         return;
     }
 
-    const dados = Petton.carregar();
+
+    const dados =
+        Petton.carregar();
+
 
     if (!dados) {
         return;
     }
 
-    const status = Petton.status();
 
-    document.getElementById("nomePetton").textContent =
+    const status =
+        Petton.status();
+
+
+    document.getElementById(
+        "nomePetton"
+    ).textContent =
         dados.nome || "Mimi";
 
-    document.getElementById("fasePetton").textContent =
-        traduzirFase(dados.fase);
 
-    const idadeDias = Number(status.idadeDias || 0);
+    document.getElementById(
+        "fasePetton"
+    ).textContent =
+        traduzirFase(
+            dados.fase
+        );
 
-    document.getElementById("idadePetton").textContent =
+
+    const idadeDias =
+        Number(
+            status.idadeDias || 0
+        );
+
+
+    document.getElementById(
+        "idadePetton"
+    ).textContent =
+
         idadeDias < 1
+
             ? "Recém-nascido"
-            : "Dia " + Math.floor(idadeDias);
 
-    document.getElementById("moedas").textContent =
-        Number(dados.moedas || 0);
+            : "Dia " +
+              Math.floor(
+                  idadeDias
+              );
 
-    atualizarStatus("fome", status.fome);
-    atualizarStatus("felicidade", status.felicidade);
-    atualizarStatus("energia", status.energia);
-    atualizarStatus("saude", status.saude);
-    atualizarStatus("higiene", status.higiene);
+
+    document.getElementById(
+        "moedas"
+    ).textContent =
+        Number(
+            dados.moedas || 0
+        );
+
+
+    atualizarStatus(
+        "fome",
+        status.fome
+    );
+
+    atualizarStatus(
+        "felicidade",
+        status.felicidade
+    );
+
+    atualizarStatus(
+        "energia",
+        status.energia
+    );
+
+    atualizarStatus(
+        "saude",
+        status.saude
+    );
+
+    atualizarStatus(
+        "higiene",
+        status.higiene
+    );
 
 
     const ovo =
-        document.getElementById("ovoContainer");
+        document.getElementById(
+            "ovoContainer"
+        );
 
-    const pet =
-        document.getElementById("pettonContainer");
+
+    const imagemContainer =
+        document.getElementById(
+            "pettonImagemContainer"
+        );
 
 
-    if (dados.fase === "ovo") {
+    const imagem =
+        document.getElementById(
+            "pettonImagem"
+        );
 
-        ovo.classList.remove("hidden");
-        pet.classList.add("hidden");
+
+    if (
+        dados.fase === "ovo"
+    ) {
+
+        ovo.classList.remove(
+            "hidden"
+        );
+
+        imagemContainer.classList.add(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    ovo.classList.add(
+        "hidden"
+    );
+
+
+    imagemContainer.classList.remove(
+        "hidden"
+    );
+
+
+    /* =================================================
+       ESCOLHER ESPÉCIE
+    ================================================= */
+
+    if (
+        dados.especie === "cachorro"
+    ) {
+
+        imagem.src =
+            "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+        imagem.alt =
+            "Petton cachorro";
 
     } else {
 
-        ovo.classList.add("hidden");
-        pet.classList.remove("hidden");
+        imagem.src =
+            "petton-original.png";
 
-        aplicarAparenciaPetton();
+        imagem.alt =
+            "Petton gato";
 
     }
 
@@ -733,16 +1013,22 @@ function atualizarTela() {
     const conquistas =
         dados.conquistas || [];
 
+
     const total =
         conquistas.length;
+
 
     document.getElementById(
         "contadorConquistas"
     ).textContent =
+
         total +
-        (total === 1
-            ? " conquista"
-            : " conquistas");
+
+        (
+            total === 1
+                ? " conquista"
+                : " conquistas"
+        );
 
 
     verificarBonus();
@@ -754,7 +1040,9 @@ function atualizarTela() {
    FASE
 ===================================================== */
 
-function traduzirFase(fase) {
+function traduzirFase(
+    fase
+) {
 
     const nomes = {
 
@@ -770,7 +1058,11 @@ function traduzirFase(fase) {
 
     };
 
-    return nomes[fase] || "Petton";
+
+    return (
+        nomes[fase] ||
+        "Petton"
+    );
 
 }
 
@@ -779,14 +1071,20 @@ function traduzirFase(fase) {
    STATUS
 ===================================================== */
 
-function atualizarStatus(nome, valor) {
+function atualizarStatus(
+    nome,
+    valor
+) {
 
-    valor = Number(valor) || 0;
+    valor =
+        Number(valor) || 0;
+
 
     const numero =
         document.getElementById(
             nome + "Valor"
         );
+
 
     const barra =
         document.getElementById(
@@ -799,7 +1097,9 @@ function atualizarStatus(nome, valor) {
     if (numero) {
 
         numero.textContent =
-            Math.round(valor);
+            Math.round(
+                valor
+            );
 
     }
 
@@ -809,42 +1109,13 @@ function atualizarStatus(nome, valor) {
         barra.style.width =
             Math.max(
                 0,
-                Math.min(100, valor)
+                Math.min(
+                    100,
+                    valor
+                )
             ) + "%";
 
     }
-
-}
-
-
-/* =====================================================
-   APARÊNCIA
-===================================================== */
-
-function aplicarAparenciaPetton() {
-
-    if (!Petton.dados) {
-        return;
-    }
-
-    const caracteristicas =
-        Petton.dados.caracteristicas;
-
-    const corpo =
-        document.querySelector(
-            ".petton-corpo"
-        );
-
-    if (!corpo || !caracteristicas) {
-        return;
-    }
-
-
-    corpo.dataset.cor =
-        caracteristicas.cor || "normal";
-
-    corpo.dataset.padrao =
-        caracteristicas.padrao || "sem_manchas";
 
 }
 
@@ -856,21 +1127,28 @@ function aplicarAparenciaPetton() {
 function interagirOvo() {
 
     const ovo =
-        document.getElementById("ovo");
+        document.getElementById(
+            "ovo"
+        );
+
 
     if (!ovo) {
         return;
     }
 
+
     ovo.classList.remove(
         "ovo-pulsando"
     );
 
+
     void ovo.offsetWidth;
+
 
     ovo.classList.add(
         "ovo-pulsando"
     );
+
 
     mostrarMensagem(
         "🥚 O pequeno Petton está crescendo..."
@@ -885,7 +1163,10 @@ function interagirOvo() {
 
 function alimentar() {
 
-    if (Petton.dados.fase === "ovo") {
+    if (
+        Petton.dados.fase ===
+        "ovo"
+    ) {
 
         mostrarMensagem(
             "🥚 O Petton ainda está no ovo."
@@ -895,11 +1176,15 @@ function alimentar() {
     }
 
 
-    Petton.alimentar(15);
+    Petton.alimentar(
+        15
+    );
+
 
     mostrarMensagem(
         "🍗 O Petton adorou a comida!"
     );
+
 
     atualizarTela();
 
@@ -912,7 +1197,10 @@ function alimentar() {
 
 function brincar() {
 
-    if (Petton.dados.fase === "ovo") {
+    if (
+        Petton.dados.fase ===
+        "ovo"
+    ) {
 
         mostrarMensagem(
             "🥚 Primeiro precisamos esperar o nascimento."
@@ -923,7 +1211,10 @@ function brincar() {
 
 
     const funcionou =
-        Petton.brincar(6);
+        Petton.brincar(
+            6
+        );
+
 
     if (!funcionou) {
 
@@ -935,29 +1226,10 @@ function brincar() {
     }
 
 
-    const coracao =
-        document.getElementById("coracao");
-
-    if (coracao) {
-
-        coracao.classList.add(
-            "coracao-animado"
-        );
-
-        setTimeout(function() {
-
-            coracao.classList.remove(
-                "coracao-animado"
-            );
-
-        }, 1000);
-
-    }
-
-
     mostrarMensagem(
         "❤️ O Petton ficou feliz!"
     );
+
 
     atualizarTela();
 
@@ -970,7 +1242,10 @@ function brincar() {
 
 function carinho() {
 
-    if (Petton.dados.fase === "ovo") {
+    if (
+        Petton.dados.fase ===
+        "ovo"
+    ) {
 
         mostrarMensagem(
             "🥚 Você pode fazer carinho no ovo."
@@ -984,9 +1259,11 @@ function carinho() {
 
     Petton.carinho();
 
+
     mostrarMensagem(
         "❤️ Que carinho gostoso!"
     );
+
 
     atualizarTela();
 
@@ -999,7 +1276,10 @@ function carinho() {
 
 function banho() {
 
-    if (Petton.dados.fase === "ovo") {
+    if (
+        Petton.dados.fase ===
+        "ovo"
+    ) {
 
         mostrarMensagem(
             "🥚 O banho fica para depois do nascimento."
@@ -1009,7 +1289,9 @@ function banho() {
     }
 
 
-    Petton.dados.higiene = 100;
+    Petton.dados.higiene =
+        100;
+
 
     Petton.salvar();
 
@@ -1017,6 +1299,7 @@ function banho() {
     mostrarMensagem(
         "🫧 Petton está limpinho!"
     );
+
 
     atualizarTela();
 
@@ -1029,7 +1312,10 @@ function banho() {
 
 function limpar() {
 
-    if (Petton.dados.fase === "ovo") {
+    if (
+        Petton.dados.fase ===
+        "ovo"
+    ) {
 
         mostrarMensagem(
             "🥚 Ainda não há sujeira para limpar."
@@ -1042,8 +1328,12 @@ function limpar() {
     Petton.dados.higiene =
         Math.min(
             100,
-            Number(Petton.dados.higiene || 0) + 15
+            Number(
+                Petton.dados.higiene ||
+                0
+            ) + 15
         );
+
 
     Petton.salvar();
 
@@ -1051,6 +1341,7 @@ function limpar() {
     mostrarMensagem(
         "🧹 Tudo limpo!"
     );
+
 
     atualizarTela();
 
@@ -1063,7 +1354,10 @@ function limpar() {
 
 function dormir() {
 
-    if (Petton.dados.fase === "ovo") {
+    if (
+        Petton.dados.fase ===
+        "ovo"
+    ) {
 
         mostrarMensagem(
             "🥚 O ovo está descansando..."
@@ -1075,9 +1369,11 @@ function dormir() {
 
     Petton.dormir();
 
+
     mostrarMensagem(
         "😴 Petton descansou!"
     );
+
 
     atualizarTela();
 
@@ -1085,13 +1381,14 @@ function dormir() {
 
 
 /* =====================================================
-   BÔNUS DIÁRIO
+   BÔNUS
 ===================================================== */
 
 function bonus() {
 
     const dados =
         Petton.dados;
+
 
     if (!dados) {
         return;
@@ -1104,7 +1401,10 @@ function bonus() {
             .slice(0, 10);
 
 
-    if (dados.ultimoBonus === hoje) {
+    if (
+        dados.ultimoBonus ===
+        hoje
+    ) {
 
         mostrarMensagem(
             "🎁 Você já pegou o bônus de hoje."
@@ -1115,15 +1415,14 @@ function bonus() {
 
 
     dados.moedas =
-        Number(dados.moedas || 0) + 30;
+        Number(
+            dados.moedas || 0
+        ) + 30;
+
 
     dados.ultimoBonus =
         hoje;
 
-
-    Petton.adicionarConquista(
-        "primeiro_bonus"
-    );
 
     Petton.salvar();
 
@@ -1131,6 +1430,7 @@ function bonus() {
     mostrarMensagem(
         "🎁 Você ganhou 30 moedas!"
     );
+
 
     atualizarTela();
 
@@ -1147,6 +1447,7 @@ function verificarBonus() {
         new Date()
             .toISOString()
             .slice(0, 10);
+
 
     const botao =
         document.getElementById(
@@ -1189,26 +1490,30 @@ function verificarBonus() {
 
 function renomear() {
 
-    document
-        .getElementById("novoNome")
-        .value =
-        Petton.dados.nome || "Mimi";
+    document.getElementById(
+        "novoNome"
+    ).value =
+        Petton.dados.nome ||
+        "Mimi";
 
 
-    document
-        .getElementById("modalNome")
-        .classList.remove(
-            "hidden"
-        );
+    document.getElementById(
+        "modalNome"
+    ).classList.remove(
+        "hidden"
+    );
 
 
-    setTimeout(function() {
+    setTimeout(
+        function() {
 
-        document
-            .getElementById("novoNome")
-            .focus();
+            document.getElementById(
+                "novoNome"
+            ).focus();
 
-    }, 100);
+        },
+        100
+    );
 
 }
 
@@ -1223,6 +1528,7 @@ function salvarNome() {
         document.getElementById(
             "novoNome"
         );
+
 
     const nome =
         campo.value.trim();
@@ -1241,6 +1547,7 @@ function salvarNome() {
     Petton.dados.nome =
         nome;
 
+
     Petton.salvar();
 
 
@@ -1251,22 +1558,23 @@ function salvarNome() {
         "🐾 Nome salvo!"
     );
 
+
     atualizarTela();
 
 }
 
 
 /* =====================================================
-   FECHAR NOME
+   FECHAR MODAL
 ===================================================== */
 
 function fecharNome() {
 
-    document
-        .getElementById("modalNome")
-        .classList.add(
-            "hidden"
-        );
+    document.getElementById(
+        "modalNome"
+    ).classList.add(
+        "hidden"
+    );
 
 }
 
@@ -1275,12 +1583,15 @@ function fecharNome() {
    MENSAGEM
 ===================================================== */
 
-function mostrarMensagem(texto) {
+function mostrarMensagem(
+    texto
+) {
 
     const toast =
         document.getElementById(
             "toast"
         );
+
 
     const textoElemento =
         document.getElementById(
@@ -1288,7 +1599,11 @@ function mostrarMensagem(texto) {
         );
 
 
-    if (!toast || !textoElemento) {
+    if (
+        !toast ||
+        !textoElemento
+    ) {
+
         return;
     }
 
@@ -1308,19 +1623,22 @@ function mostrarMensagem(texto) {
 
 
     window.toastTimer =
-        setTimeout(function() {
+        setTimeout(
+            function() {
 
-            toast.classList.remove(
-                "mostrar"
-            );
+                toast.classList.remove(
+                    "mostrar"
+                );
 
-        }, 2500);
+            },
+            2500
+        );
 
 }
 
 
 /* =====================================================
-   INICIALIZAÇÃO
+   INICIAR
 ===================================================== */
 
 document.addEventListener(
@@ -1328,6 +1646,7 @@ document.addEventListener(
     function() {
 
         atualizarTela();
+
 
         setInterval(
             atualizarTela,
