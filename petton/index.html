@@ -4,1625 +4,1679 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport"
+<meta name="viewport"
 
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      content="width=device-width, initial-scale=1.0,
 
-    <title>Petton 🐾</title>
+      maximum-scale=1.0, user-scalable=no">
 
-    <link rel="stylesheet" href="petton.css">
+<title>Petton 🐾</title>
 
-    <style>
+<link rel="stylesheet" href="petton.css">
 
-        /* =====================================================
+<!-- LINE LIFF -->
 
-           OVO
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
-           ===================================================== */
+<style>
 
-        .ovo-painel {
+* {
 
-            margin: 15px 0;
+    box-sizing: border-box;
 
-            padding: 18px;
+}
 
-            border-radius: 20px;
+body {
 
-            background: #fff8ed;
+    margin: 0;
 
-            border: 2px solid #ead5b8;
+    padding: 0;
 
-            text-align: center;
+}
 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+.oculto {
 
-        }
+    display: none !important;
 
-        .ovo-titulo {
+}
 
-            font-size: 18px;
+/* =========================
 
-            font-weight: bold;
+   TELA BLOQUEADA FORA DO LINE
 
-            color: #70452b;
+========================= */
 
-            margin-bottom: 8px;
+#bloqueioLine {
 
-        }
+    min-height: 100vh;
 
-        .ovo-tempo {
+    display: flex;
 
-            font-size: 32px;
+    align-items: center;
 
-            font-weight: bold;
+    justify-content: center;
 
-            color: #4e2e1d;
+    padding: 25px;
 
-            letter-spacing: 1px;
+    background: linear-gradient(135deg, #fff7d6, #ffe9b3);
 
-            margin: 8px 0 15px;
+    font-family: Arial, sans-serif;
 
-            font-variant-numeric: tabular-nums;
+    text-align: center;
 
-        }
+}
 
-        .ovo-visual {
+.lineBox {
 
-            width: 150px;
+    width: 100%;
 
-            height: 175px;
+    max-width: 380px;
 
-            margin: 10px auto 15px;
+    background: white;
 
-            display: flex;
+    border-radius: 25px;
 
-            align-items: center;
+    padding: 35px 25px;
 
-            justify-content: center;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.12);
 
-            font-size: 120px;
+}
 
-            transition:
+.lineIcon {
 
-                transform 0.2s,
+    font-size: 65px;
 
-                filter 0.2s,
+    margin-bottom: 10px;
 
-                box-shadow 0.2s;
+}
 
-        }
+.lineBox h2 {
 
-        /* brilho enquanto o aquecedor está ligado */
+    margin: 10px 0;
 
-        .ovo-aquecido {
+    font-size: 24px;
 
-            filter:
+    color: #333;
 
-                drop-shadow(0 0 8px #ffd54f)
+}
 
-                drop-shadow(0 0 20px #ffb300)
+.lineBox p {
 
-                drop-shadow(0 0 35px #ff9800);
+    color: #666;
 
-            animation:
+    line-height: 1.5;
 
-                ovoBrilho 1s ease-in-out infinite alternate;
+    font-size: 16px;
 
-        }
+}
 
-        @keyframes ovoBrilho {
+.btnLine {
 
-            from {
+    width: 100%;
 
-                filter:
+    border: 0;
 
-                    drop-shadow(0 0 8px #ffd54f)
+    border-radius: 15px;
 
-                    drop-shadow(0 0 15px #ffb300);
+    padding: 15px;
 
-            }
+    margin-top: 15px;
 
-            to {
+    font-size: 17px;
 
-                filter:
+    font-weight: bold;
 
-                    drop-shadow(0 0 15px #fff176)
+    background: #06c755;
 
-                    drop-shadow(0 0 30px #ff9800)
+    color: white;
 
-                    drop-shadow(0 0 45px #ffb300);
+    cursor: pointer;
 
-            }
+}
 
-        }
+.btnLine:active {
 
-        /* vibração */
+    transform: scale(0.98);
 
-        .ovo-vibrando {
+}
 
-            animation:
+/* =========================
 
-                ovoVibrar 0.55s ease-in-out 0s 3;
+   OVO
 
-        }
+========================= */
 
-        @keyframes ovoVibrar {
+#painelOvo {
 
-            0% {
+    text-align: center;
 
-                transform: translateX(0) rotate(0deg);
+}
 
-            }
+#ovoVisual {
 
-            20% {
+    font-size: 110px;
 
-                transform: translateX(-6px) rotate(-2deg);
+    margin: 15px 0;
 
-            }
+    animation: ovoMexendo 2s infinite;
 
-            40% {
+}
 
-                transform: translateX(6px) rotate(2deg);
+@keyframes ovoMexendo {
 
-            }
+    0% {
 
-            60% {
+        transform: rotate(0deg);
 
-                transform: translateX(-5px) rotate(-1deg);
+    }
 
-            }
+    25% {
 
-            80% {
+        transform: rotate(-4deg);
 
-                transform: translateX(5px) rotate(1deg);
+    }
 
-            }
+    50% {
 
-            100% {
+        transform: rotate(4deg);
 
-                transform: translateX(0) rotate(0deg);
+    }
 
-            }
+    75% {
 
-        }
+        transform: rotate(-3deg);
 
-        .aquecedor-status {
+    }
 
-            min-height: 25px;
+    100% {
 
-            margin-bottom: 12px;
+        transform: rotate(0deg);
 
-            font-size: 15px;
+    }
 
-            font-weight: 600;
+}
 
-            color: #76502e;
+#cronometroOvo {
 
-        }
+    font-size: 30px;
 
-        .btn-aquecedor {
+    font-weight: bold;
 
-            width: 100%;
+    margin: 10px 0;
 
-            border: none;
+}
 
-            border-radius: 14px;
+#statusAquecedor {
 
-            padding: 14px 12px;
+    margin: 10px 0;
 
-            font-size: 17px;
+    font-size: 14px;
 
-            font-weight: bold;
+}
 
-            background: #f5b642;
+#btnAquecedor {
 
-            color: #4b2c16;
+    border: 0;
 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+    border-radius: 12px;
 
-            cursor: pointer;
+    padding: 12px 18px;
 
-        }
+    background: #ff9f43;
 
-        .btn-aquecedor:active {
+    color: white;
 
-            transform: scale(0.97);
+    font-weight: bold;
 
-        }
+}
 
-        .btn-aquecedor:disabled {
+#imagemPetContainer {
 
-            opacity: 0.65;
+    text-align: center;
 
-            cursor: default;
+}
 
-        }
+#imagemPetContainer img {
 
-        .btn-resetar {
+    max-width: 100%;
 
-            width: 100%;
+    max-height: 250px;
 
-            margin-top: 10px;
+    object-fit: contain;
 
-            border: 1px solid #d6b895;
+}
 
-            border-radius: 14px;
+/* =========================
 
-            padding: 11px;
+   MENSAGEM
 
-            font-size: 15px;
+========================= */
 
-            font-weight: bold;
+#mensagemPetton {
 
-            background: #fff;
+    position: fixed;
 
-            color: #70452b;
+    left: 50%;
 
-            cursor: pointer;
+    bottom: 25px;
 
-        }
+    transform: translateX(-50%);
 
-        .ovo-explicacao {
+    background: rgba(0,0,0,0.85);
 
-            margin-top: 12px;
+    color: white;
 
-            font-size: 13px;
+    padding: 12px 20px;
 
-            line-height: 1.5;
+    border-radius: 20px;
 
-            color: #806b58;
+    z-index: 9999;
 
-        }
+    display: none;
 
-        /* =====================================================
+}
 
-           PET NASCIDO
-
-           ===================================================== */
-
-        .pet-imagem {
-
-            max-width: 100%;
-
-            display: block;
-
-            margin: 0 auto;
-
-        }
-
-        .oculto {
-
-            display: none !important;
-
-        }
-
-        /* =====================================================
-
-           MENSAGEM
-
-           ===================================================== */
-
-        #mensagemPetton {
-
-            position: fixed;
-
-            left: 50%;
-
-            bottom: 25px;
-
-            transform: translateX(-50%);
-
-            background: #4e3323;
-
-            color: white;
-
-            padding: 12px 18px;
-
-            border-radius: 14px;
-
-            font-size: 14px;
-
-            max-width: 90%;
-
-            text-align: center;
-
-            z-index: 9999;
-
-            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-
-        }
-
-    </style>
+</style>
 
 </head>
 
 <body>
 
-    <!-- =====================================================
+<!-- =========================
 
-         TOPO
+     BLOQUEIO FORA DO LINE
 
-         ===================================================== -->
+========================= -->
 
-    <header class="top-bar">
+<div id="bloqueioLine">
 
-        <button onclick="voltar()" aria-label="Voltar">
+    <div class="lineBox">
 
-            ←
+        <div class="lineIcon">🐾</div>
+
+        <h2>Petton é exclusivo do LINE</h2>
+
+        <p>
+
+            Para cuidar do seu Petton, abra esta página
+
+            dentro do aplicativo LINE.
+
+        </p>
+
+        <button class="btnLine" onclick="abrirNoLine()">
+
+            💚 Abrir no LINE
 
         </button>
 
-        <h1>Petton 🐾</h1>
+    </div>
 
-        <button onclick="abrirAlbum()" aria-label="Álbum">
+</div>
 
-            📷
+<!-- =========================
+
+     APLICATIVO PETTON
+
+========================= -->
+
+<div id="pettonApp" class="oculto">
+
+<header>
+
+    <button onclick="voltar()">
+
+        ←
+
+    </button>
+
+    <h1>
+
+        Petton 🐾
+
+    </h1>
+
+    <button onclick="abrirAlbum()">
+
+        📖
+
+    </button>
+
+</header>
+
+<main>
+
+    <!-- NOME -->
+
+    <section class="petton-card">
+
+        <h2 id="nomePetton">
+
+            Mimi
+
+        </h2>
+
+        <div id="idadePetton">
+
+            🥚 Ovo
+
+        </div>
+
+    </section>
+
+    <!-- =========================
+
+         OVO
+
+    ========================= -->
+
+    <section
+
+        id="painelOvo"
+
+        class="petton-card"
+
+    >
+
+        <h2>
+
+            🥚 Seu Petton está no ovo!
+
+        </h2>
+
+        <div id="ovoVisual">
+
+            🥚
+
+        </div>
+
+        <div id="cronometroOvo">
+
+            24:00:00
+
+        </div>
+
+        <p>
+
+            O seu Petton está se desenvolvendo
+
+            dentro do ovo.
+
+        </p>
+
+        <div id="statusAquecedor">
+
+            🔥 Aquecedor desligado
+
+        </div>
+
+        <button
+
+            id="btnAquecedor"
+
+            onclick="aquecerOvo()"
+
+        >
+
+            🔥 Aquecer ovo
 
         </button>
 
-    </header>
+        <br><br>
 
-    <!-- =====================================================
+        <button onclick="resetarPettonTela()">
 
-         CONTEÚDO
+            🔄 Novo Petton
 
-         ===================================================== -->
+        </button>
 
-    <main class="container">
+        <p style="font-size:13px; opacity:0.7;">
 
-        <section class="pet-card">
+            O ovo precisa completar a incubação.
 
-            <!-- NOME -->
+            O aquecedor acelera temporariamente o processo.
 
-            <h2 id="nomePetton">
+        </p>
 
-                Mimi
+    </section>
 
-            </h2>
+    <!-- =========================
 
-            <!-- IDADE / FASE -->
+         PET NASCIDO
 
-            <div id="idadePetton" class="pet-idade">
+    ========================= -->
 
-                🥚 Ovo
+    <section
 
-            </div>
+        id="imagemPetContainer"
 
-            <!-- =================================================
+        class="petton-card"
 
-                 OVO
+    >
 
-                 ================================================= -->
+        <img
 
-            <div id="painelOvo" class="ovo-painel">
+            id="imagemPetton"
 
-                <div class="ovo-titulo">
+            src="petton-original.png"
 
-                    🥚 Seu Petton está no ovo!
+            alt="Petton"
 
-                </div>
+        >
 
-                <div id="ovoVisual" class="ovo-visual">
+    </section>
 
-                    🥚
+    <!-- =========================
 
-                </div>
+         STATUS
 
-                <div id="cronometroOvo" class="ovo-tempo">
+    ========================= -->
 
-                    24:00:00
+    <section class="petton-card">
 
-                </div>
+        <div class="status-grid">
 
-                <div id="statusAquecedor" class="aquecedor-status">
+            <div>
 
-                    💡 Aquecedor desligado
+                🍖
 
-                </div>
+                <br>
 
-                <button
+                <span id="fomePetton">
 
-                    id="btnAquecedor"
+                    70
 
-                    class="btn-aquecedor"
-
-                    onclick="aquecerOvo()">
-
-                    💡 Aquecer o ovo
-
-                </button>
-
-                <button
-
-                    class="btn-resetar"
-
-                    onclick="resetarPettonTela()">
-
-                    🔄 Resetar Petton
-
-                </button>
-
-                <div class="ovo-explicacao">
-
-                    O ovo precisa de 24 horas para nascer.
-
-                    <br>
-
-                    O aquecedor acelera a incubação durante alguns minutos.
-
-                </div>
+                </span>
 
             </div>
 
-            <!-- =================================================
+            <div>
 
-                 IMAGEM DO PET
+                ❤️
 
-                 ================================================= -->
+                <br>
 
-            <div id="imagemPetContainer">
+                <span id="felicidadePetton">
 
-                <img
+                    100
 
-                    id="imagemPetton"
-
-                    class="pet-imagem"
-
-                    src="petton-original.png"
-
-                    alt="Petton">
+                </span>
 
             </div>
 
-            <!-- =================================================
+            <div>
 
-                 STATUS
+                ⚡
 
-                 ================================================= -->
+                <br>
 
-            <div class="status-grid">
+                <span id="energiaPetton">
 
-                <div class="status-card">
+                    100
 
-                    <span>🍖</span>
-
-                    <strong>Fome</strong>
-
-                    <div id="fome">70</div>
-
-                </div>
-
-                <div class="status-card">
-
-                    <span>❤️</span>
-
-                    <strong>Felicidade</strong>
-
-                    <div id="felicidade">100</div>
-
-                </div>
-
-                <div class="status-card">
-
-                    <span>⚡</span>
-
-                    <strong>Energia</strong>
-
-                    <div id="energia">100</div>
-
-                </div>
-
-                <div class="status-card">
-
-                    <span>🛁</span>
-
-                    <strong>Higiene</strong>
-
-                    <div id="higiene">100</div>
-
-                </div>
-
-                <div class="status-card">
-
-                    <span>💚</span>
-
-                    <strong>Saúde</strong>
-
-                    <div id="saude">100</div>
-
-                </div>
-
-                <div class="status-card">
-
-                    <span>🪙</span>
-
-                    <strong>Moedas</strong>
-
-                    <div id="moedas">100</div>
-
-                </div>
+                </span>
 
             </div>
 
-            <!-- =================================================
+            <div>
 
-                 CUIDADOS
+                🧼
 
-                 ================================================= -->
+                <br>
 
-            <div id="botoesCuidados" class="care-buttons">
+                <span id="higienePetton">
 
-                <button onclick="alimentarPetton()">
+                    100
 
-                    🍖
-
-                    <span>Alimentar</span>
-
-                </button>
-
-                <button onclick="brincarPetton()">
-
-                    🎾
-
-                    <span>Brincar</span>
-
-                </button>
-
-                <button onclick="banhoPetton()">
-
-                    🛁
-
-                    <span>Banho</span>
-
-                </button>
-
-                <button onclick="limparPetton()">
-
-                    🧹
-
-                    <span>Limpar</span>
-
-                </button>
-
-                <button onclick="dormirPetton()">
-
-                    😴
-
-                    <span>Dormir</span>
-
-                </button>
-
-                <button onclick="carinhoPetton()">
-
-                    ❤️
-
-                    <span>Carinho</span>
-
-                </button>
+                </span>
 
             </div>
 
-            <!-- =================================================
+            <div>
 
-                 BÔNUS
+                🩺
 
-                 ================================================= -->
+                <br>
 
-            <div class="bonus-card">
+                <span id="saudePetton">
 
-                <div>
+                    100
 
-                    🎁
-
-                    <strong>Bônus diário</strong>
-
-                </div>
-
-                <button onclick="receberBonus()">
-
-                    Receber
-
-                </button>
+                </span>
 
             </div>
 
-            <!-- =================================================
+            <div>
 
-                 MENU
+                🪙
 
-                 ================================================= -->
+                <br>
 
-            <div class="menu-grid">
+                <span id="moedasPetton">
 
-                <a href="album.html">
+                    100
 
-                    📷
-
-                    <span>Álbum</span>
-
-                </a>
-
-                <a href="alimentacao.html">
-
-                    🍖
-
-                    <span>Alimentação</span>
-
-                </a>
-
-                <a href="cuidados.html">
-
-                    🛁
-
-                    <span>Cuidados</span>
-
-                </a>
-
-                <a href="loja.html">
-
-                    🛒
-
-                    <span>Loja</span>
-
-                </a>
-
-                <a href="crescimento.html">
-
-                    🌱
-
-                    <span>Crescimento</span>
-
-                </a>
-
-                <a href="visitas.html">
-
-                    🏠
-
-                    <span>Visitas</span>
-
-                </a>
+                </span>
 
             </div>
 
-        </section>
+        </div>
 
-    </main>
+    </section>
 
-    <!-- =====================================================
+    <!-- =========================
 
-         MODAL RENOMEAR
+         CUIDADOS
 
-         ===================================================== -->
+    ========================= -->
 
-    <div
+    <section class="petton-card">
 
-        id="modalNome"
+        <h3>
 
-        class="modal oculto">
+            💕 Cuidar do Petton
 
-        <div class="modal-content">
+        </h3>
 
-            <h3>✏️ Nome do Petton</h3>
+        <div class="botoes-cuidados">
 
-            <input
+            <button onclick="alimentar()">
 
-                id="novoNome"
+                🍖
 
-                type="text"
+                <br>
 
-                maxlength="20"
-
-                placeholder="Digite o nome">
-
-            <button onclick="salvarNome()">
-
-                Salvar
+                Alimentar
 
             </button>
 
-            <button onclick="fecharModalNome()">
+            <button onclick="brincar()">
 
-                Cancelar
+                🎾
+
+                <br>
+
+                Brincar
+
+            </button>
+
+            <button onclick="banho()">
+
+                🛁
+
+                <br>
+
+                Banho
+
+            </button>
+
+            <button onclick="limpar()">
+
+                🧹
+
+                <br>
+
+                Limpar
+
+            </button>
+
+            <button onclick="dormir()">
+
+                😴
+
+                <br>
+
+                Dormir
+
+            </button>
+
+            <button onclick="carinho()">
+
+                ❤️
+
+                <br>
+
+                Carinho
 
             </button>
 
         </div>
 
+    </section>
+
+    <!-- =========================
+
+         BÔNUS
+
+    ========================= -->
+
+    <section class="petton-card">
+
+        <h3>
+
+            🎁 Bônus diário
+
+        </h3>
+
+        <button onclick="receberBonus()">
+
+            🎁 Receber bônus
+
+        </button>
+
+    </section>
+
+    <!-- =========================
+
+         MENU
+
+    ========================= -->
+
+    <section class="petton-card">
+
+        <div class="menu-petton">
+
+            <a href="album.html">
+
+                📖
+
+                <br>
+
+                Álbum
+
+            </a>
+
+            <a href="alimentacao.html">
+
+                🍖
+
+                <br>
+
+                Alimentação
+
+            </a>
+
+            <a href="cuidados.html">
+
+                🧼
+
+                <br>
+
+                Cuidados
+
+            </a>
+
+            <a href="loja.html">
+
+                🛒
+
+                <br>
+
+                Loja
+
+            </a>
+
+            <a href="crescimento.html">
+
+                📈
+
+                <br>
+
+                Crescimento
+
+            </a>
+
+            <a href="visitas.html">
+
+                👋
+
+                <br>
+
+                Visitas
+
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+<!-- =========================
+
+     MODAL NOME
+
+========================= -->
+
+<div id="modalNome" class="oculto">
+
+    <div>
+
+        <h3>
+
+            ✏️ Nome do Petton
+
+        </h3>
+
+        <input
+
+            id="novoNome"
+
+            type="text"
+
+            maxlength="20"
+
+            placeholder="Nome do Petton"
+
+        >
+
+        <br><br>
+
+        <button onclick="salvarNome()">
+
+            Salvar
+
+        </button>
+
+        <button onclick="fecharNome()">
+
+            Cancelar
+
+        </button>
+
     </div>
 
-    <!-- =====================================================
+</div>
 
-         MENSAGEM
+<!-- =========================
 
-         ===================================================== -->
+     MENSAGEM
 
-    <div
+========================= -->
 
-        id="mensagemPetton"
+<div id="mensagemPetton"></div>
 
-        class="oculto">
+</div>
 
-    </div>
+<!-- =========================
 
-    <!-- =====================================================
+     PETTON.JS
 
-         PETTON.JS
+========================= -->
 
-         ===================================================== -->
+<script src="petton.js"></script>
 
-    <script src="petton.js"></script>
+<script>
 
-    <script>
+/* =========================================
 
-        /* =====================================================
+   CONFIGURAÇÃO DO LINE
 
-           FORMATAR TEMPO
+========================================= */
 
-           ===================================================== */
+const LIFF_ID = "2010902449-KWNNNsxn";
 
-        function formatarTempo(ms) {
+let pettonLiberado = false;
 
-            ms = Math.max(0, ms);
+/* =========================================
 
-            const totalSegundos =
+   ABRIR PELO LINE
 
-                Math.ceil(ms / 1000);
+========================================= */
 
-            const horas =
+function abrirNoLine() {
 
-                Math.floor(totalSegundos / 3600);
+    window.location.href =
 
-            const minutos =
+        "https://liff.line.me/" + LIFF_ID;
 
-                Math.floor(
+}
 
-                    (totalSegundos % 3600) / 60
+/* =========================================
 
-                );
+   VERIFICAR SE ESTÁ NO LINE
 
-            const segundos =
+========================================= */
 
-                totalSegundos % 60;
+async function verificarLINE() {
 
-            return (
+    const bloqueio =
 
-                String(horas).padStart(2, "0")
+        document.getElementById("bloqueioLine");
 
-                + ":" +
+    const aplicativo =
 
-                String(minutos).padStart(2, "0")
+        document.getElementById("pettonApp");
 
-                + ":" +
+    try {
 
-                String(segundos).padStart(2, "0")
+        await liff.init({
 
-            );
+            liffId: LIFF_ID
+
+        });
+
+        /*
+
+         * isInClient() = verdadeiro quando
+
+         * a página está realmente dentro
+
+         * do aplicativo LINE.
+
+         */
+
+        if (!liff.isInClient()) {
+
+            bloqueio.classList.remove("oculto");
+
+            aplicativo.classList.add("oculto");
+
+            pettonLiberado = false;
+
+            return;
 
         }
 
-        /* =====================================================
+        /* =========================
 
-           ATUALIZAR OVO
+           ESTÁ DENTRO DO LINE
 
-           ===================================================== */
+        ========================= */
 
-        function atualizarOvoTela() {
+        pettonLiberado = true;
 
-            const dados =
+        bloqueio.classList.add("oculto");
 
-                Petton.carregar();
+        aplicativo.classList.remove("oculto");
 
-            const painel =
+        atualizarTela();
 
-                document.getElementById("painelOvo");
+    }
 
-            const imagem =
+    catch (erro) {
 
-                document.getElementById("imagemPetContainer");
+        console.error(
 
-            const cuidados =
+            "Erro LIFF:",
 
-                document.getElementById("botoesCuidados");
-
-            const idade =
-
-                document.getElementById("idadePetton");
-
-            if (!dados.dateNascimento) {
-
-                painel.classList.remove("oculto");
-
-                imagem.classList.add("oculto");
-
-                cuidados.classList.add("oculto");
-
-                idade.innerHTML =
-
-                    "🥚 Ovo • preparando para nascer";
-
-                const restante =
-
-                    Petton.incubacaoRestante();
-
-                document.getElementById(
-
-                    "cronometroOvo"
-
-                ).textContent =
-
-                    formatarTempo(restante);
-
-                /* -----------------------------------------
-
-                   AQUECEDOR
-
-                   ----------------------------------------- */
-
-                const aquecedorLigado =
-
-                    Petton.aquecedorAtivo();
-
-                const ovoVisual =
-
-                    document.getElementById("ovoVisual");
-
-                const botao =
-
-                    document.getElementById("btnAquecedor");
-
-                const status =
-
-                    document.getElementById("statusAquecedor");
-
-                if (aquecedorLigado) {
-
-                    ovoVisual.classList.add(
-
-                        "ovo-aquecido"
-
-                    );
-
-                    botao.disabled = true;
-
-                    const tempo =
-
-                        Petton.aquecedorRestante();
-
-                    status.textContent =
-
-                        "🔥 Aquecedor ligado • "
-
-                        + formatarTempo(tempo);
-
-                    botao.textContent =
-
-                        "🔥 Aquecendo...";
-
-                } else {
-
-                    ovoVisual.classList.remove(
-
-                        "ovo-aquecido"
-
-                    );
-
-                    botao.disabled = false;
-
-                    status.textContent =
-
-                        "💡 Aquecedor desligado";
-
-                    botao.textContent =
-
-                        "💡 Aquecer o ovo";
-
-                }
-
-                /*
-
-                 * Se chegou a zero, atualiza tudo.
-
-                 */
-
-                if (restante <= 0) {
-
-                    setTimeout(
-
-                        atualizarTela,
-
-                        300
-
-                    );
-
-                }
-
-            } else {
-
-                painel.classList.add("oculto");
-
-                imagem.classList.remove("oculto");
-
-                cuidados.classList.remove("oculto");
-
-            }
-
-        }
-
-        /* =====================================================
-
-           AQUECER OVO
-
-           ===================================================== */
-
-        function aquecerOvo() {
-
-            const ligado =
-
-                Petton.ligarAquecedor();
-
-            if (!ligado) {
-
-                return;
-
-            }
-
-            const ovo =
-
-                document.getElementById("ovoVisual");
-
-            /*
-
-             * Vibra algumas vezes.
-
-             */
-
-            ovo.classList.remove(
-
-                "ovo-vibrando"
-
-            );
-
-            void ovo.offsetWidth;
-
-            ovo.classList.add(
-
-                "ovo-vibrando"
-
-            );
-
-            mostrarMensagem(
-
-                "💡 O ovo está sendo aquecido!"
-
-            );
-
-            atualizarOvoTela();
-
-        }
-
-        /* =====================================================
-
-           RESETAR
-
-           ===================================================== */
-
-        function resetarPettonTela() {
-
-            const confirmar =
-
-                confirm(
-
-                    "Tem certeza que deseja resetar o Petton?\n\n"
-
-                    + "O Petton atual será substituído por um novo ovo."
-
-                );
-
-            if (!confirmar) {
-
-                return;
-
-            }
-
-            Petton.resetar();
-
-            atualizarTela();
-
-            mostrarMensagem(
-
-                "🥚 Um novo ovo começou a incubação!"
-
-            );
-
-        }
-
-        /* =====================================================
-
-           ATUALIZAR TELA
-
-           ===================================================== */
-
-        function atualizarTela() {
-
-            let dados =
-
-                Petton.carregar();
-
-            /*
-
-             * NÃO criar dateNascimento aqui.
-
-             *
-
-             * O ovo precisa continuar sendo ovo.
-
-             */
-
-            if (!dados.dateNascimento) {
-
-                atualizarOvoTela();
-
-            } else {
-
-                Petton.verificarCrescimento();
-
-                dados =
-
-                    Petton.carregar();
-
-                document.getElementById(
-
-                    "painelOvo"
-
-                ).classList.add("oculto");
-
-                document.getElementById(
-
-                    "imagemPetContainer"
-
-                ).classList.remove("oculto");
-
-                document.getElementById(
-
-                    "botoesCuidados"
-
-                ).classList.remove("oculto");
-
-                atualizarPetNascido(dados);
-
-            }
-
-        }
-
-        /* =====================================================
-
-           PET NASCIDO
-
-           ===================================================== */
-
-        function atualizarPetNascido(dados) {
-
-            document.getElementById(
-
-                "nomePetton"
-
-            ).textContent =
-
-                dados.nome || "Mimi";
-
-            const dias =
-
-                Petton.idadeDias();
-
-            let textoFase =
-
-                "Recém-nascido";
-
-            if (dias >= 1) {
-
-                textoFase =
-
-                    traduzirFase(dados.fase);
-
-            }
-
-            document.getElementById(
-
-                "idadePetton"
-
-            ).textContent =
-
-                "🐾 "
-
-                + textoFase
-
-                + " • "
-
-                + dias
-
-                + (dias === 1 ? " dia" : " dias");
-
-            /*
-
-             * STATUS
-
-             */
-
-            document.getElementById(
-
-                "fome"
-
-            ).textContent =
-
-                Math.round(dados.fome);
-
-            document.getElementById(
-
-                "felicidade"
-
-            ).textContent =
-
-                Math.round(dados.felicidade);
-
-            document.getElementById(
-
-                "energia"
-
-            ).textContent =
-
-                Math.round(dados.energia);
-
-            document.getElementById(
-
-                "higiene"
-
-            ).textContent =
-
-                Math.round(dados.higiene);
-
-            document.getElementById(
-
-                "saude"
-
-            ).textContent =
-
-                Math.round(dados.saude);
-
-            document.getElementById(
-
-                "moedas"
-
-            ).textContent =
-
-                Math.round(dados.moedas);
-
-            /*
-
-             * IMAGEM
-
-             */
-
-            const imagem =
-
-                document.getElementById(
-
-                    "imagemPetton"
-
-                );
-
-            if (dados.especie === "cachorro") {
-
-                imagem.src =
-
-                    "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
-
-            } else {
-
-                /*
-
-                 * Mantém a imagem atual para gato/coelho
-
-                 * até você colocar as imagens próprias.
-
-                 */
-
-                imagem.src =
-
-                    "petton-original.png";
-
-            }
-
-        }
-
-        /* =====================================================
-
-           FASE
-
-           ===================================================== */
-
-        function traduzirFase(fase) {
-
-            const fases = {
-
-                ovo: "Ovo",
-
-                bebe: "Bebê",
-
-                filhote: "Filhote",
-
-                jovem: "Jovem",
-
-                adulto: "Adulto"
-
-            };
-
-            return fases[fase] || fase;
-
-        }
-
-        /* =====================================================
-
-           AÇÕES
-
-           ===================================================== */
-
-        function alimentarPetton() {
-
-            if (Petton.alimentar()) {
-
-                mostrarMensagem(
-
-                    "🍖 Petton comeu!"
-
-                );
-
-                atualizarTela();
-
-            }
-
-        }
-
-        function brincarPetton() {
-
-            if (Petton.brincar()) {
-
-                mostrarMensagem(
-
-                    "🎾 Petton brincou!"
-
-                );
-
-                atualizarTela();
-
-            }
-
-        }
-
-        function banhoPetton() {
-
-            if (Petton.limpar()) {
-
-                mostrarMensagem(
-
-                    "🛁 Petton ficou limpinho!"
-
-                );
-
-                atualizarTela();
-
-            }
-
-        }
-
-        function limparPetton() {
-
-            if (Petton.limpar()) {
-
-                mostrarMensagem(
-
-                    "✨ Tudo limpo!"
-
-                );
-
-                atualizarTela();
-
-            }
-
-        }
-
-        function dormirPetton() {
-
-            if (Petton.dormir()) {
-
-                mostrarMensagem(
-
-                    "😴 Petton está descansando!"
-
-                );
-
-                atualizarTela();
-
-            }
-
-        }
-
-        function carinhoPetton() {
-
-            if (Petton.carinho()) {
-
-                mostrarMensagem(
-
-                    "❤️ Petton adorou o carinho!"
-
-                );
-
-                atualizarTela();
-
-            }
-
-        }
-
-        /* =====================================================
-
-           MENSAGEM
-
-           ===================================================== */
-
-        function mostrarMensagem(texto) {
-
-            const elemento =
-
-                document.getElementById(
-
-                    "mensagemPetton"
-
-                );
-
-            elemento.textContent = texto;
-
-            elemento.classList.remove(
-
-                "oculto"
-
-            );
-
-            clearTimeout(
-
-                window.pettonMensagemTimer
-
-            );
-
-            window.pettonMensagemTimer =
-
-                setTimeout(function () {
-
-                    elemento.classList.add(
-
-                        "oculto"
-
-                    );
-
-                }, 2500);
-
-        }
-
-        /* =====================================================
-
-           BÔNUS
-
-           ===================================================== */
-
-        function receberBonus() {
-
-            const dados =
-
-                Petton.carregar();
-
-            dados.moedas =
-
-                (dados.moedas || 0) + 10;
-
-            Petton.salvar();
-
-            mostrarMensagem(
-
-                "🎁 Você recebeu 10 moedas!"
-
-            );
-
-            atualizarTela();
-
-        }
-
-        /* =====================================================
-
-           ALBUM
-
-           ===================================================== */
-
-        function abrirAlbum() {
-
-            window.location.href =
-
-                "album.html";
-
-        }
-
-        /* =====================================================
-
-           VOLTAR
-
-           ===================================================== */
-
-        function voltar() {
-
-            if (
-
-                window.history.length > 1
-
-            ) {
-
-                history.back();
-
-            } else {
-
-                window.location.href =
-
-                    "index.html";
-
-            }
-
-        }
-
-        /* =====================================================
-
-           RENOMEAR
-
-           ===================================================== */
-
-        function abrirModalNome() {
-
-            document.getElementById(
-
-                "modalNome"
-
-            ).classList.remove(
-
-                "oculto"
-
-            );
-
-        }
-
-        function fecharModalNome() {
-
-            document.getElementById(
-
-                "modalNome"
-
-            ).classList.add(
-
-                "oculto"
-
-            );
-
-        }
-
-        function salvarNome() {
-
-            const input =
-
-                document.getElementById(
-
-                    "novoNome"
-
-                );
-
-            const nome =
-
-                input.value.trim();
-
-            if (!nome) {
-
-                return;
-
-            }
-
-            const dados =
-
-                Petton.carregar();
-
-            dados.nome = nome;
-
-            Petton.salvar();
-
-            fecharModalNome();
-
-            atualizarTela();
-
-        }
-
-        /* =====================================================
-
-           INICIALIZAÇÃO
-
-           ===================================================== */
-
-        document.addEventListener(
-
-            "DOMContentLoaded",
-
-            function () {
-
-                atualizarTela();
-
-            }
+            erro
 
         );
 
-        /* =====================================================
+        pettonLiberado = false;
 
-           CONTADOR DO OVO
+        bloqueio.classList.remove("oculto");
 
-           Atualiza a cada segundo
+        aplicativo.classList.add("oculto");
 
-           ===================================================== */
+    }
 
-        setInterval(function () {
+}
 
-            try {
+/* =========================================
 
-                const dados =
+   FORMATA TEMPO
 
-                    Petton.carregar();
+========================================= */
 
-                if (!dados.dateNascimento) {
+function formatarTempo(ms) {
 
-                    atualizarOvoTela();
+    if (ms < 0) {
 
-                } else {
+        ms = 0;
 
-                    /*
+    }
 
-                     * Se acabou de nascer,
+    const totalSegundos =
 
-                     * atualiza a tela.
+        Math.floor(ms / 1000);
 
-                     */
+    const horas =
 
-                    atualizarTela();
+        Math.floor(totalSegundos / 3600);
 
-                }
+    const minutos =
 
-            } catch (erro) {
+        Math.floor(
 
-                console.error(
+            (totalSegundos % 3600) / 60
 
-                    "Erro no contador do ovo:",
+        );
 
-                    erro
+    const segundos =
 
-                );
+        totalSegundos % 60;
 
-            }
+    return String(horas).padStart(2, "0")
 
-        }, 1000);
+        + ":" +
 
-        /* =====================================================
+        String(minutos).padStart(2, "0")
 
-           ATUALIZAÇÃO GERAL
+        + ":" +
 
-           ===================================================== */
+        String(segundos).padStart(2, "0");
 
-        setInterval(function () {
+}
 
-            atualizarTela();
+/* =========================================
 
-        }, 60000);
+   ATUALIZAR OVO
 
-    </script>
+========================================= */
+
+function atualizarOvoTela() {
+
+    if (!pettonLiberado) {
+
+        return;
+
+    }
+
+    const dados =
+
+        Petton.carregar();
+
+    if (!dados) {
+
+        return;
+
+    }
+
+    const restante =
+
+        Petton.incubacaoRestante();
+
+    const cronometro =
+
+        document.getElementById(
+
+            "cronometroOvo"
+
+        );
+
+    if (cronometro) {
+
+        cronometro.textContent =
+
+            formatarTempo(restante);
+
+    }
+
+    const status =
+
+        document.getElementById(
+
+            "statusAquecedor"
+
+        );
+
+    if (
+
+        status &&
+
+        Petton.aquecedorAtivo()
+
+    ) {
+
+        status.textContent =
+
+            "🔥 Aquecedor ativo — aceleração ligada!";
+
+    } else if (status) {
+
+        status.textContent =
+
+            "🔥 Aquecedor desligado";
+
+    }
+
+}
+
+/* =========================================
+
+   AQUECER OVO
+
+========================================= */
+
+function aquecerOvo() {
+
+    if (!pettonLiberado) {
+
+        return;
+
+    }
+
+    if (Petton.aquecedorAtivo()) {
+
+        mostrarMensagem(
+
+            "🔥 O aquecedor já está ligado!"
+
+        );
+
+        return;
+
+    }
+
+    Petton.ativarAquecedor();
+
+    atualizarOvoTela();
+
+    mostrarMensagem(
+
+        "🔥 Ovo aquecido! A incubação foi acelerada."
+
+    );
+
+}
+
+/* =========================================
+
+   RESET
+
+========================================= */
+
+function resetarPettonTela() {
+
+    if (!pettonLiberado) {
+
+        return;
+
+    }
+
+    const confirmar =
+
+        confirm(
+
+            "Tem certeza que deseja começar um novo Petton?"
+
+        );
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+    Petton.resetar();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "🥚 Um novo Petton começou a incubação!"
+
+    );
+
+}
+
+/* =========================================
+
+   ATUALIZAR TELA
+
+========================================= */
+
+function atualizarTela() {
+
+    if (!pettonLiberado) {
+
+        return;
+
+    }
+
+    const dados =
+
+        Petton.carregar();
+
+    if (!dados) {
+
+        return;
+
+    }
+
+    /* =========================
+
+       OVO
+
+    ========================= */
+
+    if (dados.fase === "ovo") {
+
+        document
+
+            .getElementById("painelOvo")
+
+            .classList.remove("oculto");
+
+        document
+
+            .getElementById("imagemPetContainer")
+
+            .classList.add("oculto");
+
+        atualizarOvoTela();
+
+        return;
+
+    }
+
+    /* =========================
+
+       PET NASCIDO
+
+    ========================= */
+
+    document
+
+        .getElementById("painelOvo")
+
+        .classList.add("oculto");
+
+    document
+
+        .getElementById("imagemPetContainer")
+
+        .classList.remove("oculto");
+
+    atualizarPetNascido(dados);
+
+    /* =========================
+
+       NOME
+
+    ========================= */
+
+    document
+
+        .getElementById("nomePetton")
+
+        .textContent =
+
+            dados.nome || "Mimi";
+
+    /* =========================
+
+       FASE / IDADE
+
+    ========================= */
+
+    const idade =
+
+        document.getElementById(
+
+            "idadePetton"
+
+        );
+
+    if (idade) {
+
+        idade.textContent =
+
+            traduzirFase(
+
+                dados.fase
+
+            ) +
+
+            " • " +
+
+            Petton.idadeTexto();
+
+    }
+
+    /* =========================
+
+       STATUS
+
+    ========================= */
+
+    const necessidades =
+
+        Petton.obterNecessidades();
+
+    if (necessidades) {
+
+        document.getElementById(
+
+            "fomePetton"
+
+        ).textContent =
+
+            necessidades.fome ?? 0;
+
+        document.getElementById(
+
+            "felicidadePetton"
+
+        ).textContent =
+
+            necessidades.felicidade ?? 0;
+
+        document.getElementById(
+
+            "energiaPetton"
+
+        ).textContent =
+
+            necessidades.energia ?? 0;
+
+        document.getElementById(
+
+            "higienePetton"
+
+        ).textContent =
+
+            necessidades.higiene ?? 0;
+
+        document.getElementById(
+
+            "saudePetton"
+
+        ).textContent =
+
+            necessidades.saude ?? 0;
+
+        document.getElementById(
+
+            "moedasPetton"
+
+        ).textContent =
+
+            dados.moedas ?? 0;
+
+    }
+
+}
+
+/* =========================================
+
+   IMAGEM DO PET
+
+========================================= */
+
+function atualizarPetNascido(dados) {
+
+    const imagem =
+
+        document.getElementById(
+
+            "imagemPetton"
+
+        );
+
+    if (!imagem) {
+
+        return;
+
+    }
+
+    if (dados.especie === "cachorro") {
+
+        imagem.src =
+
+            "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+    } else {
+
+        imagem.src =
+
+            "petton-original.png";
+
+    }
+
+}
+
+/* =========================================
+
+   TRADUZIR FASE
+
+========================================= */
+
+function traduzirFase(fase) {
+
+    const fases = {
+
+        ovo: "🥚 Ovo",
+
+        bebe: "🐣 Bebê",
+
+        crianca: "🐾 Criança",
+
+        adolescente: "🐕 Adolescente",
+
+        adulto: "🐕 Adulto"
+
+    };
+
+    return fases[fase] || fase;
+
+}
+
+/* =========================================
+
+   CUIDADOS
+
+========================================= */
+
+function alimentar() {
+
+    if (!pettonLiberado) return;
+
+    Petton.alimentar();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "🍖 O Petton comeu!"
+
+    );
+
+}
+
+function brincar() {
+
+    if (!pettonLiberado) return;
+
+    Petton.brincar();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "🎾 Vocês brincaram juntos!"
+
+    );
+
+}
+
+function banho() {
+
+    if (!pettonLiberado) return;
+
+    Petton.banhar();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "🛁 Petton tomou banho!"
+
+    );
+
+}
+
+function limpar() {
+
+    if (!pettonLiberado) return;
+
+    Petton.limpar();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "🧹 Tudo limpo!"
+
+    );
+
+}
+
+function dormir() {
+
+    if (!pettonLiberado) return;
+
+    Petton.dormir();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "😴 Petton foi dormir!"
+
+    );
+
+}
+
+function carinho() {
+
+    if (!pettonLiberado) return;
+
+    Petton.carinho();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "❤️ Petton adorou o carinho!"
+
+    );
+
+}
+
+/* =========================================
+
+   MENSAGEM
+
+========================================= */
+
+function mostrarMensagem(texto) {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagemPetton"
+
+        );
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+    elemento.textContent = texto;
+
+    elemento.style.display =
+
+        "block";
+
+    setTimeout(function() {
+
+        elemento.style.display =
+
+            "none";
+
+    }, 2500);
+
+}
+
+/* =========================================
+
+   BÔNUS
+
+========================================= */
+
+function receberBonus() {
+
+    if (!pettonLiberado) return;
+
+    const resultado =
+
+        Petton.receberBonusDiario();
+
+    atualizarTela();
+
+    if (resultado) {
+
+        mostrarMensagem(
+
+            "🎁 Bônus recebido!"
+
+        );
+
+    } else {
+
+        mostrarMensagem(
+
+            "⏰ Você já recebeu o bônus hoje!"
+
+        );
+
+    }
+
+}
+
+/* =========================================
+
+   ÁLBUM
+
+========================================= */
+
+function abrirAlbum() {
+
+    if (!pettonLiberado) return;
+
+    window.location.href =
+
+        "album.html";
+
+}
+
+/* =========================================
+
+   VOLTAR
+
+========================================= */
+
+function voltar() {
+
+    if (!pettonLiberado) return;
+
+    window.history.back();
+
+}
+
+/* =========================================
+
+   NOME
+
+========================================= */
+
+function salvarNome() {
+
+    if (!pettonLiberado) return;
+
+    const input =
+
+        document.getElementById(
+
+            "novoNome"
+
+        );
+
+    const nome =
+
+        input.value.trim();
+
+    if (!nome) {
+
+        return;
+
+    }
+
+    Petton.renomear(nome);
+
+    fecharNome();
+
+    atualizarTela();
+
+    mostrarMensagem(
+
+        "✏️ Nome alterado!"
+
+    );
+
+}
+
+function fecharNome() {
+
+    document
+
+        .getElementById("modalNome")
+
+        .classList.add("oculto");
+
+}
+
+/* =========================================
+
+   INICIAR
+
+========================================= */
+
+verificarLINE();
+
+/* =========================================
+
+   ATUALIZAÇÃO DO OVO
+
+========================================= */
+
+setInterval(function() {
+
+    if (!pettonLiberado) {
+
+        return;
+
+    }
+
+    const dados =
+
+        Petton.carregar();
+
+    if (!dados) {
+
+        return;
+
+    }
+
+    if (dados.fase === "ovo") {
+
+        atualizarOvoTela();
+
+    } else {
+
+        atualizarTela();
+
+    }
+
+}, 1000);
+
+/* =========================================
+
+   ATUALIZAÇÃO GERAL
+
+========================================= */
+
+setInterval(function() {
+
+    if (!pettonLiberado) {
+
+        return;
+
+    }
+
+    atualizarTela();
+
+}, 60000);
+
+</script>
 
 </body>
 
