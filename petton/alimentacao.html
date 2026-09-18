@@ -624,6 +624,8 @@ body{
 
 let dados = null;
 
+let assinaturaAnterior = "";
+
 /* =====================================================
 
    TEMPO
@@ -632,11 +634,23 @@ let dados = null;
 
 function formatarTempo(ms){
 
-    ms = Math.max(0, ms);
+    ms =
+
+        Math.max(
+
+            0,
+
+            ms
+
+        );
 
     const totalSegundos =
 
-        Math.ceil(ms / 1000);
+        Math.ceil(
+
+            ms / 1000
+
+        );
 
     const horas =
 
@@ -788,7 +802,9 @@ function idadeDias(){
 
             (
 
-                agora - nascimento
+                agora -
+
+                nascimento
 
             ) / 86400000
 
@@ -850,8 +866,6 @@ function especieImagem(){
 
     }
 
-    /* 🐶 CACHORRO */
-
     if(
 
         dados.especie === "cachorro"
@@ -862,8 +876,6 @@ function especieImagem(){
 
     }
 
-    /* 🐰 COELHO */
-
     if(
 
         dados.especie === "coelho"
@@ -873,8 +885,6 @@ function especieImagem(){
         return "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
 
     }
-
-    /* 🐱 GATO */
 
     if(
 
@@ -1164,7 +1174,9 @@ function podeAlimentar(){
 
         dados &&
 
-        dados.hospitalAte
+        dados.hospitalAte &&
+
+        dados.hospitalAte > Date.now()
 
     ){
 
@@ -1224,7 +1236,9 @@ function alimentar(){
 
         dados &&
 
-        dados.hospitalAte
+        dados.hospitalAte &&
+
+        dados.hospitalAte > Date.now()
 
     ){
 
@@ -1328,7 +1342,7 @@ function alimentar(){
 
     }
 
-    renderizar();
+    renderizarAgora();
 
 }
 
@@ -1364,7 +1378,9 @@ function mostrarMensagem(texto){
 
             ){
 
-                elemento.textContent = "";
+                elemento.textContent =
+
+                    "";
 
             }
 
@@ -1550,6 +1566,80 @@ function renderizarOvo(){
 
 /* =====================================================
 
+   ASSINATURA DO ESTADO VISUAL
+
+   ===================================================== */
+
+function assinaturaTela(){
+
+    const d =
+
+        Petton.carregar();
+
+    if(!d){
+
+        return "";
+
+    }
+
+    return JSON.stringify({
+
+        especie:
+
+            d.especie,
+
+        nome:
+
+            d.nome,
+
+        fase:
+
+            d.fase,
+
+        fome:
+
+            d.fome,
+
+        saude:
+
+            d.saude,
+
+        energia:
+
+            d.energia,
+
+        felicidade:
+
+            d.felicidade,
+
+        humor:
+
+            d.humor,
+
+        doente:
+
+            d.doente,
+
+        dateNascimento:
+
+            d.dateNascimento,
+
+        hospital:
+
+            !!(
+
+                d.hospitalAte &&
+
+                d.hospitalAte > Date.now()
+
+            )
+
+    });
+
+}
+
+/* =====================================================
+
    RENDERIZAR PET NASCIDO
 
    ===================================================== */
@@ -1676,7 +1766,9 @@ function renderizar(){
 
     else if(
 
-        dados.hospitalAte
+        dados.hospitalAte &&
+
+        dados.hospitalAte > Date.now()
 
     ){
 
@@ -1822,7 +1914,11 @@ function renderizar(){
 
             <div class="info-fome">
 
-                <span>Faminto</span>
+                <span>
+
+                    Faminto
+
+                </span>
 
                 <strong>
 
@@ -1830,7 +1926,11 @@ function renderizar(){
 
                 </strong>
 
-                <span>Cheio</span>
+                <span>
+
+                    Cheio
+
+                </span>
 
             </div>
 
@@ -2084,23 +2184,105 @@ function renderizar(){
 
 /* =====================================================
 
+   RENDERIZAR AGORA
+
+   ===================================================== */
+
+function renderizarAgora(){
+
+    renderizar();
+
+    try{
+
+        assinaturaAnterior =
+
+            assinaturaTela();
+
+    }catch(e){
+
+        assinaturaAnterior =
+
+            "";
+
+    }
+
+}
+
+/* =====================================================
+
    INÍCIO
 
    ===================================================== */
 
-renderizar();
+renderizarAgora();
 
-/*
+/* =====================================================
 
-   Atualiza a tela a cada segundo.
+   ATUALIZAÇÃO SEM PISCAR
 
-*/
+   =====================================================
+
+   Antes:
+
+       renderizar() a cada 1 segundo
+
+   Isso destruía e criava novamente todo o HTML.
+
+   Agora apenas verificamos se os dados
+
+   realmente mudaram.
+
+   Se não mudou:
+
+       NÃO mexe na tela.
+
+   Se mudou:
+
+       renderiza uma única vez.
+
+   ===================================================== */
 
 setInterval(
 
     function(){
 
-        renderizar();
+        try{
+
+            const atual =
+
+                assinaturaTela();
+
+            if(
+
+                atual !==
+
+                assinaturaAnterior
+
+            ){
+
+                assinaturaAnterior =
+
+                    atual;
+
+                renderizar();
+
+                assinaturaAnterior =
+
+                    assinaturaTela();
+
+            }
+
+        }catch(e){
+
+            console.log(
+
+                "Atualização Petton:",
+
+                e
+
+            );
+
+        }
 
     },
 
