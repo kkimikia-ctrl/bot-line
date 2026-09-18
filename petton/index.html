@@ -14,12 +14,6 @@
 
     <link rel="stylesheet" href="petton.css">
 
-    <!-- =====================================================
-
-         LINE LIFF
-
-         ===================================================== -->
-
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
     <style>
@@ -44,6 +38,8 @@
 
             padding: 25px;
 
+            box-sizing: border-box;
+
             background: #fff8ed;
 
             text-align: center;
@@ -63,6 +59,8 @@
             border-radius: 22px;
 
             padding: 30px 22px;
+
+            box-sizing: border-box;
 
             box-shadow: 0 5px 20px rgba(0,0,0,0.12);
 
@@ -436,7 +434,7 @@
 
 <!-- =====================================================
 
-     BLOQUEIO PARA SAFARI / CHROME
+     BLOQUEIO FORA DO LINE
 
      ===================================================== -->
 
@@ -476,19 +474,11 @@
 
 <!-- =====================================================
 
-     TODO O PETTON ORIGINAL
-
-     O VISUAL NÃO FOI ALTERADO
+     PETTON
 
      ===================================================== -->
 
 <div id="pettonConteudo">
-
-    <!-- =====================================================
-
-         TOPO
-
-         ===================================================== -->
 
     <header class="top-bar">
 
@@ -512,25 +502,15 @@
 
     </header>
 
-    <!-- =====================================================
-
-         CONTEÚDO
-
-         ===================================================== -->
-
     <main class="container">
 
         <section class="pet-card">
-
-            <!-- NOME -->
 
             <h2 id="nomePetton">
 
                 Mimi
 
             </h2>
-
-            <!-- IDADE / FASE -->
 
             <div id="idadePetton" class="pet-idade">
 
@@ -608,9 +588,15 @@
 
                  IMAGEM DO PET
 
+                 COMEÇA ESCONDIDA
+
                  ================================================= -->
 
-            <div id="imagemPetContainer">
+            <div
+
+                id="imagemPetContainer"
+
+                class="oculto">
 
                 <img
 
@@ -730,11 +716,7 @@
 
                     🍖
 
-                    <span>
-
-                        Alimentar
-
-                    </span>
+                    <span>Alimentar</span>
 
                 </button>
 
@@ -742,11 +724,7 @@
 
                     🎾
 
-                    <span>
-
-                        Brincar
-
-                    </span>
+                    <span>Brincar</span>
 
                 </button>
 
@@ -754,11 +732,7 @@
 
                     🛁
 
-                    <span>
-
-                        Banho
-
-                    </span>
+                    <span>Banho</span>
 
                 </button>
 
@@ -766,11 +740,7 @@
 
                     🧹
 
-                    <span>
-
-                        Limpar
-
-                    </span>
+                    <span>Limpar</span>
 
                 </button>
 
@@ -778,11 +748,7 @@
 
                     😴
 
-                    <span>
-
-                        Dormir
-
-                    </span>
+                    <span>Dormir</span>
 
                 </button>
 
@@ -790,11 +756,7 @@
 
                     ❤️
 
-                    <span>
-
-                        Carinho
-
-                    </span>
+                    <span>Carinho</span>
 
                 </button>
 
@@ -840,11 +802,7 @@
 
                     📷
 
-                    <span>
-
-                        Álbum
-
-                    </span>
+                    <span>Álbum</span>
 
                 </a>
 
@@ -852,11 +810,7 @@
 
                     🍖
 
-                    <span>
-
-                        Alimentação
-
-                    </span>
+                    <span>Alimentação</span>
 
                 </a>
 
@@ -864,11 +818,7 @@
 
                     🛁
 
-                    <span>
-
-                        Cuidados
-
-                    </span>
+                    <span>Cuidados</span>
 
                 </a>
 
@@ -876,11 +826,7 @@
 
                     🛒
 
-                    <span>
-
-                        Loja
-
-                    </span>
+                    <span>Loja</span>
 
                 </a>
 
@@ -888,11 +834,7 @@
 
                     🌱
 
-                    <span>
-
-                        Crescimento
-
-                    </span>
+                    <span>Crescimento</span>
 
                 </a>
 
@@ -900,11 +842,7 @@
 
                     🏠
 
-                    <span>
-
-                        Visitas
-
-                    </span>
+                    <span>Visitas</span>
 
                 </a>
 
@@ -916,7 +854,7 @@
 
     <!-- =====================================================
 
-         MODAL RENOMEAR
+         MODAL
 
          ===================================================== -->
 
@@ -960,12 +898,6 @@
 
     </div>
 
-    <!-- =====================================================
-
-         MENSAGEM
-
-         ===================================================== -->
-
     <div
 
         id="mensagemPetton"
@@ -988,29 +920,753 @@
 
 /* =====================================================
 
-   LIFF
+   FUNÇÕES DA TELA DO PETTON
 
    ===================================================== */
 
-const LIFF_ID = "2010902449-KWNNNsxn";
+function formatarTempo(ms) {
 
-/* =====================================================
+    ms = Math.max(0, ms);
 
-   ABRIR NO LINE
+    const totalSegundos =
 
-   ===================================================== */
+        Math.ceil(ms / 1000);
 
-function abrirNoLINE() {
+    const horas =
 
-    window.location.href =
+        Math.floor(
 
-        "https://liff.line.me/" + LIFF_ID;
+            totalSegundos / 3600
+
+        );
+
+    const minutos =
+
+        Math.floor(
+
+            (totalSegundos % 3600) / 60
+
+        );
+
+    const segundos =
+
+        totalSegundos % 60;
+
+    return (
+
+        String(horas).padStart(2, "0") +
+
+        ":" +
+
+        String(minutos).padStart(2, "0") +
+
+        ":" +
+
+        String(segundos).padStart(2, "0")
+
+    );
 
 }
 
 /* =====================================================
 
-   VERIFICAR SE ESTÁ DENTRO DO LINE
+   ATUALIZAR TELA DO OVO
+
+   ===================================================== */
+
+function atualizarOvoTela() {
+
+    const dados =
+
+        Petton.carregar();
+
+    const painel =
+
+        document.getElementById("painelOvo");
+
+    const imagem =
+
+        document.getElementById("imagemPetContainer");
+
+    const cuidados =
+
+        document.getElementById("botoesCuidados");
+
+    const idade =
+
+        document.getElementById("idadePetton");
+
+    const cronometro =
+
+        document.getElementById("cronometroOvo");
+
+    const ovo =
+
+        document.getElementById("ovoVisual");
+
+    const status =
+
+        document.getElementById("statusAquecedor");
+
+    const botao =
+
+        document.getElementById("btnAquecedor");
+
+    if (!dados.dateNascimento) {
+
+        painel.style.display = "block";
+
+        imagem.classList.add("oculto");
+
+        cuidados.classList.add("oculto");
+
+        idade.textContent =
+
+            "🥚 Ovo • preparando para nascer";
+
+        /*
+
+         * IMPORTANTE:
+
+         * Aqui o Petton.js calcula o tempo real.
+
+         */
+
+        const restante =
+
+            Petton.incubacaoRestante();
+
+        cronometro.textContent =
+
+            formatarTempo(restante);
+
+        /*
+
+         * AQUECEDOR
+
+         */
+
+        if (Petton.aquecedorAtivo()) {
+
+            const tempo =
+
+                Petton.aquecedorRestante();
+
+            status.textContent =
+
+                "🔥 Aquecedor ligado • " +
+
+                formatarTempo(tempo);
+
+            botao.textContent =
+
+                "🔥 Aquecedor ligado";
+
+            botao.disabled = true;
+
+            ovo.classList.add(
+
+                "ovo-aquecido"
+
+            );
+
+        } else {
+
+            status.textContent =
+
+                "💡 Aquecedor desligado";
+
+            botao.textContent =
+
+                "💡 Aquecer o ovo";
+
+            botao.disabled = false;
+
+            ovo.classList.remove(
+
+                "ovo-aquecido"
+
+            );
+
+        }
+
+        /*
+
+         * Se acabou de nascer,
+
+         * atualiza imediatamente.
+
+         */
+
+        if (restante <= 0) {
+
+            setTimeout(
+
+                atualizarTela,
+
+                100
+
+            );
+
+        }
+
+    } else {
+
+        painel.style.display = "none";
+
+        imagem.classList.remove("oculto");
+
+        cuidados.classList.remove("oculto");
+
+    }
+
+}
+
+/* =====================================================
+
+   AQUECER OVO
+
+   ===================================================== */
+
+function aquecerOvo() {
+
+    const resultado =
+
+        Petton.ligarAquecedor();
+
+    if (resultado) {
+
+        const ovo =
+
+            document.getElementById("ovoVisual");
+
+        ovo.classList.remove(
+
+            "ovo-vibrando"
+
+        );
+
+        void ovo.offsetWidth;
+
+        ovo.classList.add(
+
+            "ovo-vibrando"
+
+        );
+
+        mostrarMensagem(
+
+            "🔥 O aquecedor foi ligado! O ovo está incubando mais rápido."
+
+        );
+
+        atualizarOvoTela();
+
+    }
+
+}
+
+/* =====================================================
+
+   RESETAR
+
+   ===================================================== */
+
+function resetarPettonTela() {
+
+    const confirmar =
+
+        confirm(
+
+            "Tem certeza que deseja criar um novo Petton? O Petton atual será perdido."
+
+        );
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+    Petton.resetar();
+
+    mostrarMensagem(
+
+        "🥚 Um novo Petton começou a incubação!"
+
+    );
+
+    atualizarTela();
+
+}
+
+/* =====================================================
+
+   ATUALIZAR PET NASCIDO
+
+   ===================================================== */
+
+function atualizarPetNascido(dados) {
+
+    const nome =
+
+        document.getElementById("nomePetton");
+
+    const idade =
+
+        document.getElementById("idadePetton");
+
+    const imagem =
+
+        document.getElementById("imagemPetton");
+
+    nome.textContent =
+
+        dados.nome || "Mimi";
+
+    const dias =
+
+        Petton.idadeDias();
+
+    idade.textContent =
+
+        "🐾 " +
+
+        dados.fase +
+
+        " • " +
+
+        dias +
+
+        " dias";
+
+    document.getElementById("fome").textContent =
+
+        Math.round(dados.fome);
+
+    document.getElementById("felicidade").textContent =
+
+        Math.round(dados.felicidade);
+
+    document.getElementById("energia").textContent =
+
+        Math.round(dados.energia);
+
+    document.getElementById("higiene").textContent =
+
+        Math.round(dados.higiene);
+
+    document.getElementById("saude").textContent =
+
+        Math.round(dados.saude);
+
+    document.getElementById("moedas").textContent =
+
+        Math.round(dados.moedas);
+
+    /*
+
+     * IMAGEM
+
+     */
+
+    if (dados.especie === "cachorro") {
+
+        imagem.src =
+
+            "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+    } else {
+
+        imagem.src =
+
+            "petton-original.png";
+
+    }
+
+}
+
+/* =====================================================
+
+   ATUALIZAR TELA COMPLETA
+
+   ===================================================== */
+
+function atualizarTela() {
+
+    try {
+
+        let dados =
+
+            Petton.carregar();
+
+        /*
+
+         * PRIMEIRO atualiza a incubação.
+
+         */
+
+        if (!dados.dateNascimento) {
+
+            atualizarOvoTela();
+
+            return;
+
+        }
+
+        /*
+
+         * PET NASCEU
+
+         */
+
+        Petton.verificarCrescimento();
+
+        dados =
+
+            Petton.carregar();
+
+        document.getElementById(
+
+            "painelOvo"
+
+        ).style.display = "none";
+
+        document.getElementById(
+
+            "imagemPetContainer"
+
+        ).classList.remove("oculto");
+
+        document.getElementById(
+
+            "botoesCuidados"
+
+        ).classList.remove("oculto");
+
+        atualizarPetNascido(dados);
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro ao atualizar tela:",
+
+            erro
+
+        );
+
+    }
+
+}
+
+/* =====================================================
+
+   CUIDADOS
+
+   ===================================================== */
+
+function alimentarPetton() {
+
+    if (Petton.alimentar()) {
+
+        mostrarMensagem(
+
+            "🍖 Petton comeu! +20 fome"
+
+        );
+
+        atualizarTela();
+
+    }
+
+}
+
+function brincarPetton() {
+
+    if (Petton.brincar()) {
+
+        mostrarMensagem(
+
+            "🎾 Petton brincou!"
+
+        );
+
+        atualizarTela();
+
+    }
+
+}
+
+function banhoPetton() {
+
+    if (Petton.limpar()) {
+
+        mostrarMensagem(
+
+            "🛁 Petton tomou banho!"
+
+        );
+
+        atualizarTela();
+
+    }
+
+}
+
+function limparPetton() {
+
+    if (Petton.limpar()) {
+
+        mostrarMensagem(
+
+            "🧹 Petton ficou limpinho!"
+
+        );
+
+        atualizarTela();
+
+    }
+
+}
+
+function dormirPetton() {
+
+    if (Petton.dormir()) {
+
+        mostrarMensagem(
+
+            "😴 Petton descansou!"
+
+        );
+
+        atualizarTela();
+
+    }
+
+}
+
+function carinhoPetton() {
+
+    if (Petton.carinho()) {
+
+        mostrarMensagem(
+
+            "❤️ Petton recebeu carinho!"
+
+        );
+
+        atualizarTela();
+
+    }
+
+}
+
+/* =====================================================
+
+   BÔNUS
+
+   ===================================================== */
+
+function receberBonus() {
+
+    const dados =
+
+        Petton.carregar();
+
+    dados.moedas =
+
+        (dados.moedas || 0) + 10;
+
+    Petton.salvar();
+
+    mostrarMensagem(
+
+        "🎁 Você recebeu 10 moedas!"
+
+    );
+
+    atualizarTela();
+
+}
+
+/* =====================================================
+
+   MENSAGEM
+
+   ===================================================== */
+
+function mostrarMensagem(texto) {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagemPetton"
+
+        );
+
+    elemento.textContent =
+
+        texto;
+
+    elemento.classList.remove(
+
+        "oculto"
+
+    );
+
+    clearTimeout(
+
+        window.pettonMensagemTimer
+
+    );
+
+    window.pettonMensagemTimer =
+
+        setTimeout(
+
+            function () {
+
+                elemento.classList.add(
+
+                    "oculto"
+
+                );
+
+            },
+
+            2500
+
+        );
+
+}
+
+/* =====================================================
+
+   ÁLBUM
+
+   ===================================================== */
+
+function abrirAlbum() {
+
+    window.location.href =
+
+        "album.html";
+
+}
+
+/* =====================================================
+
+   VOLTAR
+
+   ===================================================== */
+
+function voltar() {
+
+    if (
+
+        window.history.length > 1
+
+    ) {
+
+        window.history.back();
+
+    } else {
+
+        window.location.href =
+
+            "../index.html";
+
+    }
+
+}
+
+/* =====================================================
+
+   MODAL
+
+   ===================================================== */
+
+function abrirModalNome() {
+
+    document.getElementById(
+
+        "modalNome"
+
+    ).classList.remove("oculto");
+
+}
+
+function fecharModalNome() {
+
+    document.getElementById(
+
+        "modalNome"
+
+    ).classList.add("oculto");
+
+}
+
+function salvarNome() {
+
+    const input =
+
+        document.getElementById(
+
+            "novoNome"
+
+        );
+
+    const nome =
+
+        input.value.trim();
+
+    if (!nome) {
+
+        return;
+
+    }
+
+    const dados =
+
+        Petton.carregar();
+
+    dados.nome =
+
+        nome;
+
+    Petton.salvar();
+
+    fecharModalNome();
+
+    atualizarTela();
+
+}
+
+/* =====================================================
+
+   LIFF
+
+   ===================================================== */
+
+const LIFF_ID =
+
+    "2010902449-KWNNNsxn";
+
+function abrirNoLINE() {
+
+    window.location.href =
+
+        "https://liff.line.me/" +
+
+        LIFF_ID;
+
+}
+
+/* =====================================================
+
+   VERIFICAR LINE
 
    ===================================================== */
 
@@ -1018,11 +1674,19 @@ async function verificarAcessoLINE() {
 
     const bloqueio =
 
-        document.getElementById("bloqueioLine");
+        document.getElementById(
+
+            "bloqueioLine"
+
+        );
 
     const petton =
 
-        document.getElementById("pettonConteudo");
+        document.getElementById(
+
+            "pettonConteudo"
+
+        );
 
     try {
 
@@ -1032,31 +1696,49 @@ async function verificarAcessoLINE() {
 
         });
 
-        /* ---------------------------------------------
-
-           ESTÁ DENTRO DO APLICATIVO LINE
-
-           --------------------------------------------- */
-
         if (liff.isInClient()) {
 
-            bloqueio.style.display = "none";
+            /*
 
-            petton.style.display = "block";
+             * ESTÁ DENTRO DO LINE
+
+             */
+
+            bloqueio.style.display =
+
+                "none";
+
+            petton.style.display =
+
+                "block";
+
+            /*
+
+             * Agora sim iniciamos
+
+             * a tela do Petton.
+
+             */
+
+            atualizarTela();
 
             return;
 
         }
 
-        /* ---------------------------------------------
+        /*
 
-           SAFARI / CHROME / OUTRO NAVEGADOR
+         * FORA DO LINE
 
-           --------------------------------------------- */
+         */
 
-        petton.style.display = "none";
+        petton.style.display =
 
-        bloqueio.style.display = "flex";
+            "none";
+
+        bloqueio.style.display =
+
+            "flex";
 
     }
 
@@ -1064,23 +1746,19 @@ async function verificarAcessoLINE() {
 
         console.error(
 
-            "Erro ao inicializar LIFF:",
+            "Erro LIFF:",
 
             erro
 
         );
 
-        /*
+        petton.style.display =
 
-         * Se não conseguir confirmar o LINE,
+            "none";
 
-         * bloqueia por segurança.
+        bloqueio.style.display =
 
-         */
-
-        petton.style.display = "none";
-
-        bloqueio.style.display = "flex";
+            "flex";
 
     }
 
@@ -1088,11 +1766,93 @@ async function verificarAcessoLINE() {
 
 /* =====================================================
 
-   INICIAR VERIFICAÇÃO
+   INICIALIZAÇÃO
 
    ===================================================== */
 
-verificarAcessoLINE();
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    function () {
+
+        verificarAcessoLINE();
+
+    }
+
+);
+
+/* =====================================================
+
+   ATUALIZAÇÃO DO CONTADOR
+
+   ===================================================== */
+
+setInterval(
+
+    function () {
+
+        if (
+
+            typeof liff !== "undefined" &&
+
+            liff.isInClient()
+
+        ) {
+
+            const dados =
+
+                Petton.carregar();
+
+            if (
+
+                !dados.dateNascimento
+
+            ) {
+
+                atualizarOvoTela();
+
+            } else {
+
+                atualizarTela();
+
+            }
+
+        }
+
+    },
+
+    1000
+
+);
+
+/* =====================================================
+
+   ATUALIZAÇÃO GERAL
+
+   ===================================================== */
+
+setInterval(
+
+    function () {
+
+        if (
+
+            typeof liff !== "undefined" &&
+
+            liff.isInClient()
+
+        ) {
+
+            atualizarTela();
+
+        }
+
+    },
+
+    60000
+
+);
 
 </script>
 
