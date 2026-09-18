@@ -310,8 +310,6 @@ body{
 
     height:100%;
 
-    width:0%;
-
     border-radius:20px;
 
     transition:width .5s;
@@ -538,6 +536,14 @@ body{
 
 }
 
+.aviso-doente{
+
+    background:#fee2e2;
+
+    color:#991b1b;
+
+}
+
 .rodape{
 
     text-align:center;
@@ -574,7 +580,11 @@ body{
 
             <h1>🍖 Alimentação</h1>
 
-            <p>Cuide da barriguinha do seu Petton</p>
+            <p>
+
+                Cuide da barriguinha do seu Petton
+
+            </p>
 
         </div>
 
@@ -584,9 +594,17 @@ body{
 
         <div class="card pet">
 
-            <div class="pet-emoji">🐾</div>
+            <div class="pet-emoji">
 
-            <p>Carregando...</p>
+                🐾
+
+            </div>
+
+            <p>
+
+                Carregando...
+
+            </p>
 
         </div>
 
@@ -598,13 +616,13 @@ body{
 
 <script>
 
+/* =====================================================
+
+   VARIÁVEIS
+
+   ===================================================== */
+
 let dados = null;
-
-let ultimaAlimentacao = null;
-
-const CHAVE_ALIMENTACAO =
-
-    "petton_ultima_alimentacao";
 
 /* =====================================================
 
@@ -658,19 +676,25 @@ function formatarTempo(ms){
 
 /* =====================================================
 
-   CARREGAR DADOS
+   CARREGAR PETTON
 
    ===================================================== */
 
 function carregarDados(){
 
-    dados = null;
-
     try{
 
-        if(typeof Petton !== "undefined"){
+        if(
 
-            dados = Petton.carregar();
+            typeof Petton !== "undefined" &&
+
+            Petton.carregar
+
+        ){
+
+            dados =
+
+                Petton.carregar();
 
         }
 
@@ -684,73 +708,7 @@ function carregarDados(){
 
         );
 
-    }
-
-    if(!dados){
-
-        try{
-
-            const salvo =
-
-                localStorage.getItem(
-
-                    "petton_dados_v3"
-
-                ) ||
-
-                localStorage.getItem(
-
-                    "petton_dados_v2"
-
-                ) ||
-
-                localStorage.getItem(
-
-                    "petton_dados_v1"
-
-                );
-
-            if(salvo){
-
-                dados =
-
-                    JSON.parse(salvo);
-
-            }
-
-        }catch(e){
-
-            console.log(e);
-
-        }
-
-    }
-
-    try{
-
-        const salvo =
-
-            localStorage.getItem(
-
-                CHAVE_ALIMENTACAO
-
-            );
-
-        if(salvo){
-
-            ultimaAlimentacao =
-
-                JSON.parse(salvo);
-
-        }else{
-
-            ultimaAlimentacao = null;
-
-        }
-
-    }catch(e){
-
-        ultimaAlimentacao = null;
+        dados = null;
 
     }
 
@@ -758,7 +716,7 @@ function carregarDados(){
 
 /* =====================================================
 
-   VERIFICAR SE ESTÁ NO OVO
+   VERIFICAR OVO
 
    ===================================================== */
 
@@ -854,17 +812,21 @@ function especieEmoji(){
 
     }
 
-    const especie =
+    if(
 
-        dados.especie || "gato";
+        dados.especie === "cachorro"
 
-    if(especie === "cachorro"){
+    ){
 
         return "🐶";
 
     }
 
-    if(especie === "coelho"){
+    if(
+
+        dados.especie === "coelho"
+
+    ){
 
         return "🐰";
 
@@ -876,7 +838,7 @@ function especieEmoji(){
 
 /* =====================================================
 
-   IMAGEM DO PET
+   IMAGEM
 
    ===================================================== */
 
@@ -894,19 +856,27 @@ function especieImagem(){
 
     ){
 
-        return
-
-            "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+        return "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
 
     }
 
-    return "petton-original.png";
+    if(
+
+        dados.especie === "gato"
+
+    ){
+
+        return "petton-original.png";
+
+    }
+
+    return null;
 
 }
 
 /* =====================================================
 
-   ALIMENTAÇÃO
+   ALIMENTAÇÃO POR IDADE
 
    ===================================================== */
 
@@ -1056,55 +1026,27 @@ function obterAlimentacao(idade){
 
 /* =====================================================
 
-   ÚLTIMA ALIMENTAÇÃO
-
-   ===================================================== */
-
-function horasDesdeUltima(){
-
-    if(
-
-        !ultimaAlimentacao ||
-
-        !ultimaAlimentacao.data
-
-    ){
-
-        return Infinity;
-
-    }
-
-    const ultima =
-
-        new Date(
-
-            ultimaAlimentacao.data
-
-        );
-
-    const agora =
-
-        new Date();
-
-    return (
-
-        agora - ultima
-
-    ) / 3600000;
-
-}
-
-/* =====================================================
-
    FOME
 
    ===================================================== */
 
 function calcularFome(){
 
-    /* IMPORTANTE:
+    /*
 
-       OVO NÃO TEM FOME */
+       IMPORTANTE:
+
+       A fome agora vem DIRETAMENTE
+
+       do petton.js.
+
+       Não usamos mais:
+
+       petton_ultima_alimentacao
+
+       como fonte de fome.
+
+    */
 
     if(estaNoOvo()){
 
@@ -1112,53 +1054,39 @@ function calcularFome(){
 
     }
 
-    const idade =
+    if(
 
-        idadeDias();
+        typeof dados.fome === "number"
 
-    const comida =
+    ){
 
-        obterAlimentacao(
+        return Math.max(
 
-            idade
+            0,
+
+            Math.min(
+
+                100,
+
+                dados.fome
+
+            )
 
         );
 
-    const horas =
-
-        horasDesdeUltima();
-
-    if(!isFinite(horas)){
-
-        return 20;
-
     }
 
-    const porcentagem =
+    /*
 
-        100 -
+       Compatibilidade caso algum
 
-        (
+       Petton antigo ainda não tenha
 
-            horas /
+       o campo fome.
 
-            comida.intervalo
+    */
 
-        ) * 100;
-
-    return Math.max(
-
-        0,
-
-        Math.min(
-
-            100,
-
-            porcentagem
-
-        )
-
-    );
+    return 50;
 
 }
 
@@ -1230,6 +1158,30 @@ function podeAlimentar(){
 
     }
 
+    if(
+
+        dados &&
+
+        dados.doente
+
+    ){
+
+        return false;
+
+    }
+
+    if(
+
+        dados &&
+
+        dados.hospitalAte
+
+    ){
+
+        return false;
+
+    }
+
     const fome =
 
         calcularFome();
@@ -1260,7 +1212,13 @@ function alimentar(){
 
     }
 
-    if(dados.doente){
+    if(
+
+        dados &&
+
+        dados.doente
+
+    ){
 
         mostrarMensagem(
 
@@ -1272,17 +1230,37 @@ function alimentar(){
 
     }
 
-    if(!podeAlimentar()){
+    if(
+
+        dados &&
+
+        dados.hospitalAte
+
+    ){
 
         mostrarMensagem(
 
-            "🥰 Seu Petton ainda está de barriguinha cheia!"
+            "🏥 Petton está recebendo tratamento."
 
         );
 
         return;
 
     }
+
+    if(!podeAlimentar()){
+
+        mostrarMensagem(
+
+            "🥰 Seu Petton está de barriguinha cheia!"
+
+        );
+
+        return;
+
+    }
+
+    let resultado = false;
 
     try{
 
@@ -1294,59 +1272,79 @@ function alimentar(){
 
         ){
 
-            Petton.alimentar();
+            resultado =
+
+                Petton.alimentar();
 
         }
 
     }catch(e){
 
-        console.log(e);
+        console.log(
 
-    }
+            "Erro ao alimentar:",
 
-    ultimaAlimentacao = {
-
-        data:
-
-            new Date().toISOString(),
-
-        idade:
-
-            idadeDias()
-
-    };
-
-    try{
-
-        localStorage.setItem(
-
-            CHAVE_ALIMENTACAO,
-
-            JSON.stringify(
-
-                ultimaAlimentacao
-
-            )
+            e
 
         );
 
-    }catch(e){}
+    }
 
-    mostrarMensagem(
+    /*
 
-        "😋 " +
+       Só mostra sucesso se o Petton
 
-        (
+       realmente aceitou a alimentação.
 
-            dados.nome ||
+    */
 
-            "Seu Petton"
+    if(resultado !== false){
 
-        ) +
+        mostrarMensagem(
 
-        " comeu e ficou feliz!"
+            "😋 " +
 
-    );
+            (
+
+                dados.nome ||
+
+                "Seu Petton"
+
+            ) +
+
+            " comeu e ficou feliz!"
+
+        );
+
+    }else{
+
+        carregarDados();
+
+        if(
+
+            dados &&
+
+            dados.doente
+
+        ){
+
+            mostrarMensagem(
+
+                "🤒 Petton está doente. Leve ao hospital."
+
+            );
+
+        }else{
+
+            mostrarMensagem(
+
+                "🍖 Não foi possível alimentar agora."
+
+            );
+
+        }
+
+    }
 
     renderizar();
 
@@ -1359,6 +1357,14 @@ function alimentar(){
    ===================================================== */
 
 function mostrarMensagem(texto){
+
+    /*
+
+       Se a área ainda não existir,
+
+       não fazemos nada.
+
+    */
 
     const elemento =
 
@@ -1396,54 +1402,6 @@ function mostrarMensagem(texto){
 
 /* =====================================================
 
-   ÚLTIMA REFEIÇÃO
-
-   ===================================================== */
-
-function formatarUltima(){
-
-    if(
-
-        !ultimaAlimentacao ||
-
-        !ultimaAlimentacao.data
-
-    ){
-
-        return "Ainda não alimentado";
-
-    }
-
-    const data =
-
-        new Date(
-
-            ultimaAlimentacao.data
-
-        );
-
-    return data.toLocaleString(
-
-        "pt-BR",
-
-        {
-
-            day:"2-digit",
-
-            month:"2-digit",
-
-            hour:"2-digit",
-
-            minute:"2-digit"
-
-        }
-
-    );
-
-}
-
-/* =====================================================
-
    PRÓXIMA REFEIÇÃO
 
    ===================================================== */
@@ -1452,57 +1410,51 @@ function proximidadeProxima(){
 
     if(estaNoOvo()){
 
-        return "A alimentação ficará disponível depois que o Petton nascer.";
+        return (
 
-    }
-
-    const comida =
-
-        obterAlimentacao(
-
-            idadeDias()
+            "A alimentação ficará disponível depois que o Petton nascer."
 
         );
 
-    const horas =
-
-        horasDesdeUltima();
-
-    if(!isFinite(horas)){
-
-        return "Seu Petton precisa receber sua primeira refeição.";
-
     }
 
-    const restantes =
+    const fome =
 
-        Math.max(
+        calcularFome();
 
-            0,
+    if(fome <= 20){
 
-            comida.intervalo - horas
+        return (
+
+            "Seu Petton está com bastante fome."
 
         );
 
-    if(restantes <= 0){
+    }
 
-        return "Já está na hora de oferecer comida.";
+    if(fome <= 40){
+
+        return (
+
+            "Já está chegando a hora de oferecer comida."
+
+        );
 
     }
 
-    if(restantes < 1){
+    if(fome >= 90){
 
-        return "A próxima refeição está chegando.";
+        return (
+
+            "Seu Petton está de barriguinha cheia."
+
+        );
 
     }
 
     return (
 
-        "Próxima refeição em aproximadamente " +
-
-        Math.ceil(restantes) +
-
-        " horas."
+        "O Petton está bem alimentado por enquanto."
 
     );
 
@@ -1590,13 +1542,17 @@ function renderizarOvo(){
 
             <div class="ovo-aviso">
 
-                💡 <strong>Alimentação bloqueada</strong><br><br>
+                💡 <strong>Alimentação bloqueada</strong>
+
+                <br><br>
 
                 O Petton ainda está no ovo,
 
                 por isso ele não precisa de comida
 
                 neste momento.
+
+                <br><br>
 
                 A alimentação aparecerá
 
@@ -1608,7 +1564,9 @@ function renderizarOvo(){
 
         <div class="rodape">
 
-            🥚 Primeiro o nascimento. Depois a barriguinha cheia. 🐾
+            🥚 Primeiro o nascimento.
+
+            Depois a barriguinha cheia. 🐾
 
         </div>
 
@@ -1626,6 +1584,20 @@ function renderizar(){
 
     carregarDados();
 
+    /*
+
+       PRIMEIRO:
+
+       Verifica o ovo.
+
+       Se não nasceu, PARA AQUI.
+
+       Isso impede aparecer fome,
+
+       barriga cheia, comida etc.
+
+    */
+
     if(estaNoOvo()){
 
         renderizarOvo();
@@ -1633,6 +1605,14 @@ function renderizar(){
         return;
 
     }
+
+    /*
+
+       Atualiza crescimento,
+
+       caso a incubação tenha terminado.
+
+    */
 
     try{
 
@@ -1657,6 +1637,12 @@ function renderizar(){
         console.log(e);
 
     }
+
+    /*
+
+       Verifica novamente.
+
+    */
 
     if(estaNoOvo()){
 
@@ -1694,12 +1680,6 @@ function renderizar(){
 
         );
 
-    const botaoBloqueado =
-
-        fome >= 90 ||
-
-        dados.doente;
-
     let corFome =
 
         "#22c55e";
@@ -1724,7 +1704,71 @@ function renderizar(){
 
         especieImagem();
 
+    /*
+
+       BOTÃO
+
+    */
+
+    let botaoBloqueado =
+
+        false;
+
+    let textoBotao =
+
+        "🍽️ Dar comida";
+
+    if(
+
+        dados.doente
+
+    ){
+
+        botaoBloqueado =
+
+            true;
+
+        textoBotao =
+
+            "🤒 Petton está doente";
+
+    }
+
+    else if(
+
+        dados.hospitalAte
+
+    ){
+
+        botaoBloqueado =
+
+            true;
+
+        textoBotao =
+
+            "🏥 Em tratamento";
+
+    }
+
+    else if(
+
+        fome >= 90
+
+    ){
+
+        botaoBloqueado =
+
+            true;
+
+        textoBotao =
+
+            "🥰 Barriguinha cheia";
+
+    }
+
     area.innerHTML = `
+
+        <!-- PETTON -->
 
         <div class="card pet">
 
@@ -1772,21 +1816,29 @@ function renderizar(){
 
                     idade === 0
 
-                    ? "Ainda não nasceu"
+                    ?
 
-                    : idade +
+                    "Recém-nascido"
 
-                      (
+                    :
+
+                    idade +
+
+                    (
 
                         idade === 1
 
-                        ? " dia"
+                        ?
 
-                        : " dias"
+                        " dia"
 
-                      ) +
+                        :
 
-                      " de vida"
+                        " dias"
+
+                    ) +
+
+                    " de vida"
 
                 }
 
@@ -1799,6 +1851,8 @@ function renderizar(){
             </div>
 
         </div>
+
+        <!-- FOME -->
 
         <div class="card">
 
@@ -1862,13 +1916,19 @@ function renderizar(){
 
             `
 
+            <!-- DOENTE -->
+
             <div class="card">
 
-                <div class="aviso">
+                <div class="aviso aviso-doente">
 
-                    🤒 <strong>Petton está doente.</strong><br><br>
+                    🤒 <strong>Petton está doente.</strong>
+
+                    <br><br>
 
                     A alimentação está bloqueada.
+
+                    <br><br>
 
                     Primeiro leve o Petton ao hospital
 
@@ -1883,6 +1943,8 @@ function renderizar(){
             :
 
             `
+
+            <!-- COMIDA -->
 
             <div class="card comida">
 
@@ -1920,15 +1982,7 @@ function renderizar(){
 
                 >
 
-                    ${
-
-                        botaoBloqueado
-
-                        ? "🥰 Ainda está satisfeito"
-
-                        : "🍽️ Dar comida"
-
-                    }
+                    ${textoBotao}
 
                 </button>
 
@@ -1945,6 +1999,8 @@ function renderizar(){
             `
 
         }
+
+        <!-- ROTINA -->
 
         <div class="card">
 
@@ -2022,13 +2078,25 @@ function renderizar(){
 
                         <strong>
 
-                            Última refeição
+                            Estado atual
 
                         </strong>
 
                         <span>
 
-                            ${formatarUltima()}
+                            ${
+
+                                fome >= 90
+
+                                ? "Barriguinha cheia"
+
+                                : fome <= 20
+
+                                ? "Está precisando comer"
+
+                                : "Está bem alimentado"
+
+                            }
 
                         </span>
 
@@ -2040,53 +2108,15 @@ function renderizar(){
 
         </div>
 
-        <div class="card">
-
-            <h2 style="margin-top:0;">
-
-                🍖 Refeições
-
-            </h2>
-
-            <div class="historico">
-
-                <div class="numero">
-
-                    ${
-
-                        ultimaAlimentacao
-
-                        ? "1"
-
-                        : "0"
-
-                    }
-
-                </div>
-
-                ${
-
-                    ultimaAlimentacao
-
-                    ?
-
-                    "Última refeição registrada."
-
-                    :
-
-                    "Nenhuma refeição registrada ainda."
-
-                }
-
-            </div>
-
-        </div>
+        <!-- DICA -->
 
         <div class="card">
 
             <div class="aviso">
 
-                💡 <strong>Dica:</strong><br>
+                💡 <strong>Dica:</strong>
+
+                <br><br>
 
                 Quanto menor o Petton, mais
 
@@ -2112,17 +2142,21 @@ function renderizar(){
 
 }
 
-window.alimentar =
-
-    alimentar;
-
 /* =====================================================
 
-   ATUALIZAÇÃO
+   INÍCIO
 
    ===================================================== */
 
 renderizar();
+
+/*
+
+   Atualiza a tela a cada segundo.
+
+   Isso é importante para o contador do ovo.
+
+*/
 
 setInterval(
 
