@@ -14,15 +14,15 @@ const PETTON_CHAVE = "petton_dados_v3";
 
    ========================================================= */
 
-const PETTON_INCUBACAO_MS = 24 * 60 * 60 * 1000; // 24 horas
+const PETTON_INCUBACAO_MS = 24 * 60 * 60 * 1000;
 
-const PETTON_AQUECEDOR_DURACAO_MS = 2 * 60 * 1000; // 2 minutos
+const PETTON_AQUECEDOR_DURACAO_MS = 2 * 60 * 1000;
 
 const PETTON_AQUECEDOR_MULTIPLICADOR = 5;
 
 /* =========================================================
 
-   FUNÇÕES AUXILIARES
+   ESPÉCIES
 
    ========================================================= */
 
@@ -58,9 +58,11 @@ function criarPettonNovo() {
 
     return {
 
-        especie: escolherEspecie(),
+        /* ESPÉCIE E NOME FICAM SECRETOS NO OVO */
 
-        nome: "Mimi",
+        especie: null,
+
+        nome: null,
 
         fase: "ovo",
 
@@ -70,9 +72,13 @@ function criarPettonNovo() {
 
         /* INCUBAÇÃO */
 
-        incubacaoRestanteMs: PETTON_INCUBACAO_MS,
+        incubacaoRestanteMs:
 
-        incubacaoAtualizadaEm: agora,
+            PETTON_INCUBACAO_MS,
+
+        incubacaoAtualizadaEm:
+
+            agora,
 
         aquecedorAte: null,
 
@@ -160,21 +166,39 @@ function carregarPetton() {
 
             JSON.parse(salvo);
 
-        /* -------------------------
+        /* =================================================
 
            MIGRAÇÃO
 
-        ------------------------- */
+           ================================================= */
 
         if (!dados.dateNascimento) {
 
             dados.fase = "ovo";
 
+            /*
+
+             * IMPORTANTE:
+
+             * enquanto estiver no ovo,
+
+             * não revelar espécie nem nome.
+
+             */
+
+            dados.especie = null;
+
+            dados.nome = null;
+
             if (
 
                 typeof dados.incubacaoRestanteMs !== "number" ||
 
-                !Number.isFinite(dados.incubacaoRestanteMs)
+                !Number.isFinite(
+
+                    dados.incubacaoRestanteMs
+
+                )
 
             ) {
 
@@ -188,17 +212,13 @@ function carregarPetton() {
 
                 typeof dados.incubacaoAtualizadaEm !== "number" ||
 
-                !Number.isFinite(dados.incubacaoAtualizadaEm)
+                !Number.isFinite(
+
+                    dados.incubacaoAtualizadaEm
+
+                )
 
             ) {
-
-                /*
-
-                 * Se existe data de criação,
-
-                 * usamos ela como referência.
-
-                 */
 
                 if (dados.dataCriacao) {
 
@@ -248,7 +268,11 @@ function carregarPetton() {
 
         }
 
-        /* CARACTERÍSTICAS */
+        /* =================================================
+
+           CARACTERÍSTICAS
+
+           ================================================= */
 
         if (!dados.caracteristicas) {
 
@@ -272,7 +296,11 @@ function carregarPetton() {
 
         }
 
-        /* ÁLBUM */
+        /* =================================================
+
+           ÁLBUM
+
+           ================================================= */
 
         if (!Array.isArray(dados.album)) {
 
@@ -340,7 +368,7 @@ function atualizarIncubacao() {
 
         carregarPetton();
 
-    /* Já nasceu */
+    /* JÁ NASCEU */
 
     if (dados.dateNascimento) {
 
@@ -352,17 +380,17 @@ function atualizarIncubacao() {
 
         Date.now();
 
-    /*
-
-     * Garante um timestamp válido.
-
-     */
+    /* GARANTIR TIMESTAMP */
 
     if (
 
         typeof dados.incubacaoAtualizadaEm !== "number" ||
 
-        !Number.isFinite(dados.incubacaoAtualizadaEm)
+        !Number.isFinite(
+
+            dados.incubacaoAtualizadaEm
+
+        )
 
     ) {
 
@@ -372,11 +400,7 @@ function atualizarIncubacao() {
 
     }
 
-    /*
-
-     * Tempo real passado.
-
-     */
+    /* TEMPO PASSADO */
 
     let tempoPassado =
 
@@ -396,11 +420,7 @@ function atualizarIncubacao() {
 
     }
 
-    /*
-
-     * Aquecedor.
-
-     */
+    /* AQUECEDOR */
 
     const aquecedorLigado =
 
@@ -408,11 +428,7 @@ function atualizarIncubacao() {
 
         dados.aquecedorAte > agora;
 
-    /*
-
-     * Se terminou, desliga.
-
-     */
+    /* DESLIGAR AQUECEDOR VENCIDO */
 
     if (
 
@@ -426,11 +442,7 @@ function atualizarIncubacao() {
 
     }
 
-    /*
-
-     * Multiplicador.
-
-     */
+    /* MULTIPLICADOR */
 
     const multiplicador =
 
@@ -440,11 +452,7 @@ function atualizarIncubacao() {
 
             : 1;
 
-    /*
-
-     * DESCONTA O TEMPO REAL.
-
-     */
+    /* DESCONTO */
 
     const desconto =
 
@@ -464,23 +472,15 @@ function atualizarIncubacao() {
 
         );
 
-    /*
-
-     * IMPORTANTE:
-
-     * marca exatamente o momento desta atualização.
-
-     */
-
     dados.incubacaoAtualizadaEm =
 
         agora;
 
-    /*
+    /* =================================================
 
-     * Nasceu.
+       NASCIMENTO
 
-     */
+       ================================================= */
 
     if (
 
@@ -512,7 +512,9 @@ function nascerPettonInterno(dados) {
 
     /*
 
-     * Escolhe a espécie no nascimento.
+     * AGORA SIM:
+
+     * o animal é sorteado somente no nascimento.
 
      */
 
@@ -539,6 +541,16 @@ function nascerPettonInterno(dados) {
     dados.incubacaoAtualizadaEm =
 
         Date.now();
+
+    /*
+
+     * O NOME CONTINUA VAZIO.
+
+     * A pessoa escolherá depois.
+
+     */
+
+    dados.nome = null;
 
     dados.caracteristicas = {
 
@@ -593,6 +605,72 @@ function nascerPetton() {
     nascerPettonInterno(dados);
 
     return carregarPetton();
+
+}
+
+/* =========================================================
+
+   ESCOLHER NOME
+
+   ========================================================= */
+
+function definirNome(nome) {
+
+    const dados =
+
+        carregarPetton();
+
+    /*
+
+     * Só pode escolher nome depois
+
+     * que o Petton nasceu.
+
+     */
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (typeof nome !== "string") {
+
+        return false;
+
+    }
+
+    nome =
+
+        nome.trim();
+
+    if (!nome) {
+
+        return false;
+
+    }
+
+    /*
+
+     * Limite de 20 caracteres.
+
+     */
+
+    if (nome.length > 20) {
+
+        nome =
+
+            nome.substring(0, 20);
+
+    }
+
+    dados.nome =
+
+        nome;
+
+    salvarPetton(dados);
+
+    return dados;
 
 }
 
@@ -802,7 +880,17 @@ function idadeDias() {
 
             diferenca /
 
-            (1000 * 60 * 60 * 24)
+            (
+
+                1000 *
+
+                60 *
+
+                60 *
+
+                24
+
+            )
 
         )
 
@@ -943,6 +1031,16 @@ function atualizarTempo() {
         return dados;
 
     }
+
+    /*
+
+     * FUTURO:
+
+     * cada espécie poderá ter
+
+     * necessidades diferentes.
+
+     */
 
     dados.fome =
 
@@ -1236,9 +1334,7 @@ function limpar() {
 
 function statusPetton() {
 
-    const dados =
-
-        atualizarIncubacao();
+    atualizarIncubacao();
 
     verificarCrescimento();
 
@@ -1260,13 +1356,21 @@ function identidadePetton() {
 
     return {
 
-        especie: dados.especie,
+        especie:
 
-        nome: dados.nome,
+            dados.especie,
 
-        fase: dados.fase,
+        nome:
 
-        idadeDias: idadeDias()
+            dados.nome,
+
+        fase:
+
+            dados.fase,
+
+        idadeDias:
+
+            idadeDias()
 
     };
 
@@ -1424,6 +1528,14 @@ window.Petton = {
 
     },
 
+    /* NOME */
+
+    definirNome: function (nome) {
+
+        return definirNome(nome);
+
+    },
+
     alimentar: function () {
 
         return alimentar();
@@ -1496,7 +1608,11 @@ window.Petton = {
 
     },
 
-    /* OVO */
+    /* =====================================================
+
+       OVO
+
+       ===================================================== */
 
     incubacaoRestante: function () {
 
@@ -1504,7 +1620,11 @@ window.Petton = {
 
     },
 
-    /* AQUECEDOR */
+    /* =====================================================
+
+       AQUECEDOR
+
+       ===================================================== */
 
     ligarAquecedor: function () {
 
@@ -1524,7 +1644,11 @@ window.Petton = {
 
     },
 
-    /* RESET */
+    /* =====================================================
+
+       RESET
+
+       ===================================================== */
 
     resetar: function () {
 
