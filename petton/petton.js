@@ -1,1181 +1,1158 @@
 /* =========================================================
-PETTON - SISTEMA CENTRAL
-Identidade + características + nascimento + crescimento
-========================================================= */
+   PETTON 🐾
+   Sistema principal do Petton
+   ========================================================= */
 
-const PETTON_CHAVE = “petton_dados_v3”;
-const PETTON_CHAVE_ANTIGA = “petton_dados_v2”;
-const PETTON_CHAVE_ANTIGA_2 = “petton_dados_v1”;
-
-const PETTON_ESPECIES = [
-“gato”,
-“cachorro”,
-“coelho”
-];
-
-const CARACTERISTICAS = {
-
-gato: {
-    cores: [
-        "branco",
-        "preto",
-        "cinza",
-        "cinza_claro",
-        "cinza_escuro",
-        "laranja",
-        "marrom",
-        "creme",
-        "caramelo",
-        "dourado",
-        "preto_branco",
-        "laranja_branco",
-        "marrom_branco"
-    ],
-    padroes: [
-        "sem_manchas",
-        "tabby",
-        "listrado",
-        "manchas",
-        "peito_branco",
-        "patas_brancas",
-        "rosto_bicolor",
-        "mancha_no_olho",
-        "mancha_no_nariz",
-        "pintinhas"
-    ],
-    olhos: [
-        "azuis",
-        "verdes",
-        "amarelos",
-        "dourados",
-        "castanhos",
-        "mel",
-        "pretos",
-        "cinza"
-    ],
-    rabos: [
-        "curto",
-        "medio",
-        "longo",
-        "fofinho",
-        "curvado",
-        "levantado",
-        "ponta_branca"
-    ],
-    orelhas: [
-        "pequenas",
-        "medias",
-        "grandes",
-        "pontudas",
-        "arredondadas"
-    ],
-    patas: [
-        "normais",
-        "escuras",
-        "brancas",
-        "manchadas",
-        "peludas"
-    ],
-    narizes: [
-        "rosa",
-        "preto",
-        "marrom"
-    ]
-},
-cachorro: {
-    cores: [
-        "branco",
-        "preto",
-        "cinza",
-        "cinza_claro",
-        "marrom",
-        "creme",
-        "caramelo",
-        "dourado",
-        "preto_branco",
-        "marrom_branco",
-        "caramelo_branco"
-    ],
-    padroes: [
-        "sem_manchas",
-        "manchas",
-        "pintinhas",
-        "peito_branco",
-        "patas_brancas",
-        "rosto_bicolor",
-        "mancha_no_olho",
-        "mancha_no_nariz"
-    ],
-    olhos: [
-        "azuis",
-        "castanhos",
-        "mel",
-        "dourados",
-        "pretos",
-        "cinza"
-    ],
-    rabos: [
-        "curto",
-        "medio",
-        "longo",
-        "fofinho",
-        "curvado",
-        "levantado",
-        "ponta_branca"
-    ],
-    orelhas: [
-        "pequenas",
-        "medias",
-        "grandes",
-        "caidas",
-        "semi_caidas",
-        "levantadas",
-        "arredondadas"
-    ],
-    patas: [
-        "normais",
-        "escuras",
-        "brancas",
-        "manchadas",
-        "peludas"
-    ],
-    narizes: [
-        "preto",
-        "marrom",
-        "rosa"
-    ]
-},
-coelho: {
-    cores: [
-        "branco",
-        "preto",
-        "cinza",
-        "cinza_claro",
-        "cinza_escuro",
-        "marrom",
-        "creme",
-        "caramelo",
-        "dourado",
-        "preto_branco",
-        "marrom_branco"
-    ],
-    padroes: [
-        "sem_manchas",
-        "manchas",
-        "pintinhas",
-        "peito_branco",
-        "patas_brancas",
-        "rosto_bicolor",
-        "mancha_no_olho"
-    ],
-    olhos: [
-        "azuis",
-        "verdes",
-        "vermelhos",
-        "castanhos",
-        "dourados",
-        "pretos",
-        "cinza"
-    ],
-    rabos: [
-        "pequeno",
-        "redondo",
-        "fofinho"
-    ],
-    orelhas: [
-        "longas",
-        "muito_longas"
-    ],
-    patas: [
-        "normais",
-        "brancas",
-        "escuras",
-        "peludas"
-    ],
-    narizes: [
-        "rosa",
-        "preto",
-        "marrom"
-    ]
-}
-
-};
+const PETTON_CHAVE = "petton_dados_v3";
 
 /* =========================================================
-FUNÇÕES BÁSICAS
-========================================================= */
+   CONFIGURAÇÕES DO OVO
+   ========================================================= */
 
-function escolher(lista) {
+const PETTON_INCUBACAO_MS = 24 * 60 * 60 * 1000; // 24 horas
 
-if (!lista || !lista.length) {
-    return null;
-}
-return lista[
-    Math.floor(
-        Math.random() * lista.length
-    )
-];
+const PETTON_AQUECEDOR_DURACAO_MS = 2 * 60 * 1000; // 2 minutos
 
-}
+const PETTON_AQUECEDOR_MULTIPLICADOR = 5;
 
-function limitar(valor) {
-
-return Math.max(
-    0,
-    Math.min(
-        100,
-        Number(valor) || 0
-    )
-);
-
-}
-
-function sortearRaridade() {
-
-const numero =
-    Math.random() * 100;
-if (numero < 65) {
-    return "comum";
-}
-if (numero < 88) {
-    return "incomum";
-}
-if (numero < 97) {
-    return "raro";
-}
-return "especial";
-
-}
 
 /* =========================================================
-CARACTERÍSTICAS
-========================================================= */
+   FUNÇÕES AUXILIARES
+   ========================================================= */
 
-function gerarCaracteristicas(especie) {
-
-const pool =
-    CARACTERISTICAS[especie] ||
-    CARACTERISTICAS.gato;
-return {
-    cor: escolher(pool.cores),
-    padrao: escolher(pool.padroes),
-    olhos: escolher(pool.olhos),
-    rabo: escolher(pool.rabos),
-    orelhas: escolher(pool.orelhas),
-    patas: escolher(pool.patas),
-    nariz: escolher(pool.narizes),
-    raridade: sortearRaridade()
-};
-
+function escolherEspecie() {
+    const especies = ["gato", "cachorro", "coelho"];
+    return especies[Math.floor(Math.random() * especies.length)];
 }
 
-/* =========================================================
-IDADE
-========================================================= */
-
-function obterIdadeDias(dados) {
-
-if (
-    !dados ||
-    !dados.dateNascimento
-) {
-    return 0;
-}
-const nascimento =
-    new Date(dados.dateNascimento);
-if (
-    isNaN(
-        nascimento.getTime()
-    )
-) {
-    return 0;
-}
-const agora =
-    new Date();
-const diferenca =
-    agora.getTime() -
-    nascimento.getTime();
-return Math.max(
-    0,
-    diferenca / 86400000
-);
-
-}
-
-/* =========================================================
-FASE
-========================================================= */
-
-function descobrirFase(dias) {
-
-if (dias < 1) {
-    return "bebe";
-}
-if (dias < 8) {
-    return "bebe";
-}
-if (dias < 31) {
-    return "filhote";
-}
-if (dias < 91) {
-    return "jovem";
-}
-return "adulto";
-
-}
-
-/* =========================================================
-CARACTERÍSTICAS VISÍVEIS
-========================================================= */
-
-function criarCaracteristicasVisiveis(dados) {
-
-const dias =
-    obterIdadeDias(dados);
-return {
-    cor: dias >= 0,
-    olhos: dias >= 2,
-    padrao: dias >= 3,
-    orelhas: dias >= 0,
-    patas: dias >= 4,
-    rabo: dias >= 5,
-    nariz: dias >= 0
-};
-
-}
-
-/* =========================================================
-CRIAR PETTON NOVO
-========================================================= */
 
 function criarPettonNovo() {
 
-const especie =
-    escolher(PETTON_ESPECIES);
-const caracteristicas =
-    gerarCaracteristicas(especie);
-return {
-    nome: "Mimi",
-    especie: especie,
-    caracteristicas:
-        caracteristicas,
-    caracteristicasVisiveis: {
-        cor: false,
-        olhos: false,
-        padrao: false,
-        orelhas: false,
-        patas: false,
-        rabo: false,
-        nariz: false
-    },
-    fase: "ovo",
-    dateNascimento: null,
-    dataCriacao:
-        new Date().toISOString(),
-    fome: 70,
-    felicidade: 100,
-    energia: 100,
-    higiene: 100,
-    saude: 100,
-    moedas: 100,
-    pontos: 0,
-    nivel: 1,
-    ultimaAtualizacao:
-        new Date().toISOString(),
-    ultimoBonus: null,
-    conquistas: [],
-    album: []
-};
+    return {
+        especie: escolherEspecie(),
 
+        nome: "Mimi",
+
+        fase: "ovo",
+
+        dateNascimento: null,
+
+        dataCriacao: new Date().toISOString(),
+
+        /* -------------------------
+           INCUBAÇÃO
+        ------------------------- */
+
+        incubacaoRestanteMs: PETTON_INCUBACAO_MS,
+
+        incubacaoAtualizadaEm: Date.now(),
+
+        aquecedorAte: null,
+
+        /* -------------------------
+           NECESSIDADES
+        ------------------------- */
+
+        fome: 70,
+
+        felicidade: 100,
+
+        energia: 100,
+
+        higiene: 100,
+
+        saude: 100,
+
+        /* -------------------------
+           PROGRESSO
+        ------------------------- */
+
+        moedas: 100,
+
+        pontos: 0,
+
+        nivel: 1,
+
+        /* -------------------------
+           CARACTERÍSTICAS
+        ------------------------- */
+
+        caracteristicas: {
+            cor: false,
+            orelhas: false,
+            olhos: false,
+            nariz: false,
+            padrao: false,
+            patas: false,
+            cauda: false
+        },
+
+        /* -------------------------
+           ÁLBUM
+        ------------------------- */
+
+        album: []
+    };
 }
 
+
 /* =========================================================
-CARREGAR PETTON
-========================================================= */
+   CARREGAR PETTON
+   ========================================================= */
 
 function carregarPetton() {
 
-let salvo = null;
-try {
-    salvo =
-        localStorage.getItem(
-            PETTON_CHAVE
-        );
-} catch (erro) {
-    console.error(
-        "Erro localStorage:",
-        erro
-    );
-}
-if (!salvo) {
-    try {
-        salvo =
-            localStorage.getItem(
-                PETTON_CHAVE_ANTIGA
-            );
-    } catch (erro) {
-        console.error(erro);
-    }
-}
-if (!salvo) {
-    try {
-        salvo =
-            localStorage.getItem(
-                PETTON_CHAVE_ANTIGA_2
-            );
-    } catch (erro) {
-        console.error(erro);
-    }
-}
-if (!salvo) {
-    const novo =
-        criarPettonNovo();
-    salvarPettonObjeto(novo);
-    return novo;
-}
-let resultado;
-try {
-    resultado =
-        JSON.parse(salvo);
-} catch (erro) {
-    console.error(
-        "Dados inválidos.",
-        erro
-    );
-    resultado =
-        criarPettonNovo();
-}
-/* =====================================================
-   MIGRAÇÃO DOS DADOS ANTIGOS
-===================================================== */
-if (!resultado.especie) {
-    resultado.especie =
-        escolher(PETTON_ESPECIES);
-}
-if (!resultado.caracteristicas) {
-    resultado.caracteristicas =
-        gerarCaracteristicas(
-            resultado.especie
-        );
-}
-if (
-    !resultado.caracteristicasVisiveis
-) {
-    resultado.caracteristicasVisiveis =
-        criarCaracteristicasVisiveis(
-            resultado
-        );
-}
-/*
-   CORREÇÃO PRINCIPAL:
-   Se existe dateNascimento,
-   o Petton JÁ NASCEU.
-   Portanto nunca podemos deixar
-   a fase como "ovo".
-*/
-if (resultado.dateNascimento) {
-    const dias =
-        obterIdadeDias(resultado);
-    if (
-        !resultado.fase ||
-        resultado.fase === "ovo"
-    ) {
-        resultado.fase =
-            descobrirFase(dias);
-    }
-    if (
-        resultado.fase === "ovo"
-    ) {
-        resultado.fase =
-            descobrirFase(dias);
-    }
-} else {
-    resultado.fase =
-        "ovo";
-}
-/* STATUS */
-if (
-    resultado.fome === undefined
-) {
-    resultado.fome = 70;
-}
-if (
-    resultado.felicidade === undefined
-) {
-    resultado.felicidade = 100;
-}
-if (
-    resultado.energia === undefined
-) {
-    resultado.energia = 100;
-}
-if (
-    resultado.higiene === undefined
-) {
-    resultado.higiene = 100;
-}
-if (
-    resultado.saude === undefined
-) {
-    resultado.saude = 100;
-}
-if (
-    resultado.moedas === undefined
-) {
-    resultado.moedas = 100;
-}
-if (
-    resultado.pontos === undefined
-) {
-    resultado.pontos = 0;
-}
-if (
-    resultado.nivel === undefined
-) {
-    resultado.nivel = 1;
-}
-if (!resultado.album) {
-    resultado.album = [];
-}
-if (!resultado.conquistas) {
-    resultado.conquistas = [];
-}
-petton =
-    resultado;
-atualizarTempo();
-verificarCrescimento();
-atualizarCaracteristicasVisiveis();
-atualizarAlbum();
-salvarPetton();
-return petton;
+    const salvo = localStorage.getItem(PETTON_CHAVE);
 
+    if (!salvo) {
+
+        const novo = criarPettonNovo();
+
+        localStorage.setItem(
+            PETTON_CHAVE,
+            JSON.stringify(novo)
+        );
+
+        return novo;
+    }
+
+    try {
+
+        const dados = JSON.parse(salvo);
+
+        /*
+         * Migração para o sistema novo de incubação.
+         */
+
+        if (!dados.dateNascimento) {
+
+            if (
+                typeof dados.incubacaoRestanteMs !== "number"
+            ) {
+                dados.incubacaoRestanteMs =
+                    PETTON_INCUBACAO_MS;
+            }
+
+            if (
+                typeof dados.incubacaoAtualizadaEm !== "number"
+            ) {
+                dados.incubacaoAtualizadaEm =
+                    Date.now();
+            }
+
+            if (
+                typeof dados.aquecedorAte === "undefined"
+            ) {
+                dados.aquecedorAte = null;
+            }
+
+            dados.fase = "ovo";
+        }
+
+        /*
+         * Garante que características antigas
+         * não quebrem o Petton.
+         */
+
+        if (!dados.caracteristicas) {
+
+            dados.caracteristicas = {
+                cor: false,
+                orelhas: false,
+                olhos: false,
+                nariz: false,
+                padrao: false,
+                patas: false,
+                cauda: false
+            };
+        }
+
+        if (!Array.isArray(dados.album)) {
+            dados.album = [];
+        }
+
+        return dados;
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar Petton:",
+            erro
+        );
+
+        const novo = criarPettonNovo();
+
+        localStorage.setItem(
+            PETTON_CHAVE,
+            JSON.stringify(novo)
+        );
+
+        return novo;
+    }
 }
+
 
 /* =========================================================
-VARIÁVEL PRINCIPAL
-========================================================= */
+   SALVAR
+   ========================================================= */
 
-let petton = null;
+function salvarPetton(dados) {
 
-/* =========================================================
-SALVAR
-========================================================= */
-
-function salvarPettonObjeto(dados) {
-
-try {
     localStorage.setItem(
         PETTON_CHAVE,
         JSON.stringify(dados)
     );
-} catch (erro) {
-    console.error(
-        "Erro ao salvar Petton:",
-        erro
-    );
 }
 
-}
-
-function salvarPetton() {
-
-if (!petton) {
-    return;
-}
-salvarPettonObjeto(
-    petton
-);
-
-}
 
 /* =========================================================
-TEMPO / NECESSIDADES
-========================================================= */
+   ATUALIZAR INCUBAÇÃO
+   ========================================================= */
 
-function atualizarTempo() {
+function atualizarIncubacao() {
 
-if (!petton) {
-    return;
+    const dados = carregarPetton();
+
+    /*
+     * Se já nasceu, não existe mais incubação.
+     */
+
+    if (dados.dateNascimento) {
+        return dados;
+    }
+
+    const agora = Date.now();
+
+    /*
+     * Se não houver timestamp, cria um.
+     */
+
+    if (
+        typeof dados.incubacaoAtualizadaEm !== "number"
+    ) {
+
+        dados.incubacaoAtualizadaEm = agora;
+    }
+
+    /*
+     * Quanto tempo real passou desde a última atualização?
+     */
+
+    let tempoPassado =
+        agora - dados.incubacaoAtualizadaEm;
+
+    if (tempoPassado < 0) {
+        tempoPassado = 0;
+    }
+
+    /*
+     * Descobre se o aquecedor está ligado.
+     */
+
+    const aquecedorLigado =
+        dados.aquecedorAte &&
+        dados.aquecedorAte > agora;
+
+    /*
+     * Se o aquecedor acabou, desliga.
+     */
+
+    if (
+        dados.aquecedorAte &&
+        dados.aquecedorAte <= agora
+    ) {
+
+        dados.aquecedorAte = null;
+    }
+
+    /*
+     * Velocidade da incubação.
+     */
+
+    const multiplicador =
+        aquecedorLigado
+            ? PETTON_AQUECEDOR_MULTIPLICADOR
+            : 1;
+
+    /*
+     * Diminui o tempo restante.
+     */
+
+    dados.incubacaoRestanteMs -=
+        tempoPassado * multiplicador;
+
+    dados.incubacaoAtualizadaEm = agora;
+
+    /*
+     * Nasceu!
+     */
+
+    if (dados.incubacaoRestanteMs <= 0) {
+
+        dados.incubacaoRestanteMs = 0;
+
+        nascerPettonInterno(dados);
+
+    }
+
+    salvarPetton(dados);
+
+    return dados;
 }
-const agora =
-    new Date();
-const ultima =
-    petton.ultimaAtualizacao
-        ? new Date(
-            petton.ultimaAtualizacao
-        )
-        : agora;
-let minutos =
-    (
-        agora.getTime() -
-        ultima.getTime()
-    ) / 60000;
-minutos =
-    Math.max(
-        0,
-        Math.min(
-            minutos,
-            1440
-        )
-    );
-petton.fome =
-    limitar(
-        petton.fome -
-        (minutos * 0.025)
-    );
-petton.energia =
-    limitar(
-        petton.energia -
-        (minutos * 0.015)
-    );
-petton.higiene =
-    limitar(
-        petton.higiene -
-        (minutos * 0.01)
-    );
-petton.felicidade =
-    limitar(
-        petton.felicidade -
-        (minutos * 0.008)
-    );
-petton.ultimaAtualizacao =
-    agora.toISOString();
 
-}
 
 /* =========================================================
-CRESCIMENTO
-========================================================= */
+   NASCIMENTO
+   ========================================================= */
 
-function verificarCrescimento() {
+function nascerPettonInterno(dados) {
 
-if (!petton) {
-    return;
-}
-/*
-   SEM DATA DE NASCIMENTO = OVO
-*/
-if (!petton.dateNascimento) {
-    petton.fase =
-        "ovo";
-    return;
-}
-/*
-   COM DATA DE NASCIMENTO = NASCEU
-*/
-const dias =
-    obterIdadeDias(
-        petton
-    );
-const faseAnterior =
-    petton.fase;
-const novaFase =
-    descobrirFase(dias);
-petton.fase =
-    novaFase;
-if (
-    faseAnterior !== novaFase
-) {
-    adicionarConquista(
-        "crescimento_" +
-        novaFase
-    );
-}
+    /*
+     * Escolhe a espécie somente no nascimento.
+     */
 
-}
+    dados.especie = escolherEspecie();
 
-/* =========================================================
-CARACTERÍSTICAS VISÍVEIS
-========================================================= */
+    dados.dateNascimento =
+        new Date().toISOString();
 
-function atualizarCaracteristicasVisiveis() {
+    dados.fase = "bebe";
 
-if (!petton) {
-    return;
-}
-/*
-   Antes do nascimento:
-   nada aparece.
-*/
-if (!petton.dateNascimento) {
-    petton.caracteristicasVisiveis = {
-        cor: false,
+    dados.aquecedorAte = null;
+
+    dados.incubacaoRestanteMs = 0;
+
+    /*
+     * Começa com poucas características visíveis.
+     */
+
+    dados.caracteristicas = {
+
+        cor: true,
+
+        orelhas: true,
+
         olhos: false,
-        padrao: false,
-        orelhas: false,
-        patas: false,
-        rabo: false,
-        nariz: false
-    };
-    return;
-}
-const dias =
-    obterIdadeDias(
-        petton
-    );
-petton.caracteristicasVisiveis = {
-    cor: true,
-    olhos: dias >= 2,
-    padrao: dias >= 3,
-    orelhas: true,
-    patas: dias >= 4,
-    rabo: dias >= 5,
-    nariz: true
-};
 
+        nariz: true,
+
+        padrao: false,
+
+        patas: false,
+
+        cauda: false
+    };
+
+    /*
+     * Garante que o álbum comece vazio.
+     */
+
+    if (!Array.isArray(dados.album)) {
+        dados.album = [];
+    }
+
+    salvarPetton(dados);
 }
+
 
 /* =========================================================
-NASCIMENTO
-========================================================= */
+   NASCER — API PÚBLICA
+   ========================================================= */
 
 function nascerPetton() {
 
-if (!petton) {
-    return false;
-}
-/*
-   Se já nasceu,
-   não nasce novamente.
-*/
-if (petton.dateNascimento) {
-    /*
-       Corrige automaticamente caso
-       algum dado antigo tenha ficado
-       como "ovo".
-    */
-    if (petton.fase === "ovo") {
-        petton.fase =
-            descobrirFase(
-                obterIdadeDias(
-                    petton
-                )
-            );
-        salvarPetton();
+    const dados = carregarPetton();
+
+    if (dados.dateNascimento) {
+        return dados;
     }
-    return false;
+
+    dados.incubacaoRestanteMs = 0;
+
+    nascerPettonInterno(dados);
+
+    return carregarPetton();
 }
-if (!petton.especie) {
-    petton.especie =
-        escolher(
-            PETTON_ESPECIES
+
+
+/* =========================================================
+   LIGAR AQUECEDOR
+   ========================================================= */
+
+function ligarAquecedor() {
+
+    let dados = atualizarIncubacao();
+
+    /*
+     * Se já nasceu, não pode aquecer.
+     */
+
+    if (dados.dateNascimento) {
+        return false;
+    }
+
+    const agora = Date.now();
+
+    /*
+     * Liga por 2 minutos.
+     */
+
+    dados.aquecedorAte =
+        agora + PETTON_AQUECEDOR_DURACAO_MS;
+
+    dados.incubacaoAtualizadaEm = agora;
+
+    salvarPetton(dados);
+
+    return true;
+}
+
+
+/* =========================================================
+   AQUECEDOR ATIVO?
+   ========================================================= */
+
+function aquecedorAtivo() {
+
+    const dados = atualizarIncubacao();
+
+    if (dados.dateNascimento) {
+        return false;
+    }
+
+    return (
+        dados.aquecedorAte &&
+        dados.aquecedorAte > Date.now()
+    );
+}
+
+
+/* =========================================================
+   TEMPO RESTANTE DO AQUECEDOR
+   ========================================================= */
+
+function tempoAquecedorRestante() {
+
+    const dados = atualizarIncubacao();
+
+    if (!dados.aquecedorAte) {
+        return 0;
+    }
+
+    const restante =
+        dados.aquecedorAte - Date.now();
+
+    return Math.max(0, restante);
+}
+
+
+/* =========================================================
+   TEMPO RESTANTE DA INCUBAÇÃO
+   ========================================================= */
+
+function tempoIncubacaoRestante() {
+
+    const dados = atualizarIncubacao();
+
+    if (dados.dateNascimento) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        dados.incubacaoRestanteMs
+    );
+}
+
+
+/* =========================================================
+   DESCOBRIR FASE
+   ========================================================= */
+
+function descobrirFase(dias) {
+
+    if (dias < 1) {
+        return "bebe";
+    }
+
+    if (dias < 8) {
+        return "bebe";
+    }
+
+    if (dias < 31) {
+        return "filhote";
+    }
+
+    if (dias < 91) {
+        return "jovem";
+    }
+
+    return "adulto";
+}
+
+
+/* =========================================================
+   IDADE EM DIAS
+   ========================================================= */
+
+function idadeDias() {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+        return 0;
+    }
+
+    const nascimento =
+        new Date(dados.dateNascimento);
+
+    const agora = new Date();
+
+    const diferenca =
+        agora.getTime() -
+        nascimento.getTime();
+
+    return Math.max(
+        0,
+        Math.floor(
+            diferenca / (1000 * 60 * 60 * 24)
+        )
+    );
+}
+
+
+/* =========================================================
+   VERIFICAR CRESCIMENTO
+   ========================================================= */
+
+function verificarCrescimento() {
+
+    let dados = atualizarIncubacao();
+
+    /*
+     * Ainda é ovo.
+     */
+
+    if (!dados.dateNascimento) {
+
+        dados.fase = "ovo";
+
+        salvarPetton(dados);
+
+        return dados;
+    }
+
+    const dias = idadeDias();
+
+    const novaFase =
+        descobrirFase(dias);
+
+    dados.fase = novaFase;
+
+    salvarPetton(dados);
+
+    atualizarCaracteristicasVisiveis();
+
+    return dados;
+}
+
+
+/* =========================================================
+   CARACTERÍSTICAS VISÍVEIS
+   ========================================================= */
+
+function atualizarCaracteristicasVisiveis() {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        dados.caracteristicas = {
+
+            cor: false,
+            orelhas: false,
+            olhos: false,
+            nariz: false,
+            padrao: false,
+            patas: false,
+            cauda: false
+        };
+
+        salvarPetton(dados);
+
+        return dados;
+    }
+
+    const dias = idadeDias();
+
+    dados.caracteristicas.cor = true;
+
+    dados.caracteristicas.orelhas = true;
+
+    dados.caracteristicas.nariz = true;
+
+    dados.caracteristicas.olhos =
+        dias >= 2;
+
+    dados.caracteristicas.padrao =
+        dias >= 3;
+
+    dados.caracteristicas.patas =
+        dias >= 4;
+
+    dados.caracteristicas.cauda =
+        dias >= 5;
+
+    salvarPetton(dados);
+
+    return dados;
+}
+
+
+/* =========================================================
+   ATUALIZAR NECESSIDADES
+   ========================================================= */
+
+function atualizarTempo() {
+
+    const dados = carregarPetton();
+
+    /*
+     * O ovo ainda não possui necessidades.
+     */
+
+    if (!dados.dateNascimento) {
+        return dados;
+    }
+
+    dados.fome =
+        Math.max(0, dados.fome - 1);
+
+    dados.felicidade =
+        Math.max(0, dados.felicidade - 0.5);
+
+    dados.energia =
+        Math.max(0, dados.energia - 0.3);
+
+    dados.higiene =
+        Math.max(0, dados.higiene - 0.3);
+
+    /*
+     * Saúde diminui somente se necessidades
+     * estiverem muito baixas.
+     */
+
+    if (
+        dados.fome < 20 ||
+        dados.higiene < 20
+    ) {
+
+        dados.saude =
+            Math.max(
+                0,
+                dados.saude - 0.2
+            );
+    }
+
+    salvarPetton(dados);
+
+    return dados;
+}
+
+
+/* =========================================================
+   ALIMENTAR
+   ========================================================= */
+
+function alimentar() {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+        return false;
+    }
+
+    dados.fome =
+        Math.min(
+            100,
+            dados.fome + 20
         );
-}
-if (!petton.caracteristicas) {
-    petton.caracteristicas =
-        gerarCaracteristicas(
-            petton.especie
+
+    dados.saude =
+        Math.min(
+            100,
+            dados.saude + 2
         );
-}
-/*
-   AQUI ACONTECE O NASCIMENTO.
-*/
-petton.dateNascimento =
-    new Date().toISOString();
-/*
-   IMPORTANTE:
-   depois de nascer, a fase
-   nunca é "ovo".
-*/
-petton.fase =
-    "bebe";
-petton.fome = 80;
-petton.felicidade = 100;
-petton.energia = 100;
-petton.higiene = 100;
-petton.saude = 100;
-petton.caracteristicasVisiveis = {
-    cor: true,
-    olhos: false,
-    padrao: false,
-    orelhas: true,
-    patas: false,
-    rabo: false,
-    nariz: true
-};
-adicionarConquista(
-    "nascimento"
-);
-criarFotoAlbum(0);
-salvarPetton();
-return true;
 
+    dados.pontos += 5;
+
+    salvarPetton(dados);
+
+    return true;
 }
+
 
 /* =========================================================
-ALIMENTAÇÃO
-========================================================= */
+   BRINCAR
+   ========================================================= */
 
-function alimentar(valor) {
+function brincar() {
 
-if (!petton) {
-    return false;
-}
-if (
-    petton.fase === "ovo"
-) {
-    return false;
-}
-valor =
-    Number(valor) || 10;
-petton.fome =
-    limitar(
-        petton.fome + valor
-    );
-petton.felicidade =
-    limitar(
-        petton.felicidade + 2
-    );
-petton.pontos += 2;
-salvarPetton();
-return true;
+    const dados = carregarPetton();
 
+    if (!dados.dateNascimento) {
+        return false;
+    }
+
+    dados.felicidade =
+        Math.min(
+            100,
+            dados.felicidade + 20
+        );
+
+    dados.energia =
+        Math.max(
+            0,
+            dados.energia - 10
+        );
+
+    dados.pontos += 5;
+
+    salvarPetton(dados);
+
+    return true;
 }
+
 
 /* =========================================================
-BRINCAR
-========================================================= */
-
-function brincar(valor) {
-
-if (!petton) {
-    return false;
-}
-if (
-    petton.fase === "ovo"
-) {
-    return false;
-}
-if (
-    petton.energia < 10
-) {
-    return false;
-}
-valor =
-    Number(valor) || 8;
-petton.felicidade =
-    limitar(
-        petton.felicidade + 12
-    );
-petton.energia =
-    limitar(
-        petton.energia - valor
-    );
-petton.fome =
-    limitar(
-        petton.fome - 3
-    );
-petton.pontos += 5;
-salvarPetton();
-return true;
-
-}
-
-/* =========================================================
-CARINHO
-========================================================= */
+   CARINHO
+   ========================================================= */
 
 function carinho() {
 
-if (!petton) {
-    return false;
-}
-if (
-    petton.fase === "ovo"
-) {
-    return false;
-}
-petton.felicidade =
-    limitar(
-        petton.felicidade + 5
-    );
-petton.pontos += 1;
-salvarPetton();
-return true;
+    const dados = carregarPetton();
 
+    if (!dados.dateNascimento) {
+        return false;
+    }
+
+    dados.felicidade =
+        Math.min(
+            100,
+            dados.felicidade + 10
+        );
+
+    dados.pontos += 2;
+
+    salvarPetton(dados);
+
+    return true;
 }
+
 
 /* =========================================================
-DORMIR
-========================================================= */
+   DORMIR
+   ========================================================= */
 
 function dormir() {
 
-if (!petton) {
-    return false;
-}
-if (
-    petton.fase === "ovo"
-) {
-    return false;
-}
-petton.energia =
-    limitar(
-        petton.energia + 25
-    );
-petton.felicidade =
-    limitar(
-        petton.felicidade + 3
-    );
-salvarPetton();
-return true;
+    const dados = carregarPetton();
 
+    if (!dados.dateNascimento) {
+        return false;
+    }
+
+    dados.energia =
+        Math.min(
+            100,
+            dados.energia + 30
+        );
+
+    dados.felicidade =
+        Math.min(
+            100,
+            dados.felicidade + 5
+        );
+
+    salvarPetton(dados);
+
+    return true;
 }
+
 
 /* =========================================================
-STATUS
-========================================================= */
+   BANHO / HIGIENE
+   ========================================================= */
 
-function obterStatusPetton() {
+function limpar() {
 
-if (!petton) {
-    return null;
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+        return false;
+    }
+
+    dados.higiene =
+        Math.min(
+            100,
+            dados.higiene + 30
+        );
+
+    dados.saude =
+        Math.min(
+            100,
+            dados.saude + 5
+        );
+
+    dados.pontos += 3;
+
+    salvarPetton(dados);
+
+    return true;
 }
-atualizarTempo();
-verificarCrescimento();
-atualizarCaracteristicasVisiveis();
-atualizarAlbum();
-salvarPetton();
-return {
-    fome:
-        petton.fome,
-    felicidade:
-        petton.felicidade,
-    energia:
-        petton.energia,
-    higiene:
-        petton.higiene,
-    saude:
-        petton.saude,
-    idadeDias:
-        obterIdadeDias(
-            petton
-        ),
-    fase:
-        petton.fase
-};
 
-}
 
 /* =========================================================
-IDENTIDADE
-========================================================= */
+   STATUS
+   ========================================================= */
 
-function obterIdentidade() {
+function statusPetton() {
 
-if (!petton) {
-    return null;
+    const dados = atualizarIncubacao();
+
+    verificarCrescimento();
+
+    return carregarPetton();
 }
-return {
-    especie:
-        petton.especie,
-    caracteristicas:
-        petton.caracteristicas,
-    visiveis:
-        petton.caracteristicasVisiveis,
-    raridade:
-        petton.caracteristicas
-            ? petton.caracteristicas.raridade
-            : "comum"
-};
 
-}
 
 /* =========================================================
-CONQUISTAS
-========================================================= */
+   IDENTIDADE
+   ========================================================= */
 
-function adicionarConquista(id) {
+function identidadePetton() {
 
-if (!petton) {
-    return;
-}
-if (!petton.conquistas) {
-    petton.conquistas = [];
-}
-if (
-    !petton.conquistas.includes(id)
-) {
-    petton.conquistas.push(id);
-}
-salvarPetton();
+    const dados = carregarPetton();
 
+    return {
+
+        especie: dados.especie,
+
+        nome: dados.nome,
+
+        fase: dados.fase,
+
+        idadeDias: idadeDias()
+    };
 }
+
 
 /* =========================================================
-ÁLBUM
-========================================================= */
-
-const MARCOS_ALBUM = [
-0,
-3,
-7,
-15,
-30,
-60,
-90,
-120
-];
-
-function criarFotoAlbum(dia) {
-
-if (!petton) {
-    return;
-}
-if (!petton.album) {
-    petton.album = [];
-}
-const existe =
-    petton.album.some(
-        foto =>
-            Number(foto.dia) ===
-            Number(dia)
-    );
-if (existe) {
-    return;
-}
-petton.album.push({
-    dia: dia,
-    data:
-        new Date().toISOString(),
-    nome:
-        petton.nome,
-    especie:
-        petton.especie,
-    caracteristicas:
-        JSON.parse(
-            JSON.stringify(
-                petton.caracteristicas
-            )
-        )
-});
-salvarPetton();
-
-}
+   ÁLBUM
+   ========================================================= */
 
 function atualizarAlbum() {
 
-if (!petton) {
-    return;
-}
-if (!petton.dateNascimento) {
-    return;
-}
-const dias =
-    obterIdadeDias(
-        petton
-    );
-MARCOS_ALBUM.forEach(
-    function(marco) {
-        if (
-            dias >= marco
-        ) {
-            criarFotoAlbum(
-                marco
-            );
-        }
-    }
-);
+    const dados = carregarPetton();
 
+    if (!dados.dateNascimento) {
+        return dados.album || [];
+    }
+
+    const dias = idadeDias();
+
+    const momentos = [
+        0,
+        3,
+        7,
+        15,
+        30,
+        60,
+        90,
+        120
+    ];
+
+    if (!Array.isArray(dados.album)) {
+        dados.album = [];
+    }
+
+    momentos.forEach(function (dia) {
+
+        if (dias >= dia) {
+
+            const jaExiste =
+                dados.album.some(function (foto) {
+                    return foto.dia === dia;
+                });
+
+            if (!jaExiste) {
+
+                dados.album.push({
+
+                    dia: dia,
+
+                    data:
+                        new Date().toISOString(),
+
+                    especie:
+                        dados.especie,
+
+                    fase:
+                        dados.fase
+                });
+            }
+        }
+    });
+
+    salvarPetton(dados);
+
+    return dados.album;
 }
+
 
 /* =========================================================
-API PETTON
-========================================================= */
+   RESETAR PETTON
+   ========================================================= */
 
-const Petton = {
+function resetarPetton() {
 
-get dados() {
-    return petton;
-},
-carregar() {
-    if (!petton) {
-        petton =
-            carregarPetton();
-    } else {
-        atualizarTempo();
-        verificarCrescimento();
-        atualizarCaracteristicasVisiveis();
-        atualizarAlbum();
-        salvarPetton();
-    }
-    return petton;
-},
-salvar() {
-    salvarPetton();
-    return true;
-},
-nascer() {
-    return nascerPetton();
-},
-alimentar(valor) {
-    return alimentar(valor);
-},
-brincar(valor) {
-    return brincar(valor);
-},
-carinho() {
-    return carinho();
-},
-dormir() {
-    return dormir();
-},
-status() {
-    return obterStatusPetton();
-},
-identidade() {
-    return obterIdentidade();
-},
-atualizarCaracteristicas() {
-    atualizarCaracteristicasVisiveis();
-    return petton
-        ? petton.caracteristicasVisiveis
-        : null;
-},
-idadeDias() {
-    return petton
-        ? obterIdadeDias(
-            petton
-        )
-        : 0;
-},
-fase() {
-    return petton
-        ? petton.fase
-        : "ovo";
-},
-album() {
-    atualizarAlbum();
-    return petton
-        ? petton.album
-        : [];
+    /*
+     * Cria um Petton completamente novo.
+     * O novo ovo começa novamente com 24 horas.
+     */
+
+    const novo = criarPettonNovo();
+
+    novo.fase = "ovo";
+
+    novo.dateNascimento = null;
+
+    novo.incubacaoRestanteMs =
+        PETTON_INCUBACAO_MS;
+
+    novo.incubacaoAtualizadaEm =
+        Date.now();
+
+    novo.aquecedorAte = null;
+
+    salvarPetton(novo);
+
+    return novo;
 }
 
+
+/* =========================================================
+   API PETTON
+   ========================================================= */
+
+window.Petton = {
+
+    /* dados */
+
+    get dados() {
+        return carregarPetton();
+    },
+
+    /* salvar */
+
+    salvar: function () {
+
+        const dados =
+            carregarPetton();
+
+        salvarPetton(dados);
+
+        return dados;
+    },
+
+    /* carregar */
+
+    carregar: function () {
+
+        return carregarPetton();
+    },
+
+    /* nascimento */
+
+    nascer: function () {
+
+        return nascerPetton();
+    },
+
+    /* alimentação */
+
+    alimentar: function () {
+
+        return alimentar();
+    },
+
+    /* brincar */
+
+    brincar: function () {
+
+        return brincar();
+    },
+
+    /* carinho */
+
+    carinho: function () {
+
+        return carinho();
+    },
+
+    /* dormir */
+
+    dormir: function () {
+
+        return dormir();
+    },
+
+    /* limpar */
+
+    limpar: function () {
+
+        return limpar();
+    },
+
+    /* status */
+
+    status: function () {
+
+        return statusPetton();
+    },
+
+    /* identidade */
+
+    identidade: function () {
+
+        return identidadePetton();
+    },
+
+    /* crescimento */
+
+    verificarCrescimento: function () {
+
+        return verificarCrescimento();
+    },
+
+    /* características */
+
+    atualizarCaracteristicas: function () {
+
+        return atualizarCaracteristicasVisiveis();
+    },
+
+    /* idade */
+
+    idadeDias: function () {
+
+        return idadeDias();
+    },
+
+    /* fase */
+
+    fase: function () {
+
+        return carregarPetton().fase;
+    },
+
+    /* álbum */
+
+    album: function () {
+
+        return atualizarAlbum();
+    },
+
+    /* =========================
+       OVO
+       ========================= */
+
+    incubacaoRestante: function () {
+
+        return tempoIncubacaoRestante();
+    },
+
+    /* =========================
+       AQUECEDOR
+       ========================= */
+
+    ligarAquecedor: function () {
+
+        return ligarAquecedor();
+    },
+
+    aquecedorAtivo: function () {
+
+        return aquecedorAtivo();
+    },
+
+    aquecedorRestante: function () {
+
+        return tempoAquecedorRestante();
+    },
+
+    /* =========================
+       RESET
+       ========================= */
+
+    resetar: function () {
+
+        return resetarPetton();
+    }
 };
 
-/* =========================================================
-INICIALIZAÇÃO
-========================================================= */
-
-petton =
-carregarPetton();
 
 /* =========================================================
-ATUALIZAÇÃO AUTOMÁTICA
-========================================================= */
+   ATUALIZAÇÃO AUTOMÁTICA
+   ========================================================= */
 
-setInterval(
-function() {
+setInterval(function () {
 
-    if (!petton) {
-        return;
+    try {
+
+        const dados =
+            atualizarIncubacao();
+
+        /*
+         * Necessidades dos pets nascidos.
+         */
+
+        if (dados.dateNascimento) {
+
+            atualizarTempo();
+
+            verificarCrescimento();
+
+            atualizarAlbum();
+        }
+
+    } catch (erro) {
+
+        console.error(
+            "Erro na atualização automática:",
+            erro
+        );
     }
-    atualizarTempo();
-    verificarCrescimento();
-    atualizarCaracteristicasVisiveis();
-    atualizarAlbum();
-    salvarPetton();
-},
-60000
 
-);
+}, 60 * 1000);
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+try {
+
+    atualizarIncubacao();
+
+    verificarCrescimento();
+
+    atualizarAlbum();
+
+} catch (erro) {
+
+    console.error(
+        "Erro ao iniciar Petton:",
+        erro
+    );
+}
