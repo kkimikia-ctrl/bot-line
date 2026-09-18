@@ -422,7 +422,11 @@ body{
 
     <div class="topo">
 
-        <button class="voltar" onclick="history.back()">
+        <button
+
+            class="voltar"
+
+            onclick="history.back()">
 
             ←
 
@@ -456,7 +460,11 @@ body{
 
             </div>
 
-            <p>Carregando...</p>
+            <p>
+
+                Carregando...
+
+            </p>
 
         </div>
 
@@ -469,6 +477,8 @@ body{
 <script>
 
 let dados = null;
+
+let assinaturaAnterior = "";
 
 /* =========================================================
 
@@ -602,17 +612,29 @@ function carregar(){
 
     try{
 
-        if(typeof Petton !== "undefined" &&
+        if(
 
-           typeof Petton.carregar === "function"){
+            typeof Petton !== "undefined" &&
 
-            dados = Petton.carregar();
+            typeof Petton.carregar === "function"
+
+        ){
+
+            dados =
+
+                Petton.carregar();
 
         }
 
     }catch(e){
 
-        console.log("Erro ao carregar Petton:",e);
+        console.log(
+
+            "Erro ao carregar Petton:",
+
+            e
+
+        );
 
         dados = null;
 
@@ -654,9 +676,13 @@ function idadeAtual(){
 
     try{
 
-        if(typeof Petton !== "undefined" &&
+        if(
 
-           typeof Petton.idadeDias === "function"){
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.idadeDias === "function"
+
+        ){
 
             return Petton.idadeDias();
 
@@ -676,7 +702,11 @@ function idadeAtual(){
 
     const nascimento =
 
-        new Date(dados.dateNascimento);
+        new Date(
+
+            dados.dateNascimento
+
+        );
 
     const agora =
 
@@ -688,7 +718,13 @@ function idadeAtual(){
 
         Math.floor(
 
-            (agora - nascimento) / 86400000
+            (
+
+                agora -
+
+                nascimento
+
+            ) / 86400000
 
         )
 
@@ -712,7 +748,11 @@ function imagemPetton(){
 
     const especie =
 
-        String(dados.especie || "").toLowerCase();
+        String(
+
+            dados.especie || ""
+
+        ).toLowerCase();
 
     /* CACHORRO */
 
@@ -778,7 +818,11 @@ function especieEmoji(){
 
     const especie =
 
-        String(dados.especie || "gato").toLowerCase();
+        String(
+
+            dados.especie || "gato"
+
+        ).toLowerCase();
 
     if(
 
@@ -846,7 +890,13 @@ function criarVisualPetton(){
 
                 alt="Petton"
 
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                onerror="
+
+                    this.style.display='none';
+
+                    this.nextElementSibling.style.display='flex';
+
+                "
 
             >
 
@@ -922,7 +972,13 @@ function criarVisualMomento(momento){
 
                     alt="Petton"
 
-                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    onerror="
+
+                        this.style.display='none';
+
+                        this.nextElementSibling.style.display='flex';
+
+                    "
 
                 >
 
@@ -964,7 +1020,13 @@ function criarVisualMomento(momento){
 
 function formatarData(dia){
 
-    if(!dados || !dados.dateNascimento){
+    if(
+
+        !dados ||
+
+        !dados.dateNascimento
+
+    ){
 
         return "Aguardando nascimento";
 
@@ -972,11 +1034,19 @@ function formatarData(dia){
 
     const nascimento =
 
-        new Date(dados.dateNascimento);
+        new Date(
+
+            dados.dateNascimento
+
+        );
 
     const data =
 
-        new Date(nascimento);
+        new Date(
+
+            nascimento
+
+        );
 
     data.setDate(
 
@@ -1004,6 +1074,120 @@ function formatarData(dia){
 
 /* =========================================================
 
+   ASSINATURA DO ESTADO DO ÁLBUM
+
+========================================================= */
+
+function assinaturaTela(){
+
+    if(
+
+        typeof Petton === "undefined" ||
+
+        typeof Petton.carregar !== "function"
+
+    ){
+
+        return "";
+
+    }
+
+    const d =
+
+        Petton.carregar();
+
+    if(!d){
+
+        return "";
+
+    }
+
+    let restante = "";
+
+    try{
+
+        if(
+
+            typeof Petton.incubacaoRestante === "function" &&
+
+            !d.dateNascimento
+
+        ){
+
+            restante =
+
+                Petton.incubacaoRestante();
+
+        }
+
+    }catch(e){}
+
+    let idade = 0;
+
+    if(d.dateNascimento){
+
+        try{
+
+            if(
+
+                typeof Petton.idadeDias === "function"
+
+            ){
+
+                idade =
+
+                    Petton.idadeDias();
+
+            }
+
+        }catch(e){
+
+            idade = 0;
+
+        }
+
+    }
+
+    return JSON.stringify({
+
+        especie:
+
+            d.especie,
+
+        nome:
+
+            d.nome,
+
+        fase:
+
+            d.fase,
+
+        nascimento:
+
+            d.dateNascimento,
+
+        idade:
+
+            idade,
+
+        restanteOvo:
+
+            d.dateNascimento
+
+            ? ""
+
+            : Math.floor(
+
+                Number(restante) / 1000
+
+            )
+
+    });
+
+}
+
+/* =========================================================
+
    RENDERIZAR
 
 ========================================================= */
@@ -1014,9 +1198,17 @@ function renderizar(){
 
     const area =
 
-        document.getElementById("conteudo");
+        document.getElementById(
 
-    /* NÃO EXISTE PETTON */
+            "conteudo"
+
+        );
+
+    /* =====================================================
+
+       NÃO EXISTE PETTON
+
+    ===================================================== */
 
     if(!dados){
 
@@ -1070,7 +1262,11 @@ function renderizar(){
 
     }
 
-    /* AINDA ESTÁ NO OVO */
+    /* =====================================================
+
+       AINDA ESTÁ NO OVO
+
+    ===================================================== */
 
     if(estaNoOvo()){
 
@@ -1112,7 +1308,11 @@ function renderizar(){
 
             const horas =
 
-                Math.floor(restante / 3600000);
+                Math.floor(
+
+                    restante / 3600000
+
+                );
 
             const minutos =
 
@@ -1252,9 +1452,15 @@ function renderizar(){
 
                     ${momentos
 
-                        .filter(m => m.dia !== 0)
+                        .filter(
 
-                        .map(momento => `
+                            m => m.dia !== 0
+
+                        )
+
+                        .map(
+
+                            momento => `
 
                             <div class="momento bloqueado">
 
@@ -1304,7 +1510,11 @@ function renderizar(){
 
                             </div>
 
-                        `).join("")
+                        `
+
+                        )
+
+                        .join("")
 
                     }
 
@@ -1324,7 +1534,11 @@ function renderizar(){
 
     }
 
-    /* PETTON JÁ NASCEU */
+    /* =====================================================
+
+       PETTON JÁ NASCEU
+
+    ===================================================== */
 
     const idade =
 
@@ -1336,21 +1550,33 @@ function renderizar(){
 
     let liberados = 0;
 
-    momentos.forEach(momento => {
+    momentos.forEach(
 
-        if(idade >= momento.dia){
+        momento => {
 
-            liberados++;
+            if(
+
+                idade >= momento.dia
+
+            ){
+
+                liberados++;
+
+            }
 
         }
 
-    });
+    );
 
     const ultimoLiberado =
 
         momentos
 
-            .filter(m => m.dia <= idade)
+            .filter(
+
+                m => m.dia <= idade
+
+            )
 
             .slice(-1)[0];
 
@@ -1372,7 +1598,9 @@ function renderizar(){
 
             <div class="sub">
 
-                ${idade === 1
+                ${
+
+                    idade === 1
 
                     ? "1 dia de vida"
 
@@ -1412,7 +1640,9 @@ function renderizar(){
 
             <div class="album">
 
-                ${momentos.map(momento => {
+                ${momentos.map(
+
+                    momento => {
 
                     const liberado =
 
@@ -1424,7 +1654,9 @@ function renderizar(){
 
                         ultimoLiberado &&
 
-                        momento.dia === ultimoLiberado.dia;
+                        momento.dia ===
+
+                        ultimoLiberado.dia;
 
                     let classe =
 
@@ -1448,7 +1680,9 @@ function renderizar(){
 
                                 <div class="dia">
 
-                                    ${momento.dia === 0
+                                    ${
+
+                                        momento.dia === 0
 
                                         ? "Dia 0"
 
@@ -1460,7 +1694,9 @@ function renderizar(){
 
                                 <div class="status">
 
-                                    ${liberado
+                                    ${
+
+                                        liberado
 
                                         ? "📸"
 
@@ -1480,7 +1716,11 @@ function renderizar(){
 
                                     ?
 
-                                    criarVisualMomento(momento)
+                                    criarVisualMomento(
+
+                                        momento
+
+                                    )
 
                                     :
 
@@ -1504,7 +1744,11 @@ function renderizar(){
 
                                     liberado
 
-                                    ? formatarData(momento.dia)
+                                    ? formatarData(
+
+                                        momento.dia
+
+                                      )
 
                                     : "Ainda não desbloqueado"
 
@@ -1584,21 +1828,99 @@ function renderizar(){
 
 /* =========================================================
 
+   RENDERIZAR AGORA
+
+========================================================= */
+
+function renderizarAgora(){
+
+    renderizar();
+
+    try{
+
+        assinaturaAnterior =
+
+            assinaturaTela();
+
+    }catch(e){
+
+        assinaturaAnterior =
+
+            "";
+
+    }
+
+}
+
+/* =========================================================
+
    INÍCIO
 
 ========================================================= */
 
-renderizar();
+renderizarAgora();
 
-/*
+/* =========================================================
 
-   Atualiza o álbum para acompanhar
+   ATUALIZAÇÃO SEM PISCAR
 
-   o mesmo estado do petton.js.
+=========================================================
 
-*/
+   Antes:
 
-setInterval(renderizar,1000);
+       setInterval(renderizar,1000);
+
+   Isso reconstruía todo o álbum a cada segundo.
+
+   Agora:
+
+   - verifica o estado a cada segundo
+
+   - não mexe na tela se nada mudou
+
+   - renderiza somente quando há mudança
+
+========================================================= */
+
+setInterval(
+
+    function(){
+
+        try{
+
+            const atual =
+
+                assinaturaTela();
+
+            if(
+
+                atual !==
+
+                assinaturaAnterior
+
+            ){
+
+                renderizarAgora();
+
+            }
+
+        }catch(e){
+
+            console.log(
+
+                "Atualização do álbum:",
+
+                e
+
+            );
+
+        }
+
+    },
+
+    1000
+
+);
 
 </script>
 
