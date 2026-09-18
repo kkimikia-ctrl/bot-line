@@ -26,23 +26,13 @@ const PETTON_AQUECEDOR_MULTIPLICADOR = 5;
 
    ========================================================= */
 
-/* Quanto tempo o cocô pode ficar antes de começar a prejudicar */
-
 const PETTON_COCO_ALERTA_MS = 10 * 60 * 1000;
-
-/* Quanto tempo o cocô pode ficar antes de deixar doente */
 
 const PETTON_COCO_DOENCA_MS = 30 * 60 * 1000;
 
-/* Tempo depois de comer para poder aparecer cárie */
-
 const PETTON_CARIE_APOS_COMER_MS = 5 * 60 * 1000;
 
-/* Tempo do tratamento no hospital */
-
 const PETTON_HOSPITAL_MS = 5 * 1000;
-
-/* Tempo do passeio */
 
 const PETTON_PASSEIO_MS = 8 * 1000;
 
@@ -84,8 +74,6 @@ function criarPettonNovo() {
 
     return {
 
-        /* ESPÉCIE E NOME FICAM SECRETOS NO OVO */
-
         especie: null,
 
         nome: null,
@@ -94,9 +82,9 @@ function criarPettonNovo() {
 
         dateNascimento: null,
 
-        dataCriacao: new Date(agora).toISOString(),
+        dataCriacao:
 
-        /* INCUBAÇÃO */
+            new Date(agora).toISOString(),
 
         incubacaoRestanteMs:
 
@@ -108,8 +96,6 @@ function criarPettonNovo() {
 
         aquecedorAte: null,
 
-        /* NECESSIDADES */
-
         fome: 70,
 
         felicidade: 100,
@@ -120,27 +106,15 @@ function criarPettonNovo() {
 
         saude: 100,
 
-        /* =================================================
-
-           NOVOS ESTADOS DE CUIDADO
-
-           ================================================= */
-
-        /* DOENÇA */
-
         doente: false,
 
         doenteDesde: null,
 
         hospitalAte: null,
 
-        /* COCÔ */
-
         cocoAtivo: false,
 
         cocoNasceuEm: null,
-
-        /* CÁRIE */
 
         carieAtiva: false,
 
@@ -148,23 +122,15 @@ function criarPettonNovo() {
 
         ultimaAlimentacaoEm: null,
 
-        /* PASSEIO */
-
         passeandoAte: null,
 
-        /* ESCOVAÇÃO */
-
         escovandoAte: null,
-
-        /* PROGRESSO */
 
         moedas: 100,
 
         pontos: 0,
 
         nivel: 1,
-
-        /* CARACTERÍSTICAS */
 
         caracteristicas: {
 
@@ -183,8 +149,6 @@ function criarPettonNovo() {
             cauda: false
 
         },
-
-        /* ÁLBUM */
 
         album: []
 
@@ -300,23 +264,9 @@ function carregarPetton() {
 
             JSON.parse(salvo);
 
-        /* =================================================
-
-           MIGRAÇÃO
-
-           ================================================= */
-
         if (!dados.dateNascimento) {
 
             dados.fase = "ovo";
-
-            /*
-
-             * Enquanto estiver no ovo,
-
-             * não revelar espécie nem nome.
-
-             */
 
             dados.especie = null;
 
@@ -400,12 +350,6 @@ function carregarPetton() {
 
         }
 
-        /* =================================================
-
-           CARACTERÍSTICAS
-
-           ================================================= */
-
         if (!dados.caracteristicas) {
 
             dados.caracteristicas = {
@@ -428,23 +372,11 @@ function carregarPetton() {
 
         }
 
-        /* =================================================
-
-           ÁLBUM
-
-           ================================================= */
-
         if (!Array.isArray(dados.album)) {
 
             dados.album = [];
 
         }
-
-        /* =================================================
-
-           NOVOS CAMPOS
-
-           ================================================= */
 
         garantirCamposNovos(dados);
 
@@ -508,8 +440,6 @@ function atualizarIncubacao() {
 
         carregarPetton();
 
-    /* JÁ NASCEU */
-
     if (dados.dateNascimento) {
 
         return dados;
@@ -519,8 +449,6 @@ function atualizarIncubacao() {
     const agora =
 
         Date.now();
-
-    /* GARANTIR TIMESTAMP */
 
     if (
 
@@ -540,8 +468,6 @@ function atualizarIncubacao() {
 
     }
 
-    /* TEMPO PASSADO */
-
     let tempoPassado =
 
         agora -
@@ -560,15 +486,11 @@ function atualizarIncubacao() {
 
     }
 
-    /* AQUECEDOR */
-
     const aquecedorLigado =
 
         dados.aquecedorAte &&
 
         dados.aquecedorAte > agora;
-
-    /* DESLIGAR AQUECEDOR VENCIDO */
 
     if (
 
@@ -582,8 +504,6 @@ function atualizarIncubacao() {
 
     }
 
-    /* MULTIPLICADOR */
-
     const multiplicador =
 
         aquecedorLigado
@@ -591,8 +511,6 @@ function atualizarIncubacao() {
             ? PETTON_AQUECEDOR_MULTIPLICADOR
 
             : 1;
-
-    /* DESCONTO */
 
     const desconto =
 
@@ -615,12 +533,6 @@ function atualizarIncubacao() {
     dados.incubacaoAtualizadaEm =
 
         agora;
-
-    /* =================================================
-
-       NASCIMENTO
-
-       ================================================= */
 
     if (
 
@@ -650,12 +562,6 @@ function atualizarIncubacao() {
 
 function nascerPettonInterno(dados) {
 
-    /*
-
-     * O animal é sorteado somente no nascimento.
-
-     */
-
     dados.especie =
 
         escolherEspecie();
@@ -680,15 +586,9 @@ function nascerPettonInterno(dados) {
 
         Date.now();
 
-    /*
+    dados.nome =
 
-     * O NOME CONTINUA VAZIO.
-
-     */
-
-    dados.nome = null;
-
-    /* NOVOS ESTADOS */
+        null;
 
     dados.doente = false;
 
@@ -740,7 +640,7 @@ function nascerPettonInterno(dados) {
 
 /* =========================================================
 
-   NASCER — API
+   NASCER — API REAL
 
    ========================================================= */
 
@@ -768,6 +668,58 @@ function nascerPetton() {
 
 /* =========================================================
 
+   🧪 TESTAR NASCIMENTO
+
+   ========================================================= */
+
+function testarNascimentoPetton() {
+
+    const dados =
+
+        carregarPetton();
+
+    /*
+
+     * Se já nasceu, não faz nada.
+
+     */
+
+    if (dados.dateNascimento) {
+
+        return dados;
+
+    }
+
+    /*
+
+     * Zera o ovo.
+
+     */
+
+    dados.incubacaoRestanteMs = 0;
+
+    dados.aquecedorAte = null;
+
+    dados.incubacaoAtualizadaEm =
+
+        Date.now();
+
+    salvarPetton(dados);
+
+    /*
+
+     * Usa exatamente
+
+     * o nascimento real.
+
+     */
+
+    return nascerPetton();
+
+}
+
+/* =========================================================
+
    ESCOLHER NOME
 
    ========================================================= */
@@ -783,14 +735,6 @@ function definirNome(nome) {
         return false;
 
     }
-
-    /*
-
-     * Não permitir nome enquanto
-
-     * estiver em tratamento.
-
-     */
 
     if (dados.hospitalAte) {
 
@@ -1206,14 +1150,6 @@ function verificarDoenca(dados) {
 
             dados.cocoNasceuEm;
 
-        /*
-
-         * Se ficou muito tempo sem limpar,
-
-         * começa a prejudicar a saúde.
-
-         */
-
         if (
 
             tempoCoco >=
@@ -1243,14 +1179,6 @@ function verificarDoenca(dados) {
                 );
 
         }
-
-        /*
-
-         * Depois de bastante tempo,
-
-         * Petton fica doente.
-
-         */
 
         if (
 
@@ -1289,16 +1217,6 @@ function verificarDoenca(dados) {
         }
 
     }
-
-    /*
-
-     * Segurança adicional:
-
-     * saúde muito baixa também pode
-
-     * deixar o Petton doente.
-
-     */
 
     if (
 
@@ -1354,14 +1272,6 @@ function verificarCarie(dados) {
 
             dados.ultimaAlimentacaoEm;
 
-        /*
-
-         * Depois de alguns minutos,
-
-         * pode aparecer a cárie.
-
-         */
-
         if (
 
             tempoDesdeComida >=
@@ -1369,16 +1279,6 @@ function verificarCarie(dados) {
             PETTON_CARIE_APOS_COMER_MS
 
         ) {
-
-            /*
-
-             * 45% de chance.
-
-             * A alimentação seguinte poderá
-
-             * criar outra oportunidade.
-
-             */
 
             if (Math.random() < 0.45) {
 
@@ -1393,14 +1293,6 @@ function verificarCarie(dados) {
                     null;
 
             } else {
-
-                /*
-
-                 * Não fica verificando
-
-                 * infinitamente a mesma refeição.
-
-                 */
 
                 dados.ultimaAlimentacaoEm =
 
@@ -1524,14 +1416,6 @@ function atualizarEscovacao(dados) {
 
         dados.escovandoAte = null;
 
-        /*
-
-         * Só remove a cárie quando
-
-         * a animação termina.
-
-         */
-
         dados.carieAtiva = false;
 
         dados.carieNasceuEm = null;
@@ -1584,8 +1468,6 @@ function atualizarTempo() {
 
     }
 
-    /* PROCESSOS ESPECIAIS */
-
     verificarDoenca(dados);
 
     verificarCarie(dados);
@@ -1595,14 +1477,6 @@ function atualizarTempo() {
     atualizarPasseio(dados);
 
     atualizarEscovacao(dados);
-
-    /*
-
-     * Se estiver doente, as necessidades
-
-     * continuam caindo um pouco.
-
-     */
 
     if (dados.doente) {
 
@@ -1641,8 +1515,6 @@ function atualizarTempo() {
         return dados;
 
     }
-
-    /* NECESSIDADES NORMAIS */
 
     dados.fome =
 
@@ -1722,35 +1594,17 @@ function alimentar() {
 
         carregarPetton();
 
-    /*
-
-     * Não pode alimentar no ovo.
-
-     */
-
     if (!dados.dateNascimento) {
 
         return false;
 
     }
 
-    /*
-
-     * DOENTE NÃO PODE COMER.
-
-     */
-
     if (dados.doente) {
 
         return false;
 
     }
-
-    /*
-
-     * NÃO PODE COMER DURANTE TRATAMENTO.
-
-     */
 
     if (dados.hospitalAte) {
 
@@ -1780,25 +1634,9 @@ function alimentar() {
 
     dados.pontos += 5;
 
-    /*
-
-     * Registrar alimentação.
-
-     * A cárie poderá aparecer depois.
-
-     */
-
     dados.ultimaAlimentacaoEm =
 
         Date.now();
-
-    /*
-
-     * Se não existe cocô,
-
-     * cria um novo.
-
-     */
 
     if (!dados.cocoAtivo) {
 
@@ -1996,12 +1834,6 @@ function limpar() {
 
     }
 
-    /*
-
-     * Mesmo doente, pode limpar.
-
-     */
-
     dados.higiene =
 
         Math.min(
@@ -2054,23 +1886,9 @@ function limparCoco() {
 
     }
 
-    /*
-
-     * O cocô desaparece.
-
-     */
-
     dados.cocoAtivo = false;
 
     dados.cocoNasceuEm = null;
-
-    /*
-
-     * Limpar melhora higiene,
-
-     * mas NÃO cura doença.
-
-     */
 
     dados.higiene =
 
@@ -2114,33 +1932,15 @@ function escovarDentes() {
 
     }
 
-    /*
-
-     * Já está escovando.
-
-     */
-
     if (dados.escovandoAte) {
 
         return false;
 
     }
 
-    /*
-
-     * A cárie NÃO desaparece agora.
-
-     * Ela só desaparece quando
-
-     * a animação terminar.
-
-     */
-
     dados.escovandoAte =
 
-        Date.now() +
-
-        3000;
+        Date.now() + 3000;
 
     salvarPetton(dados);
 
@@ -2166,12 +1966,6 @@ function passear() {
 
     }
 
-    /*
-
-     * DOENTE NÃO PODE PASSEAR.
-
-     */
-
     if (dados.doente) {
 
         return false;
@@ -2184,12 +1978,6 @@ function passear() {
 
     }
 
-    /*
-
-     * Já está passeando.
-
-     */
-
     if (
 
         dados.passeandoAte &&
@@ -2201,16 +1989,6 @@ function passear() {
         return false;
 
     }
-
-    /*
-
-     * Inicia o passeio.
-
-     * O index.html poderá usar esse estado
-
-     * para mostrar a animação.
-
-     */
 
     dados.passeandoAte =
 
@@ -2237,14 +2015,6 @@ function passear() {
             dados.energia - 8
 
         );
-
-    /*
-
-     * Passear pode deixar o Petton
-
-     * um pouquinho sujo.
-
-     */
 
     dados.higiene =
 
@@ -2282,37 +2052,17 @@ function levarHospital() {
 
     }
 
-    /*
-
-     * Só precisa ir ao hospital
-
-     * se estiver doente.
-
-     */
-
     if (!dados.doente) {
 
         return false;
 
     }
 
-    /*
-
-     * Já está em tratamento.
-
-     */
-
     if (dados.hospitalAte) {
 
         return false;
 
     }
-
-    /*
-
-     * Inicia tratamento.
-
-     */
 
     dados.hospitalAte =
 
@@ -2328,7 +2078,7 @@ function levarHospital() {
 
 /* =========================================================
 
-   ESTÁ DOENTE
+   ESTADOS
 
    ========================================================= */
 
@@ -2342,12 +2092,6 @@ function estaDoente() {
 
 }
 
-/* =========================================================
-
-   TEM COCÔ
-
-   ========================================================= */
-
 function temCoco() {
 
     const dados =
@@ -2358,12 +2102,6 @@ function temCoco() {
 
 }
 
-/* =========================================================
-
-   TEM CÁRIE
-
-   ========================================================= */
-
 function temCarie() {
 
     const dados =
@@ -2373,12 +2111,6 @@ function temCarie() {
     return !!dados.carieAtiva;
 
 }
-
-/* =========================================================
-
-   ESTÁ PASSEANDO
-
-   ========================================================= */
 
 function estaPasseando() {
 
@@ -2398,12 +2130,6 @@ function estaPasseando() {
 
 }
 
-/* =========================================================
-
-   ESTÁ ESCOVANDO
-
-   ========================================================= */
-
 function estaEscovando() {
 
     const dados =
@@ -2421,12 +2147,6 @@ function estaEscovando() {
     );
 
 }
-
-/* =========================================================
-
-   ESTÁ NO HOSPITAL
-
-   ========================================================= */
 
 function estaNoHospital() {
 
@@ -2706,6 +2426,14 @@ window.Petton = {
 
     },
 
+    /* 🧪 TESTE */
+
+    testarNascimento: function () {
+
+        return testarNascimentoPetton();
+
+    },
+
     /* NOME */
 
     definirNome: function (nome) {
@@ -2858,11 +2586,7 @@ window.Petton = {
 
     },
 
-    /* =====================================================
-
-       OVO
-
-       ===================================================== */
+    /* OVO */
 
     incubacaoRestante: function () {
 
@@ -2870,11 +2594,7 @@ window.Petton = {
 
     },
 
-    /* =====================================================
-
-       AQUECEDOR
-
-       ===================================================== */
+    /* AQUECEDOR */
 
     ligarAquecedor: function () {
 
@@ -2894,11 +2614,7 @@ window.Petton = {
 
     },
 
-    /* =====================================================
-
-       RESET
-
-       ===================================================== */
+    /* RESET */
 
     resetar: function () {
 
@@ -2959,14 +2675,6 @@ try {
     verificarCrescimento();
 
     atualizarAlbum();
-
-    /*
-
-     * Atualizar estados especiais
-
-     * logo ao abrir a página.
-
-     */
 
     const dadosInicial =
 
