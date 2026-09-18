@@ -392,6 +392,20 @@
 
         /* =====================================================
 
+           NÚMEROS DOS STATUS
+
+           ===================================================== */
+
+        .status-card > div {
+
+            font-size: 18px !important;
+
+            font-weight: bold !important;
+
+        }
+
+        /* =====================================================
+
            MENSAGEM
 
            ===================================================== */
@@ -506,11 +520,7 @@
 
         <section class="pet-card">
 
-            <h2 id="nomePetton">
-
-                Mimi
-
-            </h2>
+            <h2 id="nomePetton"></h2>
 
             <div id="idadePetton" class="pet-idade">
 
@@ -587,8 +597,6 @@
             <!-- =================================================
 
                  IMAGEM DO PET
-
-                 COMEÇA ESCONDIDA
 
                  ================================================= -->
 
@@ -854,7 +862,7 @@
 
     <!-- =====================================================
 
-         MODAL
+         MODAL NOME
 
          ===================================================== -->
 
@@ -908,19 +916,13 @@
 
 </div>
 
-<!-- =====================================================
-
-     PETTON.JS
-
-     ===================================================== -->
-
 <script src="petton.js"></script>
 
 <script>
 
 /* =====================================================
 
-   FUNÇÕES DA TELA DO PETTON
+   FORMATAR TEMPO
 
    ===================================================== */
 
@@ -934,19 +936,11 @@ function formatarTempo(ms) {
 
     const horas =
 
-        Math.floor(
-
-            totalSegundos / 3600
-
-        );
+        Math.floor(totalSegundos / 3600);
 
     const minutos =
 
-        Math.floor(
-
-            (totalSegundos % 3600) / 60
-
-        );
+        Math.floor((totalSegundos % 3600) / 60);
 
     const segundos =
 
@@ -970,15 +964,13 @@ function formatarTempo(ms) {
 
 /* =====================================================
 
-   ATUALIZAR TELA DO OVO
+   ATUALIZAR OVO
 
    ===================================================== */
 
 function atualizarOvoTela() {
 
-    const dados =
-
-        Petton.carregar();
+    const dados = Petton.carregar();
 
     const painel =
 
@@ -995,6 +987,10 @@ function atualizarOvoTela() {
     const idade =
 
         document.getElementById("idadePetton");
+
+    const nome =
+
+        document.getElementById("nomePetton");
 
     const cronometro =
 
@@ -1020,17 +1016,13 @@ function atualizarOvoTela() {
 
         cuidados.classList.add("oculto");
 
+        /* NÃO MOSTRAR NOME NO OVO */
+
+        nome.textContent = "";
+
         idade.textContent =
 
             "🥚 Ovo • preparando para nascer";
-
-        /*
-
-         * IMPORTANTE:
-
-         * Aqui o Petton.js calcula o tempo real.
-
-         */
 
         const restante =
 
@@ -1039,12 +1031,6 @@ function atualizarOvoTela() {
         cronometro.textContent =
 
             formatarTempo(restante);
-
-        /*
-
-         * AQUECEDOR
-
-         */
 
         if (Petton.aquecedorAtivo()) {
 
@@ -1064,11 +1050,7 @@ function atualizarOvoTela() {
 
             botao.disabled = true;
 
-            ovo.classList.add(
-
-                "ovo-aquecido"
-
-            );
+            ovo.classList.add("ovo-aquecido");
 
         } else {
 
@@ -1082,21 +1064,9 @@ function atualizarOvoTela() {
 
             botao.disabled = false;
 
-            ovo.classList.remove(
-
-                "ovo-aquecido"
-
-            );
+            ovo.classList.remove("ovo-aquecido");
 
         }
-
-        /*
-
-         * Se acabou de nascer,
-
-         * atualiza imediatamente.
-
-         */
 
         if (restante <= 0) {
 
@@ -1140,19 +1110,11 @@ function aquecerOvo() {
 
             document.getElementById("ovoVisual");
 
-        ovo.classList.remove(
-
-            "ovo-vibrando"
-
-        );
+        ovo.classList.remove("ovo-vibrando");
 
         void ovo.offsetWidth;
 
-        ovo.classList.add(
-
-            "ovo-vibrando"
-
-        );
+        ovo.classList.add("ovo-vibrando");
 
         mostrarMensagem(
 
@@ -1220,9 +1182,21 @@ function atualizarPetNascido(dados) {
 
         document.getElementById("imagemPetton");
 
+    /*
+
+     * NOME
+
+     */
+
     nome.textContent =
 
-        dados.nome || "Mimi";
+        dados.nome || "";
+
+    /*
+
+     * IDADE
+
+     */
 
     const dias =
 
@@ -1239,6 +1213,12 @@ function atualizarPetNascido(dados) {
         dias +
 
         " dias";
+
+    /*
+
+     * STATUS
+
+     */
 
     document.getElementById("fome").textContent =
 
@@ -1300,12 +1280,6 @@ function atualizarTela() {
 
             Petton.carregar();
 
-        /*
-
-         * PRIMEIRO atualiza a incubação.
-
-         */
-
         if (!dados.dateNascimento) {
 
             atualizarOvoTela();
@@ -1313,12 +1287,6 @@ function atualizarTela() {
             return;
 
         }
-
-        /*
-
-         * PET NASCEU
-
-         */
 
         Petton.verificarCrescimento();
 
@@ -1345,6 +1313,30 @@ function atualizarTela() {
         ).classList.remove("oculto");
 
         atualizarPetNascido(dados);
+
+        /*
+
+         * SE NASCEU E AINDA NÃO TEM NOME,
+
+         * ABRIR ESCOLHA DO NOME.
+
+         */
+
+        if (!dados.nome) {
+
+            setTimeout(
+
+                function () {
+
+                    abrirModalNome();
+
+                },
+
+                300
+
+            );
+
+        }
 
     } catch (erro) {
 
@@ -1564,11 +1556,7 @@ function abrirAlbum() {
 
 function voltar() {
 
-    if (
-
-        window.history.length > 1
-
-    ) {
+    if (window.history.length > 1) {
 
         window.history.back();
 
@@ -1584,17 +1572,39 @@ function voltar() {
 
 /* =====================================================
 
-   MODAL
+   MODAL NOME
 
    ===================================================== */
 
 function abrirModalNome() {
+
+    const dados =
+
+        Petton.carregar();
+
+    if (!dados.dateNascimento) {
+
+        return;
+
+    }
+
+    if (dados.nome) {
+
+        return;
+
+    }
 
     document.getElementById(
 
         "modalNome"
 
     ).classList.remove("oculto");
+
+    document.getElementById(
+
+        "novoNome"
+
+    ).focus();
 
 }
 
@@ -1624,21 +1634,33 @@ function salvarNome() {
 
     if (!nome) {
 
+        mostrarMensagem(
+
+            "✏️ Digite um nome para seu Petton."
+
+        );
+
         return;
 
     }
 
-    const dados =
+    const resultado =
 
-        Petton.carregar();
+        Petton.definirNome(nome);
 
-    dados.nome =
+    if (!resultado) {
 
-        nome;
+        return;
 
-    Petton.salvar();
+    }
 
     fecharModalNome();
+
+    mostrarMensagem(
+
+        "❤️ Nome escolhido!"
+
+    );
 
     atualizarTela();
 
@@ -1646,7 +1668,7 @@ function salvarNome() {
 
 /* =====================================================
 
-   LIFF
+   LINE
 
    ===================================================== */
 
@@ -1698,12 +1720,6 @@ async function verificarAcessoLINE() {
 
         if (liff.isInClient()) {
 
-            /*
-
-             * ESTÁ DENTRO DO LINE
-
-             */
-
             bloqueio.style.display =
 
                 "none";
@@ -1712,25 +1728,11 @@ async function verificarAcessoLINE() {
 
                 "block";
 
-            /*
-
-             * Agora sim iniciamos
-
-             * a tela do Petton.
-
-             */
-
             atualizarTela();
 
             return;
 
         }
-
-        /*
-
-         * FORA DO LINE
-
-         */
 
         petton.style.display =
 
@@ -1804,11 +1806,7 @@ setInterval(
 
                 Petton.carregar();
 
-            if (
-
-                !dados.dateNascimento
-
-            ) {
+            if (!dados.dateNascimento) {
 
                 atualizarOvoTela();
 
