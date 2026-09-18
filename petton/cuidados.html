@@ -6,7 +6,9 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Cuidados do Petton</title>
 
@@ -126,6 +128,20 @@ body{
 
 }
 
+.pet-imagem{
+
+    max-width:180px;
+
+    max-height:190px;
+
+    display:block;
+
+    margin:5px auto 10px;
+
+    object-fit:contain;
+
+}
+
 .nome{
 
     font-size:25px;
@@ -180,6 +196,94 @@ body{
 
 }
 
+/* =====================================================
+
+   OVO
+
+   ===================================================== */
+
+.ovo-titulo{
+
+    font-size:20px;
+
+    font-weight:800;
+
+    color:#70452b;
+
+    margin-bottom:8px;
+
+}
+
+.ovo-visual{
+
+    width:150px;
+
+    height:175px;
+
+    margin:10px auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:120px;
+
+    line-height:1;
+
+}
+
+.ovo-tempo{
+
+    font-size:32px;
+
+    font-weight:bold;
+
+    color:#4e2e1d;
+
+    letter-spacing:1px;
+
+    margin:8px 0 15px;
+
+    font-variant-numeric:tabular-nums;
+
+}
+
+.ovo-info{
+
+    color:#76502e;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+    margin-top:10px;
+
+}
+
+.ovo-aviso{
+
+    background:#fff7ed;
+
+    border-radius:17px;
+
+    padding:14px;
+
+    color:#92400e;
+
+    font-size:13px;
+
+    line-height:1.5;
+
+}
+
+/* =====================================================
+
+   BARRAS
+
+   ===================================================== */
+
 .barra-area{
 
     margin-top:14px;
@@ -221,6 +325,12 @@ body{
     transition:width .4s;
 
 }
+
+/* =====================================================
+
+   AÇÕES
+
+   ===================================================== */
 
 .acoes{
 
@@ -292,6 +402,12 @@ body{
 
 }
 
+/* =====================================================
+
+   MENSAGEM
+
+   ===================================================== */
+
 .mensagem{
 
     text-align:center;
@@ -307,6 +423,12 @@ body{
     font-size:14px;
 
 }
+
+/* =====================================================
+
+   LISTA
+
+   ===================================================== */
 
 .lista{
 
@@ -402,6 +524,12 @@ body{
 
 }
 
+/* =====================================================
+
+   AVISOS
+
+   ===================================================== */
+
 .aviso{
 
     background:#eff6ff;
@@ -418,6 +546,14 @@ body{
 
 }
 
+.aviso-doente{
+
+    background:#fee2e2;
+
+    color:#991b1b;
+
+}
+
 .rodape{
 
     text-align:center;
@@ -427,6 +563,40 @@ body{
     font-size:12px;
 
     padding:5px 0 25px;
+
+}
+
+/* =====================================================
+
+   ANIMAÇÕES
+
+   ===================================================== */
+
+.animacao-acao{
+
+    animation:pular .6s ease;
+
+}
+
+@keyframes pular{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.06);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
 
 }
 
@@ -450,7 +620,11 @@ body{
 
     <div class="topo">
 
-        <button class="voltar" onclick="history.back()">
+        <button
+
+            class="voltar"
+
+            onclick="history.back()">
 
             ←
 
@@ -460,7 +634,11 @@ body{
 
             <h1>🛁 Cuidados</h1>
 
-            <p>Seu Petton precisa de você</p>
+            <p>
+
+                Seu Petton precisa de você
+
+            </p>
 
         </div>
 
@@ -470,9 +648,17 @@ body{
 
         <div class="card pet">
 
-            <div class="pet-emoji">🐾</div>
+            <div class="pet-emoji">
 
-            <p>Carregando...</p>
+                🐾
+
+            </div>
+
+            <p>
+
+                Carregando...
+
+            </p>
 
         </div>
 
@@ -484,137 +670,77 @@ body{
 
 <script>
 
+/* =====================================================
+
+   DADOS
+
+   ===================================================== */
+
 let dados = null;
 
-const CHAVE_CUIDADOS =
+/* =====================================================
 
-    "petton_cuidados_v1";
+   CARREGAR PETTON
 
-let cuidados = {
-
-    higiene: 80,
-
-    energia: 80,
-
-    humor: 80,
-
-    saude: 100,
-
-    sono: 80,
-
-    ultimoBanho: null,
-
-    ultimoSono: null,
-
-    ultimoLimpeza: null,
-
-    ultimaNecessidade: null,
-
-    cocô: 0,
-
-    xixi: 0
-
-};
+   ===================================================== */
 
 function carregarDados(){
 
+    dados = null;
+
     try{
 
-        if(typeof Petton !== "undefined"){
+        if(
 
-            if(Petton.carregar){
+            typeof Petton !== "undefined" &&
+
+            Petton.carregar
+
+        ){
+
+            dados =
 
                 Petton.carregar();
-
-            }
-
-            if(Petton.dados){
-
-                dados = Petton.dados;
-
-            }
 
         }
 
     }catch(e){
 
-        console.log(e);
+        console.log(
 
-    }
+            "Erro ao carregar Petton:",
 
-    if(!dados){
-
-        try{
-
-            const salvo =
-
-                localStorage.getItem(
-
-                    "petton_dados_v2"
-
-                ) ||
-
-                localStorage.getItem(
-
-                    "petton_dados_v1"
-
-                );
-
-            if(salvo){
-
-                dados = JSON.parse(salvo);
-
-            }
-
-        }catch(e){}
-
-    }
-
-    try{
-
-        const salvo =
-
-            localStorage.getItem(
-
-                CHAVE_CUIDADOS
-
-            );
-
-        if(salvo){
-
-            const dadosCuidados =
-
-                JSON.parse(salvo);
-
-            cuidados = {
-
-                ...cuidados,
-
-                ...dadosCuidados
-
-            };
-
-        }
-
-    }catch(e){}
-
-}
-
-function salvarCuidados(){
-
-    try{
-
-        localStorage.setItem(
-
-            CHAVE_CUIDADOS,
-
-            JSON.stringify(cuidados)
+            e
 
         );
 
-    }catch(e){}
+    }
 
 }
+
+/* =====================================================
+
+   OVO
+
+   ===================================================== */
+
+function estaNoOvo(){
+
+    return (
+
+        !dados ||
+
+        !dados.dateNascimento
+
+    );
+
+}
+
+/* =====================================================
+
+   IDADE
+
+   ===================================================== */
 
 function idadeDias(){
 
@@ -640,7 +766,7 @@ function idadeDias(){
 
     }catch(e){}
 
-    if(!dados.dataNascimento){
+    if(!dados.dateNascimento){
 
         return 0;
 
@@ -650,7 +776,7 @@ function idadeDias(){
 
         new Date(
 
-            dados.dataNascimento
+            dados.dateNascimento
 
         );
 
@@ -660,9 +786,13 @@ function idadeDias(){
 
         Math.floor(
 
-            (new Date() - nascimento) /
+            (
 
-            86400000
+                Date.now() -
+
+                nascimento.getTime()
+
+            ) / 86400000
 
         )
 
@@ -670,25 +800,35 @@ function idadeDias(){
 
 }
 
+/* =====================================================
+
+   ESPÉCIE
+
+   ===================================================== */
+
 function especieEmoji(){
 
     if(!dados){
 
-        return "🐾";
+        return "🥚";
 
     }
 
-    const especie =
+    if(
 
-        dados.especie || "gato";
+        dados.especie === "cachorro"
 
-    if(especie === "cachorro"){
+    ){
 
         return "🐶";
 
     }
 
-    if(especie === "coelho"){
+    if(
+
+        dados.especie === "coelho"
+
+    ){
 
         return "🐰";
 
@@ -698,291 +838,145 @@ function especieEmoji(){
 
 }
 
-function reduzirCuidados(){
+/* =====================================================
+
+   IMAGEM
+
+   ===================================================== */
+
+function especieImagem(){
 
     if(!dados){
 
-        return;
+        return null;
 
     }
-
-    const agora =
-
-        Date.now();
-
-    const chave =
-
-        "petton_ultima_atualizacao_cuidados";
-
-    let ultima = null;
-
-    try{
-
-        ultima =
-
-            Number(
-
-                localStorage.getItem(chave)
-
-            );
-
-    }catch(e){}
-
-    if(!ultima){
-
-        try{
-
-            localStorage.setItem(
-
-                chave,
-
-                String(agora)
-
-            );
-
-        }catch(e){}
-
-        return;
-
-    }
-
-    const horas =
-
-        Math.max(
-
-            0,
-
-            (agora - ultima) /
-
-            3600000
-
-        );
-
-    if(horas < 1){
-
-        return;
-
-    }
-
-    /*
-
-        O Petton continua vivendo mesmo
-
-        quando o jogador está fora.
-
-        As quedas são lentas para evitar
-
-        punição exagerada.
-
-    */
-
-    cuidados.higiene =
-
-        Math.max(
-
-            0,
-
-            cuidados.higiene -
-
-            horas * 2
-
-        );
-
-    cuidados.energia =
-
-        Math.max(
-
-            0,
-
-            cuidados.energia -
-
-            horas * 1.2
-
-        );
-
-    cuidados.humor =
-
-        Math.max(
-
-            0,
-
-            cuidados.humor -
-
-            horas * 1
-
-        );
-
-    cuidados.sono =
-
-        Math.max(
-
-            0,
-
-            cuidados.sono -
-
-            horas * .8
-
-        );
-
-    /*
-
-        Saúde só começa a cair quando
-
-        vários cuidados estão ruins.
-
-    */
-
-    const mediaRuim =
-
-        (
-
-            cuidados.higiene +
-
-            cuidados.energia +
-
-            cuidados.humor +
-
-            cuidados.sono
-
-        ) / 4;
-
-    if(mediaRuim < 35){
-
-        cuidados.saude =
-
-            Math.max(
-
-                25,
-
-                cuidados.saude -
-
-                horas * .5
-
-            );
-
-    }
-
-    /*
-
-        Pequenas necessidades podem aparecer
-
-        com o passar do tempo.
-
-    */
-
-    const idade =
-
-        idadeDias();
-
-    const intervalo =
-
-        idade <= 3 ? 2 :
-
-        idade <= 7 ? 3 :
-
-        idade <= 30 ? 5 :
-
-        7;
 
     if(
 
-        !cuidados.ultimaNecessidade ||
-
-        (
-
-            agora -
-
-            new Date(
-
-                cuidados.ultimaNecessidade
-
-            ).getTime()
-
-        ) / 3600000 > intervalo
+        dados.especie === "cachorro"
 
     ){
 
-        if(Math.random() < .7){
-
-            cuidados.xixi += 1;
-
-        }
-
-        if(Math.random() < .45){
-
-            cuidados.cocô += 1;
-
-        }
-
-        cuidados.ultimaNecessidade =
-
-            new Date().toISOString();
+        return "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
 
     }
 
-    try{
+    if(
 
-        localStorage.setItem(
+        dados.especie === "gato"
 
-            chave,
+    ){
 
-            String(agora)
+        return "petton-original.png";
 
-        );
+    }
 
-    }catch(e){}
-
-    salvarCuidados();
+    return null;
 
 }
 
+/* =====================================================
+
+   VALOR SEGURO
+
+   ===================================================== */
+
+function valor(numero, padrao = 0){
+
+    const n =
+
+        Number(numero);
+
+    if(!Number.isFinite(n)){
+
+        return padrao;
+
+    }
+
+    return Math.max(
+
+        0,
+
+        Math.min(
+
+            100,
+
+            n
+
+        )
+
+    );
+
+}
+
+/* =====================================================
+
+   ESTADO GERAL
+
+   ===================================================== */
+
 function estadoGeral(){
 
-    const media =
+    if(
 
-        (
+        dados &&
 
-            cuidados.higiene +
+        dados.doente
 
-            cuidados.energia +
-
-            cuidados.humor +
-
-            cuidados.saude +
-
-            cuidados.sono
-
-        ) / 5;
-
-    if(media >= 75){
+    ){
 
         return {
 
-            texto:"🥰 Muito bem cuidado",
+            texto:"🤒 Está doente",
 
-            classe:""
+            classe:"urgente"
 
         };
 
     }
 
-    if(media >= 50){
+    const saude =
+
+        valor(
+
+            dados.saude,
+
+            100
+
+        );
+
+    const higiene =
+
+        valor(
+
+            dados.higiene,
+
+            100
+
+        );
+
+    if(saude < 40){
 
         return {
 
-            texto:"🙂 Está tudo bem",
+            texto:"🥺 Precisa de atenção",
 
-            classe:""
+            classe:"urgente"
 
         };
 
     }
 
-    if(media >= 30){
+    if(
+
+        higiene < 40
+
+    ){
 
         return {
 
-            texto:"😟 Precisa de atenção",
+            texto:"🧼 Precisa de cuidados",
 
             classe:"atencao"
 
@@ -992,41 +986,55 @@ function estadoGeral(){
 
     return {
 
-        texto:"🥺 Precisa de cuidados",
+        texto:"🥰 Muito bem cuidado",
 
-        classe:"urgente"
+        classe:""
 
     };
 
 }
 
-function barraHTML(nome,valor){
+/* =====================================================
 
-    let classe =
+   BARRA
 
-        "";
+   ===================================================== */
 
-    if(valor < 40){
+function barraHTML(
 
-        classe = "vermelho";
+    nome,
 
-    }else if(valor < 70){
+    valorBarra
 
-        classe = "amarelo";
+){
 
-    }
+    const v =
+
+        valor(
+
+            valorBarra,
+
+            100
+
+        );
 
     let cor =
 
         "#22c55e";
 
-    if(valor < 40){
+    if(v < 40){
 
-        cor = "#ef4444";
+        cor =
 
-    }else if(valor < 70){
+            "#ef4444";
 
-        cor = "#f59e0b";
+    }
+
+    else if(v < 70){
+
+        cor =
+
+            "#f59e0b";
 
     }
 
@@ -1036,11 +1044,15 @@ function barraHTML(nome,valor){
 
             <div class="barra-topo">
 
-                <span>${nome}</span>
+                <span>
+
+                    ${nome}
+
+                </span>
 
                 <strong>
 
-                    ${Math.round(valor)}%
+                    ${Math.round(v)}%
 
                 </strong>
 
@@ -1054,19 +1066,7 @@ function barraHTML(nome,valor){
 
                     style="
 
-                        width:${Math.max(
-
-                            0,
-
-                            Math.min(
-
-                                100,
-
-                                valor
-
-                            )
-
-                        )}%;
+                        width:${v}%;
 
                         background:${cor};
 
@@ -1082,269 +1082,147 @@ function barraHTML(nome,valor){
 
 }
 
-function executarAcao(acao){
+/* =====================================================
 
-    reduzirCuidados();
+   TEM COCO
 
-    if(acao === "banho"){
+   ===================================================== */
 
-        cuidados.higiene =
+function temCoco(){
 
-            Math.min(
-
-                100,
-
-                cuidados.higiene + 35
-
-            );
-
-        cuidados.humor =
-
-            Math.min(
-
-                100,
-
-                cuidados.humor + 5
-
-            );
-
-        cuidados.ultimoBanho =
-
-            new Date().toISOString();
-
-        mostrarMensagem(
-
-            "🛁 Banho tomado! O Petton está limpinho."
-
-        );
-
-    }
-
-    if(acao === "limpar"){
-
-        let quantidade =
-
-            cuidados.xixi +
-
-            cuidados.cocô;
-
-        if(quantidade <= 0){
-
-            mostrarMensagem(
-
-                "✨ O cantinho já está limpo!"
-
-            );
-
-        }else{
-
-            cuidados.xixi = 0;
-
-            cuidados.cocô = 0;
-
-            cuidados.higiene =
-
-                Math.min(
-
-                    100,
-
-                    cuidados.higiene + 15
-
-                );
-
-            cuidados.humor =
-
-                Math.min(
-
-                    100,
-
-                    cuidados.humor + 5
-
-                );
-
-            cuidados.ultimoLimpeza =
-
-                new Date().toISOString();
-
-            mostrarMensagem(
-
-                "🧹 Tudo limpinho novamente!"
-
-            );
-
-        }
-
-    }
-
-    if(acao === "carinho"){
-
-        cuidados.humor =
-
-            Math.min(
-
-                100,
-
-                cuidados.humor + 20
-
-            );
-
-        cuidados.energia =
-
-            Math.min(
-
-                100,
-
-                cuidados.energia + 5
-
-            );
-
-        mostrarMensagem(
-
-            "❤️ Seu Petton adorou o carinho!"
-
-        );
-
-    }
-
-    if(acao === "dormir"){
-
-        cuidados.energia =
-
-            Math.min(
-
-                100,
-
-                cuidados.energia + 30
-
-            );
-
-        cuidados.sono =
-
-            Math.min(
-
-                100,
-
-                cuidados.sono + 40
-
-            );
-
-        cuidados.humor =
-
-            Math.min(
-
-                100,
-
-                cuidados.humor + 5
-
-            );
-
-        cuidados.ultimoSono =
-
-            new Date().toISOString();
-
-        mostrarMensagem(
-
-            "😴 Seu Petton descansou bastante!"
-
-        );
-
-    }
-
-    if(acao === "brincar"){
-
-        if(cuidados.energia < 15){
-
-            mostrarMensagem(
-
-                "😴 Ele está cansado demais para brincar."
-
-            );
-
-            return;
-
-        }
-
-        cuidados.energia =
-
-            Math.max(
-
-                0,
-
-                cuidados.energia - 15
-
-            );
-
-        cuidados.sono =
-
-            Math.max(
-
-                0,
-
-                cuidados.sono - 8
-
-            );
-
-        cuidados.humor =
-
-            Math.min(
-
-                100,
-
-                cuidados.humor + 20
-
-            );
-
-        mostrarMensagem(
-
-            "🎾 Foi divertido! Seu Petton adorou brincar."
-
-        );
-
-    }
-
-    if(acao === "saude"){
+    try{
 
         if(
 
-            cuidados.higiene >= 60 &&
+            typeof Petton !== "undefined" &&
 
-            cuidados.energia >= 40
+            Petton.temCoco
 
         ){
 
-            cuidados.saude =
-
-                Math.min(
-
-                    100,
-
-                    cuidados.saude + 10
-
-                );
-
-            mostrarMensagem(
-
-                "❤️ Seu Petton está se recuperando."
-
-            );
-
-        }else{
-
-            mostrarMensagem(
-
-                "🩺 Primeiro cuide da alimentação, higiene e descanso."
-
-            );
+            return Petton.temCoco();
 
         }
 
-    }
+    }catch(e){}
 
-    salvarCuidados();
+    return !!(
 
-    renderizar();
+        dados &&
+
+        dados.cocoAtivo
+
+    );
 
 }
+
+/* =====================================================
+
+   TEM CÁRIE
+
+   ===================================================== */
+
+function temCarie(){
+
+    try{
+
+        if(
+
+            typeof Petton !== "undefined" &&
+
+            Petton.temCarie
+
+        ){
+
+            return Petton.temCarie();
+
+        }
+
+    }catch(e){}
+
+    return !!(
+
+        dados &&
+
+        dados.carieAtiva
+
+    );
+
+}
+
+/* =====================================================
+
+   ESTÁ PASSEANDO
+
+   ===================================================== */
+
+function estaPasseando(){
+
+    try{
+
+        if(
+
+            typeof Petton !== "undefined" &&
+
+            Petton.estaPasseando
+
+        ){
+
+            return Petton.estaPasseando();
+
+        }
+
+    }catch(e){}
+
+    return !!(
+
+        dados &&
+
+        dados.passeandoAte
+
+    );
+
+}
+
+/* =====================================================
+
+   ESTÁ NO HOSPITAL
+
+   ===================================================== */
+
+function estaNoHospital(){
+
+    try{
+
+        if(
+
+            typeof Petton !== "undefined" &&
+
+            Petton.estaNoHospital
+
+        ){
+
+            return Petton.estaNoHospital();
+
+        }
+
+    }catch(e){}
+
+    return !!(
+
+        dados &&
+
+        dados.hospitalAte
+
+    );
+
+}
+
+/* =====================================================
+
+   MOSTRAR MENSAGEM
+
+   ===================================================== */
 
 function mostrarMensagem(texto){
 
@@ -1356,71 +1234,441 @@ function mostrarMensagem(texto){
 
         );
 
-    if(elemento){
+    if(!elemento){
 
-        elemento.textContent =
-
-            texto;
-
-        setTimeout(()=>{
-
-            if(
-
-                elemento.textContent ===
-
-                texto
-
-            ){
-
-                elemento.textContent =
-
-                    "";
-
-            }
-
-        },3000);
+        return;
 
     }
+
+    elemento.textContent =
+
+        texto;
+
+    setTimeout(()=>{
+
+        if(
+
+            elemento.textContent ===
+
+            texto
+
+        ){
+
+            elemento.textContent =
+
+                "";
+
+        }
+
+    },3000);
 
 }
 
-function necessidadeTexto(){
+/* =====================================================
 
-    const total =
+   AÇÃO: BANHO
 
-        cuidados.xixi +
+   ===================================================== */
 
-        cuidados.cocô;
+function banho(){
 
-    if(total === 0){
+    carregarDados();
 
-        return "O cantinho está limpo.";
+    if(estaNoOvo()){
+
+        mostrarMensagem(
+
+            "🥚 O Petton ainda está no ovo!"
+
+        );
+
+        return;
 
     }
 
-    if(total === 1){
+    if(dados.doente){
 
-        return "Há uma pequena sujeirinha para limpar.";
+        mostrarMensagem(
+
+            "🤒 Petton está doente. Leve ao hospital."
+
+        );
+
+        return;
 
     }
 
-    return (
+    try{
 
-        "Há " +
+        if(
 
-        total +
+            Petton &&
 
-        " necessidades esperando limpeza."
+            Petton.limpar
+
+        ){
+
+            Petton.limpar();
+
+            mostrarMensagem(
+
+                "🛁 Petton tomou banho!"
+
+            );
+
+            renderizar();
+
+            return;
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+    mostrarMensagem(
+
+        "🛁 Banho realizado!"
 
     );
 
 }
 
-function renderizar(){
+/* =====================================================
+
+   AÇÃO: LIMPAR COCO
+
+   ===================================================== */
+
+function limparCoco(){
 
     carregarDados();
 
-    reduzirCuidados();
+    if(estaNoOvo()){
+
+        mostrarMensagem(
+
+            "🥚 O Petton ainda está no ovo!"
+
+        );
+
+        return;
+
+    }
+
+    if(!temCoco()){
+
+        mostrarMensagem(
+
+            "✨ Não há cocô para limpar."
+
+        );
+
+        return;
+
+    }
+
+    try{
+
+        if(
+
+            Petton &&
+
+            Petton.limparCoco
+
+        ){
+
+            Petton.limparCoco();
+
+            mostrarMensagem(
+
+                "🧹 Cocô limpo! Muito bem!"
+
+            );
+
+            renderizar();
+
+            return;
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+/* =====================================================
+
+   AÇÃO: ESCOVAR DENTES
+
+   ===================================================== */
+
+function escovarDentes(){
+
+    carregarDados();
+
+    if(estaNoOvo()){
+
+        mostrarMensagem(
+
+            "🥚 O Petton ainda está no ovo!"
+
+        );
+
+        return;
+
+    }
+
+    if(dados.doente){
+
+        mostrarMensagem(
+
+            "🤒 Petton está doente. Leve ao hospital."
+
+        );
+
+        return;
+
+    }
+
+    if(!temCarie()){
+
+        mostrarMensagem(
+
+            "🦷 Os dentes estão saudáveis!"
+
+        );
+
+        return;
+
+    }
+
+    try{
+
+        if(
+
+            Petton &&
+
+            Petton.escovarDentes
+
+        ){
+
+            Petton.escovarDentes();
+
+            mostrarMensagem(
+
+                "🪥 Escovando os dentes..."
+
+            );
+
+            renderizar();
+
+            return;
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+/* =====================================================
+
+   AÇÃO: PASSEAR
+
+   ===================================================== */
+
+function passear(){
+
+    carregarDados();
+
+    if(estaNoOvo()){
+
+        mostrarMensagem(
+
+            "🥚 O Petton ainda está no ovo!"
+
+        );
+
+        return;
+
+    }
+
+    if(dados.doente){
+
+        mostrarMensagem(
+
+            "🤒 Petton está doente. Primeiro leve ao hospital."
+
+        );
+
+        return;
+
+    }
+
+    if(estaPasseando()){
+
+        mostrarMensagem(
+
+            "🚶 Petton já está passeando!"
+
+        );
+
+        return;
+
+    }
+
+    try{
+
+        if(
+
+            Petton &&
+
+            Petton.passear
+
+        ){
+
+            Petton.passear();
+
+            mostrarMensagem(
+
+                "🚶 Petton saiu para passear!"
+
+            );
+
+            renderizar();
+
+            return;
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+/* =====================================================
+
+   HOSPITAL
+
+   ===================================================== */
+
+function hospital(){
+
+    carregarDados();
+
+    if(estaNoOvo()){
+
+        mostrarMensagem(
+
+            "🥚 O Petton ainda está no ovo!"
+
+        );
+
+        return;
+
+    }
+
+    if(!dados.doente){
+
+        mostrarMensagem(
+
+            "❤️ O Petton não precisa do hospital agora."
+
+        );
+
+        return;
+
+    }
+
+    if(estaNoHospital()){
+
+        mostrarMensagem(
+
+            "🏥 Petton já está em tratamento."
+
+        );
+
+        return;
+
+    }
+
+    try{
+
+        if(
+
+            Petton &&
+
+            Petton.levarHospital
+
+        ){
+
+            Petton.levarHospital();
+
+            mostrarMensagem(
+
+                "🏥 Petton está recebendo tratamento..."
+
+            );
+
+            renderizar();
+
+            return;
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+}
+
+/* =====================================================
+
+   RENDERIZAR OVO
+
+   ===================================================== */
+
+function renderizarOvo(){
+
+    let restante =
+
+        0;
+
+    try{
+
+        if(
+
+            Petton &&
+
+            Petton.incubacaoRestante
+
+        ){
+
+            restante =
+
+                Petton.incubacaoRestante();
+
+        }
+
+    }catch(e){
+
+        restante = 0;
+
+    }
 
     const area =
 
@@ -1430,75 +1678,631 @@ function renderizar(){
 
         );
 
-    if(!dados){
+    area.innerHTML = `
 
-        area.innerHTML = `
+        <div class="card pet">
 
-            <div class="card pet">
+            <div class="ovo-titulo">
 
-                <div class="pet-emoji">
-
-                    🐾
-
-                </div>
-
-                <h2>Nenhum Petton encontrado</h2>
-
-                <p>
-
-                    Comece a jornada do seu Petton
-
-                    primeiro.
-
-                </p>
-
-                <button
-
-                    class="acao"
-
-                    onclick="
-
-                        location.href='nascimento.html'
-
-                    "
-
-                >
-
-                    🥚 Começar
-
-                </button>
+                🥚 Seu Petton está no ovo!
 
             </div>
 
-        `;
+            <div class="ovo-visual">
+
+                🥚
+
+            </div>
+
+            <div class="ovo-tempo">
+
+                ${formatarTempo(restante)}
+
+            </div>
+
+            <div class="ovo-info">
+
+                ⏳ O Petton ainda não nasceu.
+
+                <br><br>
+
+                Quando a incubação terminar,
+
+                ele poderá nascer.
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="ovo-aviso">
+
+                💡 <strong>Cuidados bloqueados</strong>
+
+                <br><br>
+
+                Enquanto o Petton estiver no ovo,
+
+                ele não precisa de banho,
+
+                passeio, comida ou outros cuidados.
+
+                <br><br>
+
+                Primeiro ele precisa nascer. 🐣
+
+            </div>
+
+        </div>
+
+        <div class="rodape">
+
+            🥚 Primeiro o nascimento.
+
+            Depois começam os cuidados. 🐾
+
+        </div>
+
+    `;
+
+}
+
+/* =====================================================
+
+   FORMATAR TEMPO
+
+   ===================================================== */
+
+function formatarTempo(ms){
+
+    ms =
+
+        Math.max(
+
+            0,
+
+            ms
+
+        );
+
+    const totalSegundos =
+
+        Math.ceil(
+
+            ms / 1000
+
+        );
+
+    const horas =
+
+        Math.floor(
+
+            totalSegundos / 3600
+
+        );
+
+    const minutos =
+
+        Math.floor(
+
+            (totalSegundos % 3600) / 60
+
+        );
+
+    const segundos =
+
+        totalSegundos % 60;
+
+    return (
+
+        String(horas).padStart(2,"0") +
+
+        ":" +
+
+        String(minutos).padStart(2,"0") +
+
+        ":" +
+
+        String(segundos).padStart(2,"0")
+
+    );
+
+}
+
+/* =====================================================
+
+   RENDERIZAR PET
+
+   ===================================================== */
+
+function renderizar(){
+
+    carregarDados();
+
+    /*
+
+       SE ESTÁ NO OVO,
+
+       NÃO MOSTRA NENHUM CUIDADO.
+
+    */
+
+    if(estaNoOvo()){
+
+        renderizarOvo();
 
         return;
 
     }
 
+    /*
+
+       Atualiza crescimento.
+
+    */
+
+    try{
+
+        if(
+
+            Petton &&
+
+            Petton.verificarCrescimento
+
+        ){
+
+            Petton.verificarCrescimento();
+
+            dados =
+
+                Petton.carregar();
+
+        }
+
+    }catch(e){}
+
+    if(estaNoOvo()){
+
+        renderizarOvo();
+
+        return;
+
+    }
+
+    const area =
+
+        document.getElementById(
+
+            "conteudo"
+
+        );
+
+    const idade =
+
+        idadeDias();
+
     const estado =
 
         estadoGeral();
 
-    const temSujeira =
+    const imagem =
 
-        (
+        especieImagem();
 
-            cuidados.xixi +
+    const coco =
 
-            cuidados.cocô
+        temCoco();
 
-        ) > 0;
+    const carie =
+
+        temCarie();
+
+    const doente =
+
+        !!dados.doente;
+
+    const hospitalEmAndamento =
+
+        estaNoHospital();
+
+    const passeandoAgora =
+
+        estaPasseando();
+
+    /*
+
+       ESTATÍSTICAS
+
+       Usamos os dados do Petton.
+
+       Se algum campo ainda não existir,
+
+       usamos 100 apenas como compatibilidade.
+
+    */
+
+    const saude =
+
+        valor(
+
+            dados.saude,
+
+            100
+
+        );
+
+    const higiene =
+
+        valor(
+
+            dados.higiene,
+
+            100
+
+        );
+
+    const energia =
+
+        valor(
+
+            dados.energia,
+
+            100
+
+        );
+
+    const felicidade =
+
+        valor(
+
+            dados.felicidade,
+
+            dados.humor !== undefined
+
+            ? dados.humor
+
+            : 100
+
+        );
+
+    /*
+
+       AÇÕES NORMAIS
+
+    */
+
+    let acoesNormais = "";
+
+    if(!doente && !hospitalEmAndamento){
+
+        acoesNormais = `
+
+            <button
+
+                class="acao"
+
+                onclick="banho()">
+
+                <div class="emoji">
+
+                    🛁
+
+                </div>
+
+                <strong>
+
+                    Dar banho
+
+                </strong>
+
+                <span>
+
+                    Deixa o Petton limpinho.
+
+                </span>
+
+            </button>
+
+            <button
+
+                class="acao"
+
+                onclick="passear()">
+
+                <div class="emoji">
+
+                    🚶
+
+                </div>
+
+                <strong>
+
+                    Passear
+
+                </strong>
+
+                <span>
+
+                    Leve o Petton para passear.
+
+                </span>
+
+            </button>
+
+        `;
+
+    }
+
+    /*
+
+       COCO
+
+    */
+
+    let acaoCoco = "";
+
+    if(coco && !doente){
+
+        acaoCoco = `
+
+            <button
+
+                class="acao"
+
+                onclick="limparCoco()">
+
+                <div class="emoji">
+
+                    🧹
+
+                </div>
+
+                <strong>
+
+                    Limpar cocô
+
+                </strong>
+
+                <span>
+
+                    O Petton fez cocô.
+
+                </span>
+
+            </button>
+
+        `;
+
+    }
+
+    /*
+
+       CÁRIE
+
+    */
+
+    let acaoCarie = "";
+
+    if(carie && !doente){
+
+        acaoCarie = `
+
+            <button
+
+                class="acao"
+
+                onclick="escovarDentes()">
+
+                <div class="emoji">
+
+                    🪥
+
+                </div>
+
+                <strong>
+
+                    Escovar dentes
+
+                </strong>
+
+                <span>
+
+                    O Petton está com cárie.
+
+                </span>
+
+            </button>
+
+        `;
+
+    }
+
+    /*
+
+       DOENTE
+
+    */
+
+    let acaoHospital = "";
+
+    if(doente){
+
+        acaoHospital = `
+
+            <button
+
+                class="acao"
+
+                onclick="hospital()"
+
+                ${hospitalEmAndamento ? "disabled" : ""}>
+
+                <div class="emoji">
+
+                    🏥
+
+                </div>
+
+                <strong>
+
+                    ${
+
+                        hospitalEmAndamento
+
+                        ? "Em tratamento"
+
+                        : "Ir ao hospital"
+
+                    }
+
+                </strong>
+
+                <span>
+
+                    ${
+
+                        hospitalEmAndamento
+
+                        ? "O veterinário está cuidando dele."
+
+                        : "Leve o Petton para se recuperar."
+
+                    }
+
+                </span>
+
+            </button>
+
+        `;
+
+    }
+
+    /*
+
+       PASSEIO EM ANDAMENTO
+
+    */
+
+    if(passeandoAgora){
+
+        acaoHospital += `
+
+            <div class="acao">
+
+                <div class="emoji">
+
+                    🚶
+
+                </div>
+
+                <strong>
+
+                    Passeando...
+
+                </strong>
+
+                <span>
+
+                    O Petton está dando uma voltinha.
+
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+    /*
+
+       ESTADO DAS NECESSIDADES
+
+    */
+
+    let textoCoco =
+
+        "Nenhum cocô para limpar.";
+
+    let pontoCoco =
+
+        "";
+
+    if(coco){
+
+        textoCoco =
+
+            "Há cocô para limpar.";
+
+        pontoCoco =
+
+            "amarelo";
+
+    }
+
+    /*
+
+       CÁRIE
+
+    */
+
+    let textoCarie =
+
+        "Dentes saudáveis.";
+
+    let pontoCarie =
+
+        "";
+
+    if(carie){
+
+        textoCarie =
+
+            "Precisa escovar os dentes.";
+
+        pontoCarie =
+
+            "amarelo";
+
+    }
 
     area.innerHTML = `
 
+        <!-- PETTON -->
+
         <div class="card pet">
 
-            <div class="pet-emoji">
+            ${
 
-                ${especieEmoji()}
+                imagem
 
-            </div>
+                ?
+
+                `
+
+                <img
+
+                    class="pet-imagem"
+
+                    src="${imagem}"
+
+                    alt="Petton">
+
+                `
+
+                :
+
+                `
+
+                <div class="pet-emoji">
+
+                    ${especieEmoji()}
+
+                </div>
+
+                `
+
+            }
 
             <div class="nome">
 
@@ -1510,23 +2314,27 @@ function renderizar(){
 
                 ${
 
-                    idadeDias() === 0
+                    idade === 0
 
-                    ? "Ainda não nasceu"
+                    ?
 
-                    : idadeDias() +
+                    "Recém-nascido"
 
-                      (
+                    :
 
-                        idadeDias() === 1
+                    idade +
+
+                    (
+
+                        idade === 1
 
                         ? " dia"
 
                         : " dias"
 
-                      ) +
+                    ) +
 
-                      " de vida"
+                    " de vida"
 
                 }
 
@@ -1540,6 +2348,8 @@ function renderizar(){
 
         </div>
 
+        <!-- ESTADO -->
+
         <div class="card">
 
             <h2 style="margin-top:0;">
@@ -1550,9 +2360,17 @@ function renderizar(){
 
             ${barraHTML(
 
+                "❤️ Saúde",
+
+                saude
+
+            )}
+
+            ${barraHTML(
+
                 "🛁 Higiene",
 
-                cuidados.higiene
+                higiene
 
             )}
 
@@ -1560,35 +2378,63 @@ function renderizar(){
 
                 "⚡ Energia",
 
-                cuidados.energia
+                energia
 
             )}
 
             ${barraHTML(
 
-                "😊 Humor",
+                "😊 Felicidade",
 
-                cuidados.humor
-
-            )}
-
-            ${barraHTML(
-
-                "😴 Descanso",
-
-                cuidados.sono
-
-            )}
-
-            ${barraHTML(
-
-                "❤️ Saúde",
-
-                cuidados.saude
+                felicidade
 
             )}
 
         </div>
+
+        ${
+
+            doente
+
+            ?
+
+            `
+
+            <!-- DOENTE -->
+
+            <div class="card">
+
+                <div class="aviso aviso-doente">
+
+                    🤒 <strong>Petton está doente.</strong>
+
+                    <br><br>
+
+                    Os cuidados normais estão
+
+                    bloqueados enquanto ele estiver
+
+                    doente.
+
+                    <br><br>
+
+                    🏥 Leve-o ao hospital para
+
+                    iniciar o tratamento.
+
+                </div>
+
+            </div>
+
+            `
+
+            :
+
+            ""
+
+        }
+
+        <!-- AÇÕES -->
 
         <div class="card">
 
@@ -1600,173 +2446,13 @@ function renderizar(){
 
             <div class="acoes">
 
-                <button
+                ${acaoHospital}
 
-                    class="acao"
+                ${acaoCoco}
 
-                    onclick="executarAcao('banho')"
+                ${acaoCarie}
 
-                >
-
-                    <div class="emoji">
-
-                        🛁
-
-                    </div>
-
-                    <strong>
-
-                        Dar banho
-
-                    </strong>
-
-                    <span>
-
-                        Deixa o Petton limpinho.
-
-                    </span>
-
-                </button>
-
-                <button
-
-                    class="acao"
-
-                    onclick="executarAcao('limpar')"
-
-                >
-
-                    <div class="emoji">
-
-                        🧹
-
-                    </div>
-
-                    <strong>
-
-                        Limpar
-
-                    </strong>
-
-                    <span>
-
-                        ${necessidadeTexto()}
-
-                    </span>
-
-                </button>
-
-                <button
-
-                    class="acao"
-
-                    onclick="executarAcao('carinho')"
-
-                >
-
-                    <div class="emoji">
-
-                        ❤️
-
-                    </div>
-
-                    <strong>
-
-                        Dar carinho
-
-                    </strong>
-
-                    <span>
-
-                        Aumenta o humor.
-
-                    </span>
-
-                </button>
-
-                <button
-
-                    class="acao"
-
-                    onclick="executarAcao('brincar')"
-
-                >
-
-                    <div class="emoji">
-
-                        🎾
-
-                    </div>
-
-                    <strong>
-
-                        Brincar
-
-                    </strong>
-
-                    <span>
-
-                        Gasta energia, mas deixa feliz.
-
-                    </span>
-
-                </button>
-
-                <button
-
-                    class="acao"
-
-                    onclick="executarAcao('dormir')"
-
-                >
-
-                    <div class="emoji">
-
-                        😴
-
-                    </div>
-
-                    <strong>
-
-                        Colocar para dormir
-
-                    </strong>
-
-                    <span>
-
-                        Recupera energia e descanso.
-
-                    </span>
-
-                </button>
-
-                <button
-
-                    class="acao"
-
-                    onclick="executarAcao('saude')"
-
-                >
-
-                    <div class="emoji">
-
-                        🩺
-
-                    </div>
-
-                    <strong>
-
-                        Cuidar da saúde
-
-                    </strong>
-
-                    <span>
-
-                        Ajuda quando ele está debilitado.
-
-                    </span>
-
-                </button>
+                ${acoesNormais}
 
             </div>
 
@@ -1774,69 +2460,23 @@ function renderizar(){
 
                 id="mensagem"
 
-                class="mensagem"
+                class="mensagem">
 
-            ></div>
+            </div>
 
         </div>
+
+        <!-- NECESSIDADES -->
 
         <div class="card">
 
             <h2 style="margin-top:0;">
 
-                🧹 Necessidades
+                🐾 Necessidades
 
             </h2>
 
             <div class="lista">
-
-                <div class="item">
-
-                    <div class="item-emoji">
-
-                        💧
-
-                    </div>
-
-                    <div class="item-texto">
-
-                        <strong>
-
-                            Xixi
-
-                        </strong>
-
-                        <span>
-
-                            ${cuidados.xixi > 0
-
-                                ? cuidados.xixi +
-
-                                  " para limpar"
-
-                                : "Tudo limpo"
-
-                            }
-
-                        </span>
-
-                    </div>
-
-                    <div
-
-                        class="ponto ${
-
-                            cuidados.xixi > 0
-
-                            ? "amarelo"
-
-                            : ""
-
-                        }"
-
-                    ></div>
-
-                </div>
 
                 <div class="item">
 
@@ -1856,15 +2496,7 @@ function renderizar(){
 
                         <span>
 
-                            ${cuidados.cocô > 0
-
-                                ? cuidados.cocô +
-
-                                  " para limpar"
-
-                                : "Tudo limpo"
-
-                            }
+                            ${textoCoco}
 
                         </span>
 
@@ -1872,17 +2504,41 @@ function renderizar(){
 
                     <div
 
-                        class="ponto ${
+                        class="ponto ${pontoCoco}">
 
-                            cuidados.cocô > 0
+                    </div>
 
-                            ? "amarelo"
+                </div>
 
-                            : ""
+                <div class="item">
 
-                        }"
+                    <div class="item-emoji">
 
-                    ></div>
+                        🦷
+
+                    </div>
+
+                    <div class="item-texto">
+
+                        <strong>
+
+                            Dentes
+
+                        </strong>
+
+                        <span>
+
+                            ${textoCarie}
+
+                        </span>
+
+                    </div>
+
+                    <div
+
+                        class="ponto ${pontoCarie}">
+
+                    </div>
 
                 </div>
 
@@ -1906,15 +2562,15 @@ function renderizar(){
 
                             ${
 
-                                cuidados.higiene >= 70
+                                higiene >= 70
 
                                 ? "Muito boa"
 
-                                : cuidados.higiene >= 40
+                                : higiene >= 40
 
                                 ? "Precisa de atenção"
 
-                                : "Precisa de banho"
+                                : "Precisa de cuidados"
 
                             }
 
@@ -1926,19 +2582,19 @@ function renderizar(){
 
                         class="ponto ${
 
-                            cuidados.higiene < 40
+                            higiene < 40
 
                             ? "vermelho"
 
-                            : cuidados.higiene < 70
+                            : higiene < 70
 
                             ? "amarelo"
 
                             : ""
 
-                        }"
+                        }">
 
-                    ></div>
+                    </div>
 
                 </div>
 
@@ -1946,25 +2602,29 @@ function renderizar(){
 
         </div>
 
+        <!-- AVISO -->
+
         <div class="card">
 
             <div class="aviso">
 
-                💡 <strong>Importante:</strong><br><br>
+                💡 <strong>Cuide do seu Petton:</strong>
 
-                Seu Petton continua vivendo enquanto
+                <br><br>
 
-                você está fora. Se passar muitos dias
+                Mantenha a higiene, cuide dos
 
-                sem cuidados, ele pode ficar com fome,
+                dentes, limpe o cocô e leve-o
 
-                cansado, triste e sujo.<br><br>
+                para passear quando estiver saudável.
 
-                Mas não se preocupe: ele não morre.
+                <br><br>
 
-                Quando você voltar, poderá cuidar dele
+                Se ele ficar doente, os outros
 
-                e ajudá-lo a se recuperar. ❤️
+                cuidados ficam bloqueados até
+
+                o tratamento no hospital. ❤️
 
             </div>
 
@@ -1972,7 +2632,9 @@ function renderizar(){
 
         <div class="rodape">
 
-            Cuidar todos os dias faz seu Petton confiar ainda mais em você. 🐾
+            Cuidar todos os dias faz seu Petton
+
+            confiar ainda mais em você. 🐾
 
         </div>
 
@@ -1980,13 +2642,29 @@ function renderizar(){
 
 }
 
+/* =====================================================
+
+   INÍCIO
+
+   ===================================================== */
+
 renderizar();
+
+/*
+
+   Atualiza o estado periodicamente.
+
+*/
 
 setInterval(
 
-    renderizar,
+    function(){
 
-    10000
+        renderizar();
+
+    },
+
+    1000
 
 );
 
