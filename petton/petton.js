@@ -1,12 +1,17 @@
 /* =========================================================
+
    PETTON 🐾
+
    Sistema principal do Petton
+
    ========================================================= */
 
 const PETTON_CHAVE = "petton_dados_v3";
 
 /* =========================================================
+
    CONFIGURAÇÕES DO OVO
+
    ========================================================= */
 
 const PETTON_INCUBACAO_MS = 24 * 60 * 60 * 1000; // 24 horas
@@ -15,20 +20,44 @@ const PETTON_AQUECEDOR_DURACAO_MS = 2 * 60 * 1000; // 2 minutos
 
 const PETTON_AQUECEDOR_MULTIPLICADOR = 5;
 
-
 /* =========================================================
+
    FUNÇÕES AUXILIARES
+
    ========================================================= */
 
 function escolherEspecie() {
-    const especies = ["gato", "cachorro", "coelho"];
-    return especies[Math.floor(Math.random() * especies.length)];
+
+    const especies = [
+
+        "gato",
+
+        "cachorro",
+
+        "coelho"
+
+    ];
+
+    return especies[
+
+        Math.floor(Math.random() * especies.length)
+
+    ];
+
 }
 
+/* =========================================================
+
+   CRIAR PETTON
+
+   ========================================================= */
 
 function criarPettonNovo() {
 
+    const agora = Date.now();
+
     return {
+
         especie: escolherEspecie(),
 
         nome: "Mimi",
@@ -37,21 +66,17 @@ function criarPettonNovo() {
 
         dateNascimento: null,
 
-        dataCriacao: new Date().toISOString(),
+        dataCriacao: new Date(agora).toISOString(),
 
-        /* -------------------------
-           INCUBAÇÃO
-        ------------------------- */
+        /* INCUBAÇÃO */
 
         incubacaoRestanteMs: PETTON_INCUBACAO_MS,
 
-        incubacaoAtualizadaEm: Date.now(),
+        incubacaoAtualizadaEm: agora,
 
         aquecedorAte: null,
 
-        /* -------------------------
-           NECESSIDADES
-        ------------------------- */
+        /* NECESSIDADES */
 
         fome: 70,
 
@@ -63,9 +88,7 @@ function criarPettonNovo() {
 
         saude: 100,
 
-        /* -------------------------
-           PROGRESSO
-        ------------------------- */
+        /* PROGRESSO */
 
         moedas: 100,
 
@@ -73,102 +96,188 @@ function criarPettonNovo() {
 
         nivel: 1,
 
-        /* -------------------------
-           CARACTERÍSTICAS
-        ------------------------- */
+        /* CARACTERÍSTICAS */
 
         caracteristicas: {
+
             cor: false,
+
             orelhas: false,
+
             olhos: false,
+
             nariz: false,
+
             padrao: false,
+
             patas: false,
+
             cauda: false
+
         },
 
-        /* -------------------------
-           ÁLBUM
-        ------------------------- */
+        /* ÁLBUM */
 
         album: []
+
     };
+
 }
 
-
 /* =========================================================
+
    CARREGAR PETTON
+
    ========================================================= */
 
 function carregarPetton() {
 
-    const salvo = localStorage.getItem(PETTON_CHAVE);
+    const salvo =
+
+        localStorage.getItem(PETTON_CHAVE);
 
     if (!salvo) {
 
-        const novo = criarPettonNovo();
+        const novo =
+
+            criarPettonNovo();
 
         localStorage.setItem(
+
             PETTON_CHAVE,
+
             JSON.stringify(novo)
+
         );
 
         return novo;
+
     }
 
     try {
 
-        const dados = JSON.parse(salvo);
+        const dados =
 
-        /*
-         * Migração para o sistema novo de incubação.
-         */
+            JSON.parse(salvo);
+
+        /* -------------------------
+
+           MIGRAÇÃO
+
+        ------------------------- */
 
         if (!dados.dateNascimento) {
 
-            if (
-                typeof dados.incubacaoRestanteMs !== "number"
-            ) {
-                dados.incubacaoRestanteMs =
-                    PETTON_INCUBACAO_MS;
-            }
-
-            if (
-                typeof dados.incubacaoAtualizadaEm !== "number"
-            ) {
-                dados.incubacaoAtualizadaEm =
-                    Date.now();
-            }
-
-            if (
-                typeof dados.aquecedorAte === "undefined"
-            ) {
-                dados.aquecedorAte = null;
-            }
-
             dados.fase = "ovo";
+
+            if (
+
+                typeof dados.incubacaoRestanteMs !== "number" ||
+
+                !Number.isFinite(dados.incubacaoRestanteMs)
+
+            ) {
+
+                dados.incubacaoRestanteMs =
+
+                    PETTON_INCUBACAO_MS;
+
+            }
+
+            if (
+
+                typeof dados.incubacaoAtualizadaEm !== "number" ||
+
+                !Number.isFinite(dados.incubacaoAtualizadaEm)
+
+            ) {
+
+                /*
+
+                 * Se existe data de criação,
+
+                 * usamos ela como referência.
+
+                 */
+
+                if (dados.dataCriacao) {
+
+                    const criacao =
+
+                        new Date(
+
+                            dados.dataCriacao
+
+                        ).getTime();
+
+                    if (Number.isFinite(criacao)) {
+
+                        dados.incubacaoAtualizadaEm =
+
+                            criacao;
+
+                    } else {
+
+                        dados.incubacaoAtualizadaEm =
+
+                            Date.now();
+
+                    }
+
+                } else {
+
+                    dados.incubacaoAtualizadaEm =
+
+                        Date.now();
+
+                }
+
+            }
+
+            if (
+
+                typeof dados.aquecedorAte ===
+
+                "undefined"
+
+            ) {
+
+                dados.aquecedorAte = null;
+
+            }
+
         }
 
-        /*
-         * Garante que características antigas
-         * não quebrem o Petton.
-         */
+        /* CARACTERÍSTICAS */
 
         if (!dados.caracteristicas) {
 
             dados.caracteristicas = {
+
                 cor: false,
+
                 orelhas: false,
+
                 olhos: false,
+
                 nariz: false,
+
                 padrao: false,
+
                 patas: false,
+
                 cauda: false
+
             };
+
         }
 
+        /* ÁLBUM */
+
         if (!Array.isArray(dados.album)) {
+
             dados.album = [];
+
         }
 
         return dados;
@@ -176,155 +285,260 @@ function carregarPetton() {
     } catch (erro) {
 
         console.error(
+
             "Erro ao carregar Petton:",
+
             erro
+
         );
 
-        const novo = criarPettonNovo();
+        const novo =
+
+            criarPettonNovo();
 
         localStorage.setItem(
+
             PETTON_CHAVE,
+
             JSON.stringify(novo)
+
         );
 
         return novo;
+
     }
+
 }
 
-
 /* =========================================================
+
    SALVAR
+
    ========================================================= */
 
 function salvarPetton(dados) {
 
     localStorage.setItem(
+
         PETTON_CHAVE,
+
         JSON.stringify(dados)
+
     );
+
 }
 
-
 /* =========================================================
+
    ATUALIZAR INCUBAÇÃO
+
    ========================================================= */
 
 function atualizarIncubacao() {
 
-    const dados = carregarPetton();
+    const dados =
 
-    /*
-     * Se já nasceu, não existe mais incubação.
-     */
+        carregarPetton();
+
+    /* Já nasceu */
 
     if (dados.dateNascimento) {
+
         return dados;
+
     }
 
-    const agora = Date.now();
+    const agora =
+
+        Date.now();
 
     /*
-     * Se não houver timestamp, cria um.
+
+     * Garante um timestamp válido.
+
      */
 
     if (
-        typeof dados.incubacaoAtualizadaEm !== "number"
+
+        typeof dados.incubacaoAtualizadaEm !== "number" ||
+
+        !Number.isFinite(dados.incubacaoAtualizadaEm)
+
     ) {
 
-        dados.incubacaoAtualizadaEm = agora;
+        dados.incubacaoAtualizadaEm =
+
+            agora;
+
     }
 
     /*
-     * Quanto tempo real passou desde a última atualização?
+
+     * Tempo real passado.
+
      */
 
     let tempoPassado =
-        agora - dados.incubacaoAtualizadaEm;
 
-    if (tempoPassado < 0) {
+        agora -
+
+        dados.incubacaoAtualizadaEm;
+
+    if (
+
+        !Number.isFinite(tempoPassado) ||
+
+        tempoPassado < 0
+
+    ) {
+
         tempoPassado = 0;
+
     }
 
     /*
-     * Descobre se o aquecedor está ligado.
+
+     * Aquecedor.
+
      */
 
     const aquecedorLigado =
+
         dados.aquecedorAte &&
+
         dados.aquecedorAte > agora;
 
     /*
-     * Se o aquecedor acabou, desliga.
+
+     * Se terminou, desliga.
+
      */
 
     if (
+
         dados.aquecedorAte &&
+
         dados.aquecedorAte <= agora
+
     ) {
 
         dados.aquecedorAte = null;
+
     }
 
     /*
-     * Velocidade da incubação.
+
+     * Multiplicador.
+
      */
 
     const multiplicador =
+
         aquecedorLigado
+
             ? PETTON_AQUECEDOR_MULTIPLICADOR
+
             : 1;
 
     /*
-     * Diminui o tempo restante.
+
+     * DESCONTA O TEMPO REAL.
+
      */
 
-    dados.incubacaoRestanteMs -=
-        tempoPassado * multiplicador;
+    const desconto =
 
-    dados.incubacaoAtualizadaEm = agora;
+        tempoPassado *
+
+        multiplicador;
+
+    dados.incubacaoRestanteMs =
+
+        Math.max(
+
+            0,
+
+            dados.incubacaoRestanteMs -
+
+            desconto
+
+        );
 
     /*
-     * Nasceu!
+
+     * IMPORTANTE:
+
+     * marca exatamente o momento desta atualização.
+
      */
 
-    if (dados.incubacaoRestanteMs <= 0) {
+    dados.incubacaoAtualizadaEm =
+
+        agora;
+
+    /*
+
+     * Nasceu.
+
+     */
+
+    if (
+
+        dados.incubacaoRestanteMs <= 0
+
+    ) {
 
         dados.incubacaoRestanteMs = 0;
 
         nascerPettonInterno(dados);
+
+        return dados;
 
     }
 
     salvarPetton(dados);
 
     return dados;
+
 }
 
-
 /* =========================================================
+
    NASCIMENTO
+
    ========================================================= */
 
 function nascerPettonInterno(dados) {
 
     /*
-     * Escolhe a espécie somente no nascimento.
+
+     * Escolhe a espécie no nascimento.
+
      */
 
-    dados.especie = escolherEspecie();
+    dados.especie =
+
+        escolherEspecie();
 
     dados.dateNascimento =
+
         new Date().toISOString();
 
-    dados.fase = "bebe";
+    dados.fase =
 
-    dados.aquecedorAte = null;
+        "bebe";
 
-    dados.incubacaoRestanteMs = 0;
+    dados.aquecedorAte =
 
-    /*
-     * Começa com poucas características visíveis.
-     */
+        null;
+
+    dados.incubacaoRestanteMs =
+
+        0;
+
+    dados.incubacaoAtualizadaEm =
+
+        Date.now();
 
     dados.caracteristicas = {
 
@@ -341,347 +555,497 @@ function nascerPettonInterno(dados) {
         patas: false,
 
         cauda: false
+
     };
 
-    /*
-     * Garante que o álbum comece vazio.
-     */
-
     if (!Array.isArray(dados.album)) {
+
         dados.album = [];
+
     }
 
     salvarPetton(dados);
+
 }
 
-
 /* =========================================================
-   NASCER — API PÚBLICA
+
+   NASCER — API
+
    ========================================================= */
 
 function nascerPetton() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (dados.dateNascimento) {
+
         return dados;
+
     }
 
-    dados.incubacaoRestanteMs = 0;
+    dados.incubacaoRestanteMs =
+
+        0;
 
     nascerPettonInterno(dados);
 
     return carregarPetton();
+
 }
 
-
 /* =========================================================
+
    LIGAR AQUECEDOR
+
    ========================================================= */
 
 function ligarAquecedor() {
 
-    let dados = atualizarIncubacao();
+    let dados =
 
-    /*
-     * Se já nasceu, não pode aquecer.
-     */
+        atualizarIncubacao();
 
     if (dados.dateNascimento) {
+
         return false;
+
     }
 
-    const agora = Date.now();
+    const agora =
 
-    /*
-     * Liga por 2 minutos.
-     */
+        Date.now();
 
     dados.aquecedorAte =
-        agora + PETTON_AQUECEDOR_DURACAO_MS;
 
-    dados.incubacaoAtualizadaEm = agora;
+        agora +
+
+        PETTON_AQUECEDOR_DURACAO_MS;
+
+    dados.incubacaoAtualizadaEm =
+
+        agora;
 
     salvarPetton(dados);
 
     return true;
+
 }
 
-
 /* =========================================================
-   AQUECEDOR ATIVO?
+
+   AQUECEDOR ATIVO
+
    ========================================================= */
 
 function aquecedorAtivo() {
 
-    const dados = atualizarIncubacao();
+    const dados =
+
+        atualizarIncubacao();
 
     if (dados.dateNascimento) {
+
         return false;
+
     }
 
-    return (
+    return !!(
+
         dados.aquecedorAte &&
-        dados.aquecedorAte > Date.now()
+
+        dados.aquecedorAte >
+
+        Date.now()
+
     );
+
 }
 
-
 /* =========================================================
-   TEMPO RESTANTE DO AQUECEDOR
+
+   TEMPO AQUECEDOR
+
    ========================================================= */
 
 function tempoAquecedorRestante() {
 
-    const dados = atualizarIncubacao();
+    const dados =
+
+        atualizarIncubacao();
 
     if (!dados.aquecedorAte) {
+
         return 0;
+
     }
 
-    const restante =
-        dados.aquecedorAte - Date.now();
+    return Math.max(
 
-    return Math.max(0, restante);
+        0,
+
+        dados.aquecedorAte -
+
+        Date.now()
+
+    );
+
 }
 
-
 /* =========================================================
-   TEMPO RESTANTE DA INCUBAÇÃO
+
+   TEMPO INCUBAÇÃO
+
    ========================================================= */
 
 function tempoIncubacaoRestante() {
 
-    const dados = atualizarIncubacao();
+    const dados =
+
+        atualizarIncubacao();
 
     if (dados.dateNascimento) {
+
         return 0;
+
     }
 
     return Math.max(
+
         0,
+
         dados.incubacaoRestanteMs
+
     );
+
 }
 
-
 /* =========================================================
-   DESCOBRIR FASE
+
+   FASE
+
    ========================================================= */
 
 function descobrirFase(dias) {
 
     if (dias < 1) {
+
         return "bebe";
+
     }
 
     if (dias < 8) {
+
         return "bebe";
+
     }
 
     if (dias < 31) {
+
         return "filhote";
+
     }
 
     if (dias < 91) {
+
         return "jovem";
+
     }
 
     return "adulto";
+
 }
 
-
 /* =========================================================
-   IDADE EM DIAS
+
+   IDADE
+
    ========================================================= */
 
 function idadeDias() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return 0;
+
     }
 
     const nascimento =
-        new Date(dados.dateNascimento);
 
-    const agora = new Date();
+        new Date(
+
+            dados.dateNascimento
+
+        ).getTime();
+
+    const agora =
+
+        Date.now();
 
     const diferenca =
-        agora.getTime() -
-        nascimento.getTime();
+
+        agora -
+
+        nascimento;
 
     return Math.max(
+
         0,
+
         Math.floor(
-            diferenca / (1000 * 60 * 60 * 24)
+
+            diferenca /
+
+            (1000 * 60 * 60 * 24)
+
         )
+
     );
+
 }
 
-
 /* =========================================================
-   VERIFICAR CRESCIMENTO
+
+   CRESCIMENTO
+
    ========================================================= */
 
 function verificarCrescimento() {
 
-    let dados = atualizarIncubacao();
+    let dados =
 
-    /*
-     * Ainda é ovo.
-     */
+        atualizarIncubacao();
 
     if (!dados.dateNascimento) {
 
-        dados.fase = "ovo";
+        dados.fase =
+
+            "ovo";
 
         salvarPetton(dados);
 
         return dados;
+
     }
 
-    const dias = idadeDias();
+    const dias =
 
-    const novaFase =
+        idadeDias();
+
+    dados.fase =
+
         descobrirFase(dias);
-
-    dados.fase = novaFase;
 
     salvarPetton(dados);
 
     atualizarCaracteristicasVisiveis();
 
     return dados;
+
 }
 
-
 /* =========================================================
-   CARACTERÍSTICAS VISÍVEIS
+
+   CARACTERÍSTICAS
+
    ========================================================= */
 
 function atualizarCaracteristicasVisiveis() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
 
         dados.caracteristicas = {
 
             cor: false,
+
             orelhas: false,
+
             olhos: false,
+
             nariz: false,
+
             padrao: false,
+
             patas: false,
+
             cauda: false
+
         };
 
         salvarPetton(dados);
 
         return dados;
+
     }
 
-    const dias = idadeDias();
+    const dias =
 
-    dados.caracteristicas.cor = true;
+        idadeDias();
 
-    dados.caracteristicas.orelhas = true;
+    dados.caracteristicas.cor =
 
-    dados.caracteristicas.nariz = true;
+        true;
+
+    dados.caracteristicas.orelhas =
+
+        true;
+
+    dados.caracteristicas.nariz =
+
+        true;
 
     dados.caracteristicas.olhos =
+
         dias >= 2;
 
     dados.caracteristicas.padrao =
+
         dias >= 3;
 
     dados.caracteristicas.patas =
+
         dias >= 4;
 
     dados.caracteristicas.cauda =
+
         dias >= 5;
 
     salvarPetton(dados);
 
     return dados;
+
 }
 
-
 /* =========================================================
-   ATUALIZAR NECESSIDADES
+
+   NECESSIDADES
+
    ========================================================= */
 
 function atualizarTempo() {
 
-    const dados = carregarPetton();
+    const dados =
 
-    /*
-     * O ovo ainda não possui necessidades.
-     */
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return dados;
+
     }
 
     dados.fome =
-        Math.max(0, dados.fome - 1);
+
+        Math.max(
+
+            0,
+
+            dados.fome - 1
+
+        );
 
     dados.felicidade =
-        Math.max(0, dados.felicidade - 0.5);
+
+        Math.max(
+
+            0,
+
+            dados.felicidade - 0.5
+
+        );
 
     dados.energia =
-        Math.max(0, dados.energia - 0.3);
+
+        Math.max(
+
+            0,
+
+            dados.energia - 0.3
+
+        );
 
     dados.higiene =
-        Math.max(0, dados.higiene - 0.3);
 
-    /*
-     * Saúde diminui somente se necessidades
-     * estiverem muito baixas.
-     */
+        Math.max(
+
+            0,
+
+            dados.higiene - 0.3
+
+        );
 
     if (
+
         dados.fome < 20 ||
+
         dados.higiene < 20
+
     ) {
 
         dados.saude =
+
             Math.max(
+
                 0,
+
                 dados.saude - 0.2
+
             );
+
     }
 
     salvarPetton(dados);
 
     return dados;
+
 }
 
-
 /* =========================================================
+
    ALIMENTAR
+
    ========================================================= */
 
 function alimentar() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return false;
+
     }
 
     dados.fome =
+
         Math.min(
+
             100,
+
             dados.fome + 20
+
         );
 
     dados.saude =
+
         Math.min(
+
             100,
+
             dados.saude + 2
+
         );
 
     dados.pontos += 5;
@@ -689,31 +1053,45 @@ function alimentar() {
     salvarPetton(dados);
 
     return true;
+
 }
 
-
 /* =========================================================
+
    BRINCAR
+
    ========================================================= */
 
 function brincar() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return false;
+
     }
 
     dados.felicidade =
+
         Math.min(
+
             100,
+
             dados.felicidade + 20
+
         );
 
     dados.energia =
+
         Math.max(
+
             0,
+
             dados.energia - 10
+
         );
 
     dados.pontos += 5;
@@ -721,25 +1099,35 @@ function brincar() {
     salvarPetton(dados);
 
     return true;
+
 }
 
-
 /* =========================================================
+
    CARINHO
+
    ========================================================= */
 
 function carinho() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return false;
+
     }
 
     dados.felicidade =
+
         Math.min(
+
             100,
+
             dados.felicidade + 10
+
         );
 
     dados.pontos += 2;
@@ -747,61 +1135,89 @@ function carinho() {
     salvarPetton(dados);
 
     return true;
+
 }
 
-
 /* =========================================================
+
    DORMIR
+
    ========================================================= */
 
 function dormir() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return false;
+
     }
 
     dados.energia =
+
         Math.min(
+
             100,
+
             dados.energia + 30
+
         );
 
     dados.felicidade =
+
         Math.min(
+
             100,
+
             dados.felicidade + 5
+
         );
 
     salvarPetton(dados);
 
     return true;
+
 }
 
-
 /* =========================================================
-   BANHO / HIGIENE
+
+   LIMPAR
+
    ========================================================= */
 
 function limpar() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return false;
+
     }
 
     dados.higiene =
+
         Math.min(
+
             100,
+
             dados.higiene + 30
+
         );
 
     dados.saude =
+
         Math.min(
+
             100,
+
             dados.saude + 5
+
         );
 
     dados.pontos += 3;
@@ -809,30 +1225,38 @@ function limpar() {
     salvarPetton(dados);
 
     return true;
+
 }
 
-
 /* =========================================================
+
    STATUS
+
    ========================================================= */
 
 function statusPetton() {
 
-    const dados = atualizarIncubacao();
+    const dados =
+
+        atualizarIncubacao();
 
     verificarCrescimento();
 
     return carregarPetton();
+
 }
 
-
 /* =========================================================
+
    IDENTIDADE
+
    ========================================================= */
 
 function identidadePetton() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     return {
 
@@ -843,37 +1267,57 @@ function identidadePetton() {
         fase: dados.fase,
 
         idadeDias: idadeDias()
+
     };
+
 }
 
-
 /* =========================================================
+
    ÁLBUM
+
    ========================================================= */
 
 function atualizarAlbum() {
 
-    const dados = carregarPetton();
+    const dados =
+
+        carregarPetton();
 
     if (!dados.dateNascimento) {
+
         return dados.album || [];
+
     }
 
-    const dias = idadeDias();
+    const dias =
+
+        idadeDias();
 
     const momentos = [
+
         0,
+
         3,
+
         7,
+
         15,
+
         30,
+
         60,
+
         90,
+
         120
+
     ];
 
     if (!Array.isArray(dados.album)) {
+
         dados.album = [];
+
     }
 
     momentos.forEach(function (dia) {
@@ -881,9 +1325,16 @@ function atualizarAlbum() {
         if (dias >= dia) {
 
             const jaExiste =
-                dados.album.some(function (foto) {
-                    return foto.dia === dia;
-                });
+
+                dados.album.some(
+
+                    function (foto) {
+
+                        return foto.dia === dia;
+
+                    }
+
+                );
 
             if (!jaExiste) {
 
@@ -892,218 +1343,201 @@ function atualizarAlbum() {
                     dia: dia,
 
                     data:
+
                         new Date().toISOString(),
 
                     especie:
+
                         dados.especie,
 
                     fase:
+
                         dados.fase
+
                 });
+
             }
+
         }
+
     });
 
     salvarPetton(dados);
 
     return dados.album;
+
 }
 
-
 /* =========================================================
-   RESETAR PETTON
+
+   RESETAR
+
    ========================================================= */
 
 function resetarPetton() {
 
-    /*
-     * Cria um Petton completamente novo.
-     * O novo ovo começa novamente com 24 horas.
-     */
+    const novo =
 
-    const novo = criarPettonNovo();
-
-    novo.fase = "ovo";
-
-    novo.dateNascimento = null;
-
-    novo.incubacaoRestanteMs =
-        PETTON_INCUBACAO_MS;
-
-    novo.incubacaoAtualizadaEm =
-        Date.now();
-
-    novo.aquecedorAte = null;
+        criarPettonNovo();
 
     salvarPetton(novo);
 
     return novo;
+
 }
 
-
 /* =========================================================
+
    API PETTON
+
    ========================================================= */
 
 window.Petton = {
 
-    /* dados */
-
     get dados() {
-        return carregarPetton();
-    },
 
-    /* salvar */
+        return carregarPetton();
+
+    },
 
     salvar: function () {
 
         const dados =
+
             carregarPetton();
 
         salvarPetton(dados);
 
         return dados;
-    },
 
-    /* carregar */
+    },
 
     carregar: function () {
 
         return carregarPetton();
-    },
 
-    /* nascimento */
+    },
 
     nascer: function () {
 
         return nascerPetton();
-    },
 
-    /* alimentação */
+    },
 
     alimentar: function () {
 
         return alimentar();
-    },
 
-    /* brincar */
+    },
 
     brincar: function () {
 
         return brincar();
-    },
 
-    /* carinho */
+    },
 
     carinho: function () {
 
         return carinho();
-    },
 
-    /* dormir */
+    },
 
     dormir: function () {
 
         return dormir();
-    },
 
-    /* limpar */
+    },
 
     limpar: function () {
 
         return limpar();
-    },
 
-    /* status */
+    },
 
     status: function () {
 
         return statusPetton();
-    },
 
-    /* identidade */
+    },
 
     identidade: function () {
 
         return identidadePetton();
-    },
 
-    /* crescimento */
+    },
 
     verificarCrescimento: function () {
 
         return verificarCrescimento();
-    },
 
-    /* características */
+    },
 
     atualizarCaracteristicas: function () {
 
         return atualizarCaracteristicasVisiveis();
-    },
 
-    /* idade */
+    },
 
     idadeDias: function () {
 
         return idadeDias();
-    },
 
-    /* fase */
+    },
 
     fase: function () {
 
         return carregarPetton().fase;
-    },
 
-    /* álbum */
+    },
 
     album: function () {
 
         return atualizarAlbum();
+
     },
 
-    /* =========================
-       OVO
-       ========================= */
+    /* OVO */
 
     incubacaoRestante: function () {
 
         return tempoIncubacaoRestante();
+
     },
 
-    /* =========================
-       AQUECEDOR
-       ========================= */
+    /* AQUECEDOR */
 
     ligarAquecedor: function () {
 
         return ligarAquecedor();
+
     },
 
     aquecedorAtivo: function () {
 
         return aquecedorAtivo();
+
     },
 
     aquecedorRestante: function () {
 
         return tempoAquecedorRestante();
+
     },
 
-    /* =========================
-       RESET
-       ========================= */
+    /* RESET */
 
     resetar: function () {
 
         return resetarPetton();
+
     }
+
 };
 
-
 /* =========================================================
+
    ATUALIZAÇÃO AUTOMÁTICA
+
    ========================================================= */
 
 setInterval(function () {
@@ -1111,11 +1545,8 @@ setInterval(function () {
     try {
 
         const dados =
-            atualizarIncubacao();
 
-        /*
-         * Necessidades dos pets nascidos.
-         */
+            atualizarIncubacao();
 
         if (dados.dateNascimento) {
 
@@ -1124,21 +1555,27 @@ setInterval(function () {
             verificarCrescimento();
 
             atualizarAlbum();
+
         }
 
     } catch (erro) {
 
         console.error(
+
             "Erro na atualização automática:",
+
             erro
+
         );
+
     }
 
 }, 60 * 1000);
 
-
 /* =========================================================
+
    INICIALIZAÇÃO
+
    ========================================================= */
 
 try {
@@ -1152,7 +1589,11 @@ try {
 } catch (erro) {
 
     console.error(
+
         "Erro ao iniciar Petton:",
+
         erro
+
     );
+
 }
