@@ -356,6 +356,44 @@
 
 }
 
+/* =====================================================
+
+   BOTÃO DE TESTE
+
+   ===================================================== */
+
+.btn-teste-nascimento {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 12px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    background: #e7d8ff;
+
+    color: #54258a;
+
+    box-shadow: 0 3px 8px rgba(0,0,0,0.10);
+
+    cursor: pointer;
+
+}
+
+.btn-teste-nascimento:active {
+
+    transform: scale(0.97);
+
+}
+
 .ovo-explicacao {
 
     margin-top: 12px;
@@ -1546,7 +1584,11 @@
 
     </div>
 
-    <!-- OVO -->
+    <!-- =================================================
+
+         OVO
+
+         ================================================= -->
 
     <div id="painelOvo" class="ovo-painel">
 
@@ -1596,6 +1638,18 @@
 
         </button>
 
+        <!-- BOTÃO TEMPORÁRIO PARA TESTE -->
+
+        <button
+
+            class="btn-teste-nascimento"
+
+            onclick="testarNascimentoTela()">
+
+            🧪 Testar nascimento agora
+
+        </button>
+
         <div class="ovo-explicacao">
 
             O ovo precisa de 24 horas para nascer.
@@ -1608,7 +1662,11 @@
 
     </div>
 
-    <!-- PET -->
+    <!-- =================================================
+
+         PET
+
+         ================================================= -->
 
     <div
 
@@ -1666,7 +1724,11 @@
 
     </div>
 
-    <!-- STATUS -->
+    <!-- =================================================
+
+         STATUS
+
+         ================================================= -->
 
     <div class="status-grid">
 
@@ -1732,7 +1794,11 @@
 
     </div>
 
-    <!-- CUIDADOS -->
+    <!-- =================================================
+
+         CUIDADOS
+
+         ================================================= -->
 
     <div
 
@@ -1790,7 +1856,11 @@
 
     </div>
 
-    <!-- AÇÕES ESPECIAIS -->
+    <!-- =================================================
+
+         AÇÕES ESPECIAIS
+
+         ================================================= -->
 
     <div
 
@@ -1848,7 +1918,11 @@
 
     </div>
 
-    <!-- BÔNUS -->
+    <!-- =================================================
+
+         BÔNUS
+
+         ================================================= -->
 
     <div class="bonus-card">
 
@@ -1872,7 +1946,11 @@
 
     </div>
 
-    <!-- MENU -->
+    <!-- =================================================
+
+         MENU
+
+         ================================================= -->
 
     <div class="menu-grid">
 
@@ -1930,7 +2008,11 @@
 
 </main>
 
-<!-- MODAL NOME -->
+<!-- =====================================================
+
+     MODAL NOME
+
+     ===================================================== -->
 
 <div
 
@@ -1972,7 +2054,11 @@
 
 </div>
 
-<!-- MENSAGEM -->
+<!-- =====================================================
+
+     MENSAGEM
+
+     ===================================================== -->
 
 <div
 
@@ -2287,6 +2373,160 @@ function atualizarOvoTela() {
         imagem.classList.remove("oculto");
 
         cuidados.classList.remove("oculto");
+
+    }
+
+}
+
+/* =====================================================
+
+   TESTAR NASCIMENTO
+
+   ===================================================== */
+
+function testarNascimentoTela() {
+
+    try {
+
+        const dados =
+
+            Petton.carregar();
+
+        if (!dados) {
+
+            mostrarMensagem(
+
+                "⚠️ Não foi possível carregar o Petton."
+
+            );
+
+            return;
+
+        }
+
+        if (dados.dateNascimento) {
+
+            mostrarMensagem(
+
+                "🐾 O Petton já nasceu!"
+
+            );
+
+            atualizarTela();
+
+            return;
+
+        }
+
+        /*
+
+         * Usa o nascimento real do petton.js.
+
+         * Não cria um sistema diferente.
+
+         */
+
+        let nasceu = false;
+
+        if (
+
+            typeof Petton.testarNascimento ===
+
+            "function"
+
+        ) {
+
+            nasceu =
+
+                Petton.testarNascimento();
+
+        } else if (
+
+            typeof Petton.nascer ===
+
+            "function"
+
+        ) {
+
+            nasceu =
+
+                Petton.nascer();
+
+        } else {
+
+            mostrarMensagem(
+
+                "⚠️ A função de nascimento não foi encontrada no petton.js."
+
+            );
+
+            return;
+
+        }
+
+        if (nasceu) {
+
+            mostrarMensagem(
+
+                "🎉 O Petton nasceu! Escolha o nome dele."
+
+            );
+
+            atualizarTela();
+
+        } else {
+
+            /*
+
+             * Algumas versões do petton.js
+
+             * retornam o objeto em vez de true.
+
+             * Por isso verificamos novamente.
+
+             */
+
+            const depois =
+
+                Petton.carregar();
+
+            if (depois && depois.dateNascimento) {
+
+                mostrarMensagem(
+
+                    "🎉 O Petton nasceu! Escolha o nome dele."
+
+                );
+
+                atualizarTela();
+
+            } else {
+
+                mostrarMensagem(
+
+                    "⚠️ Não foi possível realizar o nascimento."
+
+                );
+
+            }
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro no teste de nascimento:",
+
+            erro
+
+        );
+
+        mostrarMensagem(
+
+            "⚠️ Erro ao testar o nascimento."
+
+        );
 
     }
 
@@ -3080,7 +3320,7 @@ function escovarPetton() {
 
 /* =====================================================
 
-   PASSEAR — CORRIGIDO
+   PASSEAR
 
    ===================================================== */
 
@@ -3164,14 +3404,6 @@ function passearPetton() {
 
         }
 
-        /*
-
-         * Se houver um estado antigo de passeio,
-
-         * deixamos o estado ser atualizado.
-
-         */
-
         const agora =
 
             Date.now();
@@ -3189,12 +3421,6 @@ function passearPetton() {
             Petton.salvar();
 
         }
-
-        /*
-
-         * Agora inicia o passeio.
-
-         */
 
         const iniciou =
 
@@ -3250,12 +3476,6 @@ function passearPetton() {
 
         }
 
-        /*
-
-         * Atualiza imagem de acordo com a espécie.
-
-         */
-
         const dadosAtual =
 
             Petton.carregar();
@@ -3266,23 +3486,11 @@ function passearPetton() {
 
         );
 
-        /*
-
-         * Desativa temporariamente o botão.
-
-         */
-
         botao.disabled = true;
 
         botao.style.opacity =
 
             "0.5";
-
-        /*
-
-         * Fecha qualquer passeio anterior.
-
-         */
 
         overlay.classList.remove(
 
@@ -3294,21 +3502,7 @@ function passearPetton() {
 
             "none";
 
-        /*
-
-         * Força o navegador a reiniciar
-
-         * completamente a animação.
-
-         */
-
         void pet.offsetWidth;
-
-        /*
-
-         * Começa o passeio.
-
-         */
 
         overlay.classList.add(
 
@@ -3329,12 +3523,6 @@ function passearPetton() {
             "🐾 Vamos passear!"
 
         );
-
-        /*
-
-         * Retorno para casa.
-
-         */
 
         clearTimeout(
 
