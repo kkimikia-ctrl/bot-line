@@ -6,7 +6,9 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Álbum do Petton</title>
 
@@ -116,13 +118,37 @@ body{
 
 }
 
+.pet-visual{
+
+    width:120px;
+
+    height:120px;
+
+    margin:5px auto 12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.pet-visual img{
+
+    max-width:110px;
+
+    max-height:110px;
+
+    object-fit:contain;
+
+}
+
 .pet-emoji{
 
     font-size:78px;
 
     line-height:1;
-
-    margin:5px 0 12px;
 
 }
 
@@ -262,9 +288,33 @@ body{
 
 .pet-foto{
 
+    width:110px;
+
+    height:110px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.pet-foto img{
+
+    max-width:100px;
+
+    max-height:100px;
+
+    object-fit:contain;
+
+}
+
+.pet-foto-emoji{
+
     font-size:72px;
 
-    transition:.3s;
+    line-height:1;
 
 }
 
@@ -382,7 +432,11 @@ body{
 
             <h1>📖 Álbum do Petton</h1>
 
-            <p>Os momentos que você nunca vai esquecer</p>
+            <p>
+
+                Os momentos que você nunca vai esquecer
+
+            </p>
 
         </div>
 
@@ -392,7 +446,15 @@ body{
 
         <div class="card resumo">
 
-            <div class="pet-emoji">🐾</div>
+            <div class="pet-visual">
+
+                <div class="pet-emoji">
+
+                    🐾
+
+                </div>
+
+            </div>
 
             <p>Carregando...</p>
 
@@ -407,6 +469,12 @@ body{
 <script>
 
 let dados = null;
+
+/* =========================================================
+
+   MOMENTOS DO ÁLBUM
+
+========================================================= */
 
 const momentos = [
 
@@ -524,57 +592,57 @@ const momentos = [
 
 ];
 
+/* =========================================================
+
+   CARREGAR O MESMO PETTON DO petton.js
+
+========================================================= */
+
 function carregar(){
 
     try{
 
-        if(typeof Petton !== "undefined"){
+        if(typeof Petton !== "undefined" &&
 
-            if(Petton.carregar){
+           typeof Petton.carregar === "function"){
 
-                Petton.carregar();
-
-            }
-
-            if(Petton.dados){
-
-                dados = Petton.dados;
-
-            }
+            dados = Petton.carregar();
 
         }
 
     }catch(e){
 
-        console.log(e);
+        console.log("Erro ao carregar Petton:",e);
 
-    }
-
-    if(!dados){
-
-        try{
-
-            const salvo =
-
-                localStorage.getItem("petton_dados_v2") ||
-
-                localStorage.getItem("petton_dados_v1");
-
-            if(salvo){
-
-                dados = JSON.parse(salvo);
-
-            }
-
-        }catch(e){
-
-            console.log(e);
-
-        }
+        dados = null;
 
     }
 
 }
+
+/* =========================================================
+
+   VERIFICAR SE AINDA É OVO
+
+========================================================= */
+
+function estaNoOvo(){
+
+    if(!dados){
+
+        return false;
+
+    }
+
+    return !dados.dateNascimento;
+
+}
+
+/* =========================================================
+
+   IDADE
+
+========================================================= */
 
 function idadeAtual(){
 
@@ -584,13 +652,29 @@ function idadeAtual(){
 
     }
 
-    if(typeof Petton !== "undefined" && Petton.idadeDias){
+    try{
 
-        return Petton.idadeDias();
+        if(typeof Petton !== "undefined" &&
+
+           typeof Petton.idadeDias === "function"){
+
+            return Petton.idadeDias();
+
+        }
+
+    }catch(e){
+
+        console.log(e);
 
     }
 
-    if(!dados.dataNascimento){
+    /*
+
+       O petton.js atual usa dateNascimento.
+
+    */
+
+    if(!dados.dateNascimento){
 
         return 0;
 
@@ -598,7 +682,7 @@ function idadeAtual(){
 
     const nascimento =
 
-        new Date(dados.dataNascimento);
+        new Date(dados.dateNascimento);
 
     const agora =
 
@@ -618,6 +702,60 @@ function idadeAtual(){
 
 }
 
+/* =========================================================
+
+   IMAGEM DO MESMO PETTON DA TELA PRINCIPAL
+
+========================================================= */
+
+function imagemPetton(){
+
+    if(!dados){
+
+        return null;
+
+    }
+
+    const especie =
+
+        String(dados.especie || "").toLowerCase();
+
+    if(
+
+        especie === "cachorro" ||
+
+        especie === "cao" ||
+
+        especie === "dog"
+
+    ){
+
+        return "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+    }
+
+    if(
+
+        especie === "gato" ||
+
+        especie === "cat"
+
+    ){
+
+        return "petton-original.png";
+
+    }
+
+    return null;
+
+}
+
+/* =========================================================
+
+   EMOJI DE FALLBACK
+
+========================================================= */
+
 function especieEmoji(){
 
     if(!dados){
@@ -628,15 +766,29 @@ function especieEmoji(){
 
     const especie =
 
-        dados.especie || "gato";
+        String(dados.especie || "gato").toLowerCase();
 
-    if(especie === "cachorro"){
+    if(
+
+        especie === "cachorro" ||
+
+        especie === "cao" ||
+
+        especie === "dog"
+
+    ){
 
         return "🐶";
 
     }
 
-    if(especie === "coelho"){
+    if(
+
+        especie === "coelho" ||
+
+        especie === "rabbit"
+
+    ){
 
         return "🐰";
 
@@ -646,9 +798,167 @@ function especieEmoji(){
 
 }
 
+/* =========================================================
+
+   VISUAL DO PETTON
+
+========================================================= */
+
+function criarVisualPetton(){
+
+    if(estaNoOvo()){
+
+        return `
+
+            <div class="pet-emoji">
+
+                🥚
+
+            </div>
+
+        `;
+
+    }
+
+    const imagem =
+
+        imagemPetton();
+
+    if(imagem){
+
+        return `
+
+            <img
+
+                src="${imagem}"
+
+                alt="Petton"
+
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+
+            >
+
+            <div
+
+                class="pet-emoji"
+
+                style="display:none;"
+
+            >
+
+                ${especieEmoji()}
+
+            </div>
+
+        `;
+
+    }
+
+    return `
+
+        <div class="pet-emoji">
+
+            ${especieEmoji()}
+
+        </div>
+
+    `;
+
+}
+
+/* =========================================================
+
+   VISUAL DO PETTON NOS MOMENTOS
+
+========================================================= */
+
+function criarVisualMomento(momento){
+
+    /*
+
+       Dia 0 = sempre ovo.
+
+    */
+
+    if(momento.dia === 0){
+
+        return `
+
+            <div
+
+                class="pet-foto-emoji"
+
+                style="font-size:58px;"
+
+            >
+
+                🥚
+
+            </div>
+
+        `;
+
+    }
+
+    const imagem =
+
+        imagemPetton();
+
+    if(imagem){
+
+        return `
+
+            <div class="pet-foto">
+
+                <img
+
+                    src="${imagem}"
+
+                    alt="Petton"
+
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+
+                >
+
+                <div
+
+                    class="pet-foto-emoji"
+
+                    style="display:none;"
+
+                >
+
+                    ${especieEmoji()}
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    return `
+
+        <div class="pet-foto-emoji">
+
+            ${especieEmoji()}
+
+        </div>
+
+    `;
+
+}
+
+/* =========================================================
+
+   DATA DE CADA MOMENTO
+
+========================================================= */
+
 function formatarData(dia){
 
-    if(!dados || !dados.dataNascimento){
+    if(!dados || !dados.dateNascimento){
 
         return "Aguardando nascimento";
 
@@ -656,7 +966,7 @@ function formatarData(dia){
 
     const nascimento =
 
-        new Date(dados.dataNascimento);
+        new Date(dados.dateNascimento);
 
     const data =
 
@@ -686,47 +996,11 @@ function formatarData(dia){
 
 }
 
-function tamanhoVisual(dia){
+/* =========================================================
 
-    if(dia === 0){
+   RENDERIZAR
 
-        return "52px";
-
-    }
-
-    if(dia <= 3){
-
-        return "58px";
-
-    }
-
-    if(dia <= 7){
-
-        return "65px";
-
-    }
-
-    if(dia <= 15){
-
-        return "72px";
-
-    }
-
-    if(dia <= 30){
-
-        return "80px";
-
-    }
-
-    if(dia <= 60){
-
-        return "88px";
-
-    }
-
-    return "94px";
-
-}
+========================================================= */
 
 function renderizar(){
 
@@ -736,19 +1010,33 @@ function renderizar(){
 
         document.getElementById("conteudo");
 
+    /*
+
+       Não existe Petton ainda.
+
+    */
+
     if(!dados){
 
         area.innerHTML = `
 
             <div class="card resumo">
 
-                <div class="pet-emoji">
+                <div class="pet-visual">
 
-                    🥚
+                    <div class="pet-emoji">
+
+                        🥚
+
+                    </div>
 
                 </div>
 
-                <h2>Nenhum Petton encontrado</h2>
+                <h2>
+
+                    Nenhum Petton encontrado
+
+                </h2>
 
                 <p class="info">
 
@@ -780,6 +1068,270 @@ function renderizar(){
 
     }
 
+    /*
+
+       Ainda está no ovo.
+
+    */
+
+    if(estaNoOvo()){
+
+        let restante = null;
+
+        try{
+
+            if(
+
+                typeof Petton !== "undefined" &&
+
+                typeof Petton.incubacaoRestante === "function"
+
+            ){
+
+                restante =
+
+                    Petton.incubacaoRestante();
+
+            }
+
+        }catch(e){
+
+            console.log(e);
+
+        }
+
+        let contador =
+
+            "⏳ Aguardando nascimento";
+
+        if(
+
+            typeof restante === "number" &&
+
+            restante > 0
+
+        ){
+
+            const horas =
+
+                Math.floor(restante / 3600000);
+
+            const minutos =
+
+                Math.floor(
+
+                    (restante % 3600000) / 60000
+
+                );
+
+            const segundos =
+
+                Math.floor(
+
+                    (restante % 60000) / 1000
+
+                );
+
+            contador =
+
+                `🥚 ${String(horas).padStart(2,"0")}:` +
+
+                `${String(minutos).padStart(2,"0")}:` +
+
+                `${String(segundos).padStart(2,"0")}`;
+
+        }
+
+        area.innerHTML = `
+
+            <div class="card resumo">
+
+                <div class="pet-visual">
+
+                    <div class="pet-emoji">
+
+                        🥚
+
+                    </div>
+
+                </div>
+
+                <div class="nome">
+
+                    🥚 Ovo do Petton
+
+                </div>
+
+                <div class="sub">
+
+                    Seu Petton ainda está se preparando para nascer.
+
+                </div>
+
+                <div class="contador">
+
+                    ${contador}
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <h2 style="margin-top:0;">
+
+                    📖 Álbum
+
+                </h2>
+
+                <p class="info">
+
+                    O álbum começa no momento em que
+
+                    o ovo aparece. Depois do nascimento,
+
+                    novos momentos serão desbloqueados
+
+                    conforme o Petton cresce.
+
+                </p>
+
+                <div class="album">
+
+                    <div class="momento liberado atual">
+
+                        <div class="momento-topo">
+
+                            <div class="dia">
+
+                                Dia 0
+
+                            </div>
+
+                            <div class="status">
+
+                                📸
+
+                            </div>
+
+                        </div>
+
+                        <div class="foto">
+
+                            <div
+
+                                class="pet-foto-emoji"
+
+                                style="font-size:58px;"
+
+                            >
+
+                                🥚
+
+                            </div>
+
+                        </div>
+
+                        <div class="data">
+
+                            Hoje
+
+                        </div>
+
+                        <div class="descricao">
+
+                            O começo
+
+                        </div>
+
+                        <div class="detalhe">
+
+                            Tudo começa aqui.
+
+                        </div>
+
+                    </div>
+
+                    ${momentos
+
+                        .filter(m => m.dia !== 0)
+
+                        .map(momento => `
+
+                            <div class="momento bloqueado">
+
+                                <div class="momento-topo">
+
+                                    <div class="dia">
+
+                                        Dia ${momento.dia}
+
+                                    </div>
+
+                                    <div class="status">
+
+                                        🔒
+
+                                    </div>
+
+                                </div>
+
+                                <div class="foto">
+
+                                    <div class="bloqueio">
+
+                                        🔒
+
+                                    </div>
+
+                                </div>
+
+                                <div class="data">
+
+                                    Ainda não desbloqueado
+
+                                </div>
+
+                                <div class="descricao">
+
+                                    Momento futuro
+
+                                </div>
+
+                                <div class="detalhe">
+
+                                    Continue esperando o nascimento.
+
+                                </div>
+
+                            </div>
+
+                        `).join("")
+
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="rodape">
+
+                Cada fase é uma lembrança. 🐾
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    /*
+
+       Petton já nasceu.
+
+    */
+
     const idade =
 
         idadeAtual();
@@ -800,13 +1352,27 @@ function renderizar(){
 
     });
 
+    /*
+
+       Descobre o último momento liberado.
+
+    */
+
+    const ultimoLiberado =
+
+        momentos
+
+            .filter(m => m.dia <= idade)
+
+            .slice(-1)[0];
+
     area.innerHTML = `
 
         <div class="card resumo">
 
-            <div class="pet-emoji">
+            <div class="pet-visual">
 
-                ${especieEmoji()}
+                ${criarVisualPetton()}
 
             </div>
 
@@ -818,15 +1384,11 @@ function renderizar(){
 
             <div class="sub">
 
-                ${idade === 0
+                ${idade === 1
 
-                    ? "Ainda não nasceu"
+                    ? "1 dia de vida"
 
-                    : idade + (idade === 1
-
-                        ? " dia de vida"
-
-                        : " dias de vida")
+                    : idade + " dias de vida"
 
                 }
 
@@ -834,7 +1396,11 @@ function renderizar(){
 
             <div class="contador">
 
-                📸 ${liberados} de ${momentos.length} momentos desbloqueados
+                📸 ${liberados}
+
+                de ${momentos.length}
+
+                momentos desbloqueados
 
             </div>
 
@@ -868,19 +1434,9 @@ function renderizar(){
 
                         liberado &&
 
-                        (
+                        ultimoLiberado &&
 
-                            momento.dia ===
-
-                            momentos
-
-                                .filter(m => m.dia <= idade)
-
-                                .slice(-1)[0]
-
-                                ?.dia
-
-                        );
+                        momento.dia === ultimoLiberado.dia;
 
                     let classe =
 
@@ -936,31 +1492,19 @@ function renderizar(){
 
                                     ?
 
-                                    `<div
-
-                                        class="pet-foto"
-
-                                        style="font-size:${tamanhoVisual(momento.dia)}"
-
-                                    >
-
-                                        ${momento.dia === 0
-
-                                            ? "🥚"
-
-                                            : especieEmoji()
-
-                                        }
-
-                                    </div>`
+                                    criarVisualMomento(momento)
 
                                     :
 
-                                    `<div class="bloqueio">
+                                    `
+
+                                    <div class="bloqueio">
 
                                         🔒
 
-                                    </div>`
+                                    </div>
+
+                                    `
 
                                 }
 
@@ -1050,9 +1594,23 @@ function renderizar(){
 
 }
 
+/* =========================================================
+
+   INÍCIO
+
+========================================================= */
+
 renderizar();
 
-setInterval(renderizar,10000);
+/*
+
+   Atualiza o álbum para acompanhar
+
+   o mesmo estado do petton.js.
+
+*/
+
+setInterval(renderizar,1000);
 
 </script>
 
