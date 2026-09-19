@@ -38,6 +38,26 @@ const PETTON_PASSEIO_MS = 8 * 1000;
 
 /* =========================================================
 
+   RECOMPENSAS
+
+   ========================================================= */
+
+const PETTON_MOEDAS_ALIMENTAR = 5;
+
+const PETTON_MOEDAS_BRINCAR = 5;
+
+const PETTON_MOEDAS_CARINHO = 2;
+
+const PETTON_MOEDAS_LIMPAR = 3;
+
+const PETTON_MOEDAS_LIMPAR_COCO = 5;
+
+const PETTON_MOEDAS_ESCOVAR = 3;
+
+const PETTON_MOEDAS_PASSEAR = 5;
+
+/* =========================================================
+
    ESPÉCIES
 
    ========================================================= */
@@ -704,7 +724,9 @@ function criarDescricaoVisualPetton(identidade) {
 
     const marca =
 
-        identidade.marca || "nenhuma marca especial";
+        identidade.marca ||
+
+        "nenhuma marca especial";
 
     const acessorio =
 
@@ -889,18 +911,6 @@ function garantirIdentidadeVisual(dados) {
         return dados;
 
     }
-
-    /*
-
-       IMPORTANTE:
-
-       A identidade agora pode ser criada mesmo antes
-
-       do nascimento. Isso permite que o ovo já tenha
-
-       uma identidade visual reservada.
-
-    */
 
     if (!dados.identidadeVisual) {
 
@@ -1120,7 +1130,9 @@ function garantirIdentidadeVisual(dados) {
 
 function criarPettonNovo() {
 
-    const agora = Date.now();
+    const agora =
+
+        Date.now();
 
     const especie =
 
@@ -1180,7 +1192,11 @@ function criarPettonNovo() {
 
         escovandoAte: null,
 
+        /* MOEDAS */
+
         moedas: 100,
+
+        /* PONTOS */
 
         pontos: 0,
 
@@ -1209,14 +1225,6 @@ function criarPettonNovo() {
         album: []
 
     };
-
-    /*
-
-       A identidade visual é criada desde o ovo.
-
-       Ela não muda quando o Petton nasce.
-
-    */
 
     garantirIdentidadeVisual(novo);
 
@@ -1298,6 +1306,68 @@ function garantirCamposNovos(dados) {
 
     }
 
+    /* =====================================================
+
+       MOEDAS
+
+       Se o Petton antigo não tiver moedas,
+
+       começa com 100.
+
+       Se já tiver saldo, NÃO altera.
+
+    ===================================================== */
+
+    if (
+
+        typeof dados.moedas !== "number" ||
+
+        !Number.isFinite(dados.moedas)
+
+    ) {
+
+        dados.moedas = 100;
+
+    }
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Math.floor(dados.moedas)
+
+        );
+
+    /* =====================================================
+
+       PONTOS
+
+    ===================================================== */
+
+    if (
+
+        typeof dados.pontos !== "number" ||
+
+        !Number.isFinite(dados.pontos)
+
+    ) {
+
+        dados.pontos = 0;
+
+    }
+
+    dados.pontos =
+
+        Math.max(
+
+            0,
+
+            Math.floor(dados.pontos)
+
+        );
+
     if (!dados.caracteristicas) {
 
         dados.caracteristicas = {
@@ -1360,7 +1430,9 @@ function calcularIdadeDiasDireto(dados) {
 
     const diferenca =
 
-        Date.now() - nascimento;
+        Date.now() -
+
+        nascimento;
 
     return Math.max(
 
@@ -1472,7 +1544,11 @@ function obterIdadeTexto(dados) {
 
     const dias =
 
-        calcularIdadeDiasDireto(dados);
+        calcularIdadeDiasDireto(
+
+            dados
+
+        );
 
     if (dias <= 0) {
 
@@ -1586,7 +1662,11 @@ function atualizarIncubacao() {
 
             0,
 
-            Number(dados.incubacaoRestanteMs || 0) -
+            Number(
+
+                dados.incubacaoRestanteMs || 0
+
+            ) -
 
             desconto
 
@@ -1604,7 +1684,11 @@ function atualizarIncubacao() {
 
         dados.incubacaoRestanteMs = 0;
 
-        nascerPettonInterno(dados);
+        nascerPettonInterno(
+
+            dados
+
+        );
 
         return dados;
 
@@ -1629,14 +1713,6 @@ function nascerPettonInterno(dados) {
         return dados;
 
     }
-
-    /*
-
-       NÃO cria outra identidade.
-
-       Usa a identidade que já estava reservada no ovo.
-
-    */
 
     garantirIdentidadeVisual(dados);
 
@@ -1748,7 +1824,11 @@ function nascerPetton() {
 
     if (dados.dateNascimento) {
 
-        garantirIdentidadeVisual(dados);
+        garantirIdentidadeVisual(
+
+            dados
+
+        );
 
         salvarPetton(dados);
 
@@ -1756,11 +1836,17 @@ function nascerPetton() {
 
     }
 
-    dados.incubacaoRestanteMs = 0;
+    dados.incubacaoRestanteMs =
 
-    dados.aquecedorAte = null;
+        0;
 
-    dados.incubacaoAtualizadaEm = Date.now();
+    dados.aquecedorAte =
+
+        null;
+
+    dados.incubacaoAtualizadaEm =
+
+        Date.now();
 
     nascerPettonInterno(dados);
 
@@ -1786,11 +1872,17 @@ function testarNascimentoPetton() {
 
     }
 
-    dados.incubacaoRestanteMs = 0;
+    dados.incubacaoRestanteMs =
 
-    dados.aquecedorAte = null;
+        0;
 
-    dados.incubacaoAtualizadaEm = Date.now();
+    dados.aquecedorAte =
+
+        null;
+
+    dados.incubacaoAtualizadaEm =
+
+        Date.now();
 
     salvarPetton(dados);
 
@@ -1832,13 +1924,11 @@ function carregarPetton() {
 
             JSON.parse(salvo);
 
-        garantirCamposNovos(dados);
+        garantirCamposNovos(
 
-        /*
+            dados
 
-           Compatibilidade com versões antigas.
-
-        */
+        );
 
         if (
 
@@ -1874,7 +1964,9 @@ function carregarPetton() {
 
             } else {
 
-                dados.incubacaoRestanteMs = 0;
+                dados.incubacaoRestanteMs =
+
+                    0;
 
             }
 
@@ -1920,14 +2012,6 @@ function carregarPetton() {
 
                 "ovo";
 
-            /*
-
-               NÃO apaga mais a espécie.
-
-               A espécie já pertence ao ovo.
-
-            */
-
             if (!dados.especie) {
 
                 dados.especie =
@@ -1936,25 +2020,29 @@ function carregarPetton() {
 
             }
 
-            garantirIdentidadeVisual(dados);
+            garantirIdentidadeVisual(
+
+                dados
+
+            );
 
         } else {
 
-            garantirIdentidadeVisual(dados);
+            garantirIdentidadeVisual(
+
+                dados
+
+            );
 
         }
 
-        /*
-
-           CAMPOS DE COMPATIBILIDADE COM A TELA.
-
-           Eles não precisam ser salvos.
-
-        */
-
         const dias =
 
-            calcularIdadeDiasDireto(dados);
+            calcularIdadeDiasDireto(
+
+                dados
+
+            );
 
         dados.nascido =
 
@@ -1966,7 +2054,11 @@ function carregarPetton() {
 
         dados.idadeTexto =
 
-            obterIdadeTexto(dados);
+            obterIdadeTexto(
+
+                dados
+
+            );
 
         dados.faseAtual =
 
@@ -2020,14 +2112,6 @@ function salvarPetton(dados) {
 
     }
 
-    /*
-
-       Campos temporários de compatibilidade
-
-       não precisam ficar no localStorage.
-
-    */
-
     const copia =
 
         JSON.parse(
@@ -2052,7 +2136,11 @@ function salvarPetton(dados) {
 
     );
 
-    tentarAvisarTela(dados);
+    tentarAvisarTela(
+
+        dados
+
+    );
 
     return dados;
 
@@ -2110,6 +2198,260 @@ function tentarAvisarTela(dados) {
 
 /* =========================================================
 
+   MOEDAS
+
+   ========================================================= */
+
+function obterMoedasPetton() {
+
+    const dados =
+
+        carregarPetton();
+
+    let moedas =
+
+        Number(dados.moedas);
+
+    if (
+
+        !Number.isFinite(moedas) ||
+
+        moedas < 0
+
+    ) {
+
+        moedas = 0;
+
+        dados.moedas = 0;
+
+        salvarPetton(dados);
+
+    }
+
+    return Math.floor(moedas);
+
+}
+
+/* =========================================================
+
+   ADICIONAR MOEDAS
+
+   ========================================================= */
+
+function adicionarMoedasPetton(valor) {
+
+    const quantidade =
+
+        Number(valor);
+
+    if (
+
+        !Number.isFinite(quantidade) ||
+
+        quantidade <= 0
+
+    ) {
+
+        return false;
+
+    }
+
+    const dados =
+
+        carregarPetton();
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Math.floor(
+
+                Number(dados.moedas || 0)
+
+            )
+
+        );
+
+    dados.moedas +=
+
+        Math.floor(quantidade);
+
+    salvarPetton(dados);
+
+    return dados.moedas;
+
+}
+
+/* =========================================================
+
+   GASTAR MOEDAS
+
+   ========================================================= */
+
+function gastarMoedasPetton(valor) {
+
+    const quantidade =
+
+        Number(valor);
+
+    if (
+
+        !Number.isFinite(quantidade) ||
+
+        quantidade <= 0
+
+    ) {
+
+        return false;
+
+    }
+
+    const dados =
+
+        carregarPetton();
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Math.floor(
+
+                Number(dados.moedas || 0)
+
+            )
+
+        );
+
+    const preco =
+
+        Math.floor(
+
+            quantidade
+
+        );
+
+    if (
+
+        dados.moedas < preco
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.moedas -=
+
+        preco;
+
+    salvarPetton(dados);
+
+    return true;
+
+}
+
+/* =========================================================
+
+   RECOMPENSA
+
+   ========================================================= */
+
+function darRecompensa(
+
+    dados,
+
+    pontos,
+
+    moedas
+
+) {
+
+    if (!dados) {
+
+        return;
+
+    }
+
+    if (
+
+        Number.isFinite(
+
+            Number(pontos)
+
+        )
+
+    ) {
+
+        dados.pontos =
+
+            Math.max(
+
+                0,
+
+                Math.floor(
+
+                    Number(
+
+                        dados.pontos || 0
+
+                    )
+
+                ) +
+
+                Math.floor(
+
+                    Number(pontos)
+
+                )
+
+            );
+
+    }
+
+    if (
+
+        Number.isFinite(
+
+            Number(moedas)
+
+        )
+
+    ) {
+
+        dados.moedas =
+
+            Math.max(
+
+                0,
+
+                Math.floor(
+
+                    Number(
+
+                        dados.moedas || 0
+
+                    )
+
+                ) +
+
+                Math.floor(
+
+                    Number(moedas)
+
+                )
+
+            );
+
+    }
+
+}
+
+/* =========================================================
+
    NOME
 
    ========================================================= */
@@ -2152,7 +2494,13 @@ function definirNome(nome) {
 
         nome =
 
-            nome.substring(0, 20);
+            nome.substring(
+
+                0,
+
+                20
+
+            );
 
     }
 
@@ -2270,7 +2618,9 @@ function tempoIncubacaoRestante() {
 
         Number(
 
-            dados.incubacaoRestanteMs || 0
+            dados.incubacaoRestanteMs ||
+
+            0
 
         )
 
@@ -2358,15 +2708,27 @@ function verificarCrescimento() {
 
     }
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     const dias =
 
-        calcularIdadeDiasDireto(dados);
+        calcularIdadeDiasDireto(
+
+            dados
+
+        );
 
     dados.fase =
 
-        descobrirFase(dias);
+        descobrirFase(
+
+            dias
+
+        );
 
     salvarPetton(dados);
 
@@ -2414,25 +2776,47 @@ function atualizarCaracteristicasVisiveis() {
 
     }
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     const dias =
 
-        calcularIdadeDiasDireto(dados);
+        calcularIdadeDiasDireto(
 
-    dados.caracteristicas.cor = true;
+            dados
 
-    dados.caracteristicas.orelhas = true;
+        );
 
-    dados.caracteristicas.nariz = true;
+    dados.caracteristicas.cor =
 
-    dados.caracteristicas.olhos = dias >= 2;
+        true;
 
-    dados.caracteristicas.padrao = dias >= 3;
+    dados.caracteristicas.orelhas =
 
-    dados.caracteristicas.patas = dias >= 4;
+        true;
 
-    dados.caracteristicas.cauda = dias >= 5;
+    dados.caracteristicas.nariz =
+
+        true;
+
+    dados.caracteristicas.olhos =
+
+        dias >= 2;
+
+    dados.caracteristicas.padrao =
+
+        dias >= 3;
+
+    dados.caracteristicas.patas =
+
+        dias >= 4;
+
+    dados.caracteristicas.cauda =
+
+        dias >= 5;
 
     salvarPetton(dados);
 
@@ -2512,7 +2896,9 @@ function verificarDoenca(dados) {
 
         ) {
 
-            dados.doente = true;
+            dados.doente =
+
+                true;
 
             dados.doenteDesde =
 
@@ -2544,7 +2930,9 @@ function verificarDoenca(dados) {
 
     if (dados.saude <= 10) {
 
-        dados.doente = true;
+        dados.doente =
+
+            true;
 
         dados.doenteDesde =
 
@@ -2594,7 +2982,11 @@ function verificarCarie(dados) {
 
         ) {
 
-            if (Math.random() < 0.45) {
+            if (
+
+                Math.random() < 0.45
+
+            ) {
 
                 dados.carieAtiva =
 
@@ -2626,11 +3018,17 @@ function verificarCarie(dados) {
 
 function finalizarHospital(dados) {
 
-    dados.hospitalAte = null;
+    dados.hospitalAte =
 
-    dados.doente = false;
+        null;
 
-    dados.doenteDesde = null;
+    dados.doente =
+
+        false;
+
+    dados.doenteDesde =
+
+        null;
 
     dados.saude =
 
@@ -2700,7 +3098,9 @@ function atualizarPasseio(dados) {
 
     ) {
 
-        dados.passeandoAte = null;
+        dados.passeandoAte =
+
+            null;
 
         salvarPetton(dados);
 
@@ -2728,11 +3128,17 @@ function atualizarEscovacao(dados) {
 
     ) {
 
-        dados.escovandoAte = null;
+        dados.escovandoAte =
 
-        dados.carieAtiva = false;
+            null;
 
-        dados.carieNasceuEm = null;
+        dados.carieAtiva =
+
+            false;
+
+        dados.carieNasceuEm =
+
+            null;
 
         dados.higiene =
 
@@ -2754,7 +3160,29 @@ function atualizarEscovacao(dados) {
 
             );
 
+        /* Pontos */
+
         dados.pontos += 3;
+
+        /* Moedas */
+
+        dados.moedas =
+
+            Math.max(
+
+                0,
+
+                Number(
+
+                    dados.moedas || 0
+
+                )
+
+            );
+
+        dados.moedas +=
+
+            PETTON_MOEDAS_ESCOVAR;
 
         salvarPetton(dados);
 
@@ -2946,19 +3374,33 @@ function alimentar() {
 
         );
 
+    /* Pontos */
+
     dados.pontos += 5;
+
+    /* Moedas */
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.moedas || 0
+
+            )
+
+        );
+
+    dados.moedas +=
+
+        PETTON_MOEDAS_ALIMENTAR;
 
     dados.ultimaAlimentacaoEm =
 
         Date.now();
-
-    /*
-
-       NÃO cria cocô imediatamente.
-
-       O cocô agora aparece depois de um tempo.
-
-    */
 
     salvarPetton(dados);
 
@@ -3002,15 +3444,17 @@ function verificarCoco() {
 
         dados.ultimaAlimentacaoEm;
 
-    /*
+    if (
 
-       O cocô aparece 10 minutos depois da comida.
+        tempo >=
 
-    */
+        10 * 60 * 1000
 
-    if (tempo >= 10 * 60 * 1000) {
+    ) {
 
-        dados.cocoAtivo = true;
+        dados.cocoAtivo =
+
+            true;
 
         dados.cocoNasceuEm =
 
@@ -3088,7 +3532,29 @@ function brincar() {
 
         );
 
+    /* Pontos */
+
     dados.pontos += 5;
+
+    /* Moedas */
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.moedas || 0
+
+            )
+
+        );
+
+    dados.moedas +=
+
+        PETTON_MOEDAS_BRINCAR;
 
     salvarPetton(dados);
 
@@ -3136,7 +3602,29 @@ function carinho() {
 
         );
 
+    /* Pontos */
+
     dados.pontos += 2;
+
+    /* Moedas */
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.moedas || 0
+
+            )
+
+        );
+
+    dados.moedas +=
+
+        PETTON_MOEDAS_CARINHO;
 
     salvarPetton(dados);
 
@@ -3194,6 +3682,12 @@ function dormir() {
 
         );
 
+    /*
+
+       Dormir não dá moedas.
+
+    */
+
     salvarPetton(dados);
 
     return true;
@@ -3238,7 +3732,29 @@ function limpar() {
 
         );
 
+    /* Pontos */
+
     dados.pontos += 3;
+
+    /* Moedas */
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.moedas || 0
+
+            )
+
+        );
+
+    dados.moedas +=
+
+        PETTON_MOEDAS_LIMPAR;
 
     salvarPetton(dados);
 
@@ -3270,9 +3786,13 @@ function limparCoco() {
 
     }
 
-    dados.cocoAtivo = false;
+    dados.cocoAtivo =
 
-    dados.cocoNasceuEm = null;
+        false;
+
+    dados.cocoNasceuEm =
+
+        null;
 
     dados.higiene =
 
@@ -3284,7 +3804,29 @@ function limparCoco() {
 
         );
 
+    /* Pontos */
+
     dados.pontos += 5;
+
+    /* Moedas */
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.moedas || 0
+
+            )
+
+        );
+
+    dados.moedas +=
+
+        PETTON_MOEDAS_LIMPAR_COCO;
 
     salvarPetton(dados);
 
@@ -3412,7 +3954,29 @@ function passear() {
 
         );
 
+    /* Pontos */
+
     dados.pontos += 5;
+
+    /* Moedas */
+
+    dados.moedas =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.moedas || 0
+
+            )
+
+        );
+
+    dados.moedas +=
+
+        PETTON_MOEDAS_PASSEAR;
 
     salvarPetton(dados);
 
@@ -3574,23 +4138,51 @@ function statusPetton() {
 
         carregarPetton();
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     verificarCoco();
 
-    verificarDoenca(dados);
+    verificarDoenca(
 
-    verificarCarie(dados);
+        dados
 
-    atualizarHospital(dados);
+    );
 
-    atualizarPasseio(dados);
+    verificarCarie(
 
-    atualizarEscovacao(dados);
+        dados
+
+    );
+
+    atualizarHospital(
+
+        dados
+
+    );
+
+    atualizarPasseio(
+
+        dados
+
+    );
+
+    atualizarEscovacao(
+
+        dados
+
+    );
 
     const dias =
 
-        calcularIdadeDiasDireto(dados);
+        calcularIdadeDiasDireto(
+
+            dados
+
+        );
 
     dados.nascido =
 
@@ -3602,13 +4194,21 @@ function statusPetton() {
 
     dados.idadeTexto =
 
-        obterIdadeTexto(dados);
+        obterIdadeTexto(
+
+            dados
+
+        );
 
     if (dados.dateNascimento) {
 
         dados.fase =
 
-            descobrirFase(dias);
+            descobrirFase(
+
+                dias
+
+            );
 
     } else {
 
@@ -3636,13 +4236,21 @@ function identidadePetton() {
 
         carregarPetton();
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     salvarPetton(dados);
 
     const dias =
 
-        calcularIdadeDiasDireto(dados);
+        calcularIdadeDiasDireto(
+
+            dados
+
+        );
 
     return {
 
@@ -3680,7 +4288,11 @@ function identidadePetton() {
 
         idadeTexto:
 
-            obterIdadeTexto(dados),
+            obterIdadeTexto(
+
+                dados
+
+            ),
 
         nascido:
 
@@ -3701,6 +4313,22 @@ function identidadePetton() {
         caracteristicas:
 
             dados.caracteristicas,
+
+        moedas:
+
+            Number(
+
+                dados.moedas || 0
+
+            ),
+
+        pontos:
+
+            Number(
+
+                dados.pontos || 0
+
+            ),
 
         doente:
 
@@ -3774,7 +4402,11 @@ function atualizarAlbum() {
 
     const dias =
 
-        calcularIdadeDiasDireto(dados);
+        calcularIdadeDiasDireto(
+
+            dados
+
+        );
 
     const momentos = [
 
@@ -3894,7 +4526,11 @@ function definirImagemGerada(
 
         carregarPetton();
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     if (
 
@@ -3924,7 +4560,11 @@ function definirImagemGerada(
 
     if (
 
-        !fasesValidas.includes(fase)
+        !fasesValidas.includes(
+
+            fase
+
+        )
 
     ) {
 
@@ -3944,7 +4584,11 @@ function definirImagemGerada(
 
     }
 
-    dados.identidadeVisual.imagens[fase] =
+    dados.identidadeVisual.imagens[
+
+        fase
+
+    ] =
 
         imagem.trim();
 
@@ -3966,7 +4610,11 @@ function obterImagemFase(fase) {
 
         carregarPetton();
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     if (
 
@@ -3982,7 +4630,11 @@ function obterImagemFase(fase) {
 
     return (
 
-        dados.identidadeVisual.imagens[fase] ||
+        dados.identidadeVisual.imagens[
+
+            fase
+
+        ] ||
 
         null
 
@@ -4002,7 +4654,11 @@ function obterPromptVisual(fase) {
 
         carregarPetton();
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     return criarPromptFasePetton(
 
@@ -4062,16 +4718,6 @@ window.Petton = {
 
     },
 
-    /*
-
-       ALIAS IMPORTANTE:
-
-       Algumas versões do petton.html
-
-       usam Petton.carregarPetton().
-
-    */
-
     carregarPetton: function () {
 
         return carregarPetton();
@@ -4095,6 +4741,12 @@ window.Petton = {
         return definirNome(nome);
 
     },
+
+    /* =========================
+
+       CUIDADOS
+
+    ========================= */
 
     alimentar: function () {
 
@@ -4186,6 +4838,12 @@ window.Petton = {
 
     },
 
+    /* =========================
+
+       STATUS
+
+    ========================= */
+
     status: function () {
 
         return statusPetton();
@@ -4232,11 +4890,55 @@ window.Petton = {
 
     },
 
+    /* =========================
+
+       MOEDAS
+
+    ========================= */
+
+    moedas: function () {
+
+        return obterMoedasPetton();
+
+    },
+
+    adicionarMoedas: function (valor) {
+
+        return adicionarMoedasPetton(
+
+            valor
+
+        );
+
+    },
+
+    gastarMoedas: function (valor) {
+
+        return gastarMoedasPetton(
+
+            valor
+
+        );
+
+    },
+
+    /* =========================
+
+       ÁLBUM
+
+    ========================= */
+
     album: function () {
 
         return atualizarAlbum();
 
     },
+
+    /* =========================
+
+       IDENTIDADE VISUAL
+
+    ========================= */
 
     identidadeVisual: function () {
 
@@ -4244,7 +4946,11 @@ window.Petton = {
 
             carregarPetton();
 
-        garantirIdentidadeVisual(dados);
+        garantirIdentidadeVisual(
+
+            dados
+
+        );
 
         salvarPetton(dados);
 
@@ -4258,7 +4964,11 @@ window.Petton = {
 
             carregarPetton();
 
-        garantirIdentidadeVisual(dados);
+        garantirIdentidadeVisual(
+
+            dados
+
+        );
 
         if (!dados.identidadeVisual) {
 
@@ -4276,7 +4986,11 @@ window.Petton = {
 
     promptVisual: function (fase) {
 
-        return obterPromptVisual(fase);
+        return obterPromptVisual(
+
+            fase
+
+        );
 
     },
 
@@ -4300,9 +5014,19 @@ window.Petton = {
 
     obterImagem: function (fase) {
 
-        return obterImagemFase(fase);
+        return obterImagemFase(
+
+            fase
+
+        );
 
     },
+
+    /* =========================
+
+       INCUBAÇÃO
+
+    ========================= */
 
     incubacaoRestante: function () {
 
@@ -4327,6 +5051,12 @@ window.Petton = {
         return tempoAquecedorRestante();
 
     },
+
+    /* =========================
+
+       RESET
+
+    ========================= */
 
     resetar: function () {
 
@@ -4356,7 +5086,11 @@ setInterval(
 
                 carregarPetton();
 
-            garantirIdentidadeVisual(dados);
+            garantirIdentidadeVisual(
+
+                dados
+
+            );
 
             verificarCoco();
 
@@ -4370,9 +5104,15 @@ setInterval(
 
             } else {
 
-                dados.fase = "ovo";
+                dados.fase =
 
-                salvarPetton(dados);
+                    "ovo";
+
+                salvarPetton(
+
+                    dados
+
+                );
 
             }
 
@@ -4420,7 +5160,11 @@ try {
 
         carregarPetton();
 
-    if (dadosInicial.dateNascimento) {
+    if (
+
+        dadosInicial.dateNascimento
+
+    ) {
 
         verificarCrescimento();
 
