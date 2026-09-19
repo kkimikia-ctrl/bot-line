@@ -1088,15 +1088,13 @@ function obterPetton(){
 
 /* =================================================
 
-   PEGAR MOEDAS REAIS
+   PEGAR MOEDAS
 
 ================================================= */
 
 function obterMoedas(){
 
-    const dados =
-
-        obterPetton();
+    const dados = obterPetton();
 
     if(!dados){
 
@@ -1104,9 +1102,7 @@ function obterMoedas(){
 
     }
 
-    let moedas =
-
-        Number(dados.moedas);
+    let moedas = Number(dados.moedas);
 
     if(
 
@@ -1118,23 +1114,93 @@ function obterMoedas(){
 
         moedas = 0;
 
-        dados.moedas = 0;
-
-        if(
-
-            window.Petton &&
-
-            typeof Petton.salvar === "function"
-
-        ){
-
-            Petton.salvar();
-
-        }
-
     }
 
     return Math.floor(moedas);
+
+}
+
+/* =================================================
+
+   SALVAR MOEDAS CORRETAMENTE
+
+================================================= */
+
+function salvarDadosPetton(dados){
+
+    if(!dados){
+
+        return false;
+
+    }
+
+    try{
+
+        /*
+
+         IMPORTANTE:
+
+         Não usamos Petton.salvar() aqui,
+
+         porque a função atual do petton.js
+
+         recarrega os dados antes de salvar.
+
+         Salvamos exatamente os dados que
+
+         acabaram de ser alterados.
+
+        */
+
+        localStorage.setItem(
+
+            "petton_dados_v3",
+
+            JSON.stringify(dados)
+
+        );
+
+        /*
+
+         Avisamos outras telas do Petton.
+
+        */
+
+        try{
+
+            window.dispatchEvent(
+
+                new CustomEvent(
+
+                    "petton-atualizado",
+
+                    {
+
+                        detail:dados
+
+                    }
+
+                )
+
+            );
+
+        }catch(e){}
+
+        return true;
+
+    }catch(erro){
+
+        console.error(
+
+            "Erro ao salvar moedas:",
+
+            erro
+
+        );
+
+        return false;
+
+    }
 
 }
 
@@ -1146,17 +1212,13 @@ function obterMoedas(){
 
 function atualizarSaldo(){
 
-    const saldo =
-
-        obterMoedas();
+    const saldo = obterMoedas();
 
     document.getElementById(
 
         "saldo"
 
-    ).textContent =
-
-        saldo;
+    ).textContent = saldo;
 
 }
 
@@ -1310,7 +1372,9 @@ function comprar(id){
 
     if(
 
-        !Number.isFinite(moedas)
+        !Number.isFinite(moedas) ||
+
+        moedas < 0
 
     ){
 
@@ -1318,7 +1382,19 @@ function comprar(id){
 
     }
 
-    if(moedas < produto.preco){
+    /* =========================
+
+       VERIFICAR SALDO
+
+    ========================= */
+
+    if(
+
+        moedas <
+
+        produto.preco
+
+    ){
 
         mostrarMensagem(
 
@@ -1338,37 +1414,41 @@ function comprar(id){
 
     ========================= */
 
-    dados.moedas =
+    const novoSaldo =
 
         moedas -
 
         produto.preco;
 
+    dados.moedas =
+
+        novoSaldo;
+
     /* =========================
 
-       SALVAR PETTON
+       SALVAR PRIMEIRO
 
     ========================= */
 
-    if(
+    const salvou =
 
-        window.Petton &&
+        salvarDadosPetton(
 
-        typeof Petton.salvar === "function"
-
-    ){
-
-        Petton.salvar();
-
-    }else{
-
-        localStorage.setItem(
-
-            "petton_dados_v3",
-
-            JSON.stringify(dados)
+            dados
 
         );
+
+    if(!salvou){
+
+        mostrarMensagem(
+
+            "⚠️ Não foi possível salvar a compra.",
+
+            true
+
+        );
+
+        return;
 
     }
 
@@ -1388,7 +1468,7 @@ function comprar(id){
 
     /* =========================
 
-       ATUALIZAR
+       ATUALIZAR TELA
 
     ========================= */
 
@@ -1397,6 +1477,12 @@ function comprar(id){
     renderizarProdutos();
 
     renderizarInventario();
+
+    /* =========================
+
+       CONFIRMAÇÃO
+
+    ========================= */
 
     mostrarMensagem(
 
@@ -1512,6 +1598,10 @@ function renderizarProdutos(){
 
     }
 
+    const moedas =
+
+        obterMoedas();
+
     area.innerHTML =
 
         lista.map(
@@ -1520,11 +1610,11 @@ function renderizarProdutos(){
 
                 const comprado =
 
-                    possui(produto.id);
+                    possui(
 
-                const moedas =
+                        produto.id
 
-                    obterMoedas();
+                    );
 
                 const suficiente =
 
@@ -1674,7 +1764,13 @@ function renderizarInventario(){
 
                         function(produto){
 
-                            return produto.id === id;
+                            return (
+
+                                produto.id ===
+
+                                id
+
+                            );
 
                         }
 
