@@ -286,6 +286,16 @@ body{
 
 }
 
+.foto img.foto-usuario{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
 .pet-foto{
 
     width:110px;
@@ -390,6 +400,36 @@ body{
 
 }
 
+.botao-foto{
+
+    display:block;
+
+    width:100%;
+
+    border:0;
+
+    border-radius:14px;
+
+    padding:11px;
+
+    background:#f472b6;
+
+    color:white;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    margin-top:11px;
+
+}
+
+.botao-foto:active{
+
+    transform:scale(.98);
+
+}
+
 .rodape{
 
     text-align:center;
@@ -399,6 +439,12 @@ body{
     font-size:12px;
 
     padding:5px 0 25px;
+
+}
+
+.input-foto{
+
+    display:none;
 
 }
 
@@ -604,6 +650,272 @@ const momentos = [
 
 /* =========================================================
 
+   CHAVE DAS FOTOS
+
+========================================================= */
+
+const CHAVE_FOTOS = "petton_album_fotos_v1";
+
+/* =========================================================
+
+   CARREGAR FOTOS
+
+========================================================= */
+
+function carregarFotos(){
+
+    try{
+
+        const salvo =
+
+            localStorage.getItem(CHAVE_FOTOS);
+
+        if(!salvo){
+
+            return {};
+
+        }
+
+        const fotos =
+
+            JSON.parse(salvo);
+
+        if(
+
+            fotos &&
+
+            typeof fotos === "object"
+
+        ){
+
+            return fotos;
+
+        }
+
+    }catch(e){
+
+        console.log(
+
+            "Erro ao carregar fotos:",
+
+            e
+
+        );
+
+    }
+
+    return {};
+
+}
+
+/* =========================================================
+
+   SALVAR FOTOS
+
+========================================================= */
+
+function salvarFotos(fotos){
+
+    try{
+
+        localStorage.setItem(
+
+            CHAVE_FOTOS,
+
+            JSON.stringify(fotos)
+
+        );
+
+        return true;
+
+    }catch(e){
+
+        console.log(
+
+            "Erro ao salvar foto:",
+
+            e
+
+        );
+
+        return false;
+
+    }
+
+}
+
+/* =========================================================
+
+   PEGAR FOTO DE UM MOMENTO
+
+========================================================= */
+
+function obterFotoMomento(dia){
+
+    const fotos =
+
+        carregarFotos();
+
+    return fotos[String(dia)] || null;
+
+}
+
+/* =========================================================
+
+   TIRAR FOTO
+
+========================================================= */
+
+function tirarFoto(dia){
+
+    const input =
+
+        document.getElementById(
+
+            "inputFotoAlbum"
+
+        );
+
+    if(!input){
+
+        alert(
+
+            "Não foi possível abrir a câmera."
+
+        );
+
+        return;
+
+    }
+
+    input.dataset.dia =
+
+        String(dia);
+
+    input.value = "";
+
+    input.click();
+
+}
+
+/* =========================================================
+
+   FOTO ESCOLHIDA / CÂMERA
+
+========================================================= */
+
+function fotoSelecionada(event){
+
+    try{
+
+        const arquivo =
+
+            event.target.files &&
+
+            event.target.files[0];
+
+        if(!arquivo){
+
+            return;
+
+        }
+
+        const dia =
+
+            event.target.dataset.dia;
+
+        if(
+
+            dia === undefined ||
+
+            dia === ""
+
+        ){
+
+            return;
+
+        }
+
+        const leitor =
+
+            new FileReader();
+
+        leitor.onload = function(){
+
+            const imagem =
+
+                leitor.result;
+
+            if(
+
+                typeof imagem !== "string" ||
+
+                imagem.length === 0
+
+            ){
+
+                alert(
+
+                    "Não foi possível carregar a foto."
+
+                );
+
+                return;
+
+            }
+
+            const fotos =
+
+                carregarFotos();
+
+            fotos[String(dia)] =
+
+                imagem;
+
+            if(!salvarFotos(fotos)){
+
+                alert(
+
+                    "Não foi possível salvar a foto. O armazenamento do aparelho pode estar cheio."
+
+                );
+
+                return;
+
+            }
+
+            renderizarAgora();
+
+        };
+
+        leitor.onerror = function(){
+
+            alert(
+
+                "Não foi possível carregar a foto."
+
+            );
+
+        };
+
+        leitor.readAsDataURL(arquivo);
+
+    }catch(e){
+
+        console.log(
+
+            "Erro ao selecionar foto:",
+
+            e
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
    CARREGAR O MESMO PETTON DO petton.js
 
 ========================================================= */
@@ -620,7 +932,9 @@ function carregar(){
 
         ){
 
-            dados = Petton.carregar();
+            dados =
+
+                Petton.carregar();
 
         }
 
@@ -752,8 +1066,6 @@ function imagemPetton(){
 
         ).toLowerCase();
 
-    /* CACHORRO */
-
     if(
 
         especie === "cachorro" ||
@@ -768,8 +1080,6 @@ function imagemPetton(){
 
     }
 
-    /* COELHO */
-
     if(
 
         especie === "coelho" ||
@@ -781,8 +1091,6 @@ function imagemPetton(){
         return "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
 
     }
-
-    /* GATO */
 
     if(
 
@@ -933,6 +1241,34 @@ function criarVisualPetton(){
 ========================================================= */
 
 function criarVisualMomento(momento){
+
+    const foto =
+
+        obterFotoMomento(
+
+            momento.dia
+
+        );
+
+    /* FOTO TIRADA PELO USUÁRIO */
+
+    if(foto){
+
+        return `
+
+            <img
+
+                class="foto-usuario"
+
+                src="${foto}"
+
+                alt="Foto do momento"
+
+            >
+
+        `;
+
+    }
 
     if(momento.dia === 0){
 
@@ -1416,17 +1752,45 @@ function renderizar(){
 
                         <div class="foto">
 
-                            <div
+                            ${
 
-                                class="pet-foto-emoji"
+                                obterFotoMomento(0)
 
-                                style="font-size:58px;"
+                                ?
 
-                            >
+                                `
 
-                                🥚
+                                <img
 
-                            </div>
+                                    class="foto-usuario"
+
+                                    src="${obterFotoMomento(0)}"
+
+                                    alt="Foto do momento"
+
+                                >
+
+                                `
+
+                                :
+
+                                `
+
+                                <div
+
+                                    class="pet-foto-emoji"
+
+                                    style="font-size:58px;"
+
+                                >
+
+                                    🥚
+
+                                </div>
+
+                                `
+
+                            }
 
                         </div>
 
@@ -1447,6 +1811,30 @@ function renderizar(){
                             Tudo começa aqui.
 
                         </div>
+
+                        <button
+
+                            class="botao-foto"
+
+                            onclick="tirarFoto(0)"
+
+                        >
+
+                            📸 ${
+
+                                obterFotoMomento(0)
+
+                                ?
+
+                                "Tirar outra foto"
+
+                                :
+
+                                "Tirar foto"
+
+                            }
+
+                        </button>
 
                     </div>
 
@@ -1547,20 +1935,6 @@ function renderizar(){
     const nome =
 
         dados.nome || "Meu Petton";
-
-    /*
-
-       CORREÇÃO DO CONTADOR
-
-       Conta SOMENTE os momentos cujo dia já foi atingido.
-
-       Exemplo:
-
-       idade 1 → somente Dia 0 = 1 de 8
-
-       idade 3 → Dia 0 + Dia 3 = 2 de 8
-
-    */
 
     const liberados =
 
@@ -1675,6 +2049,14 @@ function renderizar(){
                             classe += " atual";
 
                         }
+
+                        const foto =
+
+                            obterFotoMomento(
+
+                                momento.dia
+
+                            );
 
                         return `
 
@@ -1799,6 +2181,46 @@ function renderizar(){
                                     }
 
                                 </div>
+
+                                ${
+
+                                    atual
+
+                                    ?
+
+                                    `
+
+                                    <button
+
+                                        class="botao-foto"
+
+                                        onclick="tirarFoto(${momento.dia})"
+
+                                    >
+
+                                        📸 ${
+
+                                            foto
+
+                                            ?
+
+                                            "Tirar outra foto"
+
+                                            :
+
+                                            "Tirar foto"
+
+                                        }
+
+                                    </button>
+
+                                    `
+
+                                    :
+
+                                    ""
+
+                                }
 
                             </div>
 
@@ -1925,6 +2347,28 @@ setInterval(
 );
 
 </script>
+
+<!-- =========================================================
+
+     CAMPO INVISÍVEL PARA CÂMERA / GALERIA
+
+========================================================= -->
+
+<input
+
+    id="inputFotoAlbum"
+
+    class="input-foto"
+
+    type="file"
+
+    accept="image/*"
+
+    capture="environment"
+
+    onchange="fotoSelecionada(event)"
+
+>
 
 </body>
 
