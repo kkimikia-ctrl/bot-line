@@ -56,7 +56,11 @@ function escolherEspecie() {
 
     return especies[
 
-        Math.floor(Math.random() * especies.length)
+        Math.floor(
+
+            Math.random() * especies.length
+
+        )
 
     ];
 
@@ -64,19 +68,55 @@ function escolherEspecie() {
 
 /* =========================================================
 
-   IDENTIDADE VISUAL
+   UTILITÁRIOS VISUAIS
 
    ========================================================= */
 
 function escolherItem(lista) {
 
+    if (!Array.isArray(lista) || !lista.length) {
+
+        return null;
+
+    }
+
     return lista[
 
-        Math.floor(Math.random() * lista.length)
+        Math.floor(
+
+            Math.random() * lista.length
+
+        )
 
     ];
 
 }
+
+function gerarIdVisual() {
+
+    return (
+
+        "petton-" +
+
+        Date.now().toString(36) +
+
+        "-" +
+
+        Math.random()
+
+            .toString(36)
+
+            .substring(2, 10)
+
+    );
+
+}
+
+/* =========================================================
+
+   DNA VISUAL
+
+   ========================================================= */
 
 function criarIdentidadeVisual(especie) {
 
@@ -96,7 +136,25 @@ function criarIdentidadeVisual(especie) {
 
                 "creme",
 
-                "marrom"
+                "marrom",
+
+                "cinza-azulado",
+
+                "bege"
+
+            ],
+
+            coresSecundarias: [
+
+                "branco",
+
+                "creme",
+
+                "cinza",
+
+                "marrom",
+
+                "preto"
 
             ],
 
@@ -108,7 +166,11 @@ function criarIdentidadeVisual(especie) {
 
                 "manchado",
 
-                "bicolor"
+                "bicolor",
+
+                "malhado",
+
+                "com manchas no rosto"
 
             ],
 
@@ -118,7 +180,11 @@ function criarIdentidadeVisual(especie) {
 
                 "grandes",
 
-                "ovais"
+                "ovais",
+
+                "brilhantes",
+
+                "grandes e brilhantes"
 
             ],
 
@@ -126,7 +192,11 @@ function criarIdentidadeVisual(especie) {
 
                 "pontudas",
 
-                "arredondadas"
+                "arredondadas",
+
+                "pequenas e pontudas",
+
+                "grandes e pontudas"
 
             ],
 
@@ -134,7 +204,9 @@ function criarIdentidadeVisual(especie) {
 
                 "pequeno",
 
-                "redondo"
+                "redondo",
+
+                "pequeno e delicado"
 
             ],
 
@@ -144,7 +216,9 @@ function criarIdentidadeVisual(especie) {
 
                 "fofinhas",
 
-                "delicadas"
+                "delicadas",
+
+                "curtinhas"
 
             ],
 
@@ -154,7 +228,23 @@ function criarIdentidadeVisual(especie) {
 
                 "curta",
 
-                "fofa"
+                "fofa",
+
+                "longa e fofa"
+
+            ],
+
+            pelagens: [
+
+                "curta e macia",
+
+                "fofinha",
+
+                "sedosa",
+
+                "macia",
+
+                "levemente felpuda"
 
             ]
 
@@ -174,7 +264,25 @@ function criarIdentidadeVisual(especie) {
 
                 "cinza",
 
-                "creme"
+                "creme",
+
+                "bege",
+
+                "marrom-claro"
+
+            ],
+
+            coresSecundarias: [
+
+                "branco",
+
+                "creme",
+
+                "caramelo",
+
+                "marrom",
+
+                "preto"
 
             ],
 
@@ -186,7 +294,11 @@ function criarIdentidadeVisual(especie) {
 
                 "bicolor",
 
-                "com manchas no rosto"
+                "malhado",
+
+                "com manchas no rosto",
+
+                "com uma mancha no olho"
 
             ],
 
@@ -196,7 +308,11 @@ function criarIdentidadeVisual(especie) {
 
                 "grandes",
 
-                "ovais"
+                "ovais",
+
+                "brilhantes",
+
+                "grandes e brilhantes"
 
             ],
 
@@ -206,7 +322,11 @@ function criarIdentidadeVisual(especie) {
 
                 "pontudas",
 
-                "arredondadas"
+                "arredondadas",
+
+                "grandes e caídas",
+
+                "pequenas e caídas"
 
             ],
 
@@ -216,7 +336,9 @@ function criarIdentidadeVisual(especie) {
 
                 "redondo",
 
-                "escuro"
+                "escuro",
+
+                "pequeno e escuro"
 
             ],
 
@@ -226,7 +348,11 @@ function criarIdentidadeVisual(especie) {
 
                 "fofinhas",
 
-                "fortes"
+                "fortes",
+
+                "curtinhas",
+
+                "grandes e fofinhas"
 
             ],
 
@@ -238,7 +364,23 @@ function criarIdentidadeVisual(especie) {
 
                 "enrolada",
 
-                "fofa"
+                "fofa",
+
+                "longa e fofa"
+
+            ],
+
+            pelagens: [
+
+                "curta e macia",
+
+                "fofinha",
+
+                "macia",
+
+                "levemente felpuda",
+
+                "sedosa"
 
             ]
 
@@ -258,6 +400,24 @@ function criarIdentidadeVisual(especie) {
 
                 "preto",
 
+                "caramelo",
+
+                "bege",
+
+                "cinza-claro"
+
+            ],
+
+            coresSecundarias: [
+
+                "branco",
+
+                "creme",
+
+                "cinza",
+
+                "marrom",
+
                 "caramelo"
 
             ],
@@ -270,7 +430,11 @@ function criarIdentidadeVisual(especie) {
 
                 "bicolor",
 
-                "com manchas no rosto"
+                "malhado",
+
+                "com manchas no rosto",
+
+                "com uma mancha no olho"
 
             ],
 
@@ -280,7 +444,11 @@ function criarIdentidadeVisual(especie) {
 
                 "grandes",
 
-                "brilhantes"
+                "brilhantes",
+
+                "grandes e brilhantes",
+
+                "ovais"
 
             ],
 
@@ -290,7 +458,9 @@ function criarIdentidadeVisual(especie) {
 
                 "muito longas",
 
-                "arredondadas"
+                "arredondadas",
+
+                "longas e fofinhas"
 
             ],
 
@@ -298,7 +468,9 @@ function criarIdentidadeVisual(especie) {
 
                 "pequeno",
 
-                "redondo"
+                "redondo",
+
+                "pequeno e delicado"
 
             ],
 
@@ -308,7 +480,11 @@ function criarIdentidadeVisual(especie) {
 
                 "fofinhas",
 
-                "delicadas"
+                "delicadas",
+
+                "curtinhas",
+
+                "grandes e fofinhas"
 
             ],
 
@@ -318,7 +494,23 @@ function criarIdentidadeVisual(especie) {
 
                 "fofa",
 
-                "redonda"
+                "redonda",
+
+                "pequena e redonda"
+
+            ],
+
+            pelagens: [
+
+                "fofinha",
+
+                "macia",
+
+                "sedosa",
+
+                "levemente felpuda",
+
+                "muito fofinha"
 
             ]
 
@@ -332,11 +524,29 @@ function criarIdentidadeVisual(especie) {
 
         identidades.gato;
 
-    return {
+    /*
 
-        id:
+     * O DNA é sorteado uma única vez.
 
-            "petton-" +
+     * Depois fica salvo no Petton.
+
+     */
+
+    const identidade = {
+
+        id: gerarIdVisual(),
+
+        /*
+
+         * Seed permanente.
+
+         * Serve para futuras gerações de imagens
+
+         * manterem o mesmo personagem.
+
+         */
+
+        seed:
 
             Date.now().toString(36) +
 
@@ -346,13 +556,17 @@ function criarIdentidadeVisual(especie) {
 
                 .toString(36)
 
-                .substring(2, 10),
+                .substring(2, 12),
 
         especie: especie,
 
         cor:
 
             escolherItem(opcoes.cores),
+
+        corSecundaria:
+
+            escolherItem(opcoes.coresSecundarias),
 
         padrao:
 
@@ -376,9 +590,373 @@ function criarIdentidadeVisual(especie) {
 
         cauda:
 
-            escolherItem(opcoes.caudas)
+            escolherItem(opcoes.caudas),
+
+        pelagem:
+
+            escolherItem(opcoes.pelagens),
+
+        /*
+
+         * Marca exclusiva.
+
+         */
+
+        marca:
+
+            escolherItem([
+
+                "nenhuma marca especial",
+
+                "pequena mancha na testa",
+
+                "pequena mancha na bochecha",
+
+                "pequena mancha perto do olho",
+
+                "pequena marca no peito",
+
+                "pequena mancha na orelha"
+
+            ]),
+
+        /*
+
+         * Acessório não é obrigatório.
+
+         */
+
+        acessorio:
+
+            escolherItem([
+
+                "nenhum",
+
+                "nenhum",
+
+                "nenhum",
+
+                "coleira simples",
+
+                "lacinho pequeno",
+
+                "pingente pequeno",
+
+                "lenço pequeno"
+
+            ]),
+
+        /*
+
+         * Expressão característica.
+
+         */
+
+        expressao:
+
+            escolherItem([
+
+                "fofa",
+
+                "curiosa",
+
+                "alegre",
+
+                "tranquila",
+
+                "brincalhona",
+
+                "carinhosa"
+
+            ]),
+
+        /*
+
+         * Formato geral permanece Petton.
+
+         */
+
+        estiloBase:
+
+            "Petton fofo, corpo compacto, aparência infantil e amigável",
+
+        /*
+
+         * Imagens das fases.
+
+         *
+
+         * Inicialmente ficam vazias.
+
+         * Serão preenchidas quando as imagens
+
+         * individuais forem geradas.
+
+         */
+
+        imagens: {
+
+            ovo: null,
+
+            bebe: null,
+
+            filhote: null,
+
+            jovem: null,
+
+            adulto: null
+
+        },
+
+        /*
+
+         * Prompt/base visual permanente.
+
+         */
+
+        descricaoBase: null
 
     };
+
+    identidade.descricaoBase =
+
+        criarDescricaoVisualPetton(
+
+            identidade
+
+        );
+
+    return identidade;
+
+}
+
+/* =========================================================
+
+   DESCRIÇÃO VISUAL DO PETTON
+
+   ========================================================= */
+
+function criarDescricaoVisualPetton(identidade) {
+
+    if (!identidade) {
+
+        return "";
+
+    }
+
+    const especie =
+
+        identidade.especie || "gato";
+
+    const cor =
+
+        identidade.cor || "fofo";
+
+    const corSecundaria =
+
+        identidade.corSecundaria || "branco";
+
+    const padrao =
+
+        identidade.padrao || "liso";
+
+    const olhos =
+
+        identidade.olhos || "grandes";
+
+    const orelhas =
+
+        identidade.orelhas || "fofinhas";
+
+    const nariz =
+
+        identidade.nariz || "pequeno";
+
+    const patas =
+
+        identidade.patas || "fofinhas";
+
+    const cauda =
+
+        identidade.cauda || "fofa";
+
+    const pelagem =
+
+        identidade.pelagem || "macia";
+
+    const marca =
+
+        identidade.marca || "nenhuma marca especial";
+
+    const acessorio =
+
+        identidade.acessorio || "nenhum";
+
+    const expressao =
+
+        identidade.expressao || "fofa";
+
+    return (
+
+        "Personagem Petton original, espécie " +
+
+        especie +
+
+        ", corpo compacto e extremamente fofo, " +
+
+        "estilo visual Petton consistente, " +
+
+        "cor principal " +
+
+        cor +
+
+        ", cor secundária " +
+
+        corSecundaria +
+
+        ", padrão " +
+
+        padrao +
+
+        ", olhos " +
+
+        olhos +
+
+        ", orelhas " +
+
+        orelhas +
+
+        ", nariz " +
+
+        nariz +
+
+        ", patas " +
+
+        patas +
+
+        ", cauda " +
+
+        cauda +
+
+        ", pelagem " +
+
+        pelagem +
+
+        ", " +
+
+        marca +
+
+        ", acessório " +
+
+        acessorio +
+
+        ", expressão " +
+
+        expressao +
+
+        ". " +
+
+        "Manter exatamente essas características " +
+
+        "em todas as fases de crescimento."
+
+    );
+
+}
+
+/* =========================================================
+
+   PROMPT POR FASE
+
+   ========================================================= */
+
+function criarPromptFasePetton(fase) {
+
+    const dados =
+
+        carregarPetton();
+
+    garantirIdentidadeVisual(dados);
+
+    if (!dados.identidadeVisual) {
+
+        return "";
+
+    }
+
+    const identidade =
+
+        dados.identidadeVisual;
+
+    let descricaoFase = "";
+
+    switch (fase) {
+
+        case "ovo":
+
+            descricaoFase =
+
+                "ovo Petton fofo, antes do nascimento";
+
+            break;
+
+        case "bebe":
+
+            descricaoFase =
+
+                "bebê Petton recém-nascido, pequeno, fofo e delicado";
+
+            break;
+
+        case "filhote":
+
+            descricaoFase =
+
+                "filhote Petton crescendo, mantendo exatamente a mesma identidade";
+
+            break;
+
+        case "jovem":
+
+            descricaoFase =
+
+                "Petton jovem, maior e mais desenvolvido, mantendo exatamente a mesma identidade";
+
+            break;
+
+        case "adulto":
+
+            descricaoFase =
+
+                "Petton adulto, corpo desenvolvido, mantendo exatamente a mesma identidade";
+
+            break;
+
+        default:
+
+            descricaoFase =
+
+                "Petton mantendo exatamente a mesma identidade visual";
+
+    }
+
+    return (
+
+        identidade.descricaoBase +
+
+        " " +
+
+        descricaoFase +
+
+        ". " +
+
+        "Não trocar espécie, cor, padrão, olhos, orelhas, " +
+
+        "nariz, patas, cauda, pelagem, marca ou acessório. " +
+
+        "O personagem deve continuar reconhecível como o mesmo Petton."
+
+    );
 
 }
 
@@ -390,11 +968,17 @@ function criarIdentidadeVisual(especie) {
 
 function garantirIdentidadeVisual(dados) {
 
-    if (!dados.dateNascimento) {
+    if (!dados || !dados.dateNascimento) {
 
         return dados;
 
     }
+
+    /*
+
+     * Petton antigo sem identidade.
+
+     */
 
     if (!dados.identidadeVisual) {
 
@@ -416,23 +1000,27 @@ function garantirIdentidadeVisual(dados) {
 
     }
 
+    const identidade =
+
+        dados.identidadeVisual;
+
     /*
 
-     * Compatibilidade com Pettons
-
-     * criados em versões anteriores.
+     * Compatibilidade com versões antigas.
 
      */
 
-    if (
+    if (!identidade.id) {
 
-        !dados.identidadeVisual.id
+        identidade.id =
 
-    ) {
+            gerarIdVisual();
 
-        dados.identidadeVisual.id =
+    }
 
-            "petton-" +
+    if (!identidade.seed) {
+
+        identidade.seed =
 
             Date.now().toString(36) +
 
@@ -442,19 +1030,179 @@ function garantirIdentidadeVisual(dados) {
 
                 .toString(36)
 
-                .substring(2, 10);
+                .substring(2, 12);
 
     }
 
-    if (
+    if (!identidade.especie) {
 
-        !dados.identidadeVisual.especie
-
-    ) {
-
-        dados.identidadeVisual.especie =
+        identidade.especie =
 
             dados.especie;
+
+    }
+
+    if (!identidade.cor) {
+
+        identidade.cor = "branco";
+
+    }
+
+    if (!identidade.corSecundaria) {
+
+        identidade.corSecundaria =
+
+            "branco";
+
+    }
+
+    if (!identidade.padrao) {
+
+        identidade.padrao =
+
+            "liso";
+
+    }
+
+    if (!identidade.olhos) {
+
+        identidade.olhos =
+
+            "grandes";
+
+    }
+
+    if (!identidade.orelhas) {
+
+        identidade.orelhas =
+
+            "arredondadas";
+
+    }
+
+    if (!identidade.nariz) {
+
+        identidade.nariz =
+
+            "pequeno";
+
+    }
+
+    if (!identidade.patas) {
+
+        identidade.patas =
+
+            "fofinhas";
+
+    }
+
+    if (!identidade.cauda) {
+
+        identidade.cauda =
+
+            "fofa";
+
+    }
+
+    if (!identidade.pelagem) {
+
+        identidade.pelagem =
+
+            "macia";
+
+    }
+
+    if (!identidade.marca) {
+
+        identidade.marca =
+
+            "nenhuma marca especial";
+
+    }
+
+    if (!identidade.acessorio) {
+
+        identidade.acessorio =
+
+            "nenhum";
+
+    }
+
+    if (!identidade.expressao) {
+
+        identidade.expressao =
+
+            "fofa";
+
+    }
+
+    if (!identidade.estiloBase) {
+
+        identidade.estiloBase =
+
+            "Petton fofo, corpo compacto, aparência infantil e amigável";
+
+    }
+
+    if (!identidade.imagens) {
+
+        identidade.imagens = {
+
+            ovo: null,
+
+            bebe: null,
+
+            filhote: null,
+
+            jovem: null,
+
+            adulto: null
+
+        };
+
+    } else {
+
+        if (!("ovo" in identidade.imagens)) {
+
+            identidade.imagens.ovo = null;
+
+        }
+
+        if (!("bebe" in identidade.imagens)) {
+
+            identidade.imagens.bebe = null;
+
+        }
+
+        if (!("filhote" in identidade.imagens)) {
+
+            identidade.imagens.filhote = null;
+
+        }
+
+        if (!("jovem" in identidade.imagens)) {
+
+            identidade.imagens.jovem = null;
+
+        }
+
+        if (!("adulto" in identidade.imagens)) {
+
+            identidade.imagens.adulto = null;
+
+        }
+
+    }
+
+    if (!identidade.descricaoBase) {
+
+        identidade.descricaoBase =
+
+            criarDescricaoVisualPetton(
+
+                identidade
+
+            );
 
     }
 
@@ -534,7 +1282,7 @@ function criarPettonNovo() {
 
         /*
 
-         * Identidade visual fica vazia
+         * Identidade visual vazia
 
          * enquanto ainda é ovo.
 
@@ -580,55 +1328,109 @@ function garantirCamposNovos(dados) {
 
     }
 
-    if (typeof dados.doenteDesde === "undefined") {
+    if (
+
+        typeof dados.doenteDesde ===
+
+        "undefined"
+
+    ) {
 
         dados.doenteDesde = null;
 
     }
 
-    if (typeof dados.hospitalAte === "undefined") {
+    if (
+
+        typeof dados.hospitalAte ===
+
+        "undefined"
+
+    ) {
 
         dados.hospitalAte = null;
 
     }
 
-    if (typeof dados.cocoAtivo !== "boolean") {
+    if (
+
+        typeof dados.cocoAtivo !==
+
+        "boolean"
+
+    ) {
 
         dados.cocoAtivo = false;
 
     }
 
-    if (typeof dados.cocoNasceuEm === "undefined") {
+    if (
+
+        typeof dados.cocoNasceuEm ===
+
+        "undefined"
+
+    ) {
 
         dados.cocoNasceuEm = null;
 
     }
 
-    if (typeof dados.carieAtiva !== "boolean") {
+    if (
+
+        typeof dados.carieAtiva !==
+
+        "boolean"
+
+    ) {
 
         dados.carieAtiva = false;
 
     }
 
-    if (typeof dados.carieNasceuEm === "undefined") {
+    if (
+
+        typeof dados.carieNasceuEm ===
+
+        "undefined"
+
+    ) {
 
         dados.carieNasceuEm = null;
 
     }
 
-    if (typeof dados.ultimaAlimentacaoEm === "undefined") {
+    if (
+
+        typeof dados.ultimaAlimentacaoEm ===
+
+        "undefined"
+
+    ) {
 
         dados.ultimaAlimentacaoEm = null;
 
     }
 
-    if (typeof dados.passeandoAte === "undefined") {
+    if (
+
+        typeof dados.passeandoAte ===
+
+        "undefined"
+
+    ) {
 
         dados.passeandoAte = null;
 
     }
 
-    if (typeof dados.escovandoAte === "undefined") {
+    if (
+
+        typeof dados.escovandoAte ===
+
+        "undefined"
+
+    ) {
 
         dados.escovandoAte = null;
 
@@ -740,7 +1542,15 @@ function carregarPetton() {
 
                         ).getTime();
 
-                    if (Number.isFinite(criacao)) {
+                    if (
+
+                        Number.isFinite(
+
+                            criacao
+
+                        )
+
+                    ) {
 
                         dados.incubacaoAtualizadaEm =
 
@@ -810,9 +1620,7 @@ function carregarPetton() {
 
         /*
 
-         * Se já nasceu e não possui identidade,
-
-         * cria uma única vez.
+         * Se já nasceu, garante identidade.
 
          */
 
@@ -898,7 +1706,9 @@ function atualizarIncubacao() {
 
     if (
 
-        typeof dados.incubacaoAtualizadaEm !== "number" ||
+        typeof dados.incubacaoAtualizadaEm !==
+
+        "number" ||
 
         !Number.isFinite(
 
@@ -922,7 +1732,11 @@ function atualizarIncubacao() {
 
     if (
 
-        !Number.isFinite(tempoPassado) ||
+        !Number.isFinite(
+
+            tempoPassado
+
+        ) ||
 
         tempoPassado < 0
 
@@ -1014,15 +1828,7 @@ function nascerPettonInterno(dados) {
 
     /*
 
-     * A identidade visual é criada
-
-     * SOMENTE no nascimento.
-
-     *
-
-     * Depois disso não será sorteada
-
-     * novamente.
+     * CRIA O DNA VISUAL UMA ÚNICA VEZ.
 
      */
 
@@ -1484,9 +2290,7 @@ function verificarCrescimento() {
 
     /*
 
-     * Garante que a identidade
-
-     * visual continue existindo.
+     * A identidade nunca é recriada.
 
      */
 
@@ -1559,6 +2363,16 @@ function atualizarCaracteristicasVisiveis() {
     const dias =
 
         idadeDias();
+
+    /*
+
+     * A identidade já existe desde o nascimento.
+
+     * Aqui controlamos apenas quais elementos
+
+     * aparecem conforme o crescimento.
+
+     */
 
     dados.caracteristicas.cor =
 
@@ -2730,6 +3544,14 @@ function identidadePetton() {
 
                 : null,
 
+        seed:
+
+            dados.identidadeVisual
+
+                ? dados.identidadeVisual.seed
+
+                : null,
+
         especie:
 
             dados.especie,
@@ -2749,6 +3571,20 @@ function identidadePetton() {
         identidadeVisual:
 
             dados.identidadeVisual,
+
+        /*
+
+         * Descrição visual completa.
+
+         */
+
+        descricaoVisual:
+
+            dados.identidadeVisual
+
+                ? dados.identidadeVisual.descricaoBase
+
+                : null,
 
         caracteristicas:
 
@@ -2866,7 +3702,13 @@ function atualizarAlbum() {
 
                         function (foto) {
 
-                            return foto.dia === dia;
+                            return (
+
+                                foto.dia ===
+
+                                dia
+
+                            );
 
                         }
 
@@ -2894,7 +3736,31 @@ function atualizarAlbum() {
 
                         identidadeVisual:
 
-                            dados.identidadeVisual
+                            dados.identidadeVisual,
+
+                        /*
+
+                         * Guarda a imagem correspondente
+
+                         * à fase, quando existir.
+
+                         */
+
+                        imagem:
+
+                            dados.identidadeVisual &&
+
+                            dados.identidadeVisual.imagens
+
+                                ? dados.identidadeVisual
+
+                                    .imagens[
+
+                                        dados.fase
+
+                                    ] || null
+
+                                : null
 
                     });
 
@@ -2909,6 +3775,166 @@ function atualizarAlbum() {
     salvarPetton(dados);
 
     return dados.album;
+
+}
+
+/* =========================================================
+
+   DEFINIR IMAGEM GERADA
+
+   ========================================================= */
+
+function definirImagemGerada(
+
+    fase,
+
+    imagem
+
+) {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
+
+    if (
+
+        !dados.identidadeVisual ||
+
+        !dados.identidadeVisual.imagens
+
+    ) {
+
+        return false;
+
+    }
+
+    const fasesValidas = [
+
+        "ovo",
+
+        "bebe",
+
+        "filhote",
+
+        "jovem",
+
+        "adulto"
+
+    ];
+
+    if (
+
+        !fasesValidas.includes(fase)
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        typeof imagem !== "string" ||
+
+        !imagem.trim()
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.identidadeVisual.imagens[fase] =
+
+        imagem.trim();
+
+    salvarPetton(dados);
+
+    return true;
+
+}
+
+/* =========================================================
+
+   OBTER IMAGEM DA FASE
+
+   ========================================================= */
+
+function obterImagemFase(fase) {
+
+    const dados =
+
+        carregarPetton();
+
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
+
+    if (
+
+        !dados.identidadeVisual ||
+
+        !dados.identidadeVisual.imagens
+
+    ) {
+
+        return null;
+
+    }
+
+    return (
+
+        dados.identidadeVisual.imagens[fase] ||
+
+        null
+
+    );
+
+}
+
+/* =========================================================
+
+   PROMPT VISUAL
+
+   ========================================================= */
+
+function obterPromptVisual(fase) {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return "";
+
+    }
+
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
+
+    return criarPromptFasePetton(
+
+        fase || dados.fase
+
+    );
 
 }
 
@@ -3104,11 +4130,13 @@ window.Petton = {
 
     },
 
-    atualizarCaracteristicas: function () {
+    atualizarCaracteristicas:
 
-        return atualizarCaracteristicasVisiveis();
+        function () {
 
-    },
+            return atualizarCaracteristicasVisiveis();
+
+        },
 
     idadeDias: function () {
 
@@ -3128,61 +4156,179 @@ window.Petton = {
 
     },
 
-    /* IDENTIDADE VISUAL */
+    /* =====================================================
 
-    identidadeVisual: function () {
+       IDENTIDADE VISUAL
 
-        const dados =
+       ===================================================== */
 
-            carregarPetton();
+    identidadeVisual:
 
-        garantirIdentidadeVisual(
+        function () {
 
-            dados
+            const dados =
 
-        );
+                carregarPetton();
 
-        salvarPetton(dados);
+            garantirIdentidadeVisual(
 
-        return dados.identidadeVisual;
+                dados
 
-    },
+            );
 
-    /* OVO */
+            salvarPetton(dados);
 
-    incubacaoRestante: function () {
+            return dados.identidadeVisual;
 
-        return tempoIncubacaoRestante();
+        },
 
-    },
+    /* =====================================================
 
-    /* AQUECEDOR */
+       DESCRIÇÃO VISUAL
 
-    ligarAquecedor: function () {
+       ===================================================== */
 
-        return ligarAquecedor();
+    descricaoVisual:
 
-    },
+        function () {
 
-    aquecedorAtivo: function () {
+            const dados =
 
-        return aquecedorAtivo();
+                carregarPetton();
 
-    },
+            garantirIdentidadeVisual(
 
-    aquecedorRestante: function () {
+                dados
 
-        return tempoAquecedorRestante();
+            );
 
-    },
+            if (
 
-    /* RESET */
+                !dados.identidadeVisual
 
-    resetar: function () {
+            ) {
 
-        return resetarPetton();
+                return null;
 
-    }
+            }
+
+            return criarDescricaoVisualPetton(
+
+                dados.identidadeVisual
+
+            );
+
+        },
+
+    /* =====================================================
+
+       PROMPT DE CADA FASE
+
+       ===================================================== */
+
+    promptVisual:
+
+        function (fase) {
+
+            return obterPromptVisual(
+
+                fase
+
+            );
+
+        },
+
+    /* =====================================================
+
+       IMAGENS
+
+       ===================================================== */
+
+    definirImagem:
+
+        function (fase, imagem) {
+
+            return definirImagemGerada(
+
+                fase,
+
+                imagem
+
+            );
+
+        },
+
+    obterImagem:
+
+        function (fase) {
+
+            return obterImagemFase(
+
+                fase
+
+            );
+
+        },
+
+    /* =====================================================
+
+       OVO
+
+       ===================================================== */
+
+    incubacaoRestante:
+
+        function () {
+
+            return tempoIncubacaoRestante();
+
+        },
+
+    /* =====================================================
+
+       AQUECEDOR
+
+       ===================================================== */
+
+    ligarAquecedor:
+
+        function () {
+
+            return ligarAquecedor();
+
+        },
+
+    aquecedorAtivo:
+
+        function () {
+
+            return aquecedorAtivo();
+
+        },
+
+    aquecedorRestante:
+
+        function () {
+
+            return tempoAquecedorRestante();
+
+        },
+
+    /* =====================================================
+
+       RESET
+
+       ===================================================== */
+
+    resetar:
+
+        function () {
+
+            return resetarPetton();
+
+        }
+
+    };
 
 };
 
