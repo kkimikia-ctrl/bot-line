@@ -6,7 +6,9 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <meta name="google" content="notranslate">
 
@@ -708,6 +710,12 @@ body {
 
     box-shadow: 0 2px 6px rgba(0,0,0,.05);
 
+    border: none;
+
+    cursor: pointer;
+
+    width: 100%;
+
 }
 
 /* =========================================================
@@ -1282,7 +1290,11 @@ body {
 
         <h2>Petton</h2>
 
-        <p>Este jogo funciona dentro do LINE.</p>
+        <p>
+
+            Este jogo funciona dentro do LINE.
+
+        </p>
 
     </div>
 
@@ -1295,8 +1307,6 @@ body {
 ======================================================= -->
 
 <div id="pettonConteudo">
-
-    <!-- TOPO -->
 
     <div class="top-bar">
 
@@ -1323,8 +1333,6 @@ body {
         </button>
 
     </div>
-
-    <!-- CARTÃO -->
 
     <main class="pet-card">
 
@@ -1660,45 +1668,53 @@ body {
 
         <div class="menu-grid">
 
-            <a
+            <button
 
-                href="petton.html"
+                type="button"
 
-                class="menu-btn">
+                class="menu-btn"
+
+                onclick="irParaMeuPetton()">
 
                 🐾 Meu Petton
 
-            </a>
+            </button>
 
-            <a
+            <button
 
-                href="petton-album.html"
+                type="button"
 
-                class="menu-btn">
+                class="menu-btn"
+
+                onclick="abrirAlbum()">
 
                 📖 Álbum
 
-            </a>
+            </button>
 
-            <a
+            <button
 
-                href="petton-ranking.html"
+                type="button"
 
-                class="menu-btn">
+                class="menu-btn"
+
+                onclick="abrirRanking()">
 
                 🏆 Ranking
 
-            </a>
+            </button>
 
-            <a
+            <button
 
-                href="index.html"
+                type="button"
 
-                class="menu-btn">
+                class="menu-btn"
+
+                onclick="irParaInicio()">
 
                 🏠 Início
 
-            </a>
+            </button>
 
         </div>
 
@@ -1718,7 +1734,11 @@ body {
 
     <div class="nome-box">
 
-        <h3>🐾 Dê um nome ao seu Petton</h3>
+        <h3>
+
+            🐾 Dê um nome ao seu Petton
+
+        </h3>
 
         <input
 
@@ -1744,7 +1764,7 @@ body {
 
 <!-- =======================================================
 
-     ANIMAÇÃO VASSOURA
+     ANIMAÇÕES
 
 ======================================================= -->
 
@@ -1754,47 +1774,17 @@ body {
 
 </div>
 
-<!-- =======================================================
-
-     ANIMAÇÃO ESCOVA
-
-======================================================= -->
-
 <div id="animacaoEscova">
 
     🪥
 
 </div>
 
-<!-- =======================================================
-
-     ANIMAÇÃO COMIDA
-
-======================================================= -->
-
 <div id="animacaoComida"></div>
-
-<!-- =======================================================
-
-     ANIMAÇÃO BANHO
-
-======================================================= -->
 
 <div id="animacaoBanho"></div>
 
-<!-- =======================================================
-
-     ANIMAÇÃO CARINHO
-
-======================================================= -->
-
 <div id="animacaoCarinho"></div>
-
-<!-- =======================================================
-
-     ANIMAÇÃO DORMIR
-
-======================================================= -->
 
 <div id="animacaoDormir"></div>
 
@@ -1850,19 +1840,7 @@ body {
 
 </div>
 
-<!-- =======================================================
-
-     MENSAGEM TEMPORÁRIA
-
-======================================================= -->
-
 <div id="mensagemTemp"></div>
-
-<!-- =======================================================
-
-     PETTON.JS
-
-======================================================= -->
 
 <script src="petton.js"></script>
 
@@ -1870,13 +1848,15 @@ body {
 
 /* =========================================================
 
-   FORMATA TEMPO
+   TEMPO
 
 ========================================================= */
 
 function formatarTempo(ms) {
 
-    if (!ms || ms < 0) {
+    ms = Number(ms) || 0;
+
+    if (ms <= 0) {
 
         return "0s";
 
@@ -1906,25 +1886,363 @@ function formatarTempo(ms) {
 
         );
 
+    const seg =
+
+        segundos % 60;
+
     if (dias > 0) {
 
-        return dias + "d";
+        return dias + "d " + horas + "h";
 
     }
 
     if (horas > 0) {
 
-        return horas + "h";
+        return horas + "h " + minutos + "min";
 
     }
 
     if (minutos > 0) {
 
-        return minutos + "min";
+        return minutos + "min " + seg + "s";
 
     }
 
-    return segundos + "s";
+    return seg + "s";
+
+}
+
+/* =========================================================
+
+   CONVERTER DATA
+
+========================================================= */
+
+function obterDataValida(valor) {
+
+    if (!valor) {
+
+        return null;
+
+    }
+
+    const data =
+
+        new Date(valor);
+
+    if (
+
+        isNaN(data.getTime())
+
+    ) {
+
+        return null;
+
+    }
+
+    return data;
+
+}
+
+/* =========================================================
+
+   DESCOBRIR DATA DE NASCIMENTO
+
+========================================================= */
+
+function obterDataNascimentoPetton(dados) {
+
+    if (!dados) {
+
+        return null;
+
+    }
+
+    const possiveis = [
+
+        dados.dateNascimento,
+
+        dados.dataNascimento,
+
+        dados.nascimento,
+
+        dados.nascimentoEm,
+
+        dados.dataDeNascimento
+
+    ];
+
+    for (
+
+        const valor of possiveis
+
+    ) {
+
+        const data =
+
+            obterDataValida(valor);
+
+        if (data) {
+
+            return data;
+
+        }
+
+    }
+
+    return null;
+
+}
+
+/* =========================================================
+
+   DESCOBRIR INÍCIO DO OVO
+
+========================================================= */
+
+function obterInicioOvoPetton(dados) {
+
+    if (!dados) {
+
+        return null;
+
+    }
+
+    const possiveis = [
+
+        dados.incubacaoInicio,
+
+        dados.incubacaoInicioEm,
+
+        dados.inicioIncubacao,
+
+        dados.inicioIncubacaoEm,
+
+        dados.criadoEm,
+
+        dados.dataCriacao,
+
+        dados.createdAt,
+
+        dados.criado,
+
+        dados.ovoCriadoEm
+
+    ];
+
+    for (
+
+        const valor of possiveis
+
+    ) {
+
+        const data =
+
+            obterDataValida(valor);
+
+        if (data) {
+
+            return data;
+
+        }
+
+    }
+
+    return null;
+
+}
+
+/* =========================================================
+
+   CALCULAR IDADE
+
+========================================================= */
+
+function calcularIdadeTextoPetton(dados) {
+
+    if (!dados) {
+
+        return "🥚 Carregando Petton...";
+
+    }
+
+    const nascido =
+
+        dados.nascido !== false;
+
+    if (!nascido) {
+
+        let restante = 0;
+
+        const camposTempo = [
+
+            dados.tempoRestante,
+
+            dados.tempoRestanteNascimento,
+
+            dados.tempoParaNascimento,
+
+            dados.incubacaoRestanteMs,
+
+            dados.nascimentoRestante
+
+        ];
+
+        for (
+
+            const valor of camposTempo
+
+        ) {
+
+            const numero =
+
+                Number(valor);
+
+            if (
+
+                isFinite(numero) &&
+
+                numero > 0
+
+            ) {
+
+                restante = numero;
+
+                break;
+
+            }
+
+        }
+
+        if (restante <= 0) {
+
+            const inicio =
+
+                obterInicioOvoPetton(dados);
+
+            if (inicio) {
+
+                const nascimentoPrevisto =
+
+                    inicio.getTime() +
+
+                    (24 * 60 * 60 * 1000);
+
+                restante =
+
+                    Math.max(
+
+                        0,
+
+                        nascimentoPrevisto -
+
+                        Date.now()
+
+                    );
+
+            }
+
+        }
+
+        if (restante > 0) {
+
+            return (
+
+                "🥚 Nascimento em " +
+
+                formatarTempo(restante)
+
+            );
+
+        }
+
+        return "🥚 Ainda no ovo";
+
+    }
+
+    const nascimento =
+
+        obterDataNascimentoPetton(dados);
+
+    if (!nascimento) {
+
+        const idadeNumero =
+
+            Number(
+
+                dados.idadeDias ??
+
+                dados.diasDeVida
+
+            );
+
+        if (
+
+            isFinite(idadeNumero)
+
+        ) {
+
+            if (idadeNumero <= 0) {
+
+                return "🐣 Recém-nascido";
+
+            }
+
+            if (idadeNumero === 1) {
+
+                return "1 dia de vida";
+
+            }
+
+            return (
+
+                Math.floor(idadeNumero) +
+
+                " dias de vida"
+
+            );
+
+        }
+
+        return "🐣 Recém-nascido";
+
+    }
+
+    const diferenca =
+
+        Math.max(
+
+            0,
+
+            Date.now() -
+
+            nascimento.getTime()
+
+        );
+
+    const dias =
+
+        Math.floor(
+
+            diferenca /
+
+            (24 * 60 * 60 * 1000)
+
+        );
+
+    if (dias <= 0) {
+
+        return "🐣 Recém-nascido";
+
+    }
+
+    if (dias === 1) {
+
+        return "1 dia de vida";
+
+    }
+
+    return dias + " dias de vida";
 
 }
 
@@ -2004,17 +2322,51 @@ function obterFaseVisual(dados) {
 
     }
 
-    const idadeDias =
+    const nascimento =
+
+        obterDataNascimentoPetton(dados);
+
+    let idadeDias =
 
         Number(
 
-            dados.idadeDias ||
+            dados.idadeDias ??
 
-            dados.diasDeVida ||
-
-            0
+            dados.diasDeVida
 
         );
+
+    if (
+
+        !isFinite(idadeDias) &&
+
+        nascimento
+
+    ) {
+
+        idadeDias =
+
+            Math.floor(
+
+                (
+
+                    Date.now() -
+
+                    nascimento.getTime()
+
+                ) /
+
+                86400000
+
+            );
+
+    }
+
+    if (!isFinite(idadeDias)) {
+
+        idadeDias = 0;
+
+    }
 
     if (idadeDias < 7) {
 
@@ -2122,11 +2474,17 @@ function obterEspeciePet(dados) {
 
 /* =========================================================
 
-   IMAGEM INDIVIDUAL DA FASE
+   IMAGEM INDIVIDUAL
 
 ========================================================= */
 
-function obterImagemIndividual(dados, fase) {
+function obterImagemIndividual(
+
+    dados,
+
+    fase
+
+) {
 
     const identidade =
 
@@ -2268,9 +2626,17 @@ function definirImagemPet(dados) {
 
             ).href;
 
-        if (imagem.src !== urlImagem) {
+        if (
 
-            imagem.style.opacity = "0";
+            imagem.src !==
+
+            urlImagem
+
+        ) {
+
+            imagem.style.opacity =
+
+                "0";
 
             setTimeout(() => {
 
@@ -2318,8 +2684,6 @@ function definirImagemPet(dados) {
 
     }
 
-    /* IDENTIDADE NO CONTAINER */
-
     container.dataset.especie =
 
         especie;
@@ -2345,8 +2709,6 @@ function definirImagemPet(dados) {
         delete container.dataset.identidade;
 
     }
-
-    /* IDENTIDADE NA IMAGEM */
 
     imagem.dataset.especie =
 
@@ -2498,7 +2860,7 @@ function atualizarOvoTela(dados) {
 
             idade.textContent =
 
-                "Carregando Petton...";
+                "🥚 Carregando Petton...";
 
         }
 
@@ -2506,13 +2868,11 @@ function atualizarOvoTela(dados) {
 
     }
 
-    /* =====================================================
+    const nasceu =
 
-       PET AINDA NO OVO
+        dados.nascido !== false;
 
-    ===================================================== */
-
-    if (dados.nascido === false) {
+    if (!nasceu) {
 
         ovo.style.display =
 
@@ -2522,53 +2882,131 @@ function atualizarOvoTela(dados) {
 
             "none";
 
-        /* IDADE */
-
         if (idade) {
+
+            idade.textContent =
+
+                calcularIdadeTextoPetton(
+
+                    dados
+
+                );
+
+        }
+
+        let restante = 0;
+
+        const campos = [
+
+            dados.tempoRestante,
+
+            dados.tempoRestanteNascimento,
+
+            dados.tempoParaNascimento,
+
+            dados.incubacaoRestanteMs,
+
+            dados.nascimentoRestante
+
+        ];
+
+        for (
+
+            const valor of campos
+
+        ) {
+
+            const numero =
+
+                Number(valor);
 
             if (
 
-                dados.tempoRestante !== undefined &&
+                isFinite(numero) &&
 
-                dados.tempoRestante !== null &&
-
-                Number(dados.tempoRestante) > 0
+                numero > 0
 
             ) {
 
-                idade.textContent =
+                restante =
 
-                    "🥚 Nascimento em " +
+                    numero;
 
-                    formatarTempo(
-
-                        Number(
-
-                            dados.tempoRestante
-
-                        )
-
-                    );
-
-            } else {
-
-                idade.textContent =
-
-                    "🥚 Ainda no ovo";
+                break;
 
             }
 
         }
 
-        /* PROGRESSO */
+        if (
 
-        const progresso =
+            restante <= 0
 
-            Number(
+        ) {
 
-                dados.progressoNascimento || 0
+            const inicio =
 
-            );
+                obterInicioOvoPetton(
+
+                    dados
+
+                );
+
+            if (inicio) {
+
+                restante =
+
+                    Math.max(
+
+                        0,
+
+                        (
+
+                            inicio.getTime() +
+
+                            86400000
+
+                        ) -
+
+                        Date.now()
+
+                    );
+
+            }
+
+        }
+
+        let progresso = 0;
+
+        if (
+
+            dados.progressoNascimento !== undefined
+
+        ) {
+
+            progresso =
+
+                Number(
+
+                    dados.progressoNascimento
+
+                );
+
+        } else if (restante > 0) {
+
+            progresso =
+
+                100 -
+
+                (
+
+                    restante /
+
+                    86400000
+
+                ) * 100;
+
+        }
 
         const barra =
 
@@ -2598,8 +3036,6 @@ function atualizarOvoTela(dados) {
 
         }
 
-        /* TEXTO DO OVO */
-
         const texto =
 
             document.getElementById(
@@ -2610,15 +3046,7 @@ function atualizarOvoTela(dados) {
 
         if (texto) {
 
-            if (
-
-                dados.tempoRestante !== undefined &&
-
-                dados.tempoRestante !== null &&
-
-                Number(dados.tempoRestante) > 0
-
-            ) {
+            if (restante > 0) {
 
                 texto.textContent =
 
@@ -2634,95 +3062,27 @@ function atualizarOvoTela(dados) {
 
         }
 
+        return;
+
     }
 
-    /* =====================================================
+    ovo.style.display =
 
-       PET JÁ NASCEU
+        "none";
 
-    ===================================================== */
+    imagem.style.display =
 
-    else {
+        "flex";
 
-        ovo.style.display =
+    if (idade) {
 
-            "none";
+        idade.textContent =
 
-        imagem.style.display =
+            calcularIdadeTextoPetton(
 
-            "flex";
+                dados
 
-        if (idade) {
-
-            if (dados.idadeTexto) {
-
-                idade.textContent =
-
-                    dados.idadeTexto;
-
-            }
-
-            else if (
-
-                dados.idadeDias !== undefined &&
-
-                dados.idadeDias !== null
-
-            ) {
-
-                const dias =
-
-                    Number(
-
-                        dados.idadeDias
-
-                    );
-
-                if (dias <= 0) {
-
-                    idade.textContent =
-
-                        "🐣 Recém-nascido";
-
-                }
-
-                else if (dias === 1) {
-
-                    idade.textContent =
-
-                        "1 dia de vida";
-
-                }
-
-                else {
-
-                    idade.textContent =
-
-                        dias +
-
-                        " dias de vida";
-
-                }
-
-            }
-
-            else if (dados.nascimento) {
-
-                idade.textContent =
-
-                    "🐣 Recém-nascido";
-
-            }
-
-            else {
-
-                idade.textContent =
-
-                    "🐾 Petton nasceu";
-
-            }
-
-        }
+            );
 
     }
 
@@ -2730,121 +3090,7 @@ function atualizarOvoTela(dados) {
 
 /* =========================================================
 
-   TESTAR NASCIMENTO
-
-========================================================= */
-
-function testarNascimentoTela() {
-
-    try {
-
-        if (
-
-            typeof Petton !== "undefined" &&
-
-            typeof Petton.carregarPetton === "function"
-
-        ) {
-
-            const dados =
-
-                Petton.carregarPetton();
-
-            if (dados) {
-
-                atualizarOvoTela(
-
-                    dados
-
-                );
-
-                atualizarTela();
-
-            }
-
-        }
-
-    } catch (erro) {
-
-        console.error(
-
-            "Erro ao verificar nascimento:",
-
-            erro
-
-        );
-
-    }
-
-}
-
-/* =========================================================
-
-   AQUECER OVO
-
-========================================================= */
-
-function aquecerOvo() {
-
-    try {
-
-        if (
-
-            typeof Petton !== "undefined" &&
-
-            typeof Petton.aquecerOvo === "function"
-
-        ) {
-
-            Petton.aquecerOvo();
-
-            atualizarTela();
-
-        }
-
-    } catch (erro) {
-
-        console.error(erro);
-
-    }
-
-}
-
-/* =========================================================
-
-   RESET
-
-========================================================= */
-
-function resetarPettonTela() {
-
-    try {
-
-        if (
-
-            typeof Petton !== "undefined" &&
-
-            typeof Petton.resetarPetton === "function"
-
-        ) {
-
-            Petton.resetarPetton();
-
-            atualizarTela();
-
-        }
-
-    } catch (erro) {
-
-        console.error(erro);
-
-    }
-
-}
-
-/* =========================================================
-
-   PET NASCIDO
+   ATUALIZAR PET NASCIDO
 
 ========================================================= */
 
@@ -2856,11 +3102,7 @@ function atualizarPetNascido(dados) {
 
     }
 
-    definirImagemPet(
-
-        dados
-
-    );
+    definirImagemPet(dados);
 
     const nome =
 
@@ -2890,73 +3132,13 @@ function atualizarPetNascido(dados) {
 
     if (idade) {
 
-        if (dados.idadeTexto) {
+        idade.textContent =
 
-            idade.textContent =
+            calcularIdadeTextoPetton(
 
-                dados.idadeTexto;
+                dados
 
-        }
-
-        else if (
-
-            dados.idadeDias !== undefined &&
-
-            dados.idadeDias !== null
-
-        ) {
-
-            const dias =
-
-                Number(
-
-                    dados.idadeDias
-
-                );
-
-            if (dias <= 0) {
-
-                idade.textContent =
-
-                    "🐣 Recém-nascido";
-
-            }
-
-            else if (dias === 1) {
-
-                idade.textContent =
-
-                    "1 dia de vida";
-
-            }
-
-            else {
-
-                idade.textContent =
-
-                    dias +
-
-                    " dias de vida";
-
-            }
-
-        }
-
-        else if (dados.nascimento) {
-
-            idade.textContent =
-
-                "🐣 Recém-nascido";
-
-        }
-
-        else {
-
-            idade.textContent =
-
-                "🐾 Petton nasceu";
-
-        }
+            );
 
     }
 
@@ -2992,7 +3174,11 @@ function mostrarEstadoDoente(dados) {
 
             dados.doente === true ||
 
-            Number(dados.saude ?? 100) < 40
+            Number(
+
+                dados.saude ?? 100
+
+            ) < 40
 
         )
 
@@ -3042,7 +3228,7 @@ function atualizarTela() {
 
                 idade.textContent =
 
-                    "Carregando Petton...";
+                    "🥚 Carregando Petton...";
 
             }
 
@@ -3068,7 +3254,7 @@ function atualizarTela() {
 
                 idade.textContent =
 
-                    "Carregando Petton...";
+                    "🥚 Preparando Petton...";
 
             }
 
@@ -3102,8 +3288,6 @@ function atualizarTela() {
 
         }
 
-        /* FOME */
-
         const fome =
 
             document.getElementById(
@@ -3127,8 +3311,6 @@ function atualizarTela() {
                 );
 
         }
-
-        /* FELICIDADE */
 
         const felicidade =
 
@@ -3154,8 +3336,6 @@ function atualizarTela() {
 
         }
 
-        /* ENERGIA */
-
         const energia =
 
             document.getElementById(
@@ -3179,8 +3359,6 @@ function atualizarTela() {
                 );
 
         }
-
-        /* HIGIENE */
 
         const higiene =
 
@@ -3206,8 +3384,6 @@ function atualizarTela() {
 
         }
 
-        /* SAÚDE */
-
         const saude =
 
             document.getElementById(
@@ -3231,8 +3407,6 @@ function atualizarTela() {
                 );
 
         }
-
-        /* MOEDAS */
 
         const moedas =
 
@@ -3440,6 +3614,134 @@ function atualizarTela() {
 
 /* =========================================================
 
+   NASCIMENTO
+
+========================================================= */
+
+function testarNascimentoTela() {
+
+    try {
+
+        if (
+
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.carregarPetton === "function"
+
+        ) {
+
+            const dados =
+
+                Petton.carregarPetton();
+
+            if (dados) {
+
+                atualizarOvoTela(
+
+                    dados
+
+                );
+
+                if (
+
+                    dados.nascido !== false
+
+                ) {
+
+                    atualizarPetNascido(
+
+                        dados
+
+                    );
+
+                }
+
+                atualizarTela();
+
+            }
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro ao verificar nascimento:",
+
+            erro
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   AQUECER OVO
+
+========================================================= */
+
+function aquecerOvo() {
+
+    try {
+
+        if (
+
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.aquecerOvo === "function"
+
+        ) {
+
+            Petton.aquecerOvo();
+
+            atualizarTela();
+
+        }
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+}
+
+/* =========================================================
+
+   RESET
+
+========================================================= */
+
+function resetarPettonTela() {
+
+    try {
+
+        if (
+
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.resetarPetton === "function"
+
+        ) {
+
+            Petton.resetarPetton();
+
+            atualizarTela();
+
+        }
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+}
+
+/* =========================================================
+
    ALIMENTAR
 
 ========================================================= */
@@ -3480,7 +3782,7 @@ function alimentarPetton() {
 
 /* =========================================================
 
-   ANIMAÇÃO COMIDA
+   COMIDA
 
 ========================================================= */
 
@@ -3700,91 +4002,99 @@ function mostrarAnimacaoBanho() {
 
     const aguas = [
 
-        [35, 25],
+        [35,25],
 
-        [48, 20],
+        [48,20],
 
-        [60, 27],
+        [60,27],
 
-        [42, 32],
+        [42,32],
 
-        [68, 34]
+        [68,34]
 
     ];
 
-    aguas.forEach(pos => {
+    aguas.forEach(
 
-        const el =
+        pos => {
 
-            document.createElement(
+            const el =
 
-                "div"
+                document.createElement(
 
-            );
+                    "div"
 
-        el.className =
+                );
 
-            "banhoAgua";
+            el.className =
 
-        el.textContent =
+                "banhoAgua";
 
-            "💦";
+            el.textContent =
 
-        el.style.left =
+                "💦";
 
-            pos[0] + "%";
+            el.style.left =
 
-        el.style.top =
+                pos[0] + "%";
 
-            pos[1] + "%";
+            el.style.top =
 
-        area.appendChild(el);
+                pos[1] + "%";
 
-    });
+            area.appendChild(el);
+
+        }
+
+    );
 
     const bolhas = [
 
-        [30, 65],
+        [30,65],
 
-        [42, 70],
+        [42,70],
 
-        [55, 62],
+        [55,62],
 
-        [67, 68],
+        [67,68],
 
-        [48, 76]
+        [48,76]
 
     ];
 
-    bolhas.forEach(pos => {
+    bolhas.forEach(
 
-        const el =
+        pos => {
 
-            document.createElement(
+            const el =
 
-                "div"
+                document.createElement(
 
-            );
+                    "div"
 
-        el.className =
+                );
 
-            "banhoBolha";
+            el.className =
 
-        el.textContent =
+                "banhoBolha";
 
-            "🫧";
+            el.textContent =
 
-        el.style.left =
+                "🫧";
 
-            pos[0] + "%";
+            el.style.left =
 
-        el.style.top =
+                pos[0] + "%";
 
-            pos[1] + "%";
+            el.style.top =
 
-        area.appendChild(el);
+                pos[1] + "%";
 
-    });
+            area.appendChild(el);
+
+        }
+
+    );
 
     const espuma =
 
@@ -4058,13 +4368,13 @@ function escovarPetton() {
 
         rect.left +
 
-        (rect.width / 2);
+        rect.width / 2;
 
     const centroY =
 
         rect.top +
 
-        (rect.height / 2);
+        rect.height / 2;
 
     escova.style.display =
 
@@ -4120,7 +4430,11 @@ function escovarPetton() {
 
                 ) + "px";
 
-            if (movimentos >= 8) {
+            if (
+
+                movimentos >= 8
+
+            ) {
 
                 clearInterval(
 
@@ -4150,11 +4464,7 @@ function escovarPetton() {
 
                     } catch (erro) {
 
-                        console.error(
-
-                            erro
-
-                        );
+                        console.error(erro);
 
                     }
 
@@ -4212,11 +4522,11 @@ function dormirPetton() {
 
         const posicoes = [
 
-            [58, 38],
+            [58,38],
 
-            [63, 30],
+            [63,30],
 
-            [68, 22]
+            [68,22]
 
         ];
 
@@ -4252,11 +4562,7 @@ function dormirPetton() {
 
                     (i * .35) + "s";
 
-                area.appendChild(
-
-                    z
-
-                );
+                area.appendChild(z);
 
             }
 
@@ -4342,15 +4648,15 @@ function carinhoPetton() {
 
         const posicoes = [
 
-            [28, 42],
+            [28,42],
 
-            [45, 35],
+            [45,35],
 
-            [60, 45],
+            [60,45],
 
-            [38, 58],
+            [38,58],
 
-            [65, 60]
+            [65,60]
 
         ];
 
@@ -4470,7 +4776,13 @@ function passearPetton() {
 
         );
 
-    if (principal && imagem) {
+    if (
+
+        principal &&
+
+        imagem
+
+    ) {
 
         imagem.src =
 
@@ -4554,7 +4866,13 @@ function hospitalPetton() {
 
         );
 
-    if (principal && imagem) {
+    if (
+
+        principal &&
+
+        imagem
+
+    ) {
 
         imagem.src =
 
@@ -4710,15 +5028,109 @@ function mostrarMensagem(texto) {
 
 /* =========================================================
 
+   NAVEGAÇÃO SEGURA
+
+========================================================= */
+
+function navegarPara(caminho) {
+
+    try {
+
+        window.location.href =
+
+            caminho;
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro de navegação:",
+
+            erro
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   MEU PETTON
+
+========================================================= */
+
+function irParaMeuPetton() {
+
+    /*
+
+       Se esta página já é o Petton,
+
+       não faz nenhuma navegação.
+
+    */
+
+    mostrarMensagem(
+
+        "🐾 Você já está no seu Petton!"
+
+    );
+
+}
+
+/* =========================================================
+
    ÁLBUM
 
 ========================================================= */
 
 function abrirAlbum() {
 
-    window.location.href =
+    navegarPara(
 
-        "petton-album.html";
+        "petton-album.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   RANKING
+
+========================================================= */
+
+function abrirRanking() {
+
+    navegarPara(
+
+        "petton-ranking.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   INÍCIO
+
+========================================================= */
+
+function irParaInicio() {
+
+    /*
+
+       Primeiro tenta voltar para a página
+
+       principal do mesmo diretório.
+
+    */
+
+    navegarPara(
+
+        "../index.html"
+
+    );
 
 }
 
@@ -4740,19 +5152,23 @@ function voltarPetton() {
 
             window.history.back();
 
-        } else {
-
-            window.location.href =
-
-                "../index.html";
+            return;
 
         }
 
+        navegarPara(
+
+            "../index.html"
+
+        );
+
     } catch (erro) {
 
-        window.location.href =
+        navegarPara(
 
-            "../index.html";
+            "../index.html"
+
+        );
 
     }
 
@@ -4858,7 +5274,7 @@ function salvarNomePetton() {
 
 /* =========================================================
 
-   INICIALIZAÇÃO LINE
+   LINE
 
 ========================================================= */
 
@@ -4886,7 +5302,11 @@ async function inicializarLinePetton() {
 
         });
 
-        if (!liff.isInClient()) {
+        if (
+
+            !liff.isInClient()
+
+        ) {
 
             mostrarBloqueio();
 
@@ -4996,13 +5416,13 @@ document.addEventListener(
 
             atualizarTela();
 
-        }, 60000);
+        }, 1000);
 
         setInterval(() => {
 
-            testarNascimentoTela();
+            atualizarBonus();
 
-        }, 1000);
+        }, 60000);
 
     }
 
