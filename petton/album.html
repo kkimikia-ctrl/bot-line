@@ -620,9 +620,7 @@ function carregar(){
 
         ){
 
-            dados =
-
-                Petton.carregar();
+            dados = Petton.carregar();
 
         }
 
@@ -1362,7 +1360,9 @@ function renderizar(){
 
                 <div class="sub">
 
-                    Seu Petton ainda está se preparando para nascer.
+                    Seu Petton ainda está se preparando
+
+                    para nascer.
 
                 </div>
 
@@ -1548,25 +1548,29 @@ function renderizar(){
 
         dados.nome || "Meu Petton";
 
-    let liberados = 0;
+    /*
 
-    momentos.forEach(
+       CORREÇÃO DO CONTADOR
 
-        momento => {
+       Conta SOMENTE os momentos cujo dia já foi atingido.
 
-            if(
+       Exemplo:
+
+       idade 1 → somente Dia 0 = 1 de 8
+
+       idade 3 → Dia 0 + Dia 3 = 2 de 8
+
+    */
+
+    const liberados =
+
+        momentos.filter(
+
+            momento =>
 
                 idade >= momento.dia
 
-            ){
-
-                liberados++;
-
-            }
-
-        }
-
-    );
+        ).length;
 
     const ultimoLiberado =
 
@@ -1644,63 +1648,153 @@ function renderizar(){
 
                     momento => {
 
-                    const liberado =
+                        const liberado =
 
-                        idade >= momento.dia;
+                            idade >= momento.dia;
 
-                    const atual =
+                        const atual =
 
-                        liberado &&
+                            liberado &&
 
-                        ultimoLiberado &&
+                            ultimoLiberado &&
 
-                        momento.dia ===
+                            momento.dia ===
 
-                        ultimoLiberado.dia;
+                            ultimoLiberado.dia;
 
-                    let classe =
+                        let classe =
 
-                        liberado
+                            liberado
 
-                        ? "liberado"
+                            ? "liberado"
 
-                        : "bloqueado";
+                            : "bloqueado";
 
-                    if(atual){
+                        if(atual){
 
-                        classe += " atual";
+                            classe += " atual";
 
-                    }
+                        }
 
-                    return `
+                        return `
 
-                        <div class="momento ${classe}">
+                            <div class="momento ${classe}">
 
-                            <div class="momento-topo">
+                                <div class="momento-topo">
 
-                                <div class="dia">
+                                    <div class="dia">
 
-                                    ${
+                                        ${
 
-                                        momento.dia === 0
+                                            momento.dia === 0
 
-                                        ? "Dia 0"
+                                            ? "Dia 0"
 
-                                        : "Dia " + momento.dia
+                                            : "Dia " + momento.dia
 
-                                    }
+                                        }
+
+                                    </div>
+
+                                    <div class="status">
+
+                                        ${
+
+                                            liberado
+
+                                            ? "📸"
+
+                                            : "🔒"
+
+                                        }
+
+                                    </div>
 
                                 </div>
 
-                                <div class="status">
+                                <div class="foto">
 
                                     ${
 
                                         liberado
 
-                                        ? "📸"
+                                        ?
 
-                                        : "🔒"
+                                        criarVisualMomento(
+
+                                            momento
+
+                                        )
+
+                                        :
+
+                                        `
+
+                                        <div class="bloqueio">
+
+                                            🔒
+
+                                        </div>
+
+                                        `
+
+                                    }
+
+                                </div>
+
+                                <div class="data">
+
+                                    ${
+
+                                        liberado
+
+                                        ?
+
+                                        formatarData(
+
+                                            momento.dia
+
+                                        )
+
+                                        :
+
+                                        "Ainda não desbloqueado"
+
+                                    }
+
+                                </div>
+
+                                <div class="descricao">
+
+                                    ${
+
+                                        liberado
+
+                                        ?
+
+                                        momento.titulo
+
+                                        :
+
+                                        "Momento futuro"
+
+                                    }
+
+                                </div>
+
+                                <div class="detalhe">
+
+                                    ${
+
+                                        liberado
+
+                                        ?
+
+                                        momento.detalhe
+
+                                        :
+
+                                        "Continue cuidando do seu Petton."
 
                                     }
 
@@ -1708,87 +1802,11 @@ function renderizar(){
 
                             </div>
 
-                            <div class="foto">
+                        `;
 
-                                ${
+                    }
 
-                                    liberado
-
-                                    ?
-
-                                    criarVisualMomento(
-
-                                        momento
-
-                                    )
-
-                                    :
-
-                                    `
-
-                                    <div class="bloqueio">
-
-                                        🔒
-
-                                    </div>
-
-                                    `
-
-                                }
-
-                            </div>
-
-                            <div class="data">
-
-                                ${
-
-                                    liberado
-
-                                    ? formatarData(
-
-                                        momento.dia
-
-                                      )
-
-                                    : "Ainda não desbloqueado"
-
-                                }
-
-                            </div>
-
-                            <div class="descricao">
-
-                                ${
-
-                                    liberado
-
-                                    ? momento.titulo
-
-                                    : "Momento futuro"
-
-                                }
-
-                            </div>
-
-                            <div class="detalhe">
-
-                                ${
-
-                                    liberado
-
-                                    ? momento.detalhe
-
-                                    : "Continue cuidando do seu Petton."
-
-                                }
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                }).join("")}
+                ).join("")}
 
             </div>
 
@@ -1863,22 +1881,6 @@ renderizarAgora();
 /* =========================================================
 
    ATUALIZAÇÃO SEM PISCAR
-
-=========================================================
-
-   Antes:
-
-       setInterval(renderizar,1000);
-
-   Isso reconstruía todo o álbum a cada segundo.
-
-   Agora:
-
-   - verifica o estado a cada segundo
-
-   - não mexe na tela se nada mudou
-
-   - renderiza somente quando há mudança
 
 ========================================================= */
 
