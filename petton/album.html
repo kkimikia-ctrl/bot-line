@@ -442,12 +442,6 @@ body{
 
 }
 
-.input-foto{
-
-    display:none;
-
-}
-
 @media(max-width:390px){
 
     .album{
@@ -528,7 +522,7 @@ let assinaturaAnterior = "";
 
 /* =========================================================
 
-   MOMENTOS DO ÁLBUM
+   MOMENTOS
 
 ========================================================= */
 
@@ -650,17 +644,11 @@ const momentos = [
 
 /* =========================================================
 
-   CHAVE DAS FOTOS
+   FOTOS SALVAS
 
 ========================================================= */
 
 const CHAVE_FOTOS = "petton_album_fotos_v1";
-
-/* =========================================================
-
-   CARREGAR FOTOS
-
-========================================================= */
 
 function carregarFotos(){
 
@@ -676,9 +664,7 @@ function carregarFotos(){
 
         }
 
-        const fotos =
-
-            JSON.parse(salvo);
+        const fotos = JSON.parse(salvo);
 
         if(
 
@@ -707,12 +693,6 @@ function carregarFotos(){
     return {};
 
 }
-
-/* =========================================================
-
-   SALVAR FOTOS
-
-========================================================= */
 
 function salvarFotos(fotos){
 
@@ -744,12 +724,6 @@ function salvarFotos(fotos){
 
 }
 
-/* =========================================================
-
-   PEGAR FOTO DE UM MOMENTO
-
-========================================================= */
-
 function obterFotoMomento(dia){
 
     const fotos =
@@ -762,151 +736,375 @@ function obterFotoMomento(dia){
 
 /* =========================================================
 
-   TIRAR FOTO
+   CAPTURAR O PETTON
 
 ========================================================= */
 
-function tirarFoto(dia){
-
-    const input =
-
-        document.getElementById(
-
-            "inputFotoAlbum"
-
-        );
-
-    if(!input){
-
-        alert(
-
-            "Não foi possível abrir a câmera."
-
-        );
-
-        return;
-
-    }
-
-    input.dataset.dia =
-
-        String(dia);
-
-    input.value = "";
-
-    input.click();
-
-}
-
-/* =========================================================
-
-   FOTO ESCOLHIDA / CÂMERA
-
-========================================================= */
-
-function fotoSelecionada(event){
+async function tirarFoto(dia){
 
     try{
 
-        const arquivo =
+        const momento =
 
-            event.target.files &&
+            document.querySelector(
 
-            event.target.files[0];
-
-        if(!arquivo){
-
-            return;
-
-        }
-
-        const dia =
-
-            event.target.dataset.dia;
-
-        if(
-
-            dia === undefined ||
-
-            dia === ""
-
-        ){
-
-            return;
-
-        }
-
-        const leitor =
-
-            new FileReader();
-
-        leitor.onload = function(){
-
-            const imagem =
-
-                leitor.result;
-
-            if(
-
-                typeof imagem !== "string" ||
-
-                imagem.length === 0
-
-            ){
-
-                alert(
-
-                    "Não foi possível carregar a foto."
-
-                );
-
-                return;
-
-            }
-
-            const fotos =
-
-                carregarFotos();
-
-            fotos[String(dia)] =
-
-                imagem;
-
-            if(!salvarFotos(fotos)){
-
-                alert(
-
-                    "Não foi possível salvar a foto. O armazenamento do aparelho pode estar cheio."
-
-                );
-
-                return;
-
-            }
-
-            renderizarAgora();
-
-        };
-
-        leitor.onerror = function(){
-
-            alert(
-
-                "Não foi possível carregar a foto."
+                `.momento[data-dia="${dia}"]`
 
             );
 
-        };
+        if(!momento){
 
-        leitor.readAsDataURL(arquivo);
+            alert(
+
+                "Não foi possível encontrar o Petton."
+
+            );
+
+            return;
+
+        }
+
+        const areaFoto =
+
+            momento.querySelector(".foto");
+
+        if(!areaFoto){
+
+            alert(
+
+                "Não foi possível capturar o Petton."
+
+            );
+
+            return;
+
+        }
+
+        /*
+
+         * Usa SVG + foreignObject para transformar
+
+         * o conteúdo visual do Petton em uma imagem.
+
+         */
+
+        const rect =
+
+            areaFoto.getBoundingClientRect();
+
+        const largura =
+
+            Math.max(
+
+                1,
+
+                Math.round(rect.width)
+
+            );
+
+        const altura =
+
+            Math.max(
+
+                1,
+
+                Math.round(rect.height)
+
+            );
+
+        const clone =
+
+            areaFoto.cloneNode(true);
+
+        clone.style.width =
+
+            largura + "px";
+
+        clone.style.height =
+
+            altura + "px";
+
+        clone.style.margin =
+
+            "0";
+
+        clone.style.borderRadius =
+
+            "16px";
+
+        clone.style.background =
+
+            "linear-gradient(180deg,#f8fafc,#f1f5f9)";
+
+        /*
+
+         * Remove a foto antiga do clone para
+
+         * capturar o Petton atual.
+
+         */
+
+        const fotoUsuario =
+
+            clone.querySelector(
+
+                ".foto-usuario"
+
+            );
+
+        if(fotoUsuario){
+
+            fotoUsuario.remove();
+
+        }
+
+        /*
+
+         * Cria um SVG com o visual atual.
+
+         */
+
+        const serializer =
+
+            new XMLSerializer();
+
+        const html =
+
+            serializer.serializeToString(
+
+                clone
+
+            );
+
+        const svg =
+
+            `
+
+            <svg
+
+                xmlns="http://www.w3.org/2000/svg"
+
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+
+                width="${largura}"
+
+                height="${altura}"
+
+            >
+
+                <foreignObject
+
+                    width="100%"
+
+                    height="100%"
+
+                >
+
+                    <div
+
+                        xmlns="http://www.w3.org/1999/xhtml"
+
+                        style="
+
+                            width:${largura}px;
+
+                            height:${altura}px;
+
+                            display:flex;
+
+                            align-items:center;
+
+                            justify-content:center;
+
+                            overflow:hidden;
+
+                            border-radius:16px;
+
+                            background:linear-gradient(180deg,#f8fafc,#f1f5f9);
+
+                        "
+
+                    >
+
+                        ${html}
+
+                    </div>
+
+                </foreignObject>
+
+            </svg>
+
+            `;
+
+        const blob =
+
+            new Blob(
+
+                [svg],
+
+                {
+
+                    type:"image/svg+xml;charset=utf-8"
+
+                }
+
+            );
+
+        const url =
+
+            URL.createObjectURL(blob);
+
+        const imagem =
+
+            new Image();
+
+        imagem.onload =
+
+            function(){
+
+                try{
+
+                    const canvas =
+
+                        document.createElement(
+
+                            "canvas"
+
+                        );
+
+                    canvas.width =
+
+                        largura * 2;
+
+                    canvas.height =
+
+                        altura * 2;
+
+                    const ctx =
+
+                        canvas.getContext(
+
+                            "2d"
+
+                        );
+
+                    ctx.scale(2,2);
+
+                    ctx.drawImage(
+
+                        imagem,
+
+                        0,
+
+                        0,
+
+                        largura,
+
+                        altura
+
+                    );
+
+                    URL.revokeObjectURL(
+
+                        url
+
+                    );
+
+                    const resultado =
+
+                        canvas.toDataURL(
+
+                            "image/png"
+
+                        );
+
+                    const fotos =
+
+                        carregarFotos();
+
+                    fotos[String(dia)] =
+
+                        resultado;
+
+                    if(
+
+                        !salvarFotos(fotos)
+
+                    ){
+
+                        alert(
+
+                            "Não foi possível salvar a foto. O armazenamento do aparelho pode estar cheio."
+
+                        );
+
+                        return;
+
+                    }
+
+                    renderizarAgora();
+
+                }catch(e){
+
+                    URL.revokeObjectURL(
+
+                        url
+
+                    );
+
+                    console.log(
+
+                        "Erro ao gerar captura:",
+
+                        e
+
+                    );
+
+                    capturarFallback(
+
+                        dia
+
+                    );
+
+                }
+
+            };
+
+        imagem.onerror =
+
+            function(){
+
+                URL.revokeObjectURL(
+
+                    url
+
+                );
+
+                capturarFallback(
+
+                    dia
+
+                );
+
+            };
+
+        imagem.src =
+
+            url;
 
     }catch(e){
 
         console.log(
 
-            "Erro ao selecionar foto:",
+            "Erro ao capturar Petton:",
 
             e
+
+        );
+
+        capturarFallback(
+
+            dia
 
         );
 
@@ -916,7 +1114,185 @@ function fotoSelecionada(event){
 
 /* =========================================================
 
-   CARREGAR O MESMO PETTON DO petton.js
+   FALLBACK
+
+========================================================= */
+
+function capturarFallback(dia){
+
+    /*
+
+     * Caso o navegador do LINE não permita
+
+     * a captura do HTML, salva a imagem
+
+     * original do Petton como lembrança.
+
+     */
+
+    try{
+
+        const imagem =
+
+            imagemPetton();
+
+        if(!imagem){
+
+            alert(
+
+                "Não foi possível capturar o Petton."
+
+            );
+
+            return;
+
+        }
+
+        const img =
+
+            new Image();
+
+        img.crossOrigin =
+
+            "anonymous";
+
+        img.onload =
+
+            function(){
+
+                try{
+
+                    const canvas =
+
+                        document.createElement(
+
+                            "canvas"
+
+                        );
+
+                    canvas.width =
+
+                        img.naturalWidth || 400;
+
+                    canvas.height =
+
+                        img.naturalHeight || 400;
+
+                    const ctx =
+
+                        canvas.getContext(
+
+                            "2d"
+
+                        );
+
+                    ctx.fillStyle =
+
+                        "#f8fafc";
+
+                    ctx.fillRect(
+
+                        0,
+
+                        0,
+
+                        canvas.width,
+
+                        canvas.height
+
+                    );
+
+                    ctx.drawImage(
+
+                        img,
+
+                        0,
+
+                        0,
+
+                        canvas.width,
+
+                        canvas.height
+
+                    );
+
+                    const fotos =
+
+                        carregarFotos();
+
+                    fotos[String(dia)] =
+
+                        canvas.toDataURL(
+
+                            "image/png"
+
+                        );
+
+                    if(
+
+                        salvarFotos(fotos)
+
+                    ){
+
+                        renderizarAgora();
+
+                    }else{
+
+                        alert(
+
+                            "Não foi possível salvar a foto."
+
+                        );
+
+                    }
+
+                }catch(e){
+
+                    console.log(e);
+
+                    alert(
+
+                        "Não foi possível registrar este momento."
+
+                    );
+
+                }
+
+            };
+
+        img.onerror =
+
+            function(){
+
+                alert(
+
+                    "Não foi possível registrar este momento."
+
+                );
+
+            };
+
+        img.src =
+
+            imagem;
+
+    }catch(e){
+
+        console.log(e);
+
+        alert(
+
+            "Não foi possível registrar este momento."
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   CARREGAR PETTON
 
 ========================================================= */
 
@@ -956,7 +1332,7 @@ function carregar(){
 
 /* =========================================================
 
-   VERIFICAR SE AINDA É OVO
+   OVO
 
 ========================================================= */
 
@@ -1046,7 +1422,7 @@ function idadeAtual(){
 
 /* =========================================================
 
-   IMAGEM DO MESMO PETTON DA TELA PRINCIPAL
+   IMAGEM DO PETTON
 
 ========================================================= */
 
@@ -1110,7 +1486,7 @@ function imagemPetton(){
 
 /* =========================================================
 
-   EMOJI DE FALLBACK
+   EMOJI
 
 ========================================================= */
 
@@ -1162,7 +1538,7 @@ function especieEmoji(){
 
 /* =========================================================
 
-   VISUAL DO PETTON
+   VISUAL PRINCIPAL
 
 ========================================================= */
 
@@ -1236,7 +1612,7 @@ function criarVisualPetton(){
 
 /* =========================================================
 
-   VISUAL DO PETTON NOS MOMENTOS
+   VISUAL DO MOMENTO
 
 ========================================================= */
 
@@ -1249,8 +1625,6 @@ function criarVisualMomento(momento){
             momento.dia
 
         );
-
-    /* FOTO TIRADA PELO USUÁRIO */
 
     if(foto){
 
@@ -1348,7 +1722,7 @@ function criarVisualMomento(momento){
 
 /* =========================================================
 
-   DATA DE CADA MOMENTO
+   DATA
 
 ========================================================= */
 
@@ -1408,7 +1782,7 @@ function formatarData(dia){
 
 /* =========================================================
 
-   ASSINATURA DO ESTADO DO ÁLBUM
+   ASSINATURA
 
 ========================================================= */
 
@@ -1484,25 +1858,15 @@ function assinaturaTela(){
 
     return JSON.stringify({
 
-        especie:
+        especie:d.especie,
 
-            d.especie,
+        nome:d.nome,
 
-        nome:
+        fase:d.fase,
 
-            d.nome,
+        nascimento:d.dateNascimento,
 
-        fase:
-
-            d.fase,
-
-        nascimento:
-
-            d.dateNascimento,
-
-        idade:
-
-            idade,
+        idade:idade,
 
         restanteOvo:
 
@@ -1540,7 +1904,7 @@ function renderizar(){
 
     /* =====================================================
 
-       NÃO EXISTE PETTON
+       SEM PETTON
 
     ===================================================== */
 
@@ -1598,7 +1962,7 @@ function renderizar(){
 
     /* =====================================================
 
-       AINDA ESTÁ NO OVO
+       OVO
 
     ===================================================== */
 
@@ -1674,6 +2038,10 @@ function renderizar(){
 
         }
 
+        const fotoOvo =
+
+            obterFotoMomento(0);
+
         area.innerHTML = `
 
             <div class="card resumo">
@@ -1732,7 +2100,13 @@ function renderizar(){
 
                 <div class="album">
 
-                    <div class="momento liberado atual">
+                    <div
+
+                        class="momento liberado atual"
+
+                        data-dia="0"
+
+                    >
 
                         <div class="momento-topo">
 
@@ -1754,7 +2128,7 @@ function renderizar(){
 
                             ${
 
-                                obterFotoMomento(0)
+                                fotoOvo
 
                                 ?
 
@@ -1764,7 +2138,7 @@ function renderizar(){
 
                                     class="foto-usuario"
 
-                                    src="${obterFotoMomento(0)}"
+                                    src="${fotoOvo}"
 
                                     alt="Foto do momento"
 
@@ -1822,15 +2196,11 @@ function renderizar(){
 
                             📸 ${
 
-                                obterFotoMomento(0)
+                                fotoOvo
 
-                                ?
+                                ? "Tirar outra foto"
 
-                                "Tirar outra foto"
-
-                                :
-
-                                "Tirar foto"
+                                : "Registrar momento"
 
                             }
 
@@ -1838,7 +2208,9 @@ function renderizar(){
 
                     </div>
 
-                    ${momentos
+                    ${
+
+                        momentos
 
                         .filter(
 
@@ -1924,7 +2296,7 @@ function renderizar(){
 
     /* =====================================================
 
-       PETTON JÁ NASCEU
+       PETTON NASCEU
 
     ===================================================== */
 
@@ -1950,13 +2322,13 @@ function renderizar(){
 
         momentos
 
-            .filter(
+        .filter(
 
-                m => m.dia <= idade
+            m => m.dia <= idade
 
-            )
+        )
 
-            .slice(-1)[0];
+        .slice(-1)[0];
 
     area.innerHTML = `
 
@@ -2018,217 +2390,223 @@ function renderizar(){
 
             <div class="album">
 
-                ${momentos.map(
+                ${
 
-                    momento => {
+                    momentos.map(
 
-                        const liberado =
+                        momento => {
 
-                            idade >= momento.dia;
+                            const liberado =
 
-                        const atual =
+                                idade >= momento.dia;
 
-                            liberado &&
+                            const atual =
 
-                            ultimoLiberado &&
+                                liberado &&
 
-                            momento.dia ===
+                                ultimoLiberado &&
 
-                            ultimoLiberado.dia;
+                                momento.dia ===
 
-                        let classe =
+                                ultimoLiberado.dia;
 
-                            liberado
+                            let classe =
 
-                            ? "liberado"
+                                liberado
 
-                            : "bloqueado";
+                                ? "liberado"
 
-                        if(atual){
+                                : "bloqueado";
 
-                            classe += " atual";
+                            if(atual){
 
-                        }
+                                classe += " atual";
 
-                        const foto =
+                            }
 
-                            obterFotoMomento(
+                            const foto =
 
-                                momento.dia
+                                obterFotoMomento(
 
-                            );
+                                    momento.dia
 
-                        return `
+                                );
 
-                            <div class="momento ${classe}">
+                            return `
 
-                                <div class="momento-topo">
+                                <div
 
-                                    <div class="dia">
+                                    class="momento ${classe}"
 
-                                        ${
+                                    data-dia="${momento.dia}"
 
-                                            momento.dia === 0
+                                >
 
-                                            ? "Dia 0"
+                                    <div class="momento-topo">
 
-                                            : "Dia " + momento.dia
+                                        <div class="dia">
 
-                                        }
+                                            ${
+
+                                                momento.dia === 0
+
+                                                ? "Dia 0"
+
+                                                : "Dia " + momento.dia
+
+                                            }
+
+                                        </div>
+
+                                        <div class="status">
+
+                                            ${
+
+                                                liberado
+
+                                                ? "📸"
+
+                                                : "🔒"
+
+                                            }
+
+                                        </div>
 
                                     </div>
 
-                                    <div class="status">
+                                    <div class="foto">
 
                                         ${
 
                                             liberado
 
-                                            ? "📸"
+                                            ?
 
-                                            : "🔒"
+                                            criarVisualMomento(
+
+                                                momento
+
+                                            )
+
+                                            :
+
+                                            `
+
+                                            <div class="bloqueio">
+
+                                                🔒
+
+                                            </div>
+
+                                            `
 
                                         }
 
                                     </div>
 
-                                </div>
+                                    <div class="data">
 
-                                <div class="foto">
+                                        ${
 
-                                    ${
-
-                                        liberado
-
-                                        ?
-
-                                        criarVisualMomento(
-
-                                            momento
-
-                                        )
-
-                                        :
-
-                                        `
-
-                                        <div class="bloqueio">
-
-                                            🔒
-
-                                        </div>
-
-                                        `
-
-                                    }
-
-                                </div>
-
-                                <div class="data">
-
-                                    ${
-
-                                        liberado
-
-                                        ?
-
-                                        formatarData(
-
-                                            momento.dia
-
-                                        )
-
-                                        :
-
-                                        "Ainda não desbloqueado"
-
-                                    }
-
-                                </div>
-
-                                <div class="descricao">
-
-                                    ${
-
-                                        liberado
-
-                                        ?
-
-                                        momento.titulo
-
-                                        :
-
-                                        "Momento futuro"
-
-                                    }
-
-                                </div>
-
-                                <div class="detalhe">
-
-                                    ${
-
-                                        liberado
-
-                                        ?
-
-                                        momento.detalhe
-
-                                        :
-
-                                        "Continue cuidando do seu Petton."
-
-                                    }
-
-                                </div>
-
-                                ${
-
-                                    atual
-
-                                    ?
-
-                                    `
-
-                                    <button
-
-                                        class="botao-foto"
-
-                                        onclick="tirarFoto(${momento.dia})"
-
-                                    >
-
-                                        📸 ${
-
-                                            foto
+                                            liberado
 
                                             ?
 
-                                            "Tirar outra foto"
+                                            formatarData(
+
+                                                momento.dia
+
+                                            )
 
                                             :
 
-                                            "Tirar foto"
+                                            "Ainda não desbloqueado"
 
                                         }
 
-                                    </button>
+                                    </div>
 
-                                    `
+                                    <div class="descricao">
 
-                                    :
+                                        ${
 
-                                    ""
+                                            liberado
 
-                                }
+                                            ?
 
-                            </div>
+                                            momento.titulo
 
-                        `;
+                                            :
 
-                    }
+                                            "Momento futuro"
 
-                ).join("")}
+                                        }
+
+                                    </div>
+
+                                    <div class="detalhe">
+
+                                        ${
+
+                                            liberado
+
+                                            ?
+
+                                            momento.detalhe
+
+                                            :
+
+                                            "Continue cuidando do seu Petton."
+
+                                        }
+
+                                    </div>
+
+                                    ${
+
+                                        atual
+
+                                        ?
+
+                                        `
+
+                                        <button
+
+                                            class="botao-foto"
+
+                                            onclick="tirarFoto(${momento.dia})"
+
+                                        >
+
+                                            📸 ${
+
+                                                foto
+
+                                                ? "Tirar outra foto"
+
+                                                : "Registrar momento"
+
+                                            }
+
+                                        </button>
+
+                                        `
+
+                                        :
+
+                                        ""
+
+                                    }
+
+                                </div>
+
+                            `;
+
+                        }
+
+                    ).join("")
+
+                }
 
             </div>
 
@@ -2302,7 +2680,7 @@ renderizarAgora();
 
 /* =========================================================
 
-   ATUALIZAÇÃO SEM PISCAR
+   ATUALIZAÇÃO
 
 ========================================================= */
 
@@ -2347,28 +2725,6 @@ setInterval(
 );
 
 </script>
-
-<!-- =========================================================
-
-     CAMPO INVISÍVEL PARA CÂMERA / GALERIA
-
-========================================================= -->
-
-<input
-
-    id="inputFotoAlbum"
-
-    class="input-foto"
-
-    type="file"
-
-    accept="image/*"
-
-    capture="environment"
-
-    onchange="fotoSelecionada(event)"
-
->
 
 </body>
 
