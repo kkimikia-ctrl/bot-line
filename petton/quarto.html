@@ -298,7 +298,7 @@ body{
 
 /* =========================
 
-   PETTON ORIGINAL
+   PETTON
 
 ========================= */
 
@@ -432,11 +432,19 @@ body{
 
 }
 
+/* =========================
+
+   POSIÇÕES
+
+========================= */
+
+/* CAMA */
+
 .cama{
 
-    left:25px;
+    left:20px;
 
-    bottom:45px;
+    bottom:42px;
 
 }
 
@@ -446,9 +454,11 @@ body{
 
 }
 
+/* POTE */
+
 .pote{
 
-    right:30px;
+    right:25px;
 
     bottom:72px;
 
@@ -459,6 +469,8 @@ body{
     font-size:50px;
 
 }
+
+/* BRINQUEDOS */
 
 .brinquedo{
 
@@ -474,6 +486,40 @@ body{
 
 }
 
+/* SEGUNDO BRINQUEDO */
+
+.brinquedo2{
+
+    right:75px;
+
+    bottom:55px;
+
+}
+
+.brinquedo2 span{
+
+    font-size:43px;
+
+}
+
+/* TERCEIRO BRINQUEDO */
+
+.brinquedo3{
+
+    left:28px;
+
+    bottom:155px;
+
+}
+
+.brinquedo3 span{
+
+    font-size:42px;
+
+}
+
+/* PLANTA */
+
 .planta{
 
     right:25px;
@@ -487,6 +533,8 @@ body{
     font-size:62px;
 
 }
+
+/* TAPETE */
 
 .tapete{
 
@@ -510,6 +558,8 @@ body{
 
 }
 
+/* ABAJUR */
+
 .abajur{
 
     left:18px;
@@ -524,6 +574,8 @@ body{
 
 }
 
+/* QUADRO */
+
 .quadro{
 
     right:25px;
@@ -535,6 +587,26 @@ body{
 .quadro span{
 
     font-size:50px;
+
+}
+
+/* =========================
+
+   CASINHA
+
+========================= */
+
+.casa{
+
+    left:20px;
+
+    bottom:50px;
+
+}
+
+.casa span{
+
+    font-size:85px;
 
 }
 
@@ -642,7 +714,7 @@ body{
 
 /* =========================
 
-   ANIMAÇÃO OBJETOS
+   ANIMAÇÃO
 
 ========================= */
 
@@ -784,7 +856,7 @@ body{
 
     <div id="objetos"></div>
 
-    <!-- PETTON ORIGINAL -->
+    <!-- PETTON -->
 
     <div
 
@@ -795,6 +867,8 @@ body{
     >
 
         <img
+
+            id="imagemPetton"
 
             src="petton-original.png"
 
@@ -872,9 +946,11 @@ body{
 
         <br><br>
 
-        Em breve você poderá escolher
+        Você pode continuar comprando
 
-        exatamente onde colocar cada objeto.
+        novos objetos para deixar o quarto
+
+        cada vez mais bonito. 🐾
 
     </div>
 
@@ -888,7 +964,7 @@ body{
 
 /* =================================================
 
-   LOJA
+   CONFIGURAÇÃO DA LOJA
 
 ================================================= */
 
@@ -992,6 +1068,18 @@ const produtos = [
 
     {
 
+        id:"pelucia",
+
+        nome:"Bichinho de pelúcia",
+
+        emoji:"🧸",
+
+        tipo:"brinquedo"
+
+    },
+
+    {
+
         id:"pote",
 
         nome:"Pote de comida",
@@ -1072,18 +1160,6 @@ const produtos = [
 
         tipo:"quadro"
 
-    },
-
-    {
-
-        id:"pelucia",
-
-        nome:"Bichinho de pelúcia",
-
-        emoji:"🧸",
-
-        tipo:"brinquedo"
-
     }
 
 ];
@@ -1098,7 +1174,7 @@ function carregarInventario(){
 
     try{
 
-        const dados =
+        const salvo =
 
             localStorage.getItem(
 
@@ -1106,15 +1182,37 @@ function carregarInventario(){
 
             );
 
-        if(dados){
+        if(!salvo){
 
-            inventario =
+            inventario = [];
 
-                JSON.parse(dados);
+            return;
 
         }
 
-    }catch(e){
+        const dados =
+
+            JSON.parse(salvo);
+
+        if(Array.isArray(dados)){
+
+            inventario = dados;
+
+        }else{
+
+            inventario = [];
+
+        }
+
+    }catch(erro){
+
+        console.error(
+
+            "Erro ao carregar inventário:",
+
+            erro
+
+        );
 
         inventario = [];
 
@@ -1124,7 +1222,27 @@ function carregarInventario(){
 
 /* =================================================
 
-   DESENHAR OBJETOS
+   PEGAR PRODUTO
+
+================================================= */
+
+function pegarProduto(id){
+
+    return produtos.find(
+
+        function(produto){
+
+            return produto.id === id;
+
+        }
+
+    );
+
+}
+
+/* =================================================
+
+   DESENHAR TODOS OS OBJETOS
 
 ================================================= */
 
@@ -1146,173 +1264,257 @@ function desenharObjetos(){
 
             .map(
 
-                id =>
+                function(id){
 
-                    produtos.find(
+                    return pegarProduto(id);
 
-                        produto =>
-
-                            produto.id === id
-
-                    )
+                }
 
             )
 
             .filter(Boolean);
 
-    const cama =
+    /*
 
-        itens.find(
+       Agora TODOS os itens comprados
 
-            item =>
+       serão colocados no quarto.
 
-                item.tipo === "cama"
+    */
 
-        );
+    let brinquedos = 0;
 
-    if(cama){
+    let camas = 0;
 
-        criarObjeto(
+    let potes = 0;
 
-            cama,
+    let plantas = 0;
 
-            "cama"
+    itens.forEach(
 
-        );
+        function(item){
 
-    }
+            /* =====================
 
-    const pote =
+               CAMA
 
-        itens.find(
+            ===================== */
 
-            item =>
+            if(item.tipo === "cama"){
 
-                item.tipo === "pote"
+                camas++;
 
-        );
+                if(camas === 1){
 
-    if(pote){
+                    criarObjeto(
 
-        criarObjeto(
+                        item,
 
-            pote,
+                        "cama"
 
-            "pote"
+                    );
 
-        );
+                }else if(camas === 2){
 
-    }
+                    criarObjeto(
 
-    const brinquedo =
+                        item,
 
-        itens.find(
+                        "casa"
 
-            item =>
+                    );
 
-                item.tipo === "brinquedo"
+                }else{
 
-        );
+                    criarObjeto(
 
-    if(brinquedo){
+                        item,
 
-        criarObjeto(
+                        "cama-extra-" + camas
 
-            brinquedo,
+                    );
 
-            "brinquedo"
+                }
 
-        );
+                return;
 
-    }
+            }
 
-    const planta =
+            /* =====================
 
-        itens.find(
+               POTE
 
-            item =>
+            ===================== */
 
-                item.tipo === "planta"
+            if(item.tipo === "pote"){
 
-        );
+                potes++;
 
-    if(planta){
+                let classe =
 
-        criarObjeto(
+                    "pote";
 
-            planta,
+                if(potes > 1){
 
-            "planta"
+                    classe =
 
-        );
+                        "pote-extra-" +
 
-    }
+                        potes;
 
-    const tapete =
+                }
 
-        itens.find(
+                criarObjeto(
 
-            item =>
+                    item,
 
-                item.tipo === "tapete"
+                    classe
 
-        );
+                );
 
-    if(tapete){
+                return;
 
-        criarObjeto(
+            }
 
-            tapete,
+            /* =====================
 
-            "tapete"
+               BRINQUEDO
 
-        );
+            ===================== */
 
-    }
+            if(item.tipo === "brinquedo"){
 
-    const abajur =
+                brinquedos++;
 
-        itens.find(
+                let classe =
 
-            item =>
+                    "brinquedo";
 
-                item.tipo === "abajur"
+                if(brinquedos === 2){
 
-        );
+                    classe =
 
-    if(abajur){
+                        "brinquedo2";
 
-        criarObjeto(
+                }else if(brinquedos >= 3){
 
-            abajur,
+                    classe =
 
-            "abajur"
+                        "brinquedo3";
 
-        );
+                }
 
-    }
+                criarObjeto(
 
-    const quadro =
+                    item,
 
-        itens.find(
+                    classe
 
-            item =>
+                );
 
-                item.tipo === "quadro"
+                return;
 
-        );
+            }
 
-    if(quadro){
+            /* =====================
 
-        criarObjeto(
+               PLANTA
 
-            quadro,
+            ===================== */
 
-            "quadro"
+            if(item.tipo === "planta"){
 
-        );
+                plantas++;
 
-    }
+                let classe =
+
+                    "planta";
+
+                if(plantas > 1){
+
+                    classe =
+
+                        "planta-extra-" +
+
+                        plantas;
+
+                }
+
+                criarObjeto(
+
+                    item,
+
+                    classe
+
+                );
+
+                return;
+
+            }
+
+            /* =====================
+
+               TAPETE
+
+            ===================== */
+
+            if(item.tipo === "tapete"){
+
+                criarObjeto(
+
+                    item,
+
+                    "tapete"
+
+                );
+
+                return;
+
+            }
+
+            /* =====================
+
+               ABAJUR
+
+            ===================== */
+
+            if(item.tipo === "abajur"){
+
+                criarObjeto(
+
+                    item,
+
+                    "abajur"
+
+                );
+
+                return;
+
+            }
+
+            /* =====================
+
+               QUADRO
+
+            ===================== */
+
+            if(item.tipo === "quadro"){
+
+                criarObjeto(
+
+                    item,
+
+                    "quadro"
+
+                );
+
+                return;
+
+            }
+
+        }
+
+    );
 
 }
 
@@ -1422,15 +1624,11 @@ function mostrarInventario(){
 
             .map(
 
-                id =>
+                function(id){
 
-                    produtos.find(
+                    return pegarProduto(id);
 
-                        produto =>
-
-                            produto.id === id
-
-                    )
+                }
 
             )
 
@@ -1440,31 +1638,35 @@ function mostrarInventario(){
 
         itens.map(
 
-            item => `
+            function(item){
 
-                <button
+                return `
 
-                    class="botao-item"
+                    <button
 
-                    onclick="
+                        class="botao-item"
 
-                        mostrarMensagem(
+                        onclick="
 
-                            '✨ ${item.nome} está no quarto!'
+                            mostrarMensagem(
 
-                        )
+                                '✨ ${item.nome} está no quarto!'
 
-                    "
+                            )
 
-                >
+                        "
 
-                    ${item.emoji}
+                    >
 
-                    ${item.nome}
+                        ${item.emoji}
 
-                </button>
+                        ${item.nome}
 
-            `
+                    </button>
+
+                `;
+
+            }
 
         ).join("");
 
@@ -1476,7 +1678,11 @@ function mostrarInventario(){
 
 ================================================= */
 
-function mostrarMensagem(texto){
+function mostrarMensagem(
+
+    texto
+
+){
 
     const elemento =
 
@@ -1518,15 +1724,143 @@ function mostrarMensagem(texto){
 
 /* =================================================
 
+   MOSTRAR PETTON
+
+================================================= */
+
+function atualizarPettonVisual(){
+
+    try{
+
+        if(
+
+            window.Petton &&
+
+            typeof Petton.obterImagem === "function"
+
+        ){
+
+            const dados =
+
+                Petton.carregar();
+
+            const fase =
+
+                dados.fase ||
+
+                "ovo";
+
+            const imagem =
+
+                Petton.obterImagem(
+
+                    fase
+
+                );
+
+            if(imagem){
+
+                document
+
+                    .getElementById(
+
+                        "imagemPetton"
+
+                    )
+
+                    .src = imagem;
+
+            }
+
+        }
+
+    }catch(erro){
+
+        console.log(
+
+            "Imagem do Petton usando imagem padrão."
+
+        );
+
+    }
+
+}
+
+/* =================================================
+
    INICIAR
 
 ================================================= */
 
-carregarInventario();
+function iniciarQuarto(){
 
-mostrarInventario();
+    carregarInventario();
 
-desenharObjetos();
+    mostrarInventario();
+
+    desenharObjetos();
+
+    atualizarPettonVisual();
+
+}
+
+/* =================================================
+
+   INICIAR
+
+================================================= */
+
+iniciarQuarto();
+
+/* =================================================
+
+   ATUALIZAR SE A LOJA MUDAR
+
+================================================= */
+
+window.addEventListener(
+
+    "storage",
+
+    function(event){
+
+        if(
+
+            event.key ===
+
+            CHAVE_LOJA
+
+        ){
+
+            carregarInventario();
+
+            mostrarInventario();
+
+            desenharObjetos();
+
+        }
+
+    }
+
+);
+
+/* =================================================
+
+   ATUALIZAR PETTON
+
+================================================= */
+
+window.addEventListener(
+
+    "petton-atualizado",
+
+    function(){
+
+        atualizarPettonVisual();
+
+    }
+
+);
 
 </script>
 
