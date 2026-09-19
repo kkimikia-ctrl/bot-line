@@ -384,20 +384,6 @@ body {
 
 }
 
-#imagemPetContainer[data-especie="gato"] {}
-
-#imagemPetContainer[data-especie="cachorro"] {}
-
-#imagemPetContainer[data-especie="coelho"] {}
-
-#imagemPetContainer[data-fase="bebe"] {}
-
-#imagemPetContainer[data-fase="filhote"] {}
-
-#imagemPetContainer[data-fase="jovem"] {}
-
-#imagemPetContainer[data-fase="adulto"] {}
-
 .pet-imagem {
 
     width: auto;
@@ -1314,7 +1300,11 @@ body {
 
     <div class="top-bar">
 
-        <button onclick="voltarPetton()" aria-label="Voltar">
+        <button
+
+            onclick="voltarPetton()"
+
+            aria-label="Voltar">
 
             ←
 
@@ -1322,7 +1312,11 @@ body {
 
         <h1>Petton 🐾</h1>
 
-        <button onclick="abrirAlbum()" aria-label="Álbum">
+        <button
+
+            onclick="abrirAlbum()"
+
+            aria-label="Álbum">
 
             📖
 
@@ -1342,7 +1336,7 @@ body {
 
         <div id="idadePetton">
 
-            Preparando...
+            🥚 Carregando Petton...
 
         </div>
 
@@ -2228,26 +2222,6 @@ function definirImagemPet(dados) {
 
         obterIdentidadeVisual(dados);
 
-    /*
-
-       PRIMEIRO:
-
-       tenta usar a imagem individual
-
-       criada para este Petton e esta fase.
-
-       Exemplo:
-
-       identidadeVisual.imagens.bebe
-
-       identidadeVisual.imagens.filhote
-
-       identidadeVisual.imagens.jovem
-
-       identidadeVisual.imagens.adulto
-
-    */
-
     const imagemIndividual =
 
         obterImagemIndividual(
@@ -2257,18 +2231,6 @@ function definirImagemPet(dados) {
             fase
 
         );
-
-    /*
-
-       FALLBACK:
-
-       caso ainda não exista uma imagem
-
-       individual, continua usando as imagens
-
-       atuais do sistema.
-
-    */
 
     const imagensFallback = {
 
@@ -2294,43 +2256,65 @@ function definirImagemPet(dados) {
 
         imagensFallback.gato;
 
-    /*
+    try {
 
-       Evita recarregar a mesma imagem
+        const urlImagem =
 
-       desnecessariamente a cada atualização.
+            new URL(
 
-    */
+                imagemFinal,
 
-    if (
+                window.location.href
 
-        imagem.src !==
+            ).href;
 
-        new URL(
+        if (imagem.src !== urlImagem) {
 
-            imagemFinal,
+            imagem.style.opacity = "0";
 
-            window.location.href
+            setTimeout(() => {
 
-        ).href
+                imagem.src =
 
-    ) {
+                    imagemFinal;
 
-        imagem.style.opacity = "0";
+                imagem.onload = () => {
 
-        setTimeout(() => {
+                    imagem.style.opacity =
 
-            imagem.src =
+                        "1";
 
-                imagemFinal;
+                };
 
-            imagem.onload = () => {
+                imagem.onerror = () => {
 
-                imagem.style.opacity = "1";
+                    imagem.style.opacity =
 
-            };
+                        "1";
 
-        }, 80);
+                    console.warn(
+
+                        "Imagem do Petton não encontrada:",
+
+                        imagemFinal
+
+                    );
+
+                };
+
+            }, 80);
+
+        }
+
+    } catch (erro) {
+
+        imagem.src =
+
+            imagemFinal;
+
+        imagem.style.opacity =
+
+            "1";
 
     }
 
@@ -2390,14 +2374,6 @@ function definirImagemPet(dados) {
 
     }
 
-    /*
-
-       Guarda se é imagem individual
-
-       ou fallback.
-
-    */
-
     imagem.dataset.imagemIndividual =
 
         imagemIndividual
@@ -2405,14 +2381,6 @@ function definirImagemPet(dados) {
             ? "true"
 
             : "false";
-
-    /*
-
-       Guarda os dados visuais básicos
-
-       no elemento para futuras animações.
-
-    */
 
     if (identidade) {
 
@@ -2510,6 +2478,14 @@ function atualizarOvoTela(dados) {
 
         );
 
+    const idade =
+
+        document.getElementById(
+
+            "idadePetton"
+
+        );
+
     if (!ovo || !imagem) {
 
         return;
@@ -2518,9 +2494,23 @@ function atualizarOvoTela(dados) {
 
     if (!dados) {
 
+        if (idade) {
+
+            idade.textContent =
+
+                "Carregando Petton...";
+
+        }
+
         return;
 
     }
+
+    /* =====================================================
+
+       PET AINDA NO OVO
+
+    ===================================================== */
 
     if (dados.nascido === false) {
 
@@ -2531,6 +2521,46 @@ function atualizarOvoTela(dados) {
         imagem.style.display =
 
             "none";
+
+        /* IDADE */
+
+        if (idade) {
+
+            if (
+
+                dados.tempoRestante !== undefined &&
+
+                dados.tempoRestante !== null &&
+
+                Number(dados.tempoRestante) > 0
+
+            ) {
+
+                idade.textContent =
+
+                    "🥚 Nascimento em " +
+
+                    formatarTempo(
+
+                        Number(
+
+                            dados.tempoRestante
+
+                        )
+
+                    );
+
+            } else {
+
+                idade.textContent =
+
+                    "🥚 Ainda no ovo";
+
+            }
+
+        }
+
+        /* PROGRESSO */
 
         const progresso =
 
@@ -2568,6 +2598,8 @@ function atualizarOvoTela(dados) {
 
         }
 
+        /* TEXTO DO OVO */
+
         const texto =
 
             document.getElementById(
@@ -2578,17 +2610,19 @@ function atualizarOvoTela(dados) {
 
         if (texto) {
 
-            if (dados.tempoRestante) {
+            if (
+
+                dados.tempoRestante !== undefined &&
+
+                dados.tempoRestante !== null &&
+
+                Number(dados.tempoRestante) > 0
+
+            ) {
 
                 texto.textContent =
 
-                    "Ainda no ovo • " +
-
-                    formatarTempo(
-
-                        dados.tempoRestante
-
-                    );
+                    "Seu Petton está se preparando para nascer...";
 
             } else {
 
@@ -2600,7 +2634,15 @@ function atualizarOvoTela(dados) {
 
         }
 
-    } else {
+    }
+
+    /* =====================================================
+
+       PET JÁ NASCEU
+
+    ===================================================== */
+
+    else {
 
         ovo.style.display =
 
@@ -2609,6 +2651,78 @@ function atualizarOvoTela(dados) {
         imagem.style.display =
 
             "flex";
+
+        if (idade) {
+
+            if (dados.idadeTexto) {
+
+                idade.textContent =
+
+                    dados.idadeTexto;
+
+            }
+
+            else if (
+
+                dados.idadeDias !== undefined &&
+
+                dados.idadeDias !== null
+
+            ) {
+
+                const dias =
+
+                    Number(
+
+                        dados.idadeDias
+
+                    );
+
+                if (dias <= 0) {
+
+                    idade.textContent =
+
+                        "🐣 Recém-nascido";
+
+                }
+
+                else if (dias === 1) {
+
+                    idade.textContent =
+
+                        "1 dia de vida";
+
+                }
+
+                else {
+
+                    idade.textContent =
+
+                        dias +
+
+                        " dias de vida";
+
+                }
+
+            }
+
+            else if (dados.nascimento) {
+
+                idade.textContent =
+
+                    "🐣 Recém-nascido";
+
+            }
+
+            else {
+
+                idade.textContent =
+
+                    "🐾 Petton nasceu";
+
+            }
+
+        }
 
     }
 
@@ -2638,7 +2752,13 @@ function testarNascimentoTela() {
 
             if (dados) {
 
-                atualizarOvoTela(dados);
+                atualizarOvoTela(
+
+                    dados
+
+                );
+
+                atualizarTela();
 
             }
 
@@ -2736,7 +2856,11 @@ function atualizarPetNascido(dados) {
 
     }
 
-    definirImagemPet(dados);
+    definirImagemPet(
+
+        dados
+
+    );
 
     const nome =
 
@@ -2772,23 +2896,65 @@ function atualizarPetNascido(dados) {
 
                 dados.idadeTexto;
 
-        } else if (
+        }
 
-            dados.idadeDias !== undefined
+        else if (
+
+            dados.idadeDias !== undefined &&
+
+            dados.idadeDias !== null
 
         ) {
 
+            const dias =
+
+                Number(
+
+                    dados.idadeDias
+
+                );
+
+            if (dias <= 0) {
+
+                idade.textContent =
+
+                    "🐣 Recém-nascido";
+
+            }
+
+            else if (dias === 1) {
+
+                idade.textContent =
+
+                    "1 dia de vida";
+
+            }
+
+            else {
+
+                idade.textContent =
+
+                    dias +
+
+                    " dias de vida";
+
+            }
+
+        }
+
+        else if (dados.nascimento) {
+
             idade.textContent =
 
-                dados.idadeDias +
+                "🐣 Recém-nascido";
 
-                " dias";
+        }
 
-        } else {
+        else {
 
             idade.textContent =
 
-                "";
+                "🐾 Petton nasceu";
 
         }
 
@@ -2826,7 +2992,7 @@ function mostrarEstadoDoente(dados) {
 
             dados.doente === true ||
 
-            dados.saude < 40
+            Number(dados.saude ?? 100) < 40
 
         )
 
@@ -2864,6 +3030,22 @@ function atualizarTela() {
 
         ) {
 
+            const idade =
+
+                document.getElementById(
+
+                    "idadePetton"
+
+                );
+
+            if (idade) {
+
+                idade.textContent =
+
+                    "Carregando Petton...";
+
+            }
+
             return;
 
         }
@@ -2874,13 +3056,37 @@ function atualizarTela() {
 
         if (!dados) {
 
+            const idade =
+
+                document.getElementById(
+
+                    "idadePetton"
+
+                );
+
+            if (idade) {
+
+                idade.textContent =
+
+                    "Carregando Petton...";
+
+            }
+
             return;
 
         }
 
-        atualizarOvoTela(dados);
+        atualizarOvoTela(
 
-        if (dados.nascido !== false) {
+            dados
+
+        );
+
+        if (
+
+            dados.nascido !== false
+
+        ) {
 
             atualizarPetNascido(
 
@@ -3476,7 +3682,9 @@ function mostrarAnimacaoBanho() {
 
     }
 
-    area.innerHTML = "";
+    area.innerHTML =
+
+        "";
 
     if (imagem) {
 
@@ -3846,17 +4054,29 @@ function escovarPetton() {
 
         carie.getBoundingClientRect();
 
+    const centroX =
+
+        rect.left +
+
+        (rect.width / 2);
+
+    const centroY =
+
+        rect.top +
+
+        (rect.height / 2);
+
     escova.style.display =
 
         "block";
 
     escova.style.left =
 
-        (rect.left - 8) + "px";
+        (centroX - 21) + "px";
 
     escova.style.top =
 
-        (rect.top - 5) + "px";
+        (centroY - 21) + "px";
 
     escova.style.transform =
 
@@ -3870,23 +4090,33 @@ function escovarPetton() {
 
             movimentos++;
 
+            const deslocamento =
+
+                movimentos % 2 === 0
+
+                    ? 5
+
+                    : -5;
+
             escova.style.left =
 
                 (
 
-                    rect.left -
+                    centroX -
 
-                    8 +
+                    21 +
 
-                    (
+                    deslocamento
 
-                        movimentos % 2 === 0
+                ) + "px";
 
-                            ? 14
+            escova.style.top =
 
-                            : 0
+                (
 
-                    )
+                    centroY -
+
+                    21
 
                 ) + "px";
 
