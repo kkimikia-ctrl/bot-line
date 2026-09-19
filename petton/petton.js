@@ -64,6 +64,406 @@ function escolherEspecie() {
 
 /* =========================================================
 
+   IDENTIDADE VISUAL
+
+   ========================================================= */
+
+function escolherItem(lista) {
+
+    return lista[
+
+        Math.floor(Math.random() * lista.length)
+
+    ];
+
+}
+
+function criarIdentidadeVisual(especie) {
+
+    const identidades = {
+
+        gato: {
+
+            cores: [
+
+                "branco",
+
+                "preto",
+
+                "cinza",
+
+                "laranja",
+
+                "creme",
+
+                "marrom"
+
+            ],
+
+            padroes: [
+
+                "liso",
+
+                "listrado",
+
+                "manchado",
+
+                "bicolor"
+
+            ],
+
+            olhos: [
+
+                "redondos",
+
+                "grandes",
+
+                "ovais"
+
+            ],
+
+            orelhas: [
+
+                "pontudas",
+
+                "arredondadas"
+
+            ],
+
+            narizes: [
+
+                "pequeno",
+
+                "redondo"
+
+            ],
+
+            patas: [
+
+                "pequenas",
+
+                "fofinhas",
+
+                "delicadas"
+
+            ],
+
+            caudas: [
+
+                "longa",
+
+                "curta",
+
+                "fofa"
+
+            ]
+
+        },
+
+        cachorro: {
+
+            cores: [
+
+                "branco",
+
+                "preto",
+
+                "caramelo",
+
+                "marrom",
+
+                "cinza",
+
+                "creme"
+
+            ],
+
+            padroes: [
+
+                "liso",
+
+                "manchado",
+
+                "bicolor",
+
+                "com manchas no rosto"
+
+            ],
+
+            olhos: [
+
+                "redondos",
+
+                "grandes",
+
+                "ovais"
+
+            ],
+
+            orelhas: [
+
+                "caídas",
+
+                "pontudas",
+
+                "arredondadas"
+
+            ],
+
+            narizes: [
+
+                "pequeno",
+
+                "redondo",
+
+                "escuro"
+
+            ],
+
+            patas: [
+
+                "pequenas",
+
+                "fofinhas",
+
+                "fortes"
+
+            ],
+
+            caudas: [
+
+                "longa",
+
+                "curta",
+
+                "enrolada",
+
+                "fofa"
+
+            ]
+
+        },
+
+        coelho: {
+
+            cores: [
+
+                "branco",
+
+                "cinza",
+
+                "marrom",
+
+                "creme",
+
+                "preto",
+
+                "caramelo"
+
+            ],
+
+            padroes: [
+
+                "liso",
+
+                "manchado",
+
+                "bicolor",
+
+                "com manchas no rosto"
+
+            ],
+
+            olhos: [
+
+                "redondos",
+
+                "grandes",
+
+                "brilhantes"
+
+            ],
+
+            orelhas: [
+
+                "longas",
+
+                "muito longas",
+
+                "arredondadas"
+
+            ],
+
+            narizes: [
+
+                "pequeno",
+
+                "redondo"
+
+            ],
+
+            patas: [
+
+                "pequenas",
+
+                "fofinhas",
+
+                "delicadas"
+
+            ],
+
+            caudas: [
+
+                "pequena",
+
+                "fofa",
+
+                "redonda"
+
+            ]
+
+        }
+
+    };
+
+    const opcoes =
+
+        identidades[especie] ||
+
+        identidades.gato;
+
+    return {
+
+        id:
+
+            "petton-" +
+
+            Date.now().toString(36) +
+
+            "-" +
+
+            Math.random()
+
+                .toString(36)
+
+                .substring(2, 10),
+
+        especie: especie,
+
+        cor:
+
+            escolherItem(opcoes.cores),
+
+        padrao:
+
+            escolherItem(opcoes.padroes),
+
+        olhos:
+
+            escolherItem(opcoes.olhos),
+
+        orelhas:
+
+            escolherItem(opcoes.orelhas),
+
+        nariz:
+
+            escolherItem(opcoes.narizes),
+
+        patas:
+
+            escolherItem(opcoes.patas),
+
+        cauda:
+
+            escolherItem(opcoes.caudas)
+
+    };
+
+}
+
+/* =========================================================
+
+   GARANTIR IDENTIDADE VISUAL
+
+   ========================================================= */
+
+function garantirIdentidadeVisual(dados) {
+
+    if (!dados.dateNascimento) {
+
+        return dados;
+
+    }
+
+    if (!dados.identidadeVisual) {
+
+        if (!dados.especie) {
+
+            dados.especie =
+
+                escolherEspecie();
+
+        }
+
+        dados.identidadeVisual =
+
+            criarIdentidadeVisual(
+
+                dados.especie
+
+            );
+
+    }
+
+    /*
+
+     * Compatibilidade com Pettons
+
+     * criados em versões anteriores.
+
+     */
+
+    if (
+
+        !dados.identidadeVisual.id
+
+    ) {
+
+        dados.identidadeVisual.id =
+
+            "petton-" +
+
+            Date.now().toString(36) +
+
+            "-" +
+
+            Math.random()
+
+                .toString(36)
+
+                .substring(2, 10);
+
+    }
+
+    if (
+
+        !dados.identidadeVisual.especie
+
+    ) {
+
+        dados.identidadeVisual.especie =
+
+            dados.especie;
+
+    }
+
+    return dados;
+
+}
+
+/* =========================================================
+
    CRIAR PETTON
 
    ========================================================= */
@@ -131,6 +531,16 @@ function criarPettonNovo() {
         pontos: 0,
 
         nivel: 1,
+
+        /*
+
+         * Identidade visual fica vazia
+
+         * enquanto ainda é ovo.
+
+         */
+
+        identidadeVisual: null,
 
         caracteristicas: {
 
@@ -224,6 +634,18 @@ function garantirCamposNovos(dados) {
 
     }
 
+    if (
+
+        typeof dados.identidadeVisual ===
+
+        "undefined"
+
+    ) {
+
+        dados.identidadeVisual = null;
+
+    }
+
     return dados;
 
 }
@@ -238,7 +660,11 @@ function carregarPetton() {
 
     const salvo =
 
-        localStorage.getItem(PETTON_CHAVE);
+        localStorage.getItem(
+
+            PETTON_CHAVE
+
+        );
 
     if (!salvo) {
 
@@ -271,6 +697,8 @@ function carregarPetton() {
             dados.especie = null;
 
             dados.nome = null;
+
+            dados.identidadeVisual = null;
 
             if (
 
@@ -379,6 +807,24 @@ function carregarPetton() {
         }
 
         garantirCamposNovos(dados);
+
+        /*
+
+         * Se já nasceu e não possui identidade,
+
+         * cria uma única vez.
+
+         */
+
+        if (dados.dateNascimento) {
+
+            garantirIdentidadeVisual(
+
+                dados
+
+            );
+
+        }
 
         return dados;
 
@@ -566,6 +1012,28 @@ function nascerPettonInterno(dados) {
 
         escolherEspecie();
 
+    /*
+
+     * A identidade visual é criada
+
+     * SOMENTE no nascimento.
+
+     *
+
+     * Depois disso não será sorteada
+
+     * novamente.
+
+     */
+
+    dados.identidadeVisual =
+
+        criarIdentidadeVisual(
+
+            dados.especie
+
+        );
+
     dados.dateNascimento =
 
         new Date().toISOString();
@@ -652,6 +1120,14 @@ function nascerPetton() {
 
     if (dados.dateNascimento) {
 
+        garantirIdentidadeVisual(
+
+            dados
+
+        );
+
+        salvarPetton(dados);
+
         return dados;
 
     }
@@ -678,25 +1154,15 @@ function testarNascimentoPetton() {
 
         carregarPetton();
 
-    /*
-
-     * Se já nasceu, não faz nada.
-
-     */
-
     if (dados.dateNascimento) {
 
         return dados;
 
     }
 
-    /*
+    dados.incubacaoRestanteMs =
 
-     * Zera o ovo.
-
-     */
-
-    dados.incubacaoRestanteMs = 0;
+        0;
 
     dados.aquecedorAte = null;
 
@@ -705,14 +1171,6 @@ function testarNascimentoPetton() {
         Date.now();
 
     salvarPetton(dados);
-
-    /*
-
-     * Usa exatamente
-
-     * o nascimento real.
-
-     */
 
     return nascerPetton();
 
@@ -1024,6 +1482,20 @@ function verificarCrescimento() {
 
     }
 
+    /*
+
+     * Garante que a identidade
+
+     * visual continue existindo.
+
+     */
+
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
+
     const dias =
 
         idadeDias();
@@ -1077,6 +1549,12 @@ function atualizarCaracteristicasVisiveis() {
         return dados;
 
     }
+
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     const dias =
 
@@ -1360,11 +1838,17 @@ function atualizarHospital(dados) {
 
         dados.hospitalAte &&
 
-        Date.now() >= dados.hospitalAte
+        Date.now() >=
+
+        dados.hospitalAte
 
     ) {
 
-        return finalizarHospital(dados);
+        return finalizarHospital(
+
+            dados
+
+        );
 
     }
 
@@ -1384,7 +1868,9 @@ function atualizarPasseio(dados) {
 
         dados.passeandoAte &&
 
-        Date.now() >= dados.passeandoAte
+        Date.now() >=
+
+        dados.passeandoAte
 
     ) {
 
@@ -1410,7 +1896,9 @@ function atualizarEscovacao(dados) {
 
         dados.escovandoAte &&
 
-        Date.now() >= dados.escovandoAte
+        Date.now() >=
+
+        dados.escovandoAte
 
     ) {
 
@@ -1982,7 +2470,9 @@ function passear() {
 
         dados.passeandoAte &&
 
-        dados.passeandoAte > Date.now()
+        dados.passeandoAte >
+
+        Date.now()
 
     ) {
 
@@ -2124,7 +2614,9 @@ function estaPasseando() {
 
         dados.passeandoAte &&
 
-        dados.passeandoAte > Date.now()
+        dados.passeandoAte >
+
+        Date.now()
 
     );
 
@@ -2142,7 +2634,9 @@ function estaEscovando() {
 
         dados.escovandoAte &&
 
-        dados.escovandoAte > Date.now()
+        dados.escovandoAte >
+
+        Date.now()
 
     );
 
@@ -2160,7 +2654,9 @@ function estaNoHospital() {
 
         dados.hospitalAte &&
 
-        dados.hospitalAte > Date.now()
+        dados.hospitalAte >
+
+        Date.now()
 
     );
 
@@ -2181,6 +2677,12 @@ function statusPetton() {
     const dados =
 
         carregarPetton();
+
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
 
     verificarDoenca(dados);
 
@@ -2210,7 +2712,23 @@ function identidadePetton() {
 
         carregarPetton();
 
+    garantirIdentidadeVisual(
+
+        dados
+
+    );
+
+    salvarPetton(dados);
+
     return {
+
+        id:
+
+            dados.identidadeVisual
+
+                ? dados.identidadeVisual.id
+
+                : null,
 
         especie:
 
@@ -2227,6 +2745,14 @@ function identidadePetton() {
         idadeDias:
 
             idadeDias(),
+
+        identidadeVisual:
+
+            dados.identidadeVisual,
+
+        caracteristicas:
+
+            dados.caracteristicas,
 
         doente:
 
@@ -2246,7 +2772,9 @@ function identidadePetton() {
 
                 dados.passeandoAte &&
 
-                dados.passeandoAte > Date.now()
+                dados.passeandoAte >
+
+                Date.now()
 
             ),
 
@@ -2256,7 +2784,9 @@ function identidadePetton() {
 
                 dados.hospitalAte &&
 
-                dados.hospitalAte > Date.now()
+                dados.hospitalAte >
+
+                Date.now()
 
             ),
 
@@ -2266,7 +2796,9 @@ function identidadePetton() {
 
                 dados.escovandoAte &&
 
-                dados.escovandoAte > Date.now()
+                dados.escovandoAte >
+
+                Date.now()
 
             )
 
@@ -2322,47 +2854,57 @@ function atualizarAlbum() {
 
     }
 
-    momentos.forEach(function (dia) {
+    momentos.forEach(
 
-        if (dias >= dia) {
+        function (dia) {
 
-            const jaExiste =
+            if (dias >= dia) {
 
-                dados.album.some(
+                const jaExiste =
 
-                    function (foto) {
+                    dados.album.some(
 
-                        return foto.dia === dia;
+                        function (foto) {
 
-                    }
+                            return foto.dia === dia;
 
-                );
+                        }
 
-            if (!jaExiste) {
+                    );
 
-                dados.album.push({
+                if (!jaExiste) {
 
-                    dia: dia,
+                    dados.album.push({
 
-                    data:
+                        dia: dia,
 
-                        new Date().toISOString(),
+                        data:
 
-                    especie:
+                            new Date()
 
-                        dados.especie,
+                                .toISOString(),
 
-                    fase:
+                        especie:
 
-                        dados.fase
+                            dados.especie,
 
-                });
+                        fase:
+
+                            dados.fase,
+
+                        identidadeVisual:
+
+                            dados.identidadeVisual
+
+                    });
+
+                }
 
             }
 
         }
 
-    });
+    );
 
     salvarPetton(dados);
 
@@ -2586,6 +3128,26 @@ window.Petton = {
 
     },
 
+    /* IDENTIDADE VISUAL */
+
+    identidadeVisual: function () {
+
+        const dados =
+
+            carregarPetton();
+
+        garantirIdentidadeVisual(
+
+            dados
+
+        );
+
+        salvarPetton(dados);
+
+        return dados.identidadeVisual;
+
+    },
+
     /* OVO */
 
     incubacaoRestante: function () {
@@ -2630,37 +3192,49 @@ window.Petton = {
 
    ========================================================= */
 
-setInterval(function () {
+setInterval(
 
-    try {
+    function () {
 
-        const dados =
+        try {
 
-            atualizarIncubacao();
+            const dados =
 
-        if (dados.dateNascimento) {
+                atualizarIncubacao();
 
-            atualizarTempo();
+            if (dados.dateNascimento) {
 
-            verificarCrescimento();
+                garantirIdentidadeVisual(
 
-            atualizarAlbum();
+                    dados
+
+                );
+
+                atualizarTempo();
+
+                verificarCrescimento();
+
+                atualizarAlbum();
+
+            }
+
+        } catch (erro) {
+
+            console.error(
+
+                "Erro na atualização automática:",
+
+                erro
+
+            );
 
         }
 
-    } catch (erro) {
+    },
 
-        console.error(
+    60 * 1000
 
-            "Erro na atualização automática:",
-
-            erro
-
-        );
-
-    }
-
-}, 60 * 1000);
+);
 
 /* =========================================================
 
@@ -2682,17 +3256,47 @@ try {
 
     if (dadosInicial.dateNascimento) {
 
-        verificarDoenca(dadosInicial);
+        garantirIdentidadeVisual(
 
-        verificarCarie(dadosInicial);
+            dadosInicial
 
-        atualizarHospital(dadosInicial);
+        );
 
-        atualizarPasseio(dadosInicial);
+        verificarDoenca(
 
-        atualizarEscovacao(dadosInicial);
+            dadosInicial
 
-        salvarPetton(dadosInicial);
+        );
+
+        verificarCarie(
+
+            dadosInicial
+
+        );
+
+        atualizarHospital(
+
+            dadosInicial
+
+        );
+
+        atualizarPasseio(
+
+            dadosInicial
+
+        );
+
+        atualizarEscovacao(
+
+            dadosInicial
+
+        );
+
+        salvarPetton(
+
+            dadosInicial
+
+        );
 
     }
 
