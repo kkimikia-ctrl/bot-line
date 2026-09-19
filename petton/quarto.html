@@ -356,6 +356,42 @@ body{
 
 }
 
+/* =========================
+
+   FALLBACK DA ESPÉCIE
+
+========================= */
+
+.petton-fallback{
+
+    width:130px;
+
+    height:150px;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:115px;
+
+    line-height:1;
+
+    filter:
+
+        drop-shadow(
+
+            0 8px 5px rgba(0,0,0,.20)
+
+        );
+
+    animation:
+
+        respirar 3s ease-in-out infinite;
+
+}
+
 .petton:hover{
 
     transform:
@@ -438,8 +474,6 @@ body{
 
 ========================= */
 
-/* CAMA */
-
 .cama{
 
     left:20px;
@@ -453,8 +487,6 @@ body{
     font-size:78px;
 
 }
-
-/* POTE */
 
 .pote{
 
@@ -470,8 +502,6 @@ body{
 
 }
 
-/* BRINQUEDOS */
-
 .brinquedo{
 
     left:70px;
@@ -485,8 +515,6 @@ body{
     font-size:48px;
 
 }
-
-/* SEGUNDO BRINQUEDO */
 
 .brinquedo2{
 
@@ -502,8 +530,6 @@ body{
 
 }
 
-/* TERCEIRO BRINQUEDO */
-
 .brinquedo3{
 
     left:28px;
@@ -518,8 +544,6 @@ body{
 
 }
 
-/* PLANTA */
-
 .planta{
 
     right:25px;
@@ -533,8 +557,6 @@ body{
     font-size:62px;
 
 }
-
-/* TAPETE */
 
 .tapete{
 
@@ -558,8 +580,6 @@ body{
 
 }
 
-/* ABAJUR */
-
 .abajur{
 
     left:18px;
@@ -573,8 +593,6 @@ body{
     font-size:55px;
 
 }
-
-/* QUADRO */
 
 .quadro{
 
@@ -607,6 +625,68 @@ body{
 .casa span{
 
     font-size:85px;
+
+}
+
+/* =========================
+
+   ITENS EXTRAS
+
+========================= */
+
+.pote-extra-2{
+
+    right:95px;
+
+    bottom:105px;
+
+}
+
+.pote-extra-2 span{
+
+    font-size:43px;
+
+}
+
+.pote-extra-3{
+
+    right:150px;
+
+    bottom:65px;
+
+}
+
+.pote-extra-3 span{
+
+    font-size:40px;
+
+}
+
+.planta-extra-2{
+
+    right:110px;
+
+    top:175px;
+
+}
+
+.planta-extra-2 span{
+
+    font-size:50px;
+
+}
+
+.cama-extra-3{
+
+    left:145px;
+
+    bottom:45px;
+
+}
+
+.cama-extra-3 span{
+
+    font-size:65px;
 
 }
 
@@ -762,6 +842,16 @@ body{
 
     }
 
+    .petton-fallback{
+
+        width:115px;
+
+        height:140px;
+
+        font-size:100px;
+
+    }
+
     .cama span{
 
         font-size:65px;
@@ -866,15 +956,39 @@ body{
 
     >
 
+        <!--
+
+            IMPORTANTE:
+
+            NÃO colocamos mais petton-original.png
+
+            aqui, porque essa imagem é o gatinho.
+
+        -->
+
         <img
 
             id="imagemPetton"
 
-            src="petton-original.png"
+            src=""
 
             alt="Petton"
 
+            style="display:none;"
+
         >
+
+        <div
+
+            id="pettonFallback"
+
+            class="petton-fallback"
+
+        >
+
+            🐾
+
+        </div>
 
     </div>
 
@@ -1242,7 +1356,7 @@ function pegarProduto(id){
 
 /* =================================================
 
-   DESENHAR TODOS OS OBJETOS
+   DESENHAR OBJETOS
 
 ================================================= */
 
@@ -1273,14 +1387,6 @@ function desenharObjetos(){
             )
 
             .filter(Boolean);
-
-    /*
-
-       Agora TODOS os itens comprados
-
-       serão colocados no quarto.
-
-    */
 
     let brinquedos = 0;
 
@@ -1330,7 +1436,7 @@ function desenharObjetos(){
 
                         item,
 
-                        "cama-extra-" + camas
+                        "cama-extra-3"
 
                     );
 
@@ -1350,17 +1456,19 @@ function desenharObjetos(){
 
                 potes++;
 
-                let classe =
+                let classe = "pote";
 
-                    "pote";
-
-                if(potes > 1){
+                if(potes === 2){
 
                     classe =
 
-                        "pote-extra-" +
+                        "pote-extra-2";
 
-                        potes;
+                }else if(potes >= 3){
+
+                    classe =
+
+                        "pote-extra-3";
 
                 }
 
@@ -1430,13 +1538,11 @@ function desenharObjetos(){
 
                     "planta";
 
-                if(plantas > 1){
+                if(plantas === 2){
 
                     classe =
 
-                        "planta-extra-" +
-
-                        plantas;
+                        "planta-extra-2";
 
                 }
 
@@ -1724,13 +1830,135 @@ function mostrarMensagem(
 
 /* =================================================
 
+   ESPÉCIE DO PETTON
+
+================================================= */
+
+function obterEspeciePetton(){
+
+    try{
+
+        if(
+
+            window.Petton &&
+
+            typeof Petton.carregar === "function"
+
+        ){
+
+            const dados =
+
+                Petton.carregar();
+
+            if(
+
+                dados &&
+
+                dados.especie
+
+            ){
+
+                return String(
+
+                    dados.especie
+
+                ).toLowerCase();
+
+            }
+
+        }
+
+    }catch(erro){
+
+        console.error(
+
+            "Erro ao descobrir espécie:",
+
+            erro
+
+        );
+
+    }
+
+    return "gato";
+
+}
+
+/* =================================================
+
+   EMOJI DA ESPÉCIE
+
+================================================= */
+
+function obterEmojiEspecie(especie){
+
+    if(especie === "cachorro"){
+
+        return "🐶";
+
+    }
+
+    if(especie === "coelho"){
+
+        return "🐰";
+
+    }
+
+    return "🐱";
+
+}
+
+/* =================================================
+
    MOSTRAR PETTON
 
 ================================================= */
 
 function atualizarPettonVisual(){
 
+    const imagem =
+
+        document.getElementById(
+
+            "imagemPetton"
+
+        );
+
+    const fallback =
+
+        document.getElementById(
+
+            "pettonFallback"
+
+        );
+
     try{
+
+        const dados =
+
+            Petton.carregar();
+
+        const especie =
+
+            dados &&
+
+            dados.especie
+
+                ? String(
+
+                    dados.especie
+
+                ).toLowerCase()
+
+                : "gato";
+
+        /* -----------------------------------------
+
+           PRIMEIRO: TENTAR IMAGEM DA FASE
+
+        ----------------------------------------- */
+
+        let imagemPetton = null;
 
         if(
 
@@ -1740,17 +1968,13 @@ function atualizarPettonVisual(){
 
         ){
 
-            const dados =
-
-                Petton.carregar();
-
             const fase =
 
                 dados.fase ||
 
                 "ovo";
 
-            const imagem =
+            imagemPetton =
 
                 Petton.obterImagem(
 
@@ -1758,29 +1982,101 @@ function atualizarPettonVisual(){
 
                 );
 
-            if(imagem){
+        }
 
-                document
+        /* -----------------------------------------
 
-                    .getElementById(
+           SE EXISTE IMAGEM ESPECÍFICA
 
-                        "imagemPetton"
+        ----------------------------------------- */
 
-                    )
+        if(
 
-                    .src = imagem;
+            imagemPetton &&
 
-            }
+            typeof imagemPetton === "string"
+
+        ){
+
+            imagem.src =
+
+                imagemPetton;
+
+            imagem.style.display =
+
+                "block";
+
+            fallback.style.display =
+
+                "none";
+
+            return;
 
         }
 
-    }catch(erro){
+        /* -----------------------------------------
+
+           SEM IMAGEM:
+
+           MOSTRAR ESPÉCIE CORRETA
+
+        ----------------------------------------- */
+
+        imagem.removeAttribute(
+
+            "src"
+
+        );
+
+        imagem.style.display =
+
+            "none";
+
+        fallback.textContent =
+
+            obterEmojiEspecie(
+
+                especie
+
+            );
+
+        fallback.style.display =
+
+            "flex";
 
         console.log(
 
-            "Imagem do Petton usando imagem padrão."
+            "Petton sem imagem específica. Espécie:",
+
+            especie
 
         );
+
+    }catch(erro){
+
+        console.error(
+
+            "Erro ao mostrar Petton:",
+
+            erro
+
+        );
+
+        imagem.style.display =
+
+            "none";
+
+        fallback.textContent =
+
+            obterEmojiEspecie(
+
+                obterEspeciePetton()
+
+            );
+
+        fallback.style.display =
+
+            "flex";
 
     }
 
@@ -1788,7 +2084,7 @@ function atualizarPettonVisual(){
 
 /* =================================================
 
-   INICIAR
+   INICIAR QUARTO
 
 ================================================= */
 
