@@ -648,7 +648,7 @@ const momentos = [
 
 ========================================================= */
 
-const CHAVE_FOTOS = "petton_album_fotos_v1";
+const CHAVE_FOTOS = "petton_album_fotos_v2";
 
 function carregarFotos(){
 
@@ -664,7 +664,9 @@ function carregarFotos(){
 
         }
 
-        const fotos = JSON.parse(salvo);
+        const fotos =
+
+            JSON.parse(salvo);
 
         if(
 
@@ -736,411 +738,133 @@ function obterFotoMomento(dia){
 
 /* =========================================================
 
-   CAPTURAR O PETTON
+   FASE DO PETTON PARA CADA MOMENTO
 
 ========================================================= */
 
-async function tirarFoto(dia){
+function faseParaMomento(dia){
 
-    try{
+    if(dia === 0){
 
-        const momento =
-
-            document.querySelector(
-
-                `.momento[data-dia="${dia}"]`
-
-            );
-
-        if(!momento){
-
-            alert(
-
-                "Não foi possível encontrar o Petton."
-
-            );
-
-            return;
-
-        }
-
-        const areaFoto =
-
-            momento.querySelector(".foto");
-
-        if(!areaFoto){
-
-            alert(
-
-                "Não foi possível capturar o Petton."
-
-            );
-
-            return;
-
-        }
-
-        /*
-
-         * Usa SVG + foreignObject para transformar
-
-         * o conteúdo visual do Petton em uma imagem.
-
-         */
-
-        const rect =
-
-            areaFoto.getBoundingClientRect();
-
-        const largura =
-
-            Math.max(
-
-                1,
-
-                Math.round(rect.width)
-
-            );
-
-        const altura =
-
-            Math.max(
-
-                1,
-
-                Math.round(rect.height)
-
-            );
-
-        const clone =
-
-            areaFoto.cloneNode(true);
-
-        clone.style.width =
-
-            largura + "px";
-
-        clone.style.height =
-
-            altura + "px";
-
-        clone.style.margin =
-
-            "0";
-
-        clone.style.borderRadius =
-
-            "16px";
-
-        clone.style.background =
-
-            "linear-gradient(180deg,#f8fafc,#f1f5f9)";
-
-        /*
-
-         * Remove a foto antiga do clone para
-
-         * capturar o Petton atual.
-
-         */
-
-        const fotoUsuario =
-
-            clone.querySelector(
-
-                ".foto-usuario"
-
-            );
-
-        if(fotoUsuario){
-
-            fotoUsuario.remove();
-
-        }
-
-        /*
-
-         * Cria um SVG com o visual atual.
-
-         */
-
-        const serializer =
-
-            new XMLSerializer();
-
-        const html =
-
-            serializer.serializeToString(
-
-                clone
-
-            );
-
-        const svg =
-
-            `
-
-            <svg
-
-                xmlns="http://www.w3.org/2000/svg"
-
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-
-                width="${largura}"
-
-                height="${altura}"
-
-            >
-
-                <foreignObject
-
-                    width="100%"
-
-                    height="100%"
-
-                >
-
-                    <div
-
-                        xmlns="http://www.w3.org/1999/xhtml"
-
-                        style="
-
-                            width:${largura}px;
-
-                            height:${altura}px;
-
-                            display:flex;
-
-                            align-items:center;
-
-                            justify-content:center;
-
-                            overflow:hidden;
-
-                            border-radius:16px;
-
-                            background:linear-gradient(180deg,#f8fafc,#f1f5f9);
-
-                        "
-
-                    >
-
-                        ${html}
-
-                    </div>
-
-                </foreignObject>
-
-            </svg>
-
-            `;
-
-        const blob =
-
-            new Blob(
-
-                [svg],
-
-                {
-
-                    type:"image/svg+xml;charset=utf-8"
-
-                }
-
-            );
-
-        const url =
-
-            URL.createObjectURL(blob);
-
-        const imagem =
-
-            new Image();
-
-        imagem.onload =
-
-            function(){
-
-                try{
-
-                    const canvas =
-
-                        document.createElement(
-
-                            "canvas"
-
-                        );
-
-                    canvas.width =
-
-                        largura * 2;
-
-                    canvas.height =
-
-                        altura * 2;
-
-                    const ctx =
-
-                        canvas.getContext(
-
-                            "2d"
-
-                        );
-
-                    ctx.scale(2,2);
-
-                    ctx.drawImage(
-
-                        imagem,
-
-                        0,
-
-                        0,
-
-                        largura,
-
-                        altura
-
-                    );
-
-                    URL.revokeObjectURL(
-
-                        url
-
-                    );
-
-                    const resultado =
-
-                        canvas.toDataURL(
-
-                            "image/png"
-
-                        );
-
-                    const fotos =
-
-                        carregarFotos();
-
-                    fotos[String(dia)] =
-
-                        resultado;
-
-                    if(
-
-                        !salvarFotos(fotos)
-
-                    ){
-
-                        alert(
-
-                            "Não foi possível salvar a foto. O armazenamento do aparelho pode estar cheio."
-
-                        );
-
-                        return;
-
-                    }
-
-                    renderizarAgora();
-
-                }catch(e){
-
-                    URL.revokeObjectURL(
-
-                        url
-
-                    );
-
-                    console.log(
-
-                        "Erro ao gerar captura:",
-
-                        e
-
-                    );
-
-                    capturarFallback(
-
-                        dia
-
-                    );
-
-                }
-
-            };
-
-        imagem.onerror =
-
-            function(){
-
-                URL.revokeObjectURL(
-
-                    url
-
-                );
-
-                capturarFallback(
-
-                    dia
-
-                );
-
-            };
-
-        imagem.src =
-
-            url;
-
-    }catch(e){
-
-        console.log(
-
-            "Erro ao capturar Petton:",
-
-            e
-
-        );
-
-        capturarFallback(
-
-            dia
-
-        );
+        return "ovo";
 
     }
+
+    if(dia < 30){
+
+        return "bebe";
+
+    }
+
+    if(dia < 90){
+
+        return "filhote";
+
+    }
+
+    if(dia < 120){
+
+        return "jovem";
+
+    }
+
+    return "adulto";
 
 }
 
 /* =========================================================
 
-   FALLBACK
+   PEGAR IMAGEM REAL DA FASE
 
 ========================================================= */
 
-function capturarFallback(dia){
+function imagemDaFase(dia){
 
-    /*
+    const fase =
 
-     * Caso o navegador do LINE não permita
-
-     * a captura do HTML, salva a imagem
-
-     * original do Petton como lembrança.
-
-     */
+        faseParaMomento(dia);
 
     try{
 
+        if(
+
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.obterImagem === "function"
+
+        ){
+
+            const imagem =
+
+                Petton.obterImagem(fase);
+
+            if(imagem){
+
+                return imagem;
+
+            }
+
+        }
+
+    }catch(e){
+
+        console.log(
+
+            "Erro ao obter imagem da fase:",
+
+            e
+
+        );
+
+    }
+
+    /*
+
+     * Se não houver imagem específica
+
+     * da fase, usa a imagem normal do Petton.
+
+     */
+
+    if(dia !== 0){
+
+        return imagemPetton();
+
+    }
+
+    return null;
+
+}
+
+/* =========================================================
+
+   REGISTRAR MOMENTO
+
+========================================================= */
+
+function tirarFoto(dia){
+
+    try{
+
+        /*
+
+         * Não abre câmera.
+
+         * Pega diretamente a imagem atual
+
+         * do Petton correspondente à fase.
+
+         */
+
         const imagem =
 
-            imagemPetton();
+            imagemDaFase(dia);
 
         if(!imagem){
 
             alert(
 
-                "Não foi possível capturar o Petton."
+                "A imagem do Petton ainda não está disponível."
 
             );
 
@@ -1148,137 +872,41 @@ function capturarFallback(dia){
 
         }
 
-        const img =
+        const fotos =
 
-            new Image();
+            carregarFotos();
 
-        img.crossOrigin =
-
-            "anonymous";
-
-        img.onload =
-
-            function(){
-
-                try{
-
-                    const canvas =
-
-                        document.createElement(
-
-                            "canvas"
-
-                        );
-
-                    canvas.width =
-
-                        img.naturalWidth || 400;
-
-                    canvas.height =
-
-                        img.naturalHeight || 400;
-
-                    const ctx =
-
-                        canvas.getContext(
-
-                            "2d"
-
-                        );
-
-                    ctx.fillStyle =
-
-                        "#f8fafc";
-
-                    ctx.fillRect(
-
-                        0,
-
-                        0,
-
-                        canvas.width,
-
-                        canvas.height
-
-                    );
-
-                    ctx.drawImage(
-
-                        img,
-
-                        0,
-
-                        0,
-
-                        canvas.width,
-
-                        canvas.height
-
-                    );
-
-                    const fotos =
-
-                        carregarFotos();
-
-                    fotos[String(dia)] =
-
-                        canvas.toDataURL(
-
-                            "image/png"
-
-                        );
-
-                    if(
-
-                        salvarFotos(fotos)
-
-                    ){
-
-                        renderizarAgora();
-
-                    }else{
-
-                        alert(
-
-                            "Não foi possível salvar a foto."
-
-                        );
-
-                    }
-
-                }catch(e){
-
-                    console.log(e);
-
-                    alert(
-
-                        "Não foi possível registrar este momento."
-
-                    );
-
-                }
-
-            };
-
-        img.onerror =
-
-            function(){
-
-                alert(
-
-                    "Não foi possível registrar este momento."
-
-                );
-
-            };
-
-        img.src =
+        fotos[String(dia)] =
 
             imagem;
 
+        const salvou =
+
+            salvarFotos(fotos);
+
+        if(!salvou){
+
+            alert(
+
+                "Não foi possível salvar este momento. O armazenamento do aparelho pode estar cheio."
+
+            );
+
+            return;
+
+        }
+
+        renderizarAgora();
+
     }catch(e){
 
-        console.log(e);
+        console.log(
+
+            "Erro ao registrar momento:",
+
+            e
+
+        );
 
         alert(
 
@@ -1422,7 +1050,7 @@ function idadeAtual(){
 
 /* =========================================================
 
-   IMAGEM DO PETTON
+   IMAGEM NORMAL DO PETTON
 
 ========================================================= */
 
@@ -1560,7 +1188,11 @@ function criarVisualPetton(){
 
     const imagem =
 
-        imagemPetton();
+        imagemDaFase(
+
+            idadeAtual()
+
+        );
 
     if(imagem){
 
@@ -1626,6 +1258,14 @@ function criarVisualMomento(momento){
 
         );
 
+    /*
+
+     * Se já registrou o momento,
+
+     * mostra exatamente a imagem salva.
+
+     */
+
     if(foto){
 
         return `
@@ -1636,13 +1276,19 @@ function criarVisualMomento(momento){
 
                 src="${foto}"
 
-                alt="Foto do momento"
+                alt="Petton neste momento"
 
             >
 
         `;
 
     }
+
+    /*
+
+     * Dia 0 = ovo.
+
+     */
 
     if(momento.dia === 0){
 
@@ -1664,9 +1310,19 @@ function criarVisualMomento(momento){
 
     }
 
+    /*
+
+     * Mostra a imagem da fase correspondente.
+
+     */
+
     const imagem =
 
-        imagemPetton();
+        imagemDaFase(
+
+            momento.dia
+
+        );
 
     if(imagem){
 
@@ -2308,6 +1964,16 @@ function renderizar(){
 
         dados.nome || "Meu Petton";
 
+    /*
+
+     * IMPORTANTE:
+
+     * Continua contando somente os momentos
+
+     * cuja idade já atingiu o dia.
+
+     */
+
     const liberados =
 
         momentos.filter(
@@ -2399,6 +2065,14 @@ function renderizar(){
                             const liberado =
 
                                 idade >= momento.dia;
+
+                            /*
+
+                             * SOMENTE O ÚLTIMO MOMENTO
+
+                             * DESBLOQUEADO É O MOMENTO ATUAL.
+
+                             */
 
                             const atual =
 
