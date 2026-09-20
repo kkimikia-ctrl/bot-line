@@ -86,6 +86,16 @@ header p {
 
 }
 
+.secao-titulo {
+
+    padding: 4px 16px 10px;
+
+    font-size: 21px;
+
+    font-weight: 900;
+
+}
+
 .loja {
 
     display: grid;
@@ -186,9 +196,21 @@ button.comprado {
 
 }
 
+button.equipado {
+
+    background: #42a5f5;
+
+}
+
+button.desequipar {
+
+    background: #ef5350;
+
+}
+
 button:disabled {
 
-    opacity: .6;
+    opacity: .8;
 
 }
 
@@ -276,7 +298,7 @@ button:disabled {
 
     <h1>🛍️ Loja Petton</h1>
 
-    <p>Deixe o cantinho do seu Petton mais bonito!</p>
+    <p>Deixe seu Petton e o quarto ainda mais bonitos!</p>
 
 </header>
 
@@ -288,7 +310,21 @@ button:disabled {
 
 </div>
 
-<div class="loja" id="listaProdutos"></div>
+<div class="secao-titulo">
+
+    👗 Acessórios do Petton
+
+</div>
+
+<div class="loja" id="listaAcessorios"></div>
+
+<div class="secao-titulo">
+
+    🏠 Itens do quarto
+
+</div>
+
+<div class="loja" id="listaQuarto"></div>
 
 <a href="./quarto.html" class="voltar">
 
@@ -306,7 +342,161 @@ const CHAVE_PETTON = "petton_dados_v3";
 
 /* =========================================================
 
-   PRODUTOS
+   ACESSÓRIOS
+
+========================================================= */
+
+const acessorios = [
+
+    {
+
+        id: "chapeu_vermelho",
+
+        tipo: "chapeu",
+
+        nome: "Chapéu vermelho",
+
+        emoji: "🎩",
+
+        preco: 150,
+
+        descricao: "Um chapéu elegante para o Petton."
+
+    },
+
+    {
+
+        id: "chapeu_palha",
+
+        tipo: "chapeu",
+
+        nome: "Chapéu de palha",
+
+        emoji: "👒",
+
+        preco: 180,
+
+        descricao: "Perfeito para um passeio."
+
+    },
+
+    {
+
+        id: "oculos_redondo",
+
+        tipo: "oculos",
+
+        nome: "Óculos redondo",
+
+        emoji: "👓",
+
+        preco: 160,
+
+        descricao: "Óculos charmosos para o Petton."
+
+    },
+
+    {
+
+        id: "oculos_sol",
+
+        tipo: "oculos",
+
+        nome: "Óculos de sol",
+
+        emoji: "🕶️",
+
+        preco: 200,
+
+        descricao: "Estilo para o seu Petton."
+
+    },
+
+    {
+
+        id: "lacinho_rosa",
+
+        tipo: "lacinho",
+
+        nome: "Lacinho rosa",
+
+        emoji: "🎀",
+
+        preco: 120,
+
+        descricao: "Um lacinho muito fofo."
+
+    },
+
+    {
+
+        id: "lacinho_azul",
+
+        tipo: "lacinho",
+
+        nome: "Lacinho azul",
+
+        emoji: "🎀",
+
+        preco: 120,
+
+        descricao: "Um lacinho azul delicado."
+
+    },
+
+    {
+
+        id: "coroa_dourada",
+
+        tipo: "coroa",
+
+        nome: "Coroa dourada",
+
+        emoji: "👑",
+
+        preco: 350,
+
+        descricao: "Uma coroa para o rei ou rainha."
+
+    },
+
+    {
+
+        id: "lenco_azul",
+
+        tipo: "lenco",
+
+        nome: "Lenço azul",
+
+        emoji: "🧣",
+
+        preco: 130,
+
+        descricao: "Um lenço bonito para o Petton."
+
+    },
+
+    {
+
+        id: "lenco_vermelho",
+
+        tipo: "lenco",
+
+        nome: "Lenço vermelho",
+
+        emoji: "🧣",
+
+        preco: 130,
+
+        descricao: "Um lenço vermelho estiloso."
+
+    }
+
+];
+
+/* =========================================================
+
+   ITENS DO QUARTO
 
 ========================================================= */
 
@@ -534,7 +724,9 @@ function carregarInventario() {
 
     try {
 
-        const salvo = localStorage.getItem(CHAVE_LOJA);
+        const salvo =
+
+            localStorage.getItem(CHAVE_LOJA);
 
         if (!salvo) {
 
@@ -542,13 +734,25 @@ function carregarInventario() {
 
         }
 
-        const inventario = JSON.parse(salvo);
+        const inventario =
 
-        return Array.isArray(inventario) ? inventario : [];
+            JSON.parse(salvo);
+
+        return Array.isArray(inventario)
+
+            ? inventario
+
+            : [];
 
     } catch (erro) {
 
-        console.error("Erro ao carregar inventário:", erro);
+        console.error(
+
+            "Erro ao carregar inventário:",
+
+            erro
+
+        );
 
         return [];
 
@@ -570,7 +774,7 @@ function salvarInventario(inventario) {
 
 /* =========================================================
 
-   CARREGAR PETTON
+   PETTON
 
 ========================================================= */
 
@@ -578,7 +782,9 @@ function carregarDadosPetton() {
 
     try {
 
-        const salvo = localStorage.getItem(CHAVE_PETTON);
+        const salvo =
+
+            localStorage.getItem(CHAVE_PETTON);
 
         if (!salvo) {
 
@@ -590,7 +796,13 @@ function carregarDadosPetton() {
 
     } catch (erro) {
 
-        console.error("Erro ao carregar Petton:", erro);
+        console.error(
+
+            "Erro ao carregar Petton:",
+
+            erro
+
+        );
 
         return null;
 
@@ -598,15 +810,13 @@ function carregarDadosPetton() {
 
 }
 
-/* =========================================================
-
-   SALVAR PETTON
-
-========================================================= */
-
 function salvarDadosPetton(dados) {
 
-    if (!dados) return false;
+    if (!dados) {
+
+        return false;
+
+    }
 
     localStorage.setItem(
 
@@ -622,13 +832,15 @@ function salvarDadosPetton(dados) {
 
 /* =========================================================
 
-   OBTER PONTOS
+   PONTOS
 
 ========================================================= */
 
 function obterPontos() {
 
-    const dados = carregarDadosPetton();
+    const dados =
+
+        carregarDadosPetton();
 
     if (!dados) {
 
@@ -636,7 +848,9 @@ function obterPontos() {
 
     }
 
-    let pontos = Number(dados.pontos);
+    let pontos =
+
+        Number(dados.pontos);
 
     if (!Number.isFinite(pontos)) {
 
@@ -648,17 +862,17 @@ function obterPontos() {
 
 }
 
-/* =========================================================
-
-   ATUALIZAR SALDO
-
-========================================================= */
-
 function atualizarSaldo() {
 
-    const saldo = obterPontos();
+    const saldo =
 
-    document.getElementById("saldoPontos").textContent =
+        obterPontos();
+
+    document.getElementById(
+
+        "saldoPontos"
+
+    ).textContent =
 
         Math.floor(saldo);
 
@@ -674,33 +888,449 @@ function mostrarMensagem(texto) {
 
     const elemento =
 
-        document.getElementById("mensagem");
+        document.getElementById(
 
-    elemento.textContent = texto;
+            "mensagem"
 
-    elemento.style.display = "block";
+        );
 
-    clearTimeout(window.timerMensagem);
+    elemento.textContent =
 
-    window.timerMensagem = setTimeout(function() {
+        texto;
 
-        elemento.style.display = "none";
+    elemento.style.display =
 
-    }, 2200);
+        "block";
+
+    clearTimeout(
+
+        window.timerMensagem
+
+    );
+
+    window.timerMensagem =
+
+        setTimeout(function() {
+
+            elemento.style.display =
+
+                "none";
+
+        }, 2200);
 
 }
 
 /* =========================================================
 
-   VERIFICAR SE COMPROU
+   VERIFICAR COMPRA
 
 ========================================================= */
 
 function produtoComprado(id) {
 
-    const inventario = carregarInventario();
+    const inventario =
+
+        carregarInventario();
 
     return inventario.includes(id);
+
+}
+
+/* =========================================================
+
+   VERIFICAR ACESSÓRIO EQUIPADO
+
+========================================================= */
+
+function acessorioEquipado(tipo, id) {
+
+    const dados =
+
+        carregarDadosPetton();
+
+    if (!dados) {
+
+        return false;
+
+    }
+
+    if (!dados.acessorios) {
+
+        return false;
+
+    }
+
+    return dados.acessorios[tipo] === id;
+
+}
+
+/* =========================================================
+
+   EQUIPAR ACESSÓRIO
+
+========================================================= */
+
+function equiparAcessorio(tipo, id) {
+
+    const dados =
+
+        carregarDadosPetton();
+
+    if (!dados) {
+
+        mostrarMensagem(
+
+            "Petton ainda não foi carregado."
+
+        );
+
+        return;
+
+    }
+
+    if (!dados.acessorios) {
+
+        dados.acessorios = {
+
+            chapeu: null,
+
+            oculos: null,
+
+            lacinho: null,
+
+            coroa: null,
+
+            lenco: null
+
+        };
+
+    }
+
+    /*
+
+       Cada tipo ocupa apenas um espaço.
+
+       Exemplo:
+
+       só um chapéu por vez.
+
+    */
+
+    dados.acessorios[tipo] =
+
+        id;
+
+    salvarDadosPetton(
+
+        dados
+
+    );
+
+    desenharLoja();
+
+    mostrarMensagem(
+
+        "✨ Acessório equipado!"
+
+    );
+
+}
+
+/* =========================================================
+
+   DESEQUIPAR
+
+========================================================= */
+
+function desequiparAcessorio(tipo) {
+
+    const dados =
+
+        carregarDadosPetton();
+
+    if (!dados) {
+
+        return;
+
+    }
+
+    if (!dados.acessorios) {
+
+        return;
+
+    }
+
+    dados.acessorios[tipo] =
+
+        null;
+
+    salvarDadosPetton(
+
+        dados
+
+    );
+
+    desenharLoja();
+
+    mostrarMensagem(
+
+        "Acessório retirado."
+
+    );
+
+}
+
+/* =========================================================
+
+   DESENHAR ACESSÓRIOS
+
+========================================================= */
+
+function desenharAcessorios() {
+
+    const container =
+
+        document.getElementById(
+
+            "listaAcessorios"
+
+        );
+
+    container.innerHTML = "";
+
+    acessorios.forEach(
+
+        function(produto) {
+
+            const comprado =
+
+                produtoComprado(
+
+                    produto.id
+
+                );
+
+            const equipado =
+
+                acessorioEquipado(
+
+                    produto.tipo,
+
+                    produto.id
+
+                );
+
+            const div =
+
+                document.createElement(
+
+                    "div"
+
+                );
+
+            div.className =
+
+                "produto";
+
+            let botao = "";
+
+            if (!comprado) {
+
+                botao = `
+
+                    <button
+
+                        onclick="comprar('${produto.id}')"
+
+                    >
+
+                        Comprar
+
+                    </button>
+
+                `;
+
+            } else if (equipado) {
+
+                botao = `
+
+                    <button
+
+                        class="desequipar"
+
+                        onclick="desequiparAcessorio('${produto.tipo}')"
+
+                    >
+
+                        ✓ Equipado — Retirar
+
+                    </button>
+
+                `;
+
+            } else {
+
+                botao = `
+
+                    <button
+
+                        class="equipado"
+
+                        onclick="equiparAcessorio('${produto.tipo}', '${produto.id}')"
+
+                    >
+
+                        Equipar
+
+                    </button>
+
+                `;
+
+            }
+
+            div.innerHTML = `
+
+                <div class="emoji">
+
+                    ${produto.emoji}
+
+                </div>
+
+                <h3>
+
+                    ${produto.nome}
+
+                </h3>
+
+                <p>
+
+                    ${produto.descricao}
+
+                </p>
+
+                <div class="preco">
+
+                    ⭐ ${produto.preco} pontos
+
+                </div>
+
+                ${botao}
+
+            `;
+
+            container.appendChild(
+
+                div
+
+            );
+
+        }
+
+    );
+
+}
+
+/* =========================================================
+
+   DESENHAR ITENS DO QUARTO
+
+========================================================= */
+
+function desenharQuartoItens() {
+
+    const container =
+
+        document.getElementById(
+
+            "listaQuarto"
+
+        );
+
+    container.innerHTML = "";
+
+    produtos.forEach(
+
+        function(produto) {
+
+            const comprado =
+
+                produtoComprado(
+
+                    produto.id
+
+                );
+
+            const div =
+
+                document.createElement(
+
+                    "div"
+
+                );
+
+            div.className =
+
+                "produto";
+
+            div.innerHTML = `
+
+                <div class="emoji">
+
+                    ${produto.emoji}
+
+                </div>
+
+                <h3>
+
+                    ${produto.nome}
+
+                </h3>
+
+                <p>
+
+                    ${produto.descricao}
+
+                </p>
+
+                <div class="preco">
+
+                    ⭐ ${produto.preco} pontos
+
+                </div>
+
+                <button
+
+                    ${comprado ? "disabled" : ""}
+
+                    class="${comprado ? "comprado" : ""}"
+
+                    onclick="comprar('${produto.id}')"
+
+                >
+
+                    ${
+
+                        comprado
+
+                        ? "✓ Comprado"
+
+                        : "Comprar"
+
+                    }
+
+                </button>
+
+            `;
+
+            container.appendChild(
+
+                div
+
+            );
+
+        }
+
+    );
 
 }
 
@@ -712,59 +1342,9 @@ function produtoComprado(id) {
 
 function desenharLoja() {
 
-    const container =
+    desenharAcessorios();
 
-        document.getElementById("listaProdutos");
-
-    container.innerHTML = "";
-
-    const saldo = obterPontos();
-
-    produtos.forEach(function(produto) {
-
-        const comprado =
-
-            produtoComprado(produto.id);
-
-        const div =
-
-            document.createElement("div");
-
-        div.className = "produto";
-
-        div.innerHTML = `
-
-            <div class="emoji">${produto.emoji}</div>
-
-            <h3>${produto.nome}</h3>
-
-            <p>${produto.descricao}</p>
-
-            <div class="preco">
-
-                ⭐ ${produto.preco} pontos
-
-            </div>
-
-            <button
-
-                ${comprado ? "disabled" : ""}
-
-                class="${comprado ? "comprado" : ""}"
-
-                onclick="comprar('${produto.id}')"
-
-            >
-
-                ${comprado ? "✓ Comprado" : "Comprar"}
-
-            </button>
-
-        `;
-
-        container.appendChild(div);
-
-    });
+    desenharQuartoItens();
 
 }
 
@@ -776,17 +1356,45 @@ function desenharLoja() {
 
 function comprar(id) {
 
-    const produto =
+    let produto =
 
-        produtos.find(function(item) {
+        acessorios.find(
 
-            return item.id === id;
+            function(item) {
 
-        });
+                return item.id === id;
+
+            }
+
+        );
+
+    let ehAcessorio = true;
 
     if (!produto) {
 
-        mostrarMensagem("Produto não encontrado.");
+        produto =
+
+            produtos.find(
+
+                function(item) {
+
+                    return item.id === id;
+
+                }
+
+            );
+
+        ehAcessorio = false;
+
+    }
+
+    if (!produto) {
+
+        mostrarMensagem(
+
+            "Produto não encontrado."
+
+        );
 
         return;
 
@@ -802,9 +1410,21 @@ function comprar(id) {
 
         carregarInventario();
 
-    if (inventario.includes(produto.id)) {
+    if (
 
-        mostrarMensagem("Você já tem esse item!");
+        inventario.includes(
+
+            produto.id
+
+        )
+
+    ) {
+
+        mostrarMensagem(
+
+            "Você já tem esse item!"
+
+        );
 
         return;
 
@@ -822,7 +1442,11 @@ function comprar(id) {
 
     if (!dados) {
 
-        mostrarMensagem("Petton ainda não foi carregado.");
+        mostrarMensagem(
+
+            "Petton ainda não foi carregado."
+
+        );
 
         return;
 
@@ -830,7 +1454,7 @@ function comprar(id) {
 
     /* ---------------------------------------------
 
-       USAR PONTOS
+       PONTOS
 
     --------------------------------------------- */
 
@@ -850,7 +1474,13 @@ function comprar(id) {
 
     --------------------------------------------- */
 
-    if (pontos < produto.preco) {
+    if (
+
+        pontos <
+
+        produto.preco
+
+    ) {
 
         mostrarMensagem(
 
@@ -870,9 +1500,13 @@ function comprar(id) {
 
     pontos =
 
-        pontos - produto.preco;
+        pontos -
 
-    dados.pontos = pontos;
+        produto.preco;
+
+    dados.pontos =
+
+        pontos;
 
     /* ---------------------------------------------
 
@@ -882,7 +1516,11 @@ function comprar(id) {
 
     const salvou =
 
-        salvarDadosPetton(dados);
+        salvarDadosPetton(
+
+            dados
+
+        );
 
     if (!salvou) {
 
@@ -898,17 +1536,49 @@ function comprar(id) {
 
     /* ---------------------------------------------
 
-       ADICIONAR AO INVENTÁRIO
+       ADICIONAR INVENTÁRIO
 
     --------------------------------------------- */
 
-    inventario.push(produto.id);
+    inventario.push(
 
-    salvarInventario(inventario);
+        produto.id
+
+    );
+
+    salvarInventario(
+
+        inventario
+
+    );
 
     /* ---------------------------------------------
 
-       ATUALIZAR TELA
+       SE FOR ACESSÓRIO
+
+    --------------------------------------------- */
+
+    if (ehAcessorio) {
+
+        /*
+
+           O acessório comprado fica
+
+           automaticamente pronto para equipar.
+
+           Não equipamos automaticamente
+
+           para evitar trocar o acessório
+
+           que o Petton já está usando.
+
+        */
+
+    }
+
+    /* ---------------------------------------------
+
+       ATUALIZAR
 
     --------------------------------------------- */
 
@@ -918,7 +1588,11 @@ function comprar(id) {
 
     mostrarMensagem(
 
-        "🎉 " + produto.nome + " comprado!"
+        "🎉 " +
+
+        produto.nome +
+
+        " comprado!"
 
     );
 
