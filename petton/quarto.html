@@ -4,529 +4,859 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
+    <meta
 
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        name="viewport"
 
-<meta name="google" content="notranslate">
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 
-<title>Quarto do Petton 🏠</title>
+    >
 
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <title>Petton 🐾 - Quarto</title>
 
-<style>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
-* {
+    <script src="petton.js"></script>
 
-    box-sizing: border-box;
+    <style>
 
-}
+        * {
 
-body {
+            box-sizing: border-box;
 
-    margin: 0;
+            -webkit-tap-highlight-color: transparent;
 
-    padding: 0;
+        }
 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        html,
 
-    background: #f4f8f3;
+        body {
 
-    color: #333;
+            margin: 0;
 
-}
+            padding: 0;
 
-#bloqueioLine {
+            width: 100%;
 
-    display: none;
+            min-height: 100%;
 
-    position: fixed;
+            font-family:
 
-    inset: 0;
+                -apple-system,
 
-    z-index: 99999;
+                BlinkMacSystemFont,
 
-    background: #f4f8f3;
+                "Segoe UI",
 
-    align-items: center;
+                Arial,
 
-    justify-content: center;
+                sans-serif;
 
-    text-align: center;
+            background: #f7efe3;
 
-    padding: 25px;
+            color: #49372d;
 
-}
+        }
 
-.bloqueio-box {
+        body {
 
-    background: white;
+            min-height: 100vh;
 
-    border-radius: 20px;
+            overflow-x: hidden;
 
-    padding: 28px 20px;
+        }
 
-    max-width: 340px;
+        .pagina {
 
-    box-shadow: 0 5px 25px rgba(0,0,0,.12);
+            width: 100%;
 
-}
+            min-height: 100vh;
 
-.bloqueio-icon {
+            padding-bottom: 30px;
 
-    font-size: 55px;
+        }
 
-    margin-bottom: 10px;
+        /* TOPO */
 
-}
+        .topo {
 
-.bloqueio-box h2 {
+            height: 68px;
 
-    margin: 5px 0 10px;
+            background: linear-gradient(
 
-    font-size: 21px;
+                135deg,
 
-}
+                #ff9f43,
 
-.bloqueio-box p {
+                #ff7b54
 
-    margin: 0;
+            );
 
-    font-size: 14px;
+            display: flex;
 
-    color: #666;
+            align-items: center;
 
-    line-height: 1.5;
+            justify-content: space-between;
 
-}
+            padding: 0 15px;
 
-#conteudoQuarto {
+            color: white;
 
-    display: none;
+            box-shadow:
 
-    width: 100%;
+                0 4px 15px rgba(0,0,0,.12);
 
-    max-width: 600px;
+            position: sticky;
 
-    margin: 0 auto;
+            top: 0;
 
-    padding-bottom: 30px;
+            z-index: 20;
 
-}
+        }
 
-.topo {
+        .botao-voltar {
 
-    min-height: 55px;
+            border: none;
 
-    display: grid;
+            background: rgba(255,255,255,.22);
 
-    grid-template-columns: 45px 1fr 45px;
+            color: white;
 
-    align-items: center;
+            width: 44px;
 
-    padding: 6px 8px;
+            height: 44px;
 
-}
+            border-radius: 14px;
 
-.topo button {
+            font-size: 24px;
 
-    width: 42px;
+            display: flex;
 
-    height: 42px;
+            align-items: center;
 
-    border: none;
+            justify-content: center;
 
-    border-radius: 50%;
+            cursor: pointer;
 
-    background: white;
+        }
 
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        .titulo-topo {
 
-    font-size: 21px;
+            font-size: 21px;
 
-    cursor: pointer;
+            font-weight: 800;
 
-}
+            text-shadow:
 
-.topo h1 {
+                0 2px 4px rgba(0,0,0,.12);
 
-    margin: 0;
+        }
 
-    text-align: center;
+        .botao-loja {
 
-    font-size: 20px;
+            border: none;
 
-}
+            background: rgba(255,255,255,.22);
 
-.quarto-card {
+            color: white;
 
-    margin: 5px 10px 10px;
+            min-width: 44px;
 
-    background: white;
+            height: 44px;
 
-    border-radius: 22px;
+            border-radius: 14px;
 
-    padding: 12px;
+            font-size: 23px;
 
-    box-shadow: 0 3px 15px rgba(0,0,0,.08);
+            cursor: pointer;
 
-}
+        }
 
-.quarto-cena {
+        /* QUARTO */
 
-    position: relative;
+        .quarto {
 
-    width: 100%;
+            position: relative;
 
-    height: 430px;
+            margin: 18px auto 0;
 
-    overflow: hidden;
+            width: calc(100% - 24px);
 
-    border-radius: 18px;
+            max-width: 520px;
 
-    background:
+            height: 510px;
 
-        linear-gradient(
+            border-radius: 28px;
 
-            to bottom,
+            overflow: hidden;
 
-            #dff3ff 0%,
+            background:
 
-            #effaff 58%,
+                linear-gradient(
 
-            #d9efc9 58%,
+                    to bottom,
 
-            #c5e5b4 100%
+                    #dff5ff 0%,
 
-        );
+                    #eaf8ff 54%,
 
-}
+                    #d7a66b 54%,
 
-.sol {
+                    #c98d50 100%
 
-    position: absolute;
+                );
 
-    top: 25px;
+            box-shadow:
 
-    right: 30px;
+                0 12px 30px rgba(93,64,39,.20);
 
-    font-size: 48px;
+            border: 4px solid rgba(255,255,255,.75);
 
-}
+        }
 
-.nuvem {
+        /* JANELA */
 
-    position: absolute;
+        .janela {
 
-    font-size: 38px;
+            position: absolute;
 
-    opacity: .8;
+            top: 34px;
 
-}
+            left: 50%;
 
-.nuvem1 {
+            transform: translateX(-50%);
 
-    top: 45px;
+            width: 155px;
 
-    left: 30px;
+            height: 130px;
 
-}
+            background:
 
-.nuvem2 {
+                linear-gradient(
 
-    top: 90px;
+                    135deg,
 
-    left: 180px;
+                    #91d9ff,
 
-}
+                    #d7f5ff
 
-.chao {
+                );
 
-    position: absolute;
+            border: 9px solid #fff7e9;
 
-    left: 0;
+            border-radius: 18px;
 
-    right: 0;
+            box-shadow:
 
-    bottom: 0;
+                inset 0 0 0 4px #d7b58b,
 
-    height: 42%;
+                0 8px 15px rgba(0,0,0,.12);
 
-    background:
+        }
 
-        repeating-linear-gradient(
+        .janela::before {
 
-            90deg,
+            content: "";
 
-            rgba(255,255,255,.12) 0,
+            position: absolute;
 
-            rgba(255,255,255,.12) 2px,
+            left: 50%;
 
-            transparent 2px,
+            top: 0;
 
-            transparent 25px
+            width: 4px;
 
-        ),
+            height: 100%;
 
-        #c8e6b7;
+            background: #fff7e9;
 
-}
+            transform: translateX(-50%);
 
-.tapete {
+        }
 
-    position: absolute;
+        .janela::after {
 
-    bottom: 35px;
+            content: "";
 
-    left: 50%;
+            position: absolute;
 
-    transform: translateX(-50%);
+            top: 50%;
 
-    width: 240px;
+            left: 0;
 
-    height: 75px;
+            width: 100%;
 
-    border-radius: 50%;
+            height: 4px;
 
-    background: #eadcc7;
+            background: #fff7e9;
 
-    box-shadow: 0 5px 12px rgba(0,0,0,.12);
+            transform: translateY(-50%);
 
-}
+        }
 
-.cama {
+        /* QUADROS */
 
-    position: absolute;
+        .quadro {
 
-    left: 20px;
+            position: absolute;
 
-    bottom: 75px;
+            width: 65px;
 
-    width: 125px;
+            height: 65px;
 
-    height: 85px;
+            border-radius: 12px;
 
-    border-radius: 18px;
+            background: #fff;
 
-    background: #f4d6df;
+            border: 5px solid #d7b58b;
 
-    box-shadow: 0 5px 10px rgba(0,0,0,.12);
+            box-shadow:
 
-}
+                0 5px 10px rgba(0,0,0,.12);
 
-.cama::before {
+            display: flex;
 
-    content: "";
+            align-items: center;
 
-    position: absolute;
+            justify-content: center;
 
-    left: 12px;
+            font-size: 32px;
 
-    top: 10px;
+        }
 
-    width: 101px;
+        .quadro.um {
 
-    height: 45px;
+            left: 28px;
 
-    border-radius: 15px;
+            top: 45px;
 
-    background: #fff;
+        }
 
-}
+        .quadro.dois {
 
-.pote {
+            right: 28px;
 
-    position: absolute;
+            top: 45px;
 
-    right: 25px;
+        }
 
-    bottom: 82px;
+        /* TAPETE */
 
-    font-size: 48px;
+        .tapete {
 
-}
+            position: absolute;
 
-.planta {
+            left: 50%;
 
-    position: absolute;
+            bottom: 30px;
 
-    right: 18px;
+            transform: translateX(-50%);
 
-    top: 155px;
+            width: 260px;
 
-    font-size: 58px;
+            height: 125px;
 
-}
+            border-radius: 50%;
 
-.brinquedo {
+            background:
 
-    position: absolute;
+                radial-gradient(
 
-    left: 45px;
+                    ellipse,
 
-    bottom: 30px;
+                    #f7d9a7 0%,
 
-    font-size: 42px;
+                    #edbd7a 65%,
 
-}
+                    #d69b59 100%
 
-#imagemPetton {
+                );
 
-    position: absolute;
+            box-shadow:
 
-    left: 50%;
+                0 8px 15px rgba(95,61,31,.18);
 
-    bottom: 82px;
+            z-index: 2;
 
-    transform: translateX(-50%);
+        }
 
-    width: auto;
+        /* CAMA */
 
-    max-width: 210px;
+        .cama {
 
-    max-height: 220px;
+            position: absolute;
 
-    object-fit: contain;
+            left: 22px;
 
-    z-index: 10;
+            bottom: 45px;
 
-    transition: opacity .3s ease, transform .3s ease;
+            width: 145px;
 
-}
+            height: 105px;
 
-#mensagemPetton {
+            background: #c98a58;
 
-    min-height: 22px;
+            border-radius: 28px 28px 18px 18px;
 
-    margin: 10px 5px 0;
+            box-shadow:
 
-    text-align: center;
+                0 8px 12px rgba(72,43,25,.20);
 
-    font-size: 14px;
+            z-index: 4;
 
-    color: #666;
+        }
 
-}
+        .cama::before {
 
-.informacao {
+            content: "";
 
-    margin-top: 10px;
+            position: absolute;
 
-    padding: 10px;
+            top: -18px;
 
-    border-radius: 12px;
+            left: 8px;
 
-    background: #f5f8f4;
+            right: 8px;
 
-    text-align: center;
+            height: 50px;
 
-    font-size: 13px;
+            border-radius: 25px 25px 15px 15px;
 
-}
+            background: #fff4dd;
 
-.botoes {
+            box-shadow:
 
-    display: grid;
+                inset 0 -5px 0 rgba(217,171,116,.35);
 
-    grid-template-columns: 1fr 1fr;
+        }
 
-    gap: 8px;
+        .cama::after {
 
-    margin-top: 10px;
+            content: "💤";
 
-}
+            position: absolute;
 
-.botao {
+            right: 12px;
 
-    height: 46px;
+            top: 22px;
 
-    border: none;
+            font-size: 25px;
 
-    border-radius: 12px;
+        }
 
-    font-size: 14px;
+        /* COMEDOURO */
 
-    font-weight: 700;
+        .comedouro {
 
-    cursor: pointer;
+            position: absolute;
 
-}
+            right: 22px;
 
-.botao-loja {
+            bottom: 55px;
 
-    background: #fff1c9;
+            width: 85px;
 
-}
+            height: 65px;
 
-.botao-voltar {
+            z-index: 5;
 
-    background: #eef6ec;
+        }
 
-}
+        .tigela {
 
-.itens {
+            width: 85px;
 
-    display: grid;
+            height: 42px;
 
-    grid-template-columns: repeat(3, 1fr);
+            background:
 
-    gap: 8px;
+                linear-gradient(
 
-    margin-top: 12px;
+                    to bottom,
 
-}
+                    #ff8b8b,
 
-.item {
+                    #e65d5d
 
-    min-height: 75px;
+                );
 
-    border-radius: 12px;
+            border-radius:
 
-    background: #f7faf6;
+                8px 8px 30px 30px;
 
-    display: flex;
+            box-shadow:
 
-    flex-direction: column;
+                0 6px 8px rgba(70,35,35,.20);
 
-    align-items: center;
+        }
 
-    justify-content: center;
+        .comida {
 
-    font-size: 12px;
+            position: absolute;
 
-    text-align: center;
+            top: -4px;
 
-}
+            left: 8px;
 
-.item-emoji {
+            width: 69px;
 
-    font-size: 30px;
+            height: 20px;
 
-    margin-bottom: 3px;
+            border-radius: 50%;
 
-}
+            background: #8d572e;
 
-@media(max-width:380px) {
+            box-shadow:
 
-    .quarto-cena {
+                inset 0 3px 0 rgba(255,255,255,.20);
 
-        height: 390px;
+        }
 
-    }
+        /* BRINQUEDO */
 
-    #imagemPetton {
+        .brinquedo {
 
-        max-width: 180px;
+            position: absolute;
 
-        max-height: 200px;
+            left: 50%;
 
-    }
+            top: 350px;
 
-}
+            transform: translateX(-50%);
 
-</style>
+            font-size: 48px;
+
+            z-index: 8;
+
+            filter:
+
+                drop-shadow(
+
+                    0 5px 4px rgba(0,0,0,.16)
+
+                );
+
+        }
+
+        /* PET */
+
+        .pet-area {
+
+            position: absolute;
+
+            left: 50%;
+
+            bottom: 70px;
+
+            transform: translateX(-50%);
+
+            width: 180px;
+
+            height: 180px;
+
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content: center;
+
+            z-index: 10;
+
+            pointer-events: none;
+
+        }
+
+        .pet {
+
+            max-width: 150px;
+
+            max-height: 150px;
+
+            object-fit: contain;
+
+            filter:
+
+                drop-shadow(
+
+                    0 9px 7px rgba(0,0,0,.18)
+
+                );
+
+            transition:
+
+                transform .25s ease;
+
+        }
+
+        .pet:hover {
+
+            transform: scale(1.04);
+
+        }
+
+        /* STATUS */
+
+        .painel-status {
+
+            width: calc(100% - 24px);
+
+            max-width: 520px;
+
+            margin: 16px auto 0;
+
+            background: rgba(255,255,255,.95);
+
+            border-radius: 22px;
+
+            padding: 15px 17px;
+
+            box-shadow:
+
+                0 8px 20px rgba(75,53,35,.10);
+
+        }
+
+        .nome {
+
+            text-align: center;
+
+            font-size: 22px;
+
+            font-weight: 800;
+
+            color: #553d2f;
+
+            margin-bottom: 3px;
+
+        }
+
+        .idade {
+
+            text-align: center;
+
+            font-size: 14px;
+
+            color: #8b7565;
+
+            margin-bottom: 12px;
+
+        }
+
+        .status-linha {
+
+            display: grid;
+
+            grid-template-columns:
+
+                repeat(4, 1fr);
+
+            gap: 8px;
+
+        }
+
+        .status-item {
+
+            background: #fff8ef;
+
+            border-radius: 14px;
+
+            padding: 9px 4px;
+
+            text-align: center;
+
+        }
+
+        .status-emoji {
+
+            font-size: 20px;
+
+            display: block;
+
+        }
+
+        .status-valor {
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-top: 3px;
+
+            color: #70594a;
+
+        }
+
+        /* BOTÕES */
+
+        .acoes {
+
+            width: calc(100% - 24px);
+
+            max-width: 520px;
+
+            margin: 15px auto 0;
+
+            display: grid;
+
+            grid-template-columns:
+
+                1fr 1fr;
+
+            gap: 10px;
+
+        }
+
+        .acao {
+
+            border: none;
+
+            min-height: 52px;
+
+            border-radius: 17px;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            box-shadow:
+
+                0 5px 10px rgba(0,0,0,.10);
+
+            transition:
+
+                transform .12s ease;
+
+        }
+
+        .acao:active {
+
+            transform: scale(.96);
+
+        }
+
+        .acao-voltar {
+
+            background: #fff;
+
+            color: #765b49;
+
+        }
+
+        .acao-loja {
+
+            background:
+
+                linear-gradient(
+
+                    135deg,
+
+                    #ff9f43,
+
+                    #ff7043
+
+                );
+
+            color: white;
+
+        }
+
+        /* BLOQUEIO */
+
+        #bloqueioLine {
+
+            display: none;
+
+            min-height: 100vh;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 25px;
+
+            text-align: center;
+
+        }
+
+        .bloqueio-card {
+
+            background: white;
+
+            padding: 30px 22px;
+
+            border-radius: 25px;
+
+            box-shadow:
+
+                0 10px 30px rgba(0,0,0,.12);
+
+        }
+
+        .bloqueio-card .emoji {
+
+            font-size: 60px;
+
+        }
+
+        .bloqueio-card h2 {
+
+            margin: 12px 0 8px;
+
+        }
+
+        .bloqueio-card p {
+
+            color: #806e60;
+
+        }
+
+        /* RESPONSIVO */
+
+        @media (max-width: 380px) {
+
+            .quarto {
+
+                height: 475px;
+
+            }
+
+            .cama {
+
+                transform: scale(.9);
+
+                transform-origin: bottom left;
+
+            }
+
+            .comedouro {
+
+                transform: scale(.9);
+
+                transform-origin: bottom right;
+
+            }
+
+            .pet {
+
+                max-width: 130px;
+
+                max-height: 130px;
+
+            }
+
+            .status-item {
+
+                padding: 7px 2px;
+
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -534,663 +864,295 @@ body {
 
 <div id="bloqueioLine">
 
-    <div class="bloqueio-box">
+    <div class="bloqueio-card">
 
-        <div class="bloqueio-icon">🐾</div>
+        <div class="emoji">🐾</div>
 
         <h2>Petton</h2>
 
-        <p>Este jogo funciona dentro do LINE.</p>
+        <p>Abra o Petton pelo aplicativo LINE.</p>
 
     </div>
 
 </div>
 
-<div id="conteudoQuarto">
+<div id="conteudoQuarto" class="pagina">
 
-    <div class="topo">
+    <header class="topo">
 
         <button
 
-            type="button"
+            class="botao-voltar"
 
-            onclick="voltarInicio()"
+            onclick="voltarPetton()"
 
-            aria-label="Voltar">
+            aria-label="Voltar"
+
+        >
 
             ←
 
         </button>
 
-        <h1>🏠 Quarto</h1>
+        <div class="titulo-topo">
+
+            🏠 Quarto
+
+        </div>
 
         <button
 
-            type="button"
+            class="botao-loja"
 
             onclick="abrirLoja()"
 
-            aria-label="Loja">
+            aria-label="Loja"
 
-            🛒
+        >
+
+            🛍️
 
         </button>
 
-    </div>
+    </header>
 
-    <main class="quarto-card">
+    <main>
 
-        <div class="quarto-cena">
+        <section class="quarto">
 
-            <div class="sol">☀️</div>
+            <div class="janela"></div>
 
-            <div class="nuvem nuvem1">☁️</div>
+            <div class="quadro um">
 
-            <div class="nuvem nuvem2">☁️</div>
+                🐾
 
-            <div class="chao"></div>
+            </div>
 
-            <div class="planta">🪴</div>
+            <div class="quadro dois">
 
-            <div class="cama"></div>
+                ❤️
 
-            <div class="pote">🥣</div>
+            </div>
 
             <div class="tapete"></div>
 
-            <div class="brinquedo">⚽</div>
+            <div class="cama"></div>
 
-            <img
+            <div class="comedouro">
 
-                id="imagemPetton"
+                <div class="comida"></div>
 
-                src="petton-original.png"
+                <div class="tigela"></div>
 
-                alt="Petton">
+            </div>
 
-        </div>
+            <div
 
-        <div
+                class="brinquedo"
 
-            id="mensagemPetton">
+                id="brinquedo"
 
-            Carregando seu Petton...
+            >
 
-        </div>
+                🧸
 
-        <div
+            </div>
 
-            class="informacao"
+            <div class="pet-area">
 
-            id="informacaoPetton">
+                <img
 
-            🐾 Seu Petton está no quarto.
+                    id="petImagem"
 
-        </div>
+                    class="pet"
 
-        <div class="itens" id="itensQuarto">
+                    src=""
 
-        </div>
+                    alt="Seu Petton"
 
-        <div class="botoes">
+                >
+
+            </div>
+
+        </section>
+
+        <section class="painel-status">
+
+            <div
+
+                id="petNome"
+
+                class="nome"
+
+            >
+
+                Meu Petton
+
+            </div>
+
+            <div
+
+                id="petIdade"
+
+                class="idade"
+
+            >
+
+                Carregando...
+
+            </div>
+
+            <div class="status-linha">
+
+                <div class="status-item">
+
+                    <span class="status-emoji">❤️</span>
+
+                    <span
+
+                        id="statusVida"
+
+                        class="status-valor"
+
+                    >
+
+                        100
+
+                    </span>
+
+                </div>
+
+                <div class="status-item">
+
+                    <span class="status-emoji">🍖</span>
+
+                    <span
+
+                        id="statusFome"
+
+                        class="status-valor"
+
+                    >
+
+                        100
+
+                    </span>
+
+                </div>
+
+                <div class="status-item">
+
+                    <span class="status-emoji">😊</span>
+
+                    <span
+
+                        id="statusFelicidade"
+
+                        class="status-valor"
+
+                    >
+
+                        100
+
+                    </span>
+
+                </div>
+
+                <div class="status-item">
+
+                    <span class="status-emoji">✨</span>
+
+                    <span
+
+                        id="statusHigiene"
+
+                        class="status-valor"
+
+                    >
+
+                        100
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="acoes">
 
             <button
 
-                type="button"
+                class="acao acao-voltar"
 
-                class="botao botao-loja"
+                onclick="voltarPetton()"
 
-                onclick="abrirLoja()">
+            >
 
-                🛒 Ir para a loja
+                🏠 Voltar
 
             </button>
 
             <button
 
-                type="button"
+                class="acao acao-loja"
 
-                class="botao botao-voltar"
+                onclick="abrirLoja()"
 
-                onclick="voltarInicio()">
+            >
 
-                ← Voltar
+                🛍️ Loja
 
             </button>
 
-        </div>
+        </section>
 
     </main>
 
 </div>
 
-<script src="./petton.js"></script>
-
 <script>
 
 const LIFF_ID = "2010902449-KWNNNsxn";
 
-const CHAVE_LOJA = "petton_loja_v1";
+const imagensFallback = {
 
-const PRODUTOS = {
+    gato: "petton-original.png",
 
-    cama_basica: {
+    cachorro: "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png",
 
-        nome: "Cama básica",
-
-        emoji: "🛏️"
-
-    },
-
-    cama_rosa: {
-
-        nome: "Cama rosa",
-
-        emoji: "🛏️"
-
-    },
-
-    cama_casinha: {
-
-        nome: "Casinha",
-
-        emoji: "🏠"
-
-    },
-
-    bola: {
-
-        nome: "Bola",
-
-        emoji: "⚽"
-
-    },
-
-    bolinha: {
-
-        nome: "Bolinha",
-
-        emoji: "🔴"
-
-    },
-
-    ratinho: {
-
-        nome: "Ratinho",
-
-        emoji: "🐭"
-
-    },
-
-    arranhador: {
-
-        nome: "Arranhador",
-
-        emoji: "🪵"
-
-    },
-
-    pelucia: {
-
-        nome: "Pelúcia",
-
-        emoji: "🧸"
-
-    },
-
-    pote: {
-
-        nome: "Pote",
-
-        emoji: "🥣"
-
-    },
-
-    pote_agua: {
-
-        nome: "Pote de água",
-
-        emoji: "💧"
-
-    },
-
-    planta: {
-
-        nome: "Planta",
-
-        emoji: "🪴"
-
-    },
-
-    flor: {
-
-        nome: "Flor",
-
-        emoji: "🌸"
-
-    },
-
-    tapete: {
-
-        nome: "Tapete",
-
-        emoji: "🟤"
-
-    },
-
-    abajur: {
-
-        nome: "Abajur",
-
-        emoji: "💡"
-
-    },
-
-    quadro: {
-
-        nome: "Quadro",
-
-        emoji: "🖼️"
-
-    }
+    coelho: "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png"
 
 };
 
-/* =========================================================
+/* -------------------------------------------------
 
-   ESPÉCIE
+   LER PET
 
-========================================================= */
+------------------------------------------------- */
 
-function obterEspeciePet(dados) {
-
-    if (!dados) return "gato";
-
-    let especie =
-
-        dados.identidadeVisual?.especie ||
-
-        dados.especie ||
-
-        "gato";
-
-    especie =
-
-        String(especie).toLowerCase();
-
-    if (
-
-        especie.includes("cach") ||
-
-        especie.includes("dog")
-
-    ) {
-
-        return "cachorro";
-
-    }
-
-    if (
-
-        especie.includes("coelh") ||
-
-        especie.includes("rabbit")
-
-    ) {
-
-        return "coelho";
-
-    }
-
-    return "gato";
-
-}
-
-/* =========================================================
-
-   FASE
-
-========================================================= */
-
-function obterFasePet(dados) {
-
-    if (!dados) return "bebe";
-
-    const fase =
-
-        String(
-
-            dados.fase ||
-
-            dados.faseVida ||
-
-            ""
-
-        ).toLowerCase();
-
-    if (fase.includes("adult")) {
-
-        return "adulto";
-
-    }
-
-    if (fase.includes("jovem")) {
-
-        return "jovem";
-
-    }
-
-    if (fase.includes("filh")) {
-
-        return "filhote";
-
-    }
-
-    if (fase.includes("beb")) {
-
-        return "bebe";
-
-    }
-
-    let dias =
-
-        Number(
-
-            dados.idadeDias ?? 0
-
-        );
-
-    if (!Number.isFinite(dias)) {
-
-        dias = 0;
-
-    }
-
-    if (dias < 7) return "bebe";
-
-    if (dias < 30) return "filhote";
-
-    if (dias < 90) return "jovem";
-
-    return "adulto";
-
-}
-
-/* =========================================================
-
-   IMAGEM DO MESMO PETTON DO INÍCIO
-
-========================================================= */
-
-function obterImagemPetton(dados) {
-
-    const especie =
-
-        obterEspeciePet(dados);
-
-    const fase =
-
-        obterFasePet(dados);
-
-    const imagens =
-
-        dados?.identidadeVisual?.imagens;
-
-    /*
-
-       PRIMEIRO:
-
-       usa a imagem específica daquela fase,
-
-       se existir.
-
-    */
-
-    if (
-
-        imagens &&
-
-        typeof imagens === "object"
-
-    ) {
-
-        const imagemFase =
-
-            imagens[fase];
-
-        if (
-
-            typeof imagemFase === "string" &&
-
-            imagemFase.trim() !== ""
-
-        ) {
-
-            return imagemFase.trim();
-
-        }
-
-    }
-
-    /*
-
-       MESMAS IMAGENS FALLBACK DO INÍCIO
-
-    */
-
-    const fallback = {
-
-        gato:
-
-            "petton-original.png",
-
-        cachorro:
-
-            "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png",
-
-        coelho:
-
-            "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png"
-
-    };
-
-    return (
-
-        fallback[especie] ||
-
-        fallback.gato
-
-    );
-
-}
-
-/* =========================================================
-
-   ATUALIZAR PETTON
-
-========================================================= */
-
-function atualizarPetton() {
+function carregarDadosPetton() {
 
     try {
 
         if (
 
-            typeof Petton === "undefined" ||
+            typeof Petton !== "undefined" &&
 
-            typeof Petton.carregarPetton !== "function"
+            typeof Petton.carregar === "function"
 
         ) {
 
-            return;
+            return Petton.carregar();
 
         }
-
-        const dados =
-
-            Petton.carregarPetton();
-
-        if (!dados) return;
-
-        const imagem =
-
-            document.getElementById(
-
-                "imagemPetton"
-
-            );
-
-        const mensagem =
-
-            document.getElementById(
-
-                "mensagemPetton"
-
-            );
-
-        const informacao =
-
-            document.getElementById(
-
-                "informacaoPetton"
-
-            );
-
-        const especie =
-
-            obterEspeciePet(dados);
-
-        const fase =
-
-            obterFasePet(dados);
-
-        const imagemFinal =
-
-            obterImagemPetton(dados);
-
-        if (imagem) {
-
-            const urlFinal =
-
-                new URL(
-
-                    imagemFinal,
-
-                    document.baseURI
-
-                ).href;
-
-            if (
-
-                imagem.src !== urlFinal
-
-            ) {
-
-                imagem.style.opacity = "0";
-
-                setTimeout(() => {
-
-                    imagem.src =
-
-                        imagemFinal;
-
-                    imagem.onload = () => {
-
-                        imagem.style.opacity = "1";
-
-                    };
-
-                    imagem.onerror = () => {
-
-                        imagem.style.opacity = "1";
-
-                    };
-
-                }, 80);
-
-            }
-
-            imagem.alt =
-
-                "Petton " +
-
-                especie +
-
-                " " +
-
-                fase;
-
-        }
-
-        if (mensagem) {
-
-            if (dados.nome) {
-
-                mensagem.textContent =
-
-                    dados.nome +
-
-                    " está no quarto 🐾";
-
-            } else {
-
-                mensagem.textContent =
-
-                    "Seu Petton está no quarto 🐾";
-
-            }
-
-        }
-
-        if (informacao) {
-
-            let texto =
-
-                "🐾 " +
-
-                especie +
-
-                " • " +
-
-                fase;
-
-            if (
-
-                Number.isFinite(
-
-                    Number(dados.idadeDias)
-
-                )
-
-            ) {
-
-                texto +=
-
-                    " • " +
-
-                    Math.floor(
-
-                        Number(dados.idadeDias)
-
-                    ) +
-
-                    " dias";
-
-            }
-
-            informacao.textContent =
-
-                texto;
-
-        }
-
-        atualizarItens();
 
     } catch (erro) {
 
         console.error(
 
-            "Erro ao atualizar quarto:",
+            "Erro ao carregar Petton:",
 
             erro
 
@@ -1198,43 +1160,601 @@ function atualizarPetton() {
 
     }
 
+    return null;
+
 }
 
-/* =========================================================
+/* -------------------------------------------------
 
-   ITENS COMPRADOS
+   DESCOBRIR IMAGEM
 
-========================================================= */
+------------------------------------------------- */
 
-function obterInventario() {
+function obterImagemPet(dados) {
+
+    if (!dados) {
+
+        return null;
+
+    }
+
+    let fase =
+
+        dados.fase ||
+
+        "bebe";
+
+    /*
+
+     * Primeiro tenta a imagem gerada/salva
+
+     * pelo próprio Petton.
+
+     */
 
     try {
 
-        const salvo =
+        if (
 
-            localStorage.getItem(
+            dados.identidadeVisual &&
 
-                CHAVE_LOJA
+            dados.identidadeVisual.imagens &&
+
+            dados.identidadeVisual.imagens[fase]
+
+        ) {
+
+            return dados
+
+                .identidadeVisual
+
+                .imagens[fase];
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Não foi possível obter imagem da identidade:",
+
+            erro
+
+        );
+
+    }
+
+    /*
+
+     * Depois tenta imagem direta.
+
+     */
+
+    if (
+
+        dados.imagens &&
+
+        dados.imagens[fase]
+
+    ) {
+
+        return dados.imagens[fase];
+
+    }
+
+    /*
+
+     * Por último usa a espécie.
+
+     */
+
+    let especie =
+
+        dados.especie ||
+
+        (
+
+            dados.identidadeVisual &&
+
+            dados.identidadeVisual.especie
+
+        ) ||
+
+        "gato";
+
+    especie =
+
+        String(especie)
+
+            .toLowerCase();
+
+    if (
+
+        especie.includes("cachorro") ||
+
+        especie.includes("cao") ||
+
+        especie.includes("cão") ||
+
+        especie.includes("dog")
+
+    ) {
+
+        return imagensFallback.cachorro;
+
+    }
+
+    if (
+
+        especie.includes("coelho") ||
+
+        especie.includes("rabbit")
+
+    ) {
+
+        return imagensFallback.coelho;
+
+    }
+
+    return imagensFallback.gato;
+
+}
+
+/* -------------------------------------------------
+
+   ATUALIZAR PET
+
+------------------------------------------------- */
+
+function atualizarPetton() {
+
+    const dados =
+
+        carregarDadosPetton();
+
+    if (!dados) {
+
+        console.warn(
+
+            "Petton ainda não possui dados."
+
+        );
+
+        return;
+
+    }
+
+    /*
+
+     * NOME
+
+     */
+
+    const nome =
+
+        dados.nome ||
+
+        "Meu Petton";
+
+    const elementoNome =
+
+        document.getElementById(
+
+            "petNome"
+
+        );
+
+    if (elementoNome) {
+
+        elementoNome.textContent =
+
+            nome;
+
+    }
+
+    /*
+
+     * IDADE
+
+     */
+
+    let idadeTexto =
+
+        "";
+
+    try {
+
+        if (
+
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.idadeTexto === "function"
+
+        ) {
+
+            idadeTexto =
+
+                Petton.idadeTexto();
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Erro idade:",
+
+            erro
+
+        );
+
+    }
+
+    if (!idadeTexto) {
+
+        if (
+
+            typeof dados.idadeDias === "number"
+
+        ) {
+
+            idadeTexto =
+
+                dados.idadeDias +
+
+                (
+
+                    dados.idadeDias === 1
+
+                        ? " dia"
+
+                        : " dias"
+
+                );
+
+        } else {
+
+            idadeTexto =
+
+                dados.fase ||
+
+                "";
+
+        }
+
+    }
+
+    const elementoIdade =
+
+        document.getElementById(
+
+            "petIdade"
+
+        );
+
+    if (elementoIdade) {
+
+        elementoIdade.textContent =
+
+            idadeTexto;
+
+    }
+
+    /*
+
+     * IMAGEM
+
+     */
+
+    const imagem =
+
+        document.getElementById(
+
+            "petImagem"
+
+        );
+
+    const caminhoImagem =
+
+        obterImagemPet(
+
+            dados
+
+        );
+
+    if (
+
+        imagem &&
+
+        caminhoImagem
+
+    ) {
+
+        imagem.src =
+
+            caminhoImagem;
+
+    }
+
+    /*
+
+     * STATUS
+
+     */
+
+    atualizarStatus(
+
+        dados
+
+    );
+
+    /*
+
+     * BRINQUEDO
+
+     */
+
+    atualizarBrinquedo(
+
+        dados
+
+    );
+
+}
+
+/* -------------------------------------------------
+
+   STATUS
+
+------------------------------------------------- */
+
+function atualizarStatus(dados) {
+
+    const vida =
+
+        obterValor(
+
+            dados,
+
+            [
+
+                "vida",
+
+                "saude",
+
+                "saúde",
+
+                "energia"
+
+            ],
+
+            100
+
+        );
+
+    const fome =
+
+        obterValor(
+
+            dados,
+
+            [
+
+                "fome",
+
+                "alimentacao",
+
+                "alimentação"
+
+            ],
+
+            100
+
+        );
+
+    const felicidade =
+
+        obterValor(
+
+            dados,
+
+            [
+
+                "felicidade",
+
+                "diversao",
+
+                "diversão"
+
+            ],
+
+            100
+
+        );
+
+    const higiene =
+
+        obterValor(
+
+            dados,
+
+            [
+
+                "higiene",
+
+                "limpeza"
+
+            ],
+
+            100
+
+        );
+
+    colocarValor(
+
+        "statusVida",
+
+        vida
+
+    );
+
+    colocarValor(
+
+        "statusFome",
+
+        fome
+
+    );
+
+    colocarValor(
+
+        "statusFelicidade",
+
+        felicidade
+
+    );
+
+    colocarValor(
+
+        "statusHigiene",
+
+        higiene
+
+    );
+
+}
+
+function obterValor(
+
+    objeto,
+
+    nomes,
+
+    padrao
+
+) {
+
+    for (
+
+        const nome of nomes
+
+    ) {
+
+        if (
+
+            objeto &&
+
+            objeto[nome] !== undefined &&
+
+            objeto[nome] !== null
+
+        ) {
+
+            return objeto[nome];
+
+        }
+
+    }
+
+    return padrao;
+
+}
+
+function colocarValor(
+
+    id,
+
+    valor
+
+) {
+
+    const elemento =
+
+        document.getElementById(id);
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+    if (
+
+        typeof valor === "number"
+
+    ) {
+
+        valor =
+
+            Math.round(
+
+                valor
 
             );
 
-        if (!salvo) return [];
+    }
 
-        const dados =
+    elemento.textContent =
 
-            JSON.parse(salvo);
+        valor;
 
-        /*
+}
 
-           Aceita tanto array direto
+/* -------------------------------------------------
 
-           quanto objeto com inventario.
+   BRINQUEDO DA LOJA
 
-        */
+------------------------------------------------- */
 
-        if (Array.isArray(dados)) {
+function atualizarBrinquedo(dados) {
 
-            return dados;
+    const brinquedo =
+
+        document.getElementById(
+
+            "brinquedo"
+
+        );
+
+    if (!brinquedo) {
+
+        return;
+
+    }
+
+    /*
+
+     * Tenta encontrar compras
+
+     * feitas na loja.
+
+     */
+
+    let temBola =
+
+        false;
+
+    try {
+
+        if (
+
+            dados &&
+
+            dados.itens
+
+        ) {
+
+            if (
+
+                dados.itens.bola ||
+
+                dados.itens.bolinha
+
+            ) {
+
+                temBola = true;
+
+            }
 
         }
 
@@ -1242,239 +1762,227 @@ function obterInventario() {
 
             dados &&
 
-            Array.isArray(dados.inventario)
+            dados.inventario
 
         ) {
 
-            return dados.inventario;
+            if (
+
+                dados.inventario.bola ||
+
+                dados.inventario.bolinha
+
+            ) {
+
+                temBola = true;
+
+            }
 
         }
 
-        return [];
+        /*
+
+         * Alguns sistemas salvam
+
+         * compras em "loja".
+
+         */
+
+        if (
+
+            dados &&
+
+            dados.loja
+
+        ) {
+
+            if (
+
+                dados.loja.bola ||
+
+                dados.loja.bolinha
+
+            ) {
+
+                temBola = true;
+
+            }
+
+        }
 
     } catch (erro) {
 
-        console.error(
+        console.warn(
 
-            "Erro no inventário:",
+            "Erro ao verificar brinquedos:",
 
             erro
 
         );
 
-        return [];
+    }
+
+    if (temBola) {
+
+        brinquedo.textContent =
+
+            "⚽";
+
+    } else {
+
+        brinquedo.textContent =
+
+            "🧸";
 
     }
 
 }
 
-/* =========================================================
+/* -------------------------------------------------
 
-   MOSTRAR ITENS
+   VOLTAR
 
-========================================================= */
+------------------------------------------------- */
 
-function atualizarItens() {
+function voltarPetton() {
 
-    const area =
+    try {
 
-        document.getElementById(
+        if (
 
-            "itensQuarto"
+            window.history.length > 1
+
+        ) {
+
+            window.history.back();
+
+            return;
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Não foi possível voltar:",
+
+            erro
 
         );
 
-    if (!area) return;
-
-    const inventario =
-
-        obterInventario();
-
-    area.innerHTML = "";
-
-    if (!inventario.length) {
-
-        area.innerHTML = `
-
-            <div class="item">
-
-                <div class="item-emoji">🛏️</div>
-
-                <div>Quarto básico</div>
-
-            </div>
-
-        `;
-
-        return;
-
     }
 
-    const contagem = {};
+    window.location.href =
 
-    inventario.forEach(id => {
-
-        contagem[id] =
-
-            (contagem[id] || 0) + 1;
-
-    });
-
-    Object.keys(contagem).forEach(id => {
-
-        const produto =
-
-            PRODUTOS[id];
-
-        if (!produto) return;
-
-        const item =
-
-            document.createElement("div");
-
-        item.className =
-
-            "item";
-
-        item.innerHTML = `
-
-            <div class="item-emoji">
-
-                ${produto.emoji}
-
-            </div>
-
-            <div>
-
-                ${produto.nome}
-
-            </div>
-
-        `;
-
-        area.appendChild(item);
-
-    });
+        "./index.html";
 
 }
 
-/* =========================================================
+/* -------------------------------------------------
 
-   NAVEGAÇÃO
+   LOJA
 
-========================================================= */
+------------------------------------------------- */
 
 function abrirLoja() {
 
-    const destino =
+    window.location.href =
 
-        new URL(
-
-            "./loja.html",
-
-            document.baseURI
-
-        ).href;
-
-    try {
-
-        if (
-
-            typeof liff !== "undefined" &&
-
-            typeof liff.openWindow === "function" &&
-
-            liff.isInClient()
-
-        ) {
-
-            liff.openWindow({
-
-                url: destino,
-
-                external: false
-
-            });
-
-            return;
-
-        }
-
-    } catch (erro) {
-
-        console.error(
-
-            "Erro LIFF ao abrir loja:",
-
-            erro
-
-        );
-
-    }
-
-    window.location.assign(destino);
+        "./loja.html";
 
 }
 
-function voltarInicio() {
+/* -------------------------------------------------
 
-    const destino =
+   INICIALIZAÇÃO
 
-        new URL(
-
-            "./index.html",
-
-            document.baseURI
-
-        ).href;
-
-    try {
-
-        if (
-
-            typeof liff !== "undefined" &&
-
-            typeof liff.openWindow === "function" &&
-
-            liff.isInClient()
-
-        ) {
-
-            liff.openWindow({
-
-                url: destino,
-
-                external: false
-
-            });
-
-            return;
-
-        }
-
-    } catch (erro) {
-
-        console.error(
-
-            "Erro LIFF ao voltar:",
-
-            erro
-
-        );
-
-    }
-
-    window.location.assign(destino);
-
-}
-
-/* =========================================================
-
-   LIFF
-
-========================================================= */
+------------------------------------------------- */
 
 async function iniciarQuarto() {
+
+    /*
+
+     * IMPORTANTE:
+
+     *
+
+     * NÃO usamos liff.isInClient()
+
+     * para bloquear esta página.
+
+     *
+
+     * O index.html já controla a entrada
+
+     * principal do Petton pelo LINE.
+
+     *
+
+     * Quando o Quarto é aberto dentro
+
+     * do LINE, esta página precisa
+
+     * simplesmente funcionar.
+
+     */
+
+    try {
+
+        if (
+
+            typeof liff !== "undefined"
+
+        ) {
+
+            try {
+
+                await liff.init({
+
+                    liffId: LIFF_ID
+
+                });
+
+                console.log(
+
+                    "Petton Quarto: LIFF inicializado."
+
+                );
+
+            } catch (erroLiff) {
+
+                console.warn(
+
+                    "LIFF não inicializou no Quarto:",
+
+                    erroLiff
+
+                );
+
+            }
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Erro no LIFF do Quarto:",
+
+            erro
+
+        );
+
+    }
+
+    /*
+
+     * Mostra o quarto
+
+     * independentemente do resultado
+
+     * do isInClient().
+
+     */
 
     const bloqueio =
 
@@ -1492,169 +2000,31 @@ async function iniciarQuarto() {
 
         );
 
-    try {
+    if (bloqueio) {
 
-        if (
+        bloqueio.style.display =
 
-            typeof liff === "undefined"
-
-        ) {
-
-            throw new Error(
-
-                "LIFF não carregou."
-
-            );
-
-        }
-
-        /*
-
-           IMPORTANTE:
-
-           Inicializa o mesmo LIFF usado
-
-           pelo index.html.
-
-        */
-
-        await liff.init({
-
-            liffId: LIFF_ID
-
-        });
-
-        /*
-
-           O Quarto foi aberto pelo LINE.
-
-           Mostra o jogo.
-
-        */
-
-        if (liff.isInClient()) {
-
-            if (bloqueio) {
-
-                bloqueio.style.display = "none";
-
-            }
-
-            if (conteudo) {
-
-                conteudo.style.display = "block";
-
-            }
-
-            atualizarPetton();
-
-            return;
-
-        }
-
-        /*
-
-           Fora do LINE.
-
-        */
-
-        if (bloqueio) {
-
-            bloqueio.style.display = "flex";
-
-        }
-
-        if (conteudo) {
-
-            conteudo.style.display = "none";
-
-        }
-
-    } catch (erro) {
-
-        console.error(
-
-            "Erro ao inicializar Quarto:",
-
-            erro
-
-        );
-
-        /*
-
-           Se o Quarto foi aberto por
-
-           navegação interna do LINE e o
-
-           isInClient falhar, tentamos
-
-           manter a página funcionando.
-
-        */
-
-        try {
-
-            if (
-
-                typeof liff !== "undefined" &&
-
-                typeof liff.isInClient === "function" &&
-
-                liff.isInClient()
-
-            ) {
-
-                if (bloqueio) {
-
-                    bloqueio.style.display = "none";
-
-                }
-
-                if (conteudo) {
-
-                    conteudo.style.display = "block";
-
-                }
-
-                atualizarPetton();
-
-                return;
-
-            }
-
-        } catch (erro2) {
-
-            console.error(
-
-                "Segunda tentativa LIFF:",
-
-                erro2
-
-            );
-
-        }
-
-        if (bloqueio) {
-
-            bloqueio.style.display = "flex";
-
-        }
-
-        if (conteudo) {
-
-            conteudo.style.display = "none";
-
-        }
+            "none";
 
     }
 
+    if (conteudo) {
+
+        conteudo.style.display =
+
+            "block";
+
+    }
+
+    atualizarPetton();
+
 }
 
-/* =========================================================
+/* -------------------------------------------------
 
-   INICIALIZAÇÃO
+   INICIAR
 
-========================================================= */
+------------------------------------------------- */
 
 document.addEventListener(
 
@@ -1663,22 +2033,6 @@ document.addEventListener(
     function() {
 
         iniciarQuarto();
-
-        setTimeout(
-
-            atualizarPetton,
-
-            800
-
-        );
-
-        setInterval(
-
-            atualizarPetton,
-
-            1000
-
-        );
 
     }
 
