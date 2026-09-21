@@ -1,70 +1,2767 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<title>Petton 🐾</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    min-height: 100%;
+
+    font-family: Arial, sans-serif;
+
+    background: #f5f5f5;
+
+}
+
+body {
+
+    overflow-x: hidden;
+
+}
+
+header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1000;
+
+    height: 58px;
+
+    background: #fff;
+
+    border-bottom: 1px solid #ddd;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 14px;
+
+}
+
+header h1 {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    color: #333;
+
+}
+
+.btn-voltar {
+
+    border: none;
+
+    background: #f0f0f0;
+
+    border-radius: 12px;
+
+    padding: 9px 13px;
+
+    font-size: 14px;
+
+}
+
+main {
+
+    width: 100%;
+
+    max-width: 700px;
+
+    margin: auto;
+
+    padding-bottom: 200px;
+
+}
+
+/* =========================================================
+
+   QUARTO
+
+========================================================= */
+
+#quarto {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 430px;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+
+            to bottom,
+
+            #dff5ff 0%,
+
+            #dff5ff 68%,
+
+            #e8c99d 68%,
+
+            #e8c99d 100%
+
+        );
+
+    border-bottom: 2px solid #d3b384;
+
+}
+
+.janela {
+
+    position: absolute;
+
+    top: 30px;
+
+    left: 20px;
+
+    width: 105px;
+
+    height: 90px;
+
+    background: #bfe9ff;
+
+    border: 8px solid #fff;
+
+    border-radius: 10px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+
+    pointer-events: none;
+
+}
+
+.janela::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 4px;
+
+    background: #fff;
+
+    transform: translateX(-50%);
+
+}
+
+.janela::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 0;
+
+    right: 0;
+
+    height: 4px;
+
+    background: #fff;
+
+    transform: translateY(-50%);
+
+}
+
+/* =========================================================
+
+   PET
+
+========================================================= */
+
+#pet-container {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 92px;
+
+    transform: translateX(-50%);
+
+    width: 220px;
+
+    height: 240px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+}
+
+#pet {
+
+    position: relative;
+
+    width: 180px;
+
+    max-width: 180px;
+
+    max-height: 210px;
+
+    object-fit: contain;
+
+    display: block;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+    z-index: 20;
+
+}
+
+/* =========================================================
+
+   CAMADA DE ACESSÓRIOS
+
+========================================================= */
+
+#acessorio-camada {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 100;
+
+}
+
+/* =========================================================
+
+   PNG DO ACESSÓRIO
+
+========================================================= */
+
+.acessorio {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+
+        translate(-50%, -50%)
+
+        translate(
+
+            var(--x, 0px),
+
+            var(--y, 0px)
+
+        )
+
+        rotate(var(--rot, 0deg))
+
+        scale(var(--scale, 1));
+
+    transform-origin: center center;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    z-index: 100;
+
+}
+
+.acessorio img {
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: contain;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+}
+
+/* tamanho-base do PNG */
+
+.acessorio.chapeu {
+
+    width: 125px;
+
+    height: 100px;
+
+}
+
+.acessorio.coroa {
+
+    width: 110px;
+
+    height: 90px;
+
+}
+
+.acessorio.lacinho {
+
+    width: 75px;
+
+    height: 65px;
+
+}
+
+.acessorio.lenco {
+
+    width: 105px;
+
+    height: 90px;
+
+}
+
+.acessorio.oculos {
+
+    width: 110px;
+
+    height: 70px;
+
+}
+
+.acessorio.corpo {
+
+    width: 130px;
+
+    height: 120px;
+
+}
+
+/* =========================================================
+
+   OBJETOS DO QUARTO
+
+========================================================= */
+
+.objeto-quarto {
+
+    position: absolute;
+
+    z-index: 5;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    font-size: 55px;
+
+    line-height: 1;
+
+}
+
+.cama {
+
+    left: 12px;
+
+    bottom: 22px;
+
+}
+
+.bola {
+
+    right: 30px;
+
+    bottom: 70px;
+
+}
+
+.planta {
+
+    right: 15px;
+
+    top: 30px;
+
+}
+
+.pote {
+
+    left: 35px;
+
+    bottom: 45px;
+
+}
+
+.tapete {
+
+    left: 50%;
+
+    bottom: 8px;
+
+    transform: translateX(-50%);
+
+    font-size: 100px;
+
+}
+
+/* =========================================================
+
+   INFORMAÇÕES
+
+========================================================= */
+
+.info {
+
+    background: #fff;
+
+    margin: 12px;
+
+    padding: 14px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+
+}
+
+.info h2 {
+
+    margin: 0 0 5px;
+
+    font-size: 19px;
+
+}
+
+.info p {
+
+    margin: 4px 0;
+
+    color: #666;
+
+    font-size: 14px;
+
+}
+
+/* =========================================================
+
+   PAINEL DE AJUSTE
+
+========================================================= */
+
+#painel-ajuste {
+
+    position: fixed;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    z-index: 2000;
+
+    background: #fff;
+
+    border-top: 1px solid #ddd;
+
+    box-shadow:
+
+        0 -4px 15px rgba(0,0,0,.12);
+
+    padding:
+
+        10px
+
+        12px
+
+        calc(10px + env(safe-area-inset-bottom));
+
+}
+
+.ajuste-titulo {
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    margin-bottom: 7px;
+
+}
+
+#seletor-acessorio {
+
+    width: 100%;
+
+    height: 42px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 10px;
+
+    background: #fff;
+
+    padding: 0 10px;
+
+    font-size: 15px;
+
+    margin-bottom: 8px;
+
+}
+
+.controles {
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(5, 1fr);
+
+    gap: 6px;
+
+}
+
+.controles button {
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #f0f0f0;
+
+    min-height: 38px;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+}
+
+.controles button:active {
+
+    transform: scale(.96);
+
+}
+
+.btn-salvar {
+
+    width: 100%;
+
+    margin-top: 8px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #222;
+
+    color: #fff;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+}
+
+.status-ajuste {
+
+    text-align: center;
+
+    font-size: 12px;
+
+    color: #777;
+
+    min-height: 16px;
+
+    margin-top: 5px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <button
+
+        class="btn-voltar"
+
+        onclick="voltar()"
+
+    >
+
+        ← Voltar
+
+    </button>
+
+    <h1>🏠 Quarto</h1>
+
+    <div style="width:72px;"></div>
+
+</header>
+
+<main>
+
+    <div id="quarto">
+
+        <div class="janela"></div>
+
+        <div id="objetos-quarto"></div>
+
+        <div id="pet-container">
+
+            <img
+
+                id="pet"
+
+                src=""
+
+                alt="Petton"
+
+            >
+
+            <div id="acessorio-camada"></div>
+
+        </div>
+
+    </div>
+
+    <div class="info">
+
+        <h2 id="nome-pet">
+
+            Petton
+
+        </h2>
+
+        <p id="fase-pet">
+
+            Carregando...
+
+        </p>
+
+        <p id="especie-pet"></p>
+
+    </div>
+
+</main>
+
+<!-- ======================================================
+
+     PAINEL DE AJUSTE
+
+====================================================== -->
+
+<div id="painel-ajuste">
+
+    <div class="ajuste-titulo">
+
+        🎀 Ajustar acessório
+
+    </div>
+
+    <select id="seletor-acessorio">
+
+        <optgroup label="🎩 Cabeça">
+
+            <option value="cartola_preta">
+
+                🎩 Cartola preta
+
+            </option>
+
+            <option value="chapeu_palha">
+
+                👒 Chapéu de palha
+
+            </option>
+
+            <option value="bone_azul">
+
+                🧢 Boné azul
+
+            </option>
+
+            <option value="bone_amarelo">
+
+                🧢 Boné amarelo
+
+            </option>
+
+            <option value="gorro_rosa">
+
+                🧢 Gorro rosa
+
+            </option>
+
+            <option value="gorro_natal">
+
+                🎅 Gorro de Natal
+
+            </option>
+
+            <option value="touca_aviador">
+
+                ✈️ Touca aviador
+
+            </option>
+
+            <option value="touca_coelho">
+
+                🐰 Touca coelho
+
+            </option>
+
+            <option value="touca_sapo">
+
+                🐸 Touca sapo
+
+            </option>
+
+            <option value="touca_tigre">
+
+                🐯 Touca tigre
+
+            </option>
+
+            <option value="touca_urso">
+
+                🐻 Touca urso
+
+            </option>
+
+            <option value="touca_galinha">
+
+                🐔 Touca galinha
+
+            </option>
+
+            <option value="tiara_morcego">
+
+                🦇 Tiara morcego
+
+            </option>
+
+            <option value="coroa_dourada">
+
+                👑 Coroa dourada
+
+            </option>
+
+            <option value="fone_orelhas_gato">
+
+                🐱 Fone orelhas de gato
+
+            </option>
+
+        </optgroup>
+
+        <optgroup label="🎀 Laços">
+
+            <option value="lacinho_rosa">
+
+                🎀 Lacinho rosa
+
+            </option>
+
+            <option value="lacinho_vermelho">
+
+                🎀 Lacinho vermelho
+
+            </option>
+
+        </optgroup>
+
+        <optgroup label="🧣 Pescoço">
+
+            <option value="bandana_azul">
+
+                🔵 Bandana azul
+
+            </option>
+
+            <option value="bandana_vermelha">
+
+                🔴 Bandana vermelha
+
+            </option>
+
+            <option value="bandana_amarela">
+
+                🟡 Bandana amarela
+
+            </option>
+
+            <option value="bandana_verde">
+
+                🟢 Bandana verde
+
+            </option>
+
+            <option value="bandana_pirata">
+
+                🏴‍☠️ Bandana pirata
+
+            </option>
+
+            <option value="cachecol_vermelho">
+
+                🧣 Cachecol vermelho
+
+            </option>
+
+            <option value="gravata_preta">
+
+                👔 Gravata preta
+
+            </option>
+
+        </optgroup>
+
+    </select>
+
+    <div class="controles">
+
+        <button onclick="mover(-5,0)">
+
+            ←
+
+        </button>
+
+        <button onclick="mover(5,0)">
+
+            →
+
+        </button>
+
+        <button onclick="mover(0,-5)">
+
+            ↑
+
+        </button>
+
+        <button onclick="mover(0,5)">
+
+            ↓
+
+        </button>
+
+        <button onclick="aumentar()">
+
+            ＋
+
+        </button>
+
+    </div>
+
+    <div
+
+        class="controles"
+
+        style="margin-top:6px;"
+
+    >
+
+        <button onclick="diminuir()">
+
+            －
+
+        </button>
+
+        <button onclick="girar(-5)">
+
+            ↶
+
+        </button>
+
+        <button onclick="girar(5)">
+
+            ↷
+
+        </button>
+
+        <button onclick="centralizar()">
+
+            🎯
+
+        </button>
+
+        <button onclick="salvarAjuste()">
+
+            💾
+
+        </button>
+
+    </div>
+
+    <button
+
+        class="btn-salvar"
+
+        onclick="salvarAjuste()"
+
+    >
+
+        💾 Salvar posição
+
+    </button>
+
+    <div
+
+        id="status-ajuste"
+
+        class="status-ajuste"
+
+    ></div>
+
+</div>
+
+<script src="petton.js"></script>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const CHAVE_AJUSTES_V3 =
+
+    "petton_acessorios_posicoes_v3";
+
+const PASTA_ACESSORIOS =
+
+    "./petton_acessorios_loja/";
+
+/* =========================================================
+
+   CATÁLOGO PNG
+
+========================================================= */
+
+const ACESSORIOS = {
+
+    cartola_preta: {
+
+        tipo: "chapeu",
+
+        nome: "Cartola preta",
+
+        imagem: "cartola_preta.png"
+
+    },
+
+    chapeu_palha: {
+
+        tipo: "chapeu",
+
+        nome: "Chapéu de palha",
+
+        imagem: "chapeu_palha.png"
+
+    },
+
+    bone_azul: {
+
+        tipo: "chapeu",
+
+        nome: "Boné azul",
+
+        imagem: "bone_azul.png"
+
+    },
+
+    bone_amarelo: {
+
+        tipo: "chapeu",
+
+        nome: "Boné amarelo",
+
+        imagem: "bone_amarelo.png"
+
+    },
+
+    gorro_rosa: {
+
+        tipo: "chapeu",
+
+        nome: "Gorro rosa",
+
+        imagem: "gorro_rosa.png"
+
+    },
+
+    gorro_natal: {
+
+        tipo: "chapeu",
+
+        nome: "Gorro de Natal",
+
+        imagem: "gorro_natal.png"
+
+    },
+
+    touca_aviador: {
+
+        tipo: "chapeu",
+
+        nome: "Touca aviador",
+
+        imagem: "touca_aviador.png"
+
+    },
+
+    touca_coelho: {
+
+        tipo: "chapeu",
+
+        nome: "Touca coelho",
+
+        imagem: "touca_coelho.png"
+
+    },
+
+    touca_sapo: {
+
+        tipo: "chapeu",
+
+        nome: "Touca sapo",
+
+        imagem: "touca_sapo.png"
+
+    },
+
+    touca_tigre: {
+
+        tipo: "chapeu",
+
+        nome: "Touca tigre",
+
+        imagem: "touca_tigre.png"
+
+    },
+
+    touca_urso: {
+
+        tipo: "chapeu",
+
+        nome: "Touca urso",
+
+        imagem: "touca_urso.png"
+
+    },
+
+    touca_galinha: {
+
+        tipo: "chapeu",
+
+        nome: "Touca galinha",
+
+        imagem: "touca_galinha.png"
+
+    },
+
+    tiara_morcego: {
+
+        tipo: "coroa",
+
+        nome: "Tiara morcego",
+
+        imagem: "tiara_morcego.png"
+
+    },
+
+    coroa_dourada: {
+
+        tipo: "coroa",
+
+        nome: "Coroa dourada",
+
+        imagem: "coroa_dourada.png"
+
+    },
+
+    fone_orelhas_gato: {
+
+        tipo: "chapeu",
+
+        nome: "Fone orelhas de gato",
+
+        imagem: "fone_orelhas_gato.png"
+
+    },
+
+    lacinho_rosa: {
+
+        tipo: "lacinho",
+
+        nome: "Lacinho rosa",
+
+        imagem: "lacinho_rosa.png"
+
+    },
+
+    lacinho_vermelho: {
+
+        tipo: "lacinho",
+
+        nome: "Lacinho vermelho",
+
+        imagem: "lacinho_vermelho.png"
+
+    },
+
+    bandana_azul: {
+
+        tipo: "lenco",
+
+        nome: "Bandana azul",
+
+        imagem: "bandana_azul.png"
+
+    },
+
+    bandana_vermelha: {
+
+        tipo: "lenco",
+
+        nome: "Bandana vermelha",
+
+        imagem: "bandana_vermelha.png"
+
+    },
+
+    bandana_amarela: {
+
+        tipo: "lenco",
+
+        nome: "Bandana amarela",
+
+        imagem: "bandana_amarela.png"
+
+    },
+
+    bandana_verde: {
+
+        tipo: "lenco",
+
+        nome: "Bandana verde",
+
+        imagem: "bandana_verde.png"
+
+    },
+
+    bandana_pirata: {
+
+        tipo: "lenco",
+
+        nome: "Bandana pirata",
+
+        imagem: "bandana_pirata.png"
+
+    },
+
+    cachecol_vermelho: {
+
+        tipo: "lenco",
+
+        nome: "Cachecol vermelho",
+
+        imagem: "cachecol_vermelho.png"
+
+    },
+
+    gravata_preta: {
+
+        tipo: "lenco",
+
+        nome: "Gravata preta",
+
+        imagem: "gravata_preta.png"
+
+    }
+
+};
+
+/* =========================================================
+
+   VARIÁVEIS
+
+========================================================= */
+
+let dados = null;
+
+let especie = "gato";
+
+let fase = "bebe";
+
+let statusTimer = null;
+
+/* =========================================================
+
+   NORMALIZAR ESPÉCIE
+
+========================================================= */
+
+function normalizarEspecie(valor) {
+
+    if (!valor) {
+
+        return "gato";
+
+    }
+
+    const v =
+
+        String(valor).toLowerCase();
+
+    if (
+
+        v.includes("coelho") ||
+
+        v.includes("rabbit")
+
+    ) {
+
+        return "coelho";
+
+    }
+
+    if (
+
+        v.includes("cachorro") ||
+
+        v.includes("cao") ||
+
+        v.includes("cão") ||
+
+        v.includes("dog")
+
+    ) {
+
+        return "cachorro";
+
+    }
+
+    return "gato";
+
+}
+
+/* =========================================================
+
+   CARREGAR DADOS
+
+========================================================= */
+
+function carregarDados() {
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.carregar === "function"
+
+        ) {
+
+            dados =
+
+                Petton.carregar();
+
+        } else {
+
+            const salvo =
+
+                localStorage.getItem(
+
+                    "petton_dados_v3"
+
+                );
+
+            dados =
+
+                salvo
+
+                    ? JSON.parse(salvo)
+
+                    : null;
+
+        }
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        dados = null;
+
+    }
+
+    if (!dados) {
+
+        dados = {
+
+            nome: "Petton",
+
+            especie: "gato",
+
+            fase: "bebe",
+
+            acessorios: {}
+
+        };
+
+    }
+
+    especie =
+
+        normalizarEspecie(
+
+            dados.especie ||
+
+            dados.identidadeVisual?.especie
+
+        );
+
+    fase =
+
+        dados.fase ||
+
+        "bebe";
+
+}
+
+/* =========================================================
+
+   CHAVE ÚNICA
+
+   espécie + fase + acessório
+
+========================================================= */
+
+function criarChave(id) {
+
+    return (
+
+        especie +
+
+        "_" +
+
+        fase +
+
+        "_" +
+
+        id
+
+    );
+
+}
+
+/* =========================================================
+
+   POSIÇÃO PADRÃO
+
+========================================================= */
+
+function obterPadrao(id) {
+
+    const produto =
+
+        ACESSORIOS[id];
+
+    if (!produto) {
+
+        return {
+
+            x: 0,
+
+            y: 0,
+
+            scale: 1,
+
+            rot: 0
+
+        };
+
+    }
+
+    switch (produto.tipo) {
+
+        case "chapeu":
+
+            return {
+
+                x: 0,
+
+                y: -78,
+
+                scale: 1,
+
+                rot: 0
+
+            };
+
+        case "coroa":
+
+            return {
+
+                x: 0,
+
+                y: -88,
+
+                scale: .9,
+
+                rot: 0
+
+            };
+
+        case "lacinho":
+
+            return {
+
+                x: 58,
+
+                y: -55,
+
+                scale: .8,
+
+                rot: 0
+
+            };
+
+        case "oculos":
+
+            return {
+
+                x: 0,
+
+                y: -25,
+
+                scale: .85,
+
+                rot: 0
+
+            };
+
+        case "lenco":
+
+            return {
+
+                x: 0,
+
+                y: 40,
+
+                scale: .8,
+
+                rot: 0
+
+            };
+
+        case "corpo":
+
+            return {
+
+                x: 0,
+
+                y: 30,
+
+                scale: .8,
+
+                rot: 0
+
+            };
+
+        default:
+
+            return {
+
+                x: 0,
+
+                y: 0,
+
+                scale: 1,
+
+                rot: 0
+
+            };
+
+    }
+
+}
+
+/* =========================================================
+
+   CARREGAR TODOS OS AJUSTES
+
+========================================================= */
+
+function carregarAjustes() {
+
+    try {
+
+        return JSON.parse(
+
+            localStorage.getItem(
+
+                CHAVE_AJUSTES_V3
+
+            ) || "{}"
+
+        );
+
+    } catch (erro) {
+
+        return {};
+
+    }
+
+}
+
+/* =========================================================
+
+   OBTER AJUSTE
+
+========================================================= */
+
+function obterAjuste(id) {
+
+    const ajustes =
+
+        carregarAjustes();
+
+    const chave =
+
+        criarChave(id);
+
+    return {
+
+        ...obterPadrao(id),
+
+        ...(ajustes[chave] || {})
+
+    };
+
+}
+
+/* =========================================================
+
+   SALVAR AJUSTE INTERNO
+
+========================================================= */
+
+function salvarAjusteInterno(
+
+    id,
+
+    ajuste
+
+) {
+
+    const ajustes =
+
+        carregarAjustes();
+
+    ajustes[
+
+        criarChave(id)
+
+    ] = {
+
+        x:
+
+            Number(ajuste.x ?? 0),
+
+        y:
+
+            Number(ajuste.y ?? 0),
+
+        scale:
+
+            Number(ajuste.scale ?? 1),
+
+        rot:
+
+            Number(ajuste.rot ?? 0)
+
+    };
+
+    localStorage.setItem(
+
+        CHAVE_AJUSTES_V3,
+
+        JSON.stringify(ajustes)
+
+    );
+
+}
+
+/* =========================================================
+
+   IMAGEM DO PET
+
+========================================================= */
+
+function obterImagemPet() {
+
+    if (
+
+        window.Petton &&
+
+        typeof Petton.obterImagemFase === "function"
+
+    ) {
+
+        try {
+
+            const imagem =
+
+                Petton.obterImagemFase(fase);
+
+            if (imagem) {
+
+                return imagem;
+
+            }
+
+        } catch (erro) {}
+
+    }
+
+    if (
+
+        dados?.imagens?.[fase]
+
+    ) {
+
+        return dados.imagens[fase];
+
+    }
+
+    if (
+
+        dados?.imagemFases?.[fase]
+
+    ) {
+
+        return dados.imagemFases[fase];
+
+    }
+
+    if (
+
+        especie === "cachorro"
+
+    ) {
+
+        return "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+    }
+
+    if (
+
+        especie === "coelho"
+
+    ) {
+
+        return "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
+
+    }
+
+    return "petton-original.png";
+
+}
+
+/* =========================================================
+
+   MOSTRAR PET
+
+========================================================= */
+
+function mostrarPet() {
+
+    const img =
+
+        document.getElementById("pet");
+
+    img.src =
+
+        obterImagemPet();
+
+    img.alt =
+
+        dados.nome ||
+
+        "Petton";
+
+    document.getElementById(
+
+        "nome-pet"
+
+    ).textContent =
+
+        dados.nome ||
+
+        "Petton";
+
+    document.getElementById(
+
+        "fase-pet"
+
+    ).textContent =
+
+        "Fase: " +
+
+        fase;
+
+    document.getElementById(
+
+        "especie-pet"
+
+    ).textContent =
+
+        "Espécie: " +
+
+        especie;
+
+}
+
+/* =========================================================
+
+   ACESSÓRIO SELECIONADO
+
+========================================================= */
+
+function obterSelecionado() {
+
+    return document.getElementById(
+
+        "seletor-acessorio"
+
+    ).value;
+
+}
+
+/* =========================================================
+
+   CRIAR PNG DO ACESSÓRIO
+
+========================================================= */
+
+function criarVisualAcessorio(
+
+    id,
+
+    produto
+
+) {
+
+    const elemento =
+
+        document.createElement("div");
+
+    elemento.className =
+
+        "acessorio " +
+
+        produto.tipo;
+
+    elemento.dataset.id =
+
+        id;
+
+    const img =
+
+        document.createElement("img");
+
+    img.src =
+
+        PASTA_ACESSORIOS +
+
+        produto.imagem;
+
+    img.alt =
+
+        produto.nome;
+
+    img.draggable =
+
+        false;
+
+    img.onerror =
+
+        function() {
+
+            console.error(
+
+                "PNG não encontrado:",
+
+                img.src
+
+            );
+
+            mostrarStatus(
+
+                "❌ PNG não encontrado: " +
+
+                produto.imagem
+
+            );
+
+        };
+
+    elemento.appendChild(
+
+        img
+
+    );
+
+    return elemento;
+
+}
+
+/* =========================================================
+
+   DESENHAR ACESSÓRIO
+
+   IMPORTANTE:
+
+   NO PAINEL DE AJUSTE APARECE SOMENTE
+
+   O ITEM SELECIONADO.
+
+   Nenhum acessório equipado fica por baixo.
+
+========================================================= */
+
 function desenharAcessorios() {
 
     const camada =
+
         document.getElementById(
+
             "acessorio-camada"
+
         );
 
     camada.innerHTML = "";
 
-    /*
-     * MODO DE CONFIGURAÇÃO:
-     * mostra SOMENTE o acessório
-     * selecionado no painel.
-     *
-     * Assim nenhum acessório que já
-     * esteja equipado atrapalha
-     * o posicionamento.
-     */
+    const id =
 
-    const selecionado =
         obterSelecionado();
 
     if (
-        !selecionado ||
-        !ACESSORIOS[selecionado]
+
+        !id ||
+
+        !ACESSORIOS[id]
+
     ) {
+
         return;
+
     }
 
     const produto =
-        ACESSORIOS[selecionado];
+
+        ACESSORIOS[id];
 
     const elemento =
+
         criarVisualAcessorio(
-            selecionado,
+
+            id,
+
             produto
+
         );
 
     const ajuste =
-        obterAjuste(
-            selecionado
-        );
+
+        obterAjuste(id);
 
     elemento.style.setProperty(
+
         "--x",
+
         ajuste.x + "px"
+
     );
 
     elemento.style.setProperty(
+
         "--y",
+
         ajuste.y + "px"
+
     );
 
     elemento.style.setProperty(
+
         "--scale",
+
         ajuste.scale
+
     );
 
     elemento.style.setProperty(
-        "--rot",
-        ajuste.rot + "deg"
-    );
 
-    elemento.style.zIndex =
-        "200";
+        "--rot",
+
+        ajuste.rot + "deg"
+
+    );
 
     camada.appendChild(
+
         elemento
+
     );
+
 }
+
+/* =========================================================
+
+   MOVER
+
+========================================================= */
+
+function mover(dx, dy) {
+
+    const id =
+
+        obterSelecionado();
+
+    if (
+
+        !id ||
+
+        !ACESSORIOS[id]
+
+    ) {
+
+        return;
+
+    }
+
+    const ajuste =
+
+        obterAjuste(id);
+
+    ajuste.x += dx;
+
+    ajuste.y += dy;
+
+    salvarAjusteInterno(
+
+        id,
+
+        ajuste
+
+    );
+
+    desenharAcessorios();
+
+    mostrarStatus(
+
+        "Posição alterada"
+
+    );
+
+}
+
+/* =========================================================
+
+   AUMENTAR
+
+========================================================= */
+
+function aumentar() {
+
+    const id =
+
+        obterSelecionado();
+
+    if (
+
+        !id ||
+
+        !ACESSORIOS[id]
+
+    ) {
+
+        return;
+
+    }
+
+    const ajuste =
+
+        obterAjuste(id);
+
+    ajuste.scale =
+
+        Math.min(
+
+            4,
+
+            ajuste.scale + .05
+
+        );
+
+    salvarAjusteInterno(
+
+        id,
+
+        ajuste
+
+    );
+
+    desenharAcessorios();
+
+    mostrarStatus(
+
+        "Tamanho aumentado"
+
+    );
+
+}
+
+/* =========================================================
+
+   DIMINUIR
+
+========================================================= */
+
+function diminuir() {
+
+    const id =
+
+        obterSelecionado();
+
+    if (
+
+        !id ||
+
+        !ACESSORIOS[id]
+
+    ) {
+
+        return;
+
+    }
+
+    const ajuste =
+
+        obterAjuste(id);
+
+    ajuste.scale =
+
+        Math.max(
+
+            .1,
+
+            ajuste.scale - .05
+
+        );
+
+    salvarAjusteInterno(
+
+        id,
+
+        ajuste
+
+    );
+
+    desenharAcessorios();
+
+    mostrarStatus(
+
+        "Tamanho diminuído"
+
+    );
+
+}
+
+/* =========================================================
+
+   GIRAR
+
+========================================================= */
+
+function girar(graus) {
+
+    const id =
+
+        obterSelecionado();
+
+    if (
+
+        !id ||
+
+        !ACESSORIOS[id]
+
+    ) {
+
+        return;
+
+    }
+
+    const ajuste =
+
+        obterAjuste(id);
+
+    ajuste.rot +=
+
+        graus;
+
+    salvarAjusteInterno(
+
+        id,
+
+        ajuste
+
+    );
+
+    desenharAcessorios();
+
+    mostrarStatus(
+
+        "Rotação alterada"
+
+    );
+
+}
+
+/* =========================================================
+
+   CENTRALIZAR / PADRÃO
+
+========================================================= */
+
+function centralizar() {
+
+    const id =
+
+        obterSelecionado();
+
+    if (
+
+        !id ||
+
+        !ACESSORIOS[id]
+
+    ) {
+
+        return;
+
+    }
+
+    const padrao =
+
+        obterPadrao(id);
+
+    salvarAjusteInterno(
+
+        id,
+
+        {
+
+            x: padrao.x,
+
+            y: padrao.y,
+
+            scale: padrao.scale,
+
+            rot: padrao.rot
+
+        }
+
+    );
+
+    desenharAcessorios();
+
+    mostrarStatus(
+
+        "Posição padrão restaurada"
+
+    );
+
+}
+
+/* =========================================================
+
+   SALVAR
+
+========================================================= */
+
+function salvarAjuste() {
+
+    const id =
+
+        obterSelecionado();
+
+    if (
+
+        !id ||
+
+        !ACESSORIOS[id]
+
+    ) {
+
+        return;
+
+    }
+
+    const ajuste =
+
+        obterAjuste(id);
+
+    salvarAjusteInterno(
+
+        id,
+
+        ajuste
+
+    );
+
+    mostrarStatus(
+
+        "✅ Posição salva"
+
+    );
+
+}
+
+/* =========================================================
+
+   STATUS
+
+========================================================= */
+
+function mostrarStatus(texto) {
+
+    const el =
+
+        document.getElementById(
+
+            "status-ajuste"
+
+        );
+
+    el.textContent =
+
+        texto;
+
+    clearTimeout(
+
+        statusTimer
+
+    );
+
+    statusTimer =
+
+        setTimeout(
+
+            function() {
+
+                el.textContent =
+
+                    "";
+
+            },
+
+            1800
+
+        );
+
+}
+
+/* =========================================================
+
+   TROCAR ACESSÓRIO
+
+========================================================= */
+
+document
+
+    .getElementById(
+
+        "seletor-acessorio"
+
+    )
+
+    .addEventListener(
+
+        "change",
+
+        function() {
+
+            /*
+
+             * Ao trocar:
+
+             * limpa o anterior e mostra
+
+             * SOMENTE o novo selecionado.
+
+             */
+
+            desenharAcessorios();
+
+            const id =
+
+                obterSelecionado();
+
+            if (
+
+                ACESSORIOS[id]
+
+            ) {
+
+                mostrarStatus(
+
+                    "Ajustando: " +
+
+                    ACESSORIOS[id].nome
+
+                );
+
+            }
+
+        }
+
+    );
+
+/* =========================================================
+
+   OBJETOS DO QUARTO
+
+========================================================= */
+
+function desenharObjetos() {
+
+    const container =
+
+        document.getElementById(
+
+            "objetos-quarto"
+
+        );
+
+    container.innerHTML =
+
+        "";
+
+    let loja = {};
+
+    try {
+
+        loja =
+
+            JSON.parse(
+
+                localStorage.getItem(
+
+                    "petton_loja_v1"
+
+                ) || "{}"
+
+            );
+
+    } catch (erro) {
+
+        loja = {};
+
+    }
+
+    const itens =
+
+        loja.itens ||
+
+        loja.inventario ||
+
+        [];
+
+    if (
+
+        !Array.isArray(itens)
+
+    ) {
+
+        return;
+
+    }
+
+    itens.forEach(
+
+        function(item) {
+
+            const id =
+
+                typeof item === "string"
+
+                    ? item
+
+                    : item?.id;
+
+            if (!id) {
+
+                return;
+
+            }
+
+            let emoji = "";
+
+            switch (id) {
+
+                case "cama_basica":
+
+                case "cama_rosa":
+
+                    emoji = "🛏️";
+
+                    break;
+
+                case "cama_casinha":
+
+                    emoji = "🏠";
+
+                    break;
+
+                case "bola":
+
+                    emoji = "⚽";
+
+                    break;
+
+                case "bolinha":
+
+                    emoji = "🔴";
+
+                    break;
+
+                case "ratinho":
+
+                    emoji = "🐭";
+
+                    break;
+
+                case "arranhador":
+
+                    emoji = "🪵";
+
+                    break;
+
+                case "pelucia":
+
+                    emoji = "🧸";
+
+                    break;
+
+                case "pote":
+
+                    emoji = "🥣";
+
+                    break;
+
+                case "pote_agua":
+
+                    emoji = "💧";
+
+                    break;
+
+                case "planta":
+
+                    emoji = "🪴";
+
+                    break;
+
+                case "flor":
+
+                    emoji = "🌸";
+
+                    break;
+
+                case "tapete":
+
+                    emoji = "🟫";
+
+                    break;
+
+                case "abajur":
+
+                    emoji = "💡";
+
+                    break;
+
+                case "quadro":
+
+                    emoji = "🖼️";
+
+                    break;
+
+            }
+
+            if (!emoji) {
+
+                return;
+
+            }
+
+            const elemento =
+
+                document.createElement(
+
+                    "div"
+
+                );
+
+            elemento.className =
+
+                "objeto-quarto";
+
+            elemento.textContent =
+
+                emoji;
+
+            if (
+
+                id.includes("cama")
+
+            ) {
+
+                elemento.classList.add(
+
+                    "cama"
+
+                );
+
+            } else if (
+
+                id.includes("bola") ||
+
+                id === "bolinha"
+
+            ) {
+
+                elemento.classList.add(
+
+                    "bola"
+
+                );
+
+            } else if (
+
+                id === "planta"
+
+            ) {
+
+                elemento.classList.add(
+
+                    "planta"
+
+                );
+
+            } else if (
+
+                id === "pote" ||
+
+                id === "pote_agua"
+
+            ) {
+
+                elemento.classList.add(
+
+                    "pote"
+
+                );
+
+            } else if (
+
+                id === "tapete"
+
+            ) {
+
+                elemento.classList.add(
+
+                    "tapete"
+
+                );
+
+            }
+
+            container.appendChild(
+
+                elemento
+
+            );
+
+        }
+
+    );
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltar() {
+
+    if (
+
+        window.history.length > 1
+
+    ) {
+
+        window.history.back();
+
+    } else {
+
+        window.location.href =
+
+            "index.html";
+
+    }
+
+}
+
+/* =========================================================
+
+   INICIAR
+
+========================================================= */
+
+function iniciarQuarto() {
+
+    carregarDados();
+
+    mostrarPet();
+
+    desenharObjetos();
+
+    /*
+
+     * Mostra apenas o primeiro
+
+     * acessório selecionado.
+
+     */
+
+    desenharAcessorios();
+
+}
+
+/* =========================================================
+
+   QUANDO VOLTAR DA LOJA
+
+========================================================= */
+
+window.addEventListener(
+
+    "pageshow",
+
+    function() {
+
+        carregarDados();
+
+        mostrarPet();
+
+        desenharObjetos();
+
+        desenharAcessorios();
+
+    }
+
+);
+
+/* =========================================================
+
+   START
+
+========================================================= */
+
+if (
+
+    document.readyState === "loading"
+
+) {
+
+    document.addEventListener(
+
+        "DOMContentLoaded",
+
+        iniciarQuarto
+
+    );
+
+} else {
+
+    iniciarQuarto();
+
+}
+
+</script>
+
+</body>
+
+</html>
