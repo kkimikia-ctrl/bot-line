@@ -5893,3 +5893,610 @@ try {
     );
 
 }
+/* =========================================================
+
+   PETTON - SISTEMA DE TEMPO REAL V2
+
+   Não apaga nem reseta o Petton atual.
+
+========================================================= */
+
+const PETTON_TEMPO_FOME_MS = 30 * 60 * 1000;
+
+const PETTON_TEMPO_FELICIDADE_MS = 60 * 60 * 1000;
+
+const PETTON_TEMPO_ENERGIA_MS = 45 * 60 * 1000;
+
+const PETTON_TEMPO_HIGIENE_MS = 60 * 60 * 1000;
+
+const PETTON_TEMPO_SAUDE_RISCO_MS = 60 * 60 * 1000;
+
+const PETTON_TEMPO_DOENTE_MS = 60 * 60 * 1000;
+
+/* =========================================================
+
+   LIMITAR STATUS
+
+========================================================= */
+
+function limitarStatusPetton(valor) {
+
+    valor = Number(valor);
+
+    if (!Number.isFinite(valor)) {
+
+        return 0;
+
+    }
+
+    return Math.max(
+
+        0,
+
+        Math.min(100, valor)
+
+    );
+
+}
+
+/* =========================================================
+
+   GARANTIR CONTROLE DE TEMPO
+
+========================================================= */
+
+function garantirControleTempoPetton(dados) {
+
+    if (!dados) {
+
+        return dados;
+
+    }
+
+    const agora = Date.now();
+
+    if (
+
+        typeof dados.statusAtualizadoEm !== "number" ||
+
+        !Number.isFinite(dados.statusAtualizadoEm) ||
+
+        dados.statusAtualizadoEm <= 0 ||
+
+        dados.statusAtualizadoEm > agora
+
+    ) {
+
+        /*
+
+        IMPORTANTE:
+
+        Pettons antigos começam a contar a partir de agora.
+
+        Assim esta atualização NÃO desconta horas/dias
+
+        retroativamente de quem já tinha um Petton.
+
+        */
+
+        dados.statusAtualizadoEm = agora;
+
+    }
+
+    return dados;
+
+}
+
+/* =========================================================
+
+   DOENÇA V2
+
+========================================================= */
+
+verificarDoenca = function (dados) {
+
+    if (!dados || !dados.dateNascimento) {
+
+        return dados;
+
+    }
+
+    const agora = Date.now();
+
+    /*
+
+    Cocô não desconta saúde toda vez que a tela atualiza.
+
+    Ele apenas causa doença quando fica tempo demais.
+
+    */
+
+    if (
+
+        !dados.doente &&
+
+        dados.cocoAtivo &&
+
+        dados.cocoNasceuEm
+
+    ) {
+
+        const tempoCoco =
+
+            agora - Number(dados.cocoNasceuEm);
+
+        if (
+
+            Number.isFinite(tempoCoco) &&
+
+            tempoCoco >= PETTON_COCO_DOENCA_MS
+
+        ) {
+
+            dados.doente = true;
+
+            dados.doenteDesde = agora;
+
+            dados.saude =
+
+                Math.min(
+
+                    limitarStatusPetton(dados.saude),
+
+                    35
+
+                );
+
+            dados.felicidade =
+
+                Math.min(
+
+                    limitarStatusPetton(dados.felicidade),
+
+                    40
+
+                );
+
+        }
+
+    }
+
+    if (
+
+        !dados.doente &&
+
+        limitarStatusPetton(dados.saude) <= 10
+
+    ) {
+
+        dados.doente = true;
+
+        dados.doenteDesde =
+
+            dados.doenteDesde || agora;
+
+    }
+
+    return dados;
+
+};
+
+/* =========================================================
+
+   TEMPO REAL
+
+========================================================= */
+
+atualizarTempo = function () {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return dados;
+
+    }
+
+    garantirControleTempoPetton(dados);
+
+    const agora = Date.now();
+
+    let tempoPassado =
+
+        agora - dados.statusAtualizadoEm;
+
+    if (
+
+        !Number.isFinite(tempoPassado) ||
+
+        tempoPassado < 0
+
+    ) {
+
+        tempoPassado = 0;
+
+    }
+
+    /*
+
+    Menos de 1 minuto:
+
+    não precisa recalcular.
+
+    */
+
+    if (tempoPassado < 60 * 1000) {
+
+        verificarDoenca(dados);
+
+        verificarCarie(dados);
+
+        atualizarHospital(dados);
+
+        atualizarPasseio(dados);
+
+        atualizarEscovacao(dados);
+
+        return dados;
+
+    }
+
+    /* =====================================================
+
+       FOME
+
+       -1 a cada 30 minutos
+
+    ===================================================== */
+
+    const perdaFome =
+
+        Math.floor(
+
+            tempoPassado /
+
+            PETTON_TEMPO_FOME_MS
+
+        );
+
+    if (perdaFome > 0) {
+
+        dados.fome =
+
+            limitarStatusPetton(
+
+                Number(dados.fome || 0) -
+
+                perdaFome
+
+            );
+
+    }
+
+    /* =====================================================
+
+       FELICIDADE
+
+       -1 a cada 60 minutos
+
+    ===================================================== */
+
+    const perdaFelicidade =
+
+        Math.floor(
+
+            tempoPassado /
+
+            PETTON_TEMPO_FELICIDADE_MS
+
+        );
+
+    if (perdaFelicidade > 0) {
+
+        dados.felicidade =
+
+            limitarStatusPetton(
+
+                Number(dados.felicidade || 0) -
+
+                perdaFelicidade
+
+            );
+
+    }
+
+    /* =====================================================
+
+       ENERGIA
+
+       -1 a cada 45 minutos
+
+    ===================================================== */
+
+    const perdaEnergia =
+
+        Math.floor(
+
+            tempoPassado /
+
+            PETTON_TEMPO_ENERGIA_MS
+
+        );
+
+    if (perdaEnergia > 0) {
+
+        dados.energia =
+
+            limitarStatusPetton(
+
+                Number(dados.energia || 0) -
+
+                perdaEnergia
+
+            );
+
+    }
+
+    /* =====================================================
+
+       HIGIENE
+
+       -1 a cada 60 minutos
+
+    ===================================================== */
+
+    const perdaHigiene =
+
+        Math.floor(
+
+            tempoPassado /
+
+            PETTON_TEMPO_HIGIENE_MS
+
+        );
+
+    if (perdaHigiene > 0) {
+
+        dados.higiene =
+
+            limitarStatusPetton(
+
+                Number(dados.higiene || 0) -
+
+                perdaHigiene
+
+            );
+
+    }
+
+    /* =====================================================
+
+       COCÔ SUJA MAIS
+
+    ===================================================== */
+
+    if (
+
+        dados.cocoAtivo &&
+
+        dados.cocoNasceuEm
+
+    ) {
+
+        const tempoCoco =
+
+            agora -
+
+            Number(dados.cocoNasceuEm);
+
+        if (
+
+            Number.isFinite(tempoCoco) &&
+
+            tempoCoco >= PETTON_COCO_ALERTA_MS
+
+        ) {
+
+            /*
+
+            No máximo 1 ponto adicional de higiene
+
+            por hora decorrida.
+
+            */
+
+            const perdaExtra =
+
+                Math.floor(
+
+                    tempoPassado /
+
+                    (60 * 60 * 1000)
+
+                );
+
+            if (perdaExtra > 0) {
+
+                dados.higiene =
+
+                    limitarStatusPetton(
+
+                        dados.higiene -
+
+                        perdaExtra
+
+                    );
+
+            }
+
+        }
+
+    }
+
+    /* =====================================================
+
+       SAÚDE
+
+       Só cai se realmente estiver mal cuidado.
+
+    ===================================================== */
+
+    const emRisco =
+
+        dados.fome < 20 ||
+
+        dados.higiene < 20;
+
+    if (emRisco) {
+
+        const perdaSaude =
+
+            Math.floor(
+
+                tempoPassado /
+
+                PETTON_TEMPO_SAUDE_RISCO_MS
+
+            );
+
+        if (perdaSaude > 0) {
+
+            dados.saude =
+
+                limitarStatusPetton(
+
+                    dados.saude -
+
+                    perdaSaude
+
+                );
+
+        }
+
+    }
+
+    /* =====================================================
+
+       SE ESTIVER DOENTE
+
+    ===================================================== */
+
+    if (dados.doente) {
+
+        const perdaDoente =
+
+            Math.floor(
+
+                tempoPassado /
+
+                PETTON_TEMPO_DOENTE_MS
+
+            );
+
+        if (perdaDoente > 0) {
+
+            dados.felicidade =
+
+                limitarStatusPetton(
+
+                    dados.felicidade -
+
+                    perdaDoente
+
+                );
+
+            dados.energia =
+
+                limitarStatusPetton(
+
+                    dados.energia -
+
+                    perdaDoente
+
+                );
+
+            dados.saude =
+
+                limitarStatusPetton(
+
+                    dados.saude -
+
+                    perdaDoente
+
+                );
+
+        }
+
+    }
+
+    /* =====================================================
+
+       EVENTOS
+
+    ===================================================== */
+
+    verificarDoenca(dados);
+
+    verificarCarie(dados);
+
+    atualizarHospital(dados);
+
+    atualizarPasseio(dados);
+
+    atualizarEscovacao(dados);
+
+    /* =====================================================
+
+       MARCA O MOMENTO DA ATUALIZAÇÃO
+
+    ===================================================== */
+
+    dados.statusAtualizadoEm = agora;
+
+    salvarPetton(dados);
+
+    return dados;
+
+};
+
+/* =========================================================
+
+   PRIMEIRA ATUALIZAÇÃO
+
+========================================================= */
+
+try {
+
+    const dadosTempoInicial =
+
+        carregarPetton();
+
+    if (dadosTempoInicial.dateNascimento) {
+
+        garantirControleTempoPetton(
+
+            dadosTempoInicial
+
+        );
+
+        salvarPetton(
+
+            dadosTempoInicial
+
+        );
+
+        atualizarTempo();
+
+    }
+
+} catch (erro) {
+
+    console.error(
+
+        "Erro ao iniciar tempo real do Petton:",
+
+        erro
+
+    );
+
+}
