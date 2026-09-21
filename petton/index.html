@@ -128,8 +128,6 @@ body {
 
     min-height: 52px !important;
 
-    box-sizing: border-box !important;
-
     padding: 5px 8px !important;
 
 }
@@ -216,15 +214,15 @@ body {
 
 #nomePetton {
 
-    width: 100% !important;
+    width: 100%;
 
-    text-align: center !important;
+    text-align: center;
 
-    font-size: 20px !important;
+    font-size: 20px;
 
-    line-height: 1.15 !important;
+    line-height: 1.15;
 
-    margin: 5px 0 2px !important;
+    margin: 5px 0 2px;
 
     font-weight: 700;
 
@@ -232,15 +230,15 @@ body {
 
 #idadePetton {
 
-    width: 100% !important;
+    width: 100%;
 
-    text-align: center !important;
+    text-align: center;
 
-    font-size: 13px !important;
+    font-size: 13px;
 
-    line-height: 1.1 !important;
+    line-height: 1.1;
 
-    margin: 0 auto 5px !important;
+    margin: 0 auto 5px;
 
     color: #777;
 
@@ -262,13 +260,13 @@ body {
 
     line-height: 1;
 
-    animation: ovoBalançar 1.5s infinite ease-in-out;
+    animation: ovoBalancar 1.5s infinite ease-in-out;
 
 }
 
-@keyframes ovoBalançar {
+@keyframes ovoBalancar {
 
-    0%,100% {
+    0%, 100% {
 
         transform: rotate(-3deg);
 
@@ -356,13 +354,23 @@ body {
 
     display: block;
 
+    /* começa invisível */
+
+    opacity: 0;
+
     transition:
 
         transform .3s ease,
 
-        opacity .3s ease,
+        opacity .2s ease,
 
         filter .3s ease;
+
+}
+
+.pet-imagem.petton-pronto {
+
+    opacity: 1;
 
 }
 
@@ -475,12 +483,6 @@ body {
     font-weight: 700;
 
 }
-
-/* =========================================================
-
-   6 BOTÕES DE CUIDADOS
-
-========================================================= */
 
 .cuidados-grid {
 
@@ -838,7 +840,13 @@ body {
 
 }
 
-#animacaoComida {
+#animacaoComida,
+
+#animacaoBanho,
+
+#animacaoCarinho,
+
+#animacaoDormir {
 
     display: none;
 
@@ -858,7 +866,7 @@ body {
 
     font-size: 38px;
 
-    animation: comidaPiscar 0.6s infinite alternate;
+    animation: comidaPiscar .6s infinite alternate;
 
 }
 
@@ -879,20 +887,6 @@ body {
         transform: scale(1.12) rotate(5deg);
 
     }
-
-}
-
-#animacaoBanho {
-
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 6100;
-
-    pointer-events: none;
 
 }
 
@@ -994,20 +988,6 @@ body {
 
 }
 
-#animacaoCarinho {
-
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 6100;
-
-    pointer-events: none;
-
-}
-
 .coracaoCarinho {
 
     position: absolute;
@@ -1041,20 +1021,6 @@ body {
         opacity: 0;
 
     }
-
-}
-
-#animacaoDormir {
-
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 6100;
-
-    pointer-events: none;
 
 }
 
@@ -1138,11 +1104,7 @@ body {
 
         <h2>Petton</h2>
 
-        <p>
-
-            Este jogo funciona dentro do LINE.
-
-        </p>
+        <p>Este jogo funciona dentro do LINE.</p>
 
     </div>
 
@@ -1152,31 +1114,15 @@ body {
 
     <div class="top-bar">
 
-        <button
-
-            type="button"
-
-            onclick="voltarPetton()"
-
-            aria-label="Voltar">
+        <button type="button" onclick="voltarPetton()" aria-label="Voltar">
 
             ←
 
         </button>
 
-        <h1>
+        <h1>Petton 🐾</h1>
 
-            Petton 🐾
-
-        </h1>
-
-        <button
-
-            type="button"
-
-            onclick="abrirAlbum()"
-
-            aria-label="Álbum">
+        <button type="button" onclick="abrirAlbum()" aria-label="Álbum">
 
             📖
 
@@ -1222,13 +1168,13 @@ body {
 
         <div id="imagemPetContainer">
 
+            <!-- SEM SRC INICIAL: evita a piscada do gato -->
+
             <img
 
                 id="imagemPetton"
 
                 class="pet-imagem"
-
-                src="petton-original.png"
 
                 alt="Petton">
 
@@ -1256,201 +1202,87 @@ body {
 
             <div class="status-card">
 
-                <span class="status-label">
+                <span class="status-label">🍖 Fome</span>
 
-                    🍖 Fome
-
-                </span>
-
-                <span
-
-                    class="status-value"
-
-                    id="fomePetton">
-
-                    100
-
-                </span>
+                <span class="status-value" id="fomePetton">100</span>
 
             </div>
 
             <div class="status-card">
 
-                <span class="status-label">
+                <span class="status-label">❤️ Felicidade</span>
 
-                    ❤️ Felicidade
-
-                </span>
-
-                <span
-
-                    class="status-value"
-
-                    id="felicidadePetton">
-
-                    100
-
-                </span>
+                <span class="status-value" id="felicidadePetton">100</span>
 
             </div>
 
             <div class="status-card">
 
-                <span class="status-label">
+                <span class="status-label">⚡ Energia</span>
 
-                    ⚡ Energia
-
-                </span>
-
-                <span
-
-                    class="status-value"
-
-                    id="energiaPetton">
-
-                    100
-
-                </span>
+                <span class="status-value" id="energiaPetton">100</span>
 
             </div>
 
             <div class="status-card">
 
-                <span class="status-label">
+                <span class="status-label">🧼 Higiene</span>
 
-                    🧼 Higiene
-
-                </span>
-
-                <span
-
-                    class="status-value"
-
-                    id="higienePetton">
-
-                    100
-
-                </span>
+                <span class="status-value" id="higienePetton">100</span>
 
             </div>
 
             <div class="status-card">
 
-                <span class="status-label">
+                <span class="status-label">❤️ Saúde</span>
 
-                    ❤️ Saúde
-
-                </span>
-
-                <span
-
-                    class="status-value"
-
-                    id="saudePetton">
-
-                    100
-
-                </span>
+                <span class="status-value" id="saudePetton">100</span>
 
             </div>
 
             <div class="status-card">
 
-                <span class="status-label">
+                <span class="status-label">🪙 Moedas</span>
 
-                    🪙 Moedas
-
-                </span>
-
-                <span
-
-                    class="status-value"
-
-                    id="moedasPetton">
-
-                    0
-
-                </span>
+                <span class="status-value" id="moedasPetton">0</span>
 
             </div>
 
         </div>
 
-        <!-- =================================================
-
-             6 BOTÕES PRINCIPAIS
-
-        ================================================== -->
-
         <div class="cuidados-grid">
 
-            <button
-
-                type="button"
-
-                class="cuidado-btn"
-
-                onclick="alimentarPetton()">
+            <button type="button" class="cuidado-btn" onclick="alimentarPetton()">
 
                 🍖 Alimentar
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="cuidado-btn"
-
-                onclick="brincarPetton()">
+            <button type="button" class="cuidado-btn" onclick="brincarPetton()">
 
                 🎮 Brincar
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="cuidado-btn"
-
-                onclick="banhoPetton()">
+            <button type="button" class="cuidado-btn" onclick="banhoPetton()">
 
                 🛁 Banho
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="cuidado-btn"
-
-                onclick="limparPetton()">
+            <button type="button" class="cuidado-btn" onclick="limparPetton()">
 
                 🧹 Limpar
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="cuidado-btn"
-
-                onclick="dormirPetton()">
+            <button type="button" class="cuidado-btn" onclick="dormirPetton()">
 
                 😴 Dormir
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="cuidado-btn"
-
-                onclick="carinhoPetton()">
+            <button type="button" class="cuidado-btn" onclick="carinhoPetton()">
 
                 ❤️ Carinho
 
@@ -1460,55 +1292,25 @@ body {
 
         <div class="especiais-grid">
 
-            <button
-
-                type="button"
-
-                class="especial-btn"
-
-                onclick="passearPetton()">
+            <button type="button" class="especial-btn" onclick="passearPetton()">
 
                 🐕 Passear
 
             </button>
 
-            <button
-
-                type="button"
-
-                id="btnLimparCoco"
-
-                class="especial-btn"
-
-                onclick="limparCocoPetton()">
+            <button type="button" id="btnLimparCoco" class="especial-btn" onclick="limparCocoPetton()">
 
                 💩 Limpar cocô
 
             </button>
 
-            <button
-
-                type="button"
-
-                id="btnEscovar"
-
-                class="especial-btn"
-
-                onclick="escovarPetton()">
+            <button type="button" id="btnEscovar" class="especial-btn" onclick="escovarPetton()">
 
                 🪥 Escovar dentes
 
             </button>
 
-            <button
-
-                type="button"
-
-                id="btnHospital"
-
-                class="especial-btn"
-
-                onclick="hospitalPetton()">
+            <button type="button" id="btnHospital" class="especial-btn" onclick="hospitalPetton()">
 
                 🏥 Hospital
 
@@ -1516,91 +1318,45 @@ body {
 
         </div>
 
-        <div
-
-            class="bonus-card"
-
-            id="bonusPetton">
+        <div class="bonus-card" id="bonusPetton">
 
             🎁 Bônus diário
 
         </div>
 
-        <!-- =================================================
-
-             MENU
-
-        ================================================== -->
-
         <div class="menu-grid">
 
-            <button
-
-                type="button"
-
-                class="menu-btn"
-
-                onclick="irParaMeuPetton()">
+            <button type="button" class="menu-btn" onclick="irParaMeuPetton()">
 
                 🐾 Meu Petton
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="menu-btn"
-
-                onclick="abrirAlbum()">
+            <button type="button" class="menu-btn" onclick="abrirAlbum()">
 
                 📖 Álbum
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="menu-btn menu-btn-loja"
-
-                onclick="abrirLoja()">
+            <button type="button" class="menu-btn menu-btn-loja" onclick="abrirLoja()">
 
                 🛒 Loja
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="menu-btn"
-
-                onclick="abrirQuarto()">
+            <button type="button" class="menu-btn" onclick="abrirQuarto()">
 
                 🏠 Quarto
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="menu-btn"
-
-                onclick="abrirRanking()">
+            <button type="button" class="menu-btn" onclick="abrirRanking()">
 
                 🏆 Ranking
 
             </button>
 
-            <button
-
-                type="button"
-
-                class="menu-btn"
-
-                onclick="irParaInicio()">
+            <button type="button" class="menu-btn" onclick="irParaInicio()">
 
                 🏠 Início
 
@@ -1618,11 +1374,7 @@ body {
 
     <div class="nome-box">
 
-        <h3>
-
-            🐾 Dê um nome ao seu Petton
-
-        </h3>
+        <h3>🐾 Dê um nome ao seu Petton</h3>
 
         <input
 
@@ -1634,11 +1386,7 @@ body {
 
             placeholder="Nome do Petton">
 
-        <button
-
-            type="button"
-
-            onclick="salvarNomePetton()">
+        <button type="button" onclick="salvarNomePetton()">
 
             Salvar
 
@@ -1648,17 +1396,9 @@ body {
 
 </div>
 
-<div id="animacaoVassoura">
+<div id="animacaoVassoura">🧹</div>
 
-    🧹
-
-</div>
-
-<div id="animacaoEscova">
-
-    🪥
-
-</div>
+<div id="animacaoEscova">🪥</div>
 
 <div id="animacaoComida"></div>
 
@@ -1673,8 +1413,6 @@ body {
     <img
 
         id="hospitalPetImagem"
-
-        src="petton-original.png"
 
         alt="Petton no hospital">
 
@@ -1692,8 +1430,6 @@ body {
 
         id="passeioPetImagem"
 
-        src="petton-original.png"
-
         alt="Petton passeando">
 
     <div class="passeio-texto">
@@ -1706,9 +1442,17 @@ body {
 
 <div id="mensagemTemp"></div>
 
+<!-- PETTON.JS CARREGADO SOMENTE UMA VEZ -->
+
 <script src="petton.js"></script>
 
 <script>
+
+/* =========================================================
+
+   TEMPO
+
+========================================================= */
 
 function formatarTempo(ms) {
 
@@ -1716,33 +1460,23 @@ function formatarTempo(ms) {
 
     if (ms <= 0) return "0s";
 
-    const segundos =
+    const segundos = Math.floor(ms / 1000);
 
-        Math.floor(ms / 1000);
+    const dias = Math.floor(segundos / 86400);
 
-    const dias =
+    const horas = Math.floor(
 
-        Math.floor(segundos / 86400);
+        (segundos % 86400) / 3600
 
-    const horas =
+    );
 
-        Math.floor(
+    const minutos = Math.floor(
 
-            (segundos % 86400) / 3600
+        (segundos % 3600) / 60
 
-        );
+    );
 
-    const minutos =
-
-        Math.floor(
-
-            (segundos % 3600) / 60
-
-        );
-
-    const seg =
-
-        segundos % 60;
+    const seg = segundos % 60;
 
     if (dias > 0) {
 
@@ -1770,9 +1504,7 @@ function obterDataValida(valor) {
 
     if (!valor) return null;
 
-    const data =
-
-        new Date(valor);
+    const data = new Date(valor);
 
     if (isNaN(data.getTime())) {
 
@@ -1804,9 +1536,7 @@ function obterDataNascimentoPetton(dados) {
 
     for (const valor of possiveis) {
 
-        const data =
-
-            obterDataValida(valor);
+        const data = obterDataValida(valor);
 
         if (data) return data;
 
@@ -1844,9 +1574,7 @@ function obterInicioOvoPetton(dados) {
 
     for (const valor of possiveis) {
 
-        const data =
-
-            obterDataValida(valor);
+        const data = obterDataValida(valor);
 
         if (data) return data;
 
@@ -2026,69 +1754,21 @@ function calcularIdadeTextoPetton(dados) {
 
 }
 
+/* =========================================================
+
+   FASE
+
+   MESMA REGRA DO PETTON.JS
+
+========================================================= */
+
 function obterFaseVisual(dados) {
 
     if (!dados) return "bebe";
 
-    const fase =
+    if (!dados.dateNascimento) {
 
-        dados.fase ||
-
-        dados.faseVida ||
-
-        dados.etapa ||
-
-        "";
-
-    const texto =
-
-        String(fase).toLowerCase();
-
-    if (
-
-        texto.includes("adult") ||
-
-        texto.includes("adulto")
-
-    ) {
-
-        return "adulto";
-
-    }
-
-    if (
-
-        texto.includes("jovem") ||
-
-        texto.includes("young")
-
-    ) {
-
-        return "jovem";
-
-    }
-
-    if (
-
-        texto.includes("filh") ||
-
-        texto.includes("child")
-
-    ) {
-
-        return "filhote";
-
-    }
-
-    if (
-
-        texto.includes("beb") ||
-
-        texto.includes("baby")
-
-    ) {
-
-        return "bebe";
+        return "ovo";
 
     }
 
@@ -2130,21 +1810,81 @@ function obterFaseVisual(dados) {
 
     }
 
-    if (!isFinite(idadeDias)) {
+    if (isFinite(idadeDias)) {
 
-        idadeDias = 0;
+        if (idadeDias < 8) {
+
+            return "bebe";
+
+        }
+
+        if (idadeDias < 31) {
+
+            return "filhote";
+
+        }
+
+        if (idadeDias < 91) {
+
+            return "jovem";
+
+        }
+
+        return "adulto";
 
     }
 
-    if (idadeDias < 7) return "bebe";
+    const fase =
 
-    if (idadeDias < 30) return "filhote";
+        String(
 
-    if (idadeDias < 90) return "jovem";
+            dados.fase ||
 
-    return "adulto";
+            dados.faseAtual ||
+
+            "bebe"
+
+        ).toLowerCase();
+
+    if (fase.includes("adult")) {
+
+        return "adulto";
+
+    }
+
+    if (
+
+        fase.includes("jovem") ||
+
+        fase.includes("young")
+
+    ) {
+
+        return "jovem";
+
+    }
+
+    if (
+
+        fase.includes("filh") ||
+
+        fase.includes("child")
+
+    ) {
+
+        return "filhote";
+
+    }
+
+    return "bebe";
 
 }
+
+/* =========================================================
+
+   IDENTIDADE
+
+========================================================= */
 
 function obterIdentidadeVisual(dados) {
 
@@ -2212,13 +1952,23 @@ function obterEspeciePet(dados) {
 
 }
 
-function obterImagemIndividual(dados, fase) {
+function obterImagemIndividual(
+
+    dados,
+
+    fase
+
+) {
 
     const identidade =
 
         obterIdentidadeVisual(dados);
 
-    if (!identidade) return null;
+    if (!identidade) {
+
+        return null;
+
+    }
 
     const imagens =
 
@@ -2256,6 +2006,12 @@ function obterImagemIndividual(dados, fase) {
 
 }
 
+/* =========================================================
+
+   IMAGEM DO PETTON
+
+========================================================= */
+
 function definirImagemPet(dados) {
 
     if (!dados) return;
@@ -2276,7 +2032,11 @@ function definirImagemPet(dados) {
 
         );
 
-    if (!imagem || !container) return;
+    if (!imagem || !container) {
+
+        return;
+
+    }
 
     const especie =
 
@@ -2320,65 +2080,99 @@ function definirImagemPet(dados) {
 
         imagemIndividual ||
 
-        imagensFallback[especie] ||
+        imagensFallback[especie];
 
-        imagensFallback.gato;
+    if (!imagemFinal) {
+
+        return;
+
+    }
+
+    let urlFinal = imagemFinal;
 
     try {
 
-        const urlImagem =
+        urlFinal =
 
             new URL(
 
                 imagemFinal,
 
-                window.location.href
+                document.baseURI
 
             ).href;
 
-        if (imagem.src !== urlImagem) {
-
-            imagem.style.opacity = "0";
-
-            setTimeout(() => {
-
-                imagem.src =
-
-                    imagemFinal;
-
-                imagem.onload = () => {
-
-                    imagem.style.opacity = "1";
-
-                };
-
-                imagem.onerror = () => {
-
-                    imagem.style.opacity = "1";
-
-                    console.warn(
-
-                        "Imagem do Petton não encontrada:",
-
-                        imagemFinal
-
-                    );
-
-                };
-
-            }, 80);
-
-        }
-
     } catch (erro) {
+
+        urlFinal = imagemFinal;
+
+    }
+
+    /*
+
+       Se a imagem correta já está carregada,
+
+       não fazemos nada. Isso evita piscar
+
+       a cada atualização de 1 segundo.
+
+    */
+
+    if (
+
+        imagem.src === urlFinal &&
+
+        imagem.complete &&
+
+        imagem.naturalWidth > 0
+
+    ) {
+
+        imagem.classList.add(
+
+            "petton-pronto"
+
+        );
+
+    } else {
+
+        imagem.classList.remove(
+
+            "petton-pronto"
+
+        );
+
+        imagem.onload = function () {
+
+            imagem.classList.add(
+
+                "petton-pronto"
+
+            );
+
+        };
+
+        imagem.onerror = function () {
+
+            imagem.classList.remove(
+
+                "petton-pronto"
+
+            );
+
+            console.warn(
+
+                "Imagem do Petton não encontrada:",
+
+                imagemFinal
+
+            );
+
+        };
 
         imagem.src =
 
             imagemFinal;
-
-        imagem.style.opacity =
-
-            "1";
 
     }
 
@@ -2389,24 +2183,6 @@ function definirImagemPet(dados) {
     container.dataset.fase =
 
         fase;
-
-    if (
-
-        identidade &&
-
-        identidade.id
-
-    ) {
-
-        container.dataset.identidade =
-
-            String(identidade.id);
-
-    } else {
-
-        delete container.dataset.identidade;
-
-    }
 
     imagem.dataset.especie =
 
@@ -2424,11 +2200,25 @@ function definirImagemPet(dados) {
 
     ) {
 
+        container.dataset.identidade =
+
+            String(
+
+                identidade.id
+
+            );
+
         imagem.dataset.identidade =
 
-            String(identidade.id);
+            String(
+
+                identidade.id
+
+            );
 
     } else {
+
+        delete container.dataset.identidade;
 
         delete imagem.dataset.identidade;
 
@@ -2442,66 +2232,6 @@ function definirImagemPet(dados) {
 
             : "false";
 
-    if (identidade) {
-
-        if (identidade.cor) {
-
-            imagem.dataset.cor =
-
-                identidade.cor;
-
-        }
-
-        if (identidade.corSecundaria) {
-
-            imagem.dataset.corSecundaria =
-
-                identidade.corSecundaria;
-
-        }
-
-        if (identidade.padrao) {
-
-            imagem.dataset.padrao =
-
-                identidade.padrao;
-
-        }
-
-        if (identidade.olhos) {
-
-            imagem.dataset.olhos =
-
-                identidade.olhos;
-
-        }
-
-        if (identidade.orelhas) {
-
-            imagem.dataset.orelhas =
-
-                identidade.orelhas;
-
-        }
-
-        if (identidade.pelagem) {
-
-            imagem.dataset.pelagem =
-
-                identidade.pelagem;
-
-        }
-
-        if (identidade.marca) {
-
-            imagem.dataset.marca =
-
-                identidade.marca;
-
-        }
-
-    }
-
     imagem.alt =
 
         "Petton " +
@@ -2514,6 +2244,12 @@ function definirImagemPet(dados) {
 
 }
 
+/* =========================================================
+
+   OVO
+
+========================================================= */
+
 function atualizarOvoTela(dados) {
 
     const ovo =
@@ -2524,11 +2260,19 @@ function atualizarOvoTela(dados) {
 
         );
 
-    const imagem =
+    const imagemContainer =
 
         document.getElementById(
 
             "imagemPetContainer"
+
+        );
+
+    const imagemPet =
+
+        document.getElementById(
+
+            "imagemPetton"
 
         );
 
@@ -2540,7 +2284,17 @@ function atualizarOvoTela(dados) {
 
         );
 
-    if (!ovo || !imagem) return;
+    if (
+
+        !ovo ||
+
+        !imagemContainer
+
+    ) {
+
+        return;
+
+    }
 
     if (!dados) {
 
@@ -2558,7 +2312,7 @@ function atualizarOvoTela(dados) {
 
     const nasceu =
 
-        dados.nascido !== false;
+        !!dados.dateNascimento;
 
     if (!nasceu) {
 
@@ -2566,9 +2320,19 @@ function atualizarOvoTela(dados) {
 
             "block";
 
-        imagem.style.display =
+        imagemContainer.style.display =
 
             "none";
+
+        if (imagemPet) {
+
+            imagemPet.classList.remove(
+
+                "petton-pronto"
+
+            );
+
+        }
 
         if (idade) {
 
@@ -2582,99 +2346,29 @@ function atualizarOvoTela(dados) {
 
         }
 
-        let restante = 0;
+        let restante =
 
-        const campos = [
+            Number(
 
-            dados.tempoRestante,
+                dados.incubacaoRestanteMs
 
-            dados.tempoRestanteNascimento,
+            );
 
-            dados.tempoParaNascimento,
+        if (
 
-            dados.incubacaoRestanteMs,
+            !isFinite(restante) ||
 
-            dados.nascimentoRestante
+            restante < 0
 
-        ];
+        ) {
 
-        for (const valor of campos) {
-
-            const numero =
-
-                Number(valor);
-
-            if (
-
-                isFinite(numero) &&
-
-                numero > 0
-
-            ) {
-
-                restante =
-
-                    numero;
-
-                break;
-
-            }
-
-        }
-
-        if (restante <= 0) {
-
-            const inicio =
-
-                obterInicioOvoPetton(
-
-                    dados
-
-                );
-
-            if (inicio) {
-
-                restante =
-
-                    Math.max(
-
-                        0,
-
-                        (
-
-                            inicio.getTime() +
-
-                            86400000
-
-                        ) -
-
-                        Date.now()
-
-                    );
-
-            }
+            restante = 0;
 
         }
 
         let progresso = 0;
 
-        if (
-
-            dados.progressoNascimento !==
-
-            undefined
-
-        ) {
-
-            progresso =
-
-                Number(
-
-                    dados.progressoNascimento
-
-                );
-
-        } else if (restante > 0) {
+        if (restante > 0) {
 
             progresso =
 
@@ -2687,6 +2381,10 @@ function atualizarOvoTela(dados) {
                     86400000
 
                 ) * 100;
+
+        } else {
+
+            progresso = 100;
 
         }
 
@@ -2738,7 +2436,7 @@ function atualizarOvoTela(dados) {
 
                 texto.textContent =
 
-                    "Seu Petton ainda está no ovo...";
+                    "Seu Petton está pronto para nascer...";
 
             }
 
@@ -2752,7 +2450,7 @@ function atualizarOvoTela(dados) {
 
         "none";
 
-    imagem.style.display =
+    imagemContainer.style.display =
 
         "flex";
 
@@ -2769,6 +2467,12 @@ function atualizarOvoTela(dados) {
     }
 
 }
+
+/* =========================================================
+
+   PET NASCIDO
+
+========================================================= */
 
 function atualizarPetNascido(dados) {
 
@@ -2836,7 +2540,11 @@ function mostrarEstadoDoente(dados) {
 
             dados.doente === true ||
 
-            Number(dados.saude ?? 100) < 40
+            Number(
+
+                dados.saude ?? 100
+
+            ) < 40
 
         )
 
@@ -2856,6 +2564,12 @@ function mostrarEstadoDoente(dados) {
 
 }
 
+/* =========================================================
+
+   ATUALIZAR TELA
+
+========================================================= */
+
 function atualizarTela() {
 
     try {
@@ -2868,22 +2582,6 @@ function atualizarTela() {
 
         ) {
 
-            const idade =
-
-                document.getElementById(
-
-                    "idadePetton"
-
-                );
-
-            if (idade) {
-
-                idade.textContent =
-
-                    "🥚 Carregando Petton...";
-
-            }
-
             return;
 
         }
@@ -2892,7 +2590,11 @@ function atualizarTela() {
 
             Petton.carregarPetton();
 
-        if (!dados) return;
+        if (!dados) {
+
+            return;
+
+        }
 
         atualizarOvoTela(
 
@@ -2900,7 +2602,7 @@ function atualizarTela() {
 
         );
 
-        if (dados.nascido !== false) {
+        if (dados.dateNascimento) {
 
             atualizarPetNascido(
 
@@ -2914,151 +2616,75 @@ function atualizarTela() {
 
             );
 
-        }
+        } else {
 
-        const fome =
+            mostrarEstadoDoente(
 
-            document.getElementById(
-
-                "fomePetton"
+                null
 
             );
 
-        if (fome) {
-
-            fome.textContent =
-
-                Math.round(
-
-                    Number(
-
-                        dados.fome ?? 100
-
-                    )
-
-                );
-
         }
 
-        const felicidade =
+        const campos = {
 
-            document.getElementById(
+            fomePetton:
 
-                "felicidadePetton"
+                dados.fome ?? 100,
 
-            );
+            felicidadePetton:
 
-        if (felicidade) {
+                dados.felicidade ?? 100,
 
-            felicidade.textContent =
+            energiaPetton:
 
-                Math.round(
+                dados.energia ?? 100,
 
-                    Number(
+            higienePetton:
 
-                        dados.felicidade ?? 100
+                dados.higiene ?? 100,
 
-                    )
+            saudePetton:
 
-                );
+                dados.saude ?? 100,
 
-        }
+            moedasPetton:
 
-        const energia =
+                dados.moedas ?? 0
 
-            document.getElementById(
+        };
 
-                "energiaPetton"
+        Object.keys(campos).forEach(
 
-            );
+            function(id) {
 
-        if (energia) {
+                const elemento =
 
-            energia.textContent =
+                    document.getElementById(
 
-                Math.round(
+                        id
 
-                    Number(
+                    );
 
-                        dados.energia ?? 100
+                if (elemento) {
 
-                    )
+                    elemento.textContent =
 
-                );
+                        Math.round(
 
-        }
+                            Number(
 
-        const higiene =
+                                campos[id]
 
-            document.getElementById(
+                            )
 
-                "higienePetton"
+                        );
 
-            );
+                }
 
-        if (higiene) {
+            }
 
-            higiene.textContent =
-
-                Math.round(
-
-                    Number(
-
-                        dados.higiene ?? 100
-
-                    )
-
-                );
-
-        }
-
-        const saude =
-
-            document.getElementById(
-
-                "saudePetton"
-
-            );
-
-        if (saude) {
-
-            saude.textContent =
-
-                Math.round(
-
-                    Number(
-
-                        dados.saude ?? 100
-
-                    )
-
-                );
-
-        }
-
-        const moedas =
-
-            document.getElementById(
-
-                "moedasPetton"
-
-            );
-
-        if (moedas) {
-
-            moedas.textContent =
-
-                Math.round(
-
-                    Number(
-
-                        dados.moedas ?? 0
-
-                    )
-
-                );
-
-        }
+        );
 
         const coco =
 
@@ -3076,49 +2702,35 @@ function atualizarTela() {
 
             );
 
-        if (
+        const temCoco =
+
+            dados.cocoAtivo === true ||
 
             dados.temCoco === true ||
 
-            dados.coco === true ||
+            dados.coco === true;
 
-            dados.cocoAtivo === true
+        if (coco) {
 
-        ) {
+            coco.style.display =
 
-            if (coco) {
+                temCoco
 
-                coco.style.display =
+                    ? "block"
 
-                    "block";
+                    : "none";
 
-            }
+        }
 
-            if (btnCoco) {
+        if (btnCoco) {
 
-                btnCoco.style.display =
+            btnCoco.style.display =
 
-                    "block";
+                temCoco
 
-            }
+                    ? "block"
 
-        } else {
-
-            if (coco) {
-
-                coco.style.display =
-
-                    "none";
-
-            }
-
-            if (btnCoco) {
-
-                btnCoco.style.display =
-
-                    "none";
-
-            }
+                    : "none";
 
         }
 
@@ -3138,49 +2750,35 @@ function atualizarTela() {
 
             );
 
-        if (
+        const temCarie =
+
+            dados.carieAtiva === true ||
 
             dados.temCarie === true ||
 
-            dados.carie === true ||
+            dados.carie === true;
 
-            dados.carieAtiva === true
+        if (carie) {
 
-        ) {
+            carie.style.display =
 
-            if (carie) {
+                temCarie
 
-                carie.style.display =
+                    ? "block"
 
-                    "block";
+                    : "none";
 
-            }
+        }
 
-            if (btnEscovar) {
+        if (btnEscovar) {
 
-                btnEscovar.style.display =
+            btnEscovar.style.display =
 
-                    "block";
+                temCarie
 
-            }
+                    ? "block"
 
-        } else {
-
-            if (carie) {
-
-                carie.style.display =
-
-                    "none";
-
-            }
-
-            if (btnEscovar) {
-
-                btnEscovar.style.display =
-
-                    "none";
-
-            }
+                    : "none";
 
         }
 
@@ -3192,31 +2790,25 @@ function atualizarTela() {
 
             );
 
-        if (
+        const precisaHospital =
 
-            Number(dados.saude ?? 100) < 30 ||
+            dados.doente === true ||
 
-            dados.doente === true
+            Number(
 
-        ) {
+                dados.saude ?? 100
 
-            if (btnHospital) {
+            ) < 30;
 
-                btnHospital.style.display =
+        if (btnHospital) {
 
-                    "block";
+            btnHospital.style.display =
 
-            }
+                precisaHospital
 
-        } else {
+                    ? "block"
 
-            if (btnHospital) {
-
-                btnHospital.style.display =
-
-                    "none";
-
-            }
+                    : "none";
 
         }
 
@@ -3236,7 +2828,7 @@ function atualizarTela() {
 
 /* =========================================================
 
-   AÇÕES
+   ALIMENTAR
 
 ========================================================= */
 
@@ -3368,6 +2960,12 @@ function mostrarComida() {
 
 }
 
+/* =========================================================
+
+   BRINCAR
+
+========================================================= */
+
 function brincarPetton() {
 
     try {
@@ -3393,6 +2991,12 @@ function brincarPetton() {
     }
 
 }
+
+/* =========================================================
+
+   BANHO
+
+========================================================= */
 
 function banhoPetton() {
 
@@ -3616,6 +3220,12 @@ function mostrarAnimacaoBanho() {
 
 }
 
+/* =========================================================
+
+   LIMPAR
+
+========================================================= */
+
 function limparPetton() {
 
     try {
@@ -3674,6 +3284,12 @@ function limparPetton() {
 
 }
 
+/* =========================================================
+
+   COCÔ
+
+========================================================= */
+
 function limparCocoPetton() {
 
     const coco =
@@ -3716,25 +3332,11 @@ function limparCocoPetton() {
 
                 typeof Petton !== "undefined" &&
 
-                typeof Petton.limparCoco ===
-
-                "function"
+                typeof Petton.limparCoco === "function"
 
             ) {
 
                 Petton.limparCoco();
-
-            } else if (
-
-                typeof Petton !== "undefined" &&
-
-                typeof Petton.limpar ===
-
-                "function"
-
-            ) {
-
-                Petton.limpar();
 
             }
 
@@ -3782,6 +3384,12 @@ function limparCocoPetton() {
 
 }
 
+/* =========================================================
+
+   ESCOVAR
+
+========================================================= */
+
 function escovarPetton() {
 
     const carie =
@@ -3800,7 +3408,11 @@ function escovarPetton() {
 
         );
 
-    if (!carie || !escova) return;
+    if (!carie || !escova) {
+
+        return;
+
+    }
 
     const rect =
 
@@ -3862,16 +3474,6 @@ function escovarPetton() {
 
                 ) + "px";
 
-            escova.style.top =
-
-                (
-
-                    centroY -
-
-                    21
-
-                ) + "px";
-
             if (movimentos >= 8) {
 
                 clearInterval(
@@ -3892,9 +3494,7 @@ function escovarPetton() {
 
                             typeof Petton !== "undefined" &&
 
-                            typeof Petton.escovarDentes ===
-
-                            "function"
+                            typeof Petton.escovarDentes === "function"
 
                         ) {
 
@@ -3922,6 +3522,12 @@ function escovarPetton() {
 
 }
 
+/* =========================================================
+
+   DORMIR
+
+========================================================= */
+
 function dormirPetton() {
 
     const imagem =
@@ -3941,10 +3547,6 @@ function dormirPetton() {
         );
 
     if (imagem) {
-
-        imagem.dataset.dormindo =
-
-            "true";
 
         imagem.style.filter =
 
@@ -4040,8 +3642,6 @@ function dormirPetton() {
 
         if (imagem) {
 
-            delete imagem.dataset.dormindo;
-
             imagem.style.filter =
 
                 "";
@@ -4065,6 +3665,12 @@ function dormirPetton() {
     }, 3500);
 
 }
+
+/* =========================================================
+
+   CARINHO
+
+========================================================= */
 
 function carinhoPetton() {
 
@@ -4180,6 +3786,12 @@ function carinhoPetton() {
 
 }
 
+/* =========================================================
+
+   PASSEIO
+
+========================================================= */
+
 function passearPetton() {
 
     const overlay =
@@ -4206,7 +3818,15 @@ function passearPetton() {
 
         );
 
-    if (principal && imagem) {
+    if (
+
+        principal &&
+
+        imagem &&
+
+        principal.src
+
+    ) {
 
         imagem.src =
 
@@ -4258,6 +3878,12 @@ function passearPetton() {
 
 }
 
+/* =========================================================
+
+   HOSPITAL
+
+========================================================= */
+
 function hospitalPetton() {
 
     const overlay =
@@ -4284,7 +3910,15 @@ function hospitalPetton() {
 
         );
 
-    if (principal && imagem) {
+    if (
+
+        principal &&
+
+        imagem &&
+
+        principal.src
+
+    ) {
 
         imagem.src =
 
@@ -4306,9 +3940,7 @@ function hospitalPetton() {
 
             typeof Petton !== "undefined" &&
 
-            typeof Petton.levarHospital ===
-
-            "function"
+            typeof Petton.levarHospital === "function"
 
         ) {
 
@@ -4357,14 +3989,6 @@ function navegarPara(caminho) {
                 document.baseURI
 
             ).href;
-
-        console.log(
-
-            "Petton navegando para:",
-
-            destino
-
-        );
 
         window.location.assign(
 
@@ -4416,115 +4040,13 @@ function abrirLoja() {
 
 }
 
-/* =========================================================
-
-   QUARTO — ABERTURA PELO LIFF
-
-========================================================= */
-
 function abrirQuarto() {
 
-    try {
+    navegarPara(
 
-        const destino =
+        "./quarto.html"
 
-            new URL(
-
-                "./quarto.html",
-
-                document.baseURI
-
-            ).href;
-
-        console.log(
-
-            "Petton: abrindo Quarto:",
-
-            destino
-
-        );
-
-        /*
-
-         * Dentro do LINE usamos o próprio LIFF
-
-         * para abrir a página interna.
-
-         */
-
-        if (
-
-            typeof liff !== "undefined" &&
-
-            typeof liff.openWindow === "function" &&
-
-            typeof liff.isInClient === "function" &&
-
-            liff.isInClient()
-
-        ) {
-
-            liff.openWindow({
-
-                url: destino,
-
-                external: false
-
-            });
-
-            return;
-
-        }
-
-        /*
-
-         * Fallback para navegador.
-
-         */
-
-        window.location.assign(
-
-            destino
-
-        );
-
-    } catch (erro) {
-
-        console.error(
-
-            "Erro ao abrir Quarto:",
-
-            erro
-
-        );
-
-        try {
-
-            window.location.assign(
-
-                new URL(
-
-                    "quarto.html",
-
-                    window.location.href
-
-                ).href
-
-            );
-
-        } catch (erro2) {
-
-            console.error(
-
-                "Erro final ao abrir Quarto:",
-
-                erro2
-
-            );
-
-        }
-
-    }
+    );
 
 }
 
@@ -4582,6 +4104,12 @@ function voltarPetton() {
 
 }
 
+/* =========================================================
+
+   NOME
+
+========================================================= */
+
 function abrirModalNome() {
 
     const modal =
@@ -4624,9 +4152,7 @@ function salvarNomePetton() {
 
             typeof Petton !== "undefined" &&
 
-            typeof Petton.definirNome ===
-
-            "function"
+            typeof Petton.definirNome === "function"
 
         ) {
 
@@ -4664,6 +4190,12 @@ function salvarNomePetton() {
 
 }
 
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
 function mostrarMensagem(texto) {
 
     const elemento =
@@ -4694,6 +4226,12 @@ function mostrarMensagem(texto) {
 
 }
 
+/* =========================================================
+
+   BÔNUS
+
+========================================================= */
+
 function atualizarBonus() {
 
     try {
@@ -4702,9 +4240,7 @@ function atualizarBonus() {
 
             typeof Petton !== "undefined" &&
 
-            typeof Petton.verBonus ===
-
-            "function"
+            typeof Petton.verBonus === "function"
 
         ) {
 
@@ -4720,9 +4256,13 @@ function atualizarBonus() {
 
                 );
 
-            if (!elemento) return;
+            if (
 
-            if (bonus) {
+                elemento &&
+
+                bonus
+
+            ) {
 
                 elemento.textContent =
 
@@ -4748,65 +4288,11 @@ function atualizarBonus() {
 
 }
 
-function testarNascimentoTela() {
+/* =========================================================
 
-    try {
+   AQUECER / RESET
 
-        if (
-
-            typeof Petton !== "undefined" &&
-
-            typeof Petton.carregarPetton ===
-
-            "function"
-
-        ) {
-
-            const dados =
-
-                Petton.carregarPetton();
-
-            if (dados) {
-
-                atualizarOvoTela(
-
-                    dados
-
-                );
-
-                if (
-
-                    dados.nascido !== false
-
-                ) {
-
-                    atualizarPetNascido(
-
-                        dados
-
-                    );
-
-                }
-
-                atualizarTela();
-
-            }
-
-        }
-
-    } catch (erro) {
-
-        console.error(
-
-            "Erro ao verificar nascimento:",
-
-            erro
-
-        );
-
-    }
-
-}
+========================================================= */
 
 function aquecerOvo() {
 
@@ -4816,9 +4302,7 @@ function aquecerOvo() {
 
             typeof Petton !== "undefined" &&
 
-            typeof Petton.ligarAquecedor ===
-
-            "function"
+            typeof Petton.ligarAquecedor === "function"
 
         ) {
 
@@ -4844,9 +4328,7 @@ function resetarPettonTela() {
 
             typeof Petton !== "undefined" &&
 
-            typeof Petton.resetar ===
-
-            "function"
+            typeof Petton.resetar === "function"
 
         ) {
 
@@ -4863,6 +4345,28 @@ function resetarPettonTela() {
     }
 
 }
+
+/* =========================================================
+
+   EVENTO DO PETTON
+
+   Quando petton.js salva alguma alteração,
+
+   atualizamos a tela.
+
+========================================================= */
+
+window.addEventListener(
+
+    "petton-atualizado",
+
+    function() {
+
+        atualizarTela();
+
+    }
+
+);
 
 /* =========================================================
 
@@ -4988,27 +4492,57 @@ document.addEventListener(
 
     "DOMContentLoaded",
 
-    () => {
+    function() {
+
+        /*
+
+        petton.js já está carregado.
+
+        Pegamos imediatamente o Petton salvo
+
+        antes de esperar o LIFF.
+
+        */
+
+        atualizarTela();
 
         inicializarLinePetton();
 
-        setTimeout(() => {
+        /*
 
-            atualizarTela();
+        Atualização visual leve.
 
-        }, 800);
+        Não cria Petton novo.
 
-        setInterval(() => {
+        Não troca espécie.
 
-            atualizarTela();
+        Não apaga dados.
 
-        }, 1000);
+        */
 
-        setInterval(() => {
+        setInterval(
 
-            atualizarBonus();
+            function() {
 
-        }, 60000);
+                atualizarTela();
+
+            },
+
+            1000
+
+        );
+
+        setInterval(
+
+            function() {
+
+                atualizarBonus();
+
+            },
+
+            60000
+
+        );
 
     }
 
