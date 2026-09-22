@@ -35,7 +35,25 @@ const PETTON_CARIE_APOS_COMER_MS = 5 * 60 * 1000;
 const PETTON_HOSPITAL_MS = 5 * 1000;
 
 const PETTON_PASSEIO_MS = 8 * 1000;
+/* =========================================================
 
+   TEMPO REAL DOS STATUS
+
+========================================================= */
+
+const PETTON_TEMPO_FOME_MS = 30 * 60 * 1000;
+
+const PETTON_TEMPO_FELICIDADE_MS = 60 * 60 * 1000;
+
+const PETTON_TEMPO_ENERGIA_MS = 45 * 60 * 1000;
+
+const PETTON_TEMPO_HIGIENE_MS = 60 * 60 * 1000;
+
+const PETTON_TEMPO_SAUDE_RISCO_MS = 60 * 60 * 1000;
+
+const PETTON_TEMPO_DOENTE_MS = 60 * 60 * 1000;
+
+const PETTON_TEMPO_COCO_HIGIENE_MS = 60 * 60 * 1000;
 /* =========================================================
 
    RECOMPENSAS
@@ -5896,27 +5914,7 @@ try {
 }
 /* =========================================================
 
-   PETTON - SISTEMA DE TEMPO REAL V2
-
-   Não apaga nem reseta o Petton atual.
-
-========================================================= */
-
-const PETTON_TEMPO_FOME_MS = 30 * 60 * 1000;
-
-const PETTON_TEMPO_FELICIDADE_MS = 60 * 60 * 1000;
-
-const PETTON_TEMPO_ENERGIA_MS = 45 * 60 * 1000;
-
-const PETTON_TEMPO_HIGIENE_MS = 60 * 60 * 1000;
-
-const PETTON_TEMPO_SAUDE_RISCO_MS = 60 * 60 * 1000;
-
-const PETTON_TEMPO_DOENTE_MS = 60 * 60 * 1000;
-
-/* =========================================================
-
-   LIMITAR STATUS
+   PETTON - CONTROLE DE TEMPO REAL CORRIGIDO
 
 ========================================================= */
 
@@ -5930,21 +5928,67 @@ function limitarStatusPetton(valor) {
 
     }
 
-    return Math.max(
-
-        0,
-
-        Math.min(100, valor)
-
-    );
+    return Math.max(0, Math.min(100, valor));
 
 }
 
-/* =========================================================
+function calcularPassosTempoPetton(
 
-   GARANTIR CONTROLE DE TEMPO
+    agora,
 
-========================================================= */
+    ultimo,
+
+    intervalo
+
+) {
+
+    ultimo = Number(ultimo);
+
+    if (
+
+        !Number.isFinite(ultimo) ||
+
+        ultimo <= 0 ||
+
+        ultimo > agora
+
+    ) {
+
+        return {
+
+            passos: 0,
+
+            novoUltimo: agora
+
+        };
+
+    }
+
+    const diferenca =
+
+        Math.max(0, agora - ultimo);
+
+    const passos =
+
+        Math.floor(
+
+            diferenca / intervalo
+
+        );
+
+    return {
+
+        passos: passos,
+
+        novoUltimo:
+
+            ultimo +
+
+            (passos * intervalo)
+
+    };
+
+}
 
 function garantirControleTempoPetton(dados) {
 
@@ -5958,31 +6002,79 @@ function garantirControleTempoPetton(dados) {
 
     if (
 
-        typeof dados.statusAtualizadoEm !== "number" ||
+        !dados.tempoStatusV2 ||
 
-        !Number.isFinite(dados.statusAtualizadoEm) ||
+        typeof dados.tempoStatusV2 !== "object" ||
 
-        dados.statusAtualizadoEm <= 0 ||
-
-        dados.statusAtualizadoEm > agora
+        Array.isArray(dados.tempoStatusV2)
 
     ) {
 
-        /*
+        dados.tempoStatusV2 = {
 
-        IMPORTANTE:
+            fome: agora,
 
-        Pettons antigos começam a contar a partir de agora.
+            felicidade: agora,
 
-        Assim esta atualização NÃO desconta horas/dias
+            energia: agora,
 
-        retroativamente de quem já tinha um Petton.
+            higiene: agora,
 
-        */
+            saudeRisco: agora,
 
-        dados.statusAtualizadoEm = agora;
+            doente: agora,
+
+            cocoHigiene: agora
+
+        };
+
+        return dados;
 
     }
+
+    const campos = [
+
+        "fome",
+
+        "felicidade",
+
+        "energia",
+
+        "higiene",
+
+        "saudeRisco",
+
+        "doente",
+
+        "cocoHigiene"
+
+    ];
+
+    campos.forEach(function (campo) {
+
+        if (
+
+            typeof dados.tempoStatusV2[campo] !== "number" ||
+
+            !Number.isFinite(
+
+                dados.tempoStatusV2[campo]
+
+            ) ||
+
+            dados.tempoStatusV2[campo] <= 0 ||
+
+            dados.tempoStatusV2[campo] > agora
+
+        ) {
+
+            dados.tempoStatusV2[campo] =
+
+                agora;
+
+        }
+
+    });
 
     return dados;
 
@@ -5990,13 +6082,19 @@ function garantirControleTempoPetton(dados) {
 
 /* =========================================================
 
-   DOENÇA V2
+   DOENÇA CORRIGIDA
 
 ========================================================= */
 
 verificarDoenca = function (dados) {
 
-    if (!dados || !dados.dateNascimento) {
+    if (
+
+        !dados ||
+
+        !dados.dateNascimento
+
+    ) {
 
         return dados;
 
@@ -6004,279 +6102,9 @@ verificarDoenca = function (dados) {
 
     const agora = Date.now();
 
-    /*
-
-    Cocô não desconta saúde toda vez que a tela atualiza.
-
-    Ele apenas causa doença quando fica tempo demais.
-
-    */
-
     if (
 
         !dados.doente &&
-
-        dados.cocoAtivo &&
-
-        dados.cocoNasceuEm
-
-    ) {
-
-        const tempoCoco =
-
-            agora - Number(dados.cocoNasceuEm);
-
-        if (
-
-            Number.isFinite(tempoCoco) &&
-
-            tempoCoco >= PETTON_COCO_DOENCA_MS
-
-        ) {
-
-            dados.doente = true;
-
-            dados.doenteDesde = agora;
-
-            dados.saude =
-
-                Math.min(
-
-                    limitarStatusPetton(dados.saude),
-
-                    35
-
-                );
-
-            dados.felicidade =
-
-                Math.min(
-
-                    limitarStatusPetton(dados.felicidade),
-
-                    40
-
-                );
-
-        }
-
-    }
-
-    if (
-
-        !dados.doente &&
-
-        limitarStatusPetton(dados.saude) <= 10
-
-    ) {
-
-        dados.doente = true;
-
-        dados.doenteDesde =
-
-            dados.doenteDesde || agora;
-
-    }
-
-    return dados;
-
-};
-
-/* =========================================================
-
-   TEMPO REAL
-
-========================================================= */
-
-atualizarTempo = function () {
-
-    const dados = carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return dados;
-
-    }
-
-    garantirControleTempoPetton(dados);
-
-    const agora = Date.now();
-
-    let tempoPassado =
-
-        agora - dados.statusAtualizadoEm;
-
-    if (
-
-        !Number.isFinite(tempoPassado) ||
-
-        tempoPassado < 0
-
-    ) {
-
-        tempoPassado = 0;
-
-    }
-
-    /*
-
-    Menos de 1 minuto:
-
-    não precisa recalcular.
-
-    */
-
-    if (tempoPassado < 60 * 1000) {
-
-        verificarDoenca(dados);
-
-        verificarCarie(dados);
-
-        atualizarHospital(dados);
-
-        atualizarPasseio(dados);
-
-        atualizarEscovacao(dados);
-
-        return dados;
-
-    }
-
-    /* =====================================================
-
-       FOME
-
-       -1 a cada 30 minutos
-
-    ===================================================== */
-
-    const perdaFome =
-
-        Math.floor(
-
-            tempoPassado /
-
-            PETTON_TEMPO_FOME_MS
-
-        );
-
-    if (perdaFome > 0) {
-
-        dados.fome =
-
-            limitarStatusPetton(
-
-                Number(dados.fome || 0) -
-
-                perdaFome
-
-            );
-
-    }
-
-    /* =====================================================
-
-       FELICIDADE
-
-       -1 a cada 60 minutos
-
-    ===================================================== */
-
-    const perdaFelicidade =
-
-        Math.floor(
-
-            tempoPassado /
-
-            PETTON_TEMPO_FELICIDADE_MS
-
-        );
-
-    if (perdaFelicidade > 0) {
-
-        dados.felicidade =
-
-            limitarStatusPetton(
-
-                Number(dados.felicidade || 0) -
-
-                perdaFelicidade
-
-            );
-
-    }
-
-    /* =====================================================
-
-       ENERGIA
-
-       -1 a cada 45 minutos
-
-    ===================================================== */
-
-    const perdaEnergia =
-
-        Math.floor(
-
-            tempoPassado /
-
-            PETTON_TEMPO_ENERGIA_MS
-
-        );
-
-    if (perdaEnergia > 0) {
-
-        dados.energia =
-
-            limitarStatusPetton(
-
-                Number(dados.energia || 0) -
-
-                perdaEnergia
-
-            );
-
-    }
-
-    /* =====================================================
-
-       HIGIENE
-
-       -1 a cada 60 minutos
-
-    ===================================================== */
-
-    const perdaHigiene =
-
-        Math.floor(
-
-            tempoPassado /
-
-            PETTON_TEMPO_HIGIENE_MS
-
-        );
-
-    if (perdaHigiene > 0) {
-
-        dados.higiene =
-
-            limitarStatusPetton(
-
-                Number(dados.higiene || 0) -
-
-                perdaHigiene
-
-            );
-
-    }
-
-    /* =====================================================
-
-       COCÔ SUJA MAIS
-
-    ===================================================== */
-
-    if (
 
         dados.cocoAtivo &&
 
@@ -6294,115 +6122,469 @@ atualizarTempo = function () {
 
             Number.isFinite(tempoCoco) &&
 
-            tempoCoco >= PETTON_COCO_ALERTA_MS
+            tempoCoco >=
+
+                PETTON_COCO_DOENCA_MS
 
         ) {
 
-            /*
+            dados.doente = true;
 
-            No máximo 1 ponto adicional de higiene
+            dados.doenteDesde =
 
-            por hora decorrida.
+                agora;
 
-            */
+            dados.saude =
 
-            const perdaExtra =
+                Math.min(
 
-                Math.floor(
+                    limitarStatusPetton(
 
-                    tempoPassado /
+                        dados.saude
 
-                    (60 * 60 * 1000)
+                    ),
+
+                    35
 
                 );
 
-            if (perdaExtra > 0) {
+            dados.felicidade =
+
+                Math.min(
+
+                    limitarStatusPetton(
+
+                        dados.felicidade
+
+                    ),
+
+                    40
+
+                );
+
+            garantirControleTempoPetton(
+
+                dados
+
+            );
+
+            dados.tempoStatusV2.doente =
+
+                agora;
+
+        }
+
+    }
+
+    if (
+
+        !dados.doente &&
+
+        limitarStatusPetton(
+
+            dados.saude
+
+        ) <= 10
+
+    ) {
+
+        dados.doente = true;
+
+        dados.doenteDesde =
+
+            dados.doenteDesde ||
+
+            agora;
+
+        garantirControleTempoPetton(
+
+            dados
+
+        );
+
+        dados.tempoStatusV2.doente =
+
+            agora;
+
+    }
+
+    return dados;
+
+};
+
+/* =========================================================
+
+   TEMPO REAL
+
+========================================================= */
+
+atualizarTempo = function () {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return dados;
+
+    }
+
+    garantirControleTempoPetton(
+
+        dados
+
+    );
+
+    const agora = Date.now();
+
+    const tempo =
+
+        dados.tempoStatusV2;
+
+    let calculo =
+
+        calcularPassosTempoPetton(
+
+            agora,
+
+            tempo.fome,
+
+            PETTON_TEMPO_FOME_MS
+
+        );
+
+    if (calculo.passos > 0) {
+
+        dados.fome =
+
+            limitarStatusPetton(
+
+                Number(
+
+                    dados.fome || 0
+
+                ) -
+
+                calculo.passos
+
+            );
+
+        tempo.fome =
+
+            calculo.novoUltimo;
+
+    }
+
+    calculo =
+
+        calcularPassosTempoPetton(
+
+            agora,
+
+            tempo.felicidade,
+
+            PETTON_TEMPO_FELICIDADE_MS
+
+        );
+
+    if (calculo.passos > 0) {
+
+        dados.felicidade =
+
+            limitarStatusPetton(
+
+                Number(
+
+                    dados.felicidade || 0
+
+                ) -
+
+                calculo.passos
+
+            );
+
+        tempo.felicidade =
+
+            calculo.novoUltimo;
+
+    }
+
+    calculo =
+
+        calcularPassosTempoPetton(
+
+            agora,
+
+            tempo.energia,
+
+            PETTON_TEMPO_ENERGIA_MS
+
+        );
+
+    if (calculo.passos > 0) {
+
+        dados.energia =
+
+            limitarStatusPetton(
+
+                Number(
+
+                    dados.energia || 0
+
+                ) -
+
+                calculo.passos
+
+            );
+
+        tempo.energia =
+
+            calculo.novoUltimo;
+
+    }
+
+    calculo =
+
+        calcularPassosTempoPetton(
+
+            agora,
+
+            tempo.higiene,
+
+            PETTON_TEMPO_HIGIENE_MS
+
+        );
+
+    if (calculo.passos > 0) {
+
+        dados.higiene =
+
+            limitarStatusPetton(
+
+                Number(
+
+                    dados.higiene || 0
+
+                ) -
+
+                calculo.passos
+
+            );
+
+        tempo.higiene =
+
+            calculo.novoUltimo;
+
+    }
+
+    /* COCÔ */
+
+    if (
+
+        dados.cocoAtivo &&
+
+        dados.cocoNasceuEm
+
+    ) {
+
+        const nascimentoCoco =
+
+            Number(
+
+                dados.cocoNasceuEm
+
+            );
+
+        const inicioPenalidade =
+
+            nascimentoCoco +
+
+            PETTON_COCO_ALERTA_MS;
+
+        if (
+
+            Number.isFinite(
+
+                nascimentoCoco
+
+            ) &&
+
+            agora >= inicioPenalidade
+
+        ) {
+
+            let ultimoCoco =
+
+                Number(
+
+                    tempo.cocoHigiene
+
+                );
+
+            if (
+
+                !Number.isFinite(
+
+                    ultimoCoco
+
+                ) ||
+
+                ultimoCoco <
+
+                    inicioPenalidade
+
+            ) {
+
+                ultimoCoco =
+
+                    inicioPenalidade;
+
+            }
+
+            const calculoCoco =
+
+                calcularPassosTempoPetton(
+
+                    agora,
+
+                    ultimoCoco,
+
+                    PETTON_TEMPO_COCO_HIGIENE_MS
+
+                );
+
+            if (
+
+                calculoCoco.passos > 0
+
+            ) {
 
                 dados.higiene =
 
                     limitarStatusPetton(
 
-                        dados.higiene -
+                        Number(
 
-                        perdaExtra
+                            dados.higiene ||
+
+                            0
+
+                        ) -
+
+                        calculoCoco.passos
 
                     );
+
+                tempo.cocoHigiene =
+
+                    calculoCoco.novoUltimo;
 
             }
 
         }
 
+    } else {
+
+        tempo.cocoHigiene =
+
+            agora;
+
     }
 
-    /* =====================================================
-
-       SAÚDE
-
-       Só cai se realmente estiver mal cuidado.
-
-    ===================================================== */
+    /* SAÚDE */
 
     const emRisco =
 
-        dados.fome < 20 ||
+        Number(dados.fome) < 20 ||
 
-        dados.higiene < 20;
+        Number(dados.higiene) < 20;
 
     if (emRisco) {
 
-        const perdaSaude =
+        const calculoSaude =
 
-            Math.floor(
+            calcularPassosTempoPetton(
 
-                tempoPassado /
+                agora,
+
+                tempo.saudeRisco,
 
                 PETTON_TEMPO_SAUDE_RISCO_MS
 
             );
 
-        if (perdaSaude > 0) {
+        if (
+
+            calculoSaude.passos > 0
+
+        ) {
 
             dados.saude =
 
                 limitarStatusPetton(
 
-                    dados.saude -
+                    Number(
 
-                    perdaSaude
+                        dados.saude || 0
+
+                    ) -
+
+                    calculoSaude.passos
 
                 );
 
+            tempo.saudeRisco =
+
+                calculoSaude.novoUltimo;
+
         }
+
+    } else {
+
+        tempo.saudeRisco =
+
+            agora;
 
     }
 
-    /* =====================================================
+    verificarDoenca(dados);
 
-       SE ESTIVER DOENTE
-
-    ===================================================== */
+    /* DOENTE */
 
     if (dados.doente) {
 
-        const perdaDoente =
+        const calculoDoente =
 
-            Math.floor(
+            calcularPassosTempoPetton(
 
-                tempoPassado /
+                agora,
+
+                tempo.doente,
 
                 PETTON_TEMPO_DOENTE_MS
 
             );
 
-        if (perdaDoente > 0) {
+        if (
+
+            calculoDoente.passos > 0
+
+        ) {
 
             dados.felicidade =
 
                 limitarStatusPetton(
 
-                    dados.felicidade -
+                    Number(
 
-                    perdaDoente
+                        dados.felicidade ||
+
+                        0
+
+                    ) -
+
+                    calculoDoente.passos
 
                 );
 
@@ -6410,9 +6592,13 @@ atualizarTempo = function () {
 
                 limitarStatusPetton(
 
-                    dados.energia -
+                    Number(
 
-                    perdaDoente
+                        dados.energia || 0
+
+                    ) -
+
+                    calculoDoente.passos
 
                 );
 
@@ -6420,23 +6606,29 @@ atualizarTempo = function () {
 
                 limitarStatusPetton(
 
-                    dados.saude -
+                    Number(
 
-                    perdaDoente
+                        dados.saude || 0
+
+                    ) -
+
+                    calculoDoente.passos
 
                 );
 
+            tempo.doente =
+
+                calculoDoente.novoUltimo;
+
         }
 
+    } else {
+
+        tempo.doente =
+
+            agora;
+
     }
-
-    /* =====================================================
-
-       EVENTOS
-
-    ===================================================== */
-
-    verificarDoenca(dados);
 
     verificarCarie(dados);
 
@@ -6446,14 +6638,6 @@ atualizarTempo = function () {
 
     atualizarEscovacao(dados);
 
-    /* =====================================================
-
-       MARCA O MOMENTO DA ATUALIZAÇÃO
-
-    ===================================================== */
-
-    dados.statusAtualizadoEm = agora;
-
     salvarPetton(dados);
 
     return dados;
@@ -6462,7 +6646,551 @@ atualizarTempo = function () {
 
 /* =========================================================
 
-   PRIMEIRA ATUALIZAÇÃO
+   REGRAS DAS AÇÕES
+
+========================================================= */
+
+alimentar = function () {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (
+
+        dados.doente ||
+
+        dados.hospitalAte
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(dados.fome) >= 90
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.fome =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.fome || 0
+
+            ) + 20
+
+        );
+
+    dados.saude =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.saude || 0
+
+            ) + 2
+
+        );
+
+    darRecompensa(
+
+        dados,
+
+        5,
+
+        PETTON_MOEDAS_ALIMENTAR
+
+    );
+
+    dados.ultimaAlimentacaoEm =
+
+        Date.now();
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+brincar = function () {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (
+
+        dados.doente ||
+
+        dados.hospitalAte
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(
+
+            dados.felicidade
+
+        ) >= 90
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(
+
+            dados.energia
+
+        ) < 15
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.felicidade =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.felicidade || 0
+
+            ) + 20
+
+        );
+
+    dados.energia =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.energia || 0
+
+            ) - 10
+
+        );
+
+    dados.higiene =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.higiene || 0
+
+            ) - 1
+
+        );
+
+    darRecompensa(
+
+        dados,
+
+        5,
+
+        PETTON_MOEDAS_BRINCAR
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+carinho = function () {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (
+
+        dados.doente ||
+
+        dados.hospitalAte
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(
+
+            dados.felicidade
+
+        ) >= 95
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.felicidade =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.felicidade || 0
+
+            ) + 10
+
+        );
+
+    darRecompensa(
+
+        dados,
+
+        2,
+
+        PETTON_MOEDAS_CARINHO
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+dormir = function () {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (
+
+        dados.doente ||
+
+        dados.hospitalAte
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(
+
+            dados.energia
+
+        ) >= 90
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.energia =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.energia || 0
+
+            ) + 30
+
+        );
+
+    dados.felicidade =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.felicidade || 0
+
+            ) + 5
+
+        );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+limpar = function () {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (dados.hospitalAte) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(
+
+            dados.higiene
+
+        ) >= 90
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.higiene =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.higiene || 0
+
+            ) + 30
+
+        );
+
+    dados.saude =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.saude || 0
+
+            ) + 5
+
+        );
+
+    darRecompensa(
+
+        dados,
+
+        3,
+
+        PETTON_MOEDAS_LIMPAR
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+passear = function () {
+
+    const dados =
+
+        carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (
+
+        dados.doente ||
+
+        dados.hospitalAte
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        dados.passeandoAte &&
+
+        dados.passeandoAte >
+
+            Date.now()
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(
+
+            dados.energia
+
+        ) < 20
+
+    ) {
+
+        return false;
+
+    }
+
+    if (
+
+        Number(
+
+            dados.felicidade
+
+        ) >= 90
+
+    ) {
+
+        return false;
+
+    }
+
+    dados.passeandoAte =
+
+        Date.now() +
+
+        PETTON_PASSEIO_MS;
+
+    dados.felicidade =
+
+        Math.min(
+
+            100,
+
+            Number(
+
+                dados.felicidade || 0
+
+            ) + 15
+
+        );
+
+    dados.energia =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.energia || 0
+
+            ) - 8
+
+        );
+
+    dados.higiene =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                dados.higiene || 0
+
+            ) - 2
+
+        );
+
+    darRecompensa(
+
+        dados,
+
+        5,
+
+        PETTON_MOEDAS_PASSEAR
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+/* =========================================================
+
+   INICIAR CONTROLE DE TEMPO
 
 ========================================================= */
 
@@ -6472,7 +7200,11 @@ try {
 
         carregarPetton();
 
-    if (dadosTempoInicial.dateNascimento) {
+    if (
+
+        dadosTempoInicial.dateNascimento
+
+    ) {
 
         garantirControleTempoPetton(
 
@@ -6494,421 +7226,10 @@ try {
 
     console.error(
 
-        "Erro ao iniciar tempo real do Petton:",
+        "Erro ao iniciar tempo real V2:",
 
         erro
 
     );
 
 }
-/* =========================================================
-
-   PETTON - REGRAS DAS AÇÕES V3
-
-   Evita ganhar moedas/pontos infinitamente
-
-========================================================= */
-
-/* =========================================================
-
-   ALIMENTAR
-
-   Só pode alimentar abaixo de 90 de fome
-
-========================================================= */
-
-alimentar = function () {
-
-    const dados = carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return false;
-
-    }
-
-    if (dados.doente || dados.hospitalAte) {
-
-        return false;
-
-    }
-
-    if (Number(dados.fome) >= 90) {
-
-        return false;
-
-    }
-
-    dados.fome = Math.min(
-
-        100,
-
-        Number(dados.fome || 0) + 20
-
-    );
-
-    dados.saude = Math.min(
-
-        100,
-
-        Number(dados.saude || 0) + 2
-
-    );
-
-    darRecompensa(
-
-        dados,
-
-        5,
-
-        PETTON_MOEDAS_ALIMENTAR
-
-    );
-
-    dados.ultimaAlimentacaoEm = Date.now();
-
-    salvarPetton(dados);
-
-    return true;
-
-};
-
-/* =========================================================
-
-   BRINCAR
-
-   Felicidade abaixo de 90
-
-   Precisa ter pelo menos 15 de energia
-
-========================================================= */
-
-brincar = function () {
-
-    const dados = carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return false;
-
-    }
-
-    if (dados.doente || dados.hospitalAte) {
-
-        return false;
-
-    }
-
-    if (Number(dados.felicidade) >= 90) {
-
-        return false;
-
-    }
-
-    if (Number(dados.energia) < 15) {
-
-        return false;
-
-    }
-
-    dados.felicidade = Math.min(
-
-        100,
-
-        Number(dados.felicidade || 0) + 20
-
-    );
-
-    dados.energia = Math.max(
-
-        0,
-
-        Number(dados.energia || 0) - 10
-
-    );
-
-    dados.higiene = Math.max(
-
-        0,
-
-        Number(dados.higiene || 0) - 1
-
-    );
-
-    darRecompensa(
-
-        dados,
-
-        5,
-
-        PETTON_MOEDAS_BRINCAR
-
-    );
-
-    salvarPetton(dados);
-
-    return true;
-
-};
-
-/* =========================================================
-
-   CARINHO
-
-   Só recompensa abaixo de 95 de felicidade
-
-========================================================= */
-
-carinho = function () {
-
-    const dados = carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return false;
-
-    }
-
-    if (dados.doente || dados.hospitalAte) {
-
-        return false;
-
-    }
-
-    if (Number(dados.felicidade) >= 95) {
-
-        return false;
-
-    }
-
-    dados.felicidade = Math.min(
-
-        100,
-
-        Number(dados.felicidade || 0) + 10
-
-    );
-
-    darRecompensa(
-
-        dados,
-
-        2,
-
-        PETTON_MOEDAS_CARINHO
-
-    );
-
-    salvarPetton(dados);
-
-    return true;
-
-};
-
-/* =========================================================
-
-   DORMIR
-
-   Só dorme abaixo de 90 de energia
-
-========================================================= */
-
-dormir = function () {
-
-    const dados = carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return false;
-
-    }
-
-    if (dados.doente || dados.hospitalAte) {
-
-        return false;
-
-    }
-
-    if (Number(dados.energia) >= 90) {
-
-        return false;
-
-    }
-
-    dados.energia = Math.min(
-
-        100,
-
-        Number(dados.energia || 0) + 30
-
-    );
-
-    dados.felicidade = Math.min(
-
-        100,
-
-        Number(dados.felicidade || 0) + 5
-
-    );
-
-    salvarPetton(dados);
-
-    return true;
-
-};
-
-/* =========================================================
-
-   BANHO / LIMPAR
-
-   Só permite abaixo de 90 de higiene
-
-========================================================= */
-
-limpar = function () {
-
-    const dados = carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return false;
-
-    }
-
-    if (dados.hospitalAte) {
-
-        return false;
-
-    }
-
-    if (Number(dados.higiene) >= 90) {
-
-        return false;
-
-    }
-
-    dados.higiene = Math.min(
-
-        100,
-
-        Number(dados.higiene || 0) + 30
-
-    );
-
-    dados.saude = Math.min(
-
-        100,
-
-        Number(dados.saude || 0) + 5
-
-    );
-
-    darRecompensa(
-
-        dados,
-
-        3,
-
-        PETTON_MOEDAS_LIMPAR
-
-    );
-
-    salvarPetton(dados);
-
-    return true;
-
-};
-
-/* =========================================================
-
-   PASSEAR
-
-   Precisa ter pelo menos 20 de energia
-
-   Felicidade abaixo de 90
-
-========================================================= */
-
-passear = function () {
-
-    const dados = carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return false;
-
-    }
-
-    if (dados.doente || dados.hospitalAte) {
-
-        return false;
-
-    }
-
-    if (
-
-        dados.passeandoAte &&
-
-        dados.passeandoAte > Date.now()
-
-    ) {
-
-        return false;
-
-    }
-
-    if (Number(dados.energia) < 20) {
-
-        return false;
-
-    }
-
-    if (Number(dados.felicidade) >= 90) {
-
-        return false;
-
-    }
-
-    dados.passeandoAte =
-
-        Date.now() + PETTON_PASSEIO_MS;
-
-    dados.felicidade = Math.min(
-
-        100,
-
-        Number(dados.felicidade || 0) + 15
-
-    );
-
-    dados.energia = Math.max(
-
-        0,
-
-        Number(dados.energia || 0) - 8
-
-    );
-
-    dados.higiene = Math.max(
-
-        0,
-
-        Number(dados.higiene || 0) - 2
-
-    );
-
-    darRecompensa(
-
-        dados,
-
-        5,
-
-        PETTON_MOEDAS_PASSEAR
-
-    );
-
-    salvarPetton(dados);
-
-    return true;
-
-};
