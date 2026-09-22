@@ -116,7 +116,9 @@ body {
 
 }
 
-.btn-voltar {
+.btn-voltar,
+
+.btn-som {
 
     width: 42px;
 
@@ -128,7 +130,7 @@ body {
 
     background: #f2f6f0;
 
-    font-size: 22px;
+    font-size: 21px;
 
     display: flex;
 
@@ -140,7 +142,9 @@ body {
 
 }
 
-.btn-voltar:active {
+.btn-voltar:active,
+
+.btn-som:active {
 
     transform: scale(.94);
 
@@ -332,9 +336,7 @@ body {
 
     display: grid;
 
-    grid-template-columns:
-
-        repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
 
     gap: 7px;
 
@@ -346,9 +348,7 @@ body {
 
     padding: 7px 4px;
 
-    background:
-
-        rgba(255,255,255,.92);
+    background: rgba(255,255,255,.92);
 
     border-radius: 13px;
 
@@ -546,7 +546,7 @@ body {
 
 /* =========================================================
 
-   ALERTA DE ONDA
+   ALERTA
 
 ========================================================= */
 
@@ -982,7 +982,23 @@ body {
 
     </div>
 
-    <div></div>
+    <button
+
+        type="button"
+
+        id="btnSom"
+
+        class="btn-som"
+
+        onclick="alternarSom(event)"
+
+        aria-label="Som"
+
+    >
+
+        🔊
+
+    </button>
 
 </header>
 
@@ -1001,8 +1017,6 @@ body {
         ☁️
 
     </div>
-
-    <!-- PLACAR -->
 
     <div class="placar">
 
@@ -1080,8 +1094,6 @@ body {
 
     </div>
 
-    <!-- PETTON -->
-
     <div id="sombraPetton"></div>
 
     <div id="petton">
@@ -1103,8 +1115,6 @@ body {
     </div>
 
     <div id="chao"></div>
-
-    <!-- INÍCIO -->
 
     <div id="inicio">
 
@@ -1132,7 +1142,7 @@ body {
 
             <p>
 
-                Agora várias bolinhas caem
+                Várias bolinhas caem
 
                 ao mesmo tempo!
 
@@ -1169,8 +1179,6 @@ body {
         </div>
 
     </div>
-
-    <!-- GAME OVER -->
 
     <div id="gameOver">
 
@@ -1264,7 +1272,7 @@ body {
 
 const CHAVE_RECORDE =
 
-    "petton_jogo_desviar_bolinhas_recorde_v2";
+    "petton_jogo_desviar_bolinhas_recorde_v1";
 
 const ALTURA_CHAO = 82;
 
@@ -1364,7 +1372,487 @@ let animationId = null;
 
 /* =========================================================
 
-   RECORDES
+   🔊 SISTEMA DE SOM
+
+========================================================= */
+
+let audioContext = null;
+
+let somLigado = true;
+
+function prepararAudio() {
+
+    if (!somLigado) {
+
+        return;
+
+    }
+
+    try {
+
+        if (!audioContext) {
+
+            const Contexto =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (!Contexto) {
+
+                return;
+
+            }
+
+            audioContext =
+
+                new Contexto();
+
+        }
+
+        if (
+
+            audioContext.state ===
+
+            "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Áudio não disponível.",
+
+            erro
+
+        );
+
+    }
+
+}
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    volume,
+
+    tipo = "sine",
+
+    frequenciaFinal = null
+
+) {
+
+    if (
+
+        !somLigado ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const agora =
+
+            audioContext.currentTime;
+
+        const oscilador =
+
+            audioContext.createOscillator();
+
+        const ganho =
+
+            audioContext.createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                agora
+
+            );
+
+        if (frequenciaFinal) {
+
+            oscilador.frequency
+
+                .exponentialRampToValueAtTime(
+
+                    Math.max(
+
+                        1,
+
+                        frequenciaFinal
+
+                    ),
+
+                    agora + duracao
+
+                );
+
+        }
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                0.0001,
+
+                agora
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                volume,
+
+                agora + .015
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                0.0001,
+
+                agora + duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(
+
+            agora
+
+        );
+
+        oscilador.stop(
+
+            agora +
+
+            duracao +
+
+            .03
+
+        );
+
+    } catch (erro) {}
+
+}
+
+/* ▶️ SOM DE INÍCIO */
+
+function somInicio() {
+
+    tocarTom(
+
+        330,
+
+        .10,
+
+        .055,
+
+        "sine",
+
+        440
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                520,
+
+                .12,
+
+                .06,
+
+                "sine",
+
+                700
+
+            );
+
+        },
+
+        90
+
+    );
+
+}
+
+/* 🌊 SOM DA ONDA */
+
+function somOnda() {
+
+    tocarTom(
+
+        210,
+
+        .13,
+
+        .028,
+
+        "triangle",
+
+        390
+
+    );
+
+}
+
+/* ⭐ SOM DE PONTO */
+
+function somPonto() {
+
+    tocarTom(
+
+        700,
+
+        .07,
+
+        .04,
+
+        "sine",
+
+        900
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                980,
+
+                .09,
+
+                .035,
+
+                "sine",
+
+                1200
+
+            );
+
+        },
+
+        55
+
+    );
+
+}
+
+/* 🔥 SOM DE NÍVEL */
+
+function somNivel() {
+
+    tocarTom(
+
+        440,
+
+        .08,
+
+        .035,
+
+        "square",
+
+        550
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                660,
+
+                .08,
+
+                .035,
+
+                "square",
+
+                800
+
+            );
+
+        },
+
+        70
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                880,
+
+                .12,
+
+                .04,
+
+                "square",
+
+                1050
+
+            );
+
+        },
+
+        140
+
+    );
+
+}
+
+/* 💥 SOM DA BATIDA */
+
+function somBatida() {
+
+    tocarTom(
+
+        150,
+
+        .20,
+
+        .075,
+
+        "sawtooth",
+
+        55
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                90,
+
+                .28,
+
+                .06,
+
+                "square",
+
+                35
+
+            );
+
+        },
+
+        80
+
+    );
+
+}
+
+/* 🔊 / 🔇 */
+
+function alternarSom(evento) {
+
+    if (evento) {
+
+        evento.preventDefault();
+
+        evento.stopPropagation();
+
+    }
+
+    somLigado =
+
+        !somLigado;
+
+    const botao =
+
+        document.getElementById(
+
+            "btnSom"
+
+        );
+
+    if (botao) {
+
+        botao.textContent =
+
+            somLigado
+
+                ? "🔊"
+
+                : "🔇";
+
+    }
+
+    if (somLigado) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            600,
+
+            .08,
+
+            .04,
+
+            "sine",
+
+            850
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   RECORDE
 
 ========================================================= */
 
@@ -1634,7 +2122,9 @@ function obterEspeciePetton(dados) {
 
     especie =
 
-        String(especie).toLowerCase();
+        String(especie)
+
+            .toLowerCase();
 
     if (
 
@@ -1922,7 +2412,7 @@ function atualizarPosicaoPetton() {
 
 /* =========================================================
 
-   ARRASTAR PETTON
+   ARRASTAR
 
 ========================================================= */
 
@@ -2154,12 +2644,6 @@ function quantidadeBolinhas() {
 
 }
 
-/* =========================================================
-
-   CRIAR UMA BOLINHA
-
-========================================================= */
-
 function criarBolinha(
 
     x,
@@ -2240,10 +2724,6 @@ function criarBolinha(
 
             Math.random() * 85,
 
-        contado:
-
-            false,
-
         onda:
 
             numeroOnda
@@ -2286,6 +2766,8 @@ function criarOnda() {
 
         quantidadeBolinhas();
 
+    somOnda();
+
     ondaAviso.textContent =
 
         "🔥 " +
@@ -2319,18 +2801,6 @@ function criarOnda() {
     const largura =
 
         jogo.clientWidth;
-
-    /*
-
-       Divide a tela em setores.
-
-       Assim as bolinhas aparecem
-
-       espalhadas pela largura,
-
-       em vez de todas no mesmo lugar.
-
-    */
 
     const larguraSetor =
 
@@ -2386,14 +2856,6 @@ function criarOnda() {
 
             );
 
-        /*
-
-           Não caem em linha perfeita.
-
-           Há pequena diferença vertical.
-
-        */
-
         const atrasoVertical =
 
             Math.random() * 85;
@@ -2407,14 +2869,6 @@ function criarOnda() {
         );
 
     }
-
-    /*
-
-       A velocidade sobe
-
-       a cada onda.
-
-    */
 
     velocidade =
 
@@ -2432,7 +2886,7 @@ function criarOnda() {
 
 /* =========================================================
 
-   POSIÇÃO DA BOLINHA
+   POSIÇÃO BOLINHA
 
 ========================================================= */
 
@@ -2454,21 +2908,11 @@ function atualizarBolinha(item) {
 
 /* =========================================================
 
-   INTERVALO DAS ONDAS
+   TEMPO ENTRE ONDAS
 
 ========================================================= */
 
 function calcularIntervaloOnda() {
-
-    /*
-
-       Começa rápido.
-
-       Conforme avança,
-
-       novas ondas chegam antes.
-
-    */
 
     let intervalo =
 
@@ -2513,14 +2957,6 @@ function verificarColisao(item) {
         item.elemento
 
             .getBoundingClientRect();
-
-    /*
-
-       Hitbox um pouco menor
-
-       para não ficar injusto.
-
-    */
 
     const petLeft =
 
@@ -2584,10 +3020,6 @@ function verificarColisao(item) {
 
    PONTUAÇÃO
 
-   1 ponto quando uma onda inteira
-
-   passa pelo Petton.
-
 ========================================================= */
 
 function verificarOndaConcluida() {
@@ -2627,6 +3059,30 @@ function verificarOndaConcluida() {
         pontosElemento.textContent =
 
             pontos;
+
+        somPonto();
+
+        if (
+
+            pontos === 5 ||
+
+            pontos === 10 ||
+
+            pontos === 20 ||
+
+            pontos === 30
+
+        ) {
+
+            setTimeout(
+
+                somNivel,
+
+                150
+
+            );
+
+        }
 
     }
 
@@ -2730,12 +3186,6 @@ function loop(tempoAtual) {
 
         tempoAtual;
 
-    /* -----------------------------------------
-
-       NOVA ONDA
-
-    ----------------------------------------- */
-
     tempoProximaOnda -=
 
         delta * 1000;
@@ -2753,12 +3203,6 @@ function loop(tempoAtual) {
             calcularIntervaloOnda();
 
     }
-
-    /* -----------------------------------------
-
-       BOLINHAS
-
-    ----------------------------------------- */
 
     for (
 
@@ -2790,8 +3234,6 @@ function loop(tempoAtual) {
 
         atualizarBolinha(item);
 
-        /* COLISÃO */
-
         if (
 
             verificarColisao(item)
@@ -2803,12 +3245,6 @@ function loop(tempoAtual) {
             return;
 
         }
-
-        /*
-
-           Saiu por baixo da tela.
-
-        */
 
         if (
 
@@ -2866,6 +3302,10 @@ function iniciarJogo(evento) {
 
     }
 
+    prepararAudio();
+
+    somInicio();
+
     limparBolinhas();
 
     pontos = 0;
@@ -2905,12 +3345,6 @@ function iniciarJogo(evento) {
     centralizarPetton();
 
     jogando = true;
-
-    /*
-
-       Primeira onda chega rápido.
-
-    */
 
     tempoProximaOnda =
 
@@ -2965,6 +3399,8 @@ function finalizarJogo() {
     terminou = true;
 
     jogando = false;
+
+    somBatida();
 
     arrastando = false;
 
