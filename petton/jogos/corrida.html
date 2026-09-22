@@ -1,0 +1,4067 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<meta name="google" content="notranslate">
+
+<title>Corrida Petton 🏃</title>
+
+<script src="../petton.js"></script>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: hidden;
+
+}
+
+body {
+
+    font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        Arial,
+
+        sans-serif;
+
+    background: #8fd8ff;
+
+    touch-action: none;
+
+    color: #333;
+
+}
+
+.app {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 520px;
+
+    height: 100dvh;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #8edcff 0%,
+
+            #dff7ff 27%,
+
+            #a7db72 27%,
+
+            #6eb447 100%
+
+        );
+
+}
+
+/* =========================================================
+
+   TOPO
+
+========================================================= */
+
+.topo {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 62px;
+
+    z-index: 300;
+
+    display: grid;
+
+    grid-template-columns: 48px 1fr 48px;
+
+    align-items: center;
+
+    padding: 7px 9px;
+
+    background: rgba(255,255,255,.94);
+
+    border-bottom:
+
+        1px solid rgba(0,0,0,.08);
+
+    backdrop-filter: blur(8px);
+
+}
+
+.btn-topo {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+}
+
+.btn-topo:active {
+
+    transform: scale(.94);
+
+}
+
+.titulo {
+
+    text-align: center;
+
+}
+
+.titulo strong {
+
+    display: block;
+
+    font-size: 17px;
+
+}
+
+.titulo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #777;
+
+    font-size: 10px;
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+.hud {
+
+    position: absolute;
+
+    z-index: 220;
+
+    top: 72px;
+
+    left: 8px;
+
+    right: 8px;
+
+    display: grid;
+
+    grid-template-columns: repeat(4,1fr);
+
+    gap: 5px;
+
+    pointer-events: none;
+
+}
+
+.hud-item {
+
+    padding: 7px 2px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.93);
+
+    text-align: center;
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+}
+
+.hud-label {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+}
+
+.hud-valor {
+
+    display: block;
+
+    margin-top: 1px;
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+}
+
+/* =========================================================
+
+   ENERGIA
+
+========================================================= */
+
+.energia-box {
+
+    position: absolute;
+
+    z-index: 220;
+
+    top: 121px;
+
+    left: 12px;
+
+    right: 12px;
+
+    height: 30px;
+
+    padding: 5px 8px;
+
+    border-radius: 15px;
+
+    background: rgba(255,255,255,.92);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.1);
+
+}
+
+.energia-label {
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+
+}
+
+.energia-fundo {
+
+    flex: 1;
+
+    height: 12px;
+
+    overflow: hidden;
+
+    border-radius: 8px;
+
+    background: #ddd;
+
+}
+
+#energiaBarra {
+
+    width: 100%;
+
+    height: 100%;
+
+    border-radius: 8px;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            #4caf50,
+
+            #d8ed45
+
+        );
+
+    transition: width .08s linear;
+
+}
+
+/* =========================================================
+
+   CENÁRIO
+
+========================================================= */
+
+#areaJogo {
+
+    position: absolute;
+
+    top: 62px;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+.sol {
+
+    position: absolute;
+
+    top: 105px;
+
+    right: 25px;
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 50%;
+
+    background: #ffe368;
+
+    box-shadow:
+
+        0 0 25px rgba(255,221,60,.7);
+
+    pointer-events: none;
+
+}
+
+.nuvens {
+
+    position: absolute;
+
+    top: 105px;
+
+    left: 20px;
+
+    font-size: 39px;
+
+    opacity: .8;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   PISTA
+
+========================================================= */
+
+.pista {
+
+    position: absolute;
+
+    z-index: 5;
+
+    left: 0;
+
+    right: 0;
+
+    top: 175px;
+
+    bottom: 0;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            #8d6548,
+
+            #b5845c 8%,
+
+            #a97651 50%,
+
+            #b5845c 92%,
+
+            #8d6548
+
+        );
+
+    border-top:
+
+        4px solid #e0bc78;
+
+}
+
+.faixa {
+
+    position: absolute;
+
+    z-index: 7;
+
+    left: 0;
+
+    right: 0;
+
+    height: 2px;
+
+    background:
+
+        rgba(255,255,255,.42);
+
+    pointer-events: none;
+
+}
+
+.faixa1 {
+
+    top: 25%;
+
+}
+
+.faixa2 {
+
+    top: 50%;
+
+}
+
+.faixa3 {
+
+    top: 75%;
+
+}
+
+/* =========================================================
+
+   LINHA DE CHEGADA
+
+========================================================= */
+
+#chegada {
+
+    position: absolute;
+
+    z-index: 15;
+
+    top: 175px;
+
+    bottom: 0;
+
+    width: 35px;
+
+    left: 1500px;
+
+    background:
+
+        repeating-conic-gradient(
+
+            #fff 0 25%,
+
+            #222 0 50%
+
+        )
+
+        0 0 / 20px 20px;
+
+    border-left:
+
+        3px solid rgba(0,0,0,.4);
+
+    border-right:
+
+        3px solid rgba(0,0,0,.4);
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   CORREDORES
+
+========================================================= */
+
+.corredor {
+
+    position: absolute;
+
+    z-index: 50;
+
+    width: 72px;
+
+    height: 72px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 50px;
+
+    pointer-events: none;
+
+    filter:
+
+        drop-shadow(
+
+            0 4px 3px rgba(0,0,0,.22)
+
+        );
+
+}
+
+#jogador {
+
+    z-index: 60;
+
+}
+
+#jogador img {
+
+    display: block;
+
+    max-width: 72px;
+
+    max-height: 72px;
+
+    object-fit: contain;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   OBJETOS PISTA
+
+========================================================= */
+
+.objeto-pista {
+
+    position: absolute;
+
+    z-index: 45;
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 33px;
+
+    pointer-events: none;
+
+    filter:
+
+        drop-shadow(
+
+            0 3px 2px rgba(0,0,0,.2)
+
+        );
+
+}
+
+.objeto-pista.raio {
+
+    animation:
+
+        pulsar .55s ease-in-out infinite alternate;
+
+}
+
+@keyframes pulsar {
+
+    from {
+
+        transform: scale(.9);
+
+    }
+
+    to {
+
+        transform: scale(1.18);
+
+    }
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+.mensagem {
+
+    position: absolute;
+
+    z-index: 180;
+
+    left: 50%;
+
+    top: 46%;
+
+    transform:
+
+        translate(-50%,-50%);
+
+    padding: 11px 18px;
+
+    border-radius: 23px;
+
+    background: rgba(255,255,255,.96);
+
+    box-shadow:
+
+        0 5px 18px rgba(0,0,0,.18);
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+}
+
+.mensagem.mostrar {
+
+    animation:
+
+        mensagemAnimacao .8s forwards;
+
+}
+
+@keyframes mensagemAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-40%)
+
+            scale(.7);
+
+    }
+
+    20% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.08);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-70%)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   BOTÃO CORRER
+
+========================================================= */
+
+#botaoCorrer {
+
+    position: absolute;
+
+    z-index: 190;
+
+    left: 50%;
+
+    bottom: 18px;
+
+    transform: translateX(-50%);
+
+    width: 180px;
+
+    height: 58px;
+
+    border: none;
+
+    border-radius: 29px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #ff963c,
+
+            #e75628
+
+        );
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: 900;
+
+    box-shadow:
+
+        0 5px 15px rgba(120,45,15,.35);
+
+    touch-action: manipulation;
+
+    cursor: pointer;
+
+}
+
+#botaoCorrer:active {
+
+    transform:
+
+        translateX(-50%)
+
+        scale(.94);
+
+}
+
+/* =========================================================
+
+   OVERLAY
+
+========================================================= */
+
+.overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 400;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 22px;
+
+    background: rgba(50,60,70,.35);
+
+    backdrop-filter: blur(4px);
+
+}
+
+.overlay.oculto {
+
+    display: none;
+
+}
+
+.caixa {
+
+    width: 100%;
+
+    max-width: 350px;
+
+    padding: 24px 20px;
+
+    border-radius: 27px;
+
+    background: rgba(255,255,255,.98);
+
+    box-shadow:
+
+        0 12px 35px rgba(0,0,0,.2);
+
+    text-align: center;
+
+}
+
+.caixa-icone {
+
+    font-size: 54px;
+
+    line-height: 1;
+
+}
+
+.caixa h2 {
+
+    margin: 12px 0 8px;
+
+    font-size: 23px;
+
+}
+
+.caixa p {
+
+    margin: 6px 0;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+}
+
+.regras {
+
+    margin: 13px 0;
+
+    padding: 11px;
+
+    border-radius: 17px;
+
+    background: #fff4e8;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+}
+
+.resultado {
+
+    margin: 14px 0;
+
+    padding: 12px;
+
+    border-radius: 17px;
+
+    background: #f2f7ff;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+}
+
+.btn-jogar {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 9px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #ff963c,
+
+            #e75628
+
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+}
+
+.btn-menu {
+
+    width: 100%;
+
+    min-height: 46px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background: #f0f2f4;
+
+    color: #555;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="topo">
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        onclick="voltarMenu()"
+
+    >
+
+        ←
+
+    </button>
+
+    <div class="titulo">
+
+        <strong>
+
+            🏃 Corrida Petton
+
+        </strong>
+
+        <span>
+
+            Corra até a linha de chegada
+
+        </span>
+
+    </div>
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        id="btnSom"
+
+        onclick="alternarSom()"
+
+    >
+
+        🔊
+
+    </button>
+
+</header>
+
+<div class="hud">
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            POSIÇÃO
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="posicao"
+
+        >
+
+            4º
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            VELOCIDADE
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="velocidade"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            TEMPO
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="tempo"
+
+        >
+
+            0.0
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            RECORDE
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="recorde"
+
+        >
+
+            --
+
+        </span>
+
+    </div>
+
+</div>
+
+<div class="energia-box">
+
+    <div class="energia-label">
+
+        ⚡ ENERGIA
+
+    </div>
+
+    <div class="energia-fundo">
+
+        <div id="energiaBarra"></div>
+
+    </div>
+
+</div>
+
+<div id="areaJogo">
+
+    <div class="sol"></div>
+
+    <div class="nuvens">
+
+        ☁️
+
+    </div>
+
+    <div class="pista">
+
+        <div class="faixa faixa1"></div>
+
+        <div class="faixa faixa2"></div>
+
+        <div class="faixa faixa3"></div>
+
+    </div>
+
+    <div id="chegada"></div>
+
+    <div
+
+        id="jogador"
+
+        class="corredor"
+
+    >
+
+        <img
+
+            id="imagemPetton"
+
+            alt="Petton"
+
+        >
+
+    </div>
+
+    <div
+
+        id="rival1"
+
+        class="corredor"
+
+    >
+
+        🐶
+
+    </div>
+
+    <div
+
+        id="rival2"
+
+        class="corredor"
+
+    >
+
+        🐰
+
+    </div>
+
+    <div
+
+        id="rival3"
+
+        class="corredor"
+
+    >
+
+        🐱
+
+    </div>
+
+    <div
+
+        id="mensagem"
+
+        class="mensagem"
+
+    >
+
+        ⚡ TURBO!
+
+    </div>
+
+    <button
+
+        type="button"
+
+        id="botaoCorrer"
+
+    >
+
+        👆 CORRER!
+
+    </button>
+
+</div>
+
+<!-- =====================================================
+
+     INÍCIO
+
+====================================================== -->
+
+<div
+
+    class="overlay"
+
+    id="telaInicial"
+
+>
+
+    <div class="caixa">
+
+        <div class="caixa-icone">
+
+            🏁🏃🐾
+
+        </div>
+
+        <h2>
+
+            Corrida Petton
+
+        </h2>
+
+        <p>
+
+            Você vai correr contra 3 adversários.
+
+        </p>
+
+        <div class="regras">
+
+            👆 Toque rápido em CORRER para acelerar.
+
+            <br>
+
+            ⚡ Pegue o raio para ganhar energia e turbo.
+
+            <br>
+
+            🪨 Pedra reduz sua velocidade.
+
+            <br>
+
+            🔋 Se exagerar nos toques, sua energia acaba.
+
+            <br>
+
+            🏁 Tente chegar em primeiro!
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            ▶️ COMEÇAR CORRIDA
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     FINAL
+
+====================================================== -->
+
+<div
+
+    class="overlay oculto"
+
+    id="telaFim"
+
+>
+
+    <div class="caixa">
+
+        <div
+
+            class="caixa-icone"
+
+            id="iconeFim"
+
+        >
+
+            🏆🏁
+
+        </div>
+
+        <h2 id="tituloFim">
+
+            Corrida terminada!
+
+        </h2>
+
+        <p id="textoFim">
+
+            Veja seu resultado.
+
+        </p>
+
+        <div class="resultado">
+
+            Posição:
+
+            <strong id="posicaoFim">
+
+                1º
+
+            </strong>
+
+            <br>
+
+            Tempo:
+
+            <strong id="tempoFim">
+
+                0.0s
+
+            </strong>
+
+            <br>
+
+            Melhor tempo:
+
+            <strong id="recordeFim">
+
+                --
+
+            </strong>
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            🔄 CORRER NOVAMENTE
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const CHAVE_RECORDE =
+
+    "petton_jogo_corrida_recorde_v1";
+
+const DISTANCIA_TOTAL =
+
+    1500;
+
+const VELOCIDADE_MAXIMA =
+
+    250;
+
+const VELOCIDADE_MINIMA =
+
+    45;
+
+/* =========================================================
+
+   ESTADO
+
+========================================================= */
+
+let jogando =
+
+    false;
+
+let distanciaJogador =
+
+    0;
+
+let velocidadeJogador =
+
+    60;
+
+let energia =
+
+    100;
+
+let tempoCorrida =
+
+    0;
+
+let ultimoTempo =
+
+    0;
+
+let animacaoId =
+
+    null;
+
+let recorde =
+
+    null;
+
+let objetos =
+
+    [];
+
+let proximoObjeto =
+
+    250;
+
+/* =========================================================
+
+   RIVAIS
+
+========================================================= */
+
+let rivais =
+
+    [];
+
+/* =========================================================
+
+   ELEMENTOS
+
+========================================================= */
+
+const areaJogo =
+
+    document.getElementById(
+
+        "areaJogo"
+
+    );
+
+const jogadorEl =
+
+    document.getElementById(
+
+        "jogador"
+
+    );
+
+const imagemPetton =
+
+    document.getElementById(
+
+        "imagemPetton"
+
+    );
+
+const rival1El =
+
+    document.getElementById(
+
+        "rival1"
+
+    );
+
+const rival2El =
+
+    document.getElementById(
+
+        "rival2"
+
+    );
+
+const rival3El =
+
+    document.getElementById(
+
+        "rival3"
+
+    );
+
+const chegadaEl =
+
+    document.getElementById(
+
+        "chegada"
+
+    );
+
+const posicaoEl =
+
+    document.getElementById(
+
+        "posicao"
+
+    );
+
+const velocidadeEl =
+
+    document.getElementById(
+
+        "velocidade"
+
+    );
+
+const tempoEl =
+
+    document.getElementById(
+
+        "tempo"
+
+    );
+
+const recordeEl =
+
+    document.getElementById(
+
+        "recorde"
+
+    );
+
+const energiaBarra =
+
+    document.getElementById(
+
+        "energiaBarra"
+
+    );
+
+const botaoCorrer =
+
+    document.getElementById(
+
+        "botaoCorrer"
+
+    );
+
+const telaInicial =
+
+    document.getElementById(
+
+        "telaInicial"
+
+    );
+
+const telaFim =
+
+    document.getElementById(
+
+        "telaFim"
+
+    );
+
+/* =========================================================
+
+   RECORDE
+
+========================================================= */
+
+function carregarRecorde() {
+
+    try {
+
+        const salvo =
+
+            localStorage.getItem(
+
+                CHAVE_RECORDE
+
+            );
+
+        if (
+
+            salvo !== null
+
+        ) {
+
+            recorde =
+
+                Number(
+
+                    salvo
+
+                );
+
+        }
+
+    } catch (erro) {
+
+        recorde =
+
+            null;
+
+    }
+
+    atualizarRecordeTela();
+
+}
+
+function atualizarRecordeTela() {
+
+    if (
+
+        recorde &&
+
+        recorde > 0
+
+    ) {
+
+        recordeEl.textContent =
+
+            recorde.toFixed(1) +
+
+            "s";
+
+    } else {
+
+        recordeEl.textContent =
+
+            "--";
+
+    }
+
+}
+
+/* =========================================================
+
+   FASE PETTON
+
+========================================================= */
+
+function descobrirFaseLocal(
+
+    dados
+
+) {
+
+    if (
+
+        dados &&
+
+        dados.fase &&
+
+        dados.fase !== "ovo"
+
+    ) {
+
+        return dados.fase;
+
+    }
+
+    let dias =
+
+        0;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.idadeDias ===
+
+                "function"
+
+        ) {
+
+            dias =
+
+                Number(
+
+                    Petton.idadeDias()
+
+                ) || 0;
+
+        }
+
+    } catch (erro) {
+
+        dias =
+
+            0;
+
+    }
+
+    if (
+
+        dias < 8
+
+    ) {
+
+        return "bebe";
+
+    }
+
+    if (
+
+        dias < 31
+
+    ) {
+
+        return "filhote";
+
+    }
+
+    if (
+
+        dias < 91
+
+    ) {
+
+        return "jovem";
+
+    }
+
+    return "adulto";
+
+}
+
+/* =========================================================
+
+   IMAGEM PETTON
+
+========================================================= */
+
+function carregarImagemPetton() {
+
+    let dados =
+
+        null;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.carregar ===
+
+                "function"
+
+        ) {
+
+            dados =
+
+                Petton.carregar();
+
+        }
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+    if (
+
+        !dados
+
+    ) {
+
+        imagemPetton.src =
+
+            "../petton-original.png";
+
+        return;
+
+    }
+
+    const fase =
+
+        descobrirFaseLocal(
+
+            dados
+
+        );
+
+    const especie =
+
+        dados.identidadeVisual
+
+            ?.especie ||
+
+        dados.especie ||
+
+        "gato";
+
+    const imagemGerada =
+
+        dados.identidadeVisual
+
+            ?.imagens
+
+            ?.[fase];
+
+    if (
+
+        imagemGerada
+
+    ) {
+
+        imagemPetton.src =
+
+            imagemGerada;
+
+        return;
+
+    }
+
+    if (
+
+        especie ===
+
+        "cachorro"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+        return;
+
+    }
+
+    if (
+
+        especie ===
+
+        "coelho"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
+
+        return;
+
+    }
+
+    imagemPetton.src =
+
+        "../petton-original.png";
+
+}
+
+/* =========================================================
+
+   BOTÃO CORRER
+
+========================================================= */
+
+botaoCorrer.addEventListener(
+
+    "pointerdown",
+
+    function(evento) {
+
+        evento.preventDefault();
+
+        acelerar();
+
+    }
+
+);
+
+areaJogo.addEventListener(
+
+    "pointerdown",
+
+    function(evento) {
+
+        if (
+
+            evento.target ===
+
+            botaoCorrer
+
+        ) {
+
+            return;
+
+        }
+
+        if (
+
+            !jogando
+
+        ) {
+
+            return;
+
+        }
+
+        acelerar();
+
+    }
+
+);
+
+/* =========================================================
+
+   ACELERAR
+
+========================================================= */
+
+function acelerar() {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    prepararAudio();
+
+    /*
+
+       Quanto mais energia,
+
+       maior o efeito do toque.
+
+    */
+
+    if (
+
+        energia >= 4
+
+    ) {
+
+        velocidadeJogador +=
+
+            15;
+
+        energia -=
+
+            4;
+
+        tocarPasso();
+
+    } else {
+
+        /*
+
+           Sem energia ainda corre,
+
+           mas quase não acelera.
+
+        */
+
+        velocidadeJogador +=
+
+            3;
+
+    }
+
+    velocidadeJogador =
+
+        Math.min(
+
+            VELOCIDADE_MAXIMA,
+
+            velocidadeJogador
+
+        );
+
+    energia =
+
+        Math.max(
+
+            0,
+
+            energia
+
+        );
+
+}
+
+/* =========================================================
+
+   CRIAR RIVAIS
+
+========================================================= */
+
+function prepararRivais() {
+
+    rivais = [
+
+        {
+
+            elemento:
+
+                rival1El,
+
+            distancia:
+
+                0,
+
+            velocidade:
+
+                115 +
+
+                Math.random() * 15,
+
+            variacao:
+
+                Math.random() * 20
+
+        },
+
+        {
+
+            elemento:
+
+                rival2El,
+
+            distancia:
+
+                0,
+
+            velocidade:
+
+                120 +
+
+                Math.random() * 18,
+
+            variacao:
+
+                Math.random() * 20
+
+        },
+
+        {
+
+            elemento:
+
+                rival3El,
+
+            distancia:
+
+                0,
+
+            velocidade:
+
+                110 +
+
+                Math.random() * 25,
+
+            variacao:
+
+                Math.random() * 20
+
+        }
+
+    ];
+
+}
+
+/* =========================================================
+
+   CRIAR OBJETO NA PISTA
+
+========================================================= */
+
+function criarObjetoPista() {
+
+    const tipo =
+
+        Math.random() <
+
+            .55
+
+            ? "pedra"
+
+            : "raio";
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "objeto-pista " +
+
+        tipo;
+
+    elemento.textContent =
+
+        tipo ===
+
+            "pedra"
+
+            ? "🪨"
+
+            : "⚡";
+
+    /*
+
+       Objeto fica na pista
+
+       do jogador.
+
+    */
+
+    const y =
+
+        alturaPistaJogador() +
+
+        14;
+
+    elemento.style.top =
+
+        y +
+
+        "px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    objetos.push({
+
+        elemento:
+
+            elemento,
+
+        tipo:
+
+            tipo,
+
+        distancia:
+
+            proximoObjeto,
+
+        usado:
+
+            false
+
+    });
+
+    proximoObjeto +=
+
+        170 +
+
+        Math.random() *
+
+        180;
+
+}
+
+/* =========================================================
+
+   ALTURA DAS PISTAS
+
+========================================================= */
+
+function alturaPistaJogador() {
+
+    return Math.max(
+
+        190,
+
+        areaJogo.clientHeight *
+
+        .70
+
+    );
+
+}
+
+function alturasRivais() {
+
+    const base =
+
+        Math.max(
+
+            185,
+
+            areaJogo.clientHeight *
+
+            .31
+
+        );
+
+    const espaco =
+
+        Math.max(
+
+            70,
+
+            (
+
+                alturaPistaJogador() -
+
+                base
+
+            ) / 3
+
+        );
+
+    return [
+
+        base,
+
+        base +
+
+        espaco,
+
+        base +
+
+        espaco * 2
+
+    ];
+
+}
+
+/* =========================================================
+
+   CÂMERA
+
+========================================================= */
+
+function obterCamera() {
+
+    /*
+
+       Até certo ponto o Petton
+
+       avança na tela.
+
+       Depois a câmera acompanha.
+
+    */
+
+    return Math.max(
+
+        0,
+
+        distanciaJogador -
+
+        180
+
+    );
+
+}
+
+/* =========================================================
+
+   ATUALIZAR POSIÇÕES
+
+========================================================= */
+
+function atualizarVisual() {
+
+    const largura =
+
+        areaJogo.clientWidth;
+
+    const camera =
+
+        obterCamera();
+
+    const escala =
+
+        Math.max(
+
+            .22,
+
+            (
+
+                largura -
+
+                95
+
+            ) /
+
+            430
+
+        );
+
+    /*
+
+       Jogador
+
+    */
+
+    let xJogador =
+
+        30 +
+
+        (
+
+            distanciaJogador -
+
+            camera
+
+        ) *
+
+        escala;
+
+    xJogador =
+
+        Math.min(
+
+            largura - 85,
+
+            xJogador
+
+        );
+
+    jogadorEl.style.left =
+
+        xJogador +
+
+        "px";
+
+    jogadorEl.style.top =
+
+        alturaPistaJogador() +
+
+        "px";
+
+    /*
+
+       Rivais
+
+    */
+
+    const alturas =
+
+        alturasRivais();
+
+    rivais.forEach(
+
+        function(
+
+            rival,
+
+            indice
+
+        ) {
+
+            let x =
+
+                30 +
+
+                (
+
+                    rival.distancia -
+
+                    camera
+
+                ) *
+
+                escala;
+
+            rival.elemento.style.left =
+
+                x +
+
+                "px";
+
+            rival.elemento.style.top =
+
+                alturas[indice] +
+
+                "px";
+
+        }
+
+    );
+
+    /*
+
+       Linha de chegada
+
+    */
+
+    const chegadaX =
+
+        30 +
+
+        (
+
+            DISTANCIA_TOTAL -
+
+            camera
+
+        ) *
+
+        escala;
+
+    chegadaEl.style.left =
+
+        chegadaX +
+
+        "px";
+
+    /*
+
+       Objetos
+
+    */
+
+    objetos.forEach(
+
+        function(objeto) {
+
+            const x =
+
+                30 +
+
+                (
+
+                    objeto.distancia -
+
+                    camera
+
+                ) *
+
+                escala;
+
+            objeto.elemento.style.left =
+
+                x +
+
+                "px";
+
+        }
+
+    );
+
+}
+
+/* =========================================================
+
+   OBJETOS / COLISÃO
+
+========================================================= */
+
+function verificarObjetos() {
+
+    for (
+
+        const objeto
+
+        of objetos
+
+    ) {
+
+        if (
+
+            objeto.usado
+
+        ) {
+
+            continue;
+
+        }
+
+        const diferenca =
+
+            objeto.distancia -
+
+            distanciaJogador;
+
+        if (
+
+            diferenca <
+
+                16 &&
+
+            diferenca >
+
+                -18
+
+        ) {
+
+            objeto.usado =
+
+                true;
+
+            if (
+
+                objeto.tipo ===
+
+                "raio"
+
+            ) {
+
+                energia =
+
+                    Math.min(
+
+                        100,
+
+                        energia + 30
+
+                    );
+
+                velocidadeJogador =
+
+                    Math.min(
+
+                        VELOCIDADE_MAXIMA,
+
+                        velocidadeJogador + 45
+
+                    );
+
+                mostrarMensagem(
+
+                    "⚡ TURBO!"
+
+                );
+
+                tocarTurbo();
+
+            } else {
+
+                velocidadeJogador *=
+
+                    .52;
+
+                energia =
+
+                    Math.max(
+
+                        0,
+
+                        energia - 10
+
+                    );
+
+                mostrarMensagem(
+
+                    "🪨 AI!"
+
+                );
+
+                tocarPedra();
+
+            }
+
+            objeto.elemento.remove();
+
+        }
+
+    }
+
+    objetos =
+
+        objetos.filter(
+
+            function(objeto) {
+
+                return !objeto.usado;
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   POSIÇÃO DA CORRIDA
+
+========================================================= */
+
+function atualizarPosicao() {
+
+    const distancias = [
+
+        {
+
+            jogador:
+
+                true,
+
+            distancia:
+
+                distanciaJogador
+
+        },
+
+        ...rivais.map(
+
+            function(rival) {
+
+                return {
+
+                    jogador:
+
+                        false,
+
+                    distancia:
+
+                        rival.distancia
+
+                };
+
+            }
+
+        )
+
+    ];
+
+    distancias.sort(
+
+        function(a,b) {
+
+            return (
+
+                b.distancia -
+
+                a.distancia
+
+            );
+
+        }
+
+    );
+
+    const indice =
+
+        distancias.findIndex(
+
+            function(item) {
+
+                return item.jogador;
+
+            }
+
+        );
+
+    const posicao =
+
+        indice + 1;
+
+    posicaoEl.textContent =
+
+        posicao +
+
+        "º";
+
+    return posicao;
+
+}
+
+/* =========================================================
+
+   ATUALIZAR JOGO
+
+========================================================= */
+
+function atualizarJogo(
+
+    delta
+
+) {
+
+    tempoCorrida +=
+
+        delta;
+
+    /*
+
+       Energia recupera
+
+       lentamente sozinha.
+
+    */
+
+    energia +=
+
+        11 *
+
+        delta;
+
+    energia =
+
+        Math.min(
+
+            100,
+
+            energia
+
+        );
+
+    /*
+
+       Velocidade vai caindo,
+
+       então precisa continuar
+
+       tocando.
+
+    */
+
+    velocidadeJogador -=
+
+        35 *
+
+        delta;
+
+    velocidadeJogador =
+
+        Math.max(
+
+            VELOCIDADE_MINIMA,
+
+            velocidadeJogador
+
+        );
+
+    /*
+
+       Se energia zerar,
+
+       o Petton cansa mais.
+
+    */
+
+    if (
+
+        energia <
+
+        10
+
+    ) {
+
+        velocidadeJogador =
+
+            Math.min(
+
+                velocidadeJogador,
+
+                105
+
+            );
+
+    }
+
+    distanciaJogador +=
+
+        velocidadeJogador *
+
+        delta;
+
+    /*
+
+       Rivais não correm em
+
+       velocidade totalmente fixa.
+
+    */
+
+    rivais.forEach(
+
+        function(
+
+            rival,
+
+            indice
+
+        ) {
+
+            const variacao =
+
+                Math.sin(
+
+                    tempoCorrida *
+
+                    (
+
+                        1.1 +
+
+                        indice * .2
+
+                    )
+
+                ) *
+
+                rival.variacao;
+
+            const velocidadeAtual =
+
+                rival.velocidade +
+
+                variacao;
+
+            rival.distancia +=
+
+                velocidadeAtual *
+
+                delta;
+
+        }
+
+    );
+
+    /*
+
+       Cria obstáculos ao longo
+
+       da corrida.
+
+    */
+
+    while (
+
+        proximoObjeto <
+
+            DISTANCIA_TOTAL -
+
+            100
+
+    ) {
+
+        criarObjetoPista();
+
+        if (
+
+            objetos.length >= 8
+
+        ) {
+
+            break;
+
+        }
+
+    }
+
+    verificarObjetos();
+
+    energiaBarra.style.width =
+
+        energia +
+
+        "%";
+
+    velocidadeEl.textContent =
+
+        Math.round(
+
+            velocidadeJogador
+
+        );
+
+    tempoEl.textContent =
+
+        tempoCorrida.toFixed(
+
+            1
+
+        );
+
+    atualizarPosicao();
+
+    atualizarVisual();
+
+    /*
+
+       Jogador chegou.
+
+    */
+
+    if (
+
+        distanciaJogador >=
+
+        DISTANCIA_TOTAL
+
+    ) {
+
+        finalizarCorrida();
+
+        return;
+
+    }
+
+    /*
+
+       Se todos os rivais já
+
+       terminaram, jogador continua
+
+       até cruzar a linha.
+
+    */
+
+}
+
+/* =========================================================
+
+   LOOP
+
+========================================================= */
+
+function loop(
+
+    tempoAtual
+
+) {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    if (
+
+        !ultimoTempo
+
+    ) {
+
+        ultimoTempo =
+
+            tempoAtual;
+
+    }
+
+    let delta =
+
+        (
+
+            tempoAtual -
+
+            ultimoTempo
+
+        ) /
+
+        1000;
+
+    ultimoTempo =
+
+        tempoAtual;
+
+    delta =
+
+        Math.min(
+
+            delta,
+
+            .04
+
+        );
+
+    atualizarJogo(
+
+        delta
+
+    );
+
+    if (
+
+        jogando
+
+    ) {
+
+        animacaoId =
+
+            requestAnimationFrame(
+
+                loop
+
+            );
+
+    }
+
+}
+
+/* =========================================================
+
+   LIMPAR OBJETOS
+
+========================================================= */
+
+function limparObjetos() {
+
+    objetos.forEach(
+
+        function(objeto) {
+
+            try {
+
+                objeto.elemento.remove();
+
+            } catch (erro) {
+
+                /* nada */
+
+            }
+
+        }
+
+    );
+
+    objetos =
+
+        [];
+
+}
+
+/* =========================================================
+
+   INICIAR
+
+========================================================= */
+
+function iniciarJogo() {
+
+    prepararAudio();
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    limparObjetos();
+
+    distanciaJogador =
+
+        0;
+
+    velocidadeJogador =
+
+        60;
+
+    energia =
+
+        100;
+
+    tempoCorrida =
+
+        0;
+
+    ultimoTempo =
+
+        0;
+
+    proximoObjeto =
+
+        250;
+
+    prepararRivais();
+
+    posicaoEl.textContent =
+
+        "4º";
+
+    velocidadeEl.textContent =
+
+        "60";
+
+    tempoEl.textContent =
+
+        "0.0";
+
+    energiaBarra.style.width =
+
+        "100%";
+
+    telaInicial.classList.add(
+
+        "oculto"
+
+    );
+
+    telaFim.classList.add(
+
+        "oculto"
+
+    );
+
+    jogando =
+
+        true;
+
+    /*
+
+       Cria vários objetos
+
+       distribuídos na pista.
+
+    */
+
+    for (
+
+        let i = 0;
+
+        i < 6;
+
+        i++
+
+    ) {
+
+        criarObjetoPista();
+
+    }
+
+    atualizarVisual();
+
+    tocarInicio();
+
+    mostrarMensagem(
+
+        "🏁 VAI!"
+
+    );
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   FINALIZAR
+
+========================================================= */
+
+function finalizarCorrida() {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+        animacaoId =
+
+            null;
+
+    }
+
+    /*
+
+       Determina posição final
+
+       comparando quem já percorreu
+
+       maior distância.
+
+    */
+
+    const posicaoFinal =
+
+        atualizarPosicao();
+
+    /*
+
+       Melhor tempo é salvo
+
+       independentemente da posição.
+
+    */
+
+    if (
+
+        !recorde ||
+
+        tempoCorrida <
+
+        recorde
+
+    ) {
+
+        recorde =
+
+            tempoCorrida;
+
+        try {
+
+            localStorage.setItem(
+
+                CHAVE_RECORDE,
+
+                String(
+
+                    recorde
+
+                )
+
+            );
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    atualizarRecordeTela();
+
+    document.getElementById(
+
+        "posicaoFim"
+
+    ).textContent =
+
+        posicaoFinal +
+
+        "º";
+
+    document.getElementById(
+
+        "tempoFim"
+
+    ).textContent =
+
+        tempoCorrida.toFixed(
+
+            1
+
+        ) +
+
+        "s";
+
+    document.getElementById(
+
+        "recordeFim"
+
+    ).textContent =
+
+        recorde.toFixed(
+
+            1
+
+        ) +
+
+        "s";
+
+    const icone =
+
+        document.getElementById(
+
+            "iconeFim"
+
+        );
+
+    const titulo =
+
+        document.getElementById(
+
+            "tituloFim"
+
+        );
+
+    const texto =
+
+        document.getElementById(
+
+            "textoFim"
+
+        );
+
+    if (
+
+        posicaoFinal ===
+
+        1
+
+    ) {
+
+        icone.textContent =
+
+            "🏆🥇";
+
+        titulo.textContent =
+
+            "1º lugar!";
+
+        texto.textContent =
+
+            "Seu Petton venceu a corrida!";
+
+        tocarVitoria();
+
+    } else if (
+
+        posicaoFinal ===
+
+        2
+
+    ) {
+
+        icone.textContent =
+
+            "🥈🏁";
+
+        titulo.textContent =
+
+            "2º lugar!";
+
+        texto.textContent =
+
+            "Foi por pouco!";
+
+        tocarFim();
+
+    } else if (
+
+        posicaoFinal ===
+
+        3
+
+    ) {
+
+        icone.textContent =
+
+            "🥉🏁";
+
+        titulo.textContent =
+
+            "3º lugar!";
+
+        texto.textContent =
+
+            "Tente usar melhor sua energia.";
+
+        tocarFim();
+
+    } else {
+
+        icone.textContent =
+
+            "🏁🐾";
+
+        titulo.textContent =
+
+            "4º lugar";
+
+        texto.textContent =
+
+            "Toque mais rápido e aproveite os raios ⚡.";
+
+        tocarFim();
+
+    }
+
+    telaFim.classList.remove(
+
+        "oculto"
+
+    );
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+function mostrarMensagem(
+
+    texto
+
+) {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagem"
+
+        );
+
+    elemento.textContent =
+
+        texto;
+
+    elemento.classList.remove(
+
+        "mostrar"
+
+    );
+
+    void elemento.offsetWidth;
+
+    elemento.classList.add(
+
+        "mostrar"
+
+    );
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltarMenu() {
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    window.location.assign(
+
+        "./brincar.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   ÁUDIO
+
+========================================================= */
+
+let audioContext =
+
+    null;
+
+let somAtivo =
+
+    true;
+
+function prepararAudio() {
+
+    if (
+
+        !somAtivo
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        if (
+
+            !audioContext
+
+        ) {
+
+            const AudioCtx =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (
+
+                AudioCtx
+
+            ) {
+
+                audioContext =
+
+                    new AudioCtx();
+
+            }
+
+        }
+
+        if (
+
+            audioContext &&
+
+            audioContext.state ===
+
+                "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    tipo = "sine",
+
+    volume = .05,
+
+    atraso = 0
+
+) {
+
+    if (
+
+        !somAtivo ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const inicio =
+
+            audioContext.currentTime +
+
+            atraso;
+
+        const oscilador =
+
+            audioContext
+
+                .createOscillator();
+
+        const ganho =
+
+            audioContext
+
+                .createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                volume,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                .001,
+
+                inicio +
+
+                duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(
+
+            inicio
+
+        );
+
+        oscilador.stop(
+
+            inicio +
+
+            duracao
+
+        );
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   SONS
+
+========================================================= */
+
+function tocarInicio() {
+
+    tocarTom(
+
+        420,
+
+        .08
+
+    );
+
+    tocarTom(
+
+        620,
+
+        .09,
+
+        "sine",
+
+        .05,
+
+        .08
+
+    );
+
+    tocarTom(
+
+        900,
+
+        .14,
+
+        "sine",
+
+        .05,
+
+        .17
+
+    );
+
+}
+
+function tocarPasso() {
+
+    tocarTom(
+
+        180 +
+
+        Math.random() *
+
+        50,
+
+        .035,
+
+        "triangle",
+
+        .018
+
+    );
+
+}
+
+function tocarTurbo() {
+
+    tocarTom(
+
+        600,
+
+        .07,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        900,
+
+        .09,
+
+        "sine",
+
+        .05,
+
+        .06
+
+    );
+
+    tocarTom(
+
+        1300,
+
+        .13,
+
+        "sine",
+
+        .05,
+
+        .13
+
+    );
+
+}
+
+function tocarPedra() {
+
+    tocarTom(
+
+        170,
+
+        .12,
+
+        "square",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        110,
+
+        .18,
+
+        "sawtooth",
+
+        .04,
+
+        .08
+
+    );
+
+}
+
+function tocarVitoria() {
+
+    tocarTom(
+
+        600,
+
+        .09,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        800,
+
+        .10,
+
+        "sine",
+
+        .05,
+
+        .09
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .11,
+
+        "sine",
+
+        .05,
+
+        .19
+
+    );
+
+    tocarTom(
+
+        1350,
+
+        .20,
+
+        "sine",
+
+        .05,
+
+        .30
+
+    );
+
+}
+
+function tocarFim() {
+
+    tocarTom(
+
+        500,
+
+        .10,
+
+        "sine",
+
+        .04
+
+    );
+
+    tocarTom(
+
+        650,
+
+        .12,
+
+        "sine",
+
+        .04,
+
+        .10
+
+    );
+
+}
+
+/* =========================================================
+
+   SOM
+
+========================================================= */
+
+function alternarSom() {
+
+    somAtivo =
+
+        !somAtivo;
+
+    document.getElementById(
+
+        "btnSom"
+
+    ).textContent =
+
+        somAtivo
+
+            ? "🔊"
+
+            : "🔇";
+
+    if (
+
+        somAtivo
+
+    ) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            700,
+
+            .09
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   INICIALIZAÇÃO
+
+========================================================= */
+
+carregarRecorde();
+
+carregarImagemPetton();
+
+</script>
+
+</body>
+
+</html>
