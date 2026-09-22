@@ -1,0 +1,3297 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<meta name="google" content="notranslate">
+
+<title>Jogo da Memória 🧠</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    min-height: 100%;
+
+}
+
+body {
+
+    font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        Arial,
+
+        sans-serif;
+
+    background:
+
+        radial-gradient(
+
+            circle at top,
+
+            #fff8dc 0%,
+
+            #f4e8bc 48%,
+
+            #d9c98e 100%
+
+        );
+
+    color: #433a2b;
+
+    overflow-x: hidden;
+
+}
+
+.app {
+
+    width: 100%;
+
+    max-width: 520px;
+
+    min-height: 100dvh;
+
+    margin: 0 auto;
+
+    padding-bottom: 25px;
+
+}
+
+/* =========================================================
+
+   TOPO
+
+========================================================= */
+
+.topo {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+    height: 62px;
+
+    display: grid;
+
+    grid-template-columns: 48px 1fr 48px;
+
+    align-items: center;
+
+    padding: 7px 9px;
+
+    background:
+
+        rgba(255,255,255,.94);
+
+    border-bottom:
+
+        1px solid rgba(0,0,0,.08);
+
+    backdrop-filter:
+
+        blur(8px);
+
+}
+
+.btn-topo {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+}
+
+.btn-topo:active {
+
+    transform: scale(.94);
+
+}
+
+.titulo {
+
+    text-align: center;
+
+}
+
+.titulo strong {
+
+    display: block;
+
+    font-size: 17px;
+
+}
+
+.titulo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #777;
+
+    font-size: 10px;
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+.hud {
+
+    margin: 10px;
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(4,1fr);
+
+    gap: 6px;
+
+}
+
+.hud-item {
+
+    padding: 8px 3px;
+
+    border-radius: 14px;
+
+    background:
+
+        rgba(255,255,255,.93);
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.08);
+
+    text-align: center;
+
+}
+
+.hud-label {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+}
+
+.hud-valor {
+
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 17px;
+
+    font-weight: 900;
+
+}
+
+/* =========================================================
+
+   INFORMAÇÃO DO NÍVEL
+
+========================================================= */
+
+.info-nivel {
+
+    margin:
+
+        7px 12px 10px;
+
+    padding: 10px 12px;
+
+    border-radius: 16px;
+
+    background:
+
+        rgba(255,255,255,.75);
+
+    text-align: center;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #675a43;
+
+}
+
+/* =========================================================
+
+   TABULEIRO
+
+========================================================= */
+
+.tabuleiro {
+
+    width:
+
+        calc(100% - 20px);
+
+    max-width: 480px;
+
+    margin: 0 auto;
+
+    padding: 8px;
+
+    display: grid;
+
+    gap: 9px;
+
+}
+
+.tabuleiro.cartas-6 {
+
+    grid-template-columns:
+
+        repeat(3,1fr);
+
+}
+
+.tabuleiro.cartas-8 {
+
+    grid-template-columns:
+
+        repeat(4,1fr);
+
+}
+
+.tabuleiro.cartas-12 {
+
+    grid-template-columns:
+
+        repeat(4,1fr);
+
+}
+
+.tabuleiro.cartas-16 {
+
+    grid-template-columns:
+
+        repeat(4,1fr);
+
+}
+
+/* =========================================================
+
+   CARTA
+
+========================================================= */
+
+.carta {
+
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 0.82;
+
+    border: none;
+
+    background: transparent;
+
+    padding: 0;
+
+    perspective: 800px;
+
+    cursor: pointer;
+
+    user-select: none;
+
+}
+
+.carta:disabled {
+
+    cursor: default;
+
+}
+
+.carta-inner {
+
+    position: absolute;
+
+    inset: 0;
+
+    transition:
+
+        transform .34s ease;
+
+    transform-style:
+
+        preserve-3d;
+
+}
+
+.carta.virada
+
+.carta-inner,
+
+.carta.encontrada
+
+.carta-inner {
+
+    transform:
+
+        rotateY(180deg);
+
+}
+
+.carta-frente,
+
+.carta-verso {
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    backface-visibility:
+
+        hidden;
+
+    -webkit-backface-visibility:
+
+        hidden;
+
+}
+
+/* =========================================================
+
+   VERSO
+
+========================================================= */
+
+.carta-verso {
+
+    background:
+
+        linear-gradient(
+
+            145deg,
+
+            #7967d9,
+
+            #5646b6
+
+        );
+
+    border:
+
+        3px solid
+
+        rgba(255,255,255,.7);
+
+    box-shadow:
+
+        0 5px 10px
+
+        rgba(57,43,120,.25);
+
+    color: white;
+
+    font-size: 30px;
+
+    font-weight: 900;
+
+}
+
+.carta-verso::before {
+
+    content: "🐾";
+
+    width: 50px;
+
+    height: 50px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+
+        rgba(255,255,255,.16);
+
+}
+
+/* =========================================================
+
+   FRENTE
+
+========================================================= */
+
+.carta-frente {
+
+    transform:
+
+        rotateY(180deg);
+
+    background:
+
+        linear-gradient(
+
+            145deg,
+
+            #ffffff,
+
+            #fff8df
+
+        );
+
+    border:
+
+        3px solid #fff;
+
+    box-shadow:
+
+        0 5px 12px
+
+        rgba(0,0,0,.13);
+
+    font-size:
+
+        clamp(
+
+            31px,
+
+            11vw,
+
+            52px
+
+        );
+
+}
+
+.carta.encontrada
+
+.carta-frente {
+
+    background:
+
+        linear-gradient(
+
+            145deg,
+
+            #eaffdf,
+
+            #c9f5b1
+
+        );
+
+    animation:
+
+        parEncontrado .45s ease;
+
+}
+
+@keyframes parEncontrado {
+
+    0% {
+
+        transform:
+
+            rotateY(180deg)
+
+            scale(.8);
+
+    }
+
+    55% {
+
+        transform:
+
+            rotateY(180deg)
+
+            scale(1.12);
+
+    }
+
+    100% {
+
+        transform:
+
+            rotateY(180deg)
+
+            scale(1);
+
+    }
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+.mensagem {
+
+    position: fixed;
+
+    z-index: 250;
+
+    left: 50%;
+
+    top: 45%;
+
+    transform:
+
+        translate(-50%,-50%);
+
+    padding: 11px 20px;
+
+    border-radius: 24px;
+
+    background:
+
+        rgba(255,255,255,.97);
+
+    box-shadow:
+
+        0 6px 20px rgba(0,0,0,.18);
+
+    font-size: 19px;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+}
+
+.mensagem.mostrar {
+
+    animation:
+
+        mensagemAnimacao .9s forwards;
+
+}
+
+@keyframes mensagemAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-40%)
+
+            scale(.7);
+
+    }
+
+    20% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.08);
+
+    }
+
+    72% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-70%)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   OVERLAY
+
+========================================================= */
+
+.overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 300;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 22px;
+
+    background:
+
+        rgba(61,50,100,.32);
+
+    backdrop-filter:
+
+        blur(4px);
+
+}
+
+.overlay.oculto {
+
+    display: none;
+
+}
+
+.caixa {
+
+    width: 100%;
+
+    max-width: 345px;
+
+    max-height:
+
+        calc(100dvh - 30px);
+
+    overflow-y: auto;
+
+    padding: 24px 20px;
+
+    border-radius: 27px;
+
+    background:
+
+        rgba(255,255,255,.98);
+
+    box-shadow:
+
+        0 12px 35px
+
+        rgba(0,0,0,.20);
+
+    text-align: center;
+
+}
+
+.caixa-icone {
+
+    font-size: 55px;
+
+    line-height: 1;
+
+}
+
+.caixa h2 {
+
+    margin:
+
+        12px 0 8px;
+
+    font-size: 23px;
+
+}
+
+.caixa p {
+
+    margin: 6px 0;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+}
+
+.niveis-lista {
+
+    margin:
+
+        14px 0;
+
+    padding: 12px;
+
+    border-radius: 17px;
+
+    background: #f6f3ff;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+}
+
+.resultado {
+
+    margin:
+
+        15px 0;
+
+    padding: 12px;
+
+    border-radius: 17px;
+
+    background: #f6f3ff;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+}
+
+.btn-jogar {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #7865dc,
+
+            #5845bb
+
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 4px 12px
+
+        rgba(88,69,187,.28);
+
+}
+
+.btn-jogar:active {
+
+    transform:
+
+        scale(.97);
+
+}
+
+.btn-menu {
+
+    width: 100%;
+
+    min-height: 46px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background: #f0f2f4;
+
+    color: #555;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+/* =========================================================
+
+   RESPONSIVO
+
+========================================================= */
+
+@media(max-width:360px) {
+
+    .tabuleiro {
+
+        gap: 7px;
+
+        padding: 5px;
+
+    }
+
+    .carta-frente {
+
+        font-size: 34px;
+
+    }
+
+    .carta-verso::before {
+
+        width: 42px;
+
+        height: 42px;
+
+        font-size: 25px;
+
+    }
+
+    .hud-valor {
+
+        font-size: 15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+
+     TOPO
+
+====================================================== -->
+
+<header class="topo">
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        onclick="voltarMenu()"
+
+    >
+
+        ←
+
+    </button>
+
+    <div class="titulo">
+
+        <strong>
+
+            🧠 Jogo da Memória
+
+        </strong>
+
+        <span>
+
+            Encontre todos os pares
+
+        </span>
+
+    </div>
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        id="btnSom"
+
+        onclick="alternarSom()"
+
+    >
+
+        🔊
+
+    </button>
+
+</header>
+
+<!-- =====================================================
+
+     HUD
+
+====================================================== -->
+
+<div class="hud">
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            PONTOS
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="pontos"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            NÍVEL
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="nivel"
+
+        >
+
+            1
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            TEMPO
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="tempo"
+
+        >
+
+            30
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            RECORDE
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="recorde"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+</div>
+
+<div
+
+    class="info-nivel"
+
+    id="infoNivel"
+
+>
+
+    Nível 1 • 3 pares
+
+</div>
+
+<!-- =====================================================
+
+     TABULEIRO
+
+====================================================== -->
+
+<div
+
+    class="tabuleiro cartas-6"
+
+    id="tabuleiro"
+
+></div>
+
+<div
+
+    class="mensagem"
+
+    id="mensagem"
+
+>
+
+    ⭐ Par encontrado!
+
+</div>
+
+<!-- =====================================================
+
+     INÍCIO
+
+====================================================== -->
+
+<div
+
+    class="overlay"
+
+    id="telaInicial"
+
+>
+
+    <div class="caixa">
+
+        <div class="caixa-icone">
+
+            🧠🐾
+
+        </div>
+
+        <h2>
+
+            Jogo da Memória
+
+        </h2>
+
+        <p>
+
+            Vire duas cartas e encontre os pares.
+
+        </p>
+
+        <div class="niveis-lista">
+
+            🟢 Nível 1 — 6 cartas / 3 pares
+
+            <br>
+
+            🔵 Nível 2 — 8 cartas / 4 pares
+
+            <br>
+
+            🟠 Nível 3 — 12 cartas / 6 pares
+
+            <br>
+
+            🔴 Nível 4 — 16 cartas / 8 pares
+
+        </div>
+
+        <p>
+
+            Cada par vale pontos.
+
+        </p>
+
+        <p>
+
+            Termine rápido para ganhar bônus.
+
+        </p>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            ▶️ JOGAR
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     FIM
+
+====================================================== -->
+
+<div
+
+    class="overlay oculto"
+
+    id="telaFim"
+
+>
+
+    <div class="caixa">
+
+        <div
+
+            class="caixa-icone"
+
+            id="iconeFim"
+
+        >
+
+            🏆🧠
+
+        </div>
+
+        <h2 id="tituloFim">
+
+            Fim!
+
+        </h2>
+
+        <p id="textoFim">
+
+            Veja sua pontuação.
+
+        </p>
+
+        <div class="resultado">
+
+            Pontos:
+
+            <strong id="pontosFim">
+
+                0
+
+            </strong>
+
+            <br>
+
+            Nível alcançado:
+
+            <strong id="nivelFim">
+
+                1
+
+            </strong>
+
+            <br>
+
+            Recorde:
+
+            <strong id="recordeFim">
+
+                0
+
+            </strong>
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            🔄 JOGAR NOVAMENTE
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const CHAVE_RECORDE =
+
+    "petton_jogo_memoria_recorde_v1";
+
+const CONFIG_NIVEIS = {
+
+    1: {
+
+        pares: 3,
+
+        tempo: 30
+
+    },
+
+    2: {
+
+        pares: 4,
+
+        tempo: 35
+
+    },
+
+    3: {
+
+        pares: 6,
+
+        tempo: 45
+
+    },
+
+    4: {
+
+        pares: 8,
+
+        tempo: 55
+
+    }
+
+};
+
+const ICONES = [
+
+    "🐟",
+
+    "🦋",
+
+    "🍖",
+
+    "⭐",
+
+    "🥕",
+
+    "🐾",
+
+    "🎾",
+
+    "❤️",
+
+    "🌸",
+
+    "🍎",
+
+    "🐝",
+
+    "🌙"
+
+];
+
+let nivel =
+
+    1;
+
+let pontos =
+
+    0;
+
+let recorde =
+
+    0;
+
+let tempoRestante =
+
+    30;
+
+let jogando =
+
+    false;
+
+let bloqueado =
+
+    false;
+
+let primeiraCarta =
+
+    null;
+
+let segundaCarta =
+
+    null;
+
+let paresEncontrados =
+
+    0;
+
+let timer =
+
+    null;
+
+/* =========================================================
+
+   ELEMENTOS
+
+========================================================= */
+
+const tabuleiro =
+
+    document.getElementById(
+
+        "tabuleiro"
+
+    );
+
+const pontosEl =
+
+    document.getElementById(
+
+        "pontos"
+
+    );
+
+const nivelEl =
+
+    document.getElementById(
+
+        "nivel"
+
+    );
+
+const tempoEl =
+
+    document.getElementById(
+
+        "tempo"
+
+    );
+
+const recordeEl =
+
+    document.getElementById(
+
+        "recorde"
+
+    );
+
+const infoNivel =
+
+    document.getElementById(
+
+        "infoNivel"
+
+    );
+
+const telaInicial =
+
+    document.getElementById(
+
+        "telaInicial"
+
+    );
+
+const telaFim =
+
+    document.getElementById(
+
+        "telaFim"
+
+    );
+
+/* =========================================================
+
+   RECORDE
+
+========================================================= */
+
+function carregarRecorde() {
+
+    try {
+
+        recorde =
+
+            Number(
+
+                localStorage.getItem(
+
+                    CHAVE_RECORDE
+
+                )
+
+            ) || 0;
+
+    } catch (erro) {
+
+        recorde =
+
+            0;
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+}
+
+/* =========================================================
+
+   EMBARALHAR
+
+========================================================= */
+
+function embaralhar(
+
+    lista
+
+) {
+
+    const copia =
+
+        [...lista];
+
+    for (
+
+        let i =
+
+            copia.length - 1;
+
+        i > 0;
+
+        i--
+
+    ) {
+
+        const j =
+
+            Math.floor(
+
+                Math.random() *
+
+                (i + 1)
+
+            );
+
+        [
+
+            copia[i],
+
+            copia[j]
+
+        ] = [
+
+            copia[j],
+
+            copia[i]
+
+        ];
+
+    }
+
+    return copia;
+
+}
+
+/* =========================================================
+
+   CONFIGURAÇÃO ATUAL
+
+========================================================= */
+
+function obterConfigNivel() {
+
+    return CONFIG_NIVEIS[
+
+        Math.min(
+
+            nivel,
+
+            4
+
+        )
+
+    ];
+
+}
+
+/* =========================================================
+
+   CRIAR NÍVEL
+
+========================================================= */
+
+function criarNivel() {
+
+    const config =
+
+        obterConfigNivel();
+
+    paresEncontrados =
+
+        0;
+
+    primeiraCarta =
+
+        null;
+
+    segundaCarta =
+
+        null;
+
+    bloqueado =
+
+        false;
+
+    tempoRestante =
+
+        config.tempo;
+
+    tempoEl.textContent =
+
+        tempoRestante;
+
+    nivelEl.textContent =
+
+        nivel;
+
+    infoNivel.textContent =
+
+        "Nível " +
+
+        nivel +
+
+        " • " +
+
+        config.pares +
+
+        " pares";
+
+    const quantidadeCartas =
+
+        config.pares * 2;
+
+    tabuleiro.className =
+
+        "tabuleiro cartas-" +
+
+        quantidadeCartas;
+
+    tabuleiro.innerHTML =
+
+        "";
+
+    /*
+
+       Escolhe os símbolos.
+
+    */
+
+    const simbolos =
+
+        embaralhar(
+
+            ICONES
+
+        ).slice(
+
+            0,
+
+            config.pares
+
+        );
+
+    /*
+
+       Duplica para formar pares.
+
+    */
+
+    const cartas =
+
+        embaralhar(
+
+            [
+
+                ...simbolos,
+
+                ...simbolos
+
+            ]
+
+        );
+
+    cartas.forEach(
+
+        function(
+
+            simbolo,
+
+            indice
+
+        ) {
+
+            const carta =
+
+                document.createElement(
+
+                    "button"
+
+                );
+
+            carta.type =
+
+                "button";
+
+            carta.className =
+
+                "carta";
+
+            carta.dataset.simbolo =
+
+                simbolo;
+
+            carta.dataset.indice =
+
+                indice;
+
+            carta.innerHTML =
+
+                `
+
+                <div class="carta-inner">
+
+                    <div class="carta-verso">
+
+                    </div>
+
+                    <div class="carta-frente">
+
+                        ${simbolo}
+
+                    </div>
+
+                </div>
+
+                `;
+
+            carta.addEventListener(
+
+                "click",
+
+                function() {
+
+                    virarCarta(
+
+                        carta
+
+                    );
+
+                }
+
+            );
+
+            tabuleiro.appendChild(
+
+                carta
+
+            );
+
+        }
+
+    );
+
+    /*
+
+       Mostra rapidamente
+
+       as cartas no começo.
+
+       Quanto maior o nível,
+
+       menos tempo para decorar.
+
+    */
+
+    const tempoMemorizar =
+
+        nivel === 1
+
+            ? 1700
+
+            : nivel === 2
+
+                ? 1500
+
+                : nivel === 3
+
+                    ? 1250
+
+                    : 1000;
+
+    bloqueado =
+
+        true;
+
+    const todas =
+
+        tabuleiro.querySelectorAll(
+
+            ".carta"
+
+        );
+
+    todas.forEach(
+
+        function(carta) {
+
+            carta.classList.add(
+
+                "virada"
+
+            );
+
+        }
+
+    );
+
+    mostrarMensagem(
+
+        "👀 Memorize!"
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                !jogando
+
+            ) {
+
+                return;
+
+            }
+
+            todas.forEach(
+
+                function(carta) {
+
+                    carta.classList.remove(
+
+                        "virada"
+
+                    );
+
+                }
+
+            );
+
+            bloqueado =
+
+                false;
+
+            iniciarCronometro();
+
+        },
+
+        tempoMemorizar
+
+    );
+
+}
+
+/* =========================================================
+
+   VIRAR CARTA
+
+========================================================= */
+
+function virarCarta(
+
+    carta
+
+) {
+
+    if (
+
+        !jogando ||
+
+        bloqueado
+
+    ) {
+
+        return;
+
+    }
+
+    if (
+
+        carta.classList.contains(
+
+            "virada"
+
+        ) ||
+
+        carta.classList.contains(
+
+            "encontrada"
+
+        )
+
+    ) {
+
+        return;
+
+    }
+
+    prepararAudio();
+
+    carta.classList.add(
+
+        "virada"
+
+    );
+
+    tocarVirar();
+
+    if (
+
+        !primeiraCarta
+
+    ) {
+
+        primeiraCarta =
+
+            carta;
+
+        return;
+
+    }
+
+    segundaCarta =
+
+        carta;
+
+    bloqueado =
+
+        true;
+
+    verificarPar();
+
+}
+
+/* =========================================================
+
+   VERIFICAR PAR
+
+========================================================= */
+
+function verificarPar() {
+
+    const iguais =
+
+        primeiraCarta.dataset.simbolo ===
+
+        segundaCarta.dataset.simbolo;
+
+    if (
+
+        iguais
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    !jogando
+
+                ) {
+
+                    return;
+
+                }
+
+                primeiraCarta
+
+                    .classList
+
+                    .add(
+
+                        "encontrada"
+
+                    );
+
+                segundaCarta
+
+                    .classList
+
+                    .add(
+
+                        "encontrada"
+
+                    );
+
+                primeiraCarta
+
+                    .classList
+
+                    .remove(
+
+                        "virada"
+
+                    );
+
+                segundaCarta
+
+                    .classList
+
+                    .remove(
+
+                        "virada"
+
+                    );
+
+                primeiraCarta.disabled =
+
+                    true;
+
+                segundaCarta.disabled =
+
+                    true;
+
+                paresEncontrados++;
+
+                /*
+
+                   Pontuação aumenta
+
+                   conforme o nível.
+
+                */
+
+                const pontosPar =
+
+                    5 +
+
+                    (
+
+                        nivel - 1
+
+                    ) * 2;
+
+                pontos +=
+
+                    pontosPar;
+
+                pontosEl.textContent =
+
+                    pontos;
+
+                mostrarMensagem(
+
+                    "⭐ +" +
+
+                    pontosPar
+
+                );
+
+                tocarPar();
+
+                limparSelecao();
+
+                const config =
+
+                    obterConfigNivel();
+
+                if (
+
+                    paresEncontrados >=
+
+                    config.pares
+
+                ) {
+
+                    completarNivel();
+
+                } else {
+
+                    bloqueado =
+
+                        false;
+
+                }
+
+            },
+
+            260
+
+        );
+
+    } else {
+
+        tocarErro();
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    !jogando
+
+                ) {
+
+                    return;
+
+                }
+
+                primeiraCarta
+
+                    .classList
+
+                    .remove(
+
+                        "virada"
+
+                    );
+
+                segundaCarta
+
+                    .classList
+
+                    .remove(
+
+                        "virada"
+
+                    );
+
+                limparSelecao();
+
+                bloqueado =
+
+                    false;
+
+            },
+
+            700
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   LIMPAR SELEÇÃO
+
+========================================================= */
+
+function limparSelecao() {
+
+    primeiraCarta =
+
+        null;
+
+    segundaCarta =
+
+        null;
+
+}
+
+/* =========================================================
+
+   CRONÔMETRO
+
+========================================================= */
+
+function iniciarCronometro() {
+
+    pararCronometro();
+
+    timer =
+
+        setInterval(
+
+            function() {
+
+                if (
+
+                    !jogando
+
+                ) {
+
+                    return;
+
+                }
+
+                tempoRestante--;
+
+                tempoEl.textContent =
+
+                    Math.max(
+
+                        0,
+
+                        tempoRestante
+
+                    );
+
+                /*
+
+                   Aviso nos últimos
+
+                   5 segundos.
+
+                */
+
+                if (
+
+                    tempoRestante <= 5 &&
+
+                    tempoRestante > 0
+
+                ) {
+
+                    tocarRelogio();
+
+                }
+
+                if (
+
+                    tempoRestante <= 0
+
+                ) {
+
+                    finalizarJogo(
+
+                        false
+
+                    );
+
+                }
+
+            },
+
+            1000
+
+        );
+
+}
+
+/* =========================================================
+
+   PARAR CRONÔMETRO
+
+========================================================= */
+
+function pararCronometro() {
+
+    if (
+
+        timer
+
+    ) {
+
+        clearInterval(
+
+            timer
+
+        );
+
+        timer =
+
+            null;
+
+    }
+
+}
+
+/* =========================================================
+
+   COMPLETOU NÍVEL
+
+========================================================= */
+
+function completarNivel() {
+
+    pararCronometro();
+
+    bloqueado =
+
+        true;
+
+    /*
+
+       Bônus pelo tempo restante.
+
+    */
+
+    const bonus =
+
+        Math.max(
+
+            0,
+
+            tempoRestante * 2
+
+        );
+
+    pontos +=
+
+        bonus;
+
+    pontosEl.textContent =
+
+        pontos;
+
+    tocarNivel();
+
+    mostrarMensagem(
+
+        "🏆 Bônus +" +
+
+        bonus
+
+    );
+
+    /*
+
+       Depois do nível 4,
+
+       vitória completa.
+
+    */
+
+    if (
+
+        nivel >= 4
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                finalizarJogo(
+
+                    true
+
+                );
+
+            },
+
+            1300
+
+        );
+
+        return;
+
+    }
+
+    /*
+
+       Próximo nível.
+
+    */
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                !jogando
+
+            ) {
+
+                return;
+
+            }
+
+            nivel++;
+
+            criarNivel();
+
+        },
+
+        1400
+
+    );
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+function mostrarMensagem(
+
+    texto
+
+) {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagem"
+
+        );
+
+    elemento.textContent =
+
+        texto;
+
+    elemento.classList.remove(
+
+        "mostrar"
+
+    );
+
+    void elemento.offsetWidth;
+
+    elemento.classList.add(
+
+        "mostrar"
+
+    );
+
+}
+
+/* =========================================================
+
+   INICIAR JOGO
+
+========================================================= */
+
+function iniciarJogo() {
+
+    prepararAudio();
+
+    pararCronometro();
+
+    nivel =
+
+        1;
+
+    pontos =
+
+        0;
+
+    paresEncontrados =
+
+        0;
+
+    primeiraCarta =
+
+        null;
+
+    segundaCarta =
+
+        null;
+
+    bloqueado =
+
+        false;
+
+    jogando =
+
+        true;
+
+    pontosEl.textContent =
+
+        "0";
+
+    nivelEl.textContent =
+
+        "1";
+
+    telaInicial.classList.add(
+
+        "oculto"
+
+    );
+
+    telaFim.classList.add(
+
+        "oculto"
+
+    );
+
+    tocarInicio();
+
+    criarNivel();
+
+}
+
+/* =========================================================
+
+   FINAL
+
+========================================================= */
+
+function finalizarJogo(
+
+    venceu
+
+) {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    jogando =
+
+        false;
+
+    bloqueado =
+
+        true;
+
+    pararCronometro();
+
+    /*
+
+       Salva recorde.
+
+    */
+
+    if (
+
+        pontos >
+
+        recorde
+
+    ) {
+
+        recorde =
+
+            pontos;
+
+        try {
+
+            localStorage.setItem(
+
+                CHAVE_RECORDE,
+
+                String(
+
+                    recorde
+
+                )
+
+            );
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+    document.getElementById(
+
+        "pontosFim"
+
+    ).textContent =
+
+        pontos;
+
+    document.getElementById(
+
+        "nivelFim"
+
+    ).textContent =
+
+        nivel;
+
+    document.getElementById(
+
+        "recordeFim"
+
+    ).textContent =
+
+        recorde;
+
+    const icone =
+
+        document.getElementById(
+
+            "iconeFim"
+
+        );
+
+    const titulo =
+
+        document.getElementById(
+
+            "tituloFim"
+
+        );
+
+    const texto =
+
+        document.getElementById(
+
+            "textoFim"
+
+        );
+
+    if (
+
+        venceu
+
+    ) {
+
+        icone.textContent =
+
+            "🏆🧠";
+
+        titulo.textContent =
+
+            "Memória incrível!";
+
+        texto.textContent =
+
+            "Você completou todos os 4 níveis!";
+
+        tocarVitoria();
+
+    } else {
+
+        icone.textContent =
+
+            "⏰🧠";
+
+        titulo.textContent =
+
+            "Tempo acabou!";
+
+        texto.textContent =
+
+            "Tente novamente e encontre os pares mais rápido.";
+
+        tocarFim();
+
+    }
+
+    telaFim.classList.remove(
+
+        "oculto"
+
+    );
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltarMenu() {
+
+    jogando =
+
+        false;
+
+    pararCronometro();
+
+    window.location.assign(
+
+        "./brincar.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   ÁUDIO
+
+========================================================= */
+
+let audioContext =
+
+    null;
+
+let somAtivo =
+
+    true;
+
+/* =========================================================
+
+   PREPARAR ÁUDIO
+
+========================================================= */
+
+function prepararAudio() {
+
+    if (
+
+        !somAtivo
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        if (
+
+            !audioContext
+
+        ) {
+
+            const AudioCtx =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (
+
+                AudioCtx
+
+            ) {
+
+                audioContext =
+
+                    new AudioCtx();
+
+            }
+
+        }
+
+        if (
+
+            audioContext &&
+
+            audioContext.state ===
+
+                "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Áudio indisponível:",
+
+            erro
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   TOM
+
+========================================================= */
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    tipo = "sine",
+
+    volume = .05,
+
+    atraso = 0
+
+) {
+
+    if (
+
+        !somAtivo ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const inicio =
+
+            audioContext.currentTime +
+
+            atraso;
+
+        const oscilador =
+
+            audioContext
+
+                .createOscillator();
+
+        const ganho =
+
+            audioContext
+
+                .createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                volume,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                .001,
+
+                inicio +
+
+                duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(
+
+            inicio
+
+        );
+
+        oscilador.stop(
+
+            inicio +
+
+            duracao
+
+        );
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   SONS
+
+========================================================= */
+
+function tocarInicio() {
+
+    tocarTom(
+
+        440,
+
+        .09
+
+    );
+
+    tocarTom(
+
+        660,
+
+        .10,
+
+        "sine",
+
+        .05,
+
+        .09
+
+    );
+
+    tocarTom(
+
+        880,
+
+        .13,
+
+        "sine",
+
+        .05,
+
+        .18
+
+    );
+
+}
+
+function tocarVirar() {
+
+    tocarTom(
+
+        600,
+
+        .055,
+
+        "triangle",
+
+        .025
+
+    );
+
+}
+
+function tocarPar() {
+
+    tocarTom(
+
+        700,
+
+        .08,
+
+        "sine",
+
+        .045
+
+    );
+
+    tocarTom(
+
+        980,
+
+        .11,
+
+        "sine",
+
+        .045,
+
+        .07
+
+    );
+
+}
+
+function tocarErro() {
+
+    tocarTom(
+
+        230,
+
+        .10,
+
+        "square",
+
+        .025
+
+    );
+
+    tocarTom(
+
+        170,
+
+        .13,
+
+        "square",
+
+        .025,
+
+        .08
+
+    );
+
+}
+
+function tocarNivel() {
+
+    tocarTom(
+
+        520,
+
+        .09,
+
+        "triangle",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        780,
+
+        .10,
+
+        "triangle",
+
+        .05,
+
+        .08
+
+    );
+
+    tocarTom(
+
+        1040,
+
+        .14,
+
+        "triangle",
+
+        .05,
+
+        .16
+
+    );
+
+}
+
+function tocarRelogio() {
+
+    tocarTom(
+
+        900,
+
+        .045,
+
+        "square",
+
+        .02
+
+    );
+
+}
+
+function tocarFim() {
+
+    tocarTom(
+
+        350,
+
+        .12,
+
+        "sine",
+
+        .04
+
+    );
+
+    tocarTom(
+
+        250,
+
+        .18,
+
+        "sine",
+
+        .04,
+
+        .12
+
+    );
+
+}
+
+function tocarVitoria() {
+
+    tocarTom(
+
+        600,
+
+        .10,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        800,
+
+        .10,
+
+        "sine",
+
+        .05,
+
+        .10
+
+    );
+
+    tocarTom(
+
+        1000,
+
+        .11,
+
+        "sine",
+
+        .05,
+
+        .20
+
+    );
+
+    tocarTom(
+
+        1300,
+
+        .20,
+
+        "sine",
+
+        .05,
+
+        .31
+
+    );
+
+}
+
+/* =========================================================
+
+   SOM ON/OFF
+
+========================================================= */
+
+function alternarSom() {
+
+    somAtivo =
+
+        !somAtivo;
+
+    document.getElementById(
+
+        "btnSom"
+
+    ).textContent =
+
+        somAtivo
+
+            ? "🔊"
+
+            : "🔇";
+
+    if (
+
+        somAtivo
+
+    ) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            700,
+
+            .09
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   INICIALIZAÇÃO
+
+========================================================= */
+
+carregarRecorde();
+
+</script>
+
+</body>
+
+</html>
