@@ -1,0 +1,3803 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<meta name="google" content="notranslate">
+
+<title>Estourar Balões 🎈</title>
+
+<script src="../petton.js"></script>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    min-height: 100%;
+
+    overflow: hidden;
+
+}
+
+body {
+
+    font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        Arial,
+
+        sans-serif;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #9edcff 0%,
+
+            #dff5ff 60%,
+
+            #a8dc7a 100%
+
+        );
+
+    color: #333;
+
+    touch-action: none;
+
+}
+
+.app {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 520px;
+
+    height: 100dvh;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+}
+
+/* =========================================================
+
+   CENÁRIO
+
+========================================================= */
+
+.cenario {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        radial-gradient(
+
+            circle at 15% 20%,
+
+            rgba(255,255,255,.8) 0 28px,
+
+            transparent 30px
+
+        ),
+
+        radial-gradient(
+
+            circle at 25% 19%,
+
+            rgba(255,255,255,.7) 0 38px,
+
+            transparent 40px
+
+        ),
+
+        radial-gradient(
+
+            circle at 78% 28%,
+
+            rgba(255,255,255,.65) 0 35px,
+
+            transparent 37px
+
+        ),
+
+        linear-gradient(
+
+            180deg,
+
+            #a5dfff 0%,
+
+            #e5f7ff 73%,
+
+            #9dd474 73%,
+
+            #75ba51 100%
+
+        );
+
+}
+
+/* =========================================================
+
+   TOPO
+
+========================================================= */
+
+.topo {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    z-index: 100;
+
+    min-height: 62px;
+
+    display: grid;
+
+    grid-template-columns:
+
+        48px 1fr 48px;
+
+    align-items: center;
+
+    padding: 7px 9px;
+
+    background:
+
+        rgba(255,255,255,.88);
+
+    border-bottom:
+
+        1px solid rgba(0,0,0,.07);
+
+    backdrop-filter:
+
+        blur(9px);
+
+}
+
+.btn-topo {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+
+        rgba(255,255,255,.95);
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+}
+
+.btn-topo:active {
+
+    transform: scale(.94);
+
+}
+
+.titulo {
+
+    text-align: center;
+
+}
+
+.titulo strong {
+
+    display: block;
+
+    font-size: 16px;
+
+}
+
+.titulo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #777;
+
+    font-size: 10px;
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+.hud {
+
+    position: absolute;
+
+    top: 73px;
+
+    left: 10px;
+
+    right: 10px;
+
+    z-index: 80;
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(4,1fr);
+
+    gap: 6px;
+
+    pointer-events: none;
+
+}
+
+.hud-item {
+
+    padding: 7px 3px;
+
+    border-radius: 14px;
+
+    background:
+
+        rgba(255,255,255,.91);
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.08);
+
+    text-align: center;
+
+}
+
+.hud-label {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+}
+
+.hud-valor {
+
+    display: block;
+
+    margin-top: 1px;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+}
+
+/* =========================================================
+
+   JOGO
+
+========================================================= */
+
+#areaJogo {
+
+    position: absolute;
+
+    top: 62px;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+/* =========================================================
+
+   GRAMA
+
+========================================================= */
+
+.grama {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 65px;
+
+    z-index: 2;
+
+    font-size: 24px;
+
+    line-height: 65px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   PETTON
+
+========================================================= */
+
+#petton {
+
+    position: absolute;
+
+    z-index: 15;
+
+    width: 82px;
+
+    height: 82px;
+
+    left: 50%;
+
+    bottom: 37px;
+
+    transform:
+
+        translateX(-50%);
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+}
+
+#petton img {
+
+    display: block;
+
+    max-width: 82px;
+
+    max-height: 82px;
+
+    object-fit: contain;
+
+    filter:
+
+        drop-shadow(
+
+            0 5px 4px rgba(0,0,0,.18)
+
+        );
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+}
+
+/* =========================================================
+
+   BALÕES
+
+========================================================= */
+
+.objeto {
+
+    position: absolute;
+
+    z-index: 30;
+
+    width: 58px;
+
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 49px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    touch-action: manipulation;
+
+    filter:
+
+        drop-shadow(
+
+            0 4px 3px rgba(0,0,0,.18)
+
+        );
+
+    will-change:
+
+        left,
+
+        top,
+
+        transform;
+
+}
+
+.objeto.bonus {
+
+    width: 65px;
+
+    height: 72px;
+
+    font-size: 53px;
+
+    filter:
+
+        drop-shadow(
+
+            0 0 8px rgba(255,210,0,.95)
+
+        );
+
+}
+
+.objeto.bomba {
+
+    width: 58px;
+
+    height: 58px;
+
+    font-size: 47px;
+
+    filter:
+
+        drop-shadow(
+
+            0 4px 4px rgba(0,0,0,.28)
+
+        );
+
+}
+
+.estrela-bonus {
+
+    position: absolute;
+
+    top: 5px;
+
+    right: 2px;
+
+    z-index: 2;
+
+    font-size: 20px;
+
+    animation:
+
+        piscarBonus .55s infinite alternate;
+
+}
+
+@keyframes piscarBonus {
+
+    from {
+
+        transform:
+
+            scale(.8)
+
+            rotate(-8deg);
+
+        opacity: .65;
+
+    }
+
+    to {
+
+        transform:
+
+            scale(1.15)
+
+            rotate(8deg);
+
+        opacity: 1;
+
+    }
+
+}
+
+/* =========================================================
+
+   ESTOURO
+
+========================================================= */
+
+.estouro {
+
+    position: absolute;
+
+    z-index: 60;
+
+    width: 60px;
+
+    height: 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 40px;
+
+    pointer-events: none;
+
+    animation:
+
+        animarEstouro .38s forwards;
+
+}
+
+@keyframes animarEstouro {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(.45);
+
+    }
+
+    60% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.3);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.65);
+
+    }
+
+}
+
+/* =========================================================
+
+   PONTO
+
+========================================================= */
+
+.ponto-flutuante {
+
+    position: absolute;
+
+    z-index: 70;
+
+    color: #247c35;
+
+    font-size: 22px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+    animation:
+
+        subirPonto .7s forwards;
+
+}
+
+.ponto-flutuante.bonus {
+
+    color: #d98b00;
+
+    font-size: 27px;
+
+}
+
+@keyframes subirPonto {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,0)
+
+            scale(.8);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-55px)
+
+            scale(1.25);
+
+    }
+
+}
+
+/* =========================================================
+
+   NÍVEL
+
+========================================================= */
+
+#mensagemNivel {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 45%;
+
+    z-index: 150;
+
+    transform:
+
+        translate(-50%,-50%)
+
+        scale(.7);
+
+    padding: 11px 20px;
+
+    border-radius: 25px;
+
+    background:
+
+        rgba(255,255,255,.96);
+
+    box-shadow:
+
+        0 5px 18px rgba(0,0,0,.15);
+
+    font-size: 19px;
+
+    font-weight: 900;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+}
+
+#mensagemNivel.mostrar {
+
+    animation:
+
+        nivelAnimacao .85s forwards;
+
+}
+
+@keyframes nivelAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(.6);
+
+    }
+
+    25% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.08);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-70%)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   OVERLAY
+
+========================================================= */
+
+.overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 22px;
+
+    background:
+
+        rgba(31,74,104,.27);
+
+    backdrop-filter:
+
+        blur(3px);
+
+}
+
+.overlay.oculto {
+
+    display: none;
+
+}
+
+.caixa {
+
+    width: 100%;
+
+    max-width: 340px;
+
+    padding: 25px 20px;
+
+    border-radius: 26px;
+
+    background:
+
+        rgba(255,255,255,.97);
+
+    box-shadow:
+
+        0 10px 35px rgba(0,0,0,.18);
+
+    text-align: center;
+
+}
+
+.caixa-icone {
+
+    font-size: 55px;
+
+    line-height: 1;
+
+}
+
+.caixa h2 {
+
+    margin: 12px 0 7px;
+
+    font-size: 23px;
+
+}
+
+.caixa p {
+
+    margin: 5px 0;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+}
+
+.resultado {
+
+    margin: 15px 0;
+
+    padding: 12px;
+
+    border-radius: 17px;
+
+    background: #f2f8ff;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+.btn-jogar {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #58b9ef,
+
+            #348ed6
+
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 4px 12px rgba(52,142,214,.25);
+
+}
+
+.btn-jogar:active {
+
+    transform: scale(.97);
+
+}
+
+.btn-menu {
+
+    width: 100%;
+
+    min-height: 46px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background: #f0f2f4;
+
+    color: #555;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+/* =========================================================
+
+   MOBILE PEQUENO
+
+========================================================= */
+
+@media(max-width:360px) {
+
+    #petton {
+
+        width: 74px;
+
+        height: 74px;
+
+    }
+
+    #petton img {
+
+        max-width: 74px;
+
+        max-height: 74px;
+
+    }
+
+    .objeto {
+
+        font-size: 44px;
+
+    }
+
+    .hud-valor {
+
+        font-size: 15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="cenario"></div>
+
+<!-- =====================================================
+
+     TOPO
+
+====================================================== -->
+
+<header class="topo">
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        onclick="voltarMenu()"
+
+        aria-label="Voltar"
+
+    >
+
+        ←
+
+    </button>
+
+    <div class="titulo">
+
+        <strong>
+
+            🎈 Estourar Balões
+
+        </strong>
+
+        <span>
+
+            Toque nos 🎈 e cuidado com a 💣
+
+        </span>
+
+    </div>
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        id="btnSom"
+
+        onclick="alternarSom()"
+
+        aria-label="Som"
+
+    >
+
+        🔊
+
+    </button>
+
+</header>
+
+<!-- =====================================================
+
+     HUD
+
+====================================================== -->
+
+<div class="hud">
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            PONTOS
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="pontos"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            NÍVEL
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="nivel"
+
+        >
+
+            1
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            TEMPO
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="tempo"
+
+        >
+
+            90
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            RECORDE
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="recorde"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     ÁREA DO JOGO
+
+====================================================== -->
+
+<div id="areaJogo">
+
+    <div class="grama">
+
+        🌼 🌱 🌷 🌱 🌼 🌱 🌷 🌱 🌼 🌱 🌷 🌱
+
+    </div>
+
+    <div id="petton">
+
+        <img
+
+            id="imagemPetton"
+
+            alt="Petton"
+
+        >
+
+    </div>
+
+    <div id="mensagemNivel">
+
+        ⭐ Nível 2!
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     TELA INICIAL
+
+====================================================== -->
+
+<div
+
+    class="overlay"
+
+    id="telaInicial"
+
+>
+
+    <div class="caixa">
+
+        <div class="caixa-icone">
+
+            🎈💥
+
+        </div>
+
+        <h2>
+
+            Estourar Balões
+
+        </h2>
+
+        <p>
+
+            Toque nos balões para estourar.
+
+        </p>
+
+        <p>
+
+            🎈 = +1 ponto
+
+        </p>
+
+        <p>
+
+            🎈⭐ = +3 pontos
+
+        </p>
+
+        <p>
+
+            💣 = PERDE!
+
+        </p>
+
+        <p>
+
+            Você tem 90 segundos.
+
+        </p>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            ▶️ JOGAR
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     FIM
+
+====================================================== -->
+
+<div
+
+    class="overlay oculto"
+
+    id="telaFim"
+
+>
+
+    <div class="caixa">
+
+        <div
+
+            class="caixa-icone"
+
+            id="iconeFim"
+
+        >
+
+            🏆
+
+        </div>
+
+        <h2 id="tituloFim">
+
+            Fim de jogo!
+
+        </h2>
+
+        <p id="motivoFim">
+
+            Veja sua pontuação.
+
+        </p>
+
+        <div class="resultado">
+
+            Pontos:
+
+            <strong id="pontosFim">
+
+                0
+
+            </strong>
+
+            <br>
+
+            Recorde:
+
+            <strong id="recordeFim">
+
+                0
+
+            </strong>
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            🔄 JOGAR NOVAMENTE
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const CHAVE_RECORDE =
+
+    "petton_jogo_estourar_baloes_recorde_v1";
+
+const TEMPO_JOGO = 90;
+
+let pontos = 0;
+
+let nivel = 1;
+
+let recorde = 0;
+
+let tempoRestante =
+
+    TEMPO_JOGO;
+
+let jogando = false;
+
+let ultimoTempo = 0;
+
+let ultimoSpawn = 0;
+
+let animacaoId = null;
+
+let objetos = [];
+
+/* =========================================================
+
+   ELEMENTOS
+
+========================================================= */
+
+const areaJogo =
+
+    document.getElementById(
+
+        "areaJogo"
+
+    );
+
+const imagemPetton =
+
+    document.getElementById(
+
+        "imagemPetton"
+
+    );
+
+const pontosEl =
+
+    document.getElementById(
+
+        "pontos"
+
+    );
+
+const nivelEl =
+
+    document.getElementById(
+
+        "nivel"
+
+    );
+
+const tempoEl =
+
+    document.getElementById(
+
+        "tempo"
+
+    );
+
+const recordeEl =
+
+    document.getElementById(
+
+        "recorde"
+
+    );
+
+const telaInicial =
+
+    document.getElementById(
+
+        "telaInicial"
+
+    );
+
+const telaFim =
+
+    document.getElementById(
+
+        "telaFim"
+
+    );
+
+/* =========================================================
+
+   RECORDE
+
+========================================================= */
+
+function carregarRecorde() {
+
+    try {
+
+        recorde =
+
+            Number(
+
+                localStorage.getItem(
+
+                    CHAVE_RECORDE
+
+                )
+
+            ) || 0;
+
+    } catch (erro) {
+
+        recorde = 0;
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+}
+
+/* =========================================================
+
+   FASE PETTON
+
+========================================================= */
+
+function descobrirFaseLocal(dados) {
+
+    if (
+
+        dados &&
+
+        dados.fase &&
+
+        dados.fase !== "ovo"
+
+    ) {
+
+        return dados.fase;
+
+    }
+
+    let dias = 0;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.idadeDias ===
+
+                "function"
+
+        ) {
+
+            dias =
+
+                Number(
+
+                    Petton.idadeDias()
+
+                ) || 0;
+
+        }
+
+    } catch (erro) {
+
+        dias = 0;
+
+    }
+
+    if (dias < 8) {
+
+        return "bebe";
+
+    }
+
+    if (dias < 31) {
+
+        return "filhote";
+
+    }
+
+    if (dias < 91) {
+
+        return "jovem";
+
+    }
+
+    return "adulto";
+
+}
+
+/* =========================================================
+
+   IMAGEM PETTON
+
+========================================================= */
+
+function carregarImagemPetton() {
+
+    let dados = null;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.carregar ===
+
+                "function"
+
+        ) {
+
+            dados =
+
+                Petton.carregar();
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro ao carregar Petton:",
+
+            erro
+
+        );
+
+    }
+
+    if (!dados) {
+
+        imagemPetton.src =
+
+            "../petton-original.png";
+
+        return;
+
+    }
+
+    const fase =
+
+        descobrirFaseLocal(
+
+            dados
+
+        );
+
+    const especie =
+
+        dados.identidadeVisual?.especie ||
+
+        dados.especie ||
+
+        "gato";
+
+    const imagemGerada =
+
+        dados.identidadeVisual
+
+            ?.imagens
+
+            ?.[fase];
+
+    if (
+
+        imagemGerada
+
+    ) {
+
+        imagemPetton.src =
+
+            imagemGerada;
+
+        return;
+
+    }
+
+    if (
+
+        especie === "cachorro"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+        return;
+
+    }
+
+    if (
+
+        especie === "coelho"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
+
+        return;
+
+    }
+
+    imagemPetton.src =
+
+        "../petton-original.png";
+
+}
+
+/* =========================================================
+
+   CRIAR OBJETO
+
+========================================================= */
+
+function criarObjeto(
+
+    tipoForcado = null
+
+) {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    let tipo =
+
+        tipoForcado;
+
+    if (!tipo) {
+
+        /*
+
+           Bomba aumenta aos poucos.
+
+           Nível 1 = 10%
+
+           Nível 2 = 12%
+
+           Nível 3 = 14%
+
+           ...
+
+           Máximo = 28%
+
+        */
+
+        const chanceBomba =
+
+            Math.min(
+
+                .28,
+
+                .10 +
+
+                (nivel - 1) * .02
+
+            );
+
+        const chanceBonus =
+
+            .10;
+
+        const sorteio =
+
+            Math.random();
+
+        if (
+
+            sorteio <
+
+            chanceBomba
+
+        ) {
+
+            tipo =
+
+                "bomba";
+
+        } else if (
+
+            sorteio <
+
+            chanceBomba +
+
+            chanceBonus
+
+        ) {
+
+            tipo =
+
+                "bonus";
+
+        } else {
+
+            tipo =
+
+                "balao";
+
+        }
+
+    }
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "objeto";
+
+    if (
+
+        tipo === "bomba"
+
+    ) {
+
+        elemento.classList.add(
+
+            "bomba"
+
+        );
+
+        elemento.textContent =
+
+            "💣";
+
+    } else {
+
+        elemento.textContent =
+
+            "🎈";
+
+        if (
+
+            tipo === "bonus"
+
+        ) {
+
+            elemento.classList.add(
+
+                "bonus"
+
+            );
+
+            const estrela =
+
+                document.createElement(
+
+                    "span"
+
+                );
+
+            estrela.className =
+
+                "estrela-bonus";
+
+            estrela.textContent =
+
+                "⭐";
+
+            elemento.appendChild(
+
+                estrela
+
+            );
+
+        }
+
+    }
+
+    const larguraArea =
+
+        areaJogo.clientWidth;
+
+    const larguraObjeto =
+
+        tipo === "bonus"
+
+            ? 65
+
+            : 58;
+
+    const x =
+
+        8 +
+
+        Math.random() *
+
+        Math.max(
+
+            10,
+
+            larguraArea -
+
+            larguraObjeto -
+
+            16
+
+        );
+
+    /*
+
+       Nasce embaixo,
+
+       mas acima da barra inferior.
+
+    */
+
+    const y =
+
+        areaJogo.clientHeight +
+
+        10;
+
+    elemento.style.left =
+
+        x + "px";
+
+    elemento.style.top =
+
+        y + "px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    /*
+
+       Velocidade aumenta
+
+       conforme o nível.
+
+    */
+
+    let velocidade =
+
+        105 +
+
+        (nivel - 1) * 13 +
+
+        Math.random() * 45;
+
+    /*
+
+       Bomba levemente mais lenta
+
+       para o jogador perceber.
+
+    */
+
+    if (
+
+        tipo === "bomba"
+
+    ) {
+
+        velocidade *=
+
+            .90;
+
+    }
+
+    const objeto = {
+
+        elemento:
+
+            elemento,
+
+        tipo:
+
+            tipo,
+
+        x:
+
+            x,
+
+        y:
+
+            y,
+
+        velocidade:
+
+            velocidade,
+
+        onda:
+
+            Math.random() *
+
+            Math.PI *
+
+            2,
+
+        amplitude:
+
+            8 +
+
+            Math.random() * 15,
+
+        vivo:
+
+            true,
+
+        clicado:
+
+            false
+
+    };
+
+    objetos.push(
+
+        objeto
+
+    );
+
+    /*
+
+       TOUCH / CLICK
+
+    */
+
+    elemento.addEventListener(
+
+        "pointerdown",
+
+        function(evento) {
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+            tocarObjeto(
+
+                objeto
+
+            );
+
+        }
+
+    );
+
+}
+
+/* =========================================================
+
+   TOCAR OBJETO
+
+========================================================= */
+
+function tocarObjeto(
+
+    objeto
+
+) {
+
+    if (
+
+        !jogando ||
+
+        !objeto ||
+
+        !objeto.vivo ||
+
+        objeto.clicado
+
+    ) {
+
+        return;
+
+    }
+
+    objeto.clicado =
+
+        true;
+
+    const rect =
+
+        objeto.elemento
+
+            .getBoundingClientRect();
+
+    const areaRect =
+
+        areaJogo
+
+            .getBoundingClientRect();
+
+    const centroX =
+
+        rect.left -
+
+        areaRect.left +
+
+        rect.width / 2;
+
+    const centroY =
+
+        rect.top -
+
+        areaRect.top +
+
+        rect.height / 2;
+
+    /*
+
+       BOMBA
+
+    */
+
+    if (
+
+        objeto.tipo === "bomba"
+
+    ) {
+
+        criarEstouro(
+
+            centroX,
+
+            centroY,
+
+            true
+
+        );
+
+        removerObjeto(
+
+            objeto
+
+        );
+
+        tocarBomba();
+
+        finalizarJogo(
+
+            "bomba"
+
+        );
+
+        return;
+
+    }
+
+    /*
+
+       BALÃO
+
+    */
+
+    const bonus =
+
+        objeto.tipo === "bonus";
+
+    const valor =
+
+        bonus
+
+            ? 3
+
+            : 1;
+
+    pontos +=
+
+        valor;
+
+    pontosEl.textContent =
+
+        pontos;
+
+    criarEstouro(
+
+        centroX,
+
+        centroY,
+
+        false
+
+    );
+
+    mostrarPonto(
+
+        centroX,
+
+        centroY,
+
+        valor,
+
+        bonus
+
+    );
+
+    removerObjeto(
+
+        objeto
+
+    );
+
+    if (
+
+        bonus
+
+    ) {
+
+        tocarBonus();
+
+    } else {
+
+        tocarEstouro();
+
+    }
+
+    verificarNivel();
+
+}
+
+/* =========================================================
+
+   ESTOURO VISUAL
+
+========================================================= */
+
+function criarEstouro(
+
+    x,
+
+    y,
+
+    bomba
+
+) {
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "estouro";
+
+    elemento.textContent =
+
+        bomba
+
+            ? "💥"
+
+            : "✨";
+
+    elemento.style.left =
+
+        x + "px";
+
+    elemento.style.top =
+
+        y + "px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            elemento.remove();
+
+        },
+
+        420
+
+    );
+
+}
+
+/* =========================================================
+
+   PONTO FLUTUANTE
+
+========================================================= */
+
+function mostrarPonto(
+
+    x,
+
+    y,
+
+    valor,
+
+    bonus
+
+) {
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        bonus
+
+            ? "ponto-flutuante bonus"
+
+            : "ponto-flutuante";
+
+    elemento.textContent =
+
+        "+" + valor;
+
+    elemento.style.left =
+
+        x + "px";
+
+    elemento.style.top =
+
+        y + "px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            elemento.remove();
+
+        },
+
+        750
+
+    );
+
+}
+
+/* =========================================================
+
+   REMOVER OBJETO
+
+========================================================= */
+
+function removerObjeto(
+
+    objeto
+
+) {
+
+    objeto.vivo =
+
+        false;
+
+    try {
+
+        objeto.elemento.remove();
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   MOVIMENTO
+
+========================================================= */
+
+function atualizarObjetos(
+
+    delta
+
+) {
+
+    const larguraArea =
+
+        areaJogo.clientWidth;
+
+    for (
+
+        const objeto
+
+        of objetos
+
+    ) {
+
+        if (
+
+            !objeto.vivo
+
+        ) {
+
+            continue;
+
+        }
+
+        objeto.onda +=
+
+            delta * 3;
+
+        objeto.y -=
+
+            objeto.velocidade *
+
+            delta;
+
+        /*
+
+           Pequeno balanço
+
+           para os lados.
+
+        */
+
+        objeto.x +=
+
+            Math.sin(
+
+                objeto.onda
+
+            ) *
+
+            objeto.amplitude *
+
+            delta;
+
+        const largura =
+
+            objeto.tipo ===
+
+                "bonus"
+
+                ? 65
+
+                : 58;
+
+        objeto.x =
+
+            Math.max(
+
+                2,
+
+                Math.min(
+
+                    larguraArea -
+
+                    largura -
+
+                    2,
+
+                    objeto.x
+
+                )
+
+            );
+
+        objeto.elemento.style.left =
+
+            objeto.x +
+
+            "px";
+
+        objeto.elemento.style.top =
+
+            objeto.y +
+
+            "px";
+
+        /*
+
+           Saiu por cima.
+
+        */
+
+        if (
+
+            objeto.y < -90
+
+        ) {
+
+            removerObjeto(
+
+                objeto
+
+            );
+
+        }
+
+    }
+
+    objetos =
+
+        objetos.filter(
+
+            function(objeto) {
+
+                return objeto.vivo;
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   NÍVEL
+
+========================================================= */
+
+function verificarNivel() {
+
+    /*
+
+       Novo nível
+
+       a cada 10 pontos.
+
+    */
+
+    const novoNivel =
+
+        1 +
+
+        Math.floor(
+
+            pontos / 10
+
+        );
+
+    if (
+
+        novoNivel <= nivel
+
+    ) {
+
+        return;
+
+    }
+
+    nivel =
+
+        novoNivel;
+
+    nivelEl.textContent =
+
+        nivel;
+
+    mostrarNivel();
+
+    tocarNivel();
+
+}
+
+/* =========================================================
+
+   MOSTRAR NÍVEL
+
+========================================================= */
+
+function mostrarNivel() {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagemNivel"
+
+        );
+
+    elemento.textContent =
+
+        "⭐ Nível " +
+
+        nivel +
+
+        "!";
+
+    elemento.classList.remove(
+
+        "mostrar"
+
+    );
+
+    void elemento.offsetWidth;
+
+    elemento.classList.add(
+
+        "mostrar"
+
+    );
+
+}
+
+/* =========================================================
+
+   SPAWN
+
+========================================================= */
+
+function tentarCriarObjeto(
+
+    tempoAtual
+
+) {
+
+    /*
+
+       Começa acessível,
+
+       depois acelera.
+
+    */
+
+    const intervalo =
+
+        Math.max(
+
+            300,
+
+            850 -
+
+            (nivel - 1) * 65
+
+        );
+
+    if (
+
+        tempoAtual -
+
+        ultimoSpawn <
+
+        intervalo
+
+    ) {
+
+        return;
+
+    }
+
+    ultimoSpawn =
+
+        tempoAtual;
+
+    /*
+
+       Máximo simultâneo.
+
+    */
+
+    const maximo =
+
+        Math.min(
+
+            12,
+
+            5 +
+
+            Math.floor(
+
+                nivel / 2
+
+            )
+
+        );
+
+    if (
+
+        objetos.length <
+
+        maximo
+
+    ) {
+
+        criarObjeto();
+
+    }
+
+    /*
+
+       Nível 3+
+
+       pode lançar outro logo depois.
+
+    */
+
+    if (
+
+        nivel >= 3 &&
+
+        objetos.length <
+
+            maximo &&
+
+        Math.random() < .30
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    jogando &&
+
+                    objetos.length <
+
+                        maximo
+
+                ) {
+
+                    criarObjeto();
+
+                }
+
+            },
+
+            150
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   LIMPAR
+
+========================================================= */
+
+function limparObjetos() {
+
+    for (
+
+        const objeto
+
+        of objetos
+
+    ) {
+
+        try {
+
+            objeto.elemento.remove();
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    objetos = [];
+
+}
+
+/* =========================================================
+
+   LOOP
+
+========================================================= */
+
+function loop(
+
+    tempoAtual
+
+) {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    if (!ultimoTempo) {
+
+        ultimoTempo =
+
+            tempoAtual;
+
+    }
+
+    let delta =
+
+        (
+
+            tempoAtual -
+
+            ultimoTempo
+
+        ) /
+
+        1000;
+
+    ultimoTempo =
+
+        tempoAtual;
+
+    delta =
+
+        Math.min(
+
+            delta,
+
+            .04
+
+        );
+
+    tempoRestante -=
+
+        delta;
+
+    tempoEl.textContent =
+
+        Math.max(
+
+            0,
+
+            Math.ceil(
+
+                tempoRestante
+
+            )
+
+        );
+
+    if (
+
+        tempoRestante <= 0
+
+    ) {
+
+        finalizarJogo(
+
+            "tempo"
+
+        );
+
+        return;
+
+    }
+
+    tentarCriarObjeto(
+
+        tempoAtual
+
+    );
+
+    atualizarObjetos(
+
+        delta
+
+    );
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   INICIAR
+
+========================================================= */
+
+function iniciarJogo() {
+
+    prepararAudio();
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+        animacaoId =
+
+            null;
+
+    }
+
+    limparObjetos();
+
+    pontos =
+
+        0;
+
+    nivel =
+
+        1;
+
+    tempoRestante =
+
+        TEMPO_JOGO;
+
+    ultimoTempo =
+
+        0;
+
+    ultimoSpawn =
+
+        0;
+
+    pontosEl.textContent =
+
+        "0";
+
+    nivelEl.textContent =
+
+        "1";
+
+    tempoEl.textContent =
+
+        String(
+
+            TEMPO_JOGO
+
+        );
+
+    telaInicial.classList.add(
+
+        "oculto"
+
+    );
+
+    telaFim.classList.add(
+
+        "oculto"
+
+    );
+
+    jogando =
+
+        true;
+
+    /*
+
+       PRIMEIROS BALÕES
+
+       aparecem rapidamente.
+
+    */
+
+    setTimeout(
+
+        function() {
+
+            if (jogando) {
+
+                criarObjeto(
+
+                    "balao"
+
+                );
+
+            }
+
+        },
+
+        100
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (jogando) {
+
+                criarObjeto(
+
+                    "balao"
+
+                );
+
+            }
+
+        },
+
+        400
+
+    );
+
+    /*
+
+       Primeira bomba
+
+       só depois de 2 segundos,
+
+       para não começar injusto.
+
+    */
+
+    setTimeout(
+
+        function() {
+
+            if (jogando) {
+
+                criarObjeto(
+
+                    "bomba"
+
+                );
+
+            }
+
+        },
+
+        2000
+
+    );
+
+    tocarInicio();
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   FINALIZAR
+
+========================================================= */
+
+function finalizarJogo(
+
+    motivo
+
+) {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+        animacaoId =
+
+            null;
+
+    }
+
+    if (
+
+        pontos >
+
+        recorde
+
+    ) {
+
+        recorde =
+
+            pontos;
+
+        try {
+
+            localStorage.setItem(
+
+                CHAVE_RECORDE,
+
+                String(
+
+                    recorde
+
+                )
+
+            );
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+    document.getElementById(
+
+        "pontosFim"
+
+    ).textContent =
+
+        pontos;
+
+    document.getElementById(
+
+        "recordeFim"
+
+    ).textContent =
+
+        recorde;
+
+    const titulo =
+
+        document.getElementById(
+
+            "tituloFim"
+
+        );
+
+    const motivoEl =
+
+        document.getElementById(
+
+            "motivoFim"
+
+        );
+
+    const icone =
+
+        document.getElementById(
+
+            "iconeFim"
+
+        );
+
+    if (
+
+        motivo === "bomba"
+
+    ) {
+
+        icone.textContent =
+
+            "💣💥";
+
+        titulo.textContent =
+
+            "Você tocou na bomba!";
+
+        motivoEl.textContent =
+
+            "Estoure os balões, mas não toque nas bombas.";
+
+    } else {
+
+        icone.textContent =
+
+            "🏆🎈";
+
+        titulo.textContent =
+
+            "Tempo acabou!";
+
+        motivoEl.textContent =
+
+            "Você completou os 90 segundos.";
+
+        tocarFim();
+
+    }
+
+    telaFim.classList.remove(
+
+        "oculto"
+
+    );
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltarMenu() {
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    window.location.assign(
+
+        "./brincar.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   ÁUDIO
+
+========================================================= */
+
+let audioContext =
+
+    null;
+
+let somAtivo =
+
+    true;
+
+function prepararAudio() {
+
+    if (!somAtivo) {
+
+        return;
+
+    }
+
+    try {
+
+        if (!audioContext) {
+
+            const AudioCtx =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (
+
+                AudioCtx
+
+            ) {
+
+                audioContext =
+
+                    new AudioCtx();
+
+            }
+
+        }
+
+        if (
+
+            audioContext &&
+
+            audioContext.state ===
+
+                "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Áudio indisponível:",
+
+            erro
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   TOM
+
+========================================================= */
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    tipo = "sine",
+
+    volume = .06,
+
+    atraso = 0
+
+) {
+
+    if (
+
+        !somAtivo ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const inicio =
+
+            audioContext.currentTime +
+
+            atraso;
+
+        const oscilador =
+
+            audioContext
+
+                .createOscillator();
+
+        const ganho =
+
+            audioContext
+
+                .createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                volume,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                .001,
+
+                inicio +
+
+                duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(
+
+            inicio
+
+        );
+
+        oscilador.stop(
+
+            inicio +
+
+            duracao
+
+        );
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   SONS
+
+========================================================= */
+
+function tocarInicio() {
+
+    tocarTom(
+
+        440,
+
+        .10
+
+    );
+
+    tocarTom(
+
+        660,
+
+        .11,
+
+        "sine",
+
+        .055,
+
+        .10
+
+    );
+
+    tocarTom(
+
+        880,
+
+        .14,
+
+        "sine",
+
+        .055,
+
+        .20
+
+    );
+
+}
+
+function tocarEstouro() {
+
+    tocarTom(
+
+        720,
+
+        .055,
+
+        "square",
+
+        .035
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .08,
+
+        "sine",
+
+        .04,
+
+        .035
+
+    );
+
+}
+
+function tocarBonus() {
+
+    tocarTom(
+
+        700,
+
+        .08,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        1000,
+
+        .10,
+
+        "sine",
+
+        .05,
+
+        .07
+
+    );
+
+    tocarTom(
+
+        1350,
+
+        .13,
+
+        "sine",
+
+        .045,
+
+        .14
+
+    );
+
+}
+
+function tocarBomba() {
+
+    tocarTom(
+
+        180,
+
+        .15,
+
+        "sawtooth",
+
+        .065
+
+    );
+
+    tocarTom(
+
+        110,
+
+        .24,
+
+        "sawtooth",
+
+        .065,
+
+        .10
+
+    );
+
+    tocarTom(
+
+        70,
+
+        .32,
+
+        "square",
+
+        .045,
+
+        .20
+
+    );
+
+}
+
+function tocarNivel() {
+
+    tocarTom(
+
+        520,
+
+        .09,
+
+        "triangle",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        780,
+
+        .10,
+
+        "triangle",
+
+        .05,
+
+        .08
+
+    );
+
+    tocarTom(
+
+        1040,
+
+        .13,
+
+        "triangle",
+
+        .05,
+
+        .16
+
+    );
+
+}
+
+function tocarFim() {
+
+    tocarTom(
+
+        700,
+
+        .12,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        880,
+
+        .13,
+
+        "sine",
+
+        .05,
+
+        .11
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .18,
+
+        "sine",
+
+        .05,
+
+        .22
+
+    );
+
+}
+
+/* =========================================================
+
+   SOM ON/OFF
+
+========================================================= */
+
+function alternarSom() {
+
+    somAtivo =
+
+        !somAtivo;
+
+    document.getElementById(
+
+        "btnSom"
+
+    ).textContent =
+
+        somAtivo
+
+            ? "🔊"
+
+            : "🔇";
+
+    if (
+
+        somAtivo
+
+    ) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            700,
+
+            .09
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   INICIALIZAÇÃO
+
+========================================================= */
+
+carregarRecorde();
+
+carregarImagemPetton();
+
+</script>
+
+</body>
+
+</html>
