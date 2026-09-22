@@ -120,6 +120,7 @@ function gerarIdVisual() {
 
 }
 
+
 /* =========================================================
 
    DNA VISUAL
@@ -6500,3 +6501,414 @@ try {
     );
 
 }
+/* =========================================================
+
+   PETTON - REGRAS DAS AÇÕES V3
+
+   Evita ganhar moedas/pontos infinitamente
+
+========================================================= */
+
+/* =========================================================
+
+   ALIMENTAR
+
+   Só pode alimentar abaixo de 90 de fome
+
+========================================================= */
+
+alimentar = function () {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (dados.doente || dados.hospitalAte) {
+
+        return false;
+
+    }
+
+    if (Number(dados.fome) >= 90) {
+
+        return false;
+
+    }
+
+    dados.fome = Math.min(
+
+        100,
+
+        Number(dados.fome || 0) + 20
+
+    );
+
+    dados.saude = Math.min(
+
+        100,
+
+        Number(dados.saude || 0) + 2
+
+    );
+
+    darRecompensa(
+
+        dados,
+
+        5,
+
+        PETTON_MOEDAS_ALIMENTAR
+
+    );
+
+    dados.ultimaAlimentacaoEm = Date.now();
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+/* =========================================================
+
+   BRINCAR
+
+   Felicidade abaixo de 90
+
+   Precisa ter pelo menos 15 de energia
+
+========================================================= */
+
+brincar = function () {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (dados.doente || dados.hospitalAte) {
+
+        return false;
+
+    }
+
+    if (Number(dados.felicidade) >= 90) {
+
+        return false;
+
+    }
+
+    if (Number(dados.energia) < 15) {
+
+        return false;
+
+    }
+
+    dados.felicidade = Math.min(
+
+        100,
+
+        Number(dados.felicidade || 0) + 20
+
+    );
+
+    dados.energia = Math.max(
+
+        0,
+
+        Number(dados.energia || 0) - 10
+
+    );
+
+    dados.higiene = Math.max(
+
+        0,
+
+        Number(dados.higiene || 0) - 1
+
+    );
+
+    darRecompensa(
+
+        dados,
+
+        5,
+
+        PETTON_MOEDAS_BRINCAR
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+/* =========================================================
+
+   CARINHO
+
+   Só recompensa abaixo de 95 de felicidade
+
+========================================================= */
+
+carinho = function () {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (dados.doente || dados.hospitalAte) {
+
+        return false;
+
+    }
+
+    if (Number(dados.felicidade) >= 95) {
+
+        return false;
+
+    }
+
+    dados.felicidade = Math.min(
+
+        100,
+
+        Number(dados.felicidade || 0) + 10
+
+    );
+
+    darRecompensa(
+
+        dados,
+
+        2,
+
+        PETTON_MOEDAS_CARINHO
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+/* =========================================================
+
+   DORMIR
+
+   Só dorme abaixo de 90 de energia
+
+========================================================= */
+
+dormir = function () {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (dados.doente || dados.hospitalAte) {
+
+        return false;
+
+    }
+
+    if (Number(dados.energia) >= 90) {
+
+        return false;
+
+    }
+
+    dados.energia = Math.min(
+
+        100,
+
+        Number(dados.energia || 0) + 30
+
+    );
+
+    dados.felicidade = Math.min(
+
+        100,
+
+        Number(dados.felicidade || 0) + 5
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+/* =========================================================
+
+   BANHO / LIMPAR
+
+   Só permite abaixo de 90 de higiene
+
+========================================================= */
+
+limpar = function () {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (dados.hospitalAte) {
+
+        return false;
+
+    }
+
+    if (Number(dados.higiene) >= 90) {
+
+        return false;
+
+    }
+
+    dados.higiene = Math.min(
+
+        100,
+
+        Number(dados.higiene || 0) + 30
+
+    );
+
+    dados.saude = Math.min(
+
+        100,
+
+        Number(dados.saude || 0) + 5
+
+    );
+
+    darRecompensa(
+
+        dados,
+
+        3,
+
+        PETTON_MOEDAS_LIMPAR
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
+
+/* =========================================================
+
+   PASSEAR
+
+   Precisa ter pelo menos 20 de energia
+
+   Felicidade abaixo de 90
+
+========================================================= */
+
+passear = function () {
+
+    const dados = carregarPetton();
+
+    if (!dados.dateNascimento) {
+
+        return false;
+
+    }
+
+    if (dados.doente || dados.hospitalAte) {
+
+        return false;
+
+    }
+
+    if (
+
+        dados.passeandoAte &&
+
+        dados.passeandoAte > Date.now()
+
+    ) {
+
+        return false;
+
+    }
+
+    if (Number(dados.energia) < 20) {
+
+        return false;
+
+    }
+
+    if (Number(dados.felicidade) >= 90) {
+
+        return false;
+
+    }
+
+    dados.passeandoAte =
+
+        Date.now() + PETTON_PASSEIO_MS;
+
+    dados.felicidade = Math.min(
+
+        100,
+
+        Number(dados.felicidade || 0) + 15
+
+    );
+
+    dados.energia = Math.max(
+
+        0,
+
+        Number(dados.energia || 0) - 8
+
+    );
+
+    dados.higiene = Math.max(
+
+        0,
+
+        Number(dados.higiene || 0) - 2
+
+    );
+
+    darRecompensa(
+
+        dados,
+
+        5,
+
+        PETTON_MOEDAS_PASSEAR
+
+    );
+
+    salvarPetton(dados);
+
+    return true;
+
+};
