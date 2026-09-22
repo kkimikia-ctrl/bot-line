@@ -1,0 +1,4427 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<meta name="google" content="notranslate">
+
+<title>Pesca 🐟</title>
+
+<script src="../petton.js"></script>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: hidden;
+
+}
+
+body {
+
+    font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        Arial,
+
+        sans-serif;
+
+    background: #8ed8f8;
+
+    color: #333;
+
+    touch-action: none;
+
+}
+
+.app {
+
+    width: 100%;
+
+    max-width: 520px;
+
+    height: 100dvh;
+
+    margin: 0 auto;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+/* =========================================================
+
+   FUNDO
+
+========================================================= */
+
+.cenario {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #9fe0ff 0%,
+
+            #dff6ff 24%,
+
+            #55c5e8 24%,
+
+            #1688c2 100%
+
+        );
+
+}
+
+/* =========================================================
+
+   TOPO
+
+========================================================= */
+
+.topo {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 62px;
+
+    z-index: 200;
+
+    display: grid;
+
+    grid-template-columns:
+
+        48px 1fr 48px;
+
+    align-items: center;
+
+    padding: 7px 9px;
+
+    background:
+
+        rgba(255,255,255,.91);
+
+    border-bottom:
+
+        1px solid rgba(0,0,0,.08);
+
+    backdrop-filter:
+
+        blur(8px);
+
+}
+
+.btn-topo {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+}
+
+.btn-topo:active {
+
+    transform: scale(.94);
+
+}
+
+.titulo {
+
+    text-align: center;
+
+}
+
+.titulo strong {
+
+    display: block;
+
+    font-size: 17px;
+
+}
+
+.titulo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #777;
+
+    font-size: 10px;
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+.hud {
+
+    position: absolute;
+
+    top: 72px;
+
+    left: 9px;
+
+    right: 9px;
+
+    z-index: 170;
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(4,1fr);
+
+    gap: 5px;
+
+    pointer-events: none;
+
+}
+
+.hud-item {
+
+    padding: 7px 2px;
+
+    border-radius: 14px;
+
+    background:
+
+        rgba(255,255,255,.91);
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.08);
+
+    text-align: center;
+
+}
+
+.hud-label {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+}
+
+.hud-valor {
+
+    display: block;
+
+    margin-top: 1px;
+
+    font-size: 17px;
+
+    font-weight: 900;
+
+}
+
+/* =========================================================
+
+   ÁREA DO JOGO
+
+========================================================= */
+
+#areaJogo {
+
+    position: absolute;
+
+    top: 62px;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+/* =========================================================
+
+   CÉU / ÁGUA
+
+========================================================= */
+
+.sol {
+
+    position: absolute;
+
+    top: 66px;
+
+    right: 24px;
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 50%;
+
+    background: #ffe270;
+
+    box-shadow:
+
+        0 0 25px rgba(255,221,80,.75);
+
+    pointer-events: none;
+
+}
+
+.nuvem {
+
+    position: absolute;
+
+    top: 73px;
+
+    left: 24px;
+
+    font-size: 40px;
+
+    opacity: .9;
+
+    pointer-events: none;
+
+}
+
+.linha-agua {
+
+    position: absolute;
+
+    top: 185px;
+
+    left: 0;
+
+    right: 0;
+
+    height: 16px;
+
+    z-index: 8;
+
+    background:
+
+        repeating-radial-gradient(
+
+            ellipse at center,
+
+            rgba(255,255,255,.8) 0 5px,
+
+            transparent 6px 19px
+
+        );
+
+    opacity: .75;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   BARCO
+
+========================================================= */
+
+#barco {
+
+    position: absolute;
+
+    z-index: 80;
+
+    top: 125px;
+
+    left: 50%;
+
+    width: 145px;
+
+    height: 88px;
+
+    transform:
+
+        translateX(-50%);
+
+    pointer-events: none;
+
+}
+
+.barco-casco {
+
+    position: absolute;
+
+    left: 7px;
+
+    bottom: 0;
+
+    width: 132px;
+
+    height: 34px;
+
+    border-radius:
+
+        8px 8px 55px 55px;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #c97b38,
+
+            #84441d
+
+        );
+
+    border:
+
+        3px solid rgba(85,40,15,.4);
+
+}
+
+.barco-borda {
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: 27px;
+
+    width: 145px;
+
+    height: 11px;
+
+    border-radius: 8px;
+
+    background: #f4c16e;
+
+    border:
+
+        2px solid rgba(100,55,20,.3);
+
+}
+
+/* =========================================================
+
+   PETTON NO BARCO
+
+========================================================= */
+
+#petton {
+
+    position: absolute;
+
+    z-index: 85;
+
+    width: 74px;
+
+    height: 74px;
+
+    left: 50%;
+
+    top: -19px;
+
+    transform:
+
+        translateX(-50%);
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+}
+
+#petton img {
+
+    display: block;
+
+    max-width: 74px;
+
+    max-height: 74px;
+
+    object-fit: contain;
+
+    filter:
+
+        drop-shadow(
+
+            0 4px 3px rgba(0,0,0,.18)
+
+        );
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+}
+
+/* =========================================================
+
+   VARA
+
+========================================================= */
+
+.vara {
+
+    position: absolute;
+
+    z-index: 86;
+
+    top: 14px;
+
+    right: -43px;
+
+    width: 87px;
+
+    height: 5px;
+
+    border-radius: 5px;
+
+    background: #6c3b20;
+
+    transform:
+
+        rotate(17deg);
+
+    transform-origin:
+
+        left center;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   LINHA E ANZOL
+
+========================================================= */
+
+#linha {
+
+    position: absolute;
+
+    z-index: 60;
+
+    width: 2px;
+
+    background:
+
+        rgba(245,245,245,.9);
+
+    top: 172px;
+
+    left: 50%;
+
+    height: 0;
+
+    transform:
+
+        translateX(65px);
+
+    pointer-events: none;
+
+}
+
+#anzol {
+
+    position: absolute;
+
+    z-index: 70;
+
+    width: 34px;
+
+    height: 34px;
+
+    top: 172px;
+
+    left: 50%;
+
+    transform:
+
+        translateX(48px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 29px;
+
+    pointer-events: none;
+
+    filter:
+
+        drop-shadow(
+
+            0 2px 2px rgba(0,0,0,.25)
+
+        );
+
+}
+
+/* =========================================================
+
+   OBJETOS
+
+========================================================= */
+
+.objeto {
+
+    position: absolute;
+
+    z-index: 35;
+
+    width: 55px;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 40px;
+
+    line-height: 1;
+
+    user-select: none;
+
+    pointer-events: none;
+
+    filter:
+
+        drop-shadow(
+
+            0 3px 2px rgba(0,0,0,.18)
+
+        );
+
+    will-change:
+
+        left,
+
+        top,
+
+        transform;
+
+}
+
+.objeto.especial {
+
+    width: 61px;
+
+    height: 48px;
+
+    font-size: 45px;
+
+    filter:
+
+        drop-shadow(
+
+            0 0 7px rgba(255,225,50,.95)
+
+        );
+
+}
+
+.objeto.lixo {
+
+    font-size: 38px;
+
+}
+
+/* =========================================================
+
+   BOLHAS
+
+========================================================= */
+
+.bolhas {
+
+    position: absolute;
+
+    z-index: 4;
+
+    color:
+
+        rgba(255,255,255,.5);
+
+    font-size: 18px;
+
+    pointer-events: none;
+
+    animation:
+
+        subirBolha 4s linear infinite;
+
+}
+
+@keyframes subirBolha {
+
+    from {
+
+        transform:
+
+            translateY(60px);
+
+        opacity: .2;
+
+    }
+
+    50% {
+
+        opacity: .8;
+
+    }
+
+    to {
+
+        transform:
+
+            translateY(-120px);
+
+        opacity: 0;
+
+    }
+
+}
+
+/* =========================================================
+
+   FUNDO DO MAR
+
+========================================================= */
+
+.fundo-mar {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 52px;
+
+    z-index: 3;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #e5c878,
+
+            #c4a552
+
+        );
+
+    font-size: 28px;
+
+    line-height: 45px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+.mensagem {
+
+    position: absolute;
+
+    z-index: 120;
+
+    left: 50%;
+
+    top: 48%;
+
+    transform:
+
+        translate(-50%,-50%);
+
+    padding: 10px 17px;
+
+    border-radius: 22px;
+
+    background:
+
+        rgba(255,255,255,.95);
+
+    box-shadow:
+
+        0 4px 14px rgba(0,0,0,.15);
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+}
+
+.mensagem.mostrar {
+
+    animation:
+
+        mensagemAnimacao .8s forwards;
+
+}
+
+@keyframes mensagemAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-40%)
+
+            scale(.7);
+
+    }
+
+    20% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.08);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-70%)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   PONTOS
+
+========================================================= */
+
+.ponto-flutuante {
+
+    position: absolute;
+
+    z-index: 130;
+
+    color: #fff;
+
+    text-shadow:
+
+        0 2px 4px rgba(0,0,0,.35);
+
+    font-size: 23px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+    animation:
+
+        subirPonto .7s forwards;
+
+}
+
+.ponto-flutuante.bonus {
+
+    color: #ffe85c;
+
+}
+
+.ponto-flutuante.ruim {
+
+    color: #ffdad5;
+
+}
+
+@keyframes subirPonto {
+
+    from {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,0)
+
+            scale(.8);
+
+    }
+
+    to {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-55px)
+
+            scale(1.3);
+
+    }
+
+}
+
+/* =========================================================
+
+   INSTRUÇÃO
+
+========================================================= */
+
+#instrucao {
+
+    position: absolute;
+
+    z-index: 90;
+
+    left: 50%;
+
+    bottom: 68px;
+
+    transform:
+
+        translateX(-50%);
+
+    padding: 8px 15px;
+
+    border-radius: 20px;
+
+    background:
+
+        rgba(255,255,255,.82);
+
+    color: #176b91;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   OVERLAY
+
+========================================================= */
+
+.overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 300;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 22px;
+
+    background:
+
+        rgba(14,75,111,.30);
+
+    backdrop-filter:
+
+        blur(3px);
+
+}
+
+.overlay.oculto {
+
+    display: none;
+
+}
+
+.caixa {
+
+    width: 100%;
+
+    max-width: 340px;
+
+    padding: 25px 20px;
+
+    border-radius: 26px;
+
+    background:
+
+        rgba(255,255,255,.97);
+
+    box-shadow:
+
+        0 10px 35px rgba(0,0,0,.18);
+
+    text-align: center;
+
+}
+
+.caixa-icone {
+
+    font-size: 55px;
+
+    line-height: 1;
+
+}
+
+.caixa h2 {
+
+    margin: 12px 0 7px;
+
+    font-size: 23px;
+
+}
+
+.caixa p {
+
+    margin: 5px 0;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+}
+
+.resultado {
+
+    margin: 15px 0;
+
+    padding: 12px;
+
+    border-radius: 17px;
+
+    background: #eef9ff;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+.btn-jogar {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #39b9e9,
+
+            #157ebd
+
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 4px 12px rgba(21,126,189,.25);
+
+}
+
+.btn-jogar:active {
+
+    transform: scale(.97);
+
+}
+
+.btn-menu {
+
+    width: 100%;
+
+    min-height: 46px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background: #f0f2f4;
+
+    color: #555;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+/* =========================================================
+
+   MOBILE PEQUENO
+
+========================================================= */
+
+@media(max-width:360px) {
+
+    #barco {
+
+        transform:
+
+            translateX(-50%)
+
+            scale(.92);
+
+    }
+
+    .hud-valor {
+
+        font-size: 15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="cenario"></div>
+
+<!-- =====================================================
+
+     TOPO
+
+====================================================== -->
+
+<header class="topo">
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        onclick="voltarMenu()"
+
+    >
+
+        ←
+
+    </button>
+
+    <div class="titulo">
+
+        <strong>
+
+            🐟 Pesca
+
+        </strong>
+
+        <span>
+
+            Acerte o anzol nos peixes
+
+        </span>
+
+    </div>
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        id="btnSom"
+
+        onclick="alternarSom()"
+
+    >
+
+        🔊
+
+    </button>
+
+</header>
+
+<!-- =====================================================
+
+     HUD
+
+====================================================== -->
+
+<div class="hud">
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            PONTOS
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="pontos"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            NÍVEL
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="nivel"
+
+        >
+
+            1
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            TEMPO
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="tempo"
+
+        >
+
+            90
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            RECORDE
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="recorde"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     JOGO
+
+====================================================== -->
+
+<div id="areaJogo">
+
+    <div class="sol"></div>
+
+    <div class="nuvem">
+
+        ☁️
+
+    </div>
+
+    <div class="linha-agua"></div>
+
+    <div id="barco">
+
+        <div id="petton">
+
+            <img
+
+                id="imagemPetton"
+
+                alt="Petton"
+
+            >
+
+        </div>
+
+        <div class="vara"></div>
+
+        <div class="barco-casco"></div>
+
+        <div class="barco-borda"></div>
+
+    </div>
+
+    <div id="linha"></div>
+
+    <div id="anzol">
+
+        🪝
+
+    </div>
+
+    <div
+
+        id="mensagem"
+
+        class="mensagem"
+
+    >
+
+        ⭐ Nível 2!
+
+    </div>
+
+    <div id="instrucao">
+
+        👆 Toque para lançar o anzol
+
+    </div>
+
+    <div
+
+        class="bolhas"
+
+        style="left:12%; bottom:80px;"
+
+    >
+
+        ○ ° ○
+
+    </div>
+
+    <div
+
+        class="bolhas"
+
+        style="left:72%; bottom:140px; animation-delay:1.2s;"
+
+    >
+
+        ° ○ °
+
+    </div>
+
+    <div
+
+        class="bolhas"
+
+        style="left:43%; bottom:50px; animation-delay:2.2s;"
+
+    >
+
+        ○ ° ○
+
+    </div>
+
+    <div class="fundo-mar">
+
+        🌿 🪨 🌱 🐚 🌿 🪨 🌱 🐚 🌿 🪨
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     TELA INICIAL
+
+====================================================== -->
+
+<div
+
+    class="overlay"
+
+    id="telaInicial"
+
+>
+
+    <div class="caixa">
+
+        <div class="caixa-icone">
+
+            🎣🐟
+
+        </div>
+
+        <h2>
+
+            Pesca
+
+        </h2>
+
+        <p>
+
+            Toque na tela para baixar o anzol.
+
+        </p>
+
+        <p>
+
+            🐟 = +1 ponto
+
+        </p>
+
+        <p>
+
+            🐠 = +3 pontos
+
+        </p>
+
+        <p>
+
+            👢 = -2 pontos
+
+        </p>
+
+        <p>
+
+            Mire bem: o anzol volta sozinho.
+
+        </p>
+
+        <p>
+
+            Você tem 90 segundos.
+
+        </p>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            ▶️ JOGAR
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     FIM
+
+====================================================== -->
+
+<div
+
+    class="overlay oculto"
+
+    id="telaFim"
+
+>
+
+    <div class="caixa">
+
+        <div class="caixa-icone">
+
+            🏆🐟
+
+        </div>
+
+        <h2>
+
+            Pesca encerrada!
+
+        </h2>
+
+        <p>
+
+            Veja quantos pontos você conseguiu.
+
+        </p>
+
+        <div class="resultado">
+
+            Pontos:
+
+            <strong id="pontosFim">
+
+                0
+
+            </strong>
+
+            <br>
+
+            Recorde:
+
+            <strong id="recordeFim">
+
+                0
+
+            </strong>
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            🔄 PESCAR NOVAMENTE
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const CHAVE_RECORDE =
+
+    "petton_jogo_pesca_recorde_v1";
+
+const TEMPO_JOGO =
+
+    90;
+
+let pontos =
+
+    0;
+
+let nivel =
+
+    1;
+
+let recorde =
+
+    0;
+
+let tempoRestante =
+
+    TEMPO_JOGO;
+
+let jogando =
+
+    false;
+
+let ultimoTempo =
+
+    0;
+
+let ultimoSpawn =
+
+    0;
+
+let animacaoId =
+
+    null;
+
+let objetos =
+
+    [];
+
+/* =========================================================
+
+   ANZOL
+
+========================================================= */
+
+let estadoAnzol =
+
+    "parado";
+
+let anzolY =
+
+    172;
+
+let velocidadeAnzol =
+
+    560;
+
+let objetoPescado =
+
+    null;
+
+/* =========================================================
+
+   ELEMENTOS
+
+========================================================= */
+
+const areaJogo =
+
+    document.getElementById(
+
+        "areaJogo"
+
+    );
+
+const linhaEl =
+
+    document.getElementById(
+
+        "linha"
+
+    );
+
+const anzolEl =
+
+    document.getElementById(
+
+        "anzol"
+
+    );
+
+const imagemPetton =
+
+    document.getElementById(
+
+        "imagemPetton"
+
+    );
+
+const pontosEl =
+
+    document.getElementById(
+
+        "pontos"
+
+    );
+
+const nivelEl =
+
+    document.getElementById(
+
+        "nivel"
+
+    );
+
+const tempoEl =
+
+    document.getElementById(
+
+        "tempo"
+
+    );
+
+const recordeEl =
+
+    document.getElementById(
+
+        "recorde"
+
+    );
+
+const telaInicial =
+
+    document.getElementById(
+
+        "telaInicial"
+
+    );
+
+const telaFim =
+
+    document.getElementById(
+
+        "telaFim"
+
+    );
+
+/* =========================================================
+
+   RECORDE
+
+========================================================= */
+
+function carregarRecorde() {
+
+    try {
+
+        recorde =
+
+            Number(
+
+                localStorage.getItem(
+
+                    CHAVE_RECORDE
+
+                )
+
+            ) || 0;
+
+    } catch (erro) {
+
+        recorde =
+
+            0;
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+}
+
+/* =========================================================
+
+   FASE PETTON
+
+========================================================= */
+
+function descobrirFaseLocal(
+
+    dados
+
+) {
+
+    if (
+
+        dados &&
+
+        dados.fase &&
+
+        dados.fase !== "ovo"
+
+    ) {
+
+        return dados.fase;
+
+    }
+
+    let dias =
+
+        0;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.idadeDias ===
+
+                "function"
+
+        ) {
+
+            dias =
+
+                Number(
+
+                    Petton.idadeDias()
+
+                ) || 0;
+
+        }
+
+    } catch (erro) {
+
+        dias =
+
+            0;
+
+    }
+
+    if (
+
+        dias < 8
+
+    ) {
+
+        return "bebe";
+
+    }
+
+    if (
+
+        dias < 31
+
+    ) {
+
+        return "filhote";
+
+    }
+
+    if (
+
+        dias < 91
+
+    ) {
+
+        return "jovem";
+
+    }
+
+    return "adulto";
+
+}
+
+/* =========================================================
+
+   IMAGEM PETTON
+
+========================================================= */
+
+function carregarImagemPetton() {
+
+    let dados =
+
+        null;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.carregar ===
+
+                "function"
+
+        ) {
+
+            dados =
+
+                Petton.carregar();
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro ao carregar Petton:",
+
+            erro
+
+        );
+
+    }
+
+    if (
+
+        !dados
+
+    ) {
+
+        imagemPetton.src =
+
+            "../petton-original.png";
+
+        return;
+
+    }
+
+    const fase =
+
+        descobrirFaseLocal(
+
+            dados
+
+        );
+
+    const especie =
+
+        dados.identidadeVisual
+
+            ?.especie ||
+
+        dados.especie ||
+
+        "gato";
+
+    const imagemGerada =
+
+        dados.identidadeVisual
+
+            ?.imagens
+
+            ?.[fase];
+
+    if (
+
+        imagemGerada
+
+    ) {
+
+        imagemPetton.src =
+
+            imagemGerada;
+
+        return;
+
+    }
+
+    if (
+
+        especie ===
+
+        "cachorro"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+        return;
+
+    }
+
+    if (
+
+        especie ===
+
+        "coelho"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
+
+        return;
+
+    }
+
+    imagemPetton.src =
+
+        "../petton-original.png";
+
+}
+
+/* =========================================================
+
+   LANÇAR ANZOL
+
+========================================================= */
+
+function lancarAnzol() {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    if (
+
+        estadoAnzol !==
+
+        "parado"
+
+    ) {
+
+        return;
+
+    }
+
+    estadoAnzol =
+
+        "descendo";
+
+    objetoPescado =
+
+        null;
+
+    document.getElementById(
+
+        "instrucao"
+
+    ).style.opacity =
+
+        ".25";
+
+    tocarLancamento();
+
+}
+
+/* =========================================================
+
+   TOUCH / CLICK
+
+========================================================= */
+
+areaJogo.addEventListener(
+
+    "pointerdown",
+
+    function(evento) {
+
+        if (
+
+            !jogando
+
+        ) {
+
+            return;
+
+        }
+
+        evento.preventDefault();
+
+        lancarAnzol();
+
+    }
+
+);
+
+/* =========================================================
+
+   POSIÇÃO DO ANZOL
+
+========================================================= */
+
+function atualizarVisualAnzol() {
+
+    const topoLinha =
+
+        172;
+
+    const alturaLinha =
+
+        Math.max(
+
+            0,
+
+            anzolY -
+
+            topoLinha +
+
+            15
+
+        );
+
+    linhaEl.style.height =
+
+        alturaLinha +
+
+        "px";
+
+    anzolEl.style.top =
+
+        anzolY +
+
+        "px";
+
+    if (
+
+        objetoPescado &&
+
+        objetoPescado.vivo
+
+    ) {
+
+        objetoPescado.x =
+
+            areaJogo.clientWidth /
+
+            2 +
+
+            42;
+
+        objetoPescado.y =
+
+            anzolY +
+
+            20;
+
+        objetoPescado
+
+            .elemento
+
+            .style.left =
+
+                objetoPescado.x +
+
+                "px";
+
+        objetoPescado
+
+            .elemento
+
+            .style.top =
+
+                objetoPescado.y +
+
+                "px";
+
+    }
+
+}
+
+/* =========================================================
+
+   MOVIMENTO ANZOL
+
+========================================================= */
+
+function atualizarAnzol(
+
+    delta
+
+) {
+
+    const topo =
+
+        172;
+
+    const fundo =
+
+        areaJogo.clientHeight -
+
+        82;
+
+    if (
+
+        estadoAnzol ===
+
+        "descendo"
+
+    ) {
+
+        anzolY +=
+
+            velocidadeAnzol *
+
+            delta;
+
+        verificarCaptura();
+
+        if (
+
+            anzolY >=
+
+            fundo
+
+        ) {
+
+            anzolY =
+
+                fundo;
+
+            estadoAnzol =
+
+                "subindo";
+
+        }
+
+    } else if (
+
+        estadoAnzol ===
+
+        "subindo"
+
+    ) {
+
+        anzolY -=
+
+            velocidadeAnzol *
+
+            delta;
+
+        if (
+
+            anzolY <=
+
+            topo
+
+        ) {
+
+            anzolY =
+
+                topo;
+
+            estadoAnzol =
+
+                "parado";
+
+            finalizarCaptura();
+
+            document.getElementById(
+
+                "instrucao"
+
+            ).style.opacity =
+
+                "1";
+
+        }
+
+    }
+
+    atualizarVisualAnzol();
+
+}
+
+/* =========================================================
+
+   CRIAR OBJETO
+
+========================================================= */
+
+function criarObjeto() {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    const sorteio =
+
+        Math.random();
+
+    let tipo;
+
+    /*
+
+       12% lixo
+
+       10% peixe especial
+
+       restante peixe normal
+
+    */
+
+    if (
+
+        sorteio < .12
+
+    ) {
+
+        tipo =
+
+            "lixo";
+
+    } else if (
+
+        sorteio < .22
+
+    ) {
+
+        tipo =
+
+            "especial";
+
+    } else {
+
+        tipo =
+
+            "peixe";
+
+    }
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "objeto";
+
+    if (
+
+        tipo ===
+
+        "lixo"
+
+    ) {
+
+        elemento.classList.add(
+
+            "lixo"
+
+        );
+
+        elemento.textContent =
+
+            "👢";
+
+    } else if (
+
+        tipo ===
+
+        "especial"
+
+    ) {
+
+        elemento.classList.add(
+
+            "especial"
+
+        );
+
+        elemento.textContent =
+
+            "🐠";
+
+    } else {
+
+        elemento.textContent =
+
+            "🐟";
+
+    }
+
+    const larguraArea =
+
+        areaJogo.clientWidth;
+
+    const alturaArea =
+
+        areaJogo.clientHeight;
+
+    const direita =
+
+        Math.random() >
+
+        .5;
+
+    const tamanho =
+
+        tipo ===
+
+            "especial"
+
+            ? 61
+
+            : 55;
+
+    const x =
+
+        direita
+
+            ? -tamanho - 10
+
+            : larguraArea + 10;
+
+    /*
+
+       Espalha os peixes
+
+       pela água.
+
+    */
+
+    const minimoY =
+
+        230;
+
+    const maximoY =
+
+        Math.max(
+
+            minimoY + 50,
+
+            alturaArea - 115
+
+        );
+
+    const y =
+
+        minimoY +
+
+        Math.random() *
+
+        (
+
+            maximoY -
+
+            minimoY
+
+        );
+
+    let velocidade =
+
+        65 +
+
+        (nivel - 1) * 9 +
+
+        Math.random() * 45;
+
+    if (
+
+        tipo ===
+
+        "especial"
+
+    ) {
+
+        velocidade *=
+
+            1.18;
+
+    }
+
+    if (
+
+        tipo ===
+
+        "lixo"
+
+    ) {
+
+        velocidade *=
+
+            .82;
+
+    }
+
+    const vx =
+
+        direita
+
+            ? velocidade
+
+            : -velocidade;
+
+    elemento.style.left =
+
+        x + "px";
+
+    elemento.style.top =
+
+        y + "px";
+
+    /*
+
+       Inverte emoji
+
+       conforme direção.
+
+    */
+
+    if (
+
+        vx < 0 &&
+
+        tipo !== "lixo"
+
+    ) {
+
+        elemento.style.transform =
+
+            "scaleX(-1)";
+
+    }
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    objetos.push({
+
+        elemento:
+
+            elemento,
+
+        tipo:
+
+            tipo,
+
+        x:
+
+            x,
+
+        y:
+
+            y,
+
+        vx:
+
+            vx,
+
+        tamanho:
+
+            tamanho,
+
+        vivo:
+
+            true,
+
+        capturado:
+
+            false,
+
+        onda:
+
+            Math.random() *
+
+            Math.PI *
+
+            2
+
+    });
+
+}
+
+/* =========================================================
+
+   MOVIMENTO DOS PEIXES
+
+========================================================= */
+
+function atualizarObjetos(
+
+    delta
+
+) {
+
+    const largura =
+
+        areaJogo.clientWidth;
+
+    for (
+
+        const objeto
+
+        of objetos
+
+    ) {
+
+        if (
+
+            !objeto.vivo ||
+
+            objeto.capturado
+
+        ) {
+
+            continue;
+
+        }
+
+        objeto.onda +=
+
+            delta * 3;
+
+        objeto.x +=
+
+            objeto.vx *
+
+            delta;
+
+        objeto.elemento.style.left =
+
+            objeto.x +
+
+            "px";
+
+        objeto.elemento.style.top =
+
+            (
+
+                objeto.y +
+
+                Math.sin(
+
+                    objeto.onda
+
+                ) * 5
+
+            ) +
+
+            "px";
+
+        if (
+
+            objeto.vx > 0 &&
+
+            objeto.x >
+
+                largura + 80
+
+        ) {
+
+            removerObjeto(
+
+                objeto
+
+            );
+
+        }
+
+        if (
+
+            objeto.vx < 0 &&
+
+            objeto.x <
+
+                -90
+
+        ) {
+
+            removerObjeto(
+
+                objeto
+
+            );
+
+        }
+
+    }
+
+    objetos =
+
+        objetos.filter(
+
+            function(item) {
+
+                return item.vivo;
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   VERIFICAR CAPTURA
+
+========================================================= */
+
+function verificarCaptura() {
+
+    if (
+
+        objetoPescado
+
+    ) {
+
+        return;
+
+    }
+
+    const rectAnzol =
+
+        anzolEl
+
+            .getBoundingClientRect();
+
+    /*
+
+       Hitbox um pouco maior
+
+       para ficar gostoso de jogar.
+
+    */
+
+    const anzolHit = {
+
+        left:
+
+            rectAnzol.left - 7,
+
+        right:
+
+            rectAnzol.right + 7,
+
+        top:
+
+            rectAnzol.top - 5,
+
+        bottom:
+
+            rectAnzol.bottom + 8
+
+    };
+
+    for (
+
+        const objeto
+
+        of objetos
+
+    ) {
+
+        if (
+
+            !objeto.vivo ||
+
+            objeto.capturado
+
+        ) {
+
+            continue;
+
+        }
+
+        const rect =
+
+            objeto.elemento
+
+                .getBoundingClientRect();
+
+        const bateu =
+
+            anzolHit.left <
+
+                rect.right - 4 &&
+
+            anzolHit.right >
+
+                rect.left + 4 &&
+
+            anzolHit.top <
+
+                rect.bottom - 3 &&
+
+            anzolHit.bottom >
+
+                rect.top + 3;
+
+        if (
+
+            !bateu
+
+        ) {
+
+            continue;
+
+        }
+
+        objeto.capturado =
+
+            true;
+
+        objetoPescado =
+
+            objeto;
+
+        estadoAnzol =
+
+            "subindo";
+
+        tocarFisgada();
+
+        return;
+
+    }
+
+}
+
+/* =========================================================
+
+   FINALIZAR CAPTURA
+
+========================================================= */
+
+function finalizarCaptura() {
+
+    if (
+
+        !objetoPescado
+
+    ) {
+
+        return;
+
+    }
+
+    const objeto =
+
+        objetoPescado;
+
+    objetoPescado =
+
+        null;
+
+    if (
+
+        !objeto.vivo
+
+    ) {
+
+        return;
+
+    }
+
+    if (
+
+        objeto.tipo ===
+
+        "peixe"
+
+    ) {
+
+        pontos +=
+
+            1;
+
+        mostrarPonto(
+
+            "+1",
+
+            false,
+
+            false
+
+        );
+
+        tocarPonto();
+
+    } else if (
+
+        objeto.tipo ===
+
+        "especial"
+
+    ) {
+
+        pontos +=
+
+            3;
+
+        mostrarPonto(
+
+            "+3",
+
+            true,
+
+            false
+
+        );
+
+        tocarBonus();
+
+    } else {
+
+        pontos =
+
+            Math.max(
+
+                0,
+
+                pontos - 2
+
+            );
+
+        mostrarPonto(
+
+            "-2",
+
+            false,
+
+            true
+
+        );
+
+        mostrarMensagem(
+
+            "👢 Lixo! -2"
+
+        );
+
+        tocarLixo();
+
+    }
+
+    pontosEl.textContent =
+
+        pontos;
+
+    removerObjeto(
+
+        objeto
+
+    );
+
+    verificarNivel();
+
+}
+
+/* =========================================================
+
+   REMOVER OBJETO
+
+========================================================= */
+
+function removerObjeto(
+
+    objeto
+
+) {
+
+    objeto.vivo =
+
+        false;
+
+    try {
+
+        objeto.elemento.remove();
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   PONTO FLUTUANTE
+
+========================================================= */
+
+function mostrarPonto(
+
+    texto,
+
+    bonus,
+
+    ruim
+
+) {
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "ponto-flutuante";
+
+    if (
+
+        bonus
+
+    ) {
+
+        elemento.classList.add(
+
+            "bonus"
+
+        );
+
+    }
+
+    if (
+
+        ruim
+
+    ) {
+
+        elemento.classList.add(
+
+            "ruim"
+
+        );
+
+    }
+
+    elemento.textContent =
+
+        texto;
+
+    elemento.style.left =
+
+        "63%";
+
+    elemento.style.top =
+
+        "180px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            elemento.remove();
+
+        },
+
+        750
+
+    );
+
+}
+
+/* =========================================================
+
+   NÍVEL
+
+========================================================= */
+
+function verificarNivel() {
+
+    const novoNivel =
+
+        1 +
+
+        Math.floor(
+
+            pontos / 10
+
+        );
+
+    if (
+
+        novoNivel <=
+
+        nivel
+
+    ) {
+
+        return;
+
+    }
+
+    nivel =
+
+        novoNivel;
+
+    nivelEl.textContent =
+
+        nivel;
+
+    mostrarMensagem(
+
+        "⭐ Nível " +
+
+        nivel +
+
+        "!"
+
+    );
+
+    tocarNivel();
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+function mostrarMensagem(
+
+    texto
+
+) {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagem"
+
+        );
+
+    elemento.textContent =
+
+        texto;
+
+    elemento.classList.remove(
+
+        "mostrar"
+
+    );
+
+    void elemento.offsetWidth;
+
+    elemento.classList.add(
+
+        "mostrar"
+
+    );
+
+}
+
+/* =========================================================
+
+   SPAWN
+
+========================================================= */
+
+function tentarCriarObjeto(
+
+    tempoAtual
+
+) {
+
+    const intervalo =
+
+        Math.max(
+
+            390,
+
+            900 -
+
+            (nivel - 1) * 60
+
+        );
+
+    if (
+
+        tempoAtual -
+
+        ultimoSpawn <
+
+        intervalo
+
+    ) {
+
+        return;
+
+    }
+
+    ultimoSpawn =
+
+        tempoAtual;
+
+    const maximo =
+
+        Math.min(
+
+            12,
+
+            6 +
+
+            Math.floor(
+
+                nivel / 2
+
+            )
+
+        );
+
+    if (
+
+        objetos.length <
+
+        maximo
+
+    ) {
+
+        criarObjeto();
+
+    }
+
+    /*
+
+       Níveis maiores:
+
+       possibilidade de segundo peixe.
+
+    */
+
+    if (
+
+        nivel >= 3 &&
+
+        objetos.length <
+
+            maximo &&
+
+        Math.random() < .28
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    jogando &&
+
+                    objetos.length <
+
+                        maximo
+
+                ) {
+
+                    criarObjeto();
+
+                }
+
+            },
+
+            180
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   LIMPAR
+
+========================================================= */
+
+function limparObjetos() {
+
+    for (
+
+        const objeto
+
+        of objetos
+
+    ) {
+
+        try {
+
+            objeto.elemento.remove();
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    objetos =
+
+        [];
+
+    objetoPescado =
+
+        null;
+
+}
+
+/* =========================================================
+
+   LOOP
+
+========================================================= */
+
+function loop(
+
+    tempoAtual
+
+) {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    if (
+
+        !ultimoTempo
+
+    ) {
+
+        ultimoTempo =
+
+            tempoAtual;
+
+    }
+
+    let delta =
+
+        (
+
+            tempoAtual -
+
+            ultimoTempo
+
+        ) /
+
+        1000;
+
+    ultimoTempo =
+
+        tempoAtual;
+
+    delta =
+
+        Math.min(
+
+            delta,
+
+            .04
+
+        );
+
+    tempoRestante -=
+
+        delta;
+
+    tempoEl.textContent =
+
+        Math.max(
+
+            0,
+
+            Math.ceil(
+
+                tempoRestante
+
+            )
+
+        );
+
+    if (
+
+        tempoRestante <=
+
+        0
+
+    ) {
+
+        finalizarJogo();
+
+        return;
+
+    }
+
+    tentarCriarObjeto(
+
+        tempoAtual
+
+    );
+
+    atualizarObjetos(
+
+        delta
+
+    );
+
+    atualizarAnzol(
+
+        delta
+
+    );
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   INICIAR
+
+========================================================= */
+
+function iniciarJogo() {
+
+    prepararAudio();
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    limparObjetos();
+
+    pontos =
+
+        0;
+
+    nivel =
+
+        1;
+
+    tempoRestante =
+
+        TEMPO_JOGO;
+
+    ultimoTempo =
+
+        0;
+
+    ultimoSpawn =
+
+        0;
+
+    estadoAnzol =
+
+        "parado";
+
+    anzolY =
+
+        172;
+
+    objetoPescado =
+
+        null;
+
+    pontosEl.textContent =
+
+        "0";
+
+    nivelEl.textContent =
+
+        "1";
+
+    tempoEl.textContent =
+
+        String(
+
+            TEMPO_JOGO
+
+        );
+
+    telaInicial.classList.add(
+
+        "oculto"
+
+    );
+
+    telaFim.classList.add(
+
+        "oculto"
+
+    );
+
+    document.getElementById(
+
+        "instrucao"
+
+    ).style.opacity =
+
+        "1";
+
+    atualizarVisualAnzol();
+
+    jogando =
+
+        true;
+
+    /*
+
+       Começa com vários peixes,
+
+       para não ficar esperando.
+
+    */
+
+    criarObjeto();
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando
+
+            ) {
+
+                criarObjeto();
+
+            }
+
+        },
+
+        250
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando
+
+            ) {
+
+                criarObjeto();
+
+            }
+
+        },
+
+        500
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando
+
+            ) {
+
+                criarObjeto();
+
+            }
+
+        },
+
+        750
+
+    );
+
+    tocarInicio();
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   FINAL
+
+========================================================= */
+
+function finalizarJogo() {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+        animacaoId =
+
+            null;
+
+    }
+
+    if (
+
+        pontos >
+
+        recorde
+
+    ) {
+
+        recorde =
+
+            pontos;
+
+        try {
+
+            localStorage.setItem(
+
+                CHAVE_RECORDE,
+
+                String(
+
+                    recorde
+
+                )
+
+            );
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+    document.getElementById(
+
+        "pontosFim"
+
+    ).textContent =
+
+        pontos;
+
+    document.getElementById(
+
+        "recordeFim"
+
+    ).textContent =
+
+        recorde;
+
+    tocarFim();
+
+    telaFim.classList.remove(
+
+        "oculto"
+
+    );
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltarMenu() {
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    window.location.assign(
+
+        "./brincar.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   ÁUDIO
+
+========================================================= */
+
+let audioContext =
+
+    null;
+
+let somAtivo =
+
+    true;
+
+function prepararAudio() {
+
+    if (
+
+        !somAtivo
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        if (
+
+            !audioContext
+
+        ) {
+
+            const AudioCtx =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (
+
+                AudioCtx
+
+            ) {
+
+                audioContext =
+
+                    new AudioCtx();
+
+            }
+
+        }
+
+        if (
+
+            audioContext &&
+
+            audioContext.state ===
+
+                "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Áudio indisponível:",
+
+            erro
+
+        );
+
+    }
+
+}
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    tipo = "sine",
+
+    volume = .05,
+
+    atraso = 0
+
+) {
+
+    if (
+
+        !somAtivo ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const inicio =
+
+            audioContext.currentTime +
+
+            atraso;
+
+        const oscilador =
+
+            audioContext
+
+                .createOscillator();
+
+        const ganho =
+
+            audioContext
+
+                .createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                volume,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                .001,
+
+                inicio +
+
+                duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(
+
+            inicio
+
+        );
+
+        oscilador.stop(
+
+            inicio +
+
+            duracao
+
+        );
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   SONS
+
+========================================================= */
+
+function tocarInicio() {
+
+    tocarTom(
+
+        440,
+
+        .10
+
+    );
+
+    tocarTom(
+
+        660,
+
+        .11,
+
+        "sine",
+
+        .05,
+
+        .10
+
+    );
+
+    tocarTom(
+
+        880,
+
+        .14,
+
+        "sine",
+
+        .05,
+
+        .20
+
+    );
+
+}
+
+function tocarLancamento() {
+
+    tocarTom(
+
+        500,
+
+        .07,
+
+        "triangle",
+
+        .025
+
+    );
+
+    tocarTom(
+
+        360,
+
+        .10,
+
+        "triangle",
+
+        .025,
+
+        .05
+
+    );
+
+}
+
+function tocarFisgada() {
+
+    tocarTom(
+
+        720,
+
+        .07,
+
+        "square",
+
+        .035
+
+    );
+
+    tocarTom(
+
+        900,
+
+        .09,
+
+        "sine",
+
+        .035,
+
+        .05
+
+    );
+
+}
+
+function tocarPonto() {
+
+    tocarTom(
+
+        700,
+
+        .09,
+
+        "sine",
+
+        .045
+
+    );
+
+    tocarTom(
+
+        930,
+
+        .10,
+
+        "sine",
+
+        .04,
+
+        .07
+
+    );
+
+}
+
+function tocarBonus() {
+
+    tocarTom(
+
+        700,
+
+        .08,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        1000,
+
+        .10,
+
+        "sine",
+
+        .05,
+
+        .07
+
+    );
+
+    tocarTom(
+
+        1350,
+
+        .13,
+
+        "sine",
+
+        .045,
+
+        .14
+
+    );
+
+}
+
+function tocarLixo() {
+
+    tocarTom(
+
+        190,
+
+        .13,
+
+        "sawtooth",
+
+        .04
+
+    );
+
+    tocarTom(
+
+        120,
+
+        .20,
+
+        "sawtooth",
+
+        .035,
+
+        .10
+
+    );
+
+}
+
+function tocarNivel() {
+
+    tocarTom(
+
+        520,
+
+        .09,
+
+        "triangle",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        780,
+
+        .10,
+
+        "triangle",
+
+        .05,
+
+        .08
+
+    );
+
+    tocarTom(
+
+        1040,
+
+        .13,
+
+        "triangle",
+
+        .05,
+
+        .16
+
+    );
+
+}
+
+function tocarFim() {
+
+    tocarTom(
+
+        700,
+
+        .12,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        880,
+
+        .13,
+
+        "sine",
+
+        .05,
+
+        .11
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .18,
+
+        "sine",
+
+        .05,
+
+        .22
+
+    );
+
+}
+
+/* =========================================================
+
+   SOM
+
+========================================================= */
+
+function alternarSom() {
+
+    somAtivo =
+
+        !somAtivo;
+
+    document.getElementById(
+
+        "btnSom"
+
+    ).textContent =
+
+        somAtivo
+
+            ? "🔊"
+
+            : "🔇";
+
+    if (
+
+        somAtivo
+
+    ) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            700,
+
+            .09
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   INICIALIZAÇÃO
+
+========================================================= */
+
+carregarRecorde();
+
+carregarImagemPetton();
+
+atualizarVisualAnzol();
+
+</script>
+
+</body>
+
+</html>
