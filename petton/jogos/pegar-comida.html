@@ -1,0 +1,3929 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<meta name="google" content="notranslate">
+
+<title>Pegar Comida 🍖</title>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: hidden;
+
+    overscroll-behavior: none;
+
+}
+
+body {
+
+    font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        Arial,
+
+        sans-serif;
+
+    background: #dff5ff;
+
+    color: #333;
+
+    touch-action: none;
+
+}
+
+.app {
+
+    width: 100%;
+
+    max-width: 520px;
+
+    height: 100%;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    position: relative;
+
+}
+
+/* =========================================================
+
+   TOPO
+
+========================================================= */
+
+.topo {
+
+    height: 58px;
+
+    flex: 0 0 58px;
+
+    display: grid;
+
+    grid-template-columns: 46px 1fr 46px;
+
+    align-items: center;
+
+    padding: 6px 9px;
+
+    background: rgba(255,255,255,.96);
+
+    border-bottom:
+
+        1px solid rgba(0,0,0,.07);
+
+    z-index: 100;
+
+}
+
+.btn-voltar,
+
+.btn-som {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f2f6f0;
+
+    font-size: 21px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+}
+
+.btn-voltar:active,
+
+.btn-som:active {
+
+    transform: scale(.94);
+
+}
+
+.titulo {
+
+    text-align: center;
+
+}
+
+.titulo strong {
+
+    display: block;
+
+    font-size: 16px;
+
+}
+
+.titulo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #888;
+
+    font-size: 10px;
+
+}
+
+/* =========================================================
+
+   ÁREA DO JOGO
+
+========================================================= */
+
+#jogo {
+
+    position: relative;
+
+    flex: 1;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    touch-action: none;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #ccefff 0%,
+
+            #eaf9ff 58%,
+
+            #dff3ce 58%,
+
+            #a9d77f 100%
+
+        );
+
+}
+
+/* =========================================================
+
+   CENÁRIO
+
+========================================================= */
+
+.sol {
+
+    position: absolute;
+
+    width: 65px;
+
+    height: 65px;
+
+    right: 24px;
+
+    top: 75px;
+
+    border-radius: 50%;
+
+    background: #ffe58a;
+
+    box-shadow:
+
+        0 0 30px
+
+        rgba(255,220,80,.45);
+
+}
+
+.nuvem {
+
+    position: absolute;
+
+    pointer-events: none;
+
+    opacity: .72;
+
+}
+
+.nuvem1 {
+
+    top: 135px;
+
+    left: 7%;
+
+    font-size: 45px;
+
+}
+
+.nuvem2 {
+
+    top: 220px;
+
+    right: 10%;
+
+    font-size: 35px;
+
+}
+
+/* =========================================================
+
+   CHÃO
+
+========================================================= */
+
+#chao {
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: 0;
+
+    width: 100%;
+
+    height: 82px;
+
+    z-index: 2;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #7fc85c 0,
+
+            #67ad4a 13px,
+
+            #ae8151 14px,
+
+            #936842 100%
+
+        );
+
+    border-top:
+
+        3px solid #58a13e;
+
+}
+
+/* =========================================================
+
+   PLACAR
+
+========================================================= */
+
+.placar {
+
+    position: absolute;
+
+    top: 12px;
+
+    left: 10px;
+
+    right: 10px;
+
+    z-index: 30;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 7px;
+
+    pointer-events: none;
+
+}
+
+.placar-item {
+
+    padding: 7px 4px;
+
+    background:
+
+        rgba(255,255,255,.93);
+
+    border-radius: 13px;
+
+    text-align: center;
+
+    box-shadow:
+
+        0 2px 10px
+
+        rgba(0,0,0,.07);
+
+}
+
+.placar-label {
+
+    display: block;
+
+    color: #888;
+
+    font-size: 9px;
+
+}
+
+.placar-valor {
+
+    display: block;
+
+    margin-top: 1px;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+}
+
+/* =========================================================
+
+   PETTON
+
+========================================================= */
+
+#petton {
+
+    position: absolute;
+
+    width: 88px;
+
+    height: 88px;
+
+    left: 50%;
+
+    bottom: 88px;
+
+    transform:
+
+        translateX(-50%);
+
+    z-index: 12;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+#petton img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+
+    opacity: 0;
+
+    transition:
+
+        opacity .15s;
+
+}
+
+#petton img.pronto {
+
+    opacity: 1;
+
+}
+
+#petton.movendo img {
+
+    animation:
+
+        petMexer .16s
+
+        infinite alternate
+
+        ease-in-out;
+
+}
+
+@keyframes petMexer {
+
+    from {
+
+        transform:
+
+            rotate(-4deg)
+
+            scale(1);
+
+    }
+
+    to {
+
+        transform:
+
+            rotate(4deg)
+
+            scale(1.04);
+
+    }
+
+}
+
+/* =========================================================
+
+   SOMBRA
+
+========================================================= */
+
+#sombraPetton {
+
+    position: absolute;
+
+    width: 64px;
+
+    height: 11px;
+
+    left: 50%;
+
+    bottom: 87px;
+
+    transform:
+
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+
+        rgba(0,0,0,.15);
+
+    z-index: 4;
+
+}
+
+/* =========================================================
+
+   OBJETOS
+
+========================================================= */
+
+.objeto {
+
+    position: absolute;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+    will-change: transform;
+
+    filter:
+
+        drop-shadow(
+
+            0 3px 3px
+
+            rgba(0,0,0,.16)
+
+        );
+
+}
+
+.objeto.bonus {
+
+    filter:
+
+        drop-shadow(
+
+            0 0 8px
+
+            rgba(255,215,0,.8)
+
+        );
+
+}
+
+.objeto.bomba {
+
+    filter:
+
+        drop-shadow(
+
+            0 3px 4px
+
+            rgba(0,0,0,.28)
+
+        );
+
+}
+
+/* =========================================================
+
+   TEXTO FLUTUANTE
+
+========================================================= */
+
+.feedback {
+
+    position: absolute;
+
+    z-index: 40;
+
+    font-size: 20px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+    animation:
+
+        subirFeedback
+
+        .65s forwards;
+
+}
+
+@keyframes subirFeedback {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,0)
+
+            scale(.8);
+
+    }
+
+    45% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-25px)
+
+            scale(1.15);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-55px)
+
+            scale(1);
+
+    }
+
+}
+
+/* =========================================================
+
+   ALERTA
+
+========================================================= */
+
+#nivelAviso {
+
+    position: absolute;
+
+    top: 92px;
+
+    left: 50%;
+
+    transform:
+
+        translateX(-50%)
+
+        scale(.85);
+
+    z-index: 35;
+
+    padding: 7px 15px;
+
+    border-radius: 20px;
+
+    background:
+
+        rgba(255,255,255,.94);
+
+    box-shadow:
+
+        0 3px 12px
+
+        rgba(0,0,0,.1);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+
+        opacity .2s,
+
+        transform .2s;
+
+}
+
+#nivelAviso.mostrar {
+
+    opacity: 1;
+
+    transform:
+
+        translateX(-50%)
+
+        scale(1);
+
+}
+
+/* =========================================================
+
+   INSTRUÇÃO
+
+========================================================= */
+
+#instrucao {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 190px;
+
+    transform:
+
+        translateX(-50%);
+
+    z-index: 25;
+
+    padding: 8px 14px;
+
+    border-radius: 20px;
+
+    background:
+
+        rgba(255,255,255,.92);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+
+        opacity .3s;
+
+}
+
+#instrucao.mostrar {
+
+    opacity: 1;
+
+}
+
+/* =========================================================
+
+   INÍCIO
+
+========================================================= */
+
+#inicio {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 50;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+
+        rgba(255,255,255,.18);
+
+}
+
+.inicio-box {
+
+    width: 100%;
+
+    max-width: 335px;
+
+    padding: 22px 18px;
+
+    border-radius: 24px;
+
+    background:
+
+        rgba(255,255,255,.97);
+
+    text-align: center;
+
+    box-shadow:
+
+        0 8px 30px
+
+        rgba(0,0,0,.13);
+
+}
+
+.inicio-icon {
+
+    font-size: 48px;
+
+}
+
+.inicio-box h2 {
+
+    margin: 8px 0 7px;
+
+    font-size: 22px;
+
+}
+
+.inicio-box p {
+
+    margin: 5px 0;
+
+    color: #666;
+
+    font-size: 14px;
+
+    line-height: 1.45;
+
+}
+
+.regras {
+
+    margin-top: 11px;
+
+    padding: 10px;
+
+    border-radius: 14px;
+
+    background: #fff7e7;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+}
+
+.perigo {
+
+    color: #d83c3c;
+
+    font-weight: 900;
+
+}
+
+.btn-jogar {
+
+    width: 100%;
+
+    height: 50px;
+
+    margin-top: 14px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background: #f0a63a;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 4px 12px
+
+        rgba(190,120,20,.25);
+
+}
+
+.btn-jogar:active {
+
+    transform: scale(.97);
+
+}
+
+/* =========================================================
+
+   GAME OVER
+
+========================================================= */
+
+#gameOver {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 60;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+
+        rgba(0,0,0,.28);
+
+}
+
+.gameover-box {
+
+    width: 100%;
+
+    max-width: 330px;
+
+    padding: 22px 18px;
+
+    border-radius: 24px;
+
+    background: white;
+
+    text-align: center;
+
+    box-shadow:
+
+        0 10px 35px
+
+        rgba(0,0,0,.2);
+
+}
+
+.gameover-icon {
+
+    font-size: 50px;
+
+}
+
+.gameover-box h2 {
+
+    margin: 7px 0 4px;
+
+    font-size: 23px;
+
+}
+
+.resultado {
+
+    margin: 12px 0;
+
+    padding: 11px;
+
+    border-radius: 15px;
+
+    background: #fff7e7;
+
+    font-size: 15px;
+
+}
+
+.resultado strong {
+
+    font-size: 24px;
+
+}
+
+#novoRecorde {
+
+    display: none;
+
+    margin-bottom: 6px;
+
+    color: #d79500;
+
+    font-weight: 800;
+
+}
+
+.botoes-gameover {
+
+    display: grid;
+
+    grid-template-columns:
+
+        1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 12px;
+
+}
+
+.btn-secundario,
+
+.btn-reiniciar {
+
+    height: 46px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+.btn-secundario {
+
+    background: #eee;
+
+    color: #444;
+
+}
+
+.btn-reiniciar {
+
+    background: #f0a63a;
+
+    color: white;
+
+}
+
+@media(max-width:370px) {
+
+    #petton {
+
+        width: 78px;
+
+        height: 78px;
+
+    }
+
+    #sombraPetton {
+
+        width: 58px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="topo">
+
+    <button
+
+        type="button"
+
+        class="btn-voltar"
+
+        onclick="voltarMenu()"
+
+    >
+
+        ←
+
+    </button>
+
+    <div class="titulo">
+
+        <strong>
+
+            🦴 Pegar Comida
+
+        </strong>
+
+        <span>
+
+            Jogo 3
+
+        </span>
+
+    </div>
+
+    <button
+
+        type="button"
+
+        id="btnSom"
+
+        class="btn-som"
+
+        onclick="alternarSom(event)"
+
+        aria-label="Som"
+
+    >
+
+        🔊
+
+    </button>
+
+</header>
+
+<main id="jogo">
+
+    <div class="sol"></div>
+
+    <div class="nuvem nuvem1">
+
+        ☁️
+
+    </div>
+
+    <div class="nuvem nuvem2">
+
+        ☁️
+
+    </div>
+
+    <!-- PLACAR -->
+
+    <div class="placar">
+
+        <div class="placar-item">
+
+            <span class="placar-label">
+
+                ⭐ PONTOS
+
+            </span>
+
+            <span
+
+                id="pontos"
+
+                class="placar-valor"
+
+            >
+
+                0
+
+            </span>
+
+        </div>
+
+        <div class="placar-item">
+
+            <span class="placar-label">
+
+                🏆 RECORDE
+
+            </span>
+
+            <span
+
+                id="recorde"
+
+                class="placar-valor"
+
+            >
+
+                0
+
+            </span>
+
+        </div>
+
+        <div class="placar-item">
+
+            <span class="placar-label">
+
+                ⚡ NÍVEL
+
+            </span>
+
+            <span
+
+                id="nivel"
+
+                class="placar-valor"
+
+            >
+
+                1
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <div id="nivelAviso">
+
+        🔥 Mais rápido!
+
+    </div>
+
+    <!-- PETTON -->
+
+    <div id="sombraPetton"></div>
+
+    <div id="petton">
+
+        <img
+
+            id="imagemPetton"
+
+            alt="Petton"
+
+        >
+
+    </div>
+
+    <div id="instrucao">
+
+        👈 Pegue a comida! Evite 💣 👉
+
+    </div>
+
+    <div id="chao"></div>
+
+    <!-- INÍCIO -->
+
+    <div id="inicio">
+
+        <div class="inicio-box">
+
+            <div class="inicio-icon">
+
+                🍖 🐟 🥕
+
+            </div>
+
+            <h2>
+
+                Pegar Comida
+
+            </h2>
+
+            <p>
+
+                Arraste seu Petton para os lados
+
+                e pegue as comidas.
+
+            </p>
+
+            <div class="regras">
+
+                🍖 🐟 🥕 = <strong>+1</strong>
+
+                <br>
+
+                🍰 = <strong>+3</strong>
+
+                <br>
+
+                <span class="perigo">
+
+                    💣 = GAME OVER
+
+                </span>
+
+            </div>
+
+            <button
+
+                type="button"
+
+                class="btn-jogar"
+
+                onclick="iniciarJogo(event)"
+
+            >
+
+                ▶️ Começar
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- GAME OVER -->
+
+    <div id="gameOver">
+
+        <div class="gameover-box">
+
+            <div class="gameover-icon">
+
+                💥
+
+            </div>
+
+            <h2>
+
+                Game Over
+
+            </h2>
+
+            <div class="resultado">
+
+                Pontuação<br>
+
+                <strong>
+
+                    ⭐
+
+                    <span id="pontosFinal">
+
+                        0
+
+                    </span>
+
+                </strong>
+
+            </div>
+
+            <div id="novoRecorde">
+
+                🏆 Novo recorde!
+
+            </div>
+
+            <div class="botoes-gameover">
+
+                <button
+
+                    type="button"
+
+                    class="btn-secundario"
+
+                    onclick="voltarMenu()"
+
+                >
+
+                    ← Jogos
+
+                </button>
+
+                <button
+
+                    type="button"
+
+                    class="btn-reiniciar"
+
+                    onclick="reiniciarJogo(event)"
+
+                >
+
+                    🔄 De novo
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</div>
+
+<script src="../petton.js"></script>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const CHAVE_RECORDE =
+
+    "petton_jogo_pegar_comida_recorde_v1";
+
+const VELOCIDADE_INICIAL = 205;
+
+const VELOCIDADE_MAXIMA = 590;
+
+/* =========================================================
+
+   ELEMENTOS
+
+========================================================= */
+
+const jogo =
+
+    document.getElementById("jogo");
+
+const petton =
+
+    document.getElementById("petton");
+
+const imagemPetton =
+
+    document.getElementById("imagemPetton");
+
+const sombraPetton =
+
+    document.getElementById("sombraPetton");
+
+const pontosElemento =
+
+    document.getElementById("pontos");
+
+const recordeElemento =
+
+    document.getElementById("recorde");
+
+const nivelElemento =
+
+    document.getElementById("nivel");
+
+const nivelAviso =
+
+    document.getElementById("nivelAviso");
+
+const inicio =
+
+    document.getElementById("inicio");
+
+const gameOver =
+
+    document.getElementById("gameOver");
+
+const pontosFinal =
+
+    document.getElementById("pontosFinal");
+
+const novoRecorde =
+
+    document.getElementById("novoRecorde");
+
+const instrucao =
+
+    document.getElementById("instrucao");
+
+/* =========================================================
+
+   ESTADO
+
+========================================================= */
+
+let jogando = false;
+
+let terminou = false;
+
+let arrastando = false;
+
+let pontos = 0;
+
+let recorde = 0;
+
+let nivel = 1;
+
+let velocidade =
+
+    VELOCIDADE_INICIAL;
+
+let petX = 0;
+
+let ultimoTempo = 0;
+
+let tempoProximoObjeto = 0;
+
+let objetos = [];
+
+let animationId = null;
+
+/* =========================================================
+
+   SOM
+
+========================================================= */
+
+let audioContext = null;
+
+let somLigado = true;
+
+function prepararAudio() {
+
+    if (!somLigado) {
+
+        return;
+
+    }
+
+    try {
+
+        if (!audioContext) {
+
+            const Contexto =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (!Contexto) {
+
+                return;
+
+            }
+
+            audioContext =
+
+                new Contexto();
+
+        }
+
+        if (
+
+            audioContext.state ===
+
+            "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {}
+
+}
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    volume,
+
+    tipo = "sine",
+
+    frequenciaFinal = null
+
+) {
+
+    if (
+
+        !somLigado ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const agora =
+
+            audioContext.currentTime;
+
+        const oscilador =
+
+            audioContext.createOscillator();
+
+        const ganho =
+
+            audioContext.createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                agora
+
+            );
+
+        if (frequenciaFinal) {
+
+            oscilador.frequency
+
+                .exponentialRampToValueAtTime(
+
+                    Math.max(
+
+                        1,
+
+                        frequenciaFinal
+
+                    ),
+
+                    agora + duracao
+
+                );
+
+        }
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                .0001,
+
+                agora
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                volume,
+
+                agora + .012
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                .0001,
+
+                agora + duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(agora);
+
+        oscilador.stop(
+
+            agora +
+
+            duracao +
+
+            .03
+
+        );
+
+    } catch (erro) {}
+
+}
+
+function somInicio() {
+
+    tocarTom(
+
+        330,
+
+        .09,
+
+        .05,
+
+        "sine",
+
+        450
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                540,
+
+                .12,
+
+                .055,
+
+                "sine",
+
+                760
+
+            );
+
+        },
+
+        90
+
+    );
+
+}
+
+function somComida() {
+
+    tocarTom(
+
+        650,
+
+        .07,
+
+        .04,
+
+        "sine",
+
+        850
+
+    );
+
+}
+
+function somBonus() {
+
+    tocarTom(
+
+        650,
+
+        .07,
+
+        .045,
+
+        "sine",
+
+        850
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                900,
+
+                .08,
+
+                .045,
+
+                "sine",
+
+                1150
+
+            );
+
+        },
+
+        60
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                1250,
+
+                .11,
+
+                .04,
+
+                "sine",
+
+                1500
+
+            );
+
+        },
+
+        120
+
+    );
+
+}
+
+function somNivel() {
+
+    tocarTom(
+
+        450,
+
+        .07,
+
+        .035,
+
+        "square",
+
+        600
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                700,
+
+                .10,
+
+                .035,
+
+                "square",
+
+                950
+
+            );
+
+        },
+
+        70
+
+    );
+
+}
+
+function somBomba() {
+
+    tocarTom(
+
+        150,
+
+        .20,
+
+        .08,
+
+        "sawtooth",
+
+        55
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            tocarTom(
+
+                85,
+
+                .30,
+
+                .065,
+
+                "square",
+
+                30
+
+            );
+
+        },
+
+        80
+
+    );
+
+}
+
+function alternarSom(evento) {
+
+    if (evento) {
+
+        evento.preventDefault();
+
+        evento.stopPropagation();
+
+    }
+
+    somLigado =
+
+        !somLigado;
+
+    const botao =
+
+        document.getElementById(
+
+            "btnSom"
+
+        );
+
+    botao.textContent =
+
+        somLigado
+
+            ? "🔊"
+
+            : "🔇";
+
+    if (somLigado) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            600,
+
+            .08,
+
+            .04,
+
+            "sine",
+
+            850
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   RECORDE
+
+========================================================= */
+
+function carregarRecorde() {
+
+    try {
+
+        const salvo =
+
+            Number(
+
+                localStorage.getItem(
+
+                    CHAVE_RECORDE
+
+                )
+
+            );
+
+        recorde =
+
+            isFinite(salvo)
+
+                ? Math.max(0, salvo)
+
+                : 0;
+
+    } catch (erro) {
+
+        recorde = 0;
+
+    }
+
+    recordeElemento.textContent =
+
+        recorde;
+
+}
+
+function salvarRecorde() {
+
+    try {
+
+        localStorage.setItem(
+
+            CHAVE_RECORDE,
+
+            String(recorde)
+
+        );
+
+    } catch (erro) {}
+
+}
+
+/* =========================================================
+
+   PETTON ATUAL
+
+========================================================= */
+
+function obterDadosPetton() {
+
+    try {
+
+        if (
+
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.carregarPetton ===
+
+                "function"
+
+        ) {
+
+            return Petton.carregarPetton();
+
+        }
+
+    } catch (erro) {}
+
+    return null;
+
+}
+
+function obterFasePetton(dados) {
+
+    if (!dados) {
+
+        return "bebe";
+
+    }
+
+    if (!dados.dateNascimento) {
+
+        return "ovo";
+
+    }
+
+    let idadeDias =
+
+        Number(
+
+            dados.idadeDias ??
+
+            dados.diasDeVida
+
+        );
+
+    if (
+
+        !isFinite(idadeDias) &&
+
+        dados.dateNascimento
+
+    ) {
+
+        const nascimento =
+
+            new Date(
+
+                dados.dateNascimento
+
+            );
+
+        if (
+
+            !isNaN(
+
+                nascimento.getTime()
+
+            )
+
+        ) {
+
+            idadeDias =
+
+                Math.floor(
+
+                    (
+
+                        Date.now() -
+
+                        nascimento.getTime()
+
+                    ) /
+
+                    86400000
+
+                );
+
+        }
+
+    }
+
+    if (isFinite(idadeDias)) {
+
+        if (idadeDias < 8) {
+
+            return "bebe";
+
+        }
+
+        if (idadeDias < 31) {
+
+            return "filhote";
+
+        }
+
+        if (idadeDias < 91) {
+
+            return "jovem";
+
+        }
+
+        return "adulto";
+
+    }
+
+    const fase =
+
+        String(
+
+            dados.faseAtual ||
+
+            dados.fase ||
+
+            "bebe"
+
+        ).toLowerCase();
+
+    if (fase.includes("adult")) {
+
+        return "adulto";
+
+    }
+
+    if (
+
+        fase.includes("jovem") ||
+
+        fase.includes("young")
+
+    ) {
+
+        return "jovem";
+
+    }
+
+    if (fase.includes("filh")) {
+
+        return "filhote";
+
+    }
+
+    return "bebe";
+
+}
+
+function obterEspeciePetton(dados) {
+
+    if (!dados) {
+
+        return "gato";
+
+    }
+
+    const identidade =
+
+        dados.identidadeVisual &&
+
+        typeof dados.identidadeVisual ===
+
+            "object"
+
+            ? dados.identidadeVisual
+
+            : null;
+
+    let especie =
+
+        identidade?.especie ||
+
+        dados.especie ||
+
+        "gato";
+
+    especie =
+
+        String(especie)
+
+            .toLowerCase();
+
+    if (
+
+        especie.includes("cach") ||
+
+        especie.includes("dog")
+
+    ) {
+
+        return "cachorro";
+
+    }
+
+    if (
+
+        especie.includes("coelh") ||
+
+        especie.includes("rabbit")
+
+    ) {
+
+        return "coelho";
+
+    }
+
+    return "gato";
+
+}
+
+function obterImagemIndividual(
+
+    dados,
+
+    fase
+
+) {
+
+    if (
+
+        !dados ||
+
+        !dados.identidadeVisual ||
+
+        typeof dados.identidadeVisual !==
+
+            "object"
+
+    ) {
+
+        return null;
+
+    }
+
+    const imagens =
+
+        dados.identidadeVisual.imagens;
+
+    if (
+
+        !imagens ||
+
+        typeof imagens !== "object"
+
+    ) {
+
+        return null;
+
+    }
+
+    const imagem =
+
+        imagens[fase];
+
+    if (
+
+        typeof imagem === "string" &&
+
+        imagem.trim() !== ""
+
+    ) {
+
+        return imagem.trim();
+
+    }
+
+    return null;
+
+}
+
+function carregarImagemPetton() {
+
+    const dados =
+
+        obterDadosPetton();
+
+    const especie =
+
+        obterEspeciePetton(dados);
+
+    const fase =
+
+        obterFasePetton(dados);
+
+    const individual =
+
+        obterImagemIndividual(
+
+            dados,
+
+            fase
+
+        );
+
+    const fallback = {
+
+        gato:
+
+            "../petton-original.png",
+
+        cachorro:
+
+            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png",
+
+        coelho:
+
+            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png"
+
+    };
+
+    let imagemFinal =
+
+        individual ||
+
+        fallback[especie];
+
+    if (
+
+        individual &&
+
+        !individual.startsWith("http://") &&
+
+        !individual.startsWith("https://") &&
+
+        !individual.startsWith("/") &&
+
+        !individual.startsWith("../")
+
+    ) {
+
+        imagemFinal =
+
+            "../" + individual;
+
+    }
+
+    imagemPetton.onload =
+
+        function() {
+
+            imagemPetton.classList.add(
+
+                "pronto"
+
+            );
+
+        };
+
+    imagemPetton.onerror =
+
+        function() {
+
+            const imagemFallback =
+
+                fallback[especie];
+
+            if (
+
+                imagemPetton.getAttribute(
+
+                    "src"
+
+                ) !== imagemFallback
+
+            ) {
+
+                imagemPetton.src =
+
+                    imagemFallback;
+
+            }
+
+        };
+
+    imagemPetton.src =
+
+        imagemFinal;
+
+}
+
+/* =========================================================
+
+   MOVIMENTO PETTON
+
+========================================================= */
+
+function centralizarPetton() {
+
+    const largura =
+
+        jogo.clientWidth;
+
+    const larguraPet =
+
+        petton.offsetWidth || 88;
+
+    petX =
+
+        (
+
+            largura -
+
+            larguraPet
+
+        ) / 2;
+
+    atualizarPosicaoPetton();
+
+}
+
+function atualizarPosicaoPetton() {
+
+    const largura =
+
+        jogo.clientWidth;
+
+    const larguraPet =
+
+        petton.offsetWidth || 88;
+
+    const limite =
+
+        largura -
+
+        larguraPet;
+
+    petX =
+
+        Math.max(
+
+            0,
+
+            Math.min(
+
+                limite,
+
+                petX
+
+            )
+
+        );
+
+    petton.style.left =
+
+        petX + "px";
+
+    petton.style.transform =
+
+        "none";
+
+    sombraPetton.style.left =
+
+        (
+
+            petX +
+
+            larguraPet / 2
+
+        ) + "px";
+
+    sombraPetton.style.transform =
+
+        "translateX(-50%)";
+
+}
+
+function moverParaToque(clientX) {
+
+    if (
+
+        !jogando ||
+
+        terminou
+
+    ) {
+
+        return;
+
+    }
+
+    const rect =
+
+        jogo.getBoundingClientRect();
+
+    const larguraPet =
+
+        petton.offsetWidth || 88;
+
+    petX =
+
+        clientX -
+
+        rect.left -
+
+        larguraPet / 2;
+
+    atualizarPosicaoPetton();
+
+}
+
+function iniciarArrasto(evento) {
+
+    if (
+
+        !jogando ||
+
+        terminou
+
+    ) {
+
+        return;
+
+    }
+
+    if (
+
+        evento.target.closest("button")
+
+    ) {
+
+        return;
+
+    }
+
+    evento.preventDefault();
+
+    arrastando = true;
+
+    petton.classList.add(
+
+        "movendo"
+
+    );
+
+    try {
+
+        jogo.setPointerCapture(
+
+            evento.pointerId
+
+        );
+
+    } catch (erro) {}
+
+    moverParaToque(
+
+        evento.clientX
+
+    );
+
+}
+
+function moverArrasto(evento) {
+
+    if (
+
+        !arrastando ||
+
+        !jogando ||
+
+        terminou
+
+    ) {
+
+        return;
+
+    }
+
+    evento.preventDefault();
+
+    moverParaToque(
+
+        evento.clientX
+
+    );
+
+}
+
+function terminarArrasto(evento) {
+
+    arrastando = false;
+
+    petton.classList.remove(
+
+        "movendo"
+
+    );
+
+    try {
+
+        jogo.releasePointerCapture(
+
+            evento.pointerId
+
+        );
+
+    } catch (erro) {}
+
+}
+
+jogo.addEventListener(
+
+    "pointerdown",
+
+    iniciarArrasto,
+
+    { passive: false }
+
+);
+
+jogo.addEventListener(
+
+    "pointermove",
+
+    moverArrasto,
+
+    { passive: false }
+
+);
+
+jogo.addEventListener(
+
+    "pointerup",
+
+    terminarArrasto,
+
+    { passive: false }
+
+);
+
+jogo.addEventListener(
+
+    "pointercancel",
+
+    terminarArrasto,
+
+    { passive: false }
+
+);
+
+/* =========================================================
+
+   TIPOS DE OBJETOS
+
+========================================================= */
+
+const COMIDAS = [
+
+    "🍖",
+
+    "🐟",
+
+    "🥕",
+
+    "🍗",
+
+    "🦴"
+
+];
+
+/* =========================================================
+
+   CRIAR OBJETO
+
+========================================================= */
+
+function criarObjeto() {
+
+    if (
+
+        !jogando ||
+
+        terminou
+
+    ) {
+
+        return;
+
+    }
+
+    /*
+
+       Quanto maior o nível,
+
+       maior a chance de bomba.
+
+    */
+
+    const chanceBomba =
+
+        Math.min(
+
+            .36,
+
+            .13 +
+
+            (nivel - 1) * .025
+
+        );
+
+    const chanceBonus =
+
+        .08;
+
+    const sorteio =
+
+        Math.random();
+
+    let tipo =
+
+        "comida";
+
+    let simbolo =
+
+        COMIDAS[
+
+            Math.floor(
+
+                Math.random() *
+
+                COMIDAS.length
+
+            )
+
+        ];
+
+    let valor =
+
+        1;
+
+    if (
+
+        sorteio <
+
+        chanceBomba
+
+    ) {
+
+        tipo =
+
+            "bomba";
+
+        simbolo =
+
+            "💣";
+
+        valor =
+
+            0;
+
+    } else if (
+
+        sorteio <
+
+        chanceBomba +
+
+        chanceBonus
+
+    ) {
+
+        tipo =
+
+            "bonus";
+
+        simbolo =
+
+            "🍰";
+
+        valor =
+
+            3;
+
+    }
+
+    const tamanho =
+
+        tipo === "bomba"
+
+            ? 44
+
+            : (
+
+                tipo === "bonus"
+
+                    ? 45
+
+                    : 40 +
+
+                      Math.random() * 7
+
+            );
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "objeto " + tipo;
+
+    elemento.textContent =
+
+        simbolo;
+
+    elemento.style.width =
+
+        tamanho + "px";
+
+    elemento.style.height =
+
+        tamanho + "px";
+
+    elemento.style.fontSize =
+
+        (
+
+            tamanho * .82
+
+        ) + "px";
+
+    jogo.appendChild(
+
+        elemento
+
+    );
+
+    const margem = 8;
+
+    const largura =
+
+        jogo.clientWidth;
+
+    const x =
+
+        margem +
+
+        Math.random() *
+
+        Math.max(
+
+            1,
+
+            largura -
+
+            tamanho -
+
+            margem * 2
+
+        );
+
+    /*
+
+       Comidas podem ter velocidades
+
+       ligeiramente diferentes.
+
+    */
+
+    const velocidadeExtra =
+
+        Math.random() * 70;
+
+    const item = {
+
+        elemento:
+
+            elemento,
+
+        tipo:
+
+            tipo,
+
+        simbolo:
+
+            simbolo,
+
+        valor:
+
+            valor,
+
+        tamanho:
+
+            tamanho,
+
+        x:
+
+            x,
+
+        y:
+
+            -tamanho - 10,
+
+        velocidadeExtra:
+
+            velocidadeExtra
+
+    };
+
+    objetos.push(item);
+
+    atualizarObjeto(item);
+
+}
+
+/* =========================================================
+
+   POSIÇÃO OBJETO
+
+========================================================= */
+
+function atualizarObjeto(item) {
+
+    item.elemento.style.transform =
+
+        "translate(" +
+
+        item.x +
+
+        "px," +
+
+        item.y +
+
+        "px)";
+
+}
+
+/* =========================================================
+
+   INTERVALO
+
+========================================================= */
+
+function calcularIntervaloObjeto() {
+
+    /*
+
+       Começa razoavelmente rápido.
+
+       A cada nível os objetos
+
+       aparecem com mais frequência.
+
+    */
+
+    let base =
+
+        680 -
+
+        (nivel - 1) * 55;
+
+    base =
+
+        Math.max(
+
+            260,
+
+            base
+
+        );
+
+    return (
+
+        base +
+
+        Math.random() * 220
+
+    );
+
+}
+
+/* =========================================================
+
+   COLISÃO
+
+========================================================= */
+
+function verificarColisao(item) {
+
+    const petRect =
+
+        petton.getBoundingClientRect();
+
+    const objetoRect =
+
+        item.elemento
+
+            .getBoundingClientRect();
+
+    /*
+
+       Hitbox menor que a imagem
+
+       para ficar justo.
+
+    */
+
+    const petLeft =
+
+        petRect.left + 18;
+
+    const petRight =
+
+        petRect.right - 18;
+
+    const petTop =
+
+        petRect.top + 15;
+
+    const petBottom =
+
+        petRect.bottom - 7;
+
+    const margemObjeto =
+
+        item.tamanho * .15;
+
+    const objetoLeft =
+
+        objetoRect.left +
+
+        margemObjeto;
+
+    const objetoRight =
+
+        objetoRect.right -
+
+        margemObjeto;
+
+    const objetoTop =
+
+        objetoRect.top +
+
+        margemObjeto;
+
+    const objetoBottom =
+
+        objetoRect.bottom -
+
+        margemObjeto;
+
+    return (
+
+        petRight > objetoLeft &&
+
+        petLeft < objetoRight &&
+
+        petBottom > objetoTop &&
+
+        petTop < objetoBottom
+
+    );
+
+}
+
+/* =========================================================
+
+   FEEDBACK +1 / +3
+
+========================================================= */
+
+function mostrarFeedback(
+
+    texto,
+
+    x,
+
+    y
+
+) {
+
+    const feedback =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    feedback.className =
+
+        "feedback";
+
+    feedback.textContent =
+
+        texto;
+
+    feedback.style.left =
+
+        x + "px";
+
+    feedback.style.top =
+
+        y + "px";
+
+    jogo.appendChild(
+
+        feedback
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                feedback.parentNode
+
+            ) {
+
+                feedback.remove();
+
+            }
+
+        },
+
+        700
+
+    );
+
+}
+
+/* =========================================================
+
+   PEGOU OBJETO
+
+========================================================= */
+
+function pegarObjeto(item) {
+
+    if (
+
+        item.tipo ===
+
+        "bomba"
+
+    ) {
+
+        finalizarJogo();
+
+        return;
+
+    }
+
+    pontos +=
+
+        item.valor;
+
+    pontosElemento.textContent =
+
+        pontos;
+
+    const rect =
+
+        item.elemento
+
+            .getBoundingClientRect();
+
+    const jogoRect =
+
+        jogo.getBoundingClientRect();
+
+    mostrarFeedback(
+
+        "+" + item.valor + " ⭐",
+
+        rect.left -
+
+        jogoRect.left +
+
+        rect.width / 2,
+
+        rect.top -
+
+        jogoRect.top
+
+    );
+
+    if (
+
+        item.tipo ===
+
+        "bonus"
+
+    ) {
+
+        somBonus();
+
+    } else {
+
+        somComida();
+
+    }
+
+    atualizarNivel();
+
+}
+
+/* =========================================================
+
+   NÍVEL
+
+========================================================= */
+
+function atualizarNivel() {
+
+    const novoNivel =
+
+        1 +
+
+        Math.floor(
+
+            pontos / 8
+
+        );
+
+    if (
+
+        novoNivel <= nivel
+
+    ) {
+
+        return;
+
+    }
+
+    nivel =
+
+        novoNivel;
+
+    nivelElemento.textContent =
+
+        nivel;
+
+    velocidade =
+
+        Math.min(
+
+            VELOCIDADE_MAXIMA,
+
+            VELOCIDADE_INICIAL +
+
+            (nivel - 1) * 38
+
+        );
+
+    nivelAviso.textContent =
+
+        "🔥 Nível " +
+
+        nivel +
+
+        " — mais rápido!";
+
+    nivelAviso.classList.add(
+
+        "mostrar"
+
+    );
+
+    somNivel();
+
+    setTimeout(
+
+        function() {
+
+            nivelAviso.classList.remove(
+
+                "mostrar"
+
+            );
+
+        },
+
+        900
+
+    );
+
+}
+
+/* =========================================================
+
+   REMOVER OBJETO
+
+========================================================= */
+
+function removerObjeto(item) {
+
+    try {
+
+        if (
+
+            item.elemento &&
+
+            item.elemento.parentNode
+
+        ) {
+
+            item.elemento.remove();
+
+        }
+
+    } catch (erro) {}
+
+}
+
+function limparObjetos() {
+
+    objetos.forEach(
+
+        removerObjeto
+
+    );
+
+    objetos = [];
+
+}
+
+/* =========================================================
+
+   LOOP
+
+========================================================= */
+
+function loop(tempoAtual) {
+
+    if (
+
+        !jogando ||
+
+        terminou
+
+    ) {
+
+        return;
+
+    }
+
+    if (!ultimoTempo) {
+
+        ultimoTempo =
+
+            tempoAtual;
+
+    }
+
+    let delta =
+
+        (
+
+            tempoAtual -
+
+            ultimoTempo
+
+        ) / 1000;
+
+    delta =
+
+        Math.min(
+
+            delta,
+
+            .035
+
+        );
+
+    ultimoTempo =
+
+        tempoAtual;
+
+    /* NOVO OBJETO */
+
+    tempoProximoObjeto -=
+
+        delta * 1000;
+
+    if (
+
+        tempoProximoObjeto <= 0
+
+    ) {
+
+        criarObjeto();
+
+        /*
+
+           Em níveis mais altos,
+
+           existe chance de dois objetos
+
+           entrarem quase juntos.
+
+        */
+
+        if (
+
+            nivel >= 3 &&
+
+            Math.random() < .32
+
+        ) {
+
+            setTimeout(
+
+                function() {
+
+                    if (
+
+                        jogando &&
+
+                        !terminou
+
+                    ) {
+
+                        criarObjeto();
+
+                    }
+
+                },
+
+                120
+
+            );
+
+        }
+
+        tempoProximoObjeto =
+
+            calcularIntervaloObjeto();
+
+    }
+
+    /* MOVIMENTAR OBJETOS */
+
+    for (
+
+        let i =
+
+            objetos.length - 1;
+
+        i >= 0;
+
+        i--
+
+    ) {
+
+        const item =
+
+            objetos[i];
+
+        item.y +=
+
+            (
+
+                velocidade +
+
+                item.velocidadeExtra
+
+            ) *
+
+            delta;
+
+        atualizarObjeto(item);
+
+        /* COLISÃO */
+
+        if (
+
+            verificarColisao(item)
+
+        ) {
+
+            if (
+
+                item.tipo ===
+
+                "bomba"
+
+            ) {
+
+                finalizarJogo();
+
+                return;
+
+            }
+
+            pegarObjeto(item);
+
+            removerObjeto(item);
+
+            objetos.splice(
+
+                i,
+
+                1
+
+            );
+
+            continue;
+
+        }
+
+        /* SAIU DA TELA */
+
+        if (
+
+            item.y >
+
+            jogo.clientHeight + 60
+
+        ) {
+
+            removerObjeto(item);
+
+            objetos.splice(
+
+                i,
+
+                1
+
+            );
+
+        }
+
+    }
+
+    animationId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   INICIAR
+
+========================================================= */
+
+function iniciarJogo(evento) {
+
+    if (evento) {
+
+        evento.preventDefault();
+
+        evento.stopPropagation();
+
+    }
+
+    if (jogando) {
+
+        return;
+
+    }
+
+    prepararAudio();
+
+    somInicio();
+
+    limparObjetos();
+
+    pontos = 0;
+
+    nivel = 1;
+
+    velocidade =
+
+        VELOCIDADE_INICIAL;
+
+    ultimoTempo = 0;
+
+    terminou = false;
+
+    arrastando = false;
+
+    pontosElemento.textContent =
+
+        "0";
+
+    nivelElemento.textContent =
+
+        "1";
+
+    novoRecorde.style.display =
+
+        "none";
+
+    inicio.style.display =
+
+        "none";
+
+    gameOver.style.display =
+
+        "none";
+
+    centralizarPetton();
+
+    jogando = true;
+
+    /*
+
+       Primeira comida
+
+       aparece rápido.
+
+    */
+
+    tempoProximoObjeto =
+
+        500;
+
+    instrucao.classList.add(
+
+        "mostrar"
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            instrucao.classList.remove(
+
+                "mostrar"
+
+            );
+
+        },
+
+        1800
+
+    );
+
+    animationId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   GAME OVER
+
+========================================================= */
+
+function finalizarJogo() {
+
+    if (terminou) {
+
+        return;
+
+    }
+
+    terminou = true;
+
+    jogando = false;
+
+    arrastando = false;
+
+    somBomba();
+
+    petton.classList.remove(
+
+        "movendo"
+
+    );
+
+    if (animationId) {
+
+        cancelAnimationFrame(
+
+            animationId
+
+        );
+
+        animationId = null;
+
+    }
+
+    pontosFinal.textContent =
+
+        pontos;
+
+    if (
+
+        pontos > recorde
+
+    ) {
+
+        recorde =
+
+            pontos;
+
+        recordeElemento.textContent =
+
+            recorde;
+
+        salvarRecorde();
+
+        novoRecorde.style.display =
+
+            "block";
+
+    } else {
+
+        novoRecorde.style.display =
+
+            "none";
+
+    }
+
+    try {
+
+        petton.animate(
+
+            [
+
+                {
+
+                    transform:
+
+                        "translateX(0)"
+
+                },
+
+                {
+
+                    transform:
+
+                        "translateX(-8px)"
+
+                },
+
+                {
+
+                    transform:
+
+                        "translateX(8px)"
+
+                },
+
+                {
+
+                    transform:
+
+                        "translateX(0)"
+
+                }
+
+            ],
+
+            {
+
+                duration: 260,
+
+                iterations: 2
+
+            }
+
+        );
+
+    } catch (erro) {}
+
+    setTimeout(
+
+        function() {
+
+            gameOver.style.display =
+
+                "flex";
+
+        },
+
+        320
+
+    );
+
+}
+
+/* =========================================================
+
+   REINICIAR
+
+========================================================= */
+
+function reiniciarJogo(evento) {
+
+    if (evento) {
+
+        evento.preventDefault();
+
+        evento.stopPropagation();
+
+    }
+
+    jogando = false;
+
+    terminou = false;
+
+    limparObjetos();
+
+    gameOver.style.display =
+
+        "none";
+
+    iniciarJogo(evento);
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltarMenu() {
+
+    window.location.assign(
+
+        "./brincar.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   RESIZE
+
+========================================================= */
+
+window.addEventListener(
+
+    "resize",
+
+    function() {
+
+        if (!jogando) {
+
+            centralizarPetton();
+
+        } else {
+
+            atualizarPosicaoPetton();
+
+        }
+
+    }
+
+);
+
+/* =========================================================
+
+   SEGUNDO PLANO
+
+========================================================= */
+
+document.addEventListener(
+
+    "visibilitychange",
+
+    function() {
+
+        if (
+
+            document.hidden &&
+
+            jogando
+
+        ) {
+
+            ultimoTempo = 0;
+
+        }
+
+    }
+
+);
+
+/* =========================================================
+
+   INICIALIZAÇÃO
+
+========================================================= */
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    function() {
+
+        carregarRecorde();
+
+        carregarImagemPetton();
+
+        centralizarPetton();
+
+    }
+
+);
+
+</script>
+
+</body>
+
+</html>
