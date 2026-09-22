@@ -1,0 +1,3703 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<meta name="google" content="notranslate">
+
+<title>Pegar Borboletas 🦋</title>
+
+<script src="../petton.js"></script>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    min-height: 100%;
+
+    overflow: hidden;
+
+}
+
+body {
+
+    font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        Arial,
+
+        sans-serif;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #bdeaff 0%,
+
+            #e9fbd8 55%,
+
+            #a7db7d 100%
+
+        );
+
+    color: #333;
+
+    touch-action: none;
+
+}
+
+/* =========================================================
+
+   APP
+
+========================================================= */
+
+.app {
+
+    width: 100%;
+
+    max-width: 520px;
+
+    height: 100dvh;
+
+    margin: 0 auto;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+/* =========================================================
+
+   CÉU / CENÁRIO
+
+========================================================= */
+
+.cenario {
+
+    position: absolute;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+
+            circle at 18% 18%,
+
+            rgba(255,255,255,.85) 0 28px,
+
+            transparent 30px
+
+        ),
+
+        radial-gradient(
+
+            circle at 28% 17%,
+
+            rgba(255,255,255,.75) 0 35px,
+
+            transparent 37px
+
+        ),
+
+        radial-gradient(
+
+            circle at 78% 27%,
+
+            rgba(255,255,255,.65) 0 30px,
+
+            transparent 32px
+
+        ),
+
+        linear-gradient(
+
+            180deg,
+
+            #bdeaff 0%,
+
+            #e9fbd8 70%,
+
+            #9bd36e 70%,
+
+            #78bd54 100%
+
+        );
+
+}
+
+/* =========================================================
+
+   TOPO
+
+========================================================= */
+
+.topo {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    z-index: 100;
+
+    min-height: 62px;
+
+    display: grid;
+
+    grid-template-columns:
+
+        48px 1fr 48px;
+
+    align-items: center;
+
+    padding:
+
+        7px 9px;
+
+    background:
+
+        rgba(255,255,255,.88);
+
+    border-bottom:
+
+        1px solid rgba(0,0,0,.07);
+
+    backdrop-filter:
+
+        blur(9px);
+
+}
+
+.btn-topo {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+
+        rgba(255,255,255,.95);
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+}
+
+.btn-topo:active {
+
+    transform: scale(.94);
+
+}
+
+.titulo {
+
+    text-align: center;
+
+}
+
+.titulo strong {
+
+    display: block;
+
+    font-size: 16px;
+
+}
+
+.titulo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #777;
+
+    font-size: 10px;
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+.hud {
+
+    position: absolute;
+
+    top: 73px;
+
+    left: 10px;
+
+    right: 10px;
+
+    z-index: 80;
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(3, 1fr);
+
+    gap: 7px;
+
+    pointer-events: none;
+
+}
+
+.hud-item {
+
+    padding:
+
+        7px 4px;
+
+    border-radius: 14px;
+
+    background:
+
+        rgba(255,255,255,.88);
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.08);
+
+    text-align: center;
+
+}
+
+.hud-label {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+}
+
+.hud-valor {
+
+    display: block;
+
+    margin-top: 1px;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+}
+
+/* =========================================================
+
+   ÁREA DO JOGO
+
+========================================================= */
+
+#areaJogo {
+
+    position: absolute;
+
+    top: 62px;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+/* =========================================================
+
+   FLORES
+
+========================================================= */
+
+.flores {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 72px;
+
+    z-index: 2;
+
+    font-size: 25px;
+
+    line-height: 72px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    opacity: .9;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   BORBOLETAS
+
+========================================================= */
+
+.borboleta {
+
+    position: absolute;
+
+    z-index: 20;
+
+    width: 46px;
+
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 36px;
+
+    line-height: 1;
+
+    user-select: none;
+
+    pointer-events: none;
+
+    filter:
+
+        drop-shadow(
+
+            0 3px 3px
+
+            rgba(0,0,0,.15)
+
+        );
+
+    will-change:
+
+        transform,
+
+        left,
+
+        top;
+
+}
+
+.borboleta.especial {
+
+    width: 52px;
+
+    height: 52px;
+
+    font-size: 41px;
+
+    filter:
+
+        drop-shadow(
+
+            0 0 7px
+
+            rgba(255,200,0,.9)
+
+        );
+
+}
+
+.brilho {
+
+    position: absolute;
+
+    inset: -5px;
+
+    border-radius: 50%;
+
+    border:
+
+        2px solid
+
+        rgba(255,220,60,.7);
+
+    animation:
+
+        pulsar .65s
+
+        infinite alternate;
+
+}
+
+@keyframes pulsar {
+
+    from {
+
+        transform: scale(.85);
+
+        opacity: .45;
+
+    }
+
+    to {
+
+        transform: scale(1.12);
+
+        opacity: 1;
+
+    }
+
+}
+
+/* =========================================================
+
+   PETTON
+
+========================================================= */
+
+#petton {
+
+    position: absolute;
+
+    z-index: 40;
+
+    width: 88px;
+
+    height: 88px;
+
+    left: 50%;
+
+    bottom: 47px;
+
+    transform:
+
+        translateX(-50%);
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+    will-change:
+
+        left,
+
+        transform;
+
+}
+
+#petton img {
+
+    display: block;
+
+    max-width: 88px;
+
+    max-height: 88px;
+
+    object-fit: contain;
+
+    filter:
+
+        drop-shadow(
+
+            0 5px 4px
+
+            rgba(0,0,0,.18)
+
+        );
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+}
+
+/* =========================================================
+
+   PONTOS FLUTUANTES
+
+========================================================= */
+
+.ponto-flutuante {
+
+    position: absolute;
+
+    z-index: 70;
+
+    color: #258b36;
+
+    font-size: 21px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+    animation:
+
+        subirPonto .7s
+
+        forwards;
+
+}
+
+.ponto-flutuante.bonus {
+
+    color: #d98a00;
+
+    font-size: 25px;
+
+}
+
+@keyframes subirPonto {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,0)
+
+            scale(.8);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50px)
+
+            scale(1.25);
+
+    }
+
+}
+
+/* =========================================================
+
+   TELA INICIAL / GAME OVER
+
+========================================================= */
+
+.overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 22px;
+
+    background:
+
+        rgba(32,73,39,.28);
+
+    backdrop-filter:
+
+        blur(3px);
+
+}
+
+.overlay.oculto {
+
+    display: none;
+
+}
+
+.caixa {
+
+    width: 100%;
+
+    max-width: 340px;
+
+    padding:
+
+        25px 20px;
+
+    border-radius: 26px;
+
+    background:
+
+        rgba(255,255,255,.97);
+
+    box-shadow:
+
+        0 10px 35px
+
+        rgba(0,0,0,.18);
+
+    text-align: center;
+
+}
+
+.caixa-icone {
+
+    font-size: 55px;
+
+    line-height: 1;
+
+}
+
+.caixa h2 {
+
+    margin:
+
+        12px 0 7px;
+
+    font-size: 23px;
+
+}
+
+.caixa p {
+
+    margin:
+
+        5px 0;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+}
+
+.resultado {
+
+    margin:
+
+        15px 0;
+
+    padding:
+
+        12px;
+
+    border-radius: 17px;
+
+    background:
+
+        #f4faee;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+.btn-jogar {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #68bd59,
+
+            #42a849
+
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 4px 12px
+
+        rgba(65,160,70,.25);
+
+}
+
+.btn-jogar:active {
+
+    transform: scale(.97);
+
+}
+
+.btn-menu {
+
+    width: 100%;
+
+    min-height: 46px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background: #f0f2ef;
+
+    color: #555;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+/* =========================================================
+
+   MENSAGEM NÍVEL
+
+========================================================= */
+
+#mensagemNivel {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 47%;
+
+    z-index: 150;
+
+    transform:
+
+        translate(-50%,-50%)
+
+        scale(.7);
+
+    padding:
+
+        11px 20px;
+
+    border-radius: 25px;
+
+    background:
+
+        rgba(255,255,255,.94);
+
+    box-shadow:
+
+        0 5px 18px
+
+        rgba(0,0,0,.15);
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+}
+
+#mensagemNivel.mostrar {
+
+    animation:
+
+        nivelAnimacao
+
+        .85s forwards;
+
+}
+
+@keyframes nivelAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(.6);
+
+    }
+
+    25% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.08);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-70%)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   CELULARES PEQUENOS
+
+========================================================= */
+
+@media(max-width:360px) {
+
+    #petton {
+
+        width: 78px;
+
+        height: 78px;
+
+    }
+
+    #petton img {
+
+        max-width: 78px;
+
+        max-height: 78px;
+
+    }
+
+    .borboleta {
+
+        font-size: 32px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="cenario"></div>
+
+    <!-- =====================================================
+
+         TOPO
+
+    ====================================================== -->
+
+    <header class="topo">
+
+        <button
+
+            type="button"
+
+            class="btn-topo"
+
+            onclick="voltarMenu()"
+
+            aria-label="Voltar"
+
+        >
+
+            ←
+
+        </button>
+
+        <div class="titulo">
+
+            <strong>
+
+                🦋 Pegar Borboletas
+
+            </strong>
+
+            <span>
+
+                Pegue o máximo que conseguir!
+
+            </span>
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-topo"
+
+            id="btnSom"
+
+            onclick="alternarSom()"
+
+            aria-label="Som"
+
+        >
+
+            🔊
+
+        </button>
+
+    </header>
+
+    <!-- =====================================================
+
+         HUD
+
+    ====================================================== -->
+
+    <div class="hud">
+
+        <div class="hud-item">
+
+            <span class="hud-label">
+
+                PONTOS
+
+            </span>
+
+            <span
+
+                class="hud-valor"
+
+                id="pontos"
+
+            >
+
+                0
+
+            </span>
+
+        </div>
+
+        <div class="hud-item">
+
+            <span class="hud-label">
+
+                NÍVEL
+
+            </span>
+
+            <span
+
+                class="hud-valor"
+
+                id="nivel"
+
+            >
+
+                1
+
+            </span>
+
+        </div>
+
+        <div class="hud-item">
+
+            <span class="hud-label">
+
+                RECORDE
+
+            </span>
+
+            <span
+
+                class="hud-valor"
+
+                id="recorde"
+
+            >
+
+                0
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+
+         JOGO
+
+    ====================================================== -->
+
+    <div id="areaJogo">
+
+        <div class="flores">
+
+            🌼 🌷 🌸 🌻 🌼 🌸 🌷 🌻 🌼 🌷 🌸 🌻 🌼
+
+        </div>
+
+        <div id="petton">
+
+            <img
+
+                id="imagemPetton"
+
+                alt="Petton"
+
+            >
+
+        </div>
+
+        <div id="mensagemNivel">
+
+            Nível 2!
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+
+         TELA INICIAL
+
+    ====================================================== -->
+
+    <div
+
+        class="overlay"
+
+        id="telaInicial"
+
+    >
+
+        <div class="caixa">
+
+            <div class="caixa-icone">
+
+                🦋🐾
+
+            </div>
+
+            <h2>
+
+                Pegar Borboletas
+
+            </h2>
+
+            <p>
+
+                Arraste o Petton para os lados
+
+                e encoste nas borboletas.
+
+            </p>
+
+            <p>
+
+                🦋 = +1 ponto
+
+                &nbsp; • &nbsp;
+
+                ✨🦋 = +3 pontos
+
+            </p>
+
+            <p>
+
+                Você tem 45 segundos!
+
+            </p>
+
+            <button
+
+                type="button"
+
+                class="btn-jogar"
+
+                onclick="iniciarJogo()"
+
+            >
+
+                ▶️ JOGAR
+
+            </button>
+
+            <button
+
+                type="button"
+
+                class="btn-menu"
+
+                onclick="voltarMenu()"
+
+            >
+
+                Voltar aos jogos
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+
+         GAME OVER
+
+    ====================================================== -->
+
+    <div
+
+        class="overlay oculto"
+
+        id="telaFim"
+
+    >
+
+        <div class="caixa">
+
+            <div class="caixa-icone">
+
+                🦋🏆
+
+            </div>
+
+            <h2>
+
+                Tempo acabou!
+
+            </h2>
+
+            <div class="resultado">
+
+                Pontos:
+
+                <strong id="pontosFim">
+
+                    0
+
+                </strong>
+
+                <br>
+
+                Recorde:
+
+                <strong id="recordeFim">
+
+                    0
+
+                </strong>
+
+            </div>
+
+            <button
+
+                type="button"
+
+                class="btn-jogar"
+
+                onclick="iniciarJogo()"
+
+            >
+
+                🔄 JOGAR NOVAMENTE
+
+            </button>
+
+            <button
+
+                type="button"
+
+                class="btn-menu"
+
+                onclick="voltarMenu()"
+
+            >
+
+                Voltar aos jogos
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const CHAVE_RECORDE =
+
+    "petton_jogo_pegar_borboletas_recorde_v1";
+
+const TEMPO_JOGO =
+
+    45;
+
+let pontos = 0;
+
+let nivel = 1;
+
+let recorde = 0;
+
+let tempoRestante =
+
+    TEMPO_JOGO;
+
+let jogando = false;
+
+let ultimoTempo = 0;
+
+let ultimoSpawn = 0;
+
+let animacaoId = null;
+
+/*
+
+   Lista das borboletas atualmente
+
+   na tela.
+
+*/
+
+let borboletas = [];
+
+/* =========================================================
+
+   ELEMENTOS
+
+========================================================= */
+
+const areaJogo =
+
+    document.getElementById(
+
+        "areaJogo"
+
+    );
+
+const petton =
+
+    document.getElementById(
+
+        "petton"
+
+    );
+
+const imagemPetton =
+
+    document.getElementById(
+
+        "imagemPetton"
+
+    );
+
+const pontosEl =
+
+    document.getElementById(
+
+        "pontos"
+
+    );
+
+const nivelEl =
+
+    document.getElementById(
+
+        "nivel"
+
+    );
+
+const recordeEl =
+
+    document.getElementById(
+
+        "recorde"
+
+    );
+
+const telaInicial =
+
+    document.getElementById(
+
+        "telaInicial"
+
+    );
+
+const telaFim =
+
+    document.getElementById(
+
+        "telaFim"
+
+    );
+
+/* =========================================================
+
+   CARREGAR RECORDE
+
+========================================================= */
+
+function carregarRecorde() {
+
+    try {
+
+        recorde =
+
+            Number(
+
+                localStorage.getItem(
+
+                    CHAVE_RECORDE
+
+                )
+
+            ) || 0;
+
+    } catch (erro) {
+
+        recorde = 0;
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+}
+
+/* =========================================================
+
+   DESCOBRIR FASE
+
+========================================================= */
+
+function descobrirFaseLocal(
+
+    dados
+
+) {
+
+    if (
+
+        dados &&
+
+        dados.fase &&
+
+        dados.fase !== "ovo"
+
+    ) {
+
+        return dados.fase;
+
+    }
+
+    let dias = 0;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.idadeDias ===
+
+                "function"
+
+        ) {
+
+            dias =
+
+                Number(
+
+                    Petton.idadeDias()
+
+                ) || 0;
+
+        }
+
+    } catch (erro) {
+
+        dias = 0;
+
+    }
+
+    if (dias < 8) {
+
+        return "bebe";
+
+    }
+
+    if (dias < 31) {
+
+        return "filhote";
+
+    }
+
+    if (dias < 91) {
+
+        return "jovem";
+
+    }
+
+    return "adulto";
+
+}
+
+/* =========================================================
+
+   IMAGEM DO PETTON
+
+========================================================= */
+
+function carregarImagemPetton() {
+
+    let dados = null;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.carregar ===
+
+                "function"
+
+        ) {
+
+            dados =
+
+                Petton.carregar();
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro ao carregar Petton:",
+
+            erro
+
+        );
+
+    }
+
+    if (!dados) {
+
+        imagemPetton.src =
+
+            "../petton-original.png";
+
+        return;
+
+    }
+
+    const fase =
+
+        descobrirFaseLocal(
+
+            dados
+
+        );
+
+    const especie =
+
+        dados.identidadeVisual?.especie ||
+
+        dados.especie ||
+
+        "gato";
+
+    const imagemGerada =
+
+        dados.identidadeVisual
+
+            ?.imagens
+
+            ?.[fase];
+
+    if (imagemGerada) {
+
+        imagemPetton.src =
+
+            imagemGerada;
+
+        return;
+
+    }
+
+    if (
+
+        especie === "cachorro"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+        return;
+
+    }
+
+    if (
+
+        especie === "coelho"
+
+    ) {
+
+        imagemPetton.src =
+
+            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
+
+        return;
+
+    }
+
+    imagemPetton.src =
+
+        "../petton-original.png";
+
+}
+
+/* =========================================================
+
+   POSIÇÃO DO PETTON
+
+========================================================= */
+
+function moverPetton(
+
+    clientX
+
+) {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    const areaRect =
+
+        areaJogo.getBoundingClientRect();
+
+    const largura =
+
+        petton.offsetWidth;
+
+    let x =
+
+        clientX -
+
+        areaRect.left;
+
+    const minimo =
+
+        largura / 2;
+
+    const maximo =
+
+        areaRect.width -
+
+        largura / 2;
+
+    x =
+
+        Math.max(
+
+            minimo,
+
+            Math.min(
+
+                maximo,
+
+                x
+
+            )
+
+        );
+
+    petton.style.left =
+
+        x + "px";
+
+}
+
+/* =========================================================
+
+   CONTROLE TOUCH
+
+========================================================= */
+
+areaJogo.addEventListener(
+
+    "touchstart",
+
+    function(evento) {
+
+        if (!jogando) {
+
+            return;
+
+        }
+
+        evento.preventDefault();
+
+        const toque =
+
+            evento.touches[0];
+
+        if (toque) {
+
+            moverPetton(
+
+                toque.clientX
+
+            );
+
+        }
+
+    },
+
+    {
+
+        passive: false
+
+    }
+
+);
+
+areaJogo.addEventListener(
+
+    "touchmove",
+
+    function(evento) {
+
+        if (!jogando) {
+
+            return;
+
+        }
+
+        evento.preventDefault();
+
+        const toque =
+
+            evento.touches[0];
+
+        if (toque) {
+
+            moverPetton(
+
+                toque.clientX
+
+            );
+
+        }
+
+    },
+
+    {
+
+        passive: false
+
+    }
+
+);
+
+/* =========================================================
+
+   MOUSE
+
+========================================================= */
+
+let mousePressionado = false;
+
+areaJogo.addEventListener(
+
+    "mousedown",
+
+    function(evento) {
+
+        mousePressionado = true;
+
+        moverPetton(
+
+            evento.clientX
+
+        );
+
+    }
+
+);
+
+window.addEventListener(
+
+    "mousemove",
+
+    function(evento) {
+
+        if (
+
+            mousePressionado
+
+        ) {
+
+            moverPetton(
+
+                evento.clientX
+
+            );
+
+        }
+
+    }
+
+);
+
+window.addEventListener(
+
+    "mouseup",
+
+    function() {
+
+        mousePressionado =
+
+            false;
+
+    }
+
+);
+
+/* =========================================================
+
+   CRIAR BORBOLETA
+
+========================================================= */
+
+function criarBorboleta() {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    const larguraArea =
+
+        areaJogo.clientWidth;
+
+    const alturaArea =
+
+        areaJogo.clientHeight;
+
+    /*
+
+       12% de chance de aparecer
+
+       uma borboleta especial.
+
+    */
+
+    const especial =
+
+        Math.random() < .12;
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        especial
+
+            ? "borboleta especial"
+
+            : "borboleta";
+
+    elemento.textContent =
+
+        especial
+
+            ? "🦋"
+
+            : "🦋";
+
+    if (especial) {
+
+        const brilho =
+
+            document.createElement(
+
+                "span"
+
+            );
+
+        brilho.className =
+
+            "brilho";
+
+        elemento.appendChild(
+
+            brilho
+
+        );
+
+    }
+
+    const tamanho =
+
+        especial
+
+            ? 52
+
+            : 46;
+
+    /*
+
+       As borboletas podem nascer
+
+       em qualquer parte acima
+
+       da região do Petton.
+
+    */
+
+    const x =
+
+        8 +
+
+        Math.random() *
+
+        Math.max(
+
+            10,
+
+            larguraArea -
+
+            tamanho -
+
+            16
+
+        );
+
+    const yMin =
+
+        75;
+
+    const yMax =
+
+        Math.max(
+
+            yMin + 30,
+
+            alturaArea - 230
+
+        );
+
+    const y =
+
+        yMin +
+
+        Math.random() *
+
+        (
+
+            yMax -
+
+            yMin
+
+        );
+
+    elemento.style.left =
+
+        x + "px";
+
+    elemento.style.top =
+
+        y + "px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    /*
+
+       Direção inicial aleatória.
+
+    */
+
+    const angulo =
+
+        Math.random() *
+
+        Math.PI *
+
+        2;
+
+    const velocidadeBase =
+
+        52 +
+
+        (nivel - 1) * 7 +
+
+        Math.random() * 30;
+
+    const borboleta = {
+
+        elemento:
+
+            elemento,
+
+        especial:
+
+            especial,
+
+        x:
+
+            x,
+
+        y:
+
+            y,
+
+        vx:
+
+            Math.cos(
+
+                angulo
+
+            ) *
+
+            velocidadeBase,
+
+        vy:
+
+            Math.sin(
+
+                angulo
+
+            ) *
+
+            velocidadeBase,
+
+        tamanho:
+
+            tamanho,
+
+        onda:
+
+            Math.random() *
+
+            Math.PI *
+
+            2,
+
+        viva:
+
+            true
+
+    };
+
+    borboletas.push(
+
+        borboleta
+
+    );
+
+}
+
+/* =========================================================
+
+   REMOVER BORBOLETA
+
+========================================================= */
+
+function removerBorboleta(
+
+    borboleta
+
+) {
+
+    borboleta.viva =
+
+        false;
+
+    try {
+
+        borboleta.elemento.remove();
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   ATUALIZAR BORBOLETAS
+
+========================================================= */
+
+function atualizarBorboletas(
+
+    delta
+
+) {
+
+    const largura =
+
+        areaJogo.clientWidth;
+
+    const altura =
+
+        areaJogo.clientHeight;
+
+    for (
+
+        const borboleta
+
+        of borboletas
+
+    ) {
+
+        if (
+
+            !borboleta.viva
+
+        ) {
+
+            continue;
+
+        }
+
+        /*
+
+           Movimento ondulado.
+
+        */
+
+        borboleta.onda +=
+
+            delta * 5;
+
+        borboleta.x +=
+
+            borboleta.vx *
+
+            delta;
+
+        borboleta.y +=
+
+            (
+
+                borboleta.vy +
+
+                Math.sin(
+
+                    borboleta.onda
+
+                ) * 18
+
+            ) *
+
+            delta;
+
+        /*
+
+           Rebater nas laterais.
+
+        */
+
+        if (
+
+            borboleta.x <= 2
+
+        ) {
+
+            borboleta.x = 2;
+
+            borboleta.vx =
+
+                Math.abs(
+
+                    borboleta.vx
+
+                );
+
+        }
+
+        if (
+
+            borboleta.x +
+
+            borboleta.tamanho >=
+
+            largura - 2
+
+        ) {
+
+            borboleta.x =
+
+                largura -
+
+                borboleta.tamanho -
+
+                2;
+
+            borboleta.vx =
+
+                -Math.abs(
+
+                    borboleta.vx
+
+                );
+
+        }
+
+        /*
+
+           Limites verticais.
+
+        */
+
+        const topo =
+
+            65;
+
+        const fundo =
+
+            altura - 105;
+
+        if (
+
+            borboleta.y <= topo
+
+        ) {
+
+            borboleta.y =
+
+                topo;
+
+            borboleta.vy =
+
+                Math.abs(
+
+                    borboleta.vy
+
+                );
+
+        }
+
+        if (
+
+            borboleta.y +
+
+            borboleta.tamanho >=
+
+            fundo
+
+        ) {
+
+            borboleta.y =
+
+                fundo -
+
+                borboleta.tamanho;
+
+            borboleta.vy =
+
+                -Math.abs(
+
+                    borboleta.vy
+
+                );
+
+        }
+
+        /*
+
+           De vez em quando muda
+
+           um pouco a direção.
+
+        */
+
+        if (
+
+            Math.random() <
+
+            .012
+
+        ) {
+
+            borboleta.vx +=
+
+                (
+
+                    Math.random() -
+
+                    .5
+
+                ) * 18;
+
+            borboleta.vy +=
+
+                (
+
+                    Math.random() -
+
+                    .5
+
+                ) * 18;
+
+        }
+
+        borboleta.elemento.style.left =
+
+            borboleta.x +
+
+            "px";
+
+        borboleta.elemento.style.top =
+
+            borboleta.y +
+
+            "px";
+
+    }
+
+    borboletas =
+
+        borboletas.filter(
+
+            function(item) {
+
+                return item.viva;
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   COLISÕES
+
+========================================================= */
+
+function verificarColisoes() {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    const petRect =
+
+        petton.getBoundingClientRect();
+
+    /*
+
+       Caixa um pouco menor para
+
+       a colisão ficar justa.
+
+    */
+
+    const petHit = {
+
+        left:
+
+            petRect.left + 15,
+
+        right:
+
+            petRect.right - 15,
+
+        top:
+
+            petRect.top + 14,
+
+        bottom:
+
+            petRect.bottom - 8
+
+    };
+
+    for (
+
+        const borboleta
+
+        of borboletas
+
+    ) {
+
+        if (
+
+            !borboleta.viva
+
+        ) {
+
+            continue;
+
+        }
+
+        const rect =
+
+            borboleta.elemento
+
+                .getBoundingClientRect();
+
+        const margem =
+
+            7;
+
+        const bateu =
+
+            petHit.left <
+
+                rect.right -
+
+                margem &&
+
+            petHit.right >
+
+                rect.left +
+
+                margem &&
+
+            petHit.top <
+
+                rect.bottom -
+
+                margem &&
+
+            petHit.bottom >
+
+                rect.top +
+
+                margem;
+
+        if (!bateu) {
+
+            continue;
+
+        }
+
+        pegarBorboleta(
+
+            borboleta,
+
+            rect
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   PEGOU BORBOLETA
+
+========================================================= */
+
+function pegarBorboleta(
+
+    borboleta,
+
+    rect
+
+) {
+
+    const valor =
+
+        borboleta.especial
+
+            ? 3
+
+            : 1;
+
+    removerBorboleta(
+
+        borboleta
+
+    );
+
+    pontos += valor;
+
+    pontosEl.textContent =
+
+        pontos;
+
+    mostrarPonto(
+
+        rect.left +
+
+        rect.width / 2,
+
+        rect.top,
+
+        valor,
+
+        borboleta.especial
+
+    );
+
+    if (
+
+        borboleta.especial
+
+    ) {
+
+        tocarBonus();
+
+    } else {
+
+        tocarPonto();
+
+    }
+
+    verificarNivel();
+
+}
+
+/* =========================================================
+
+   PONTO FLUTUANTE
+
+========================================================= */
+
+function mostrarPonto(
+
+    xTela,
+
+    yTela,
+
+    valor,
+
+    bonus
+
+) {
+
+    const areaRect =
+
+        areaJogo.getBoundingClientRect();
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        bonus
+
+            ? "ponto-flutuante bonus"
+
+            : "ponto-flutuante";
+
+    elemento.textContent =
+
+        "+" + valor;
+
+    elemento.style.left =
+
+        (
+
+            xTela -
+
+            areaRect.left
+
+        ) +
+
+        "px";
+
+    elemento.style.top =
+
+        (
+
+            yTela -
+
+            areaRect.top
+
+        ) +
+
+        "px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            elemento.remove();
+
+        },
+
+        750
+
+    );
+
+}
+
+/* =========================================================
+
+   NÍVEL
+
+========================================================= */
+
+function verificarNivel() {
+
+    const novoNivel =
+
+        1 +
+
+        Math.floor(
+
+            pontos / 10
+
+        );
+
+    if (
+
+        novoNivel <= nivel
+
+    ) {
+
+        return;
+
+    }
+
+    nivel =
+
+        novoNivel;
+
+    nivelEl.textContent =
+
+        nivel;
+
+    mostrarNivel();
+
+    tocarNivel();
+
+}
+
+/* =========================================================
+
+   MOSTRAR NÍVEL
+
+========================================================= */
+
+function mostrarNivel() {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagemNivel"
+
+        );
+
+    elemento.textContent =
+
+        "⭐ Nível " +
+
+        nivel +
+
+        "!";
+
+    elemento.classList.remove(
+
+        "mostrar"
+
+    );
+
+    void elemento.offsetWidth;
+
+    elemento.classList.add(
+
+        "mostrar"
+
+    );
+
+}
+
+/* =========================================================
+
+   LIMPAR BORBOLETAS
+
+========================================================= */
+
+function limparBorboletas() {
+
+    for (
+
+        const borboleta
+
+        of borboletas
+
+    ) {
+
+        try {
+
+            borboleta.elemento
+
+                .remove();
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    borboletas = [];
+
+}
+
+/* =========================================================
+
+   SPAWN
+
+========================================================= */
+
+function tentarCriarBorboleta(
+
+    tempoAtual
+
+) {
+
+    /*
+
+       Quanto maior o nível,
+
+       mais rapidamente aparecem.
+
+    */
+
+    const intervalo =
+
+        Math.max(
+
+            470,
+
+            1150 -
+
+            (nivel - 1) * 80
+
+        );
+
+    if (
+
+        tempoAtual -
+
+        ultimoSpawn <
+
+        intervalo
+
+    ) {
+
+        return;
+
+    }
+
+    ultimoSpawn =
+
+        tempoAtual;
+
+    /*
+
+       Limite de borboletas
+
+       simultâneas.
+
+    */
+
+    const maximo =
+
+        Math.min(
+
+            8,
+
+            3 +
+
+            Math.floor(
+
+                nivel / 2
+
+            )
+
+        );
+
+    if (
+
+        borboletas.length <
+
+        maximo
+
+    ) {
+
+        criarBorboleta();
+
+    }
+
+    /*
+
+       Em níveis altos existe
+
+       chance de aparecer outra.
+
+    */
+
+    if (
+
+        nivel >= 4 &&
+
+        borboletas.length <
+
+            maximo &&
+
+        Math.random() < .30
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    jogando &&
+
+                    borboletas.length <
+
+                        maximo
+
+                ) {
+
+                    criarBorboleta();
+
+                }
+
+            },
+
+            160
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   LOOP
+
+========================================================= */
+
+function loop(
+
+    tempoAtual
+
+) {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    if (!ultimoTempo) {
+
+        ultimoTempo =
+
+            tempoAtual;
+
+    }
+
+    let delta =
+
+        (
+
+            tempoAtual -
+
+            ultimoTempo
+
+        ) /
+
+        1000;
+
+    ultimoTempo =
+
+        tempoAtual;
+
+    /*
+
+       Evita saltos grandes caso
+
+       o navegador pause.
+
+    */
+
+    delta =
+
+        Math.min(
+
+            delta,
+
+            .04
+
+        );
+
+    tempoRestante -=
+
+        delta;
+
+    if (
+
+        tempoRestante <= 0
+
+    ) {
+
+        finalizarJogo();
+
+        return;
+
+    }
+
+    tentarCriarBorboleta(
+
+        tempoAtual
+
+    );
+
+    atualizarBorboletas(
+
+        delta
+
+    );
+
+    verificarColisoes();
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   INICIAR JOGO
+
+========================================================= */
+
+function iniciarJogo() {
+
+    prepararAudio();
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+        animacaoId = null;
+
+    }
+
+    limparBorboletas();
+
+    pontos = 0;
+
+    nivel = 1;
+
+    tempoRestante =
+
+        TEMPO_JOGO;
+
+    ultimoTempo = 0;
+
+    ultimoSpawn = 0;
+
+    pontosEl.textContent =
+
+        "0";
+
+    nivelEl.textContent =
+
+        "1";
+
+    petton.style.left =
+
+        "50%";
+
+    telaInicial.classList.add(
+
+        "oculto"
+
+    );
+
+    telaFim.classList.add(
+
+        "oculto"
+
+    );
+
+    jogando = true;
+
+    /*
+
+       Primeiras borboletas para
+
+       o jogo não começar vazio.
+
+    */
+
+    criarBorboleta();
+
+    setTimeout(
+
+        function() {
+
+            if (jogando) {
+
+                criarBorboleta();
+
+            }
+
+        },
+
+        350
+
+    );
+
+    tocarInicio();
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   FINALIZAR
+
+========================================================= */
+
+function finalizarJogo() {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    jogando = false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+        animacaoId = null;
+
+    }
+
+    if (
+
+        pontos > recorde
+
+    ) {
+
+        recorde =
+
+            pontos;
+
+        try {
+
+            localStorage.setItem(
+
+                CHAVE_RECORDE,
+
+                String(recorde)
+
+            );
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+    document.getElementById(
+
+        "pontosFim"
+
+    ).textContent =
+
+        pontos;
+
+    document.getElementById(
+
+        "recordeFim"
+
+    ).textContent =
+
+        recorde;
+
+    tocarFim();
+
+    telaFim.classList.remove(
+
+        "oculto"
+
+    );
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltarMenu() {
+
+    jogando = false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    window.location.assign(
+
+        "./brincar.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   ÁUDIO
+
+========================================================= */
+
+let audioContext = null;
+
+let somAtivo = true;
+
+/* =========================================================
+
+   PREPARAR ÁUDIO
+
+========================================================= */
+
+function prepararAudio() {
+
+    if (!somAtivo) {
+
+        return;
+
+    }
+
+    try {
+
+        if (!audioContext) {
+
+            const AudioCtx =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (AudioCtx) {
+
+                audioContext =
+
+                    new AudioCtx();
+
+            }
+
+        }
+
+        if (
+
+            audioContext &&
+
+            audioContext.state ===
+
+                "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {
+
+        console.warn(
+
+            "Áudio indisponível:",
+
+            erro
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   TOM
+
+========================================================= */
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    tipo = "sine",
+
+    volume = .06,
+
+    atraso = 0
+
+) {
+
+    if (
+
+        !somAtivo ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const inicio =
+
+            audioContext.currentTime +
+
+            atraso;
+
+        const oscilador =
+
+            audioContext
+
+                .createOscillator();
+
+        const ganho =
+
+            audioContext
+
+                .createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                volume,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                .001,
+
+                inicio +
+
+                duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(
+
+            inicio
+
+        );
+
+        oscilador.stop(
+
+            inicio +
+
+            duracao
+
+        );
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   SONS
+
+========================================================= */
+
+function tocarInicio() {
+
+    tocarTom(
+
+        440,
+
+        .12
+
+    );
+
+    tocarTom(
+
+        660,
+
+        .13,
+
+        "sine",
+
+        .06,
+
+        .11
+
+    );
+
+    tocarTom(
+
+        880,
+
+        .16,
+
+        "sine",
+
+        .06,
+
+        .22
+
+    );
+
+}
+
+function tocarPonto() {
+
+    tocarTom(
+
+        760,
+
+        .09,
+
+        "sine",
+
+        .045
+
+    );
+
+    tocarTom(
+
+        980,
+
+        .10,
+
+        "sine",
+
+        .04,
+
+        .07
+
+    );
+
+}
+
+function tocarBonus() {
+
+    tocarTom(
+
+        700,
+
+        .10,
+
+        "sine",
+
+        .055
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .12,
+
+        "sine",
+
+        .055,
+
+        .08
+
+    );
+
+    tocarTom(
+
+        1400,
+
+        .15,
+
+        "sine",
+
+        .05,
+
+        .16
+
+    );
+
+}
+
+function tocarNivel() {
+
+    tocarTom(
+
+        520,
+
+        .10,
+
+        "triangle",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        780,
+
+        .11,
+
+        "triangle",
+
+        .05,
+
+        .09
+
+    );
+
+    tocarTom(
+
+        1040,
+
+        .14,
+
+        "triangle",
+
+        .05,
+
+        .18
+
+    );
+
+}
+
+function tocarFim() {
+
+    tocarTom(
+
+        650,
+
+        .14,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        520,
+
+        .16,
+
+        "sine",
+
+        .05,
+
+        .13
+
+    );
+
+    tocarTom(
+
+        390,
+
+        .22,
+
+        "sine",
+
+        .05,
+
+        .27
+
+    );
+
+}
+
+/* =========================================================
+
+   LIGAR / DESLIGAR SOM
+
+========================================================= */
+
+function alternarSom() {
+
+    somAtivo =
+
+        !somAtivo;
+
+    document.getElementById(
+
+        "btnSom"
+
+    ).textContent =
+
+        somAtivo
+
+            ? "🔊"
+
+            : "🔇";
+
+    if (somAtivo) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            700,
+
+            .09
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   INICIALIZAÇÃO
+
+========================================================= */
+
+carregarRecorde();
+
+carregarImagemPetton();
+
+</script>
+
+</body>
+
+</html>
