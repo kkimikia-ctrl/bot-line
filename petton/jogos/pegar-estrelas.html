@@ -298,7 +298,7 @@ body {
 
 /* =========================================================
 
-   ESTRELAS DO FUNDO
+   CÉU
 
 ========================================================= */
 
@@ -538,9 +538,13 @@ body {
 
     font-size: 40px;
 
-    animation:
+    filter:
 
-        balancarBomba .35s ease-in-out infinite alternate;
+        drop-shadow(
+
+            0 0 8px rgba(255,70,40,.6)
+
+        );
 
 }
 
@@ -576,25 +580,9 @@ body {
 
 }
 
-@keyframes balancarBomba {
-
-    from {
-
-        transform: rotate(-8deg);
-
-    }
-
-    to {
-
-        transform: rotate(8deg);
-
-    }
-
-}
-
 /* =========================================================
 
-   PONTO FLUTUANTE
+   PONTO
 
 ========================================================= */
 
@@ -892,6 +880,24 @@ body {
 
 }
 
+.aviso-bomba {
+
+    margin: 12px 0;
+
+    padding: 10px;
+
+    border-radius: 15px;
+
+    background: #fff0ed;
+
+    color: #a43c2b;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
 .resultado {
 
     margin: 15px 0;
@@ -1006,7 +1012,7 @@ body {
 
         <span>
 
-            Pegue as estrelas e fuja das bombas
+            Cuidado com as bombas!
 
         </span>
 
@@ -1146,7 +1152,7 @@ body {
 
     >
 
-        ⭐ Nível 2!
+        ⚡ Nível 2!
 
     </div>
 
@@ -1166,11 +1172,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     INÍCIO
-
-====================================================== -->
+<!-- INÍCIO -->
 
 <div
 
@@ -1184,7 +1186,7 @@ body {
 
         <div class="caixa-icone">
 
-            🌙⭐
+            🌙⭐💣
 
         </div>
 
@@ -1218,9 +1220,15 @@ body {
 
         </p>
 
+        <div class="aviso-bomba">
+
+            ⚠️ Algumas bombas caem reto e outras fazem zigue-zague.
+
+        </div>
+
         <p>
 
-            A cada 10 pontos o jogo fica mais rápido.
+            Quanto maior o nível, mais bombas aparecem.
 
         </p>
 
@@ -1262,11 +1270,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     FINAL
-
-====================================================== -->
+<!-- FINAL -->
 
 <div
 
@@ -1419,12 +1423,6 @@ let ultimoSpawn =
 let animacaoId =
 
     null;
-
-/* =========================================================
-
-   PETTON
-
-========================================================= */
 
 let pettonX =
 
@@ -1778,7 +1776,7 @@ function carregarImagemPetton() {
 
 /* =========================================================
 
-   POSICIONAR PETTON
+   POSIÇÃO PETTON
 
 ========================================================= */
 
@@ -1796,25 +1794,17 @@ function posicionarPetton(
 
         86;
 
-    const minimo =
-
-        0;
-
-    const maximo =
-
-        largura -
-
-        larguraPetton;
-
     pettonX =
 
         Math.max(
 
-            minimo,
+            0,
 
             Math.min(
 
-                maximo,
+                largura -
+
+                larguraPetton,
 
                 x
 
@@ -1992,9 +1982,21 @@ function criarObjeto(
 
         /*
 
-           Bombas aumentam conforme
+           MAIS BOMBAS:
 
-           sobe de nível.
+           Nível 1 = 22%
+
+           Nível 2 = 27%
+
+           Nível 3 = 32%
+
+           Nível 4 = 37%
+
+           Nível 5 = 42%
+
+           Nível 6 = 47%
+
+           Nível 7+ = 50%
 
         */
 
@@ -2002,11 +2004,11 @@ function criarObjeto(
 
             Math.min(
 
-                .36,
+                .50,
 
-                .12 +
+                .22 +
 
-                (nivel - 1) * .035
+                (nivel - 1) * .05
 
             );
 
@@ -2114,11 +2116,39 @@ function criarObjeto(
 
             : 48;
 
-    const x =
+    /*
 
-        5 +
+       Dá espaço para o
 
-        Math.random() *
+       zigue-zague não sair
+
+       imediatamente da tela.
+
+    */
+
+    let margem =
+
+        tipo === "bomba"
+
+            ? 45
+
+            : 8;
+
+    if (
+
+        largura <
+
+        280
+
+    ) {
+
+        margem =
+
+            15;
+
+    }
+
+    const espaco =
 
         Math.max(
 
@@ -2128,63 +2158,39 @@ function criarObjeto(
 
             tamanho -
 
-            10
+            margem * 2
 
         );
 
-    /*
+    const x =
 
-       Começa logo acima da tela.
+        margem +
 
-    */
+        Math.random() *
+
+        espaco;
 
     const y =
 
-        -55 -
+        -60 -
 
-        Math.random() * 80;
+        Math.random() *
+
+        90;
 
     /*
 
-       O jogo já começa rápido.
+       VELOCIDADE VERTICAL
 
     */
 
     let velocidade =
 
-        185 +
+        190 +
 
-        (nivel - 1) * 28 +
+        (nivel - 1) * 30 +
 
-        Math.random() * 80;
-
-    /*
-
-       Bombas um pouco mais rápidas.
-
-    */
-
-    if (
-
-        tipo ===
-
-        "bomba"
-
-    ) {
-
-        velocidade *=
-
-            1.18;
-
-    }
-
-    /*
-
-       Estrela dourada também
-
-       não fica fácil demais.
-
-    */
+        Math.random() * 85;
 
     if (
 
@@ -2199,6 +2205,114 @@ function criarObjeto(
             1.10;
 
     }
+
+    /*
+
+       BOMBA MAIS RÁPIDA
+
+    */
+
+    if (
+
+        tipo ===
+
+        "bomba"
+
+    ) {
+
+        velocidade *=
+
+            1.22;
+
+    }
+
+    /*
+
+       METADE DAS BOMBAS
+
+       FAZ ZIGUE-ZAGUE.
+
+    */
+
+    let movimento =
+
+        "vertical";
+
+    if (
+
+        tipo === "bomba" &&
+
+        Math.random() < .50
+
+    ) {
+
+        movimento =
+
+            "ziguezague";
+
+    }
+
+    /*
+
+       AMPLITUDE DO ZIGUE-ZAGUE.
+
+       Quanto maior o nível,
+
+       mais longe a bomba vai
+
+       para os lados.
+
+    */
+
+    const amplitude =
+
+        movimento ===
+
+            "ziguezague"
+
+            ?
+
+            Math.min(
+
+                100,
+
+                48 +
+
+                (nivel - 1) * 8 +
+
+                Math.random() * 18
+
+            )
+
+            :
+
+            0;
+
+    /*
+
+       VELOCIDADE DO
+
+       ZIGUE-ZAGUE.
+
+    */
+
+    const velocidadeZig =
+
+        movimento ===
+
+            "ziguezague"
+
+            ?
+
+            3.2 +
+
+            (nivel - 1) * .32 +
+
+            Math.random() * .8
+
+            :
+
+            0;
 
     elemento.style.left =
 
@@ -2228,6 +2342,14 @@ function criarObjeto(
 
             tipo,
 
+        movimento:
+
+            movimento,
+
+        xBase:
+
+            x,
+
         x:
 
             x,
@@ -2240,9 +2362,13 @@ function criarObjeto(
 
             velocidade,
 
-        vivo:
+        amplitude:
 
-            true,
+            amplitude,
+
+        velocidadeZig:
+
+            velocidadeZig,
 
         fase:
 
@@ -2250,7 +2376,11 @@ function criarObjeto(
 
             Math.PI *
 
-            2
+            2,
+
+        vivo:
+
+            true
 
     });
 
@@ -2272,6 +2402,10 @@ function atualizarObjetos(
 
         areaJogo.clientHeight;
 
+    const largura =
+
+        areaJogo.clientWidth;
+
     for (
 
         const objeto
@@ -2290,9 +2424,11 @@ function atualizarObjetos(
 
         }
 
-        objeto.fase +=
+        /*
 
-            delta * 3;
+           DESCIDA
+
+        */
 
         objeto.y +=
 
@@ -2302,27 +2438,141 @@ function atualizarObjetos(
 
         /*
 
-           Pequeno movimento lateral.
+           BOMBA EM ZIGUE-ZAGUE
 
         */
 
-        const lateral =
+        if (
 
-            Math.sin(
+            objeto.tipo ===
 
-                objeto.fase
+                "bomba" &&
 
-            ) * 6;
+            objeto.movimento ===
+
+                "ziguezague"
+
+        ) {
+
+            objeto.fase +=
+
+                objeto.velocidadeZig *
+
+                delta;
+
+            objeto.x =
+
+                objeto.xBase +
+
+                Math.sin(
+
+                    objeto.fase
+
+                ) *
+
+                objeto.amplitude;
+
+            /*
+
+               Não deixa a bomba
+
+               sair pelas laterais.
+
+            */
+
+            objeto.x =
+
+                Math.max(
+
+                    2,
+
+                    Math.min(
+
+                        largura - 50,
+
+                        objeto.x
+
+                    )
+
+                );
+
+            /*
+
+               Inclina conforme
+
+               muda de direção.
+
+            */
+
+            const inclinacao =
+
+                Math.cos(
+
+                    objeto.fase
+
+                ) * 15;
+
+            objeto.elemento
+
+                .style.transform =
+
+                    "rotate(" +
+
+                    inclinacao +
+
+                    "deg)";
+
+        } else if (
+
+            objeto.tipo ===
+
+            "bomba"
+
+        ) {
+
+            /*
+
+               BOMBA VERTICAL.
+
+               Só balança visualmente,
+
+               mas continua caindo reto.
+
+            */
+
+            objeto.fase +=
+
+                delta * 7;
+
+            const inclinacao =
+
+                Math.sin(
+
+                    objeto.fase
+
+                ) * 8;
+
+            objeto.elemento
+
+                .style.transform =
+
+                    "rotate(" +
+
+                    inclinacao +
+
+                    "deg)";
+
+        }
+
+        objeto.elemento.style.left =
+
+            objeto.x +
+
+            "px";
 
         objeto.elemento.style.top =
 
             objeto.y +
-
-            "px";
-
-        objeto.elemento.style.marginLeft =
-
-            lateral +
 
             "px";
 
@@ -2402,9 +2652,9 @@ function verificarColisao(
 
     /*
 
-       Hitbox do Petton um pouco
+       HITBOX PETTON
 
-       menor para ficar justo.
+       levemente menor.
 
     */
 
@@ -2432,19 +2682,19 @@ function verificarColisao(
 
         left:
 
-            rectObjeto.left + 5,
+            rectObjeto.left + 6,
 
         right:
 
-            rectObjeto.right - 5,
+            rectObjeto.right - 6,
 
         top:
 
-            rectObjeto.top + 5,
+            rectObjeto.top + 6,
 
         bottom:
 
-            rectObjeto.bottom - 5
+            rectObjeto.bottom - 6
 
     };
 
@@ -2476,6 +2726,12 @@ function verificarColisao(
 
     }
 
+    /*
+
+       BOMBA = GAME OVER
+
+    */
+
     if (
 
         objeto.tipo ===
@@ -2501,6 +2757,12 @@ function verificarColisao(
         return;
 
     }
+
+    /*
+
+       ESTRELA DOURADA
+
+    */
 
     if (
 
@@ -2529,6 +2791,12 @@ function verificarColisao(
         tocarBonus();
 
     } else {
+
+        /*
+
+           ESTRELA NORMAL
+
+        */
 
         pontos +=
 
@@ -2594,7 +2862,7 @@ function removerObjeto(
 
 /* =========================================================
 
-   PONTOS
+   PONTO FLUTUANTE
 
 ========================================================= */
 
@@ -2712,7 +2980,7 @@ function verificarNivel() {
 
     mostrarMensagem(
 
-        "⚡ Nível " +
+        "💣⚡ Nível " +
 
         nivel +
 
@@ -2778,9 +3046,11 @@ function tentarSpawn(
 
     /*
 
-       Fica progressivamente
+       MAIS OBJETOS.
 
-       mais frenético.
+       Nível alto fica bem
+
+       mais movimentado.
 
     */
 
@@ -2788,11 +3058,11 @@ function tentarSpawn(
 
         Math.max(
 
-            260,
+            220,
 
-            720 -
+            650 -
 
-            (nivel - 1) * 65
+            (nivel - 1) * 55
 
         );
 
@@ -2818,9 +3088,9 @@ function tentarSpawn(
 
         Math.min(
 
-            14,
+            16,
 
-            6 +
+            7 +
 
             nivel
 
@@ -2840,21 +3110,25 @@ function tentarSpawn(
 
     /*
 
-       A partir do nível 3
+       A partir do nível 2
 
-       pode cair outro logo depois.
+       já pode cair outro
+
+       objeto quase junto.
 
     */
 
     if (
 
-        nivel >= 3 &&
+        nivel >= 2 &&
 
         objetos.length <
 
             maximo &&
 
-        Math.random() < .35
+        Math.random() <
+
+            .32
 
     ) {
 
@@ -2879,6 +3153,64 @@ function tentarSpawn(
             },
 
             120
+
+        );
+
+    }
+
+    /*
+
+       NÍVEL 4+:
+
+       pequena chance de surgir
+
+       uma bomba adicional.
+
+       Isso deixa os níveis
+
+       altos perigosos.
+
+    */
+
+    if (
+
+        nivel >= 4 &&
+
+        objetos.length <
+
+            maximo &&
+
+        Math.random() <
+
+            .14
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    jogando &&
+
+                    objetos.length <
+
+                        maximo
+
+                ) {
+
+                    criarObjeto(
+
+                        "bomba"
+
+                    );
+
+                }
+
+            },
+
+            230
 
         );
 
@@ -3118,7 +3450,7 @@ function iniciarJogo() {
 
     /*
 
-       Petton no centro.
+       PETTON NO CENTRO
 
     */
 
@@ -3130,13 +3462,19 @@ function iniciarJogo() {
 
             86
 
-        ) / 2
+        ) /
+
+        2
 
     );
 
     /*
 
-       Começa sem demora.
+       COMEÇA LOGO.
+
+       Duas estrelas e
+
+       depois uma bomba.
 
     */
 
@@ -3166,7 +3504,7 @@ function iniciarJogo() {
 
         },
 
-        250
+        200
 
     );
 
@@ -3190,7 +3528,31 @@ function iniciarJogo() {
 
         },
 
-        650
+        450
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando
+
+            ) {
+
+                criarObjeto(
+
+                    "bomba"
+
+                );
+
+            }
+
+        },
+
+        850
 
     );
 
@@ -3358,7 +3720,7 @@ function finalizarJogo(
 
         texto.textContent =
 
-            "Você encostou em uma bomba. Desvie delas!";
+            "Você encostou em uma bomba!";
 
     } else {
 
@@ -3612,6 +3974,12 @@ function tocarTom(
 
 }
 
+/* =========================================================
+
+   SONS
+
+========================================================= */
+
 function tocarInicio() {
 
     tocarTom(
@@ -3846,7 +4214,7 @@ function tocarFim() {
 
 /* =========================================================
 
-   SOM
+   SOM ON/OFF
 
 ========================================================= */
 
