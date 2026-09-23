@@ -1,0 +1,4139 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+>
+
+<meta name="google" content="notranslate">
+
+<title>Acertar o Alvo 🎯</title>
+
+<script src="../petton.js"></script>
+
+<style>
+
+* {
+
+    box-sizing: border-box;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+html,
+
+body {
+
+    margin: 0;
+
+    padding: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: hidden;
+
+}
+
+body {
+
+    font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        Arial,
+
+        sans-serif;
+
+    background: #dff4ff;
+
+    color: #333;
+
+    touch-action: none;
+
+}
+
+.app {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 520px;
+
+    height: 100dvh;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #86d8ff 0%,
+
+            #dff6ff 48%,
+
+            #8fd36b 48%,
+
+            #5daa46 100%
+
+        );
+
+}
+
+/* =========================================================
+
+   TOPO
+
+========================================================= */
+
+.topo {
+
+    position: absolute;
+
+    z-index: 500;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 60px;
+
+    display: grid;
+
+    grid-template-columns: 48px 1fr 48px;
+
+    align-items: center;
+
+    padding: 7px 9px;
+
+    background: rgba(255,255,255,.95);
+
+    border-bottom:
+
+        1px solid rgba(0,0,0,.08);
+
+    backdrop-filter: blur(8px);
+
+}
+
+.btn-topo {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+}
+
+.btn-topo:active {
+
+    transform: scale(.94);
+
+}
+
+.titulo {
+
+    text-align: center;
+
+}
+
+.titulo strong {
+
+    display: block;
+
+    font-size: 17px;
+
+}
+
+.titulo span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #777;
+
+    font-size: 10px;
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+.hud {
+
+    position: absolute;
+
+    z-index: 400;
+
+    top: 70px;
+
+    left: 8px;
+
+    right: 8px;
+
+    display: grid;
+
+    grid-template-columns: repeat(4,1fr);
+
+    gap: 5px;
+
+    pointer-events: none;
+
+}
+
+.hud-item {
+
+    padding: 7px 2px;
+
+    border-radius: 14px;
+
+    background:
+
+        rgba(255,255,255,.94);
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.12);
+
+    text-align: center;
+
+}
+
+.hud-label {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+}
+
+.hud-valor {
+
+    display: block;
+
+    margin-top: 1px;
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+}
+
+/* =========================================================
+
+   COMBO
+
+========================================================= */
+
+.combo-box {
+
+    position: absolute;
+
+    z-index: 400;
+
+    top: 120px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    min-width: 125px;
+
+    padding: 6px 14px;
+
+    border-radius: 18px;
+
+    background:
+
+        rgba(255,255,255,.93);
+
+    text-align: center;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    box-shadow:
+
+        0 2px 8px rgba(0,0,0,.1);
+
+    pointer-events: none;
+
+}
+
+#comboValor {
+
+    color: #ef6c00;
+
+    font-size: 16px;
+
+}
+
+/* =========================================================
+
+   ÁREA DO JOGO
+
+========================================================= */
+
+#areaJogo {
+
+    position: absolute;
+
+    top: 60px;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+/* =========================================================
+
+   CENÁRIO
+
+========================================================= */
+
+.sol {
+
+    position: absolute;
+
+    top: 95px;
+
+    right: 24px;
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 50%;
+
+    background: #ffe36c;
+
+    box-shadow:
+
+        0 0 25px rgba(255,220,50,.65);
+
+    pointer-events: none;
+
+}
+
+.nuvem1,
+
+.nuvem2 {
+
+    position: absolute;
+
+    font-size: 42px;
+
+    opacity: .78;
+
+    pointer-events: none;
+
+}
+
+.nuvem1 {
+
+    top: 120px;
+
+    left: 18px;
+
+}
+
+.nuvem2 {
+
+    top: 190px;
+
+    right: 38px;
+
+    font-size: 34px;
+
+}
+
+/* =========================================================
+
+   CAMPO DOS ALVOS
+
+========================================================= */
+
+#campoAlvos {
+
+    position: absolute;
+
+    z-index: 50;
+
+    top: 150px;
+
+    left: 8px;
+
+    right: 8px;
+
+    bottom: 125px;
+
+    overflow: hidden;
+
+    border-radius: 22px;
+
+    background:
+
+        rgba(255,255,255,.08);
+
+    touch-action: manipulation;
+
+}
+
+/* =========================================================
+
+   ALVO
+
+========================================================= */
+
+.alvo {
+
+    position: absolute;
+
+    z-index: 80;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 64px;
+
+    height: 64px;
+
+    border: none;
+
+    padding: 0;
+
+    background: transparent;
+
+    font-size: 55px;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    touch-action: manipulation;
+
+    filter:
+
+        drop-shadow(
+
+            0 4px 4px rgba(0,0,0,.25)
+
+        );
+
+    will-change:
+
+        left,
+
+        top,
+
+        transform;
+
+}
+
+.alvo:active {
+
+    transform: scale(.82);
+
+}
+
+/* =========================================================
+
+   ALVO DOURADO
+
+========================================================= */
+
+.alvo.bonus {
+
+    animation:
+
+        bonusPulso .45s ease-in-out infinite alternate;
+
+}
+
+@keyframes bonusPulso {
+
+    from {
+
+        transform: scale(.9);
+
+    }
+
+    to {
+
+        transform: scale(1.14);
+
+    }
+
+}
+
+/* =========================================================
+
+   BOMBA
+
+========================================================= */
+
+.alvo.bomba {
+
+    animation:
+
+        bombaMexer .22s ease-in-out infinite alternate;
+
+}
+
+@keyframes bombaMexer {
+
+    from {
+
+        transform:
+
+            rotate(-7deg)
+
+            scale(.96);
+
+    }
+
+    to {
+
+        transform:
+
+            rotate(7deg)
+
+            scale(1.05);
+
+    }
+
+}
+
+/* =========================================================
+
+   PETTON
+
+========================================================= */
+
+.petton-area {
+
+    position: absolute;
+
+    z-index: 100;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 5px;
+
+    height: 115px;
+
+    pointer-events: none;
+
+}
+
+#petton {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 28px;
+
+    width: 82px;
+
+    height: 82px;
+
+    transform:
+
+        translateX(-50%);
+
+    object-fit: contain;
+
+    filter:
+
+        drop-shadow(
+
+            0 5px 4px rgba(0,0,0,.2)
+
+        );
+
+}
+
+.sombra {
+
+    position: absolute;
+
+    left: 50%;
+
+    bottom: 22px;
+
+    width: 62px;
+
+    height: 13px;
+
+    transform:
+
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+
+        rgba(0,0,0,.18);
+
+}
+
+/* =========================================================
+
+   EFEITOS
+
+========================================================= */
+
+.efeito {
+
+    position: absolute;
+
+    z-index: 180;
+
+    font-size: 22px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+    animation:
+
+        subirEfeito .75s forwards;
+
+}
+
+@keyframes subirEfeito {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,0)
+
+            scale(.8);
+
+    }
+
+    40% {
+
+        transform:
+
+            translate(-50%,-18px)
+
+            scale(1.2);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-55px)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+#mensagem {
+
+    position: absolute;
+
+    z-index: 300;
+
+    left: 50%;
+
+    top: 45%;
+
+    transform:
+
+        translate(-50%,-50%);
+
+    padding: 10px 17px;
+
+    border-radius: 22px;
+
+    background:
+
+        rgba(255,255,255,.96);
+
+    box-shadow:
+
+        0 5px 17px rgba(0,0,0,.17);
+
+    font-size: 18px;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+}
+
+#mensagem.mostrar {
+
+    animation:
+
+        mensagemAnimacao .8s forwards;
+
+}
+
+@keyframes mensagemAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-40%)
+
+            scale(.7);
+
+    }
+
+    20% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.08);
+
+    }
+
+    75% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-70%)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   OVERLAY
+
+========================================================= */
+
+.overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 700;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 22px;
+
+    background:
+
+        rgba(45,55,65,.4);
+
+    backdrop-filter: blur(4px);
+
+}
+
+.overlay.oculto {
+
+    display: none;
+
+}
+
+.caixa {
+
+    width: 100%;
+
+    max-width: 355px;
+
+    padding: 23px 20px;
+
+    border-radius: 27px;
+
+    background:
+
+        rgba(255,255,255,.98);
+
+    box-shadow:
+
+        0 12px 35px rgba(0,0,0,.22);
+
+    text-align: center;
+
+}
+
+.caixa-icone {
+
+    font-size: 56px;
+
+    line-height: 1;
+
+}
+
+.caixa h2 {
+
+    margin: 12px 0 8px;
+
+    font-size: 23px;
+
+}
+
+.caixa p {
+
+    margin: 6px 0;
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+}
+
+.regras {
+
+    margin: 13px 0;
+
+    padding: 11px;
+
+    border-radius: 17px;
+
+    background: #fff4e8;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    line-height: 1.85;
+
+}
+
+.resultado {
+
+    margin: 14px 0;
+
+    padding: 12px;
+
+    border-radius: 17px;
+
+    background: #f2f7ff;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+}
+
+.btn-jogar {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 9px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #ff8a34,
+
+            #e64a24
+
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+}
+
+.btn-menu {
+
+    width: 100%;
+
+    min-height: 46px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background: #f0f2f4;
+
+    color: #555;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+
+     TOPO
+
+====================================================== -->
+
+<header class="topo">
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        onclick="voltarMenu()"
+
+    >
+
+        ←
+
+    </button>
+
+    <div class="titulo">
+
+        <strong>
+
+            🎯 Acertar o Alvo
+
+        </strong>
+
+        <span>
+
+            Seja rápido!
+
+        </span>
+
+    </div>
+
+    <button
+
+        type="button"
+
+        class="btn-topo"
+
+        id="btnSom"
+
+        onclick="alternarSom()"
+
+    >
+
+        🔊
+
+    </button>
+
+</header>
+
+<!-- =====================================================
+
+     HUD
+
+====================================================== -->
+
+<div class="hud">
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            PONTOS
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="pontos"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            NÍVEL
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="nivel"
+
+        >
+
+            1
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            TEMPO
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="tempo"
+
+        >
+
+            90
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            RECORDE
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="recorde"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+</div>
+
+<div class="combo-box">
+
+    COMBO
+
+    <span id="comboValor">
+
+        x0
+
+    </span>
+
+</div>
+
+<!-- =====================================================
+
+     JOGO
+
+====================================================== -->
+
+<div id="areaJogo">
+
+    <div class="sol"></div>
+
+    <div class="nuvem1">
+
+        ☁️
+
+    </div>
+
+    <div class="nuvem2">
+
+        ☁️
+
+    </div>
+
+    <div id="campoAlvos"></div>
+
+    <div class="petton-area">
+
+        <div class="sombra"></div>
+
+        <img
+
+            id="petton"
+
+            alt="Petton"
+
+        >
+
+    </div>
+
+    <div id="mensagem">
+
+        🎯 ACERTOU!
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     TELA INICIAL
+
+====================================================== -->
+
+<div
+
+    class="overlay"
+
+    id="telaInicial"
+
+>
+
+    <div class="caixa">
+
+        <div class="caixa-icone">
+
+            🎯💥
+
+        </div>
+
+        <h2>
+
+            Acertar o Alvo
+
+        </h2>
+
+        <p>
+
+            Acerte o máximo de alvos antes do tempo acabar.
+
+        </p>
+
+        <div class="regras">
+
+            🎯 Alvo normal:
+
+            <b>+1 ponto</b>
+
+            <br>
+
+            🌟 Alvo dourado:
+
+            <b>+3 pontos</b>
+
+            <br>
+
+            🔥 Acerte vários seguidos para aumentar o
+
+            <b>combo</b>.
+
+            <br>
+
+            ❌ Se deixar um alvo escapar, perde o combo.
+
+            <br>
+
+            💣 Cuidado!
+
+            Tocar na bomba tira
+
+            <b>5 pontos</b> e acaba com o combo.
+
+            <br>
+
+            ⏱️ Você tem
+
+            <b>90 segundos</b>.
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            ▶️ COMEÇAR
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+
+     TELA FINAL
+
+====================================================== -->
+
+<div
+
+    class="overlay oculto"
+
+    id="telaFim"
+
+>
+
+    <div class="caixa">
+
+        <div class="caixa-icone">
+
+            🏆🎯
+
+        </div>
+
+        <h2>
+
+            Tempo!
+
+        </h2>
+
+        <p>
+
+            Veja seu resultado.
+
+        </p>
+
+        <div class="resultado">
+
+            Pontos:
+
+            <strong id="pontosFim">
+
+                0
+
+            </strong>
+
+            <br>
+
+            Maior combo:
+
+            <strong id="comboFim">
+
+                x0
+
+            </strong>
+
+            <br>
+
+            Recorde:
+
+            <strong id="recordeFim">
+
+                0
+
+            </strong>
+
+        </div>
+
+        <button
+
+            type="button"
+
+            class="btn-jogar"
+
+            onclick="iniciarJogo()"
+
+        >
+
+            🔄 JOGAR NOVAMENTE
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="btn-menu"
+
+            onclick="voltarMenu()"
+
+        >
+
+            Voltar aos jogos
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
+const TEMPO_JOGO =
+
+    90;
+
+const CHAVE_RECORDE =
+
+    "petton_jogo_acertar_alvo_recorde_v1";
+
+/* =========================================================
+
+   ESTADO
+
+========================================================= */
+
+let jogando =
+
+    false;
+
+let pontos =
+
+    0;
+
+let nivel =
+
+    1;
+
+let combo =
+
+    0;
+
+let maiorCombo =
+
+    0;
+
+let tempoRestante =
+
+    TEMPO_JOGO;
+
+let recorde =
+
+    0;
+
+let alvos =
+
+    [];
+
+let ultimoTempo =
+
+    0;
+
+let acumuladorSpawn =
+
+    0;
+
+let animacaoId =
+
+    null;
+
+let contadorSegundo =
+
+    0;
+
+/* =========================================================
+
+   ELEMENTOS
+
+========================================================= */
+
+const campo =
+
+    document.getElementById(
+
+        "campoAlvos"
+
+    );
+
+const pontosEl =
+
+    document.getElementById(
+
+        "pontos"
+
+    );
+
+const nivelEl =
+
+    document.getElementById(
+
+        "nivel"
+
+    );
+
+const tempoEl =
+
+    document.getElementById(
+
+        "tempo"
+
+    );
+
+const recordeEl =
+
+    document.getElementById(
+
+        "recorde"
+
+    );
+
+const comboEl =
+
+    document.getElementById(
+
+        "comboValor"
+
+    );
+
+const pettonEl =
+
+    document.getElementById(
+
+        "petton"
+
+    );
+
+const telaInicial =
+
+    document.getElementById(
+
+        "telaInicial"
+
+    );
+
+const telaFim =
+
+    document.getElementById(
+
+        "telaFim"
+
+    );
+
+/* =========================================================
+
+   RECORDE
+
+========================================================= */
+
+function carregarRecorde() {
+
+    try {
+
+        recorde =
+
+            Number(
+
+                localStorage.getItem(
+
+                    CHAVE_RECORDE
+
+                )
+
+            ) || 0;
+
+    } catch (erro) {
+
+        recorde =
+
+            0;
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+}
+
+/* =========================================================
+
+   PETTON
+
+========================================================= */
+
+function descobrirFaseLocal(
+
+    dados
+
+) {
+
+    if (
+
+        dados &&
+
+        dados.fase &&
+
+        dados.fase !== "ovo"
+
+    ) {
+
+        return dados.fase;
+
+    }
+
+    let dias =
+
+        0;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.idadeDias ===
+
+                "function"
+
+        ) {
+
+            dias =
+
+                Number(
+
+                    Petton.idadeDias()
+
+                ) || 0;
+
+        }
+
+    } catch (erro) {
+
+        dias =
+
+            0;
+
+    }
+
+    if (
+
+        dias < 8
+
+    ) {
+
+        return "bebe";
+
+    }
+
+    if (
+
+        dias < 31
+
+    ) {
+
+        return "filhote";
+
+    }
+
+    if (
+
+        dias < 91
+
+    ) {
+
+        return "jovem";
+
+    }
+
+    return "adulto";
+
+}
+
+function carregarPetton() {
+
+    let dados =
+
+        null;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof Petton.carregar ===
+
+                "function"
+
+        ) {
+
+            dados =
+
+                Petton.carregar();
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro Petton:",
+
+            erro
+
+        );
+
+    }
+
+    if (
+
+        !dados
+
+    ) {
+
+        pettonEl.src =
+
+            "../petton-original.png";
+
+        return;
+
+    }
+
+    const fase =
+
+        descobrirFaseLocal(
+
+            dados
+
+        );
+
+    const especie =
+
+        dados.identidadeVisual
+
+            ?.especie ||
+
+        dados.especie ||
+
+        "gato";
+
+    const imagemGerada =
+
+        dados.identidadeVisual
+
+            ?.imagens
+
+            ?.[fase];
+
+    if (
+
+        imagemGerada
+
+    ) {
+
+        pettonEl.src =
+
+            imagemGerada;
+
+        return;
+
+    }
+
+    if (
+
+        especie ===
+
+        "cachorro"
+
+    ) {
+
+        pettonEl.src =
+
+            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+
+        return;
+
+    }
+
+    if (
+
+        especie ===
+
+        "coelho"
+
+    ) {
+
+        pettonEl.src =
+
+            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
+
+        return;
+
+    }
+
+    pettonEl.src =
+
+        "../petton-original.png";
+
+}
+
+/* =========================================================
+
+   DIFICULDADE
+
+========================================================= */
+
+function atualizarNivel() {
+
+    const novoNivel =
+
+        1 +
+
+        Math.floor(
+
+            pontos / 10
+
+        );
+
+    if (
+
+        novoNivel >
+
+        nivel
+
+    ) {
+
+        nivel =
+
+            novoNivel;
+
+        nivelEl.textContent =
+
+            nivel;
+
+        mostrarMensagem(
+
+            "🔥 NÍVEL " +
+
+            nivel
+
+        );
+
+        tocarNivel();
+
+    }
+
+}
+
+/* =========================================================
+
+   TEMPO DE VIDA DO ALVO
+
+========================================================= */
+
+function obterVidaAlvo(
+
+    tipo
+
+) {
+
+    let vida =
+
+        1850 -
+
+        (
+
+            nivel - 1
+
+        ) *
+
+        105;
+
+    vida =
+
+        Math.max(
+
+            700,
+
+            vida
+
+        );
+
+    if (
+
+        tipo ===
+
+        "bonus"
+
+    ) {
+
+        vida *=
+
+            .82;
+
+    }
+
+    if (
+
+        tipo ===
+
+        "bomba"
+
+    ) {
+
+        vida *=
+
+            1.08;
+
+    }
+
+    return vida;
+
+}
+
+/* =========================================================
+
+   INTERVALO DE SPAWN
+
+========================================================= */
+
+function obterIntervaloSpawn() {
+
+    return Math.max(
+
+        270,
+
+        780 -
+
+        (
+
+            nivel - 1
+
+        ) *
+
+        55
+
+    );
+
+}
+
+/* =========================================================
+
+   CRIAR ALVO
+
+========================================================= */
+
+function criarAlvo(
+
+    tipoForcado = null
+
+) {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    /*
+
+       BOMBA FICA MAIS COMUM
+
+       NOS NÍVEIS ALTOS
+
+    */
+
+    const chanceBomba =
+
+        Math.min(
+
+            .34,
+
+            .12 +
+
+            (
+
+                nivel - 1
+
+            ) *
+
+            .025
+
+        );
+
+    const chanceBonus =
+
+        .10;
+
+    let tipo =
+
+        tipoForcado;
+
+    if (
+
+        !tipo
+
+    ) {
+
+        const sorteio =
+
+            Math.random();
+
+        if (
+
+            sorteio <
+
+            chanceBomba
+
+        ) {
+
+            tipo =
+
+                "bomba";
+
+        } else if (
+
+            sorteio <
+
+            chanceBomba +
+
+            chanceBonus
+
+        ) {
+
+            tipo =
+
+                "bonus";
+
+        } else {
+
+            tipo =
+
+                "normal";
+
+        }
+
+    }
+
+    const elemento =
+
+        document.createElement(
+
+            "button"
+
+        );
+
+    elemento.type =
+
+        "button";
+
+    elemento.className =
+
+        "alvo " +
+
+        tipo;
+
+    if (
+
+        tipo ===
+
+        "normal"
+
+    ) {
+
+        elemento.textContent =
+
+            "🎯";
+
+    } else if (
+
+        tipo ===
+
+        "bonus"
+
+    ) {
+
+        elemento.textContent =
+
+            "🌟";
+
+    } else {
+
+        elemento.textContent =
+
+            "💣";
+
+    }
+
+    campo.appendChild(
+
+        elemento
+
+    );
+
+    const tamanho =
+
+        64;
+
+    const maxX =
+
+        Math.max(
+
+            0,
+
+            campo.clientWidth -
+
+            tamanho
+
+        );
+
+    const maxY =
+
+        Math.max(
+
+            0,
+
+            campo.clientHeight -
+
+            tamanho
+
+        );
+
+    const x =
+
+        Math.random() *
+
+        maxX;
+
+    const y =
+
+        Math.random() *
+
+        maxY;
+
+    /*
+
+       ALGUNS SE MOVEM
+
+    */
+
+    const movel =
+
+        nivel >= 2
+
+            ? Math.random() <
+
+                Math.min(
+
+                    .85,
+
+                    .32 +
+
+                    nivel *
+
+                    .07
+
+                )
+
+            : Math.random() <
+
+                .20;
+
+    let vx =
+
+        0;
+
+    let vy =
+
+        0;
+
+    if (
+
+        movel
+
+    ) {
+
+        const velocidade =
+
+            38 +
+
+            nivel *
+
+            8 +
+
+            Math.random() *
+
+            42;
+
+        const angulo =
+
+            Math.random() *
+
+            Math.PI *
+
+            2;
+
+        vx =
+
+            Math.cos(
+
+                angulo
+
+            ) *
+
+            velocidade;
+
+        vy =
+
+            Math.sin(
+
+                angulo
+
+            ) *
+
+            velocidade;
+
+    }
+
+    const alvo = {
+
+        elemento:
+
+            elemento,
+
+        tipo:
+
+            tipo,
+
+        x:
+
+            x,
+
+        y:
+
+            y,
+
+        vx:
+
+            vx,
+
+        vy:
+
+            vy,
+
+        vida:
+
+            obterVidaAlvo(
+
+                tipo
+
+            ),
+
+        idade:
+
+            0,
+
+        acertado:
+
+            false
+
+    };
+
+    alvos.push(
+
+        alvo
+
+    );
+
+    posicionarAlvo(
+
+        alvo
+
+    );
+
+    elemento.addEventListener(
+
+        "pointerdown",
+
+        function(evento) {
+
+            evento.preventDefault();
+
+            evento.stopPropagation();
+
+            acertarAlvo(
+
+                alvo
+
+            );
+
+        }
+
+    );
+
+}
+
+/* =========================================================
+
+   POSICIONAR
+
+========================================================= */
+
+function posicionarAlvo(
+
+    alvo
+
+) {
+
+    alvo.elemento.style.left =
+
+        alvo.x +
+
+        "px";
+
+    alvo.elemento.style.top =
+
+        alvo.y +
+
+        "px";
+
+}
+
+/* =========================================================
+
+   ACERTO
+
+========================================================= */
+
+function acertarAlvo(
+
+    alvo
+
+) {
+
+    if (
+
+        !jogando ||
+
+        alvo.acertado
+
+    ) {
+
+        return;
+
+    }
+
+    prepararAudio();
+
+    alvo.acertado =
+
+        true;
+
+    const centroX =
+
+        alvo.x +
+
+        32;
+
+    const centroY =
+
+        alvo.y +
+
+        25;
+
+    /*
+
+       BOMBA
+
+    */
+
+    if (
+
+        alvo.tipo ===
+
+        "bomba"
+
+    ) {
+
+        pontos =
+
+            Math.max(
+
+                0,
+
+                pontos - 5
+
+            );
+
+        combo =
+
+            0;
+
+        comboEl.textContent =
+
+            "x0";
+
+        criarEfeito(
+
+            centroX,
+
+            centroY,
+
+            "💥 -5"
+
+        );
+
+        mostrarMensagem(
+
+            "💣 BOMBA!"
+
+        );
+
+        tocarBomba();
+
+        removerAlvo(
+
+            alvo
+
+        );
+
+        atualizarHUD();
+
+        return;
+
+    }
+
+    /*
+
+       ALVO NORMAL / BÔNUS
+
+    */
+
+    combo++;
+
+    maiorCombo =
+
+        Math.max(
+
+            maiorCombo,
+
+            combo
+
+        );
+
+    let ganho =
+
+        alvo.tipo ===
+
+            "bonus"
+
+            ? 3
+
+            : 1;
+
+    /*
+
+       COMBO DÁ PONTO EXTRA
+
+       A CADA 5 ACERTOS.
+
+    */
+
+    const bonusCombo =
+
+        Math.floor(
+
+            combo / 5
+
+        );
+
+    ganho +=
+
+        bonusCombo;
+
+    pontos +=
+
+        ganho;
+
+    comboEl.textContent =
+
+        "x" +
+
+        combo;
+
+    if (
+
+        alvo.tipo ===
+
+        "bonus"
+
+    ) {
+
+        criarEfeito(
+
+            centroX,
+
+            centroY,
+
+            "+" +
+
+            ganho +
+
+            " 🌟"
+
+        );
+
+        tocarBonus();
+
+    } else {
+
+        criarEfeito(
+
+            centroX,
+
+            centroY,
+
+            "+" +
+
+            ganho
+
+        );
+
+        tocarAcerto();
+
+    }
+
+    /*
+
+       AVISOS DE COMBO
+
+    */
+
+    if (
+
+        combo === 5
+
+    ) {
+
+        mostrarMensagem(
+
+            "🔥 COMBO x5!"
+
+        );
+
+    } else if (
+
+        combo === 10
+
+    ) {
+
+        mostrarMensagem(
+
+            "🔥 COMBO x10!"
+
+        );
+
+    } else if (
+
+        combo > 10 &&
+
+        combo % 10 === 0
+
+    ) {
+
+        mostrarMensagem(
+
+            "🔥 COMBO x" +
+
+            combo +
+
+            "!"
+
+        );
+
+    }
+
+    removerAlvo(
+
+        alvo
+
+    );
+
+    atualizarNivel();
+
+    atualizarHUD();
+
+}
+
+/* =========================================================
+
+   ALVO ESCAPOU
+
+========================================================= */
+
+function alvoEscapou(
+
+    alvo
+
+) {
+
+    if (
+
+        alvo.acertado
+
+    ) {
+
+        return;
+
+    }
+
+    alvo.acertado =
+
+        true;
+
+    /*
+
+       BOMBA PODE SUMIR
+
+       SEM PENALIDADE.
+
+    */
+
+    if (
+
+        alvo.tipo !==
+
+        "bomba"
+
+    ) {
+
+        if (
+
+            combo > 0
+
+        ) {
+
+            combo =
+
+                0;
+
+            comboEl.textContent =
+
+                "x0";
+
+            tocarErro();
+
+        }
+
+    }
+
+    removerAlvo(
+
+        alvo
+
+    );
+
+}
+
+/* =========================================================
+
+   REMOVER
+
+========================================================= */
+
+function removerAlvo(
+
+    alvo
+
+) {
+
+    try {
+
+        alvo.elemento.remove();
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   EFEITO
+
+========================================================= */
+
+function criarEfeito(
+
+    x,
+
+    y,
+
+    texto
+
+) {
+
+    const efeito =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    efeito.className =
+
+        "efeito";
+
+    efeito.textContent =
+
+        texto;
+
+    efeito.style.left =
+
+        x +
+
+        "px";
+
+    efeito.style.top =
+
+        y +
+
+        "px";
+
+    campo.appendChild(
+
+        efeito
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            efeito.remove();
+
+        },
+
+        800
+
+    );
+
+}
+
+/* =========================================================
+
+   MENSAGEM
+
+========================================================= */
+
+function mostrarMensagem(
+
+    texto
+
+) {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagem"
+
+        );
+
+    elemento.textContent =
+
+        texto;
+
+    elemento.classList.remove(
+
+        "mostrar"
+
+    );
+
+    void elemento.offsetWidth;
+
+    elemento.classList.add(
+
+        "mostrar"
+
+    );
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+function atualizarHUD() {
+
+    pontosEl.textContent =
+
+        pontos;
+
+    nivelEl.textContent =
+
+        nivel;
+
+    tempoEl.textContent =
+
+        Math.max(
+
+            0,
+
+            Math.ceil(
+
+                tempoRestante
+
+            )
+
+        );
+
+    comboEl.textContent =
+
+        "x" +
+
+        combo;
+
+}
+
+/* =========================================================
+
+   ATUALIZAR ALVOS
+
+========================================================= */
+
+function atualizarAlvos(
+
+    delta
+
+) {
+
+    const largura =
+
+        campo.clientWidth;
+
+    const altura =
+
+        campo.clientHeight;
+
+    for (
+
+        const alvo
+
+        of alvos
+
+    ) {
+
+        if (
+
+            alvo.acertado
+
+        ) {
+
+            continue;
+
+        }
+
+        alvo.idade +=
+
+            delta *
+
+            1000;
+
+        /*
+
+           MOVIMENTO
+
+        */
+
+        alvo.x +=
+
+            alvo.vx *
+
+            delta;
+
+        alvo.y +=
+
+            alvo.vy *
+
+            delta;
+
+        /*
+
+           BATER NAS BORDAS
+
+        */
+
+        if (
+
+            alvo.x <= 0
+
+        ) {
+
+            alvo.x =
+
+                0;
+
+            alvo.vx =
+
+                Math.abs(
+
+                    alvo.vx
+
+                );
+
+        }
+
+        if (
+
+            alvo.x >=
+
+            largura - 64
+
+        ) {
+
+            alvo.x =
+
+                largura - 64;
+
+            alvo.vx =
+
+                -Math.abs(
+
+                    alvo.vx
+
+                );
+
+        }
+
+        if (
+
+            alvo.y <= 0
+
+        ) {
+
+            alvo.y =
+
+                0;
+
+            alvo.vy =
+
+                Math.abs(
+
+                    alvo.vy
+
+                );
+
+        }
+
+        if (
+
+            alvo.y >=
+
+            altura - 64
+
+        ) {
+
+            alvo.y =
+
+                altura - 64;
+
+            alvo.vy =
+
+                -Math.abs(
+
+                    alvo.vy
+
+                );
+
+        }
+
+        posicionarAlvo(
+
+            alvo
+
+        );
+
+        /*
+
+           ACABOU O TEMPO
+
+           DO ALVO
+
+        */
+
+        if (
+
+            alvo.idade >=
+
+            alvo.vida
+
+        ) {
+
+            alvoEscapou(
+
+                alvo
+
+            );
+
+        }
+
+    }
+
+    alvos =
+
+        alvos.filter(
+
+            function(alvo) {
+
+                return !alvo.acertado;
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   LOOP
+
+========================================================= */
+
+function loop(
+
+    tempoAtual
+
+) {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    if (
+
+        !ultimoTempo
+
+    ) {
+
+        ultimoTempo =
+
+            tempoAtual;
+
+    }
+
+    let delta =
+
+        (
+
+            tempoAtual -
+
+            ultimoTempo
+
+        ) /
+
+        1000;
+
+    ultimoTempo =
+
+        tempoAtual;
+
+    delta =
+
+        Math.min(
+
+            delta,
+
+            .05
+
+        );
+
+    /*
+
+       TEMPO TOTAL
+
+    */
+
+    tempoRestante -=
+
+        delta;
+
+    if (
+
+        tempoRestante <= 0
+
+    ) {
+
+        tempoRestante =
+
+            0;
+
+        atualizarHUD();
+
+        finalizarJogo();
+
+        return;
+
+    }
+
+    /*
+
+       SPAWN
+
+    */
+
+    acumuladorSpawn +=
+
+        delta *
+
+        1000;
+
+    const intervalo =
+
+        obterIntervaloSpawn();
+
+    if (
+
+        acumuladorSpawn >=
+
+        intervalo
+
+    ) {
+
+        acumuladorSpawn =
+
+            0;
+
+        /*
+
+           LIMITA QUANTIDADE
+
+        */
+
+        const maximo =
+
+            Math.min(
+
+                9,
+
+                3 +
+
+                Math.floor(
+
+                    nivel / 2
+
+                )
+
+            );
+
+        if (
+
+            alvos.length <
+
+            maximo
+
+        ) {
+
+            criarAlvo();
+
+        }
+
+        /*
+
+           NÍVEL 3+
+
+           PODE CRIAR SEGUNDO ALVO
+
+        */
+
+        if (
+
+            nivel >= 3 &&
+
+            alvos.length <
+
+            maximo &&
+
+            Math.random() <
+
+                .28
+
+        ) {
+
+            setTimeout(
+
+                function() {
+
+                    if (
+
+                        jogando
+
+                    ) {
+
+                        criarAlvo();
+
+                    }
+
+                },
+
+                120
+
+            );
+
+        }
+
+    }
+
+    atualizarAlvos(
+
+        delta
+
+    );
+
+    atualizarHUD();
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   LIMPAR
+
+========================================================= */
+
+function limparAlvos() {
+
+    alvos.forEach(
+
+        function(alvo) {
+
+            try {
+
+                alvo.elemento.remove();
+
+            } catch (erro) {
+
+                /* nada */
+
+            }
+
+        }
+
+    );
+
+    alvos =
+
+        [];
+
+    campo
+
+        .querySelectorAll(
+
+            ".efeito"
+
+        )
+
+        .forEach(
+
+            function(elemento) {
+
+                elemento.remove();
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   INICIAR
+
+========================================================= */
+
+function iniciarJogo() {
+
+    prepararAudio();
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    limparAlvos();
+
+    pontos =
+
+        0;
+
+    nivel =
+
+        1;
+
+    combo =
+
+        0;
+
+    maiorCombo =
+
+        0;
+
+    tempoRestante =
+
+        TEMPO_JOGO;
+
+    ultimoTempo =
+
+        0;
+
+    acumuladorSpawn =
+
+        0;
+
+    contadorSegundo =
+
+        0;
+
+    atualizarHUD();
+
+    telaInicial.classList.add(
+
+        "oculto"
+
+    );
+
+    telaFim.classList.add(
+
+        "oculto"
+
+    );
+
+    jogando =
+
+        true;
+
+    tocarInicio();
+
+    mostrarMensagem(
+
+        "🎯 VAI!"
+
+    );
+
+    /*
+
+       COMEÇA RÁPIDO
+
+       SEM ESPERAR
+
+    */
+
+    criarAlvo(
+
+        "normal"
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando
+
+            ) {
+
+                criarAlvo(
+
+                    "normal"
+
+                );
+
+            }
+
+        },
+
+        300
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando
+
+            ) {
+
+                criarAlvo();
+
+            }
+
+        },
+
+        650
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando
+
+            ) {
+
+                criarAlvo(
+
+                    "bomba"
+
+                );
+
+            }
+
+        },
+
+        1300
+
+    );
+
+    animacaoId =
+
+        requestAnimationFrame(
+
+            loop
+
+        );
+
+}
+
+/* =========================================================
+
+   FINALIZAR
+
+========================================================= */
+
+function finalizarJogo() {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+        animacaoId =
+
+            null;
+
+    }
+
+    /*
+
+       RECORDE
+
+    */
+
+    if (
+
+        pontos >
+
+        recorde
+
+    ) {
+
+        recorde =
+
+            pontos;
+
+        try {
+
+            localStorage.setItem(
+
+                CHAVE_RECORDE,
+
+                String(
+
+                    recorde
+
+                )
+
+            );
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    recordeEl.textContent =
+
+        recorde;
+
+    document.getElementById(
+
+        "pontosFim"
+
+    ).textContent =
+
+        pontos;
+
+    document.getElementById(
+
+        "comboFim"
+
+    ).textContent =
+
+        "x" +
+
+        maiorCombo;
+
+    document.getElementById(
+
+        "recordeFim"
+
+    ).textContent =
+
+        recorde;
+
+    tocarFinal();
+
+    telaFim.classList.remove(
+
+        "oculto"
+
+    );
+
+}
+
+/* =========================================================
+
+   VOLTAR
+
+========================================================= */
+
+function voltarMenu() {
+
+    jogando =
+
+        false;
+
+    if (
+
+        animacaoId
+
+    ) {
+
+        cancelAnimationFrame(
+
+            animacaoId
+
+        );
+
+    }
+
+    window.location.assign(
+
+        "./brincar.html"
+
+    );
+
+}
+
+/* =========================================================
+
+   ÁUDIO
+
+========================================================= */
+
+let audioContext =
+
+    null;
+
+let somAtivo =
+
+    true;
+
+function prepararAudio() {
+
+    if (
+
+        !somAtivo
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        if (
+
+            !audioContext
+
+        ) {
+
+            const AudioCtx =
+
+                window.AudioContext ||
+
+                window.webkitAudioContext;
+
+            if (
+
+                AudioCtx
+
+            ) {
+
+                audioContext =
+
+                    new AudioCtx();
+
+            }
+
+        }
+
+        if (
+
+            audioContext &&
+
+            audioContext.state ===
+
+                "suspended"
+
+        ) {
+
+            audioContext.resume();
+
+        }
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+function tocarTom(
+
+    frequencia,
+
+    duracao,
+
+    tipo = "sine",
+
+    volume = .05,
+
+    atraso = 0
+
+) {
+
+    if (
+
+        !somAtivo ||
+
+        !audioContext
+
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        const inicio =
+
+            audioContext.currentTime +
+
+            atraso;
+
+        const oscilador =
+
+            audioContext
+
+                .createOscillator();
+
+        const ganho =
+
+            audioContext
+
+                .createGain();
+
+        oscilador.type =
+
+            tipo;
+
+        oscilador.frequency
+
+            .setValueAtTime(
+
+                frequencia,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .setValueAtTime(
+
+                volume,
+
+                inicio
+
+            );
+
+        ganho.gain
+
+            .exponentialRampToValueAtTime(
+
+                .001,
+
+                inicio +
+
+                duracao
+
+            );
+
+        oscilador.connect(
+
+            ganho
+
+        );
+
+        ganho.connect(
+
+            audioContext.destination
+
+        );
+
+        oscilador.start(
+
+            inicio
+
+        );
+
+        oscilador.stop(
+
+            inicio +
+
+            duracao
+
+        );
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   SONS
+
+========================================================= */
+
+function tocarInicio() {
+
+    tocarTom(
+
+        500,
+
+        .07
+
+    );
+
+    tocarTom(
+
+        750,
+
+        .08,
+
+        "sine",
+
+        .05,
+
+        .07
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .12,
+
+        "sine",
+
+        .05,
+
+        .15
+
+    );
+
+}
+
+function tocarAcerto() {
+
+    tocarTom(
+
+        720,
+
+        .055,
+
+        "triangle",
+
+        .04
+
+    );
+
+    tocarTom(
+
+        980,
+
+        .075,
+
+        "triangle",
+
+        .035,
+
+        .04
+
+    );
+
+}
+
+function tocarBonus() {
+
+    tocarTom(
+
+        800,
+
+        .06,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        1100,
+
+        .08,
+
+        "sine",
+
+        .05,
+
+        .05
+
+    );
+
+    tocarTom(
+
+        1450,
+
+        .11,
+
+        "sine",
+
+        .04,
+
+        .11
+
+    );
+
+}
+
+function tocarBomba() {
+
+    tocarTom(
+
+        160,
+
+        .13,
+
+        "square",
+
+        .055
+
+    );
+
+    tocarTom(
+
+        90,
+
+        .22,
+
+        "sawtooth",
+
+        .04,
+
+        .07
+
+    );
+
+}
+
+function tocarErro() {
+
+    tocarTom(
+
+        260,
+
+        .08,
+
+        "square",
+
+        .025
+
+    );
+
+}
+
+function tocarNivel() {
+
+    tocarTom(
+
+        600,
+
+        .07,
+
+        "triangle",
+
+        .04
+
+    );
+
+    tocarTom(
+
+        850,
+
+        .08,
+
+        "triangle",
+
+        .04,
+
+        .07
+
+    );
+
+    tocarTom(
+
+        1100,
+
+        .12,
+
+        "triangle",
+
+        .04,
+
+        .15
+
+    );
+
+}
+
+function tocarFinal() {
+
+    tocarTom(
+
+        600,
+
+        .08,
+
+        "sine",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        800,
+
+        .09,
+
+        "sine",
+
+        .05,
+
+        .08
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .10,
+
+        "sine",
+
+        .05,
+
+        .17
+
+    );
+
+    tocarTom(
+
+        1300,
+
+        .18,
+
+        "sine",
+
+        .05,
+
+        .27
+
+    );
+
+}
+
+/* =========================================================
+
+   SOM ON/OFF
+
+========================================================= */
+
+function alternarSom() {
+
+    somAtivo =
+
+        !somAtivo;
+
+    document.getElementById(
+
+        "btnSom"
+
+    ).textContent =
+
+        somAtivo
+
+            ? "🔊"
+
+            : "🔇";
+
+    if (
+
+        somAtivo
+
+    ) {
+
+        prepararAudio();
+
+        tocarTom(
+
+            700,
+
+            .09
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   INICIALIZAÇÃO
+
+========================================================= */
+
+carregarRecorde();
+
+carregarPetton();
+
+</script>
+
+</body>
+
+</html>
