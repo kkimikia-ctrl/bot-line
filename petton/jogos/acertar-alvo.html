@@ -582,6 +582,8 @@ body {
 
     object-fit: contain;
 
+    display: none;
+
     filter:
 
         drop-shadow(
@@ -1356,9 +1358,7 @@ body {
 
 ========================================================= */
 
-const TEMPO_JOGO =
-
-    90;
+const TEMPO_JOGO = 90;
 
 const CHAVE_RECORDE =
 
@@ -1370,49 +1370,29 @@ const CHAVE_RECORDE =
 
 ========================================================= */
 
-let jogando =
+let jogando = false;
 
-    false;
+let pontos = 0;
 
-let pontos =
+let nivel = 1;
 
-    0;
+let combo = 0;
 
-let nivel =
-
-    1;
-
-let combo =
-
-    0;
-
-let maiorCombo =
-
-    0;
+let maiorCombo = 0;
 
 let tempoRestante =
 
     TEMPO_JOGO;
 
-let recorde =
+let recorde = 0;
 
-    0;
+let alvos = [];
 
-let alvos =
+let ultimoTempo = 0;
 
-    [];
+let acumuladorSpawn = 0;
 
-let ultimoTempo =
-
-    0;
-
-let acumuladorSpawn =
-
-    0;
-
-let animacaoId =
-
-    null;
+let animacaoId = null;
 
 /* =========================================================
 
@@ -1516,9 +1496,7 @@ function carregarRecorde() {
 
     } catch (erro) {
 
-        recorde =
-
-            0;
+        recorde = 0;
 
     }
 
@@ -1534,383 +1512,17 @@ function carregarRecorde() {
 
 ========================================================= */
 
-function obterDataValida(valor) {
+function carregarPetton() {
 
-    if (!valor) {
-
-        return null;
-
-    }
-
-    const data =
-
-        new Date(valor);
-
-    if (
-
-        isNaN(
-
-            data.getTime()
-
-        )
-
-    ) {
-
-        return null;
-
-    }
-
-    return data;
-
-}
-
-function obterNascimento(dados) {
-
-    if (!dados) {
-
-        return null;
-
-    }
-
-    const campos = [
-
-        dados.dateNascimento,
-
-        dados.dataNascimento,
-
-        dados.nascimento,
-
-        dados.nascimentoEm,
-
-        dados.dataDeNascimento
-
-    ];
-
-    for (
-
-        const valor
-
-        of campos
-
-    ) {
-
-        const data =
-
-            obterDataValida(
-
-                valor
-
-            );
-
-        if (data) {
-
-            return data;
-
-        }
-
-    }
-
-    return null;
-
-}
-
-function descobrirFasePetton(
-
-    dados
-
-) {
-
-    if (!dados) {
-
-        return "bebe";
-
-    }
-
-    const nascimento =
-
-        obterNascimento(
-
-            dados
-
-        );
-
-    if (!nascimento) {
-
-        const faseSalva =
-
-            String(
-
-                dados.fase ||
-
-                dados.faseAtual ||
-
-                "bebe"
-
-            ).toLowerCase();
-
-        if (
-
-            faseSalva !== "ovo"
-
-        ) {
-
-            if (
-
-                faseSalva.includes(
-
-                    "adult"
-
-                )
-
-            ) {
-
-                return "adulto";
-
-            }
-
-            if (
-
-                faseSalva.includes(
-
-                    "jovem"
-
-                )
-
-            ) {
-
-                return "jovem";
-
-            }
-
-            if (
-
-                faseSalva.includes(
-
-                    "filh"
-
-                )
-
-            ) {
-
-                return "filhote";
-
-            }
-
-        }
-
-        return "bebe";
-
-    }
-
-    let dias =
-
-        Number(
-
-            dados.idadeDias ??
-
-            dados.diasDeVida
-
-        );
-
-    if (
-
-        !isFinite(
-
-            dias
-
-        )
-
-    ) {
-
-        dias =
-
-            Math.floor(
-
-                (
-
-                    Date.now() -
-
-                    nascimento.getTime()
-
-                ) /
-
-                86400000
-
-            );
-
-    }
-
-    if (
-
-        dias < 8
-
-    ) {
-
-        return "bebe";
-
-    }
-
-    if (
-
-        dias < 31
-
-    ) {
-
-        return "filhote";
-
-    }
-
-    if (
-
-        dias < 91
-
-    ) {
-
-        return "jovem";
-
-    }
-
-    return "adulto";
-
-}
-
-function descobrirEspeciePetton(
-
-    dados
-
-) {
-
-    let especie =
-
-        dados?.identidadeVisual?.especie ||
-
-        dados?.especie ||
-
-        "gato";
-
-    especie =
-
-        String(
-
-            especie
-
-        ).toLowerCase();
-
-    if (
-
-        especie.includes(
-
-            "cach"
-
-        ) ||
-
-        especie.includes(
-
-            "dog"
-
-        )
-
-    ) {
-
-        return "cachorro";
-
-    }
-
-    if (
-
-        especie.includes(
-
-            "coelh"
-
-        ) ||
-
-        especie.includes(
-
-            "rabbit"
-
-        )
-
-    ) {
-
-        return "coelho";
-
-    }
-
-    return "gato";
-
-}
-
-function obterImagemPetton(
-
-    dados,
-
-    fase
-
-) {
-
-    if (
-
-        !dados ||
-
-        !dados.identidadeVisual ||
-
-        !dados.identidadeVisual.imagens
-
-    ) {
-
-        return null;
-
-    }
-
-    const imagem =
-
-        dados.identidadeVisual
-
-            .imagens[
-
-                fase
-
-            ];
-
-    if (
-
-        typeof imagem ===
-
-            "string" &&
-
-        imagem.trim() !== ""
-
-    ) {
-
-        return imagem.trim();
-
-    }
-
-    return null;
-
-}
-
-function carregarDadosPetton() {
-
-    let dados =
-
-        null;
+    let dados = null;
 
     try {
 
-        /*
-
-           PRIMEIRA OPÇÃO:
-
-           a mesma usada pela principal.
-
-        */
-
         if (
 
             window.Petton &&
 
-            typeof Petton.carregarPetton ===
+            typeof window.Petton.carregar ===
 
                 "function"
 
@@ -1918,35 +1530,7 @@ function carregarDadosPetton() {
 
             dados =
 
-                Petton.carregarPetton();
-
-        }
-
-        /*
-
-           SEGUNDA OPÇÃO:
-
-           compatibilidade com versões
-
-           que usam Petton.carregar().
-
-        */
-
-        if (
-
-            !dados &&
-
-            window.Petton &&
-
-            typeof Petton.carregar ===
-
-                "function"
-
-        ) {
-
-            dados =
-
-                Petton.carregar();
+                window.Petton.carregar();
 
         }
 
@@ -1962,16 +1546,6 @@ function carregarDadosPetton() {
 
     }
 
-    return dados;
-
-}
-
-function carregarPetton() {
-
-    const dados =
-
-        carregarDadosPetton();
-
     if (!dados) {
 
         console.warn(
@@ -1984,33 +1558,227 @@ function carregarPetton() {
 
     }
 
-    const fase =
+    /* =====================================================
 
-        descobrirFasePetton(
+       ESPÉCIE
 
-            dados
+    ===================================================== */
 
-        );
+    let especie =
 
-    const especie =
+        dados.identidadeVisual?.especie ||
 
-        descobrirEspeciePetton(
+        dados.especie ||
 
-            dados
+        "gato";
 
-        );
+    especie =
 
-    const imagemIndividual =
+        String(especie)
 
-        obterImagemPetton(
+            .toLowerCase()
 
-            dados,
+            .trim();
 
-            fase
+    if (
 
-        );
+        especie.includes("cach") ||
 
-    const fallback = {
+        especie.includes("dog")
+
+    ) {
+
+        especie =
+
+            "cachorro";
+
+    } else if (
+
+        especie.includes("coelh") ||
+
+        especie.includes("rabbit")
+
+    ) {
+
+        especie =
+
+            "coelho";
+
+    } else {
+
+        especie =
+
+            "gato";
+
+    }
+
+    /* =====================================================
+
+       FASE
+
+    ===================================================== */
+
+    let fase = "";
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof window.Petton.status ===
+
+                "function"
+
+        ) {
+
+            const status =
+
+                window.Petton.status();
+
+            if (
+
+                status &&
+
+                status.fase
+
+            ) {
+
+                fase =
+
+                    String(
+
+                        status.fase
+
+                    )
+
+                    .toLowerCase()
+
+                    .trim();
+
+            }
+
+        }
+
+    } catch (erro) {
+
+        fase = "";
+
+    }
+
+    if (!fase) {
+
+        fase =
+
+            String(
+
+                dados.fase ||
+
+                "bebe"
+
+            )
+
+            .toLowerCase()
+
+            .trim();
+
+    }
+
+    if (
+
+        fase.includes("adult")
+
+    ) {
+
+        fase =
+
+            "adulto";
+
+    } else if (
+
+        fase.includes("jovem")
+
+    ) {
+
+        fase =
+
+            "jovem";
+
+    } else if (
+
+        fase.includes("filh")
+
+    ) {
+
+        fase =
+
+            "filhote";
+
+    } else {
+
+        fase =
+
+            "bebe";
+
+    }
+
+    /* =====================================================
+
+       IMAGEM DO PETTON
+
+    ===================================================== */
+
+    let imagem = null;
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof window.Petton.obterImagemFase ===
+
+                "function"
+
+        ) {
+
+            imagem =
+
+                window.Petton.obterImagemFase(
+
+                    fase
+
+                );
+
+        }
+
+    } catch (erro) {
+
+        imagem = null;
+
+    }
+
+    if (!imagem) {
+
+        imagem =
+
+            dados.identidadeVisual
+
+                ?.imagens
+
+                ?.[fase] ||
+
+            null;
+
+    }
+
+    /* =====================================================
+
+       IMAGENS PADRÃO
+
+    ===================================================== */
+
+    const imagensPadrao = {
 
         gato:
 
@@ -2026,69 +1794,11 @@ function carregarPetton() {
 
     };
 
-    let imagemFinal =
+    if (!imagem) {
 
-        imagemIndividual;
+        imagem =
 
-    if (
-
-        imagemFinal
-
-    ) {
-
-        if (
-
-            !imagemFinal.startsWith(
-
-                "http://"
-
-            ) &&
-
-            !imagemFinal.startsWith(
-
-                "https://"
-
-            ) &&
-
-            !imagemFinal.startsWith(
-
-                "data:"
-
-            ) &&
-
-            !imagemFinal.startsWith(
-
-                "blob:"
-
-            ) &&
-
-            !imagemFinal.startsWith(
-
-                "/"
-
-            ) &&
-
-            !imagemFinal.startsWith(
-
-                "../"
-
-            )
-
-        ) {
-
-            imagemFinal =
-
-                "../" +
-
-                imagemFinal;
-
-        }
-
-    } else {
-
-        imagemFinal =
-
-            fallback[
+            imagensPadrao[
 
                 especie
 
@@ -2096,15 +1806,109 @@ function carregarPetton() {
 
     }
 
-    if (
+    if (!imagem) {
 
-        !imagemFinal
+        console.error(
 
-    ) {
+            "Imagem do Petton não encontrada."
+
+        );
 
         return;
 
     }
+
+    /* =====================================================
+
+       CORRIGIR CAMINHO DA IMAGEM
+
+    ===================================================== */
+
+    imagem =
+
+        String(imagem)
+
+            .trim();
+
+    const externa =
+
+        imagem.startsWith(
+
+            "http://"
+
+        ) ||
+
+        imagem.startsWith(
+
+            "https://"
+
+        ) ||
+
+        imagem.startsWith(
+
+            "data:"
+
+        ) ||
+
+        imagem.startsWith(
+
+            "blob:"
+
+        );
+
+    const absoluta =
+
+        imagem.startsWith(
+
+            "/"
+
+        );
+
+    const relativaJogos =
+
+        imagem.startsWith(
+
+            "../"
+
+        );
+
+    if (
+
+        !externa &&
+
+        !absoluta &&
+
+        !relativaJogos
+
+    ) {
+
+        imagem =
+
+            imagem.replace(
+
+                /^\.\//,
+
+                ""
+
+            );
+
+        imagem =
+
+            "../" +
+
+            imagem;
+
+    }
+
+    /* =====================================================
+
+       MOSTRAR
+
+    ===================================================== */
+
+    pettonEl.style.display =
+
+        "none";
 
     pettonEl.onload =
 
@@ -2120,51 +1924,45 @@ function carregarPetton() {
 
         function() {
 
-            console.warn(
+            const fallback =
 
-                "Falhou imagem:",
-
-                imagemFinal
-
-            );
-
-            const imagemFallback =
-
-                fallback[
+                imagensPadrao[
 
                     especie
 
                 ];
 
+            const fallbackUrl =
+
+                new URL(
+
+                    fallback,
+
+                    document.baseURI
+
+                ).href;
+
             if (
 
-                imagemFallback &&
+                pettonEl.src !==
 
-                pettonEl.getAttribute(
-
-                    "src"
-
-                ) !==
-
-                    imagemFallback
+                fallbackUrl
 
             ) {
 
                 pettonEl.src =
 
-                    imagemFallback;
+                    fallback;
+
+            } else {
+
+                pettonEl.style.display =
+
+                    "none";
 
             }
 
         };
-
-    pettonEl.src =
-
-        imagemFinal;
-
-    pettonEl.style.display =
-
-        "block";
 
     pettonEl.dataset.especie =
 
@@ -2173,6 +1971,10 @@ function carregarPetton() {
     pettonEl.dataset.fase =
 
         fase;
+
+    pettonEl.src =
+
+        imagem;
 
 }
 
@@ -2230,11 +2032,7 @@ function atualizarNivel() {
 
 ========================================================= */
 
-function obterVidaAlvo(
-
-    tipo
-
-) {
+function obterVidaAlvo(tipo) {
 
     if (
 
@@ -2248,11 +2046,7 @@ function obterVidaAlvo(
 
             1700 -
 
-            (
-
-                nivel - 1
-
-            ) *
+            (nivel - 1) *
 
             90
 
@@ -2288,11 +2082,7 @@ function obterIntervaloSpawn() {
 
         800 -
 
-        (
-
-            nivel - 1
-
-        ) *
+        (nivel - 1) *
 
         55
 
@@ -2312,11 +2102,7 @@ function criarAlvo(
 
 ) {
 
-    if (
-
-        !jogando
-
-    ) {
+    if (!jogando) {
 
         return;
 
@@ -2330,11 +2116,7 @@ function criarAlvo(
 
             .06 +
 
-            (
-
-                nivel - 1
-
-            ) *
+            (nivel - 1) *
 
             .018
 
@@ -2348,11 +2130,7 @@ function criarAlvo(
 
         tipoForcado;
 
-    if (
-
-        !tipo
-
-    ) {
+    if (!tipo) {
 
         const sorteio =
 
@@ -2508,19 +2286,11 @@ function criarAlvo(
 
                 .20;
 
-    let vx =
+    let vx = 0;
 
-        0;
+    let vy = 0;
 
-    let vy =
-
-        0;
-
-    if (
-
-        movel
-
-    ) {
+    if (movel) {
 
         const velocidade =
 
@@ -2664,11 +2434,7 @@ function criarAlvo(
 
 ========================================================= */
 
-function posicionarAlvo(
-
-    alvo
-
-) {
+function posicionarAlvo(alvo) {
 
     alvo.elemento.style.left =
 
@@ -3484,21 +3250,13 @@ function loop(
 
 ) {
 
-    if (
-
-        !jogando
-
-    ) {
+    if (!jogando) {
 
         return;
 
     }
 
-    if (
-
-        !ultimoTempo
-
-    ) {
+    if (!ultimoTempo) {
 
         ultimoTempo =
 
