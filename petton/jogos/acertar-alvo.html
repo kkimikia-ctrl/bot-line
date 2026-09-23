@@ -898,6 +898,24 @@ body {
 
 }
 
+.recompensa-destaque {
+
+    display: inline-block;
+
+    margin-top: 4px;
+
+    padding: 3px 10px;
+
+    border-radius: 12px;
+
+    background: #fff4c7;
+
+    color: #8a5b00;
+
+    font-weight: 900;
+
+}
+
 .btn-jogar {
 
     width: 100%;
@@ -1220,6 +1238,20 @@ body {
 
             <b>90 segundos</b>.
 
+            <br>
+
+            🪙 A primeira partida completa do dia
+
+            pode dar até
+
+            <b>5 moedas</b>.
+
+            <br>
+
+            🏆 Novo recorde na partida premiada:
+
+            <b>+2 moedas</b>.
+
         </div>
 
         <button
@@ -1314,6 +1346,22 @@ body {
 
             </strong>
 
+            <br>
+
+            Recompensa:
+
+            <strong
+
+                id="recompensaFim"
+
+                class="recompensa-destaque"
+
+            >
+
+                -
+
+            </strong>
+
         </div>
 
         <button
@@ -1363,6 +1411,250 @@ const TEMPO_JOGO = 90;
 const CHAVE_RECORDE =
 
     "petton_jogo_acertar_alvo_recorde_v1";
+
+const CHAVE_RECOMPENSA =
+
+    "petton_jogo_acertar_alvo_recompensa_v1";
+
+/* =========================================================
+
+   RECOMPENSA DIÁRIA
+
+========================================================= */
+
+function obterDiaLocal() {
+
+    const agora =
+
+        new Date();
+
+    const ano =
+
+        agora.getFullYear();
+
+    const mes =
+
+        agora.getMonth() + 1;
+
+    const dia =
+
+        agora.getDate();
+
+    return (
+
+        ano +
+
+        "-" +
+
+        (mes < 10 ? "0" : "") +
+
+        mes +
+
+        "-" +
+
+        (dia < 10 ? "0" : "") +
+
+        dia
+
+    );
+
+}
+
+function recompensaJaRecebidaHoje() {
+
+    try {
+
+        return (
+
+            localStorage.getItem(
+
+                CHAVE_RECOMPENSA
+
+            ) ===
+
+            obterDiaLocal()
+
+        );
+
+    } catch (erro) {
+
+        return false;
+
+    }
+
+}
+
+function calcularMoedas(
+
+    pontuacao,
+
+    novoRecorde
+
+) {
+
+    let moedas = 0;
+
+    if (
+
+        pontuacao >= 200
+
+    ) {
+
+        moedas = 5;
+
+    } else if (
+
+        pontuacao >= 150
+
+    ) {
+
+        moedas = 4;
+
+    } else if (
+
+        pontuacao >= 100
+
+    ) {
+
+        moedas = 3;
+
+    } else if (
+
+        pontuacao >= 50
+
+    ) {
+
+        moedas = 2;
+
+    } else {
+
+        moedas = 1;
+
+    }
+
+    if (
+
+        novoRecorde
+
+    ) {
+
+        moedas += 2;
+
+    }
+
+    return moedas;
+
+}
+
+function pagarRecompensa(
+
+    novoRecorde
+
+) {
+
+    if (
+
+        recompensaJaRecebidaHoje()
+
+    ) {
+
+        return {
+
+            recebeu: false,
+
+            moedas: 0,
+
+            motivo: "hoje"
+
+        };
+
+    }
+
+    const moedas =
+
+        calcularMoedas(
+
+            pontos,
+
+            novoRecorde
+
+        );
+
+    try {
+
+        if (
+
+            window.Petton &&
+
+            typeof window.Petton.adicionarMoedas ===
+
+                "function"
+
+        ) {
+
+            const saldo =
+
+                window.Petton.adicionarMoedas(
+
+                    moedas
+
+                );
+
+            if (
+
+                saldo !== false &&
+
+                saldo !== null &&
+
+                saldo !== undefined
+
+            ) {
+
+                localStorage.setItem(
+
+                    CHAVE_RECOMPENSA,
+
+                    obterDiaLocal()
+
+                );
+
+                return {
+
+                    recebeu: true,
+
+                    moedas: moedas,
+
+                    motivo: "pago"
+
+                };
+
+            }
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro ao adicionar recompensa:",
+
+            erro
+
+        );
+
+    }
+
+    return {
+
+        recebeu: false,
+
+        moedas: 0,
+
+        motivo: "erro"
+
+    };
+
+}
 
 /* =========================================================
 
@@ -1558,12 +1850,6 @@ function carregarPetton() {
 
     }
 
-    /* =====================================================
-
-       ESPÉCIE
-
-    ===================================================== */
-
     let especie =
 
         dados.identidadeVisual?.especie ||
@@ -1611,12 +1897,6 @@ function carregarPetton() {
             "gato";
 
     }
-
-    /* =====================================================
-
-       FASE
-
-    ===================================================== */
 
     let fase = "";
 
@@ -1722,12 +2002,6 @@ function carregarPetton() {
 
     }
 
-    /* =====================================================
-
-       IMAGEM DO PETTON
-
-    ===================================================== */
-
     let imagem = null;
 
     try {
@@ -1772,12 +2046,6 @@ function carregarPetton() {
 
     }
 
-    /* =====================================================
-
-       IMAGENS PADRÃO
-
-    ===================================================== */
-
     const imagensPadrao = {
 
         gato:
@@ -1817,12 +2085,6 @@ function carregarPetton() {
         return;
 
     }
-
-    /* =====================================================
-
-       CORRIGIR CAMINHO DA IMAGEM
-
-    ===================================================== */
 
     imagem =
 
@@ -1899,12 +2161,6 @@ function carregarPetton() {
             imagem;
 
     }
-
-    /* =====================================================
-
-       MOSTRAR
-
-    ===================================================== */
 
     pettonEl.style.display =
 
@@ -3676,11 +3932,19 @@ function finalizarJogo() {
 
     }
 
-    if (
+    const recordeAnterior =
+
+        recorde;
+
+    const novoRecorde =
 
         pontos >
 
-        recorde
+        recordeAnterior;
+
+    if (
+
+        novoRecorde
 
     ) {
 
@@ -3707,6 +3971,14 @@ function finalizarJogo() {
         }
 
     }
+
+    const recompensa =
+
+        pagarRecompensa(
+
+            novoRecorde
+
+        );
 
     recordeEl.textContent =
 
@@ -3737,6 +4009,46 @@ function finalizarJogo() {
     ).textContent =
 
         recorde;
+
+    const recompensaEl =
+
+        document.getElementById(
+
+            "recompensaFim"
+
+        );
+
+    if (
+
+        recompensa.recebeu
+
+    ) {
+
+        recompensaEl.textContent =
+
+            "🪙 +" +
+
+            recompensa.moedas;
+
+    } else if (
+
+        recompensa.motivo ===
+
+        "hoje"
+
+    ) {
+
+        recompensaEl.textContent =
+
+            "Já recebida hoje ✅";
+
+    } else {
+
+        recompensaEl.textContent =
+
+            "Não foi possível entregar";
+
+    }
 
     tocarFinal();
 
