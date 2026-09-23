@@ -314,7 +314,7 @@ body {
 
 /* =========================================================
 
-   ÁREA
+   ÁREA DO JOGO
 
 ========================================================= */
 
@@ -582,12 +582,6 @@ body {
 
     object-fit: contain;
 
-    opacity: 0;
-
-    transition:
-
-        opacity .15s ease;
-
     filter:
 
         drop-shadow(
@@ -595,12 +589,6 @@ body {
             0 5px 4px rgba(0,0,0,.2)
 
         );
-
-}
-
-#petton.petton-pronto {
-
-    opacity: 1;
 
 }
 
@@ -1544,11 +1532,9 @@ function carregarRecorde() {
 
    PETTON
 
-   MESMA LÓGICA DA TELA PRINCIPAL
-
 ========================================================= */
 
-function obterDataValidaPetton(valor) {
+function obterDataValida(valor) {
 
     if (!valor) {
 
@@ -1578,7 +1564,7 @@ function obterDataValidaPetton(valor) {
 
 }
 
-function obterDataNascimentoPetton(dados) {
+function obterNascimento(dados) {
 
     if (!dados) {
 
@@ -1586,7 +1572,7 @@ function obterDataNascimentoPetton(dados) {
 
     }
 
-    const possiveis = [
+    const campos = [
 
         dados.dateNascimento,
 
@@ -1604,13 +1590,13 @@ function obterDataNascimentoPetton(dados) {
 
         const valor
 
-        of possiveis
+        of campos
 
     ) {
 
         const data =
 
-            obterDataValidaPetton(
+            obterDataValida(
 
                 valor
 
@@ -1628,7 +1614,11 @@ function obterDataNascimentoPetton(dados) {
 
 }
 
-function obterFaseVisualPetton(dados) {
+function descobrirFasePetton(
+
+    dados
+
+) {
 
     if (!dados) {
 
@@ -1636,21 +1626,83 @@ function obterFaseVisualPetton(dados) {
 
     }
 
-    if (!dados.dateNascimento) {
-
-        return "ovo";
-
-    }
-
     const nascimento =
 
-        obterDataNascimentoPetton(
+        obterNascimento(
 
             dados
 
         );
 
-    let idadeDias =
+    if (!nascimento) {
+
+        const faseSalva =
+
+            String(
+
+                dados.fase ||
+
+                dados.faseAtual ||
+
+                "bebe"
+
+            ).toLowerCase();
+
+        if (
+
+            faseSalva !== "ovo"
+
+        ) {
+
+            if (
+
+                faseSalva.includes(
+
+                    "adult"
+
+                )
+
+            ) {
+
+                return "adulto";
+
+            }
+
+            if (
+
+                faseSalva.includes(
+
+                    "jovem"
+
+                )
+
+            ) {
+
+                return "jovem";
+
+            }
+
+            if (
+
+                faseSalva.includes(
+
+                    "filh"
+
+                )
+
+            ) {
+
+                return "filhote";
+
+            }
+
+        }
+
+        return "bebe";
+
+    }
+
+    let dias =
 
         Number(
 
@@ -1662,13 +1714,15 @@ function obterFaseVisualPetton(dados) {
 
     if (
 
-        !isFinite(idadeDias) &&
+        !isFinite(
 
-        nascimento
+            dias
+
+        )
 
     ) {
 
-        idadeDias =
+        dias =
 
             Math.floor(
 
@@ -1688,107 +1742,17 @@ function obterFaseVisualPetton(dados) {
 
     if (
 
-        isFinite(
-
-            idadeDias
-
-        )
+        dias < 8
 
     ) {
 
-        if (
-
-            idadeDias < 8
-
-        ) {
-
-            return "bebe";
-
-        }
-
-        if (
-
-            idadeDias < 31
-
-        ) {
-
-            return "filhote";
-
-        }
-
-        if (
-
-            idadeDias < 91
-
-        ) {
-
-            return "jovem";
-
-        }
-
-        return "adulto";
-
-    }
-
-    const fase =
-
-        String(
-
-            dados.fase ||
-
-            dados.faseAtual ||
-
-            "bebe"
-
-        ).toLowerCase();
-
-    if (
-
-        fase.includes(
-
-            "adult"
-
-        )
-
-    ) {
-
-        return "adulto";
+        return "bebe";
 
     }
 
     if (
 
-        fase.includes(
-
-            "jovem"
-
-        ) ||
-
-        fase.includes(
-
-            "young"
-
-        )
-
-    ) {
-
-        return "jovem";
-
-    }
-
-    if (
-
-        fase.includes(
-
-            "filh"
-
-        ) ||
-
-        fase.includes(
-
-            "child"
-
-        )
+        dias < 31
 
     ) {
 
@@ -1796,57 +1760,29 @@ function obterFaseVisualPetton(dados) {
 
     }
 
-    return "bebe";
-
-}
-
-function obterIdentidadeVisualPetton(
-
-    dados
-
-) {
-
-    if (!dados) {
-
-        return null;
-
-    }
-
     if (
 
-        dados.identidadeVisual &&
-
-        typeof dados.identidadeVisual ===
-
-            "object"
+        dias < 91
 
     ) {
 
-        return dados.identidadeVisual;
+        return "jovem";
 
     }
 
-    return null;
+    return "adulto";
 
 }
 
-function obterEspeciePetton(
+function descobrirEspeciePetton(
 
     dados
 
 ) {
 
-    const identidade =
-
-        obterIdentidadeVisualPetton(
-
-            dados
-
-        );
-
     let especie =
 
-        identidade?.especie ||
+        dados?.identidadeVisual?.especie ||
 
         dados?.especie ||
 
@@ -1904,7 +1840,7 @@ function obterEspeciePetton(
 
 }
 
-function obterImagemIndividualPetton(
+function obterImagemPetton(
 
     dados,
 
@@ -1912,31 +1848,13 @@ function obterImagemIndividualPetton(
 
 ) {
 
-    const identidade =
-
-        obterIdentidadeVisualPetton(
-
-            dados
-
-        );
-
-    if (!identidade) {
-
-        return null;
-
-    }
-
-    const imagens =
-
-        identidade.imagens;
-
     if (
 
-        !imagens ||
+        !dados ||
 
-        typeof imagens !==
+        !dados.identidadeVisual ||
 
-            "object"
+        !dados.identidadeVisual.imagens
 
     ) {
 
@@ -1946,7 +1864,13 @@ function obterImagemIndividualPetton(
 
     const imagem =
 
-        imagens[fase];
+        dados.identidadeVisual
+
+            .imagens[
+
+                fase
+
+            ];
 
     if (
 
@@ -1966,7 +1890,7 @@ function obterImagemIndividualPetton(
 
 }
 
-function carregarPetton() {
+function carregarDadosPetton() {
 
     let dados =
 
@@ -1974,11 +1898,17 @@ function carregarPetton() {
 
     try {
 
+        /*
+
+           PRIMEIRA OPÇÃO:
+
+           a mesma usada pela principal.
+
+        */
+
         if (
 
-            typeof Petton !==
-
-                "undefined" &&
+            window.Petton &&
 
             typeof Petton.carregarPetton ===
 
@@ -1989,6 +1919,34 @@ function carregarPetton() {
             dados =
 
                 Petton.carregarPetton();
+
+        }
+
+        /*
+
+           SEGUNDA OPÇÃO:
+
+           compatibilidade com versões
+
+           que usam Petton.carregar().
+
+        */
+
+        if (
+
+            !dados &&
+
+            window.Petton &&
+
+            typeof Petton.carregar ===
+
+                "function"
+
+        ) {
+
+            dados =
+
+                Petton.carregar();
 
         }
 
@@ -2004,17 +1962,21 @@ function carregarPetton() {
 
     }
 
+    return dados;
+
+}
+
+function carregarPetton() {
+
+    const dados =
+
+        carregarDadosPetton();
+
     if (!dados) {
 
         console.warn(
 
-            "Dados do Petton não encontrados."
-
-        );
-
-        pettonEl.removeAttribute(
-
-            "src"
+            "Petton não encontrado."
 
         );
 
@@ -2022,17 +1984,17 @@ function carregarPetton() {
 
     }
 
-    const especie =
+    const fase =
 
-        obterEspeciePetton(
+        descobrirFasePetton(
 
             dados
 
         );
 
-    const fase =
+    const especie =
 
-        obterFaseVisualPetton(
+        descobrirEspeciePetton(
 
             dados
 
@@ -2040,7 +2002,7 @@ function carregarPetton() {
 
     const imagemIndividual =
 
-        obterImagemIndividualPetton(
+        obterImagemPetton(
 
             dados,
 
@@ -2048,7 +2010,7 @@ function carregarPetton() {
 
         );
 
-    const imagensFallback = {
+    const fallback = {
 
         gato:
 
@@ -2066,103 +2028,91 @@ function carregarPetton() {
 
     let imagemFinal =
 
-        imagemIndividual ||
+        imagemIndividual;
 
-        imagensFallback[
+    if (
 
-            especie
+        imagemFinal
 
-        ];
+    ) {
 
-    if (!imagemFinal) {
+        if (
 
-        console.warn(
+            !imagemFinal.startsWith(
 
-            "Imagem do Petton não encontrada."
+                "http://"
 
-        );
+            ) &&
+
+            !imagemFinal.startsWith(
+
+                "https://"
+
+            ) &&
+
+            !imagemFinal.startsWith(
+
+                "data:"
+
+            ) &&
+
+            !imagemFinal.startsWith(
+
+                "blob:"
+
+            ) &&
+
+            !imagemFinal.startsWith(
+
+                "/"
+
+            ) &&
+
+            !imagemFinal.startsWith(
+
+                "../"
+
+            )
+
+        ) {
+
+            imagemFinal =
+
+                "../" +
+
+                imagemFinal;
+
+        }
+
+    } else {
+
+        imagemFinal =
+
+            fallback[
+
+                especie
+
+            ];
+
+    }
+
+    if (
+
+        !imagemFinal
+
+    ) {
 
         return;
 
     }
 
-    /*
-
-       Se a imagem individual está salva
-
-       como caminho relativo da pasta petton/,
-
-       adicionamos ../ porque este jogo
-
-       está dentro de petton/jogos/.
-
-    */
-
-    if (
-
-        imagemIndividual &&
-
-        !imagemIndividual.startsWith(
-
-            "http://"
-
-        ) &&
-
-        !imagemIndividual.startsWith(
-
-            "https://"
-
-        ) &&
-
-        !imagemIndividual.startsWith(
-
-            "/"
-
-        ) &&
-
-        !imagemIndividual.startsWith(
-
-            "../"
-
-        ) &&
-
-        !imagemIndividual.startsWith(
-
-            "data:"
-
-        ) &&
-
-        !imagemIndividual.startsWith(
-
-            "blob:"
-
-        )
-
-    ) {
-
-        imagemFinal =
-
-            "../" +
-
-            imagemIndividual;
-
-    }
-
-    pettonEl.classList.remove(
-
-        "petton-pronto"
-
-    );
-
     pettonEl.onload =
 
         function() {
 
-            pettonEl.classList.add(
+            pettonEl.style.display =
 
-                "petton-pronto"
-
-            );
+                "block";
 
         };
 
@@ -2170,45 +2120,39 @@ function carregarPetton() {
 
         function() {
 
-            const fallback =
-
-                imagensFallback[
-
-                    especie
-
-                ];
-
             console.warn(
 
-                "Imagem não encontrada:",
+                "Falhou imagem:",
 
                 imagemFinal
 
             );
 
+            const imagemFallback =
+
+                fallback[
+
+                    especie
+
+                ];
+
             if (
 
-                fallback &&
+                imagemFallback &&
 
                 pettonEl.getAttribute(
 
                     "src"
 
-                ) !== fallback
+                ) !==
+
+                    imagemFallback
 
             ) {
 
                 pettonEl.src =
 
-                    fallback;
-
-            } else {
-
-                pettonEl.classList.remove(
-
-                    "petton-pronto"
-
-                );
+                    imagemFallback;
 
             }
 
@@ -2218,29 +2162,15 @@ function carregarPetton() {
 
         imagemFinal;
 
+    pettonEl.style.display =
+
+        "block";
+
     pettonEl.dataset.especie =
 
         especie;
 
     pettonEl.dataset.fase =
-
-        fase;
-
-    pettonEl.dataset.imagemIndividual =
-
-        imagemIndividual
-
-            ? "true"
-
-            : "false";
-
-    pettonEl.alt =
-
-        "Petton " +
-
-        especie +
-
-        " " +
 
         fase;
 
@@ -2296,7 +2226,7 @@ function atualizarNivel() {
 
 /* =========================================================
 
-   VIDA DOS OBJETOS
+   VIDA
 
 ========================================================= */
 
@@ -2756,7 +2686,7 @@ function posicionarAlvo(
 
 /* =========================================================
 
-   TRANSFORMAR 🎯 EM 💣
+   TRANSFORMAR EM BOMBA
 
 ========================================================= */
 
@@ -3195,8 +3125,6 @@ function removerAlvo(
         alvo.elemento.remove();
 
     } catch (erro) {
-
-        /* nada */
 
     }
 
@@ -3750,8 +3678,6 @@ function limparAlvos() {
 
             } catch (erro) {
 
-                /* nada */
-
             }
 
         }
@@ -3791,14 +3717,6 @@ function limparAlvos() {
 function iniciarJogo() {
 
     prepararAudio();
-
-    /*
-
-       Recarrega a imagem atual do Petton
-
-       antes de começar.
-
-    */
 
     carregarPetton();
 
@@ -4028,8 +3946,6 @@ function finalizarJogo() {
 
         } catch (erro) {
 
-            /* nada */
-
         }
 
     }
@@ -4178,8 +4094,6 @@ function prepararAudio() {
 
     } catch (erro) {
 
-        /* nada */
-
     }
 
 }
@@ -4293,8 +4207,6 @@ function tocarTom(
         );
 
     } catch (erro) {
-
-        /* nada */
 
     }
 
