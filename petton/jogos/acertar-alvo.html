@@ -314,7 +314,7 @@ body {
 
 /* =========================================================
 
-   ÁREA DO JOGO
+   ÁREA
 
 ========================================================= */
 
@@ -335,12 +335,6 @@ body {
     touch-action: none;
 
 }
-
-/* =========================================================
-
-   CENÁRIO
-
-========================================================= */
 
 .sol {
 
@@ -400,7 +394,7 @@ body {
 
 /* =========================================================
 
-   CAMPO DOS ALVOS
+   CAMPO
 
 ========================================================= */
 
@@ -432,7 +426,7 @@ body {
 
 /* =========================================================
 
-   ALVO
+   ALVOS
 
 ========================================================= */
 
@@ -490,12 +484,6 @@ body {
 
 }
 
-/* =========================================================
-
-   ALVO DOURADO
-
-========================================================= */
-
 .alvo.bonus {
 
     animation:
@@ -519,12 +507,6 @@ body {
     }
 
 }
-
-/* =========================================================
-
-   BOMBA
-
-========================================================= */
 
 .alvo.bomba {
 
@@ -976,12 +958,6 @@ body {
 
 <div class="app">
 
-<!-- =====================================================
-
-     TOPO
-
-====================================================== -->
-
 <header class="topo">
 
     <button
@@ -1008,7 +984,7 @@ body {
 
         <span>
 
-            Seja rápido!
+            Acerte antes que vire bomba!
 
         </span>
 
@@ -1031,12 +1007,6 @@ body {
     </button>
 
 </header>
-
-<!-- =====================================================
-
-     HUD
-
-====================================================== -->
 
 <div class="hud">
 
@@ -1142,12 +1112,6 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     JOGO
-
-====================================================== -->
-
 <div id="areaJogo">
 
     <div class="sol"></div>
@@ -1188,11 +1152,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     TELA INICIAL
-
-====================================================== -->
+<!-- TELA INICIAL -->
 
 <div
 
@@ -1206,7 +1166,7 @@ body {
 
         <div class="caixa-icone">
 
-            🎯💥
+            🎯💣
 
         </div>
 
@@ -1218,43 +1178,43 @@ body {
 
         <p>
 
-            Acerte o máximo de alvos antes do tempo acabar.
+            Não deixe o alvo virar uma bomba!
 
         </p>
 
         <div class="regras">
 
-            🎯 Alvo normal:
+            🎯 Acerte o alvo rapidamente.
 
-            <b>+1 ponto</b>
+            <br>
+
+            ⏱️ Depois de
+
+            <b>2 a 3 segundos</b>,
+
+            o 🎯 vira 💣.
 
             <br>
 
             🌟 Alvo dourado:
 
-            <b>+3 pontos</b>
+            <b>+3 pontos</b>.
 
             <br>
 
-            🔥 Acerte vários seguidos para aumentar o
-
-            <b>combo</b>.
+            🔥 Acertos seguidos aumentam o combo.
 
             <br>
 
-            ❌ Se deixar um alvo escapar, perde o combo.
+            💣 Tocar na bomba:
+
+            <b>-5 pontos</b>
+
+            e perde o combo.
 
             <br>
 
-            💣 Cuidado!
-
-            Tocar na bomba tira
-
-            <b>5 pontos</b> e acaba com o combo.
-
-            <br>
-
-            ⏱️ Você tem
+            ⏱️ O jogo dura
 
             <b>90 segundos</b>.
 
@@ -1292,11 +1252,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     TELA FINAL
-
-====================================================== -->
+<!-- TELA FINAL -->
 
 <div
 
@@ -1457,10 +1413,6 @@ let acumuladorSpawn =
 let animacaoId =
 
     null;
-
-let contadorSegundo =
-
-    0;
 
 /* =========================================================
 
@@ -1800,7 +1752,7 @@ function carregarPetton() {
 
 /* =========================================================
 
-   DIFICULDADE
+   NÍVEL
 
 ========================================================= */
 
@@ -1848,7 +1800,7 @@ function atualizarNivel() {
 
 /* =========================================================
 
-   TEMPO DE VIDA DO ALVO
+   VIDA DOS OBJETOS
 
 ========================================================= */
 
@@ -1858,63 +1810,69 @@ function obterVidaAlvo(
 
 ) {
 
-    let vida =
+    /*
 
-        1850 -
+       BÔNUS DESAPARECE NORMALMENTE.
 
-        (
+    */
 
-            nivel - 1
+    if (
 
-        ) *
+        tipo === "bonus"
 
-        105;
+    ) {
 
-    vida =
+        return Math.max(
 
-        Math.max(
+            750,
 
-            700,
+            1700 -
 
-            vida
+            (
+
+                nivel - 1
+
+            ) *
+
+            90
 
         );
 
-    if (
-
-        tipo ===
-
-        "bonus"
-
-    ) {
-
-        vida *=
-
-            .82;
-
     }
+
+    /*
+
+       BOMBA NORMAL
+
+    */
 
     if (
 
-        tipo ===
-
-        "bomba"
+        tipo === "bomba"
 
     ) {
 
-        vida *=
-
-            1.08;
+        return 1800;
 
     }
 
-    return vida;
+    /*
+
+       ALVO NORMAL RECEBE TEMPO
+
+       MAIOR PORQUE ELE VAI
+
+       VIRAR BOMBA.
+
+    */
+
+    return 5200;
 
 }
 
 /* =========================================================
 
-   INTERVALO DE SPAWN
+   SPAWN
 
 ========================================================= */
 
@@ -1922,9 +1880,9 @@ function obterIntervaloSpawn() {
 
     return Math.max(
 
-        270,
+        300,
 
-        780 -
+        800 -
 
         (
 
@@ -1962,9 +1920,13 @@ function criarAlvo(
 
     /*
 
-       BOMBA FICA MAIS COMUM
+       AGORA TEM MENOS BOMBAS
 
-       NOS NÍVEIS ALTOS
+       NASCENDO DIRETAMENTE,
+
+       PORQUE OS ALVOS TAMBÉM
+
+       VIRAM BOMBAS.
 
     */
 
@@ -1972,9 +1934,9 @@ function criarAlvo(
 
         Math.min(
 
-            .34,
+            .20,
 
-            .12 +
+            .06 +
 
             (
 
@@ -1982,7 +1944,7 @@ function criarAlvo(
 
             ) *
 
-            .025
+            .018
 
         );
 
@@ -2138,7 +2100,7 @@ function criarAlvo(
 
     /*
 
-       ALGUNS SE MOVEM
+       ALGUNS ALVOS SE MOVEM
 
     */
 
@@ -2260,7 +2222,33 @@ function criarAlvo(
 
         acertado:
 
-            false
+            false,
+
+        virouBomba:
+
+            false,
+
+        /*
+
+           SOMENTE 🎯 NORMAL
+
+           VIRA BOMBA.
+
+           ENTRE 2 E 3 SEGUNDOS.
+
+        */
+
+        tempoParaVirarBomba:
+
+            tipo === "normal"
+
+                ? 2000 +
+
+                    Math.random() *
+
+                    1000
+
+                : null
 
     };
 
@@ -2300,7 +2288,7 @@ function criarAlvo(
 
 /* =========================================================
 
-   POSICIONAR
+   POSIÇÃO
 
 ========================================================= */
 
@@ -2321,6 +2309,150 @@ function posicionarAlvo(
         alvo.y +
 
         "px";
+
+}
+
+/* =========================================================
+
+   TRANSFORMAR 🎯 EM 💣
+
+========================================================= */
+
+function transformarEmBomba(
+
+    alvo
+
+) {
+
+    if (
+
+        alvo.acertado ||
+
+        alvo.tipo !== "normal" ||
+
+        alvo.virouBomba
+
+    ) {
+
+        return;
+
+    }
+
+    alvo.virouBomba =
+
+        true;
+
+    alvo.tipo =
+
+        "bomba";
+
+    alvo.elemento.classList.remove(
+
+        "normal"
+
+    );
+
+    alvo.elemento.classList.add(
+
+        "bomba"
+
+    );
+
+    alvo.elemento.textContent =
+
+        "💣";
+
+    /*
+
+       DEPOIS DE VIRAR BOMBA
+
+       ELA FICA MAIS 1,5 SEGUNDO.
+
+    */
+
+    alvo.vida =
+
+        alvo.idade +
+
+        1500;
+
+    /*
+
+       BOMBA FICA MAIS RÁPIDA.
+
+    */
+
+    alvo.vx *=
+
+        1.35;
+
+    alvo.vy *=
+
+        1.35;
+
+    /*
+
+       SE ESTAVA PARADA,
+
+       COMEÇA A SE MOVER.
+
+    */
+
+    if (
+
+        Math.abs(
+
+            alvo.vx
+
+        ) < 5 &&
+
+        Math.abs(
+
+            alvo.vy
+
+        ) < 5
+
+    ) {
+
+        const velocidade =
+
+            65 +
+
+            nivel *
+
+            8;
+
+        const angulo =
+
+            Math.random() *
+
+            Math.PI *
+
+            2;
+
+        alvo.vx =
+
+            Math.cos(
+
+                angulo
+
+            ) *
+
+            velocidade;
+
+        alvo.vy =
+
+            Math.sin(
+
+                angulo
+
+            ) *
+
+            velocidade;
+
+    }
+
+    tocarTransformacaoBomba();
 
 }
 
@@ -2366,11 +2498,11 @@ function acertarAlvo(
 
         25;
 
-    /*
+    /* =====================================================
 
        BOMBA
 
-    */
+    ====================================================== */
 
     if (
 
@@ -2410,7 +2542,7 @@ function acertarAlvo(
 
         mostrarMensagem(
 
-            "💣 BOMBA!"
+            "💣 BOMBA! -5"
 
         );
 
@@ -2428,11 +2560,11 @@ function acertarAlvo(
 
     }
 
-    /*
+    /* =====================================================
 
-       ALVO NORMAL / BÔNUS
+       ALVO / BÔNUS
 
-    */
+    ====================================================== */
 
     combo++;
 
@@ -2458,9 +2590,9 @@ function acertarAlvo(
 
     /*
 
-       COMBO DÁ PONTO EXTRA
+       A CADA 5 DE COMBO
 
-       A CADA 5 ACERTOS.
+       GANHA PONTO EXTRA.
 
     */
 
@@ -2528,12 +2660,6 @@ function acertarAlvo(
 
     }
 
-    /*
-
-       AVISOS DE COMBO
-
-    */
-
     if (
 
         combo === 5
@@ -2592,7 +2718,7 @@ function acertarAlvo(
 
 /* =========================================================
 
-   ALVO ESCAPOU
+   ESCAPOU
 
 ========================================================= */
 
@@ -2617,6 +2743,12 @@ function alvoEscapou(
         true;
 
     /*
+
+       SE ERA ALVO OU BÔNUS
+
+       E ESCAPOU:
+
+       PERDE COMBO.
 
        BOMBA PODE SUMIR
 
@@ -2870,11 +3002,39 @@ function atualizarAlvos(
 
             1000;
 
-        /*
+        /* =================================================
+
+           🎯 VIROU 💣
+
+        ================================================== */
+
+        if (
+
+            alvo.tipo === "normal" &&
+
+            !alvo.virouBomba &&
+
+            alvo.tempoParaVirarBomba !== null &&
+
+            alvo.idade >=
+
+                alvo.tempoParaVirarBomba
+
+        ) {
+
+            transformarEmBomba(
+
+                alvo
+
+            );
+
+        }
+
+        /* =================================================
 
            MOVIMENTO
 
-        */
+        ================================================== */
 
         alvo.x +=
 
@@ -2888,11 +3048,11 @@ function atualizarAlvos(
 
             delta;
 
-        /*
+        /* =================================================
 
-           BATER NAS BORDAS
+           BORDAS
 
-        */
+        ================================================== */
 
         if (
 
@@ -2984,13 +3144,11 @@ function atualizarAlvos(
 
         );
 
-        /*
+        /* =================================================
 
-           ACABOU O TEMPO
+           SUMIU
 
-           DO ALVO
-
-        */
+        ================================================== */
 
         if (
 
@@ -3084,11 +3242,11 @@ function loop(
 
         );
 
-    /*
+    /* =====================================================
 
-       TEMPO TOTAL
+       TEMPO
 
-    */
+    ====================================================== */
 
     tempoRestante -=
 
@@ -3112,11 +3270,11 @@ function loop(
 
     }
 
-    /*
+    /* =====================================================
 
        SPAWN
 
-    */
+    ====================================================== */
 
     acumuladorSpawn +=
 
@@ -3139,12 +3297,6 @@ function loop(
         acumuladorSpawn =
 
             0;
-
-        /*
-
-           LIMITA QUANTIDADE
-
-        */
 
         const maximo =
 
@@ -3176,9 +3328,9 @@ function loop(
 
         /*
 
-           NÍVEL 3+
+           A PARTIR DO NÍVEL 3
 
-           PODE CRIAR SEGUNDO ALVO
+           PODE APARECER MAIS UM.
 
         */
 
@@ -3342,10 +3494,6 @@ function iniciarJogo() {
 
         0;
 
-    contadorSegundo =
-
-        0;
-
     atualizarHUD();
 
     telaInicial.classList.add(
@@ -3374,9 +3522,7 @@ function iniciarJogo() {
 
     /*
 
-       COMEÇA RÁPIDO
-
-       SEM ESPERAR
+       JÁ COMEÇA COM ALVOS
 
     */
 
@@ -3406,7 +3552,7 @@ function iniciarJogo() {
 
         },
 
-        300
+        350
 
     );
 
@@ -3420,15 +3566,27 @@ function iniciarJogo() {
 
             ) {
 
-                criarAlvo();
+                criarAlvo(
+
+                    "bonus"
+
+                );
 
             }
 
         },
 
-        650
+        750
 
     );
+
+    /*
+
+       PRIMEIRA BOMBA
+
+       APARECE MAIS TARDE.
+
+    */
 
     setTimeout(
 
@@ -3450,7 +3608,7 @@ function iniciarJogo() {
 
         },
 
-        1300
+        1800
 
     );
 
@@ -3466,7 +3624,7 @@ function iniciarJogo() {
 
 /* =========================================================
 
-   FINALIZAR
+   FINAL
 
 ========================================================= */
 
@@ -3503,12 +3661,6 @@ function finalizarJogo() {
             null;
 
     }
-
-    /*
-
-       RECORDE
-
-    */
 
     if (
 
@@ -3925,6 +4077,56 @@ function tocarBonus() {
         .04,
 
         .11
+
+    );
+
+}
+
+/* =========================================================
+
+   SOM DO 🎯 VIRANDO 💣
+
+========================================================= */
+
+function tocarTransformacaoBomba() {
+
+    tocarTom(
+
+        520,
+
+        .05,
+
+        "square",
+
+        .035
+
+    );
+
+    tocarTom(
+
+        350,
+
+        .07,
+
+        "square",
+
+        .035,
+
+        .06
+
+    );
+
+    tocarTom(
+
+        220,
+
+        .10,
+
+        "square",
+
+        .035,
+
+        .13
 
     );
 
