@@ -582,6 +582,12 @@ body {
 
     object-fit: contain;
 
+    opacity: 0;
+
+    transition:
+
+        opacity .15s ease;
+
     filter:
 
         drop-shadow(
@@ -589,6 +595,12 @@ body {
             0 5px 4px rgba(0,0,0,.2)
 
         );
+
+}
+
+#petton.petton-pronto {
+
+    opacity: 1;
 
 }
 
@@ -1532,85 +1544,231 @@ function carregarRecorde() {
 
    PETTON
 
+   MESMA LÓGICA DA TELA PRINCIPAL
+
 ========================================================= */
 
-function descobrirFaseLocal(
+function obterDataValidaPetton(valor) {
 
-    dados
+    if (!valor) {
 
-) {
-
-    if (
-
-        dados &&
-
-        dados.fase &&
-
-        dados.fase !== "ovo"
-
-    ) {
-
-        return dados.fase;
+        return null;
 
     }
 
-    let dias =
+    const data =
 
-        0;
+        new Date(valor);
 
-    try {
+    if (
 
-        if (
+        isNaN(
 
-            window.Petton &&
+            data.getTime()
 
-            typeof Petton.idadeDias ===
+        )
 
-                "function"
+    ) {
 
-        ) {
+        return null;
 
-            dias =
+    }
 
-                Number(
+    return data;
 
-                    Petton.idadeDias()
+}
 
-                ) || 0;
+function obterDataNascimentoPetton(dados) {
+
+    if (!dados) {
+
+        return null;
+
+    }
+
+    const possiveis = [
+
+        dados.dateNascimento,
+
+        dados.dataNascimento,
+
+        dados.nascimento,
+
+        dados.nascimentoEm,
+
+        dados.dataDeNascimento
+
+    ];
+
+    for (
+
+        const valor
+
+        of possiveis
+
+    ) {
+
+        const data =
+
+            obterDataValidaPetton(
+
+                valor
+
+            );
+
+        if (data) {
+
+            return data;
 
         }
 
-    } catch (erro) {
-
-        dias =
-
-            0;
-
     }
 
-    if (
+    return null;
 
-        dias < 8
+}
 
-    ) {
+function obterFaseVisualPetton(dados) {
+
+    if (!dados) {
 
         return "bebe";
 
     }
 
+    if (!dados.dateNascimento) {
+
+        return "ovo";
+
+    }
+
+    const nascimento =
+
+        obterDataNascimentoPetton(
+
+            dados
+
+        );
+
+    let idadeDias =
+
+        Number(
+
+            dados.idadeDias ??
+
+            dados.diasDeVida
+
+        );
+
     if (
 
-        dias < 31
+        !isFinite(idadeDias) &&
+
+        nascimento
 
     ) {
 
-        return "filhote";
+        idadeDias =
+
+            Math.floor(
+
+                (
+
+                    Date.now() -
+
+                    nascimento.getTime()
+
+                ) /
+
+                86400000
+
+            );
 
     }
 
     if (
 
-        dias < 91
+        isFinite(
+
+            idadeDias
+
+        )
+
+    ) {
+
+        if (
+
+            idadeDias < 8
+
+        ) {
+
+            return "bebe";
+
+        }
+
+        if (
+
+            idadeDias < 31
+
+        ) {
+
+            return "filhote";
+
+        }
+
+        if (
+
+            idadeDias < 91
+
+        ) {
+
+            return "jovem";
+
+        }
+
+        return "adulto";
+
+    }
+
+    const fase =
+
+        String(
+
+            dados.fase ||
+
+            dados.faseAtual ||
+
+            "bebe"
+
+        ).toLowerCase();
+
+    if (
+
+        fase.includes(
+
+            "adult"
+
+        )
+
+    ) {
+
+        return "adulto";
+
+    }
+
+    if (
+
+        fase.includes(
+
+            "jovem"
+
+        ) ||
+
+        fase.includes(
+
+            "young"
+
+        )
 
     ) {
 
@@ -1618,7 +1776,193 @@ function descobrirFaseLocal(
 
     }
 
-    return "adulto";
+    if (
+
+        fase.includes(
+
+            "filh"
+
+        ) ||
+
+        fase.includes(
+
+            "child"
+
+        )
+
+    ) {
+
+        return "filhote";
+
+    }
+
+    return "bebe";
+
+}
+
+function obterIdentidadeVisualPetton(
+
+    dados
+
+) {
+
+    if (!dados) {
+
+        return null;
+
+    }
+
+    if (
+
+        dados.identidadeVisual &&
+
+        typeof dados.identidadeVisual ===
+
+            "object"
+
+    ) {
+
+        return dados.identidadeVisual;
+
+    }
+
+    return null;
+
+}
+
+function obterEspeciePetton(
+
+    dados
+
+) {
+
+    const identidade =
+
+        obterIdentidadeVisualPetton(
+
+            dados
+
+        );
+
+    let especie =
+
+        identidade?.especie ||
+
+        dados?.especie ||
+
+        "gato";
+
+    especie =
+
+        String(
+
+            especie
+
+        ).toLowerCase();
+
+    if (
+
+        especie.includes(
+
+            "cach"
+
+        ) ||
+
+        especie.includes(
+
+            "dog"
+
+        )
+
+    ) {
+
+        return "cachorro";
+
+    }
+
+    if (
+
+        especie.includes(
+
+            "coelh"
+
+        ) ||
+
+        especie.includes(
+
+            "rabbit"
+
+        )
+
+    ) {
+
+        return "coelho";
+
+    }
+
+    return "gato";
+
+}
+
+function obterImagemIndividualPetton(
+
+    dados,
+
+    fase
+
+) {
+
+    const identidade =
+
+        obterIdentidadeVisualPetton(
+
+            dados
+
+        );
+
+    if (!identidade) {
+
+        return null;
+
+    }
+
+    const imagens =
+
+        identidade.imagens;
+
+    if (
+
+        !imagens ||
+
+        typeof imagens !==
+
+            "object"
+
+    ) {
+
+        return null;
+
+    }
+
+    const imagem =
+
+        imagens[fase];
+
+    if (
+
+        typeof imagem ===
+
+            "string" &&
+
+        imagem.trim() !== ""
+
+    ) {
+
+        return imagem.trim();
+
+    }
+
+    return null;
 
 }
 
@@ -1632,9 +1976,11 @@ function carregarPetton() {
 
         if (
 
-            window.Petton &&
+            typeof Petton !==
 
-            typeof Petton.carregar ===
+                "undefined" &&
+
+            typeof Petton.carregarPetton ===
 
                 "function"
 
@@ -1642,7 +1988,7 @@ function carregarPetton() {
 
             dados =
 
-                Petton.carregar();
+                Petton.carregarPetton();
 
         }
 
@@ -1650,7 +1996,7 @@ function carregarPetton() {
 
         console.error(
 
-            "Erro Petton:",
+            "Erro ao carregar Petton:",
 
             erro
 
@@ -1658,95 +2004,245 @@ function carregarPetton() {
 
     }
 
-    if (
+    if (!dados) {
 
-        !dados
+        console.warn(
 
-    ) {
+            "Dados do Petton não encontrados."
 
-        pettonEl.src =
+        );
 
-            "../petton-original.png";
+        pettonEl.removeAttribute(
+
+            "src"
+
+        );
 
         return;
 
     }
 
-    const fase =
+    const especie =
 
-        descobrirFaseLocal(
+        obterEspeciePetton(
 
             dados
 
         );
 
-    const especie =
+    const fase =
 
-        dados.identidadeVisual
+        obterFaseVisualPetton(
 
-            ?.especie ||
+            dados
 
-        dados.especie ||
+        );
 
-        "gato";
+    const imagemIndividual =
 
-    const imagemGerada =
+        obterImagemIndividualPetton(
 
-        dados.identidadeVisual
+            dados,
 
-            ?.imagens
+            fase
 
-            ?.[fase];
+        );
 
-    if (
+    const imagensFallback = {
 
-        imagemGerada
+        gato:
 
-    ) {
+            "../petton-original.png",
 
-        pettonEl.src =
+        cachorro:
 
-            imagemGerada;
+            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png",
 
-        return;
+        coelho:
 
-    }
+            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png"
 
-    if (
+    };
 
-        especie ===
+    let imagemFinal =
 
-        "cachorro"
+        imagemIndividual ||
 
-    ) {
+        imagensFallback[
 
-        pettonEl.src =
+            especie
 
-            "../FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png";
+        ];
 
-        return;
+    if (!imagemFinal) {
 
-    }
+        console.warn(
 
-    if (
+            "Imagem do Petton não encontrada."
 
-        especie ===
-
-        "coelho"
-
-    ) {
-
-        pettonEl.src =
-
-            "../39CE7A33-D105-4E83-BF3B-DDE48E046D60.png";
+        );
 
         return;
 
     }
+
+    /*
+
+       Se a imagem individual está salva
+
+       como caminho relativo da pasta petton/,
+
+       adicionamos ../ porque este jogo
+
+       está dentro de petton/jogos/.
+
+    */
+
+    if (
+
+        imagemIndividual &&
+
+        !imagemIndividual.startsWith(
+
+            "http://"
+
+        ) &&
+
+        !imagemIndividual.startsWith(
+
+            "https://"
+
+        ) &&
+
+        !imagemIndividual.startsWith(
+
+            "/"
+
+        ) &&
+
+        !imagemIndividual.startsWith(
+
+            "../"
+
+        ) &&
+
+        !imagemIndividual.startsWith(
+
+            "data:"
+
+        ) &&
+
+        !imagemIndividual.startsWith(
+
+            "blob:"
+
+        )
+
+    ) {
+
+        imagemFinal =
+
+            "../" +
+
+            imagemIndividual;
+
+    }
+
+    pettonEl.classList.remove(
+
+        "petton-pronto"
+
+    );
+
+    pettonEl.onload =
+
+        function() {
+
+            pettonEl.classList.add(
+
+                "petton-pronto"
+
+            );
+
+        };
+
+    pettonEl.onerror =
+
+        function() {
+
+            const fallback =
+
+                imagensFallback[
+
+                    especie
+
+                ];
+
+            console.warn(
+
+                "Imagem não encontrada:",
+
+                imagemFinal
+
+            );
+
+            if (
+
+                fallback &&
+
+                pettonEl.getAttribute(
+
+                    "src"
+
+                ) !== fallback
+
+            ) {
+
+                pettonEl.src =
+
+                    fallback;
+
+            } else {
+
+                pettonEl.classList.remove(
+
+                    "petton-pronto"
+
+                );
+
+            }
+
+        };
 
     pettonEl.src =
 
-        "../petton-original.png";
+        imagemFinal;
+
+    pettonEl.dataset.especie =
+
+        especie;
+
+    pettonEl.dataset.fase =
+
+        fase;
+
+    pettonEl.dataset.imagemIndividual =
+
+        imagemIndividual
+
+            ? "true"
+
+            : "false";
+
+    pettonEl.alt =
+
+        "Petton " +
+
+        especie +
+
+        " " +
+
+        fase;
 
 }
 
@@ -1810,12 +2306,6 @@ function obterVidaAlvo(
 
 ) {
 
-    /*
-
-       BÔNUS DESAPARECE NORMALMENTE.
-
-    */
-
     if (
 
         tipo === "bonus"
@@ -1840,12 +2330,6 @@ function obterVidaAlvo(
 
     }
 
-    /*
-
-       BOMBA NORMAL
-
-    */
-
     if (
 
         tipo === "bomba"
@@ -1855,16 +2339,6 @@ function obterVidaAlvo(
         return 1800;
 
     }
-
-    /*
-
-       ALVO NORMAL RECEBE TEMPO
-
-       MAIOR PORQUE ELE VAI
-
-       VIRAR BOMBA.
-
-    */
 
     return 5200;
 
@@ -1917,18 +2391,6 @@ function criarAlvo(
         return;
 
     }
-
-    /*
-
-       AGORA TEM MENOS BOMBAS
-
-       NASCENDO DIRETAMENTE,
-
-       PORQUE OS ALVOS TAMBÉM
-
-       VIRAM BOMBAS.
-
-    */
 
     const chanceBomba =
 
@@ -2022,9 +2484,7 @@ function criarAlvo(
 
     if (
 
-        tipo ===
-
-        "normal"
+        tipo === "normal"
 
     ) {
 
@@ -2034,9 +2494,7 @@ function criarAlvo(
 
     } else if (
 
-        tipo ===
-
-        "bonus"
+        tipo === "bonus"
 
     ) {
 
@@ -2097,12 +2555,6 @@ function criarAlvo(
         Math.random() *
 
         maxY;
-
-    /*
-
-       ALGUNS ALVOS SE MOVEM
-
-    */
 
     const movel =
 
@@ -2228,16 +2680,6 @@ function criarAlvo(
 
             false,
 
-        /*
-
-           SOMENTE 🎯 NORMAL
-
-           VIRA BOMBA.
-
-           ENTRE 2 E 3 SEGUNDOS.
-
-        */
-
         tempoParaVirarBomba:
 
             tipo === "normal"
@@ -2362,25 +2804,11 @@ function transformarEmBomba(
 
         "💣";
 
-    /*
-
-       DEPOIS DE VIRAR BOMBA
-
-       ELA FICA MAIS 1,5 SEGUNDO.
-
-    */
-
     alvo.vida =
 
         alvo.idade +
 
         1500;
-
-    /*
-
-       BOMBA FICA MAIS RÁPIDA.
-
-    */
 
     alvo.vx *=
 
@@ -2389,14 +2817,6 @@ function transformarEmBomba(
     alvo.vy *=
 
         1.35;
-
-    /*
-
-       SE ESTAVA PARADA,
-
-       COMEÇA A SE MOVER.
-
-    */
 
     if (
 
@@ -2498,12 +2918,6 @@ function acertarAlvo(
 
         25;
 
-    /* =====================================================
-
-       BOMBA
-
-    ====================================================== */
-
     if (
 
         alvo.tipo ===
@@ -2560,12 +2974,6 @@ function acertarAlvo(
 
     }
 
-    /* =====================================================
-
-       ALVO / BÔNUS
-
-    ====================================================== */
-
     combo++;
 
     maiorCombo =
@@ -2587,14 +2995,6 @@ function acertarAlvo(
             ? 3
 
             : 1;
-
-    /*
-
-       A CADA 5 DE COMBO
-
-       GANHA PONTO EXTRA.
-
-    */
 
     const bonusCombo =
 
@@ -2741,20 +3141,6 @@ function alvoEscapou(
     alvo.acertado =
 
         true;
-
-    /*
-
-       SE ERA ALVO OU BÔNUS
-
-       E ESCAPOU:
-
-       PERDE COMBO.
-
-       BOMBA PODE SUMIR
-
-       SEM PENALIDADE.
-
-    */
 
     if (
 
@@ -3002,12 +3388,6 @@ function atualizarAlvos(
 
             1000;
 
-        /* =================================================
-
-           🎯 VIROU 💣
-
-        ================================================== */
-
         if (
 
             alvo.tipo === "normal" &&
@@ -3030,12 +3410,6 @@ function atualizarAlvos(
 
         }
 
-        /* =================================================
-
-           MOVIMENTO
-
-        ================================================== */
-
         alvo.x +=
 
             alvo.vx *
@@ -3047,12 +3421,6 @@ function atualizarAlvos(
             alvo.vy *
 
             delta;
-
-        /* =================================================
-
-           BORDAS
-
-        ================================================== */
 
         if (
 
@@ -3143,12 +3511,6 @@ function atualizarAlvos(
             alvo
 
         );
-
-        /* =================================================
-
-           SUMIU
-
-        ================================================== */
 
         if (
 
@@ -3242,12 +3604,6 @@ function loop(
 
         );
 
-    /* =====================================================
-
-       TEMPO
-
-    ====================================================== */
-
     tempoRestante -=
 
         delta;
@@ -3269,12 +3625,6 @@ function loop(
         return;
 
     }
-
-    /* =====================================================
-
-       SPAWN
-
-    ====================================================== */
 
     acumuladorSpawn +=
 
@@ -3325,14 +3675,6 @@ function loop(
             criarAlvo();
 
         }
-
-        /*
-
-           A PARTIR DO NÍVEL 3
-
-           PODE APARECER MAIS UM.
-
-        */
 
         if (
 
@@ -3450,6 +3792,16 @@ function iniciarJogo() {
 
     prepararAudio();
 
+    /*
+
+       Recarrega a imagem atual do Petton
+
+       antes de começar.
+
+    */
+
+    carregarPetton();
+
     if (
 
         animacaoId
@@ -3520,12 +3872,6 @@ function iniciarJogo() {
 
     );
 
-    /*
-
-       JÁ COMEÇA COM ALVOS
-
-    */
-
     criarAlvo(
 
         "normal"
@@ -3579,14 +3925,6 @@ function iniciarJogo() {
         750
 
     );
-
-    /*
-
-       PRIMEIRA BOMBA
-
-       APARECE MAIS TARDE.
-
-    */
 
     setTimeout(
 
@@ -4081,12 +4419,6 @@ function tocarBonus() {
     );
 
 }
-
-/* =========================================================
-
-   SOM DO 🎯 VIRANDO 💣
-
-========================================================= */
 
 function tocarTransformacaoBomba() {
 
