@@ -354,7 +354,7 @@ body {
 
 /* =========================================================
 
-   ÁREA
+   ÁREA DO JOGO
 
 ========================================================= */
 
@@ -580,9 +580,7 @@ body {
 
         left,
 
-        top,
-
-        transform;
+        top;
 
 }
 
@@ -605,6 +603,32 @@ body {
     user-select: none;
 
     -webkit-user-drag: none;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   SOMBRA
+
+========================================================= */
+
+#sombraJogador {
+
+    position: absolute;
+
+    z-index: 55;
+
+    width: 48px;
+
+    height: 12px;
+
+    border-radius: 50%;
+
+    background:
+
+        rgba(0,0,0,.22);
 
     pointer-events: none;
 
@@ -667,80 +691,6 @@ body {
         transform: scale(1.18);
 
     }
-
-}
-
-/* =========================================================
-
-   SOMBRA DO JOGADOR
-
-========================================================= */
-
-#sombraJogador {
-
-    position: absolute;
-
-    z-index: 55;
-
-    width: 48px;
-
-    height: 12px;
-
-    border-radius: 50%;
-
-    background:
-
-        rgba(0,0,0,.22);
-
-    pointer-events: none;
-
-    transform:
-
-        translateX(12px);
-
-    transition:
-
-        opacity .05s linear,
-
-        transform .05s linear;
-
-}
-
-/* =========================================================
-
-   INSTRUÇÃO
-
-========================================================= */
-
-#instrucaoPulo {
-
-    position: absolute;
-
-    z-index: 180;
-
-    left: 50%;
-
-    bottom: 90px;
-
-    transform: translateX(-50%);
-
-    padding: 8px 14px;
-
-    border-radius: 20px;
-
-    background:
-
-        rgba(255,255,255,.9);
-
-    color: #77451f;
-
-    font-size: 12px;
-
-    font-weight: 900;
-
-    white-space: nowrap;
-
-    pointer-events: none;
 
 }
 
@@ -844,31 +794,57 @@ body {
 
 /* =========================================================
 
-   BOTÃO CORRER
+   BOTÕES DO JOGO
 
 ========================================================= */
 
-#botaoCorrer {
+.controles {
 
     position: absolute;
 
-    z-index: 210;
+    z-index: 230;
 
-    left: 50%;
+    left: 12px;
 
-    bottom: 18px;
+    right: 12px;
 
-    transform:
+    bottom: 16px;
 
-        translateX(-50%);
+    display: grid;
 
-    width: 180px;
+    grid-template-columns: 1fr 1fr;
 
-    height: 58px;
+    gap: 10px;
+
+}
+
+.botao-jogo {
+
+    height: 60px;
 
     border: none;
 
-    border-radius: 29px;
+    border-radius: 22px;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+    box-shadow:
+
+        0 5px 15px rgba(0,0,0,.25);
+
+    touch-action: manipulation;
+
+    user-select: none;
+
+    cursor: pointer;
+
+}
+
+#botaoCorrer {
 
     background:
 
@@ -882,29 +858,27 @@ body {
 
         );
 
-    color: white;
+}
 
-    font-size: 17px;
+#botaoPular {
 
-    font-weight: 900;
+    background:
 
-    box-shadow:
+        linear-gradient(
 
-        0 5px 15px rgba(120,45,15,.35);
+            135deg,
 
-    touch-action: manipulation;
+            #4e9cff,
 
-    cursor: pointer;
+            #3157d5
+
+        );
 
 }
 
-#botaoCorrer:active {
+.botao-jogo:active {
 
-    transform:
-
-        translateX(-50%)
-
-        scale(.94);
+    transform: scale(.95);
 
 }
 
@@ -934,9 +908,7 @@ body {
 
         rgba(50,60,70,.38);
 
-    backdrop-filter:
-
-        blur(4px);
+    backdrop-filter: blur(4px);
 
 }
 
@@ -1060,8 +1032,6 @@ body {
 
     font-weight: 800;
 
-    cursor: pointer;
-
 }
 
 .btn-menu {
@@ -1083,8 +1053,6 @@ body {
     font-size: 14px;
 
     font-weight: 700;
-
-    cursor: pointer;
 
 }
 
@@ -1344,31 +1312,41 @@ body {
 
     </div>
 
-    <div id="instrucaoPulo">
+    <div class="controles">
 
-        ⬆️ Deslize para cima para PULAR
+        <button
+
+            type="button"
+
+            class="botao-jogo"
+
+            id="botaoCorrer"
+
+        >
+
+            🏃 CORRER
+
+        </button>
+
+        <button
+
+            type="button"
+
+            class="botao-jogo"
+
+            id="botaoPular"
+
+        >
+
+            ⬆️ PULAR
+
+        </button>
 
     </div>
 
-    <button
-
-        type="button"
-
-        id="botaoCorrer"
-
-    >
-
-        👆 CORRER!
-
-    </button>
-
 </div>
 
-<!-- =====================================================
-
-     INÍCIO
-
-====================================================== -->
+<!-- TELA INICIAL -->
 
 <div
 
@@ -1400,11 +1378,11 @@ body {
 
         <div class="regras">
 
-            👆 Toque em <b>CORRER</b> várias vezes para acelerar.
+            🏃 Aperte <b>CORRER</b> várias vezes para acelerar.
 
             <br>
 
-            ⬆️ Deslize para cima na pista para <b>PULAR</b>.
+            ⬆️ Aperte <b>PULAR</b> quando a pedra chegar.
 
             <br>
 
@@ -1412,15 +1390,15 @@ body {
 
             <br>
 
-            💥 Se bater na pedra, perde velocidade e energia.
+            💥 Se bater, perde velocidade e energia.
 
             <br>
 
-            ⚡ Pegue o raio para ganhar turbo e energia.
+            ⚡ Pegue os raios para ganhar turbo.
 
             <br>
 
-            🔋 Não gaste toda sua energia de uma vez.
+            🔋 A energia recupera aos poucos.
 
         </div>
 
@@ -1456,11 +1434,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     FINAL
-
-====================================================== -->
+<!-- TELA FINAL -->
 
 <div
 
@@ -1586,6 +1560,22 @@ const VELOCIDADE_MINIMA =
 
     45;
 
+/*
+
+   PULO MAIS RÁPIDO
+
+   E RESPONSIVO
+
+*/
+
+const FORCA_PULO =
+
+    720;
+
+const GRAVIDADE_PULO =
+
+    1850;
+
 /* =========================================================
 
    ESTADO
@@ -1649,26 +1639,6 @@ let alturaPulo =
 let velocidadePulo =
 
     0;
-
-const FORCA_PULO =
-
-    650;
-
-const GRAVIDADE_PULO =
-
-    1550;
-
-let toqueInicioX =
-
-    0;
-
-let toqueInicioY =
-
-    0;
-
-let toqueIniciado =
-
-    false;
 
 /* =========================================================
 
@@ -1798,6 +1768,14 @@ const botaoCorrer =
 
     );
 
+const botaoPular =
+
+    document.getElementById(
+
+        "botaoPular"
+
+    );
+
 const telaInicial =
 
     document.getElementById(
@@ -1888,7 +1866,7 @@ function atualizarRecordeTela() {
 
 /* =========================================================
 
-   FASE PETTON
+   FASE DO PETTON
 
 ========================================================= */
 
@@ -1982,7 +1960,7 @@ function descobrirFaseLocal(
 
 /* =========================================================
 
-   IMAGEM PETTON
+   IMAGEM DO PETTON
 
 ========================================================= */
 
@@ -2116,7 +2094,7 @@ function carregarImagemPetton() {
 
 /* =========================================================
 
-   CORRER
+   BOTÃO CORRER
 
 ========================================================= */
 
@@ -2135,6 +2113,34 @@ botaoCorrer.addEventListener(
     }
 
 );
+
+/* =========================================================
+
+   BOTÃO PULAR
+
+========================================================= */
+
+botaoPular.addEventListener(
+
+    "pointerdown",
+
+    function(evento) {
+
+        evento.preventDefault();
+
+        evento.stopPropagation();
+
+        pular();
+
+    }
+
+);
+
+/* =========================================================
+
+   ACELERAR
+
+========================================================= */
 
 function acelerar() {
 
@@ -2198,148 +2204,6 @@ function acelerar() {
 
 /* =========================================================
 
-   CONTROLE DO PULO
-
-========================================================= */
-
-areaJogo.addEventListener(
-
-    "pointerdown",
-
-    function(evento) {
-
-        if (
-
-            evento.target ===
-
-            botaoCorrer
-
-        ) {
-
-            return;
-
-        }
-
-        if (
-
-            !jogando
-
-        ) {
-
-            return;
-
-        }
-
-        toqueInicioX =
-
-            evento.clientX;
-
-        toqueInicioY =
-
-            evento.clientY;
-
-        toqueIniciado =
-
-            true;
-
-    }
-
-);
-
-areaJogo.addEventListener(
-
-    "pointerup",
-
-    function(evento) {
-
-        if (
-
-            !jogando ||
-
-            !toqueIniciado
-
-        ) {
-
-            toqueIniciado =
-
-                false;
-
-            return;
-
-        }
-
-        toqueIniciado =
-
-            false;
-
-        const diferencaY =
-
-            toqueInicioY -
-
-            evento.clientY;
-
-        const diferencaX =
-
-            Math.abs(
-
-                evento.clientX -
-
-                toqueInicioX
-
-            );
-
-        /*
-
-           DESLIZAR PARA CIMA
-
-        */
-
-        if (
-
-            diferencaY > 35 &&
-
-            diferencaY >
-
-                diferencaX
-
-        ) {
-
-            pular();
-
-            return;
-
-        }
-
-        /*
-
-           TOQUE SIMPLES NA PISTA
-
-           TAMBÉM ACELERA.
-
-        */
-
-        acelerar();
-
-    }
-
-);
-
-areaJogo.addEventListener(
-
-    "pointercancel",
-
-    function() {
-
-        toqueIniciado =
-
-            false;
-
-    }
-
-);
-
-/* =========================================================
-
    PULAR
 
 ========================================================= */
@@ -2348,7 +2212,21 @@ function pular() {
 
     if (
 
-        !jogando ||
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    /*
+
+       NÃO PODE DAR PULO DUPLO
+
+    */
+
+    if (
 
         pulando
 
@@ -2357,6 +2235,8 @@ function pular() {
         return;
 
     }
+
+    prepararAudio();
 
     pulando =
 
@@ -2458,7 +2338,7 @@ function prepararRivais() {
 
 /* =========================================================
 
-   ALTURAS DAS PISTAS
+   ALTURA DAS PISTAS
 
 ========================================================= */
 
@@ -2546,9 +2426,9 @@ function criarObjetoPista() {
 
     /*
 
-       68% PEDRAS
+       70% PEDRAS
 
-       32% TURBO
+       30% RAIOS
 
     */
 
@@ -2556,7 +2436,7 @@ function criarObjetoPista() {
 
         Math.random() <
 
-            .68
+            .70
 
             ? "pedra"
 
@@ -2626,21 +2506,19 @@ function criarObjetoPista() {
 
     /*
 
-       ESPAÇAMENTO.
+       ESPAÇO ENTRE OBJETOS
 
-       Não coloca pedras
-
-       impossíveis de pular.
+       PARA DAR TEMPO DE PULAR
 
     */
 
     proximoObjeto +=
 
-        150 +
+        160 +
 
         Math.random() *
 
-        125;
+        120;
 
 }
 
@@ -2700,7 +2578,7 @@ function atualizarVisual() {
 
     /*
 
-       PETTON
+       JOGADOR
 
     */
 
@@ -2758,7 +2636,13 @@ function atualizarVisual() {
 
     sombraJogador.style.left =
 
-        xJogador +
+        (
+
+            xJogador +
+
+            12
+
+        ) +
 
         "px";
 
@@ -2790,7 +2674,7 @@ function atualizarVisual() {
 
     sombraJogador.style.transform =
 
-        "translateX(12px) scale(" +
+        "scale(" +
 
         sombraEscala +
 
@@ -2928,7 +2812,7 @@ function atualizarVisual() {
 
 /* =========================================================
 
-   COLISÃO
+   COLISÕES
 
 ========================================================= */
 
@@ -2960,9 +2844,7 @@ function verificarObjetos() {
 
         /*
 
-           OBJETO JÁ FICOU
-
-           PARA TRÁS
+           OBJETO PASSOU
 
         */
 
@@ -2986,7 +2868,7 @@ function verificarObjetos() {
 
         /*
 
-           CHEGOU NO PETTON
+           CHEGOU NO JOGADOR
 
         */
 
@@ -3066,9 +2948,9 @@ function verificarObjetos() {
 
                 /*
 
-                   PULOU ALTO O
+                   ESTÁ NO AR
 
-                   SUFICIENTE
+                   = PASSOU POR CIMA
 
                 */
 
@@ -3076,7 +2958,7 @@ function verificarObjetos() {
 
                     alturaPulo >
 
-                    42
+                    38
 
                 ) {
 
@@ -3100,7 +2982,7 @@ function verificarObjetos() {
 
                 /*
 
-                   BATEU
+                   BATEU NA PEDRA
 
                 */
 
@@ -3240,7 +3122,7 @@ function atualizarPosicao() {
 
 /* =========================================================
 
-   ATUALIZAR JOGO
+   ATUALIZAÇÃO
 
 ========================================================= */
 
@@ -3256,7 +3138,7 @@ function atualizarJogo(
 
     /* =====================================================
 
-       PULO
+       FÍSICA DO PULO
 
     ====================================================== */
 
@@ -3302,7 +3184,7 @@ function atualizarJogo(
 
     /* =====================================================
 
-       ENERGIA
+       ENERGIA RECUPERA
 
     ====================================================== */
 
@@ -3324,7 +3206,7 @@ function atualizarJogo(
 
     /* =====================================================
 
-       VELOCIDADE CAI SOZINHA
+       VELOCIDADE CAI
 
     ====================================================== */
 
@@ -3448,7 +3330,7 @@ function atualizarJogo(
 
     /* =====================================================
 
-       CRIAR NOVOS OBJETOS
+       CRIAR OBJETOS
 
     ====================================================== */
 
@@ -3471,12 +3353,6 @@ function atualizarJogo(
         criarObjetoPista();
 
     }
-
-    /* =====================================================
-
-       COLISÕES
-
-    ====================================================== */
 
     verificarObjetos();
 
@@ -3620,7 +3496,7 @@ function loop(
 
 /* =========================================================
 
-   LIMPAR
+   LIMPAR OBJETOS
 
 ========================================================= */
 
@@ -3712,10 +3588,6 @@ function iniciarJogo() {
 
         0;
 
-    toqueIniciado =
-
-        false;
-
     prepararRivais();
 
     posicaoEl.textContent =
@@ -3752,7 +3624,7 @@ function iniciarJogo() {
 
     /*
 
-       CRIA OBJETOS À FRENTE
+       OBJETOS INICIAIS
 
     */
 
@@ -3834,7 +3706,7 @@ function finalizarCorrida() {
 
     /*
 
-       RECORDE DE TEMPO
+       MELHOR TEMPO
 
     */
 
@@ -4000,7 +3872,7 @@ function finalizarCorrida() {
 
         texto.textContent =
 
-            "Pule melhor as pedras e use os raios!";
+            "Pule as pedras e aproveite os raios!";
 
         tocarFim();
 
@@ -4016,7 +3888,7 @@ function finalizarCorrida() {
 
         texto.textContent =
 
-            "Corra mais e cuidado com as pedras!";
+            "Acelere mais e cuidado com as pedras!";
 
         tocarFim();
 
@@ -4366,27 +4238,27 @@ function tocarPulo() {
 
     tocarTom(
 
-        420,
+        430,
 
-        .07,
+        .06,
 
         "sine",
 
-        .035
+        .04
 
     );
 
     tocarTom(
 
-        680,
+        720,
 
-        .11,
+        .10,
 
         "sine",
 
         .04,
 
-        .05
+        .045
 
     );
 
@@ -4586,7 +4458,7 @@ function tocarFim() {
 
 /* =========================================================
 
-   SOM ON/OFF
+   SOM
 
 ========================================================= */
 
