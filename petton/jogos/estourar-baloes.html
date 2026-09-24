@@ -284,9 +284,9 @@ body {
 
     grid-template-columns:
 
-        repeat(4,1fr);
+        repeat(5,1fr);
 
-    gap: 6px;
+    gap: 5px;
 
     pointer-events: none;
 
@@ -294,9 +294,9 @@ body {
 
 .hud-item {
 
-    padding: 7px 3px;
+    padding: 7px 2px;
 
-    border-radius: 14px;
+    border-radius: 13px;
 
     background:
 
@@ -316,7 +316,7 @@ body {
 
     color: #777;
 
-    font-size: 8px;
+    font-size: 7px;
 
     font-weight: 700;
 
@@ -328,9 +328,15 @@ body {
 
     margin-top: 1px;
 
-    font-size: 17px;
+    font-size: 16px;
 
     font-weight: 800;
+
+}
+
+#combo {
+
+    color: #e67800;
 
 }
 
@@ -450,7 +456,7 @@ body {
 
 /* =========================================================
 
-   BALÕES
+   OBJETOS
 
 ========================================================= */
 
@@ -510,7 +516,7 @@ body {
 
         drop-shadow(
 
-            0 0 8px rgba(255,210,0,.95)
+            0 0 9px rgba(255,210,0,.95)
 
         );
 
@@ -548,7 +554,7 @@ body {
 
     animation:
 
-        piscarBonus .55s infinite alternate;
+        piscarBonus .45s infinite alternate;
 
 }
 
@@ -654,7 +660,7 @@ body {
 
 /* =========================================================
 
-   PONTO
+   PONTOS
 
 ========================================================= */
 
@@ -709,6 +715,98 @@ body {
             translate(-50%,-55px)
 
             scale(1.25);
+
+    }
+
+}
+
+/* =========================================================
+
+   COMBO
+
+========================================================= */
+
+.combo-mensagem {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 31%;
+
+    z-index: 120;
+
+    transform:
+
+        translate(-50%,-50%);
+
+    color: #ff7600;
+
+    font-size: 29px;
+
+    font-weight: 1000;
+
+    text-shadow:
+
+        0 2px 0 #fff,
+
+        0 0 8px rgba(255,255,255,.8);
+
+    pointer-events: none;
+
+    animation:
+
+        comboAnimacao .65s forwards;
+
+}
+
+@keyframes comboAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(.5);
+
+    }
+
+    25% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.2);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-75%)
+
+            scale(.9);
 
     }
 
@@ -990,12 +1088,6 @@ body {
 
 }
 
-/* =========================================================
-
-   MOBILE PEQUENO
-
-========================================================= */
-
 @media(max-width:360px) {
 
     #petton {
@@ -1022,7 +1114,7 @@ body {
 
     .hud-valor {
 
-        font-size: 15px;
+        font-size: 14px;
 
     }
 
@@ -1037,12 +1129,6 @@ body {
 <div class="app">
 
 <div class="cenario"></div>
-
-<!-- =====================================================
-
-     TOPO
-
-====================================================== -->
 
 <header class="topo">
 
@@ -1072,7 +1158,7 @@ body {
 
         <span>
 
-            Toque nos 🎈 e cuidado com a 💣
+            Estoure rápido e não toque na 💣
 
         </span>
 
@@ -1098,12 +1184,6 @@ body {
 
 </header>
 
-<!-- =====================================================
-
-     HUD
-
-====================================================== -->
-
 <div class="hud">
 
     <div class="hud-item">
@@ -1119,6 +1199,28 @@ body {
             class="hud-valor"
 
             id="pontos"
+
+        >
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            COMBO
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="combo"
 
         >
 
@@ -1196,12 +1298,6 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     ÁREA DO JOGO
-
-====================================================== -->
-
 <div id="areaJogo">
 
     <div class="grama">
@@ -1230,11 +1326,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     TELA INICIAL
-
-====================================================== -->
+<!-- TELA INICIAL -->
 
 <div
 
@@ -1260,7 +1352,7 @@ body {
 
         <p>
 
-            Toque nos balões para estourar.
+            Estoure os balões das rajadas.
 
         </p>
 
@@ -1273,6 +1365,12 @@ body {
         <p>
 
             🎈⭐ = +3 pontos
+
+        </p>
+
+        <p>
+
+            🔥 Faça 5 acertos seguidos para ganhar bônus.
 
         </p>
 
@@ -1320,11 +1418,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     FIM
-
-====================================================== -->
+<!-- FIM -->
 
 <div
 
@@ -1365,6 +1459,16 @@ body {
             Pontos:
 
             <strong id="pontosFim">
+
+                0
+
+            </strong>
+
+            <br>
+
+            Melhor combo:
+
+            <strong id="comboFim">
 
                 0
 
@@ -1436,6 +1540,10 @@ let nivel = 1;
 
 let recorde = 0;
 
+let combo = 0;
+
+let melhorCombo = 0;
+
 let tempoRestante =
 
     TEMPO_JOGO;
@@ -1444,7 +1552,7 @@ let jogando = false;
 
 let ultimoTempo = 0;
 
-let ultimoSpawn = 0;
+let proximaRajada = 0;
 
 let animacaoId = null;
 
@@ -1477,6 +1585,14 @@ const pontosEl =
     document.getElementById(
 
         "pontos"
+
+    );
+
+const comboEl =
+
+    document.getElementById(
+
+        "combo"
 
     );
 
@@ -1694,7 +1810,7 @@ function carregarImagemPetton() {
 
         "gato";
 
-    const imagemGerada =
+    let imagemGerada =
 
         dados.identidadeVisual
 
@@ -1702,11 +1818,27 @@ function carregarImagemPetton() {
 
             ?.[fase];
 
-    if (
+    if (imagemGerada) {
 
-        imagemGerada
+        if (
 
-    ) {
+            !imagemGerada.startsWith("http://") &&
+
+            !imagemGerada.startsWith("https://") &&
+
+            !imagemGerada.startsWith("/") &&
+
+            !imagemGerada.startsWith("../")
+
+        ) {
+
+            imagemGerada =
+
+                "../" +
+
+                imagemGerada;
+
+        }
 
         imagemPetton.src =
 
@@ -1758,7 +1890,9 @@ function carregarImagemPetton() {
 
 function criarObjeto(
 
-    tipoForcado = null
+    tipoForcado = null,
+
+    atrasoVertical = 0
 
 ) {
 
@@ -1776,17 +1910,19 @@ function criarObjeto(
 
         /*
 
-           Bomba aumenta aos poucos.
+           Bombas aumentam com o nível.
 
-           Nível 1 = 10%
+           N1 12%
 
-           Nível 2 = 12%
+           N2 15%
 
-           Nível 3 = 14%
+           N3 18%
 
-           ...
+           N4 21%
 
-           Máximo = 28%
+           N5 24%
+
+           N6+ até 30%
 
         */
 
@@ -1794,17 +1930,17 @@ function criarObjeto(
 
             Math.min(
 
-                .28,
+                .30,
 
-                .10 +
+                .12 +
 
-                (nivel - 1) * .02
+                (nivel - 1) * .03
 
             );
 
         const chanceBonus =
 
-            .10;
+            .11;
 
         const sorteio =
 
@@ -1932,7 +2068,7 @@ function criarObjeto(
 
     const x =
 
-        8 +
+        7 +
 
         Math.random() *
 
@@ -1944,15 +2080,15 @@ function criarObjeto(
 
             larguraObjeto -
 
-            16
+            14
 
         );
 
     /*
 
-       Nasce embaixo,
+       Objetos de uma mesma rajada
 
-       mas acima da barra inferior.
+       entram em alturas diferentes.
 
     */
 
@@ -1960,7 +2096,9 @@ function criarObjeto(
 
         areaJogo.clientHeight +
 
-        10;
+        10 +
+
+        atrasoVertical;
 
     elemento.style.left =
 
@@ -1978,25 +2116,23 @@ function criarObjeto(
 
     /*
 
-       Velocidade aumenta
-
-       conforme o nível.
+       Mais rápido que a versão antiga.
 
     */
 
     let velocidade =
 
-        105 +
+        145 +
 
-        (nivel - 1) * 13 +
+        (nivel - 1) * 16 +
 
-        Math.random() * 45;
+        Math.random() * 55;
 
     /*
 
-       Bomba levemente mais lenta
+       Bomba não fica lenta demais.
 
-       para o jogador perceber.
+       Precisa acompanhar a rajada.
 
     */
 
@@ -2008,7 +2144,19 @@ function criarObjeto(
 
         velocidade *=
 
-            .90;
+            .94;
+
+    }
+
+    if (
+
+        tipo === "bonus"
+
+    ) {
+
+        velocidade *=
+
+            1.08;
 
     }
 
@@ -2044,9 +2192,9 @@ function criarObjeto(
 
         amplitude:
 
-            8 +
+            10 +
 
-            Math.random() * 15,
+            Math.random() * 20,
 
         vivo:
 
@@ -2063,12 +2211,6 @@ function criarObjeto(
         objeto
 
     );
-
-    /*
-
-       TOUCH / CLICK
-
-    */
 
     elemento.addEventListener(
 
@@ -2089,6 +2231,246 @@ function criarObjeto(
         }
 
     );
+
+}
+
+/* =========================================================
+
+   RAJADA
+
+========================================================= */
+
+function criarRajada() {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    /*
+
+       Nível 1:
+
+       3 ou 4 objetos.
+
+       Conforme sobe:
+
+       pode chegar a 7.
+
+    */
+
+    let minimo =
+
+        Math.min(
+
+            5,
+
+            3 +
+
+            Math.floor(
+
+                (nivel - 1) / 2
+
+            )
+
+        );
+
+    let maximo =
+
+        Math.min(
+
+            7,
+
+            minimo + 1
+
+        );
+
+    const quantidade =
+
+        minimo +
+
+        Math.floor(
+
+            Math.random() *
+
+            (
+
+                maximo -
+
+                minimo +
+
+                1
+
+            )
+
+        );
+
+    /*
+
+       Na primeira fase não deixamos
+
+       uma rajada cheia de bombas.
+
+    */
+
+    let bombasNaRajada = 0;
+
+    for (
+
+        let i = 0;
+
+        i < quantidade;
+
+        i++
+
+    ) {
+
+        let tipo =
+
+            null;
+
+        /*
+
+           Primeira posição de algumas
+
+           rajadas é garantidamente balão.
+
+        */
+
+        if (
+
+            i === 0 &&
+
+            Math.random() < .70
+
+        ) {
+
+            tipo =
+
+                "balao";
+
+        }
+
+        /*
+
+           Limite de bombas por rajada.
+
+        */
+
+        if (!tipo) {
+
+            const limiteBombas =
+
+                nivel <= 2
+
+                    ? 1
+
+                    : nivel <= 4
+
+                        ? 2
+
+                        : 3;
+
+            if (
+
+                bombasNaRajada >=
+
+                limiteBombas
+
+            ) {
+
+                tipo =
+
+                    Math.random() < .13
+
+                        ? "bonus"
+
+                        : "balao";
+
+            }
+
+        }
+
+        if (!tipo) {
+
+            const chanceBomba =
+
+                Math.min(
+
+                    .30,
+
+                    .12 +
+
+                    (nivel - 1) * .03
+
+                );
+
+            const sorteio =
+
+                Math.random();
+
+            if (
+
+                sorteio <
+
+                chanceBomba
+
+            ) {
+
+                tipo =
+
+                    "bomba";
+
+                bombasNaRajada++;
+
+            } else if (
+
+                sorteio <
+
+                chanceBomba + .11
+
+            ) {
+
+                tipo =
+
+                    "bonus";
+
+            } else {
+
+                tipo =
+
+                    "balao";
+
+            }
+
+        }
+
+        /*
+
+           Pequena diferença de altura
+
+           deixa a rajada natural.
+
+        */
+
+        const atrasoVertical =
+
+            i * 30 +
+
+            Math.random() * 35;
+
+        criarObjeto(
+
+            tipo,
+
+            atrasoVertical
+
+        );
+
+    }
+
+    tocarRajada();
 
 }
 
@@ -2152,17 +2534,25 @@ function tocarObjeto(
 
         rect.height / 2;
 
-    /*
+    /* =====================================================
 
        BOMBA
 
-    */
+    ===================================================== */
 
     if (
 
-        objeto.tipo === "bomba"
+        objeto.tipo ===
+
+        "bomba"
 
     ) {
+
+        combo = 0;
+
+        comboEl.textContent =
+
+            "0";
 
         criarEstouro(
 
@@ -2192,17 +2582,19 @@ function tocarObjeto(
 
     }
 
-    /*
+    /* =====================================================
 
        BALÃO
 
-    */
+    ===================================================== */
 
     const bonus =
 
-        objeto.tipo === "bonus";
+        objeto.tipo ===
 
-    const valor =
+        "bonus";
+
+    let valor =
 
         bonus
 
@@ -2210,13 +2602,65 @@ function tocarObjeto(
 
             : 1;
 
+    combo++;
+
+    if (
+
+        combo >
+
+        melhorCombo
+
+    ) {
+
+        melhorCombo =
+
+            combo;
+
+    }
+
+    /*
+
+       A cada 5 acertos seguidos:
+
+       +2 pontos extras.
+
+    */
+
+    let bonusCombo = 0;
+
+    if (
+
+        combo > 0 &&
+
+        combo % 5 === 0
+
+    ) {
+
+        bonusCombo = 2;
+
+        mostrarCombo(
+
+            combo
+
+        );
+
+        tocarCombo();
+
+    }
+
     pontos +=
 
-        valor;
+        valor +
+
+        bonusCombo;
 
     pontosEl.textContent =
 
         pontos;
+
+    comboEl.textContent =
+
+        combo;
 
     criarEstouro(
 
@@ -2234,9 +2678,13 @@ function tocarObjeto(
 
         centroY,
 
-        valor,
+        valor +
 
-        bonus
+        bonusCombo,
+
+        bonus ||
+
+        bonusCombo > 0
 
     );
 
@@ -2266,7 +2714,59 @@ function tocarObjeto(
 
 /* =========================================================
 
-   ESTOURO VISUAL
+   COMBO
+
+========================================================= */
+
+function mostrarCombo(
+
+    valor
+
+) {
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "combo-mensagem";
+
+    elemento.textContent =
+
+        "🔥 COMBO " +
+
+        valor +
+
+        "  +2";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            elemento.remove();
+
+        },
+
+        700
+
+    );
+
+}
+
+/* =========================================================
+
+   ESTOURO
 
 ========================================================= */
 
@@ -2396,7 +2896,7 @@ function mostrarPonto(
 
 /* =========================================================
 
-   REMOVER OBJETO
+   REMOVER
 
 ========================================================= */
 
@@ -2458,21 +2958,25 @@ function atualizarObjetos(
 
         objeto.onda +=
 
-            delta * 3;
+            delta *
+
+            (
+
+                objeto.tipo ===
+
+                    "bomba"
+
+                    ? 3.7
+
+                    : 4.2
+
+            );
 
         objeto.y -=
 
             objeto.velocidade *
 
             delta;
-
-        /*
-
-           Pequeno balanço
-
-           para os lados.
-
-        */
 
         objeto.x +=
 
@@ -2528,17 +3032,39 @@ function atualizarObjetos(
 
             "px";
 
-        /*
-
-           Saiu por cima.
-
-        */
-
         if (
 
-            objeto.y < -90
+            objeto.y <
+
+            -90
 
         ) {
+
+            /*
+
+               Perder um balão normal
+
+               quebra o combo,
+
+               mas NÃO termina o jogo.
+
+            */
+
+            if (
+
+                objeto.tipo !==
+
+                "bomba"
+
+            ) {
+
+                combo = 0;
+
+                comboEl.textContent =
+
+                    "0";
+
+            }
 
             removerObjeto(
 
@@ -2572,27 +3098,21 @@ function atualizarObjetos(
 
 function verificarNivel() {
 
-    /*
-
-       Novo nível
-
-       a cada 10 pontos.
-
-    */
-
     const novoNivel =
 
         1 +
 
         Math.floor(
 
-            pontos / 10
+            pontos / 15
 
         );
 
     if (
 
-        novoNivel <= nivel
+        novoNivel <=
+
+        nivel
 
     ) {
 
@@ -2656,43 +3176,21 @@ function mostrarNivel() {
 
 /* =========================================================
 
-   SPAWN
+   RAJADAS
 
 ========================================================= */
 
-function tentarCriarObjeto(
+function tentarCriarRajada(
 
     tempoAtual
 
 ) {
 
-    /*
-
-       Começa acessível,
-
-       depois acelera.
-
-    */
-
-    const intervalo =
-
-        Math.max(
-
-            300,
-
-            850 -
-
-            (nivel - 1) * 65
-
-        );
-
     if (
 
-        tempoAtual -
+        tempoAtual <
 
-        ultimoSpawn <
-
-        intervalo
+        proximaRajada
 
     ) {
 
@@ -2700,89 +3198,37 @@ function tentarCriarObjeto(
 
     }
 
-    ultimoSpawn =
-
-        tempoAtual;
+    criarRajada();
 
     /*
 
-       Máximo simultâneo.
+       Pausa curta entre rajadas.
+
+       Nível alto =
+
+       quase não dá descanso.
 
     */
 
-    const maximo =
+    const intervalo =
 
-        Math.min(
+        Math.max(
 
-            12,
+            720,
 
-            5 +
+            1450 -
 
-            Math.floor(
-
-                nivel / 2
-
-            )
+            (nivel - 1) * 105
 
         );
 
-    if (
+    proximaRajada =
 
-        objetos.length <
+        tempoAtual +
 
-        maximo
+        intervalo +
 
-    ) {
-
-        criarObjeto();
-
-    }
-
-    /*
-
-       Nível 3+
-
-       pode lançar outro logo depois.
-
-    */
-
-    if (
-
-        nivel >= 3 &&
-
-        objetos.length <
-
-            maximo &&
-
-        Math.random() < .30
-
-    ) {
-
-        setTimeout(
-
-            function() {
-
-                if (
-
-                    jogando &&
-
-                    objetos.length <
-
-                        maximo
-
-                ) {
-
-                    criarObjeto();
-
-                }
-
-            },
-
-            150
-
-        );
-
-    }
+        Math.random() * 320;
 
 }
 
@@ -2904,7 +3350,7 @@ function loop(
 
     }
 
-    tentarCriarObjeto(
+    tentarCriarRajada(
 
         tempoAtual
 
@@ -2956,27 +3402,27 @@ function iniciarJogo() {
 
     limparObjetos();
 
-    pontos =
+    pontos = 0;
 
-        0;
+    combo = 0;
 
-    nivel =
+    melhorCombo = 0;
 
-        1;
+    nivel = 1;
 
     tempoRestante =
 
         TEMPO_JOGO;
 
-    ultimoTempo =
+    ultimoTempo = 0;
 
-        0;
-
-    ultimoSpawn =
-
-        0;
+    proximaRajada = 0;
 
     pontosEl.textContent =
+
+        "0";
+
+    comboEl.textContent =
 
         "0";
 
@@ -3004,87 +3450,55 @@ function iniciarJogo() {
 
     );
 
-    jogando =
-
-        true;
+    jogando = true;
 
     /*
 
-       PRIMEIROS BALÕES
+       PRIMEIRA RAJADA
 
-       aparecem rapidamente.
+       já começa com ação,
+
+       sem bomba.
 
     */
 
-    setTimeout(
+    criarObjeto(
 
-        function() {
+        "balao",
 
-            if (jogando) {
-
-                criarObjeto(
-
-                    "balao"
-
-                );
-
-            }
-
-        },
-
-        100
+        0
 
     );
 
-    setTimeout(
+    criarObjeto(
 
-        function() {
+        "balao",
 
-            if (jogando) {
+        45
 
-                criarObjeto(
+    );
 
-                    "balao"
+    criarObjeto(
 
-                );
+        "bonus",
 
-            }
-
-        },
-
-        400
+        90
 
     );
 
     /*
 
-       Primeira bomba
+       Próxima rajada começa
 
-       só depois de 2 segundos,
-
-       para não começar injusto.
+       pouco depois.
 
     */
 
-    setTimeout(
+    proximaRajada =
 
-        function() {
+        performance.now() +
 
-            if (jogando) {
-
-                criarObjeto(
-
-                    "bomba"
-
-                );
-
-            }
-
-        },
-
-        2000
-
-    );
+        1150;
 
     tocarInicio();
 
@@ -3116,9 +3530,7 @@ function finalizarJogo(
 
     }
 
-    jogando =
-
-        false;
+    jogando = false;
 
     if (
 
@@ -3186,6 +3598,14 @@ function finalizarJogo(
 
     document.getElementById(
 
+        "comboFim"
+
+    ).textContent =
+
+        melhorCombo;
+
+    document.getElementById(
+
         "recordeFim"
 
     ).textContent =
@@ -3232,7 +3652,7 @@ function finalizarJogo(
 
         motivoEl.textContent =
 
-            "Estoure os balões, mas não toque nas bombas.";
+            "As bombas ficam misturadas nas rajadas. Toque rápido, mas com cuidado.";
 
     } else {
 
@@ -3246,7 +3666,7 @@ function finalizarJogo(
 
         motivoEl.textContent =
 
-            "Você completou os 90 segundos.";
+            "Você sobreviveu aos 90 segundos.";
 
         tocarFim();
 
@@ -3268,9 +3688,7 @@ function finalizarJogo(
 
 function voltarMenu() {
 
-    jogando =
-
-        false;
+    jogando = false;
 
     if (
 
@@ -3284,11 +3702,25 @@ function voltarMenu() {
 
         );
 
+        animacaoId =
+
+            null;
+
     }
+
+    const destino =
+
+        new URL(
+
+            "./brincar.html",
+
+            document.baseURI
+
+        ).href;
 
     window.location.assign(
 
-        "./brincar.html"
+        destino
 
     );
 
@@ -3605,6 +4037,66 @@ function tocarBonus() {
         .045,
 
         .14
+
+    );
+
+}
+
+function tocarCombo() {
+
+    tocarTom(
+
+        900,
+
+        .07,
+
+        "triangle",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        1200,
+
+        .09,
+
+        "triangle",
+
+        .05,
+
+        .06
+
+    );
+
+    tocarTom(
+
+        1550,
+
+        .12,
+
+        "triangle",
+
+        .045,
+
+        .12
+
+    );
+
+}
+
+function tocarRajada() {
+
+    tocarTom(
+
+        360,
+
+        .045,
+
+        "sine",
+
+        .015
 
     );
 
