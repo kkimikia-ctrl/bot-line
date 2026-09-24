@@ -16,7 +16,9 @@
 
 <meta name="google" content="notranslate">
 
-<title>Jogo da Memória 🧠</title>
+<title>Estourar Balões 🎈</title>
+
+<script src="../petton.js"></script>
 
 <style>
 
@@ -40,6 +42,8 @@ body {
 
     min-height: 100%;
 
+    overflow: hidden;
+
 }
 
 body {
@@ -58,35 +62,97 @@ body {
 
     background:
 
-        radial-gradient(
+        linear-gradient(
 
-            circle at top,
+            180deg,
 
-            #fff8dc 0%,
+            #9edcff 0%,
 
-            #f4e8bc 48%,
+            #dff5ff 60%,
 
-            #d9c98e 100%
+            #a8dc7a 100%
 
         );
 
-    color: #433a2b;
+    color: #333;
 
-    overflow-x: hidden;
+    touch-action: none;
 
 }
 
 .app {
 
+    position: relative;
+
     width: 100%;
 
     max-width: 520px;
 
-    min-height: 100dvh;
+    height: 100dvh;
 
     margin: 0 auto;
 
-    padding-bottom: 25px;
+    overflow: hidden;
+
+}
+
+/* =========================================================
+
+   CENÁRIO
+
+========================================================= */
+
+.cenario {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        radial-gradient(
+
+            circle at 15% 20%,
+
+            rgba(255,255,255,.8) 0 28px,
+
+            transparent 30px
+
+        ),
+
+        radial-gradient(
+
+            circle at 25% 19%,
+
+            rgba(255,255,255,.7) 0 38px,
+
+            transparent 40px
+
+        ),
+
+        radial-gradient(
+
+            circle at 78% 28%,
+
+            rgba(255,255,255,.65) 0 35px,
+
+            transparent 37px
+
+        ),
+
+        linear-gradient(
+
+            180deg,
+
+            #a5dfff 0%,
+
+            #e5f7ff 73%,
+
+            #9dd474 73%,
+
+            #75ba51 100%
+
+        );
 
 }
 
@@ -98,17 +164,23 @@ body {
 
 .topo {
 
-    position: sticky;
+    position: absolute;
 
     top: 0;
 
+    left: 0;
+
+    right: 0;
+
     z-index: 100;
 
-    height: 62px;
+    min-height: 62px;
 
     display: grid;
 
-    grid-template-columns: 48px 1fr 48px;
+    grid-template-columns:
+
+        48px 1fr 48px;
 
     align-items: center;
 
@@ -116,15 +188,15 @@ body {
 
     background:
 
-        rgba(255,255,255,.94);
+        rgba(255,255,255,.90);
 
     border-bottom:
 
-        1px solid rgba(0,0,0,.08);
+        1px solid rgba(0,0,0,.07);
 
     backdrop-filter:
 
-        blur(8px);
+        blur(9px);
 
 }
 
@@ -138,7 +210,9 @@ body {
 
     border-radius: 50%;
 
-    background: white;
+    background:
+
+        rgba(255,255,255,.95);
 
     box-shadow:
 
@@ -172,7 +246,7 @@ body {
 
     display: block;
 
-    font-size: 17px;
+    font-size: 16px;
 
 }
 
@@ -196,7 +270,15 @@ body {
 
 .hud {
 
-    margin: 10px;
+    position: absolute;
+
+    top: 73px;
+
+    left: 10px;
+
+    right: 10px;
+
+    z-index: 80;
 
     display: grid;
 
@@ -206,17 +288,19 @@ body {
 
     gap: 6px;
 
+    pointer-events: none;
+
 }
 
 .hud-item {
 
-    padding: 8px 3px;
+    padding: 7px 3px;
 
     border-radius: 14px;
 
     background:
 
-        rgba(255,255,255,.93);
+        rgba(255,255,255,.92);
 
     box-shadow:
 
@@ -234,7 +318,7 @@ body {
 
     font-size: 8px;
 
-    font-weight: 800;
+    font-weight: 700;
 
 }
 
@@ -242,453 +326,315 @@ body {
 
     display: block;
 
-    margin-top: 2px;
+    margin-top: 1px;
 
     font-size: 17px;
 
-    font-weight: 900;
+    font-weight: 800;
 
 }
 
 /* =========================================================
 
-   INFO NÍVEL
+   ÁREA DO JOGO
 
 ========================================================= */
 
-.info-nivel {
+#areaJogo {
 
-    margin:
+    position: absolute;
 
-        7px 12px 10px;
+    top: 62px;
 
-    padding: 10px 12px;
+    left: 0;
 
-    border-radius: 16px;
+    right: 0;
+
+    bottom: 0;
+
+    overflow: hidden;
+
+    touch-action: none;
+
+}
+
+/* =========================================================
+
+   LINHA DE PERIGO
+
+========================================================= */
+
+#linhaPerigo {
+
+    position: absolute;
+
+    top: 118px;
+
+    left: 0;
+
+    right: 0;
+
+    z-index: 25;
+
+    height: 4px;
 
     background:
 
-        rgba(255,255,255,.75);
+        repeating-linear-gradient(
 
-    text-align: center;
+            90deg,
 
-    font-size: 12px;
+            #f44336 0,
 
-    font-weight: 700;
+            #f44336 15px,
 
-    color: #675a43;
+            #ffffff 15px,
+
+            #ffffff 25px
+
+        );
+
+    box-shadow:
+
+        0 0 7px rgba(244,67,54,.8);
+
+    pointer-events: none;
+
+}
+
+#linhaPerigo::before {
+
+    content: "🚫 NÃO DEIXE PASSAR";
+
+    position: absolute;
+
+    top: -24px;
+
+    left: 50%;
+
+    transform:
+
+        translateX(-50%);
+
+    padding:
+
+        3px 9px;
+
+    border-radius: 10px;
+
+    background:
+
+        rgba(255,255,255,.93);
+
+    color: #d52f25;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    white-space: nowrap;
+
+    box-shadow:
+
+        0 2px 5px rgba(0,0,0,.10);
 
 }
 
 /* =========================================================
 
-   TABULEIRO
+   GRAMA
 
 ========================================================= */
 
-.tabuleiro {
+.grama {
 
-    width:
+    position: absolute;
 
-        calc(100% - 20px);
+    left: 0;
 
-    max-width: 480px;
+    right: 0;
 
-    margin: 0 auto;
+    bottom: 0;
 
-    padding: 8px;
+    height: 65px;
 
-    display: grid;
+    z-index: 2;
 
-    gap: 9px;
+    font-size: 24px;
 
-}
+    line-height: 65px;
 
-.tabuleiro.cartas-6 {
+    white-space: nowrap;
 
-    grid-template-columns:
+    overflow: hidden;
 
-        repeat(3,1fr);
-
-}
-
-.tabuleiro.cartas-8 {
-
-    grid-template-columns:
-
-        repeat(4,1fr);
-
-}
-
-.tabuleiro.cartas-13 {
-
-    grid-template-columns:
-
-        repeat(4,1fr);
-
-}
-
-.tabuleiro.cartas-18 {
-
-    grid-template-columns:
-
-        repeat(4,1fr);
+    pointer-events: none;
 
 }
 
 /* =========================================================
 
-   CARTA
+   PETTON
 
 ========================================================= */
 
-.carta {
+#petton {
 
-    position: relative;
+    position: absolute;
 
-    width: 100%;
+    z-index: 15;
 
-    aspect-ratio: .82;
+    width: 82px;
 
-    border: none;
+    height: 82px;
 
-    background: transparent;
+    left: 50%;
 
-    padding: 0;
+    bottom: 37px;
 
-    perspective: 800px;
+    transform:
+
+        translateX(-50%);
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    pointer-events: none;
+
+}
+
+#petton img {
+
+    display: block;
+
+    max-width: 82px;
+
+    max-height: 82px;
+
+    object-fit: contain;
+
+    filter:
+
+        drop-shadow(
+
+            0 5px 4px rgba(0,0,0,.18)
+
+        );
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+}
+
+/* =========================================================
+
+   BALÕES
+
+========================================================= */
+
+.balao {
+
+    position: absolute;
+
+    z-index: 30;
+
+    width: 58px;
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 50px;
+
+    line-height: 1;
 
     cursor: pointer;
 
     user-select: none;
 
-    transition:
+    touch-action: manipulation;
 
-        transform .25s ease,
+    filter:
 
-        opacity .25s ease;
+        drop-shadow(
+
+            0 4px 3px rgba(0,0,0,.18)
+
+        );
+
+    will-change:
+
+        left,
+
+        top;
 
 }
 
-.carta:disabled {
+.balao.bonus {
 
-    cursor: default;
+    width: 65px;
+
+    height: 74px;
+
+    font-size: 54px;
+
+    filter:
+
+        drop-shadow(
+
+            0 0 9px rgba(255,205,0,.95)
+
+        );
 
 }
 
-.carta-inner {
+.estrela-bonus {
 
     position: absolute;
 
-    inset: 0;
+    top: 3px;
 
-    transition:
+    right: 0;
 
-        transform .34s ease;
+    z-index: 2;
 
-    transform-style:
-
-        preserve-3d;
-
-}
-
-.carta.virada .carta-inner,
-
-.carta.encontrada .carta-inner {
-
-    transform:
-
-        rotateY(180deg);
-
-}
-
-.carta-frente,
-
-.carta-verso {
-
-    position: absolute;
-
-    inset: 0;
-
-    border-radius: 17px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    backface-visibility:
-
-        hidden;
-
-    -webkit-backface-visibility:
-
-        hidden;
-
-}
-
-/* =========================================================
-
-   VERSO
-
-========================================================= */
-
-.carta-verso {
-
-    background:
-
-        linear-gradient(
-
-            145deg,
-
-            #7967d9,
-
-            #5646b6
-
-        );
-
-    border:
-
-        3px solid
-
-        rgba(255,255,255,.7);
-
-    box-shadow:
-
-        0 5px 10px
-
-        rgba(57,43,120,.25);
-
-    color: white;
-
-    font-size: 30px;
-
-    font-weight: 900;
-
-}
-
-.carta-verso::before {
-
-    content: "🐾";
-
-    width: 50px;
-
-    height: 50px;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background:
-
-        rgba(255,255,255,.16);
-
-}
-
-/* =========================================================
-
-   FRENTE
-
-========================================================= */
-
-.carta-frente {
-
-    transform:
-
-        rotateY(180deg);
-
-    background:
-
-        linear-gradient(
-
-            145deg,
-
-            #ffffff,
-
-            #fff8df
-
-        );
-
-    border:
-
-        3px solid #fff;
-
-    box-shadow:
-
-        0 5px 12px
-
-        rgba(0,0,0,.13);
-
-    font-size:
-
-        clamp(
-
-            31px,
-
-            11vw,
-
-            52px
-
-        );
-
-}
-
-.carta.encontrada .carta-frente {
-
-    background:
-
-        linear-gradient(
-
-            145deg,
-
-            #eaffdf,
-
-            #c9f5b1
-
-        );
+    font-size: 21px;
 
     animation:
 
-        parEncontrado .45s ease;
+        piscarBonus .45s infinite alternate;
 
 }
 
-.carta.bomba-explodiu .carta-frente {
+@keyframes piscarBonus {
 
-    background:
-
-        linear-gradient(
-
-            145deg,
-
-            #ffd3cf,
-
-            #ff8d84
-
-        );
-
-    animation:
-
-        bombaExplodiu .45s ease;
-
-}
-
-@keyframes parEncontrado {
-
-    0% {
+    from {
 
         transform:
 
-            rotateY(180deg)
+            scale(.8)
 
-            scale(.8);
-
-    }
-
-    55% {
-
-        transform:
-
-            rotateY(180deg)
-
-            scale(1.12);
-
-    }
-
-    100% {
-
-        transform:
-
-            rotateY(180deg)
-
-            scale(1);
-
-    }
-
-}
-
-@keyframes bombaExplodiu {
-
-    0% {
-
-        transform:
-
-            rotateY(180deg)
-
-            scale(.8);
-
-    }
-
-    45% {
-
-        transform:
-
-            rotateY(180deg)
-
-            scale(1.22)
-
-            rotate(5deg);
-
-    }
-
-    100% {
-
-        transform:
-
-            rotateY(180deg)
-
-            scale(1);
-
-    }
-
-}
-
-/* =========================================================
-
-   EFEITO TROCA
-
-========================================================= */
-
-.tabuleiro.trocando .carta:not(.encontrada) {
-
-    animation:
-
-        trocaCarta .55s ease;
-
-}
-
-@keyframes trocaCarta {
-
-    0% {
-
-        transform:
-
-            scale(1);
-
-    }
-
-    45% {
-
-        transform:
-
-            scale(.82)
-
-            rotate(-3deg);
+            rotate(-8deg);
 
         opacity: .65;
 
     }
 
-    100% {
+    to {
 
         transform:
 
-            scale(1);
+            scale(1.18)
+
+            rotate(8deg);
 
         opacity: 1;
 
@@ -698,37 +644,171 @@ body {
 
 /* =========================================================
 
-   MENSAGEM
+   ESTOURO
 
 ========================================================= */
 
-.mensagem {
+.estouro {
 
-    position: fixed;
+    position: absolute;
 
-    z-index: 250;
+    z-index: 60;
+
+    width: 60px;
+
+    height: 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 42px;
+
+    pointer-events: none;
+
+    animation:
+
+        animarEstouro .38s forwards;
+
+}
+
+@keyframes animarEstouro {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(.45);
+
+    }
+
+    60% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.35);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.7);
+
+    }
+
+}
+
+/* =========================================================
+
+   PONTO
+
+========================================================= */
+
+.ponto-flutuante {
+
+    position: absolute;
+
+    z-index: 70;
+
+    color: #247c35;
+
+    font-size: 22px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+    animation:
+
+        subirPonto .7s forwards;
+
+}
+
+.ponto-flutuante.bonus {
+
+    color: #d98b00;
+
+    font-size: 27px;
+
+}
+
+@keyframes subirPonto {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,0)
+
+            scale(.8);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-55px)
+
+            scale(1.25);
+
+    }
+
+}
+
+/* =========================================================
+
+   ALERTA DA LINHA
+
+========================================================= */
+
+.alerta-linha {
+
+    position: absolute;
 
     left: 50%;
 
-    top: 45%;
+    top: 40%;
+
+    z-index: 170;
 
     transform:
 
         translate(-50%,-50%);
 
-    padding: 11px 20px;
+    padding:
 
-    border-radius: 24px;
+        13px 20px;
+
+    border-radius: 22px;
 
     background:
 
-        rgba(255,255,255,.97);
+        rgba(255,255,255,.96);
 
-    box-shadow:
+    color: #d62d23;
 
-        0 6px 20px rgba(0,0,0,.18);
-
-    font-size: 19px;
+    font-size: 20px;
 
     font-weight: 900;
 
@@ -736,19 +816,17 @@ body {
 
     pointer-events: none;
 
-    opacity: 0;
-
-}
-
-.mensagem.mostrar {
-
     animation:
 
-        mensagemAnimacao .9s forwards;
+        alertaLinha .75s forwards;
+
+    box-shadow:
+
+        0 5px 18px rgba(0,0,0,.15);
 
 }
 
-@keyframes mensagemAnimacao {
+@keyframes alertaLinha {
 
     0% {
 
@@ -756,13 +834,113 @@ body {
 
         transform:
 
-            translate(-50%,-40%)
+            translate(-50%,-50%)
 
-            scale(.7);
+            scale(.6);
 
     }
 
-    20% {
+    25% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.1);
+
+    }
+
+    75% {
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-65%)
+
+            scale(.9);
+
+    }
+
+}
+
+/* =========================================================
+
+   NÍVEL
+
+========================================================= */
+
+#mensagemNivel {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 45%;
+
+    z-index: 150;
+
+    transform:
+
+        translate(-50%,-50%)
+
+        scale(.7);
+
+    padding:
+
+        11px 20px;
+
+    border-radius: 25px;
+
+    background:
+
+        rgba(255,255,255,.96);
+
+    box-shadow:
+
+        0 5px 18px rgba(0,0,0,.15);
+
+    font-size: 19px;
+
+    font-weight: 900;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+}
+
+#mensagemNivel.mostrar {
+
+    animation:
+
+        nivelAnimacao .85s forwards;
+
+}
+
+@keyframes nivelAnimacao {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(.6);
+
+    }
+
+    25% {
 
         opacity: 1;
 
@@ -774,7 +952,7 @@ body {
 
     }
 
-    72% {
+    70% {
 
         opacity: 1;
 
@@ -808,11 +986,11 @@ body {
 
 .overlay {
 
-    position: fixed;
+    position: absolute;
 
     inset: 0;
 
-    z-index: 300;
+    z-index: 200;
 
     display: flex;
 
@@ -824,11 +1002,11 @@ body {
 
     background:
 
-        rgba(61,50,100,.32);
+        rgba(31,74,104,.27);
 
     backdrop-filter:
 
-        blur(4px);
+        blur(3px);
 
 }
 
@@ -842,27 +1020,19 @@ body {
 
     width: 100%;
 
-    max-width: 345px;
+    max-width: 340px;
 
-    max-height:
+    padding: 25px 20px;
 
-        calc(100dvh - 30px);
-
-    overflow-y: auto;
-
-    padding: 24px 20px;
-
-    border-radius: 27px;
+    border-radius: 26px;
 
     background:
 
-        rgba(255,255,255,.98);
+        rgba(255,255,255,.97);
 
     box-shadow:
 
-        0 12px 35px
-
-        rgba(0,0,0,.20);
+        0 10px 35px rgba(0,0,0,.18);
 
     text-align: center;
 
@@ -880,7 +1050,7 @@ body {
 
     margin:
 
-        12px 0 8px;
+        12px 0 7px;
 
     font-size: 23px;
 
@@ -888,7 +1058,9 @@ body {
 
 .caixa p {
 
-    margin: 6px 0;
+    margin:
+
+        5px 0;
 
     color: #666;
 
@@ -898,37 +1070,27 @@ body {
 
 }
 
-.niveis-lista {
+.regra-principal {
 
     margin:
 
-        14px 0;
+        12px 0 !important;
 
-    padding: 12px;
+    padding:
 
-    border-radius: 17px;
+        9px 10px;
 
-    background: #f6f3ff;
+    border-radius: 13px;
 
-    text-align: left;
+    background:
 
-    font-size: 13px;
+        #fff0ef;
 
-    line-height: 1.8;
+    color:
 
-}
+        #c93027 !important;
 
-.aviso-bomba {
-
-    padding: 8px 10px;
-
-    border-radius: 12px;
-
-    background: #fff0ef;
-
-    color: #c83931 !important;
-
-    font-weight: 800;
+    font-weight: 900;
 
 }
 
@@ -942,11 +1104,13 @@ body {
 
     border-radius: 17px;
 
-    background: #f6f3ff;
+    background:
+
+        #f2f8ff;
 
     font-size: 14px;
 
-    line-height: 1.8;
+    line-height: 1.7;
 
 }
 
@@ -968,9 +1132,9 @@ body {
 
             135deg,
 
-            #7865dc,
+            #58b9ef,
 
-            #5845bb
+            #348ed6
 
         );
 
@@ -984,9 +1148,7 @@ body {
 
     box-shadow:
 
-        0 4px 12px
-
-        rgba(88,69,187,.28);
+        0 4px 12px rgba(52,142,214,.25);
 
 }
 
@@ -1010,7 +1172,9 @@ body {
 
     border-radius: 17px;
 
-    background: #f0f2f4;
+    background:
+
+        #f0f2f4;
 
     color: #555;
 
@@ -1024,2986 +1188,34 @@ body {
 
 /* =========================================================
 
-   RESPONSIVO
+   MOBILE PEQUENO
 
 ========================================================= */
 
 @media(max-width:360px) {
 
-    .tabuleiro {
+    #petton {
 
-        gap: 7px;
+        width: 74px;
 
-        padding: 5px;
-
-    }
-
-    .carta-frente {
-
-        font-size: 34px;
+        height: 74px;
 
     }
 
-    .carta-verso::before {
+    #petton img {
 
-        width: 42px;
+        max-width: 74px;
 
-        height: 42px;
+        max-height: 74px;
 
-        font-size: 25px;
+    }
+
+    .balao {
+
+        font-size: 44px;
 
     }
 
     .hud-valor {
 
-        font-size: 15px;
-
-    }
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="app">
-
-<header class="topo">
-
-    <button
-
-        type="button"
-
-        class="btn-topo"
-
-        onclick="voltarMenu()"
-
-    >
-
-        ←
-
-    </button>
-
-    <div class="titulo">
-
-        <strong>
-
-            🧠 Jogo da Memória
-
-        </strong>
-
-        <span>
-
-            Memorize, encontre os pares e evite 💣
-
-        </span>
-
-    </div>
-
-    <button
-
-        type="button"
-
-        class="btn-topo"
-
-        id="btnSom"
-
-        onclick="alternarSom()"
-
-    >
-
-        🔊
-
-    </button>
-
-</header>
-
-<div class="hud">
-
-    <div class="hud-item">
-
-        <span class="hud-label">PONTOS</span>
-
-        <span class="hud-valor" id="pontos">0</span>
-
-    </div>
-
-    <div class="hud-item">
-
-        <span class="hud-label">NÍVEL</span>
-
-        <span class="hud-valor" id="nivel">1</span>
-
-    </div>
-
-    <div class="hud-item">
-
-        <span class="hud-label">TEMPO</span>
-
-        <span class="hud-valor" id="tempo">30</span>
-
-    </div>
-
-    <div class="hud-item">
-
-        <span class="hud-label">RECORDE</span>
-
-        <span class="hud-valor" id="recorde">0</span>
-
-    </div>
-
-</div>
-
-<div
-
-    class="info-nivel"
-
-    id="infoNivel"
-
->
-
-    Nível 1 • 3 pares
-
-</div>
-
-<div
-
-    class="tabuleiro cartas-6"
-
-    id="tabuleiro"
-
-></div>
-
-<div
-
-    class="mensagem"
-
-    id="mensagem"
-
->
-
-    ⭐ Par encontrado!
-
-</div>
-
-<!-- =====================================================
-
-     INÍCIO
-
-====================================================== -->
-
-<div
-
-    class="overlay"
-
-    id="telaInicial"
-
->
-
-    <div class="caixa">
-
-        <div class="caixa-icone">
-
-            🧠🐾
-
-        </div>
-
-        <h2>
-
-            Jogo da Memória
-
-        </h2>
-
-        <p>
-
-            Memorize as cartas e encontre todos os pares.
-
-        </p>
-
-        <div class="niveis-lista">
-
-            🟢 Nível 1 — 6 cartas / 3 pares
-
-            <br>
-
-            🔵 Nível 2 — 8 cartas / 4 pares + cartas trocam
-
-            <br>
-
-            🟠 Nível 3 — 12 cartas / 6 pares + 💣
-
-            <br>
-
-            🔴 Nível 4 — 16 cartas / 8 pares + 💣💣
-
-        </div>
-
-        <p class="aviso-bomba">
-
-            💣 Tocou na bomba = Game Over!
-
-        </p>
-
-        <p>
-
-            Nos níveis mais difíceis algumas cartas trocam de posição.
-
-        </p>
-
-        <button
-
-            type="button"
-
-            class="btn-jogar"
-
-            onclick="iniciarJogo()"
-
-        >
-
-            ▶️ JOGAR
-
-        </button>
-
-        <button
-
-            type="button"
-
-            class="btn-menu"
-
-            onclick="voltarMenu()"
-
-        >
-
-            Voltar aos jogos
-
-        </button>
-
-    </div>
-
-</div>
-
-<!-- =====================================================
-
-     FIM
-
-====================================================== -->
-
-<div
-
-    class="overlay oculto"
-
-    id="telaFim"
-
->
-
-    <div class="caixa">
-
-        <div
-
-            class="caixa-icone"
-
-            id="iconeFim"
-
-        >
-
-            🏆🧠
-
-        </div>
-
-        <h2 id="tituloFim">
-
-            Fim!
-
-        </h2>
-
-        <p id="textoFim">
-
-            Veja sua pontuação.
-
-        </p>
-
-        <div class="resultado">
-
-            Pontos:
-
-            <strong id="pontosFim">
-
-                0
-
-            </strong>
-
-            <br>
-
-            Nível alcançado:
-
-            <strong id="nivelFim">
-
-                1
-
-            </strong>
-
-            <br>
-
-            Recorde:
-
-            <strong id="recordeFim">
-
-                0
-
-            </strong>
-
-        </div>
-
-        <button
-
-            type="button"
-
-            class="btn-jogar"
-
-            onclick="iniciarJogo()"
-
-        >
-
-            🔄 JOGAR NOVAMENTE
-
-        </button>
-
-        <button
-
-            type="button"
-
-            class="btn-menu"
-
-            onclick="voltarMenu()"
-
-        >
-
-            Voltar aos jogos
-
-        </button>
-
-    </div>
-
-</div>
-
-</div>
-
-<script>
-
-/* =========================================================
-
-   CONFIGURAÇÃO
-
-========================================================= */
-
-const CHAVE_RECORDE =
-
-    "petton_jogo_memoria_recorde_v1";
-
-/*
-
-   Nível 1:
-
-   3 pares
-
-   sem bomba
-
-   sem troca
-
-   Nível 2:
-
-   4 pares
-
-   sem bomba
-
-   1 troca
-
-   Nível 3:
-
-   6 pares
-
-   1 bomba
-
-   1 troca
-
-   Nível 4:
-
-   8 pares
-
-   2 bombas
-
-   1 troca
-
-*/
-
-const CONFIG_NIVEIS = {
-
-    1: {
-
-        pares: 3,
-
-        tempo: 30,
-
-        bombas: 0,
-
-        troca: false,
-
-        memorizar: 1700
-
-    },
-
-    2: {
-
-        pares: 4,
-
-        tempo: 35,
-
-        bombas: 0,
-
-        troca: true,
-
-        memorizar: 1500
-
-    },
-
-    3: {
-
-        pares: 6,
-
-        tempo: 45,
-
-        bombas: 1,
-
-        troca: true,
-
-        memorizar: 1250
-
-    },
-
-    4: {
-
-        pares: 8,
-
-        tempo: 55,
-
-        bombas: 2,
-
-        troca: true,
-
-        memorizar: 1000
-
-    }
-
-};
-
-const ICONES = [
-
-    "🐟",
-
-    "🦋",
-
-    "🍖",
-
-    "⭐",
-
-    "🥕",
-
-    "🐾",
-
-    "🎾",
-
-    "❤️",
-
-    "🌸",
-
-    "🍎",
-
-    "🐝",
-
-    "🌙"
-
-];
-
-let nivel =
-
-    1;
-
-let pontos =
-
-    0;
-
-let recorde =
-
-    0;
-
-let tempoRestante =
-
-    30;
-
-let jogando =
-
-    false;
-
-let bloqueado =
-
-    false;
-
-let primeiraCarta =
-
-    null;
-
-let segundaCarta =
-
-    null;
-
-let paresEncontrados =
-
-    0;
-
-let timer =
-
-    null;
-
-let timeoutTroca =
-
-    null;
-
-let trocaFeita =
-
-    false;
-
-/* =========================================================
-
-   ELEMENTOS
-
-========================================================= */
-
-const tabuleiro =
-
-    document.getElementById(
-
-        "tabuleiro"
-
-    );
-
-const pontosEl =
-
-    document.getElementById(
-
-        "pontos"
-
-    );
-
-const nivelEl =
-
-    document.getElementById(
-
-        "nivel"
-
-    );
-
-const tempoEl =
-
-    document.getElementById(
-
-        "tempo"
-
-    );
-
-const recordeEl =
-
-    document.getElementById(
-
-        "recorde"
-
-    );
-
-const infoNivel =
-
-    document.getElementById(
-
-        "infoNivel"
-
-    );
-
-const telaInicial =
-
-    document.getElementById(
-
-        "telaInicial"
-
-    );
-
-const telaFim =
-
-    document.getElementById(
-
-        "telaFim"
-
-    );
-
-/* =========================================================
-
-   RECORDE
-
-========================================================= */
-
-function carregarRecorde() {
-
-    try {
-
-        recorde =
-
-            Number(
-
-                localStorage.getItem(
-
-                    CHAVE_RECORDE
-
-                )
-
-            ) || 0;
-
-    } catch (erro) {
-
-        recorde =
-
-            0;
-
-    }
-
-    recordeEl.textContent =
-
-        recorde;
-
-}
-
-/* =========================================================
-
-   EMBARALHAR
-
-========================================================= */
-
-function embaralhar(
-
-    lista
-
-) {
-
-    const copia =
-
-        [...lista];
-
-    for (
-
-        let i =
-
-            copia.length - 1;
-
-        i > 0;
-
-        i--
-
-    ) {
-
-        const j =
-
-            Math.floor(
-
-                Math.random() *
-
-                (i + 1)
-
-            );
-
-        [
-
-            copia[i],
-
-            copia[j]
-
-        ] = [
-
-            copia[j],
-
-            copia[i]
-
-        ];
-
-    }
-
-    return copia;
-
-}
-
-/* =========================================================
-
-   CONFIGURAÇÃO ATUAL
-
-========================================================= */
-
-function obterConfigNivel() {
-
-    return CONFIG_NIVEIS[
-
-        Math.min(
-
-            nivel,
-
-            4
-
-        )
-
-    ];
-
-}
-
-/* =========================================================
-
-   CRIAR NÍVEL
-
-========================================================= */
-
-function criarNivel() {
-
-    pararCronometro();
-
-    cancelarTroca();
-
-    const config =
-
-        obterConfigNivel();
-
-    paresEncontrados =
-
-        0;
-
-    primeiraCarta =
-
-        null;
-
-    segundaCarta =
-
-        null;
-
-    bloqueado =
-
-        false;
-
-    trocaFeita =
-
-        false;
-
-    tempoRestante =
-
-        config.tempo;
-
-    tempoEl.textContent =
-
-        tempoRestante;
-
-    nivelEl.textContent =
-
-        nivel;
-
-    let textoInfo =
-
-        "Nível " +
-
-        nivel +
-
-        " • " +
-
-        config.pares +
-
-        " pares";
-
-    if (
-
-        config.bombas > 0
-
-    ) {
-
-        textoInfo +=
-
-            " • " +
-
-            "💣".repeat(
-
-                config.bombas
-
-            );
-
-    }
-
-    if (
-
-        config.troca
-
-    ) {
-
-        textoInfo +=
-
-            " • 🔀";
-
-    }
-
-    infoNivel.textContent =
-
-        textoInfo;
-
-    /*
-
-       Quantidade real:
-
-       pares * 2 + bombas
-
-    */
-
-    const quantidadeCartas =
-
-        config.pares * 2 +
-
-        config.bombas;
-
-    tabuleiro.className =
-
-        "tabuleiro cartas-" +
-
-        quantidadeCartas;
-
-    tabuleiro.innerHTML =
-
-        "";
-
-    const simbolos =
-
-        embaralhar(
-
-            ICONES
-
-        ).slice(
-
-            0,
-
-            config.pares
-
-        );
-
-    let cartas =
-
-        [
-
-            ...simbolos,
-
-            ...simbolos
-
-        ];
-
-    /*
-
-       Adiciona bombas SEM par.
-
-    */
-
-    for (
-
-        let i = 0;
-
-        i < config.bombas;
-
-        i++
-
-    ) {
-
-        cartas.push(
-
-            "💣"
-
-        );
-
-    }
-
-    cartas =
-
-        embaralhar(
-
-            cartas
-
-        );
-
-    cartas.forEach(
-
-        function(
-
-            simbolo,
-
-            indice
-
-        ) {
-
-            const carta =
-
-                document.createElement(
-
-                    "button"
-
-                );
-
-            carta.type =
-
-                "button";
-
-            carta.className =
-
-                "carta";
-
-            carta.dataset.simbolo =
-
-                simbolo;
-
-            carta.dataset.indice =
-
-                indice;
-
-            carta.dataset.bomba =
-
-                simbolo === "💣"
-
-                    ? "1"
-
-                    : "0";
-
-            carta.innerHTML =
-
-                `
-
-                <div class="carta-inner">
-
-                    <div class="carta-verso">
-
-                    </div>
-
-                    <div class="carta-frente">
-
-                        ${simbolo}
-
-                    </div>
-
-                </div>
-
-                `;
-
-            carta.addEventListener(
-
-                "click",
-
-                function() {
-
-                    virarCarta(
-
-                        carta
-
-                    );
-
-                }
-
-            );
-
-            tabuleiro.appendChild(
-
-                carta
-
-            );
-
-        }
-
-    );
-
-    /*
-
-       Mostra todas as cartas
-
-       para memorizar.
-
-       Inclusive as bombas.
-
-    */
-
-    bloqueado =
-
-        true;
-
-    const todas =
-
-        tabuleiro.querySelectorAll(
-
-            ".carta"
-
-        );
-
-    todas.forEach(
-
-        function(carta) {
-
-            carta.classList.add(
-
-                "virada"
-
-            );
-
-        }
-
-    );
-
-    mostrarMensagem(
-
-        "👀 Memorize!"
-
-    );
-
-    setTimeout(
-
-        function() {
-
-            if (
-
-                !jogando
-
-            ) {
-
-                return;
-
-            }
-
-            todas.forEach(
-
-                function(carta) {
-
-                    carta.classList.remove(
-
-                        "virada"
-
-                    );
-
-                }
-
-            );
-
-            bloqueado =
-
-                false;
-
-            iniciarCronometro();
-
-            /*
-
-               Nos níveis 2, 3 e 4
-
-               haverá UMA troca.
-
-               Ela acontece alguns
-
-               segundos depois.
-
-            */
-
-            if (
-
-                config.troca
-
-            ) {
-
-                agendarTroca();
-
-            }
-
-        },
-
-        config.memorizar
-
-    );
-
-}
-
-/* =========================================================
-
-   AGENDAR TROCA
-
-========================================================= */
-
-function agendarTroca() {
-
-    cancelarTroca();
-
-    /*
-
-       Dá alguns segundos para
-
-       o jogador começar.
-
-       Níveis maiores trocam
-
-       um pouco mais cedo.
-
-    */
-
-    let atraso;
-
-    if (
-
-        nivel === 2
-
-    ) {
-
-        atraso =
-
-            7000;
-
-    } else if (
-
-        nivel === 3
-
-    ) {
-
-        atraso =
-
-            6000;
-
-    } else {
-
-        atraso =
-
-            5000;
-
-    }
-
-    timeoutTroca =
-
-        setTimeout(
-
-            function() {
-
-                trocarCartas();
-
-            },
-
-            atraso
-
-        );
-
-}
-
-/* =========================================================
-
-   CANCELAR TROCA
-
-========================================================= */
-
-function cancelarTroca() {
-
-    if (
-
-        timeoutTroca
-
-    ) {
-
-        clearTimeout(
-
-            timeoutTroca
-
-        );
-
-        timeoutTroca =
-
-            null;
-
-    }
-
-}
-
-/* =========================================================
-
-   TROCAR CARTAS
-
-========================================================= */
-
-function trocarCartas() {
-
-    if (
-
-        !jogando ||
-
-        bloqueado ||
-
-        trocaFeita
-
-    ) {
-
-        /*
-
-           Se naquele instante o jogador
-
-           estiver vendo duas cartas,
-
-           tentamos novamente logo depois.
-
-        */
-
-        if (
-
-            jogando &&
-
-            !trocaFeita
-
-        ) {
-
-            timeoutTroca =
-
-                setTimeout(
-
-                    trocarCartas,
-
-                    900
-
-                );
-
-        }
-
-        return;
-
-    }
-
-    const disponiveis =
-
-        Array.from(
-
-            tabuleiro.querySelectorAll(
-
-                ".carta:not(.encontrada)"
-
-            )
-
-        ).filter(
-
-            function(carta) {
-
-                return !carta.classList.contains(
-
-                    "virada"
-
-                );
-
-            }
-
-        );
-
-    if (
-
-        disponiveis.length < 2
-
-    ) {
-
-        return;
-
-    }
-
-    bloqueado =
-
-        true;
-
-    trocaFeita =
-
-        true;
-
-    mostrarMensagem(
-
-        "🔀 Atenção! Cartas mudando!"
-
-    );
-
-    tocarTroca();
-
-    tabuleiro.classList.add(
-
-        "trocando"
-
-    );
-
-    /*
-
-       Embaralha TODAS as cartas
-
-       ainda não encontradas.
-
-       As cartas já acertadas
-
-       permanecem onde estão.
-
-    */
-
-    const posicoes =
-
-        disponiveis.map(
-
-            function(carta) {
-
-                return {
-
-                    simbolo:
-
-                        carta.dataset.simbolo,
-
-                    bomba:
-
-                        carta.dataset.bomba,
-
-                    frente:
-
-                        carta.querySelector(
-
-                            ".carta-frente"
-
-                        ).textContent
-
-                };
-
-            }
-
-        );
-
-    const novas =
-
-        embaralhar(
-
-            posicoes
-
-        );
-
-    setTimeout(
-
-        function() {
-
-            if (
-
-                !jogando
-
-            ) {
-
-                return;
-
-            }
-
-            disponiveis.forEach(
-
-                function(
-
-                    carta,
-
-                    indice
-
-                ) {
-
-                    const novo =
-
-                        novas[indice];
-
-                    carta.dataset.simbolo =
-
-                        novo.simbolo;
-
-                    carta.dataset.bomba =
-
-                        novo.bomba;
-
-                    carta.querySelector(
-
-                        ".carta-frente"
-
-                    ).textContent =
-
-                        novo.frente;
-
-                }
-
-            );
-
-        },
-
-        250
-
-    );
-
-    setTimeout(
-
-        function() {
-
-            tabuleiro.classList.remove(
-
-                "trocando"
-
-            );
-
-            if (
-
-                jogando
-
-            ) {
-
-                bloqueado =
-
-                    false;
-
-            }
-
-        },
-
-        600
-
-    );
-
-}
-
-/* =========================================================
-
-   VIRAR CARTA
-
-========================================================= */
-
-function virarCarta(
-
-    carta
-
-) {
-
-    if (
-
-        !jogando ||
-
-        bloqueado
-
-    ) {
-
-        return;
-
-    }
-
-    if (
-
-        carta.classList.contains(
-
-            "virada"
-
-        ) ||
-
-        carta.classList.contains(
-
-            "encontrada"
-
-        )
-
-    ) {
-
-        return;
-
-    }
-
-    prepararAudio();
-
-    /*
-
-       BOMBA
-
-    */
-
-    if (
-
-        carta.dataset.bomba ===
-
-        "1"
-
-    ) {
-
-        bloqueado =
-
-            true;
-
-        carta.classList.add(
-
-            "virada"
-
-        );
-
-        carta.classList.add(
-
-            "bomba-explodiu"
-
-        );
-
-        tocarBomba();
-
-        mostrarMensagem(
-
-            "💣 BOOM!"
-
-        );
-
-        cancelarTroca();
-
-        setTimeout(
-
-            function() {
-
-                finalizarJogo(
-
-                    false,
-
-                    "bomba"
-
-                );
-
-            },
-
-            650
-
-        );
-
-        return;
-
-    }
-
-    carta.classList.add(
-
-        "virada"
-
-    );
-
-    tocarVirar();
-
-    if (
-
-        !primeiraCarta
-
-    ) {
-
-        primeiraCarta =
-
-            carta;
-
-        return;
-
-    }
-
-    segundaCarta =
-
-        carta;
-
-    bloqueado =
-
-        true;
-
-    verificarPar();
-
-}
-
-/* =========================================================
-
-   VERIFICAR PAR
-
-========================================================= */
-
-function verificarPar() {
-
-    const carta1 =
-
-        primeiraCarta;
-
-    const carta2 =
-
-        segundaCarta;
-
-    if (
-
-        !carta1 ||
-
-        !carta2
-
-    ) {
-
-        bloqueado =
-
-            false;
-
-        return;
-
-    }
-
-    const iguais =
-
-        carta1.dataset.simbolo ===
-
-        carta2.dataset.simbolo;
-
-    if (
-
-        iguais
-
-    ) {
-
-        setTimeout(
-
-            function() {
-
-                if (
-
-                    !jogando
-
-                ) {
-
-                    return;
-
-                }
-
-                carta1.classList.add(
-
-                    "encontrada"
-
-                );
-
-                carta2.classList.add(
-
-                    "encontrada"
-
-                );
-
-                carta1.classList.remove(
-
-                    "virada"
-
-                );
-
-                carta2.classList.remove(
-
-                    "virada"
-
-                );
-
-                carta1.disabled =
-
-                    true;
-
-                carta2.disabled =
-
-                    true;
-
-                paresEncontrados++;
-
-                const pontosPar =
-
-                    5 +
-
-                    (
-
-                        nivel - 1
-
-                    ) * 2;
-
-                pontos +=
-
-                    pontosPar;
-
-                pontosEl.textContent =
-
-                    pontos;
-
-                mostrarMensagem(
-
-                    "⭐ +" +
-
-                    pontosPar
-
-                );
-
-                tocarPar();
-
-                limparSelecao();
-
-                const config =
-
-                    obterConfigNivel();
-
-                if (
-
-                    paresEncontrados >=
-
-                    config.pares
-
-                ) {
-
-                    completarNivel();
-
-                } else {
-
-                    bloqueado =
-
-                        false;
-
-                }
-
-            },
-
-            260
-
-        );
-
-    } else {
-
-        tocarErro();
-
-        setTimeout(
-
-            function() {
-
-                if (
-
-                    !jogando
-
-                ) {
-
-                    return;
-
-                }
-
-                carta1.classList.remove(
-
-                    "virada"
-
-                );
-
-                carta2.classList.remove(
-
-                    "virada"
-
-                );
-
-                limparSelecao();
-
-                bloqueado =
-
-                    false;
-
-            },
-
-            700
-
-        );
-
-    }
-
-}
-
-/* =========================================================
-
-   LIMPAR SELEÇÃO
-
-========================================================= */
-
-function limparSelecao() {
-
-    primeiraCarta =
-
-        null;
-
-    segundaCarta =
-
-        null;
-
-}
-
-/* =========================================================
-
-   CRONÔMETRO
-
-========================================================= */
-
-function iniciarCronometro() {
-
-    pararCronometro();
-
-    timer =
-
-        setInterval(
-
-            function() {
-
-                if (
-
-                    !jogando
-
-                ) {
-
-                    return;
-
-                }
-
-                tempoRestante--;
-
-                tempoEl.textContent =
-
-                    Math.max(
-
-                        0,
-
-                        tempoRestante
-
-                    );
-
-                if (
-
-                    tempoRestante <= 5 &&
-
-                    tempoRestante > 0
-
-                ) {
-
-                    tocarRelogio();
-
-                }
-
-                if (
-
-                    tempoRestante <= 0
-
-                ) {
-
-                    finalizarJogo(
-
-                        false,
-
-                        "tempo"
-
-                    );
-
-                }
-
-            },
-
-            1000
-
-        );
-
-}
-
-/* =========================================================
-
-   PARAR CRONÔMETRO
-
-========================================================= */
-
-function pararCronometro() {
-
-    if (
-
-        timer
-
-    ) {
-
-        clearInterval(
-
-            timer
-
-        );
-
-        timer =
-
-            null;
-
-    }
-
-}
-
-/* =========================================================
-
-   COMPLETOU NÍVEL
-
-========================================================= */
-
-function completarNivel() {
-
-    pararCronometro();
-
-    cancelarTroca();
-
-    bloqueado =
-
-        true;
-
-    const bonus =
-
-        Math.max(
-
-            0,
-
-            tempoRestante * 2
-
-        );
-
-    pontos +=
-
-        bonus;
-
-    pontosEl.textContent =
-
-        pontos;
-
-    tocarNivel();
-
-    mostrarMensagem(
-
-        "🏆 Bônus +" +
-
-        bonus
-
-    );
-
-    if (
-
-        nivel >= 4
-
-    ) {
-
-        setTimeout(
-
-            function() {
-
-                finalizarJogo(
-
-                    true,
-
-                    "vitoria"
-
-                );
-
-            },
-
-            1300
-
-        );
-
-        return;
-
-    }
-
-    setTimeout(
-
-        function() {
-
-            if (
-
-                !jogando
-
-            ) {
-
-                return;
-
-            }
-
-            nivel++;
-
-            criarNivel();
-
-        },
-
-        1400
-
-    );
-
-}
-
-/* =========================================================
-
-   MENSAGEM
-
-========================================================= */
-
-function mostrarMensagem(
-
-    texto
-
-) {
-
-    const elemento =
-
-        document.getElementById(
-
-            "mensagem"
-
-        );
-
-    elemento.textContent =
-
-        texto;
-
-    elemento.classList.remove(
-
-        "mostrar"
-
-    );
-
-    void elemento.offsetWidth;
-
-    elemento.classList.add(
-
-        "mostrar"
-
-    );
-
-}
-
-/* =========================================================
-
-   INICIAR JOGO
-
-========================================================= */
-
-function iniciarJogo() {
-
-    prepararAudio();
-
-    pararCronometro();
-
-    cancelarTroca();
-
-    nivel =
-
-        1;
-
-    pontos =
-
-        0;
-
-    paresEncontrados =
-
-        0;
-
-    primeiraCarta =
-
-        null;
-
-    segundaCarta =
-
-        null;
-
-    bloqueado =
-
-        false;
-
-    trocaFeita =
-
-        false;
-
-    jogando =
-
-        true;
-
-    pontosEl.textContent =
-
-        "0";
-
-    nivelEl.textContent =
-
-        "1";
-
-    telaInicial.classList.add(
-
-        "oculto"
-
-    );
-
-    telaFim.classList.add(
-
-        "oculto"
-
-    );
-
-    tocarInicio();
-
-    criarNivel();
-
-}
-
-/* =========================================================
-
-   FINAL
-
-========================================================= */
-
-function finalizarJogo(
-
-    venceu,
-
-    motivo = "tempo"
-
-) {
-
-    if (
-
-        !jogando
-
-    ) {
-
-        return;
-
-    }
-
-    jogando =
-
-        false;
-
-    bloqueado =
-
-        true;
-
-    pararCronometro();
-
-    cancelarTroca();
-
-    if (
-
-        pontos >
-
-        recorde
-
-    ) {
-
-        recorde =
-
-            pontos;
-
-        try {
-
-            localStorage.setItem(
-
-                CHAVE_RECORDE,
-
-                String(
-
-                    recorde
-
-                )
-
-            );
-
-        } catch (erro) {
-
-            /* nada */
-
-        }
-
-    }
-
-    recordeEl.textContent =
-
-        recorde;
-
-    document.getElementById(
-
-        "pontosFim"
-
-    ).textContent =
-
-        pontos;
-
-    document.getElementById(
-
-        "nivelFim"
-
-    ).textContent =
-
-        nivel;
-
-    document.getElementById(
-
-        "recordeFim"
-
-    ).textContent =
-
-        recorde;
-
-    const icone =
-
-        document.getElementById(
-
-            "iconeFim"
-
-        );
-
-    const titulo =
-
-        document.getElementById(
-
-            "tituloFim"
-
-        );
-
-    const texto =
-
-        document.getElementById(
-
-            "textoFim"
-
-        );
-
-    if (
-
-        venceu
-
-    ) {
-
-        icone.textContent =
-
-            "🏆🧠";
-
-        titulo.textContent =
-
-            "Memória incrível!";
-
-        texto.textContent =
-
-            "Você completou todos os 4 níveis!";
-
-        tocarVitoria();
-
-    } else if (
-
-        motivo ===
-
-        "bomba"
-
-    ) {
-
-        icone.textContent =
-
-            "💣💥";
-
-        titulo.textContent =
-
-            "BOOM!";
-
-        texto.textContent =
-
-            "Você virou uma bomba. Memorize onde ela está e tente novamente!";
-
-        tocarGameOver();
-
-    } else {
-
-        icone.textContent =
-
-            "⏰🧠";
-
-        titulo.textContent =
-
-            "Tempo acabou!";
-
-        texto.textContent =
-
-            "Tente novamente e encontre os pares mais rápido.";
-
-        tocarFim();
-
-    }
-
-    telaFim.classList.remove(
-
-        "oculto"
-
-    );
-
-}
-
-/* =========================================================
-
-   VOLTAR
-
-========================================================= */
-
-function voltarMenu() {
-
-    jogando =
-
-        false;
-
-    pararCronometro();
-
-    cancelarTroca();
-
-    const destino =
-
-        new URL(
-
-            "./brincar.html",
-
-            document.baseURI
-
-        ).href;
-
-    window.location.assign(
-
-        destino
-
-    );
-
-}
-
-/* =========================================================
-
-   ÁUDIO
-
-========================================================= */
-
-let audioContext =
-
-    null;
-
-let somAtivo =
-
-    true;
-
-function prepararAudio() {
-
-    if (
-
-        !somAtivo
-
-    ) {
-
-        return;
-
-    }
-
-    try {
-
-        if (
-
-            !audioContext
-
-        ) {
-
-            const AudioCtx =
-
-                window.AudioContext ||
-
-                window.webkitAudioContext;
-
-            if (
-
-                AudioCtx
-
-            ) {
-
-                audioContext =
-
-                    new AudioCtx();
-
-            }
-
-        }
-
-        if (
-
-            audioContext &&
-
-            audioContext.state ===
-
-                "suspended"
-
-        ) {
-
-            audioContext.resume();
-
-        }
-
-    } catch (erro) {
-
-        console.warn(
-
-            "Áudio indisponível:",
-
-            erro
-
-        );
-
-    }
-
-}
-
-/* =========================================================
-
-   TOM
-
-========================================================= */
-
-function tocarTom(
-
-    frequencia,
-
-    duracao,
-
-    tipo = "sine",
-
-    volume = .05,
-
-    atraso = 0
-
-) {
-
-    if (
-
-        !somAtivo ||
-
-        !audioContext
-
-    ) {
-
-        return;
-
-    }
-
-    try {
-
-        const inicio =
-
-            audioContext.currentTime +
-
-            atraso;
-
-        const oscilador =
-
-            audioContext
-
-                .createOscillator();
-
-        const ganho =
-
-            audioContext
-
-                .createGain();
-
-        oscilador.type =
-
-            tipo;
-
-        oscilador.frequency
-
-            .setValueAtTime(
-
-                frequencia,
-
-                inicio
-
-            );
-
-        ganho.gain
-
-            .setValueAtTime(
-
-                volume,
-
-                inicio
-
-            );
-
-        ganho.gain
-
-            .exponentialRampToValueAtTime(
-
-                .001,
-
-                inicio +
-
-                duracao
-
-            );
-
-        oscilador.connect(
-
-            ganho
-
-        );
-
-        ganho.connect(
-
-            audioContext.destination
-
-        );
-
-        oscilador.start(
-
-            inicio
-
-        );
-
-        oscilador.stop(
-
-            inicio +
-
-            duracao
-
-        );
-
-    } catch (erro) {
-
-        /* nada */
-
-    }
-
-}
-
-/* =========================================================
-
-   SONS
-
-========================================================= */
-
-function tocarInicio() {
-
-    tocarTom(
-
-        440,
-
-        .09
-
-    );
-
-    tocarTom(
-
-        660,
-
-        .10,
-
-        "sine",
-
-        .05,
-
-        .09
-
-    );
-
-    tocarTom(
-
-        880,
-
-        .13,
-
-        "sine",
-
-        .05,
-
-        .18
-
-    );
-
-}
-
-function tocarVirar() {
-
-    tocarTom(
-
-        600,
-
-        .055,
-
-        "triangle",
-
-        .025
-
-    );
-
-}
-
-function tocarPar() {
-
-    tocarTom(
-
-        700,
-
-        .08,
-
-        "sine",
-
-        .045
-
-    );
-
-    tocarTom(
-
-        980,
-
-        .11,
-
-        "sine",
-
-        .045,
-
-        .07
-
-    );
-
-}
-
-function tocarErro() {
-
-    tocarTom(
-
-        230,
-
-        .10,
-
-        "square",
-
-        .025
-
-    );
-
-    tocarTom(
-
-        170,
-
-        .13,
-
-        "square",
-
-        .025,
-
-        .08
-
-    );
-
-}
-
-function tocarTroca() {
-
-    tocarTom(
-
-        500,
-
-        .07,
-
-        "triangle",
-
-        .04
-
-    );
-
-    tocarTom(
-
-        700,
-
-        .07,
-
-        "triangle",
-
-        .04,
-
-        .07
-
-    );
-
-    tocarTom(
-
-        500,
-
-        .07,
-
-        "triangle",
-
-        .04,
-
-        .14
-
-    );
-
-}
-
-function tocarBomba() {
-
-    tocarTom(
-
-        180,
-
-        .10,
-
-        "sawtooth",
-
-        .06
-
-    );
-
-    tocarTom(
-
-        100,
-
-        .30,
-
-        "sawtooth",
-
-        .065,
-
-        .08
-
-    );
-
-}
-
-function tocarNivel() {
-
-    tocarTom(
-
-        520,
-
-        .09,
-
-        "triangle",
-
-        .05
-
-    );
-
-    tocarTom(
-
-        780,
-
-        .10,
-
-        "triangle",
-
-        .05,
-
-        .08
-
-    );
-
-    tocarTom(
-
-        1040,
-
-        .14,
-
-        "triangle",
-
-        .05,
-
-        .16
-
-    );
-
-}
-
-function tocarRelogio() {
-
-    tocarTom(
-
-        900,
-
-        .045,
-
-        "square",
-
-        .02
-
-    );
-
-}
-
-function tocarFim() {
-
-    tocarTom(
-
-        350,
-
-        .12,
-
-        "sine",
-
-        .04
-
-    );
-
-    tocarTom(
-
-        250,
-
-        .18,
-
-        "sine",
-
-        .04,
-
-        .12
-
-    );
-
-}
-
-function tocarGameOver() {
-
-    tocarTom(
-
-        330,
-
-        .10,
-
-        "square",
-
-        .05
-
-    );
-
-    tocarTom(
-
-        210,
-
-        .15,
-
-        "square",
-
-        .05,
-
-        .10
-
-    );
-
-    tocarTom(
-
-        110,
-
-        .25,
-
-        "sawtooth",
-
-        .045,
-
-        .22
-
-    );
-
-}
-
-function tocarVitoria() {
-
-    tocarTom(
-
-        600,
-
-        .10,
-
-        "sine",
-
-        .05
-
-    );
-
-    tocarTom(
-
-        800,
-
-        .10,
-
-        "sine",
-
-        .05,
-
-        .10
-
-    );
-
-    tocarTom(
-
-        1000,
-
-        .11,
-
-        "sine",
-
-        .05,
-
-        .20
-
-    );
-
-    tocarTom(
-
-        1300,
-
-        .20,
-
-        "sine",
-
-        .05,
-
-        .31
-
-    );
-
-}
-
-/* =========================================================
-
-   SOM ON/OFF
-
-========================================================= */
-
-function alternarSom() {
-
-    somAtivo =
-
-        !somAtivo;
-
-    document.getElementById(
-
-        "btnSom"
-
-    ).textContent =
-
-        somAtivo
-
-            ? "🔊"
-
-            : "🔇";
-
-    if (
-
-        somAtivo
-
-    ) {
-
-        prepararAudio();
-
-        tocarTom(
-
-            700,
-
-            .09
-
-        );
-
-    }
-
-}
-
-/* =========================================================
-
-   INICIALIZAÇÃO
-
-========================================================= */
-
-carregarRecorde();
-
-</script>
-
-</body>
-
-</html>
+        font-size: 15px
