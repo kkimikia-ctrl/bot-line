@@ -106,7 +106,7 @@ body {
 
 /* =========================================================
 
-   CÉU ESPECIAL — METEOROS
+   CÉU ESPECIAL
 
 ========================================================= */
 
@@ -370,7 +370,7 @@ body {
 
 /* =========================================================
 
-   CÉU
+   ESTRELAS DO FUNDO
 
 ========================================================= */
 
@@ -437,6 +437,12 @@ body {
         );
 
 }
+
+/* =========================================================
+
+   LUA
+
+========================================================= */
 
 .lua {
 
@@ -1602,7 +1608,7 @@ body {
 
         >
 
-            90
+            120
 
         </span>
 
@@ -1684,11 +1690,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     INÍCIO
-
-====================================================== -->
+<!-- INÍCIO -->
 
 <div
 
@@ -1750,7 +1752,7 @@ body {
 
         <p>
 
-            Sobreviva por 90 segundos.
+            Sobreviva por 120 segundos.
 
         </p>
 
@@ -1786,11 +1788,7 @@ body {
 
 </div>
 
-<!-- =====================================================
-
-     FINAL
-
-====================================================== -->
+<!-- FINAL -->
 
 <div
 
@@ -1906,19 +1904,17 @@ const CHAVE_RECORDE =
 
 const TEMPO_JOGO =
 
-    90;
+    120;
 
 /*
 
-   As chuvas acontecem depois
+   CHUVAS DE METEOROS
 
-   de aproximadamente:
+   1ª = 25 segundos
 
-   20 segundos
+   2ª = 60 segundos
 
-   45 segundos
-
-   70 segundos
+   3ª = 95 segundos
 
 */
 
@@ -1926,7 +1922,7 @@ const EVENTOS_METEOROS = [
 
     {
 
-        tempo: 20,
+        tempo: 25,
 
         intensidade: 1
 
@@ -1934,7 +1930,7 @@ const EVENTOS_METEOROS = [
 
     {
 
-        tempo: 45,
+        tempo: 60,
 
         intensidade: 2
 
@@ -1942,7 +1938,7 @@ const EVENTOS_METEOROS = [
 
     {
 
-        tempo: 70,
+        tempo: 95,
 
         intensidade: 3
 
@@ -2004,7 +2000,7 @@ let arrastando =
 
 /* =========================================================
 
-   ESTADO DA CHUVA
+   ESTADO METEOROS
 
 ========================================================= */
 
@@ -2015,18 +2011,6 @@ let proximoEventoMeteoros =
 let faseMeteoros =
 
     "normal";
-
-/*
-
-   normal
-
-   aviso
-
-   chuva
-
-   retorno
-
-*/
 
 let inicioFaseMeteoros =
 
@@ -3490,7 +3474,7 @@ function verificarNivel() {
 
 /* =========================================================
 
-   MENSAGEM
+   MENSAGEM NORMAL
 
 ========================================================= */
 
@@ -3594,13 +3578,11 @@ function tentarSpawn(
 
     /*
 
-       Durante chuva:
+       Durante a chuva,
 
-       estrelas continuam,
+       estrelas continuam aparecendo,
 
-       mas aparecem bem menos.
-
-       Bombas comuns não nascem.
+       mas em menor quantidade.
 
     */
 
@@ -3834,7 +3816,7 @@ function tentarSpawn(
 
 /* =========================================================
 
-   REMOVER BOMBAS NORMAIS
+   REMOVER BOMBAS ATUAIS
 
 ========================================================= */
 
@@ -3896,7 +3878,7 @@ function fazerClarao() {
 
 /* =========================================================
 
-   INICIAR AVISO METEOROS
+   AVISO DA CHUVA
 
 ========================================================= */
 
@@ -3952,7 +3934,7 @@ function iniciarAvisoMeteoros(
 
 /* =========================================================
 
-   INICIAR CHUVA
+   COMEÇAR CHUVA
 
 ========================================================= */
 
@@ -3995,14 +3977,6 @@ function iniciarChuvaMeteoros(
         "☄️ DESVIE DOS METEOROS!";
 
     tocarInicioChuva();
-
-    /*
-
-       Dois meteoros logo
-
-       no começo do evento.
-
-    */
 
     criarMeteoro();
 
@@ -4080,7 +4054,7 @@ function terminarChuvaMeteoros(
 
 /* =========================================================
 
-   VOLTAR CÉU NORMAL
+   CÉU NORMAL
 
 ========================================================= */
 
@@ -4134,12 +4108,6 @@ function verificarEventosMeteoros(
 
         tempoRestante;
 
-    /*
-
-       Dispara próximo evento.
-
-    */
-
     if (
 
         faseMeteoros ===
@@ -4186,11 +4154,7 @@ function verificarEventosMeteoros(
 
     /*
 
-       AVISO:
-
-       1,8 segundo antes
-
-       de começar.
+       Aviso antes da chuva.
 
     */
 
@@ -4220,9 +4184,7 @@ function verificarEventosMeteoros(
 
     /*
 
-       CHUVA:
-
-       dura 6 segundos.
+       CHUVA DURA 10 SEGUNDOS
 
     */
 
@@ -4236,7 +4198,7 @@ function verificarEventosMeteoros(
 
             inicioFaseMeteoros >=
 
-            6000
+            10000
 
     ) {
 
@@ -4252,7 +4214,9 @@ function verificarEventosMeteoros(
 
     /*
 
-       Retorno gradual.
+       Retorno gradual
+
+       do céu normal.
 
     */
 
@@ -4324,18 +4288,6 @@ function criarMeteoro() {
 
         areaJogo.clientWidth;
 
-    /*
-
-       Três tipos:
-
-       reto
-
-       diagonal direita
-
-       diagonal esquerda
-
-    */
-
     const sorteioDirecao =
 
         Math.random();
@@ -4381,14 +4333,6 @@ function criarMeteoro() {
             Math.random() * 30;
 
     }
-
-    /*
-
-       A terceira chuva
-
-       fica mais rápida.
-
-    */
 
     let velocidade =
 
@@ -4444,43 +4388,9 @@ function criarMeteoro() {
 
         Math.random() * 120;
 
-    /*
-
-       Inclinação visual
-
-       acompanhando o movimento.
-
-    */
-
-    const angulo =
-
-        90 -
-
-        (
-
-            Math.atan2(
-
-                velocidade,
-
-                Math.max(
-
-                    1,
-
-                    Math.abs(vx)
-
-                )
-
-            ) *
-
-            180 /
-
-            Math.PI
-
-        );
-
     let rotacao =
 
-        55;
+        78;
 
     if (
 
@@ -4501,12 +4411,6 @@ function criarMeteoro() {
         rotacao =
 
             55;
-
-    } else {
-
-        rotacao =
-
-            78;
 
     }
 
@@ -4677,14 +4581,6 @@ function tentarSpawnMeteoro(
     }
 
     criarMeteoro();
-
-    /*
-
-       Nas chuvas 2 e 3
-
-       pode vir outro quase junto.
-
-    */
 
     if (
 
@@ -5362,14 +5258,6 @@ function iniciarJogo() {
 
     );
 
-    /*
-
-       Começo original:
-
-       estrelas e bombas.
-
-    */
-
     criarObjeto(
 
         "normal"
@@ -5642,7 +5530,7 @@ function finalizarJogo(
 
         titulo.textContent =
 
-            "90 segundos completos!";
+            "120 segundos completos!";
 
         texto.textContent =
 
@@ -6079,12 +5967,6 @@ function tocarTrovao() {
         );
 
         fonte.start();
-
-        /*
-
-           Grave extra do trovão.
-
-        */
 
         tocarTom(
 
