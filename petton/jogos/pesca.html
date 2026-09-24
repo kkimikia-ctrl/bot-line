@@ -232,9 +232,11 @@ body {
 
     display: grid;
 
-    grid-template-columns: repeat(4,1fr);
+    grid-template-columns:
 
-    gap: 5px;
+        repeat(5,1fr);
+
+    gap: 4px;
 
     pointer-events: none;
 
@@ -242,9 +244,9 @@ body {
 
 .hud-item {
 
-    padding: 7px 2px;
+    padding: 7px 1px;
 
-    border-radius: 14px;
+    border-radius: 13px;
 
     background:
 
@@ -264,7 +266,7 @@ body {
 
     color: #777;
 
-    font-size: 8px;
+    font-size: 7px;
 
     font-weight: 700;
 
@@ -276,9 +278,17 @@ body {
 
     margin-top: 1px;
 
-    font-size: 17px;
+    font-size: 16px;
 
     font-weight: 900;
+
+}
+
+#vidas {
+
+    font-size: 15px;
+
+    white-space: nowrap;
 
 }
 
@@ -566,11 +576,11 @@ body {
 
     z-index: 60;
 
-    width: 2px;
+    width: 3px;
 
     background:
 
-        rgba(245,245,245,.9);
+        rgba(245,245,245,.95);
 
     top: 172px;
 
@@ -581,6 +591,10 @@ body {
     transform: translateX(65px);
 
     pointer-events: none;
+
+    box-shadow:
+
+        0 0 2px rgba(0,0,0,.25);
 
 }
 
@@ -622,7 +636,7 @@ body {
 
 /* =========================================================
 
-   PEIXES / LIXO
+   PEIXES / LIXO / POLVO
 
 ========================================================= */
 
@@ -689,6 +703,106 @@ body {
 .objeto.lixo {
 
     font-size: 41px;
+
+}
+
+.objeto.polvo {
+
+    width: 61px;
+
+    height: 55px;
+
+    font-size: 47px;
+
+    filter:
+
+        drop-shadow(
+
+            0 0 7px rgba(155,70,200,.55)
+
+        );
+
+}
+
+/* =========================================================
+
+   TESOURA
+
+========================================================= */
+
+.tesoura {
+
+    position: absolute;
+
+    z-index: 65;
+
+    width: 54px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 39px;
+
+    user-select: none;
+
+    pointer-events: none;
+
+    filter:
+
+        drop-shadow(
+
+            0 3px 3px rgba(0,0,0,.25)
+
+        );
+
+    will-change:
+
+        left,
+
+        top,
+
+        transform;
+
+}
+
+.tesoura.perigosa {
+
+    animation:
+
+        brilhoTesoura .35s infinite alternate;
+
+}
+
+@keyframes brilhoTesoura {
+
+    from {
+
+        filter:
+
+            drop-shadow(
+
+                0 2px 2px rgba(0,0,0,.25)
+
+            );
+
+    }
+
+    to {
+
+        filter:
+
+            drop-shadow(
+
+                0 0 9px rgba(255,70,70,.95)
+
+            );
+
+    }
 
 }
 
@@ -1090,6 +1204,22 @@ body {
 
 }
 
+.regra-perigo {
+
+    margin: 10px 0 !important;
+
+    padding: 8px 10px;
+
+    border-radius: 13px;
+
+    background: #fff0ef;
+
+    color: #c9362d !important;
+
+    font-weight: 800;
+
+}
+
 .resultado {
 
     margin: 15px 0;
@@ -1188,7 +1318,53 @@ body {
 
     .hud-valor {
 
-        font-size: 15px;
+        font-size: 14px;
+
+    }
+
+    #vidas {
+
+        font-size: 13px;
+
+    }
+
+}
+
+/* =========================================================
+
+   TELA PISCAR AO PERDER VIDA
+
+========================================================= */
+
+.app.dano {
+
+    animation:
+
+        piscarDano .32s;
+
+}
+
+@keyframes piscarDano {
+
+    0% {
+
+        filter: none;
+
+    }
+
+    40% {
+
+        filter:
+
+            brightness(1.25)
+
+            saturate(1.6);
+
+    }
+
+    100% {
+
+        filter: none;
 
     }
 
@@ -1200,7 +1376,7 @@ body {
 
 <body>
 
-<div class="app">
+<div class="app" id="app">
 
 <div class="cenario"></div>
 
@@ -1230,7 +1406,7 @@ body {
 
         <span>
 
-            Acerte os peixes e evite o lixo
+            Cuidado com o polvo e a tesoura!
 
         </span>
 
@@ -1295,6 +1471,28 @@ body {
         >
 
             1
+
+        </span>
+
+    </div>
+
+    <div class="hud-item">
+
+        <span class="hud-label">
+
+            VIDAS
+
+        </span>
+
+        <span
+
+            class="hud-valor"
+
+            id="vidas"
+
+        >
+
+            ❤️❤️
 
         </span>
 
@@ -1450,6 +1648,12 @@ body {
 
 </div>
 
+<!-- =====================================================
+
+     TELA INICIAL
+
+====================================================== -->
+
 <div
 
     class="overlay"
@@ -1498,13 +1702,25 @@ body {
 
         <p>
 
-            ⚠️ O lixo é muito mais rápido que os peixes!
+            🐙 = perde 1 vida
+
+        </p>
+
+        <p class="regra-perigo">
+
+            ✂️ Se a tesoura cortar a linha, você perde 1 vida!
 
         </p>
 
         <p>
 
-            Quanto maior o nível, mais lixo aparece.
+            Você começa com ❤️❤️.
+
+        </p>
+
+        <p>
+
+            Sem vidas = Game Over.
 
         </p>
 
@@ -1546,6 +1762,12 @@ body {
 
 </div>
 
+<!-- =====================================================
+
+     TELA FINAL
+
+====================================================== -->
+
 <div
 
     class="overlay oculto"
@@ -1556,19 +1778,25 @@ body {
 
     <div class="caixa">
 
-        <div class="caixa-icone">
+        <div
+
+            class="caixa-icone"
+
+            id="iconeFim"
+
+        >
 
             🏆🐟
 
         </div>
 
-        <h2>
+        <h2 id="tituloFim">
 
             Pesca encerrada!
 
         </h2>
 
-        <p>
+        <p id="motivoFim">
 
             Veja quantos pontos você conseguiu.
 
@@ -1646,6 +1874,10 @@ const TEMPO_JOGO =
 
     90;
 
+const VIDAS_INICIAIS =
+
+    2;
+
 let pontos =
 
     0;
@@ -1653,6 +1885,10 @@ let pontos =
 let nivel =
 
     1;
+
+let vidas =
+
+    VIDAS_INICIAIS;
 
 let recorde =
 
@@ -1674,6 +1910,14 @@ let ultimoSpawn =
 
     0;
 
+let ultimoSpawnTesoura =
+
+    0;
+
+let proximaTesoura =
+
+    5500;
+
 let animacaoId =
 
     null;
@@ -1681,6 +1925,14 @@ let animacaoId =
 let objetos =
 
     [];
+
+let tesouras =
+
+    [];
+
+let invulneravelAte =
+
+    0;
 
 /* =========================================================
 
@@ -1709,6 +1961,14 @@ let objetoPescado =
    ELEMENTOS
 
 ========================================================= */
+
+const app =
+
+    document.getElementById(
+
+        "app"
+
+    );
 
 const areaJogo =
 
@@ -1755,6 +2015,14 @@ const nivelEl =
     document.getElementById(
 
         "nivel"
+
+    );
+
+const vidasEl =
+
+    document.getElementById(
+
+        "vidas"
 
     );
 
@@ -1886,31 +2154,19 @@ function descobrirFaseLocal(
 
     }
 
-    if (
-
-        dias < 8
-
-    ) {
+    if (dias < 8) {
 
         return "bebe";
 
     }
 
-    if (
-
-        dias < 31
-
-    ) {
+    if (dias < 31) {
 
         return "filhote";
 
     }
 
-    if (
-
-        dias < 91
-
-    ) {
+    if (dias < 91) {
 
         return "jovem";
 
@@ -1962,11 +2218,7 @@ function carregarImagemPetton() {
 
     }
 
-    if (
-
-        !dados
-
-    ) {
+    if (!dados) {
 
         imagemPetton.src =
 
@@ -1986,15 +2238,13 @@ function carregarImagemPetton() {
 
     const especie =
 
-        dados.identidadeVisual
-
-            ?.especie ||
+        dados.identidadeVisual?.especie ||
 
         dados.especie ||
 
         "gato";
 
-    const imagemGerada =
+    let imagemGerada =
 
         dados.identidadeVisual
 
@@ -2007,6 +2257,26 @@ function carregarImagemPetton() {
         imagemGerada
 
     ) {
+
+        if (
+
+            !imagemGerada.startsWith("http://") &&
+
+            !imagemGerada.startsWith("https://") &&
+
+            !imagemGerada.startsWith("/") &&
+
+            !imagemGerada.startsWith("../")
+
+        ) {
+
+            imagemGerada =
+
+                "../" +
+
+                imagemGerada;
+
+        }
 
         imagemPetton.src =
 
@@ -2051,6 +2321,264 @@ function carregarImagemPetton() {
     imagemPetton.src =
 
         "../petton-original.png";
+
+}
+
+/* =========================================================
+
+   VIDAS
+
+========================================================= */
+
+function atualizarVidas() {
+
+    if (
+
+        vidas <= 0
+
+    ) {
+
+        vidasEl.textContent =
+
+            "🖤🖤";
+
+        return;
+
+    }
+
+    if (
+
+        vidas === 1
+
+    ) {
+
+        vidasEl.textContent =
+
+            "❤️🖤";
+
+        return;
+
+    }
+
+    vidasEl.textContent =
+
+        "❤️❤️";
+
+}
+
+/* =========================================================
+
+   PERDER VIDA
+
+========================================================= */
+
+function perderVida(
+
+    motivo
+
+) {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    const agora =
+
+        performance.now();
+
+    /*
+
+       Evita perder as duas vidas
+
+       praticamente no mesmo frame.
+
+    */
+
+    if (
+
+        agora <
+
+        invulneravelAte
+
+    ) {
+
+        return;
+
+    }
+
+    invulneravelAte =
+
+        agora +
+
+        900;
+
+    vidas -=
+
+        1;
+
+    vidas =
+
+        Math.max(
+
+            0,
+
+            vidas
+
+        );
+
+    atualizarVidas();
+
+    app.classList.remove(
+
+        "dano"
+
+    );
+
+    void app.offsetWidth;
+
+    app.classList.add(
+
+        "dano"
+
+    );
+
+    if (
+
+        motivo ===
+
+        "tesoura"
+
+    ) {
+
+        mostrarMensagem(
+
+            "✂️ Linha cortada! -1 ❤️"
+
+        );
+
+        tocarTesoura();
+
+        /*
+
+           Quando corta a linha,
+
+           o anzol volta imediatamente.
+
+        */
+
+        cancelarLancamento();
+
+    } else if (
+
+        motivo ===
+
+        "polvo"
+
+    ) {
+
+        mostrarMensagem(
+
+            "🐙 Polvo! -1 ❤️"
+
+        );
+
+        tocarPolvo();
+
+    }
+
+    if (
+
+        vidas <= 0
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    jogando
+
+                ) {
+
+                    finalizarJogo(
+
+                        motivo
+
+                    );
+
+                }
+
+            },
+
+            280
+
+        );
+
+    }
+
+}
+
+/* =========================================================
+
+   CANCELAR LANÇAMENTO
+
+========================================================= */
+
+function cancelarLancamento() {
+
+    if (
+
+        objetoPescado &&
+
+        objetoPescado.vivo
+
+    ) {
+
+        /*
+
+           Se a linha foi cortada
+
+           enquanto carregava algo,
+
+           o objeto é solto.
+
+        */
+
+        objetoPescado.capturado =
+
+            false;
+
+        objetoPescado =
+
+            null;
+
+    }
+
+    estadoAnzol =
+
+        "parado";
+
+    anzolY =
+
+        172;
+
+    atualizarVisualAnzol();
+
+    document.getElementById(
+
+        "instrucao"
+
+    ).style.opacity =
+
+        "1";
 
 }
 
@@ -2348,23 +2876,35 @@ function criarObjeto() {
 
     /*
 
-       LIXO AUMENTA COM O NÍVEL
+       POLVO:
 
-       Nível 1 = 25%
+       nível 1 = 6%
 
-       Nível 2 = 29%
+       vai aumentando
 
-       Nível 3 = 33%
+       até no máximo 16%.
 
-       Nível 4 = 37%
+       LIXO:
 
-       Nível 5 = 41%
+       mantém forte presença.
 
-       Nível 6+ = máximo 45%
+       ESPECIAL:
 
-       Peixe especial = 10%
+       10%.
 
     */
+
+    const chancePolvo =
+
+        Math.min(
+
+            .16,
+
+            .06 +
+
+            (nivel - 1) * .02
+
+        );
 
     const chanceLixo =
 
@@ -2386,6 +2926,20 @@ function criarObjeto() {
 
         sorteio <
 
+        chancePolvo
+
+    ) {
+
+        tipo =
+
+            "polvo";
+
+    } else if (
+
+        sorteio <
+
+        chancePolvo +
+
         chanceLixo
 
     ) {
@@ -2397,6 +2951,8 @@ function criarObjeto() {
     } else if (
 
         sorteio <
+
+        chancePolvo +
 
         chanceLixo +
 
@@ -2464,6 +3020,24 @@ function criarObjeto() {
 
             "🐠";
 
+    } else if (
+
+        tipo ===
+
+        "polvo"
+
+    ) {
+
+        elemento.classList.add(
+
+            "polvo"
+
+        );
+
+        elemento.textContent =
+
+            "🐙";
+
     } else {
 
         elemento.textContent =
@@ -2488,9 +3062,9 @@ function criarObjeto() {
 
     const tamanho =
 
-        tipo ===
+        tipo === "especial" ||
 
-            "especial"
+        tipo === "polvo"
 
             ? 61
 
@@ -2518,25 +3092,67 @@ function criarObjeto() {
 
         );
 
-    const y =
-
-        minimoY +
-
-        Math.random() *
-
-        (
-
-            maximoY -
-
-            minimoY
-
-        );
-
     /*
 
-       VELOCIDADE BASE DOS PEIXES
+       Polvo fica geralmente
+
+       mais para baixo.
 
     */
+
+    let y;
+
+    if (
+
+        tipo ===
+
+        "polvo"
+
+    ) {
+
+        const inicioPolvo =
+
+            Math.max(
+
+                minimoY + 80,
+
+                alturaArea * .58
+
+            );
+
+        y =
+
+            inicioPolvo +
+
+            Math.random() *
+
+            Math.max(
+
+                30,
+
+                maximoY -
+
+                inicioPolvo
+
+            );
+
+    } else {
+
+        y =
+
+            minimoY +
+
+            Math.random() *
+
+            (
+
+                maximoY -
+
+                minimoY
+
+            );
+
+    }
 
     let velocidade =
 
@@ -2545,14 +3161,6 @@ function criarObjeto() {
         (nivel - 1) * 9 +
 
         Math.random() * 45;
-
-    /*
-
-       PEIXE ESPECIAL
-
-       um pouco mais rápido.
-
-    */
 
     if (
 
@@ -2568,20 +3176,6 @@ function criarObjeto() {
 
     }
 
-    /*
-
-       LIXO:
-
-       2,25 VEZES MAIS RÁPIDO.
-
-       Agora o lixo cruza a tela
-
-       muito mais rápido que
-
-       os peixes.
-
-    */
-
     if (
 
         tipo ===
@@ -2593,6 +3187,20 @@ function criarObjeto() {
         velocidade *=
 
             2.25;
+
+    }
+
+    if (
+
+        tipo ===
+
+        "polvo"
+
+    ) {
+
+        velocidade *=
+
+            .85;
 
     }
 
@@ -2616,7 +3224,9 @@ function criarObjeto() {
 
         vx < 0 &&
 
-        tipo !== "lixo"
+        tipo !== "lixo" &&
+
+        tipo !== "polvo"
 
     ) {
 
@@ -2736,12 +3346,6 @@ function atualizarObjetos(
 
             delta;
 
-        /*
-
-           Lixo balança um pouco mais.
-
-    */
-
         const movimentoVertical =
 
             Math.sin(
@@ -2758,7 +3362,13 @@ function atualizarObjetos(
 
                     ? 9
 
-                    : 5
+                    : objeto.tipo ===
+
+                        "polvo"
+
+                        ? 4
+
+                        : 5
 
             );
 
@@ -2829,6 +3439,616 @@ function atualizarObjetos(
             }
 
         );
+
+}
+
+/* =========================================================
+
+   CRIAR TESOURA
+
+========================================================= */
+
+function criarTesoura() {
+
+    if (
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    /*
+
+       Evita excesso de tesouras.
+
+    */
+
+    const maxTesouras =
+
+        nivel >= 5
+
+            ? 2
+
+            : 1;
+
+    const ativas =
+
+        tesouras.filter(
+
+            item =>
+
+                item.vivo
+
+        ).length;
+
+    if (
+
+        ativas >=
+
+        maxTesouras
+
+    ) {
+
+        return;
+
+    }
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "tesoura";
+
+    elemento.textContent =
+
+        "✂️";
+
+    const larguraArea =
+
+        areaJogo.clientWidth;
+
+    const alturaArea =
+
+        areaJogo.clientHeight;
+
+    const vemDaEsquerda =
+
+        Math.random() >
+
+        .5;
+
+    /*
+
+       A tesoura cruza exatamente
+
+       a região onde a linha pode
+
+       estar estendida.
+
+    */
+
+    const minimoY =
+
+        245;
+
+    const maximoY =
+
+        Math.max(
+
+            minimoY + 50,
+
+            alturaArea - 145
+
+        );
+
+    const y =
+
+        minimoY +
+
+        Math.random() *
+
+        (
+
+            maximoY -
+
+            minimoY
+
+        );
+
+    const x =
+
+        vemDaEsquerda
+
+            ? -65
+
+            : larguraArea + 10;
+
+    /*
+
+       Fica mais rápida
+
+       conforme o nível.
+
+    */
+
+    const velocidade =
+
+        Math.min(
+
+            310,
+
+            135 +
+
+            (nivel - 1) * 18 +
+
+            Math.random() * 40
+
+        );
+
+    const vx =
+
+        vemDaEsquerda
+
+            ? velocidade
+
+            : -velocidade;
+
+    elemento.style.left =
+
+        x + "px";
+
+    elemento.style.top =
+
+        y + "px";
+
+    if (
+
+        vx < 0
+
+    ) {
+
+        elemento.style.transform =
+
+            "scaleX(-1)";
+
+    }
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    tesouras.push({
+
+        elemento:
+
+            elemento,
+
+        x:
+
+            x,
+
+        y:
+
+            y,
+
+        vx:
+
+            vx,
+
+        vivo:
+
+            true,
+
+        cortou:
+
+            false
+
+    });
+
+}
+
+/* =========================================================
+
+   MOVIMENTO TESOURA
+
+========================================================= */
+
+function atualizarTesouras(
+
+    delta
+
+) {
+
+    const largura =
+
+        areaJogo.clientWidth;
+
+    for (
+
+        const tesoura
+
+        of tesouras
+
+    ) {
+
+        if (
+
+            !tesoura.vivo
+
+        ) {
+
+            continue;
+
+        }
+
+        tesoura.x +=
+
+            tesoura.vx *
+
+            delta;
+
+        tesoura.elemento.style.left =
+
+            tesoura.x +
+
+            "px";
+
+        /*
+
+           Só fica "perigosa"
+
+           visualmente quando
+
+           a linha está lançada.
+
+        */
+
+        if (
+
+            estadoAnzol !==
+
+            "parado"
+
+        ) {
+
+            tesoura.elemento
+
+                .classList
+
+                .add(
+
+                    "perigosa"
+
+                );
+
+        } else {
+
+            tesoura.elemento
+
+                .classList
+
+                .remove(
+
+                    "perigosa"
+
+                );
+
+        }
+
+        verificarCorteLinha(
+
+            tesoura
+
+        );
+
+        if (
+
+            tesoura.vx > 0 &&
+
+            tesoura.x >
+
+                largura + 80
+
+        ) {
+
+            removerTesoura(
+
+                tesoura
+
+            );
+
+        }
+
+        if (
+
+            tesoura.vx < 0 &&
+
+            tesoura.x <
+
+                -90
+
+        ) {
+
+            removerTesoura(
+
+                tesoura
+
+            );
+
+        }
+
+    }
+
+    tesouras =
+
+        tesouras.filter(
+
+            function(item) {
+
+                return item.vivo;
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   VERIFICAR CORTE DA LINHA
+
+========================================================= */
+
+function verificarCorteLinha(
+
+    tesoura
+
+) {
+
+    if (
+
+        !jogando ||
+
+        !tesoura.vivo ||
+
+        tesoura.cortou ||
+
+        estadoAnzol ===
+
+            "parado"
+
+    ) {
+
+        return;
+
+    }
+
+    const rectTesoura =
+
+        tesoura.elemento
+
+            .getBoundingClientRect();
+
+    const rectLinha =
+
+        linhaEl
+
+            .getBoundingClientRect();
+
+    /*
+
+       A linha é fina.
+
+       Criamos uma área de alguns
+
+       pixels para a colisão ficar
+
+       justa no celular.
+
+    */
+
+    const linhaHit = {
+
+        left:
+
+            rectLinha.left - 5,
+
+        right:
+
+            rectLinha.right + 5,
+
+        top:
+
+            rectLinha.top,
+
+        bottom:
+
+            rectLinha.bottom
+
+    };
+
+    const tesouraHit = {
+
+        left:
+
+            rectTesoura.left + 8,
+
+        right:
+
+            rectTesoura.right - 8,
+
+        top:
+
+            rectTesoura.top + 8,
+
+        bottom:
+
+            rectTesoura.bottom - 7
+
+    };
+
+    const bateu =
+
+        linhaHit.left <
+
+            tesouraHit.right &&
+
+        linhaHit.right >
+
+            tesouraHit.left &&
+
+        linhaHit.top <
+
+            tesouraHit.bottom &&
+
+        linhaHit.bottom >
+
+            tesouraHit.top;
+
+    if (
+
+        !bateu
+
+    ) {
+
+        return;
+
+    }
+
+    tesoura.cortou =
+
+        true;
+
+    /*
+
+       A tesoura continua,
+
+       mas não pode cortar
+
+       duas vezes.
+
+    */
+
+    tesoura.elemento
+
+        .classList
+
+        .remove(
+
+            "perigosa"
+
+        );
+
+    perderVida(
+
+        "tesoura"
+
+    );
+
+}
+
+/* =========================================================
+
+   REMOVER TESOURA
+
+========================================================= */
+
+function removerTesoura(
+
+    tesoura
+
+) {
+
+    tesoura.vivo =
+
+        false;
+
+    try {
+
+        tesoura.elemento.remove();
+
+    } catch (erro) {
+
+        /* nada */
+
+    }
+
+}
+
+/* =========================================================
+
+   SPAWN TESOURA
+
+========================================================= */
+
+function tentarCriarTesoura(
+
+    tempoAtual
+
+) {
+
+    if (
+
+        tempoAtual -
+
+        ultimoSpawnTesoura <
+
+        proximaTesoura
+
+    ) {
+
+        return;
+
+    }
+
+    ultimoSpawnTesoura =
+
+        tempoAtual;
+
+    criarTesoura();
+
+    /*
+
+       Nível 1:
+
+       aproximadamente 5-7 segundos.
+
+       Depois aparece com
+
+       mais frequência.
+
+       Nunca vira chuva de tesoura.
+
+    */
+
+    const base =
+
+        Math.max(
+
+            2600,
+
+            5700 -
+
+            (nivel - 1) * 420
+
+        );
+
+    proximaTesoura =
+
+        base +
+
+        Math.random() * 1700;
 
 }
 
@@ -3034,13 +4254,13 @@ function finalizarCaptura() {
 
         tocarBonus();
 
-    } else {
+    } else if (
 
-        /*
+        objeto.tipo ===
 
-           LIXO AGORA TIRA 3.
+        "lixo"
 
-    */
+    ) {
 
         pontos =
 
@@ -3070,6 +4290,30 @@ function finalizarCaptura() {
 
         tocarLixo();
 
+    } else if (
+
+        objeto.tipo ===
+
+        "polvo"
+
+    ) {
+
+        mostrarPonto(
+
+            "-1 ❤️",
+
+            false,
+
+            true
+
+        );
+
+        perderVida(
+
+            "polvo"
+
+        );
+
     }
 
     pontosEl.textContent =
@@ -3088,7 +4332,7 @@ function finalizarCaptura() {
 
 /* =========================================================
 
-   REMOVER
+   REMOVER OBJETO
 
 ========================================================= */
 
@@ -3296,7 +4540,7 @@ function mostrarMensagem(
 
 /* =========================================================
 
-   SPAWN
+   SPAWN OBJETOS
 
 ========================================================= */
 
@@ -3305,14 +4549,6 @@ function tentarCriarObjeto(
     tempoAtual
 
 ) {
-
-    /*
-
-       Também aumenta a quantidade
-
-       de objetos conforme sobe nível.
-
-    */
 
     const intervalo =
 
@@ -3371,16 +4607,6 @@ function tentarCriarObjeto(
         criarObjeto();
 
     }
-
-    /*
-
-       A partir do nível 2
-
-       já pode aparecer um
-
-       segundo objeto rapidamente.
-
-    */
 
     if (
 
@@ -3450,7 +4676,31 @@ function limparObjetos() {
 
     }
 
+    for (
+
+        const tesoura
+
+        of tesouras
+
+    ) {
+
+        try {
+
+            tesoura.elemento.remove();
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
     objetos =
+
+        [];
+
+    tesouras =
 
         [];
 
@@ -3546,7 +4796,11 @@ function loop(
 
     ) {
 
-        finalizarJogo();
+        finalizarJogo(
+
+            "tempo"
+
+        );
 
         return;
 
@@ -3558,7 +4812,19 @@ function loop(
 
     );
 
+    tentarCriarTesoura(
+
+        tempoAtual
+
+    );
+
     atualizarObjetos(
+
+        delta
+
+    );
+
+    atualizarTesouras(
 
         delta
 
@@ -3602,6 +4868,10 @@ function iniciarJogo() {
 
         );
 
+        animacaoId =
+
+            null;
+
     }
 
     limparObjetos();
@@ -3614,6 +4884,10 @@ function iniciarJogo() {
 
         1;
 
+    vidas =
+
+        VIDAS_INICIAIS;
+
     tempoRestante =
 
         TEMPO_JOGO;
@@ -3623,6 +4897,20 @@ function iniciarJogo() {
         0;
 
     ultimoSpawn =
+
+        0;
+
+    ultimoSpawnTesoura =
+
+        performance.now();
+
+    proximaTesoura =
+
+        4500 +
+
+        Math.random() * 1800;
+
+    invulneravelAte =
 
         0;
 
@@ -3654,6 +4942,8 @@ function iniciarJogo() {
 
         );
 
+    atualizarVidas();
+
     telaInicial.classList.add(
 
         "oculto"
@@ -3682,7 +4972,11 @@ function iniciarJogo() {
 
     /*
 
-       Já começa movimentado.
+       Começa com peixes,
+
+       sem jogar perigo
+
+       imediatamente.
 
     */
 
@@ -3704,7 +4998,7 @@ function iniciarJogo() {
 
         },
 
-        180
+        220
 
     );
 
@@ -3724,7 +5018,7 @@ function iniciarJogo() {
 
         },
 
-        360
+        440
 
     );
 
@@ -3744,27 +5038,7 @@ function iniciarJogo() {
 
         },
 
-        540
-
-    );
-
-    setTimeout(
-
-        function() {
-
-            if (
-
-                jogando
-
-            ) {
-
-                criarObjeto();
-
-            }
-
-        },
-
-        720
+        660
 
     );
 
@@ -3786,7 +5060,11 @@ function iniciarJogo() {
 
 ========================================================= */
 
-function finalizarJogo() {
+function finalizarJogo(
+
+    motivo = "tempo"
+
+) {
 
     if (
 
@@ -3874,7 +5152,91 @@ function finalizarJogo() {
 
         recorde;
 
-    tocarFim();
+    const titulo =
+
+        document.getElementById(
+
+            "tituloFim"
+
+        );
+
+    const motivoFim =
+
+        document.getElementById(
+
+            "motivoFim"
+
+        );
+
+    const icone =
+
+        document.getElementById(
+
+            "iconeFim"
+
+        );
+
+    if (
+
+        motivo ===
+
+        "tesoura"
+
+    ) {
+
+        icone.textContent =
+
+            "✂️💥";
+
+        titulo.textContent =
+
+            "Linha cortada!";
+
+        motivoFim.textContent =
+
+            "Você perdeu suas duas vidas. Observe as tesouras antes de lançar o anzol.";
+
+        tocarGameOver();
+
+    } else if (
+
+        motivo ===
+
+        "polvo"
+
+    ) {
+
+        icone.textContent =
+
+            "🐙💥";
+
+        titulo.textContent =
+
+            "O polvo venceu!";
+
+        motivoFim.textContent =
+
+            "Você perdeu suas duas vidas. Cuidado ao fisgar perto dos polvos.";
+
+        tocarGameOver();
+
+    } else {
+
+        icone.textContent =
+
+            "🏆🐟";
+
+        titulo.textContent =
+
+            "Pesca encerrada!";
+
+        motivoFim.textContent =
+
+            "Você conseguiu sobreviver aos 90 segundos!";
+
+        tocarFim();
+
+    }
 
     telaFim.classList.remove(
 
@@ -3908,11 +5270,25 @@ function voltarMenu() {
 
         );
 
+        animacaoId =
+
+            null;
+
     }
+
+    const destino =
+
+        new URL(
+
+            "./brincar.html",
+
+            document.baseURI
+
+        ).href;
 
     window.location.assign(
 
-        "./brincar.html"
+        destino
 
     );
 
@@ -4332,6 +5708,86 @@ function tocarLixo() {
 
 }
 
+function tocarPolvo() {
+
+    tocarTom(
+
+        250,
+
+        .12,
+
+        "sawtooth",
+
+        .055
+
+    );
+
+    tocarTom(
+
+        160,
+
+        .20,
+
+        "square",
+
+        .05,
+
+        .08
+
+    );
+
+}
+
+function tocarTesoura() {
+
+    /*
+
+       Som seco de corte.
+
+    */
+
+    tocarTom(
+
+        1250,
+
+        .045,
+
+        "square",
+
+        .055
+
+    );
+
+    tocarTom(
+
+        760,
+
+        .06,
+
+        "square",
+
+        .05,
+
+        .035
+
+    );
+
+    tocarTom(
+
+        180,
+
+        .17,
+
+        "sawtooth",
+
+        .045,
+
+        .09
+
+    );
+
+}
+
 function tocarNivel() {
 
     tocarTom(
@@ -4371,6 +5827,50 @@ function tocarNivel() {
         .05,
 
         .16
+
+    );
+
+}
+
+function tocarGameOver() {
+
+    tocarTom(
+
+        330,
+
+        .12,
+
+        "square",
+
+        .055
+
+    );
+
+    tocarTom(
+
+        220,
+
+        .16,
+
+        "square",
+
+        .055,
+
+        .11
+
+    );
+
+    tocarTom(
+
+        110,
+
+        .28,
+
+        "sawtooth",
+
+        .05,
+
+        .24
 
     );
 
@@ -4473,6 +5973,8 @@ function alternarSom() {
 carregarRecorde();
 
 carregarImagemPetton();
+
+atualizarVidas();
 
 atualizarVisualAnzol();
 
