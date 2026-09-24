@@ -414,13 +414,7 @@ body {
 
         );
 
-    will-change:
-
-        left,
-
-        top,
-
-        transform;
+    will-change: left, top;
 
 }
 
@@ -500,6 +494,96 @@ body {
 
 /* =========================================================
 
+   FERRÃO
+
+========================================================= */
+
+.ferrao {
+
+    position: absolute;
+
+    z-index: 35;
+
+    width: 18px;
+
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 23px;
+
+    line-height: 1;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    filter:
+
+        drop-shadow(
+
+            0 3px 2px rgba(0,0,0,.28)
+
+        );
+
+    will-change: left, top;
+
+}
+
+.aviso-tiro {
+
+    position: absolute;
+
+    z-index: 34;
+
+    width: 9px;
+
+    height: 9px;
+
+    border-radius: 50%;
+
+    background:
+
+        rgba(255,60,40,.9);
+
+    box-shadow:
+
+        0 0 9px rgba(255,60,40,.9);
+
+    pointer-events: none;
+
+    animation:
+
+        piscarTiro .18s infinite alternate;
+
+}
+
+@keyframes piscarTiro {
+
+    from {
+
+        opacity: .35;
+
+        transform: scale(.7);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1.25);
+
+    }
+
+}
+
+/* =========================================================
+
    PETTON
 
 ========================================================= */
@@ -560,7 +644,7 @@ body {
 
 /* =========================================================
 
-   PONTOS FLUTUANTES
+   PONTOS
 
 ========================================================= */
 
@@ -1202,7 +1286,7 @@ body {
 
     >
 
-        ⚠️ Cuidado com as abelhas!
+        ⚠️ Cuidado! As abelhas atiram!
 
     </div>
 
@@ -1252,13 +1336,13 @@ body {
 
         <p>
 
-            🐝 = PERDE!
+            🐝 ou ferrão = PERDE!
 
         </p>
 
         <p>
 
-            Sobreviva por 90 segundos.
+            Cuidado: as abelhas atiram para baixo!
 
         </p>
 
@@ -1294,7 +1378,7 @@ body {
 
 </div>
 
-<!-- FIM -->
+<!-- TELA FINAL -->
 
 <div
 
@@ -1419,6 +1503,8 @@ let ultimoSpawn = 0;
 let animacaoId = null;
 
 let insetos = [];
+
+let ferroes = [];
 
 let avisoMostrado = false;
 
@@ -1674,7 +1760,7 @@ function carregarImagemPetton() {
 
         "gato";
 
-    const imagemGerada =
+    let imagemGerada =
 
         dados.identidadeVisual
 
@@ -1683,6 +1769,26 @@ function carregarImagemPetton() {
             ?.[fase];
 
     if (imagemGerada) {
+
+        if (
+
+            !imagemGerada.startsWith("http://") &&
+
+            !imagemGerada.startsWith("https://") &&
+
+            !imagemGerada.startsWith("/") &&
+
+            !imagemGerada.startsWith("../")
+
+        ) {
+
+            imagemGerada =
+
+                "../" +
+
+                imagemGerada;
+
+        }
 
         imagemPetton.src =
 
@@ -1950,15 +2056,31 @@ function criarInseto() {
 
     }
 
+    /*
+
+       MAIS ABELHAS:
+
+       nível 1 = 35%
+
+       nível 2 = 40%
+
+       nível 3 = 45%
+
+       nível 4 = 50%
+
+       nível 5+ = 55%
+
+    */
+
     const chanceAbelha =
 
         Math.min(
 
-            .44,
+            .55,
 
-            .18 +
+            .35 +
 
-            (nivel - 1) * .04
+            (nivel - 1) * .05
 
         );
 
@@ -2126,7 +2248,61 @@ function criarInsetoTipo(
 
         );
 
-    let y;
+    /*
+
+       Os insetos começam mais próximos
+
+       da parte jogável.
+
+    */
+
+    const yMin = 72;
+
+    let yMax;
+
+    if (
+
+        tipo === "abelha"
+
+    ) {
+
+        yMax =
+
+            Math.max(
+
+                150,
+
+                alturaArea * .48
+
+            );
+
+    } else {
+
+        yMax =
+
+            Math.max(
+
+                150,
+
+                alturaArea * .52
+
+            );
+
+    }
+
+    let y =
+
+        yMin +
+
+        Math.random() *
+
+        Math.max(
+
+            30,
+
+            yMax - yMin
+
+        );
 
     if (
 
@@ -2136,57 +2312,17 @@ function criarInsetoTipo(
 
     ) {
 
-        const maxInicial =
-
-            Math.max(
-
-                130,
-
-                alturaArea * .35
-
-            );
-
         y =
 
-            95 +
+            90 +
 
             Math.random() *
 
             Math.max(
 
-                25,
+                30,
 
-                maxInicial - 95
-
-            );
-
-    } else {
-
-        const yMin =
-
-            75;
-
-        const yMax =
-
-            Math.max(
-
-                yMin + 30,
-
-                alturaArea - 230
-
-            );
-
-        y =
-
-            yMin +
-
-            Math.random() *
-
-            (
-
-                yMax -
-
-                yMin
+                alturaArea * .30
 
             );
 
@@ -2206,13 +2342,31 @@ function criarInsetoTipo(
 
     );
 
+    /*
+
+       RITMO MAIS RÁPIDO
+
+    */
+
     let velocidadeBase =
 
-        65 +
+        110 +
 
-        (nivel - 1) * 10 +
+        (nivel - 1) * 14 +
 
-        Math.random() * 35;
+        Math.random() * 42;
+
+    if (
+
+        tipo === "especial"
+
+    ) {
+
+        velocidadeBase *=
+
+            1.15;
+
+    }
 
     if (
 
@@ -2222,23 +2376,7 @@ function criarInsetoTipo(
 
         velocidadeBase *=
 
-            1.28;
-
-    }
-
-    if (
-
-        inicial &&
-
-        tipo === "abelha"
-
-    ) {
-
-        velocidadeBase =
-
-            100 +
-
-            Math.random() * 30;
+            1.22;
 
     }
 
@@ -2249,6 +2387,54 @@ function criarInsetoTipo(
         Math.PI *
 
         2;
+
+    let forcaDescida = 0;
+
+    if (
+
+        tipo !== "abelha"
+
+    ) {
+
+        forcaDescida =
+
+            Math.min(
+
+                150,
+
+                70 +
+
+                (nivel - 1) * 12 +
+
+                Math.random() * 22
+
+            );
+
+        if (
+
+            tipo === "especial"
+
+        ) {
+
+            forcaDescida *=
+
+                1.12;
+
+        }
+
+    }
+
+    const agora =
+
+        performance.now();
+
+    /*
+
+       Cada abelha tem seu próprio
+
+       relógio de disparo.
+
+    */
 
     const inseto = {
 
@@ -2300,9 +2486,21 @@ function criarInsetoTipo(
 
             2,
 
+        forcaDescida:
+
+            forcaDescida,
+
         viva:
 
-            true
+            true,
+
+        proximoTiro:
+
+            agora +
+
+            1300 +
+
+            Math.random() * 1500
 
     };
 
@@ -2406,7 +2604,7 @@ function mostrarAvisoAbelha() {
 
 /* =========================================================
 
-   REMOVER
+   REMOVER INSETO
 
 ========================================================= */
 
@@ -2430,7 +2628,469 @@ function removerInseto(inseto) {
 
 /* =========================================================
 
-   MOVIMENTO
+   CRIAR FERRÃO
+
+========================================================= */
+
+function criarFerrao(abelha) {
+
+    if (
+
+        !jogando ||
+
+        !abelha ||
+
+        !abelha.viva
+
+    ) {
+
+        return;
+
+    }
+
+    /*
+
+       Limita quantidade de ferrões
+
+       simultâneos para não virar
+
+       uma parede impossível.
+
+    */
+
+    const limite =
+
+        Math.min(
+
+            8,
+
+            3 +
+
+            nivel
+
+        );
+
+    if (
+
+        ferroes.length >=
+
+        limite
+
+    ) {
+
+        return;
+
+    }
+
+    const elemento =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    elemento.className =
+
+        "ferrao";
+
+    /*
+
+       Triângulo apontando para baixo.
+
+    */
+
+    elemento.textContent =
+
+        "▼";
+
+    const x =
+
+        abelha.x +
+
+        abelha.tamanho / 2 -
+
+        9;
+
+    const y =
+
+        abelha.y +
+
+        abelha.tamanho -
+
+        3;
+
+    elemento.style.left =
+
+        x + "px";
+
+    elemento.style.top =
+
+        y + "px";
+
+    areaJogo.appendChild(
+
+        elemento
+
+    );
+
+    /*
+
+       Ferrões ficam progressivamente
+
+       mais rápidos.
+
+    */
+
+    const velocidade =
+
+        Math.min(
+
+            500,
+
+            290 +
+
+            (nivel - 1) * 28
+
+        );
+
+    ferroes.push({
+
+        elemento:
+
+            elemento,
+
+        x:
+
+            x,
+
+        y:
+
+            y,
+
+        largura:
+
+            18,
+
+        altura:
+
+            30,
+
+        velocidade:
+
+            velocidade,
+
+        vivo:
+
+            true
+
+    });
+
+    tocarTiro();
+
+}
+
+/* =========================================================
+
+   DISPARO DAS ABELHAS
+
+========================================================= */
+
+function atualizarTirosAbelhas(
+
+    tempoAtual
+
+) {
+
+    for (
+
+        const inseto
+
+        of insetos
+
+    ) {
+
+        if (
+
+            !inseto.viva ||
+
+            inseto.tipo !==
+
+                "abelha"
+
+        ) {
+
+            continue;
+
+        }
+
+        if (
+
+            tempoAtual <
+
+            inseto.proximoTiro
+
+        ) {
+
+            continue;
+
+        }
+
+        /*
+
+           A abelha só atira se estiver
+
+           numa posição razoável acima
+
+           da área do Petton.
+
+        */
+
+        const altura =
+
+            areaJogo.clientHeight;
+
+        if (
+
+            inseto.y <
+
+            altura - 170
+
+        ) {
+
+            criarFerrao(
+
+                inseto
+
+            );
+
+        }
+
+        /*
+
+           Quanto maior o nível,
+
+           menor o intervalo entre tiros.
+
+           Nível 1 ainda dá tempo
+
+           de aprender.
+
+        */
+
+        const intervaloBase =
+
+            Math.max(
+
+                850,
+
+                1900 -
+
+                (nivel - 1) * 150
+
+            );
+
+        inseto.proximoTiro =
+
+            tempoAtual +
+
+            intervaloBase +
+
+            Math.random() * 700;
+
+    }
+
+}
+
+/* =========================================================
+
+   MOVIMENTO DOS FERRÕES
+
+========================================================= */
+
+function atualizarFerroes(delta) {
+
+    const altura =
+
+        areaJogo.clientHeight;
+
+    for (
+
+        const ferrao
+
+        of ferroes
+
+    ) {
+
+        if (!ferrao.vivo) {
+
+            continue;
+
+        }
+
+        ferrao.y +=
+
+            ferrao.velocidade *
+
+            delta;
+
+        ferrao.elemento.style.top =
+
+            ferrao.y +
+
+            "px";
+
+        if (
+
+            ferrao.y >
+
+            altura + 40
+
+        ) {
+
+            ferrao.vivo =
+
+                false;
+
+            try {
+
+                ferrao.elemento.remove();
+
+            } catch (erro) {
+
+                /* nada */
+
+            }
+
+        }
+
+    }
+
+    ferroes =
+
+        ferroes.filter(
+
+            function(item) {
+
+                return item.vivo;
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
+   COLISÃO FERRÃO
+
+========================================================= */
+
+function verificarColisaoFerroes() {
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    const petRect =
+
+        petton
+
+            .getBoundingClientRect();
+
+    const petHit = {
+
+        left:
+
+            petRect.left + 20,
+
+        right:
+
+            petRect.right - 20,
+
+        top:
+
+            petRect.top + 18,
+
+        bottom:
+
+            petRect.bottom - 8
+
+    };
+
+    for (
+
+        const ferrao
+
+        of ferroes
+
+    ) {
+
+        if (!ferrao.vivo) {
+
+            continue;
+
+        }
+
+        const rect =
+
+            ferrao.elemento
+
+                .getBoundingClientRect();
+
+        const bateu =
+
+            petHit.left <
+
+                rect.right - 3 &&
+
+            petHit.right >
+
+                rect.left + 3 &&
+
+            petHit.top <
+
+                rect.bottom - 3 &&
+
+            petHit.bottom >
+
+                rect.top + 3;
+
+        if (bateu) {
+
+            ferrao.vivo =
+
+                false;
+
+            try {
+
+                ferrao.elemento.remove();
+
+            } catch (erro) {
+
+                /* nada */
+
+            }
+
+            finalizarJogo(
+
+                "ferrao"
+
+            );
+
+            return;
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+
+   MOVIMENTO DOS INSETOS
 
 ========================================================= */
 
@@ -2443,6 +3103,10 @@ function atualizarInsetos(delta) {
     const altura =
 
         areaJogo.clientHeight;
+
+    const alvoBorboleta =
+
+        altura - 175;
 
     for (
 
@@ -2468,11 +3132,17 @@ function atualizarInsetos(delta) {
 
                     "abelha"
 
-                    ? 8
+                    ? 9
 
-                    : 5
+                    : 6
 
             );
+
+        /* =================================================
+
+           ABELHAS PERSEGUEM HORIZONTALMENTE
+
+        ================================================= */
 
         if (
 
@@ -2518,17 +3188,17 @@ function atualizarInsetos(delta) {
 
                 Math.min(
 
-                    48,
+                    65,
 
-                    15 +
+                    23 +
 
-                    nivel * 4
+                    nivel * 5
 
                 );
 
             if (
 
-                diferenca > 8
+                diferenca > 7
 
             ) {
 
@@ -2540,7 +3210,7 @@ function atualizarInsetos(delta) {
 
             } else if (
 
-                diferenca < -8
+                diferenca < -7
 
             ) {
 
@@ -2554,9 +3224,15 @@ function atualizarInsetos(delta) {
 
             const maxVel =
 
-                170 +
+                Math.min(
 
-                nivel * 13;
+                    260,
+
+                    190 +
+
+                    nivel * 15
+
+                );
 
             inseto.vx =
 
@@ -2575,6 +3251,88 @@ function atualizarInsetos(delta) {
                 );
 
         }
+
+        /* =================================================
+
+           BORBOLETAS DESCEM
+
+        ================================================= */
+
+        if (
+
+            inseto.tipo !==
+
+            "abelha"
+
+        ) {
+
+            if (
+
+                inseto.y <
+
+                alvoBorboleta
+
+            ) {
+
+                inseto.vy +=
+
+                    inseto.forcaDescida *
+
+                    delta;
+
+            }
+
+            if (
+
+                inseto.y >
+
+                alvoBorboleta + 35
+
+            ) {
+
+                inseto.vy -=
+
+                    80 *
+
+                    delta;
+
+            }
+
+            const maxVy =
+
+                Math.min(
+
+                    230,
+
+                    155 +
+
+                    nivel * 10
+
+                );
+
+            inseto.vy =
+
+                Math.max(
+
+                    -110,
+
+                    Math.min(
+
+                        maxVy,
+
+                        inseto.vy
+
+                    )
+
+                );
+
+        }
+
+        /* =================================================
+
+           MOVIMENTO
+
+        ================================================= */
 
         inseto.x +=
 
@@ -2600,15 +3358,21 @@ function atualizarInsetos(delta) {
 
                         "abelha"
 
-                        ? 25
+                        ? 30
 
-                        : 18
+                        : 23
 
                 )
 
             ) *
 
             delta;
+
+        /* =================================================
+
+           PAREDES
+
+        ================================================= */
 
         if (
 
@@ -2674,9 +3438,15 @@ function atualizarInsetos(delta) {
 
             inseto.vy =
 
-                Math.abs(
+                Math.max(
 
-                    inseto.vy
+                    55,
+
+                    Math.abs(
+
+                        inseto.vy
+
+                    )
 
                 );
 
@@ -2708,15 +3478,21 @@ function atualizarInsetos(delta) {
 
         }
 
+        /* =================================================
+
+           MUDANÇA ALEATÓRIA
+
+        ================================================= */
+
         const chanceMudanca =
 
             inseto.tipo ===
 
                 "abelha"
 
-                ? .022
+                ? .025
 
-                : .010;
+                : .015;
 
         if (
 
@@ -2742,9 +3518,9 @@ function atualizarInsetos(delta) {
 
                         "abelha"
 
-                        ? 35
+                        ? 45
 
-                        : 18
+                        : 32
 
                 );
 
@@ -2764,9 +3540,9 @@ function atualizarInsetos(delta) {
 
                         "abelha"
 
-                        ? 35
+                        ? 42
 
-                        : 18
+                        : 20
 
                 );
 
@@ -2802,7 +3578,7 @@ function atualizarInsetos(delta) {
 
 /* =========================================================
 
-   COLISÃO
+   COLISÃO INSETOS
 
 ========================================================= */
 
@@ -3116,7 +3892,9 @@ function verificarNivel() {
 
     if (
 
-        novoNivel <= nivel
+        novoNivel <=
+
+        nivel
 
     ) {
 
@@ -3210,6 +3988,32 @@ function limparInsetos() {
 
 }
 
+function limparFerroes() {
+
+    for (
+
+        const ferrao
+
+        of ferroes
+
+    ) {
+
+        try {
+
+            ferrao.elemento.remove();
+
+        } catch (erro) {
+
+            /* nada */
+
+        }
+
+    }
+
+    ferroes = [];
+
+}
+
 /* =========================================================
 
    SPAWN
@@ -3222,15 +4026,21 @@ function tentarCriarInseto(
 
 ) {
 
+    /*
+
+       Mais rápido que antes.
+
+    */
+
     const intervalo =
 
         Math.max(
 
-            340,
+            300,
 
-            900 -
+            680 -
 
-            (nivel - 1) * 70
+            (nivel - 1) * 55
 
         );
 
@@ -3252,13 +4062,19 @@ function tentarCriarInseto(
 
         tempoAtual;
 
+    /*
+
+       Mais insetos simultâneos.
+
+    */
+
     const maximo =
 
         Math.min(
 
-            11,
+            14,
 
-            5 +
+            7 +
 
             Math.floor(
 
@@ -3280,15 +4096,23 @@ function tentarCriarInseto(
 
     }
 
+    /*
+
+       Do nível 2 em diante pode
+
+       entrar um segundo inseto.
+
+    */
+
     if (
 
-        nivel >= 3 &&
+        nivel >= 2 &&
 
         insetos.length <
 
-            maximo &&
+        maximo &&
 
-        Math.random() < .34
+        Math.random() < .38
 
     ) {
 
@@ -3312,7 +4136,7 @@ function tentarCriarInseto(
 
             },
 
-            130
+            120
 
         );
 
@@ -3418,7 +4242,27 @@ function loop(
 
     );
 
+    atualizarTirosAbelhas(
+
+        tempoAtual
+
+    );
+
+    atualizarFerroes(
+
+        delta
+
+    );
+
     verificarColisoes();
+
+    if (!jogando) {
+
+        return;
+
+    }
+
+    verificarColisaoFerroes();
 
     if (!jogando) {
 
@@ -3463,6 +4307,8 @@ function iniciarJogo() {
     }
 
     limparInsetos();
+
+    limparFerroes();
 
     pontos = 0;
 
@@ -3514,13 +4360,11 @@ function iniciarJogo() {
 
     /*
 
-       COMEÇA COM:
+       COMEÇA COM MAIS AÇÃO:
 
-       🦋 imediatamente
+       3 borboletas
 
-       🦋 após 250ms
-
-       🐝 após 500ms
+       2 abelhas
 
     */
 
@@ -3538,7 +4382,7 @@ function iniciarJogo() {
 
         },
 
-        250
+        150
 
     );
 
@@ -3554,7 +4398,39 @@ function iniciarJogo() {
 
         },
 
-        500
+        300
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (jogando) {
+
+                criarBorboletaInicial();
+
+            }
+
+        },
+
+        450
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (jogando) {
+
+                criarAbelhaInicial();
+
+            }
+
+        },
+
+        650
 
     );
 
@@ -3700,7 +4576,27 @@ function finalizarJogo(
 
         motivoEl.textContent =
 
-            "Desvie das abelhas e pegue somente as borboletas.";
+            "Desvie das abelhas e dos ferrões.";
+
+        tocarAbelha();
+
+    } else if (
+
+        motivo === "ferrao"
+
+    ) {
+
+        icone.textContent =
+
+            "🐝▼💥";
+
+        titulo.textContent =
+
+            "O ferrão acertou você!";
+
+        motivoEl.textContent =
+
+            "Fique de olho nas abelhas que estão acima do Petton.";
 
         tocarAbelha();
 
@@ -3751,6 +4647,8 @@ function voltarMenu() {
             animacaoId
 
         );
+
+        animacaoId = null;
 
     }
 
@@ -4139,6 +5037,42 @@ function tocarAviso() {
         .025,
 
         .15
+
+    );
+
+}
+
+/*
+
+   Som curtinho do ferrão.
+
+*/
+
+function tocarTiro() {
+
+    tocarTom(
+
+        420,
+
+        .055,
+
+        "square",
+
+        .018
+
+    );
+
+    tocarTom(
+
+        260,
+
+        .07,
+
+        "square",
+
+        .014,
+
+        .035
 
     );
 
