@@ -896,7 +896,7 @@ body {
 
 /* =========================================================
 
-   ALVO CHEFE
+   CHEFE
 
 ========================================================= */
 
@@ -964,7 +964,7 @@ body {
 
     animation:
 
-        chefePulso .30s ease-in-out infinite alternate;
+        chefePulso .26s ease-in-out infinite alternate;
 
 }
 
@@ -1097,12 +1097,6 @@ body {
         width .12s linear;
 
 }
-
-/* =========================================================
-
-   IMPACTO CHEFE
-
-========================================================= */
 
 .impacto-chefe {
 
@@ -1412,89 +1406,33 @@ body {
 
     <div class="hud-item">
 
-        <span class="hud-label">
+        <span class="hud-label">PONTOS</span>
 
-            PONTOS
-
-        </span>
-
-        <span
-
-            class="hud-valor"
-
-            id="pontos"
-
-        >
-
-            0
-
-        </span>
+        <span class="hud-valor" id="pontos">0</span>
 
     </div>
 
     <div class="hud-item">
 
-        <span class="hud-label">
+        <span class="hud-label">NÍVEL</span>
 
-            NÍVEL
-
-        </span>
-
-        <span
-
-            class="hud-valor"
-
-            id="nivel"
-
-        >
-
-            1
-
-        </span>
+        <span class="hud-valor" id="nivel">1</span>
 
     </div>
 
     <div class="hud-item">
 
-        <span class="hud-label">
+        <span class="hud-label">TEMPO</span>
 
-            TEMPO
-
-        </span>
-
-        <span
-
-            class="hud-valor"
-
-            id="tempo"
-
-        >
-
-            90
-
-        </span>
+        <span class="hud-valor" id="tempo">70</span>
 
     </div>
 
     <div class="hud-item">
 
-        <span class="hud-label">
+        <span class="hud-label">RECORDE</span>
 
-            RECORDE
-
-        </span>
-
-        <span
-
-            class="hud-valor"
-
-            id="recorde"
-
-        >
-
-            0
-
-        </span>
+        <span class="hud-valor" id="recorde">0</span>
 
     </div>
 
@@ -1530,11 +1468,7 @@ body {
 
     <div id="campoAlvos"></div>
 
-    <div
-
-        id="chefeContainer"
-
-    >
+    <div id="chefeContainer">
 
         <button
 
@@ -1558,7 +1492,13 @@ body {
 
     >
 
-        <div class="chefe-titulo">
+        <div
+
+            class="chefe-titulo"
+
+            id="chefeTitulo"
+
+        >
 
             👹 ALVO CHEFE
 
@@ -1594,11 +1534,7 @@ body {
 
 </div>
 
-<!-- APAGÃO -->
-
 <div id="apagao"></div>
-
-<!-- TELA INICIAL -->
 
 <div
 
@@ -1660,23 +1596,23 @@ body {
 
             <br>
 
-            🌑 Cuidado:
+            🌑 Podem acontecer
 
-            podem acontecer
-
-            <b>apagões surpresa!</b>
+            <b>apagões surpresa</b>.
 
             <br>
 
-            👹 Às vezes algo especial
+            👹 Até
 
-            pode aparecer depois...
+            <b>2 chefões</b>
+
+            podem aparecer.
 
             <br>
 
             ⏱️ O jogo dura
 
-            <b>90 segundos</b>.
+            <b>70 segundos</b>.
 
             <br>
 
@@ -1725,8 +1661,6 @@ body {
     </div>
 
 </div>
-
-<!-- TELA FINAL -->
 
 <div
 
@@ -1842,13 +1776,13 @@ body {
 
 /* =========================================================
 
-   CONFIGURAÇÃO
+   CONFIG
 
 ========================================================= */
 
 const TEMPO_JOGO =
 
-    90;
+    70;
 
 const CHAVE_RECORDE =
 
@@ -2194,9 +2128,9 @@ let chefeAtivo =
 
     false;
 
-let chefeJaApareceu =
+let quantidadeChefes =
 
-    false;
+    0;
 
 let chefeVida =
 
@@ -2223,6 +2157,10 @@ let chefeVy =
     0;
 
 let chefeTempo =
+
+    0;
+
+let chefePodeVoltarDepoisDe =
 
     0;
 
@@ -2344,6 +2282,14 @@ const chefeBarra =
 
     );
 
+const chefeTitulo =
+
+    document.getElementById(
+
+        "chefeTitulo"
+
+    );
+
 /* =========================================================
 
    RECORDE
@@ -2410,17 +2356,7 @@ function carregarPetton() {
 
         }
 
-    } catch (erro) {
-
-        console.error(
-
-            "Erro ao carregar Petton:",
-
-            erro
-
-        );
-
-    }
+    } catch (erro) {}
 
     if (!dados) {
 
@@ -2520,13 +2456,7 @@ function carregarPetton() {
 
         }
 
-    } catch (erro) {
-
-        fase =
-
-            "";
-
-    }
+    } catch (erro) {}
 
     if (!fase) {
 
@@ -2610,13 +2540,7 @@ function carregarPetton() {
 
         }
 
-    } catch (erro) {
-
-        imagem =
-
-            null;
-
-    }
+    } catch (erro) {}
 
     if (!imagem) {
 
@@ -2686,7 +2610,7 @@ function carregarPetton() {
 
         imagem.startsWith("/");
 
-    const relativaJogos =
+    const relativa =
 
         imagem.startsWith("../");
 
@@ -2696,7 +2620,7 @@ function carregarPetton() {
 
         !absoluta &&
 
-        !relativaJogos
+        !relativa
 
     ) {
 
@@ -2826,7 +2750,7 @@ function atualizarNivel() {
 
 /* =========================================================
 
-   VIDA
+   ALVO
 
 ========================================================= */
 
@@ -2870,12 +2794,6 @@ function obterVidaAlvo(
 
 }
 
-/* =========================================================
-
-   SPAWN
-
-========================================================= */
-
 function obterIntervaloSpawn() {
 
     return Math.max(
@@ -2891,12 +2809,6 @@ function obterIntervaloSpawn() {
     );
 
 }
-
-/* =========================================================
-
-   CRIAR ALVO
-
-========================================================= */
 
 function criarAlvo(
 
@@ -3238,12 +3150,6 @@ function criarAlvo(
 
 }
 
-/* =========================================================
-
-   POSICIONAR
-
-========================================================= */
-
 function posicionarAlvo(
 
     alvo
@@ -3263,12 +3169,6 @@ function posicionarAlvo(
         "px";
 
 }
-
-/* =========================================================
-
-   TRANSFORMAR EM BOMBA
-
-========================================================= */
 
 function transformarEmBomba(
 
@@ -3385,12 +3285,6 @@ function transformarEmBomba(
     tocarTransformacaoBomba();
 
 }
-
-/* =========================================================
-
-   ACERTO
-
-========================================================= */
 
 function acertarAlvo(
 
@@ -3510,17 +3404,13 @@ function acertarAlvo(
 
             : 1;
 
-    const bonusCombo =
+    ganho +=
 
         Math.floor(
 
             combo / 5
 
         );
-
-    ganho +=
-
-        bonusCombo;
 
     pontos +=
 
@@ -3630,12 +3520,6 @@ function acertarAlvo(
 
 }
 
-/* =========================================================
-
-   ESCAPOU
-
-========================================================= */
-
 function alvoEscapou(
 
     alvo
@@ -3660,23 +3544,17 @@ function alvoEscapou(
 
         alvo.tipo !==
 
-        "bomba"
+        "bomba" &&
+
+        combo > 0
 
     ) {
 
-        if (
+        combo =
 
-            combo > 0
+            0;
 
-        ) {
-
-            combo =
-
-                0;
-
-            tocarErro();
-
-        }
+        tocarErro();
 
     }
 
@@ -3687,12 +3565,6 @@ function alvoEscapou(
     );
 
 }
-
-/* =========================================================
-
-   REMOVER
-
-========================================================= */
 
 function removerAlvo(
 
@@ -3707,162 +3579,6 @@ function removerAlvo(
     } catch (erro) {}
 
 }
-
-/* =========================================================
-
-   EFEITO
-
-========================================================= */
-
-function criarEfeito(
-
-    x,
-
-    y,
-
-    texto
-
-) {
-
-    const efeito =
-
-        document.createElement(
-
-            "div"
-
-        );
-
-    efeito.className =
-
-        "efeito";
-
-    efeito.textContent =
-
-        texto;
-
-    efeito.style.left =
-
-        x +
-
-        "px";
-
-    efeito.style.top =
-
-        y +
-
-        "px";
-
-    campo.appendChild(
-
-        efeito
-
-    );
-
-    setTimeout(
-
-        function() {
-
-            efeito.remove();
-
-        },
-
-        800
-
-    );
-
-}
-
-/* =========================================================
-
-   MENSAGEM
-
-========================================================= */
-
-function mostrarMensagem(
-
-    texto,
-
-    chefe = false
-
-) {
-
-    const elemento =
-
-        document.getElementById(
-
-            "mensagem"
-
-        );
-
-    elemento.textContent =
-
-        texto;
-
-    elemento.classList.remove(
-
-        "mostrar",
-
-        "chefe-msg"
-
-    );
-
-    void elemento.offsetWidth;
-
-    elemento.classList.add(
-
-        chefe
-
-            ? "chefe-msg"
-
-            : "mostrar"
-
-    );
-
-}
-
-/* =========================================================
-
-   HUD
-
-========================================================= */
-
-function atualizarHUD() {
-
-    pontosEl.textContent =
-
-        pontos;
-
-    nivelEl.textContent =
-
-        nivel;
-
-    tempoEl.textContent =
-
-        Math.max(
-
-            0,
-
-            Math.ceil(
-
-                tempoRestante
-
-            )
-
-        );
-
-    comboEl.textContent =
-
-        "x" +
-
-        combo;
-
-}
-
-/* =========================================================
-
-   ATUALIZAR ALVOS
-
-========================================================= */
 
 function atualizarAlvos(
 
@@ -4076,6 +3792,150 @@ function atualizarAlvos(
 
 /* =========================================================
 
+   EFEITOS
+
+========================================================= */
+
+function criarEfeito(
+
+    x,
+
+    y,
+
+    texto
+
+) {
+
+    const efeito =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    efeito.className =
+
+        "efeito";
+
+    efeito.textContent =
+
+        texto;
+
+    efeito.style.left =
+
+        x +
+
+        "px";
+
+    efeito.style.top =
+
+        y +
+
+        "px";
+
+    campo.appendChild(
+
+        efeito
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            efeito.remove();
+
+        },
+
+        800
+
+    );
+
+}
+
+function mostrarMensagem(
+
+    texto,
+
+    chefe = false
+
+) {
+
+    const elemento =
+
+        document.getElementById(
+
+            "mensagem"
+
+        );
+
+    elemento.textContent =
+
+        texto;
+
+    elemento.classList.remove(
+
+        "mostrar",
+
+        "chefe-msg"
+
+    );
+
+    void elemento.offsetWidth;
+
+    elemento.classList.add(
+
+        chefe
+
+            ? "chefe-msg"
+
+            : "mostrar"
+
+    );
+
+}
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+function atualizarHUD() {
+
+    pontosEl.textContent =
+
+        pontos;
+
+    nivelEl.textContent =
+
+        nivel;
+
+    tempoEl.textContent =
+
+        Math.max(
+
+            0,
+
+            Math.ceil(
+
+                tempoRestante
+
+            )
+
+        );
+
+    comboEl.textContent =
+
+        "x" +
+
+        combo;
+
+}
+
+/* =========================================================
+
    APAGÃO
 
 ========================================================= */
@@ -4084,11 +3944,11 @@ function programarPrimeiroApagao() {
 
     proximoApagao =
 
-        6 +
+        5 +
 
         Math.random() *
 
-        9;
+        7;
 
 }
 
@@ -4098,19 +3958,13 @@ function programarProximoApagao() {
 
         tempoDecorrido +
 
-        11 +
+        8 +
 
         Math.random() *
 
-        13;
+        9;
 
 }
-
-/* =========================================================
-
-   REPOSICIONAR
-
-========================================================= */
 
 function reposicionarAlvos() {
 
@@ -4176,12 +4030,6 @@ function reposicionarAlvos() {
 
 }
 
-/* =========================================================
-
-   INICIAR APAGÃO
-
-========================================================= */
-
 function iniciarApagao() {
 
     if (
@@ -4211,14 +4059,6 @@ function iniciarApagao() {
     );
 
     tocarApagao();
-
-    /*
-
-       APAGÃO MAIS RÁPIDO
-
-       0,45 até 0,90 segundo.
-
-    */
 
     const duracao =
 
@@ -4266,55 +4106,7 @@ function iniciarApagao() {
 
             tocarVoltaEnergia();
 
-            /*
-
-               Chance do chefão depois
-
-               de apagões.
-
-               Nunca no primeiro.
-
-            */
-
-            const podeChefe =
-
-                quantidadeApagoes >= 2 &&
-
-                !chefeJaApareceu &&
-
-                tempoRestante > 12;
-
-            if (
-
-                podeChefe &&
-
-                Math.random() < .38
-
-            ) {
-
-                setTimeout(
-
-                    function() {
-
-                        if (
-
-                            jogando &&
-
-                            !apagaoAtivo
-
-                        ) {
-
-                            iniciarChefe();
-
-                        }
-
-                    },
-
-                    300
-
-                );
-
-            }
+            tentarChamarChefe();
 
             programarProximoApagao();
 
@@ -4328,9 +4120,131 @@ function iniciarApagao() {
 
 /* =========================================================
 
-   ALVOS DURANTE CHEFE
+   CHEFES
 
 ========================================================= */
+
+function tentarChamarChefe() {
+
+    if (
+
+        quantidadeChefes >= 2 ||
+
+        chefeAtivo ||
+
+        tempoRestante <= 12
+
+    ) {
+
+        return;
+
+    }
+
+    /*
+
+       PRIMEIRO CHEFE
+
+       Pode aparecer depois de
+
+       alguns apagões.
+
+    */
+
+    if (
+
+        quantidadeChefes === 0
+
+    ) {
+
+        if (
+
+            quantidadeApagoes >= 2 &&
+
+            Math.random() < .48
+
+        ) {
+
+            setTimeout(
+
+                function() {
+
+                    if (
+
+                        jogando &&
+
+                        !apagaoAtivo &&
+
+                        !chefeAtivo
+
+                    ) {
+
+                        iniciarChefe();
+
+                    }
+
+                },
+
+                280
+
+            );
+
+        }
+
+        return;
+
+    }
+
+    /*
+
+       SEGUNDO CHEFE
+
+       Só depois de passar algum
+
+       tempo desde o primeiro.
+
+    */
+
+    if (
+
+        quantidadeChefes === 1 &&
+
+        tempoDecorrido >=
+
+            chefePodeVoltarDepoisDe &&
+
+        Math.random() < .58
+
+    ) {
+
+        setTimeout(
+
+            function() {
+
+                if (
+
+                    jogando &&
+
+                    !apagaoAtivo &&
+
+                    !chefeAtivo &&
+
+                    quantidadeChefes === 1
+
+                ) {
+
+                    iniciarChefe();
+
+                }
+
+            },
+
+            280
+
+        );
+
+    }
+
+}
 
 function esconderAlvosDuranteChefe() {
 
@@ -4372,19 +4286,13 @@ function mostrarAlvosDepoisChefe() {
 
 }
 
-/* =========================================================
-
-   INICIAR CHEFE
-
-========================================================= */
-
 function iniciarChefe() {
 
     if (
 
         chefeAtivo ||
 
-        chefeJaApareceu ||
+        quantidadeChefes >= 2 ||
 
         !jogando
 
@@ -4394,9 +4302,7 @@ function iniciarChefe() {
 
     }
 
-    chefeJaApareceu =
-
-        true;
+    quantidadeChefes++;
 
     chefeAtivo =
 
@@ -4408,21 +4314,45 @@ function iniciarChefe() {
 
     esconderAlvosDuranteChefe();
 
+    const segundoChefe =
+
+        quantidadeChefes === 2;
+
     chefeVidaMaxima =
 
-        Math.min(
+        segundoChefe
 
-            18,
+            ?
 
-            10 +
+            Math.min(
 
-            Math.floor(
+                21,
 
-                nivel / 2
+                13 +
+
+                Math.floor(
+
+                    nivel / 2
+
+                )
 
             )
 
-        );
+            :
+
+            Math.min(
+
+                18,
+
+                10 +
+
+                Math.floor(
+
+                    nivel / 2
+
+                )
+
+            );
 
     chefeVida =
 
@@ -4443,6 +4373,18 @@ function iniciarChefe() {
         "ativo"
 
     );
+
+    chefeTitulo.textContent =
+
+        segundoChefe
+
+            ?
+
+            "🔥 CHEFÃO REVANCHE"
+
+            :
+
+            "👹 ALVO CHEFE";
 
     const largura =
 
@@ -4484,19 +4426,25 @@ function iniciarChefe() {
 
         2;
 
-    /*
-
-       CHEFÃO MUITO MAIS RÁPIDO
-
-    */
-
     const velocidadeInicial =
 
-        220 +
+        segundoChefe
 
-        nivel *
+            ?
 
-        10;
+            280 +
+
+            nivel *
+
+            12
+
+            :
+
+            220 +
+
+            nivel *
+
+            10;
 
     chefeVx =
 
@@ -4532,7 +4480,15 @@ function iniciarChefe() {
 
     mostrarMensagem(
 
-        "👹 ALVO CHEFE!",
+        segundoChefe
+
+            ?
+
+            "🔥 CHEFÃO VOLTOU!"
+
+            :
+
+            "👹 ALVO CHEFE!",
 
         true
 
@@ -4541,12 +4497,6 @@ function iniciarChefe() {
     tocarChefe();
 
 }
-
-/* =========================================================
-
-   TOQUE NO CHEFE
-
-========================================================= */
 
 chefeEl.addEventListener(
 
@@ -4592,37 +4542,35 @@ chefeEl.addEventListener(
 
         tocarGolpeChefe();
 
-        /*
+        const aumento =
 
-           A cada golpe:
+            quantidadeChefes === 2
 
-           o chefão fica 9% mais rápido.
+                ? 1.11
 
-        */
+                : 1.09;
 
         chefeVx *=
 
-            1.09;
+            aumento;
 
         chefeVy *=
 
-            1.09;
+            aumento;
 
-        /*
+        const chanceMudar =
 
-           Às vezes muda de direção
+            quantidadeChefes === 2
 
-           depois de levar um golpe.
+                ? .60
 
-           Isso deixa muito menos previsível.
-
-        */
+                : .45;
 
         if (
 
             Math.random() <
 
-            .45
+            chanceMudar
 
         ) {
 
@@ -4683,12 +4631,6 @@ chefeEl.addEventListener(
     }
 
 );
-
-/* =========================================================
-
-   IMPACTO CHEFE
-
-========================================================= */
 
 function criarImpactoChefe() {
 
@@ -4759,12 +4701,6 @@ function criarImpactoChefe() {
     );
 
 }
-
-/* =========================================================
-
-   ATUALIZAR CHEFE
-
-========================================================= */
 
 function atualizarChefe(
 
@@ -4904,17 +4840,19 @@ function atualizarChefe(
 
         "px";
 
-    /*
+    const limiteTempo =
 
-       Tem 10 segundos
+        quantidadeChefes === 2
 
-       para derrotar.
+            ? 9
 
-    */
+            : 10;
 
     if (
 
-        chefeTempo >= 10
+        chefeTempo >=
+
+        limiteTempo
 
     ) {
 
@@ -4923,12 +4861,6 @@ function atualizarChefe(
     }
 
 }
-
-/* =========================================================
-
-   DERROTAR CHEFE
-
-========================================================= */
 
 function derrotarChefe() {
 
@@ -4946,9 +4878,17 @@ function derrotarChefe() {
 
         false;
 
+    const premio =
+
+        quantidadeChefes === 2
+
+            ? 30
+
+            : 20;
+
     pontos +=
 
-        20;
+        premio;
 
     atualizarNivel();
 
@@ -4970,7 +4910,9 @@ function derrotarChefe() {
 
     mostrarMensagem(
 
-        "💥 CHEFE DERROTADO! +20",
+        "💥 CHEFE DERROTADO! +" +
+
+        premio,
 
         true
 
@@ -4978,13 +4920,35 @@ function derrotarChefe() {
 
     tocarChefeDerrotado();
 
+    /*
+
+       Depois do primeiro chefe,
+
+       espera alguns segundos antes
+
+       de permitir o segundo.
+
+    */
+
+    if (
+
+        quantidadeChefes === 1
+
+    ) {
+
+        chefePodeVoltarDepoisDe =
+
+            tempoDecorrido +
+
+            10 +
+
+            Math.random() *
+
+            6;
+
+    }
+
 }
-
-/* =========================================================
-
-   CHEFE ESCAPOU
-
-========================================================= */
 
 function chefeEscapou() {
 
@@ -5023,6 +4987,24 @@ function chefeEscapou() {
     );
 
     tocarErro();
+
+    if (
+
+        quantidadeChefes === 1
+
+    ) {
+
+        chefePodeVoltarDepoisDe =
+
+            tempoDecorrido +
+
+            9 +
+
+            Math.random() *
+
+            5;
+
+    }
 
 }
 
@@ -5112,12 +5094,6 @@ function loop(
 
     }
 
-    /*
-
-       APAGÃO
-
-    */
-
     if (
 
         !apagaoAtivo &&
@@ -5142,12 +5118,6 @@ function loop(
 
     ) {
 
-        /*
-
-           CHEFE
-
-        */
-
         if (
 
             chefeAtivo
@@ -5161,12 +5131,6 @@ function loop(
             );
 
         } else {
-
-            /*
-
-               JOGO NORMAL
-
-            */
 
             acumuladorSpawn +=
 
@@ -5400,9 +5364,9 @@ function iniciarJogo() {
 
         false;
 
-    chefeJaApareceu =
+    quantidadeChefes =
 
-        false;
+        0;
 
     chefeVida =
 
@@ -5413,6 +5377,10 @@ function iniciarJogo() {
         0;
 
     chefeTempo =
+
+        0;
+
+    chefePodeVoltarDepoisDe =
 
         0;
 
@@ -6240,12 +6208,6 @@ function tocarNivel() {
 
 }
 
-/* =========================================================
-
-   SOM APAGÃO
-
-========================================================= */
-
 function tocarApagao() {
 
     tocarTom(
@@ -6319,12 +6281,6 @@ function tocarVoltaEnergia() {
     );
 
 }
-
-/* =========================================================
-
-   SOM CHEFE
-
-========================================================= */
 
 function tocarChefe() {
 
@@ -6546,7 +6502,7 @@ function tocarFinal() {
 
 /* =========================================================
 
-   SOM ON/OFF
+   SOM
 
 ========================================================= */
 
