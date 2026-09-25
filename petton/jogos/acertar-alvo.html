@@ -1602,11 +1602,9 @@ body {
 
             <br>
 
-            👹 Até
+            👹 Dois chefões aparecem
 
-            <b>2 chefões</b>
-
-            podem aparecer.
+            durante a partida.
 
             <br>
 
@@ -2098,6 +2096,16 @@ let animacaoId =
 
 /* =========================================================
 
+   TEMPO
+
+========================================================= */
+
+let tempoDecorrido =
+
+    0;
+
+/* =========================================================
+
    APAGÃO
 
 ========================================================= */
@@ -2106,21 +2114,13 @@ let apagaoAtivo =
 
     false;
 
-let tempoDecorrido =
-
-    0;
-
 let proximoApagao =
-
-    0;
-
-let quantidadeApagoes =
 
     0;
 
 /* =========================================================
 
-   CHEFE
+   CHEFES
 
 ========================================================= */
 
@@ -2129,6 +2129,14 @@ let chefeAtivo =
     false;
 
 let quantidadeChefes =
+
+    0;
+
+let horarioChefe1 =
+
+    0;
+
+let horarioChefe2 =
 
     0;
 
@@ -2157,10 +2165,6 @@ let chefeVy =
     0;
 
 let chefeTempo =
-
-    0;
-
-let chefePodeVoltarDepoisDe =
 
     0;
 
@@ -2750,7 +2754,7 @@ function atualizarNivel() {
 
 /* =========================================================
 
-   ALVO
+   ALVOS
 
 ========================================================= */
 
@@ -3544,7 +3548,7 @@ function alvoEscapou(
 
         alvo.tipo !==
 
-        "bomba" &&
+            "bomba" &&
 
         combo > 0
 
@@ -4050,8 +4054,6 @@ function iniciarApagao() {
 
         true;
 
-    quantidadeApagoes++;
-
     apagaoEl.classList.add(
 
         "ativo"
@@ -4106,8 +4108,6 @@ function iniciarApagao() {
 
             tocarVoltaEnergia();
 
-            tentarChamarChefe();
-
             programarProximoApagao();
 
         },
@@ -4120,19 +4120,61 @@ function iniciarApagao() {
 
 /* =========================================================
 
+   PROGRAMAR CHEFES
+
+========================================================= */
+
+function programarChefes() {
+
+    /*
+
+       1º chefão:
+
+       entre 15 e 25 segundos.
+
+    */
+
+    horarioChefe1 =
+
+        15 +
+
+        Math.random() *
+
+        10;
+
+    /*
+
+       2º chefão:
+
+       entre 45 e 58 segundos.
+
+    */
+
+    horarioChefe2 =
+
+        45 +
+
+        Math.random() *
+
+        13;
+
+}
+
+/* =========================================================
+
    CHEFES
 
 ========================================================= */
 
-function tentarChamarChefe() {
+function verificarChefesProgramados() {
 
     if (
 
-        quantidadeChefes >= 2 ||
-
         chefeAtivo ||
 
-        tempoRestante <= 12
+        apagaoAtivo ||
+
+        !jogando
 
     ) {
 
@@ -4144,51 +4186,19 @@ function tentarChamarChefe() {
 
        PRIMEIRO CHEFE
 
-       Pode aparecer depois de
-
-       alguns apagões.
-
     */
 
     if (
 
-        quantidadeChefes === 0
+        quantidadeChefes === 0 &&
+
+        tempoDecorrido >=
+
+            horarioChefe1
 
     ) {
 
-        if (
-
-            quantidadeApagoes >= 2 &&
-
-            Math.random() < .48
-
-        ) {
-
-            setTimeout(
-
-                function() {
-
-                    if (
-
-                        jogando &&
-
-                        !apagaoAtivo &&
-
-                        !chefeAtivo
-
-                    ) {
-
-                        iniciarChefe();
-
-                    }
-
-                },
-
-                280
-
-            );
-
-        }
+        iniciarChefe();
 
         return;
 
@@ -4198,9 +4208,9 @@ function tentarChamarChefe() {
 
        SEGUNDO CHEFE
 
-       Só depois de passar algum
+       GARANTIDO depois do horário
 
-       tempo desde o primeiro.
+       sorteado entre 45 e 58 s.
 
     */
 
@@ -4210,37 +4220,11 @@ function tentarChamarChefe() {
 
         tempoDecorrido >=
 
-            chefePodeVoltarDepoisDe &&
-
-        Math.random() < .58
+            horarioChefe2
 
     ) {
 
-        setTimeout(
-
-            function() {
-
-                if (
-
-                    jogando &&
-
-                    !apagaoAtivo &&
-
-                    !chefeAtivo &&
-
-                    quantidadeChefes === 1
-
-                ) {
-
-                    iniciarChefe();
-
-                }
-
-            },
-
-            280
-
-        );
+        iniciarChefe();
 
     }
 
@@ -4920,34 +4904,6 @@ function derrotarChefe() {
 
     tocarChefeDerrotado();
 
-    /*
-
-       Depois do primeiro chefe,
-
-       espera alguns segundos antes
-
-       de permitir o segundo.
-
-    */
-
-    if (
-
-        quantidadeChefes === 1
-
-    ) {
-
-        chefePodeVoltarDepoisDe =
-
-            tempoDecorrido +
-
-            10 +
-
-            Math.random() *
-
-            6;
-
-    }
-
 }
 
 function chefeEscapou() {
@@ -4987,24 +4943,6 @@ function chefeEscapou() {
     );
 
     tocarErro();
-
-    if (
-
-        quantidadeChefes === 1
-
-    ) {
-
-        chefePodeVoltarDepoisDe =
-
-            tempoDecorrido +
-
-            9 +
-
-            Math.random() *
-
-            5;
-
-    }
 
 }
 
@@ -5094,6 +5032,26 @@ function loop(
 
     }
 
+    /*
+
+       PRIMEIRO verifica os chefes.
+
+       Assim, quando chegar o momento
+
+       deles, eles têm prioridade sobre
+
+       um novo apagão.
+
+    */
+
+    verificarChefesProgramados();
+
+    /*
+
+       APAGÃO
+
+    */
+
     if (
 
         !apagaoAtivo &&
@@ -5104,7 +5062,7 @@ function loop(
 
             proximoApagao &&
 
-        tempoRestante > 6
+        tempoRestante > 5
 
     ) {
 
@@ -5356,10 +5314,6 @@ function iniciarJogo() {
 
         false;
 
-    quantidadeApagoes =
-
-        0;
-
     chefeAtivo =
 
         false;
@@ -5380,10 +5334,6 @@ function iniciarJogo() {
 
         0;
 
-    chefePodeVoltarDepoisDe =
-
-        0;
-
     apagaoEl.classList.remove(
 
         "ativo"
@@ -5401,6 +5351,16 @@ function iniciarJogo() {
         "ativo"
 
     );
+
+    /*
+
+       Sorteia os momentos dos
+
+       2 chefões em cada partida.
+
+    */
+
+    programarChefes();
 
     programarPrimeiroApagao();
 
@@ -6502,7 +6462,7 @@ function tocarFinal() {
 
 /* =========================================================
 
-   SOM
+   SOM ON/OFF
 
 ========================================================= */
 
