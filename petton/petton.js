@@ -3569,7 +3569,7 @@ function limpar() {
 
 /* =========================================================
 
-   LIMPAR COCÔ
+   LIMPAR COCÔ - CORRIGIDO
 
    ========================================================= */
 
@@ -3582,11 +3582,22 @@ function limparCoco() {
         return false;
     }
 
-    if (!dados.cocoAtivo) {
+    const temCocoAgora =
+        dados.cocoAtivo === true ||
+        dados.temCoco === true ||
+        dados.coco === true;
+
+    if (!temCocoAgora) {
         return false;
     }
 
     dados.cocoAtivo =
+        false;
+
+    dados.temCoco =
+        false;
+
+    dados.coco =
         false;
 
     dados.cocoNasceuEm =
@@ -3595,23 +3606,24 @@ function limparCoco() {
     dados.higiene =
         Math.min(
             100,
-            dados.higiene + 20
-        );
-
-    dados.pontos += 5;
-
-    dados.moedas =
-        Math.max(
-            0,
             Number(
-                dados.moedas || 0
-            )
+                dados.higiene || 0
+            ) + 20
         );
 
-    dados.moedas +=
-        PETTON_MOEDAS_LIMPAR_COCO;
+    darRecompensa(
 
-    salvarPetton(dados);
+        dados,
+
+        5,
+
+        PETTON_MOEDAS_LIMPAR_COCO
+
+    );
+
+    salvarPetton(
+        dados
+    );
 
     return true;
 
@@ -3774,7 +3786,11 @@ function temCoco() {
     const dados =
         verificarCoco();
 
-    return !!dados.cocoAtivo;
+    return !!(
+        dados.cocoAtivo ||
+        dados.temCoco ||
+        dados.coco
+    );
 
 }
 
@@ -5174,8 +5190,6 @@ atualizarTempo = function () {
 
     }
 
-    /* COCÔ */
-
     if (
         dados.cocoAtivo &&
         dados.cocoNasceuEm
@@ -5252,8 +5266,6 @@ atualizarTempo = function () {
 
     }
 
-    /* SAÚDE */
-
     const emRisco =
         Number(dados.fome) < 20 ||
         Number(dados.higiene) < 20;
@@ -5296,8 +5308,6 @@ atualizarTempo = function () {
     }
 
     verificarDoenca(dados);
-
-    /* DOENTE */
 
     if (dados.doente) {
 
@@ -5738,11 +5748,6 @@ passear = function () {
         return false;
 
     }
-
-    /*
-       A REGRA DA FELICIDADE >= 90
-       FOI REMOVIDA.
-    */
 
     dados.passeandoAte =
         Date.now() +
