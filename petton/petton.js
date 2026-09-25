@@ -35,6 +35,7 @@ const PETTON_CARIE_APOS_COMER_MS = 5 * 60 * 1000;
 const PETTON_HOSPITAL_MS = 5 * 1000;
 
 const PETTON_PASSEIO_MS = 8 * 1000;
+
 /* =========================================================
 
    TEMPO REAL DOS STATUS
@@ -54,6 +55,7 @@ const PETTON_TEMPO_SAUDE_RISCO_MS = 60 * 60 * 1000;
 const PETTON_TEMPO_DOENTE_MS = 60 * 60 * 1000;
 
 const PETTON_TEMPO_COCO_HIGIENE_MS = 60 * 60 * 1000;
+
 /* =========================================================
 
    RECOMPENSAS
@@ -137,7 +139,6 @@ function gerarIdVisual() {
     );
 
 }
-
 
 /* =========================================================
 
@@ -1331,18 +1332,6 @@ function obterAcessorioPetton(tipo) {
 
    POSIÇÃO DOS ACESSÓRIOS
 
-   =========================================================
-
-   Os valores são percentuais relativos à imagem do Petton.
-
-   Isso permite que Principal e Quarto usem exatamente
-
-   a mesma posição para o mesmo Petton.
-
-   A posição pode ser ajustada depois sem alterar
-
-   o sistema de compra/equipamento.
-
    ========================================================= */
 
 function obterPosicaoAcessorio(tipo, especie, fase) {
@@ -1567,97 +1556,27 @@ function obterPosicaoAcessorio(tipo, especie, fase) {
 
         especieBase.chapeu;
 
-    const ajusteFase = {
-
-        ovo: {
-
-            top: 0,
-
-            width: 1
-
-        },
-
-        bebe: {
-
-            top: 0,
-
-            width: 1
-
-        },
-
-        filhote: {
-
-            top: 0,
-
-            width: 1
-
-        },
-
-        jovem: {
-
-            top: 0,
-
-            width: 1
-
-        },
-
-        adulto: {
-
-            top: 0,
-
-            width: 1
-
-        }
-
-    };
-
-    const ajuste =
-
-        ajusteFase[fase] ||
-
-        ajusteFase.bebe;
-
     return {
 
-        top:
+        top: posicao.top,
 
-            posicao.top,
+        left: posicao.left,
 
-        left:
+        width: posicao.width,
 
-            posicao.left,
+        transform: posicao.transform,
 
-        width:
+        fase: fase,
 
-            posicao.width,
+        especie: especie,
 
-        transform:
-
-            posicao.transform,
-
-        fase:
-
-            fase,
-
-        especie:
-
-            especie,
-
-        tipo:
-
-            tipo
+        tipo: tipo
 
     };
 
 }
 
-function posicaoAcessorioPetton(
-
-    tipo,
-
-    fase
-
-) {
+function posicaoAcessorioPetton(tipo, fase) {
 
     const dados =
 
@@ -1765,25 +1684,21 @@ function criarPettonNovo() {
 
         ultimaAlimentacaoEm: null,
 
+        /* NOVO - RELÓGIOS SEPARADOS */
+
+        ultimaAlimentacaoCarieEm: null,
+
+        ultimaAlimentacaoCocoEm: null,
+
         passeandoAte: null,
 
         escovandoAte: null,
 
-        /* MOEDAS */
-
         moedas: 100,
-
-        /* PONTOS */
 
         pontos: 0,
 
         nivel: 1,
-
-        /* =================================================
-
-           ACESSÓRIOS EQUIPADOS
-
-           ================================================= */
 
         acessorios: {
 
@@ -1887,6 +1802,42 @@ function garantirCamposNovos(dados) {
 
     }
 
+    /* =====================================================
+       NOVO - SEPARA CÁRIE E COCÔ
+    ===================================================== */
+
+    if (
+
+        typeof dados.ultimaAlimentacaoCarieEm ===
+
+        "undefined"
+
+    ) {
+
+        dados.ultimaAlimentacaoCarieEm =
+
+            dados.ultimaAlimentacaoEm ||
+
+            null;
+
+    }
+
+    if (
+
+        typeof dados.ultimaAlimentacaoCocoEm ===
+
+        "undefined"
+
+    ) {
+
+        dados.ultimaAlimentacaoCocoEm =
+
+            dados.ultimaAlimentacaoEm ||
+
+            null;
+
+    }
+
     if (typeof dados.passeandoAte === "undefined") {
 
         dados.passeandoAte = null;
@@ -1905,19 +1856,7 @@ function garantirCamposNovos(dados) {
 
     }
 
-    /* =====================================================
-
-       ACESSÓRIOS
-
-    ===================================================== */
-
     garantirAcessorios(dados);
-
-    /* =====================================================
-
-       MOEDAS
-
-    ===================================================== */
 
     if (
 
@@ -1940,12 +1879,6 @@ function garantirCamposNovos(dados) {
             Math.floor(dados.moedas)
 
         );
-
-    /* =====================================================
-
-       PONTOS
-
-    ===================================================== */
 
     if (
 
@@ -2372,6 +2305,14 @@ function nascerPettonInterno(dados) {
         null;
 
     dados.ultimaAlimentacaoEm =
+
+        null;
+
+    dados.ultimaAlimentacaoCarieEm =
+
+        null;
+
+    dados.ultimaAlimentacaoCocoEm =
 
         null;
 
@@ -3565,7 +3506,7 @@ function verificarDoenca(dados) {
 
 /* =========================================================
 
-   CÁRIE
+   CÁRIE - CORRIGIDO
 
    ========================================================= */
 
@@ -3583,13 +3524,21 @@ function verificarCarie(dados) {
 
     }
 
-    if (dados.ultimaAlimentacaoEm) {
+    if (
+
+        dados.ultimaAlimentacaoCarieEm
+
+    ) {
 
         const tempoDesdeComida =
 
             Date.now() -
 
-            dados.ultimaAlimentacaoEm;
+            Number(
+
+                dados.ultimaAlimentacaoCarieEm
+
+            );
 
         if (
 
@@ -3615,9 +3564,26 @@ function verificarCarie(dados) {
 
             }
 
-            dados.ultimaAlimentacaoEm =
+            /*
+               IMPORTANTE:
+               limpa apenas o relógio da cárie
+            */
+
+            dados.ultimaAlimentacaoCarieEm =
 
                 null;
+
+            if (
+
+                !dados.ultimaAlimentacaoCocoEm
+
+            ) {
+
+                dados.ultimaAlimentacaoEm =
+
+                    null;
+
+            }
 
         }
 
@@ -4007,9 +3973,21 @@ function alimentar() {
 
         PETTON_MOEDAS_ALIMENTAR;
 
-    dados.ultimaAlimentacaoEm =
+    const agoraAlimentacao =
 
         Date.now();
+
+    dados.ultimaAlimentacaoEm =
+
+        agoraAlimentacao;
+
+    dados.ultimaAlimentacaoCarieEm =
+
+        agoraAlimentacao;
+
+    dados.ultimaAlimentacaoCocoEm =
+
+        agoraAlimentacao;
 
     salvarPetton(dados);
 
@@ -4019,13 +3997,15 @@ function alimentar() {
 
 /* =========================================================
 
-   PRODUZIR COCÔ DEPOIS DA COMIDA
+   PRODUZIR COCÔ DEPOIS DA COMIDA - CORRIGIDO
 
    ========================================================= */
 
-function verificarCoco() {
+function verificarCoco(dadosRecebidos) {
 
     const dados =
+
+        dadosRecebidos ||
 
         carregarPetton();
 
@@ -4041,7 +4021,11 @@ function verificarCoco() {
 
     }
 
-    if (!dados.ultimaAlimentacaoEm) {
+    if (
+
+        !dados.ultimaAlimentacaoCocoEm
+
+    ) {
 
         return dados;
 
@@ -4051,7 +4035,11 @@ function verificarCoco() {
 
         Date.now() -
 
-        dados.ultimaAlimentacaoEm;
+        Number(
+
+            dados.ultimaAlimentacaoCocoEm
+
+        );
 
     if (
 
@@ -4069,9 +4057,25 @@ function verificarCoco() {
 
             Date.now();
 
-        dados.ultimaAlimentacaoEm =
+        /*
+           limpa somente o relógio do cocô
+        */
+
+        dados.ultimaAlimentacaoCocoEm =
 
             null;
+
+        if (
+
+            !dados.ultimaAlimentacaoCarieEm
+
+        ) {
+
+            dados.ultimaAlimentacaoEm =
+
+                null;
+
+        }
 
         salvarPetton(dados);
 
@@ -4729,7 +4733,15 @@ function statusPetton() {
 
     garantirAcessorios(dados);
 
-    verificarCoco();
+    /*
+       IMPORTANTE:
+       usa o MESMO objeto para não perder
+       o cocô recém-criado.
+    */
+
+    dados =
+
+        verificarCoco(dados);
 
     verificarDoenca(
 
@@ -4900,8 +4912,6 @@ function identidadePetton() {
         caracteristicas:
 
             dados.caracteristicas,
-
-        /* ACESSÓRIOS */
 
         acessorios:
 
@@ -5331,12 +5341,6 @@ window.Petton = {
 
     },
 
-    /* =========================
-
-       CUIDADOS
-
-    ========================= */
-
     alimentar: function () {
 
         return alimentar();
@@ -5427,12 +5431,6 @@ window.Petton = {
 
     },
 
-    /* =========================
-
-       STATUS
-
-    ========================= */
-
     status: function () {
 
         return statusPetton();
@@ -5479,12 +5477,6 @@ window.Petton = {
 
     },
 
-    /* =========================
-
-       MOEDAS
-
-    ========================= */
-
     moedas: function () {
 
         return obterMoedasPetton();
@@ -5511,23 +5503,11 @@ window.Petton = {
 
     },
 
-    /* =========================
-
-       ÁLBUM
-
-    ========================= */
-
     album: function () {
 
         return atualizarAlbum();
 
     },
-
-    /* =========================
-
-       IDENTIDADE VISUAL
-
-    ========================= */
 
     identidadeVisual: function () {
 
@@ -5611,12 +5591,6 @@ window.Petton = {
 
     },
 
-    /* =========================
-
-       ACESSÓRIOS
-
-    ========================= */
-
     acessorios: function () {
 
         return obterAcessoriosPetton();
@@ -5689,12 +5663,6 @@ window.Petton = {
 
     },
 
-    /* =========================
-
-       INCUBAÇÃO
-
-    ========================= */
-
     incubacaoRestante: function () {
 
         return tempoIncubacaoRestante();
@@ -5718,12 +5686,6 @@ window.Petton = {
         return tempoAquecedorRestante();
 
     },
-
-    /* =========================
-
-       RESET
-
-    ========================= */
 
     resetar: function () {
 
@@ -5761,7 +5723,9 @@ setInterval(
 
             garantirAcessorios(dados);
 
-            verificarCoco();
+            dados =
+
+                verificarCoco(dados);
 
             if (dados.dateNascimento) {
 
@@ -5861,7 +5825,13 @@ try {
 
         );
 
-        verificarCoco();
+        dadosInicial =
+
+            verificarCoco(
+
+                dadosInicial
+
+            );
 
         atualizarHospital(
 
@@ -5912,6 +5882,7 @@ try {
     );
 
 }
+
 /* =========================================================
 
    PETTON - CONTROLE DE TEMPO REAL CORRIGIDO
@@ -6630,7 +6601,19 @@ atualizarTempo = function () {
 
     }
 
+    /*
+       Verifica cárie sem mexer
+       no relógio do cocô.
+    */
+
     verificarCarie(dados);
+
+    /*
+       Verifica também se chegou
+       a hora do cocô.
+    */
+
+    verificarCoco(dados);
 
     atualizarHospital(dados);
 
@@ -6722,9 +6705,27 @@ alimentar = function () {
 
     );
 
-    dados.ultimaAlimentacaoEm =
+    /*
+       CORRIGIDO:
+       cárie e cocô recebem
+       relógios separados.
+    */
+
+    const agoraAlimentacao =
 
         Date.now();
+
+    dados.ultimaAlimentacaoEm =
+
+        agoraAlimentacao;
+
+    dados.ultimaAlimentacaoCarieEm =
+
+        agoraAlimentacao;
+
+    dados.ultimaAlimentacaoCocoEm =
+
+        agoraAlimentacao;
 
     salvarPetton(dados);
 
