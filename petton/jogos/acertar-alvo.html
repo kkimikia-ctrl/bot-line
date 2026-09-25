@@ -98,6 +98,190 @@ body {
 
         );
 
+    transition:
+
+        filter .7s ease,
+
+        background .7s ease;
+
+}
+
+/* =========================================================
+
+   CHUVA DE ALVOS
+
+========================================================= */
+
+.app.evento-alvos {
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #37506d 0%,
+
+            #71879b 48%,
+
+            #5e8059 48%,
+
+            #3f603c 100%
+
+        );
+
+}
+
+.app.evento-alvos .sol {
+
+    opacity: .25;
+
+    transform: scale(.8);
+
+}
+
+.app.evento-alvos .nuvem1,
+
+.app.evento-alvos .nuvem2 {
+
+    opacity: .95;
+
+    filter: brightness(.65);
+
+}
+
+.app.evento-alvos #campoAlvos {
+
+    background:
+
+        rgba(0,0,0,.10);
+
+    box-shadow:
+
+        inset 0 0 35px
+
+        rgba(0,0,0,.16);
+
+}
+
+#eventoAviso {
+
+    position: absolute;
+
+    z-index: 650;
+
+    left: 50%;
+
+    top: 38%;
+
+    transform:
+
+        translate(-50%,-50%)
+
+        scale(.7);
+
+    width: calc(100% - 42px);
+
+    max-width: 390px;
+
+    padding: 16px 14px;
+
+    border-radius: 24px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #ffcc36,
+
+            #ff6b28
+
+        );
+
+    border:
+
+        3px solid white;
+
+    color: white;
+
+    text-align: center;
+
+    font-size: 24px;
+
+    font-weight: 1000;
+
+    box-shadow:
+
+        0 0 28px
+
+        rgba(255,125,40,.8);
+
+    pointer-events: none;
+
+    opacity: 0;
+
+}
+
+#eventoAviso.mostrar {
+
+    animation:
+
+        avisoEvento 1.8s forwards;
+
+}
+
+@keyframes avisoEvento {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(.45);
+
+    }
+
+    18% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1.12);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform:
+
+            translate(-50%,-50%)
+
+            scale(1);
+
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+
+            translate(-50%,-62%)
+
+            scale(.9);
+
+    }
+
 }
 
 /* =========================================================
@@ -122,13 +306,17 @@ body {
 
     display: grid;
 
-    grid-template-columns: 48px 1fr 48px;
+    grid-template-columns:
+
+        48px 1fr 48px;
 
     align-items: center;
 
     padding: 7px 9px;
 
-    background: rgba(255,255,255,.95);
+    background:
+
+        rgba(255,255,255,.95);
 
     border-bottom:
 
@@ -212,7 +400,9 @@ body {
 
     display: grid;
 
-    grid-template-columns: repeat(4,1fr);
+    grid-template-columns:
+
+        repeat(4,1fr);
 
     gap: 5px;
 
@@ -278,7 +468,9 @@ body {
 
     left: 50%;
 
-    transform: translateX(-50%);
+    transform:
+
+        translateX(-50%);
 
     min-width: 125px;
 
@@ -358,6 +550,12 @@ body {
 
     pointer-events: none;
 
+    transition:
+
+        opacity .7s ease,
+
+        transform .7s ease;
+
 }
 
 .nuvem1,
@@ -371,6 +569,12 @@ body {
     opacity: .78;
 
     pointer-events: none;
+
+    transition:
+
+        opacity .7s ease,
+
+        filter .7s ease;
 
 }
 
@@ -419,6 +623,12 @@ body {
     background:
 
         rgba(255,255,255,.08);
+
+    transition:
+
+        background .7s ease,
+
+        box-shadow .7s ease;
 
     touch-action: manipulation;
 
@@ -976,7 +1186,13 @@ body {
 
 <body>
 
-<div class="app">
+<div
+
+    class="app"
+
+    id="app"
+
+>
 
 <header class="topo">
 
@@ -1170,6 +1386,12 @@ body {
 
     </div>
 
+    <div id="eventoAviso">
+
+        ⚠️ CHUVA DE ALVOS!
+
+    </div>
+
 </div>
 
 <!-- TELA INICIAL -->
@@ -1231,6 +1453,12 @@ body {
             <b>-5 pontos</b>
 
             e perde o combo.
+
+            <br>
+
+            ⚠️ Durante a partida pode acontecer uma
+
+            <b>CHUVA DE ALVOS!</b>
 
             <br>
 
@@ -1406,7 +1634,9 @@ body {
 
 ========================================================= */
 
-const TEMPO_JOGO = 90;
+const TEMPO_JOGO =
+
+    90;
 
 const CHAVE_RECORDE =
 
@@ -1415,6 +1645,28 @@ const CHAVE_RECORDE =
 const CHAVE_RECOMPENSA =
 
     "petton_jogo_acertar_alvo_recompensa_v1";
+
+/*
+
+   CHUVA DE ALVOS
+
+   Começa quando faltam 25 segundos.
+
+   Isso significa aproximadamente
+
+   65 segundos depois do começo.
+
+   Duração: 9 segundos.
+
+*/
+
+const EVENTO_INICIO_RESTANTE =
+
+    25;
+
+const EVENTO_DURACAO =
+
+    9;
 
 /* =========================================================
 
@@ -1662,35 +1914,85 @@ function pagarRecompensa(
 
 ========================================================= */
 
-let jogando = false;
+let jogando =
 
-let pontos = 0;
+    false;
 
-let nivel = 1;
+let pontos =
 
-let combo = 0;
+    0;
 
-let maiorCombo = 0;
+let nivel =
+
+    1;
+
+let combo =
+
+    0;
+
+let maiorCombo =
+
+    0;
 
 let tempoRestante =
 
     TEMPO_JOGO;
 
-let recorde = 0;
+let recorde =
 
-let alvos = [];
+    0;
 
-let ultimoTempo = 0;
+let alvos =
 
-let acumuladorSpawn = 0;
+    [];
 
-let animacaoId = null;
+let ultimoTempo =
+
+    0;
+
+let acumuladorSpawn =
+
+    0;
+
+let animacaoId =
+
+    null;
+
+/* =========================================================
+
+   ESTADO DO EVENTO
+
+========================================================= */
+
+let eventoIniciado =
+
+    false;
+
+let eventoAtivo =
+
+    false;
+
+let tempoEvento =
+
+    0;
+
+let acumuladorEvento =
+
+    0;
 
 /* =========================================================
 
    ELEMENTOS
 
 ========================================================= */
+
+const app =
+
+    document.getElementById(
+
+        "app"
+
+    );
 
 const campo =
 
@@ -1764,6 +2066,14 @@ const telaFim =
 
     );
 
+const eventoAviso =
+
+    document.getElementById(
+
+        "eventoAviso"
+
+    );
+
 /* =========================================================
 
    RECORDE
@@ -1788,7 +2098,9 @@ function carregarRecorde() {
 
     } catch (erro) {
 
-        recorde = 0;
+        recorde =
+
+            0;
 
     }
 
@@ -1806,7 +2118,9 @@ function carregarRecorde() {
 
 function carregarPetton() {
 
-    let dados = null;
+    let dados =
+
+        null;
 
     try {
 
@@ -1898,7 +2212,9 @@ function carregarPetton() {
 
     }
 
-    let fase = "";
+    let fase =
+
+        "";
 
     try {
 
@@ -1942,7 +2258,9 @@ function carregarPetton() {
 
     } catch (erro) {
 
-        fase = "";
+        fase =
+
+            "";
 
     }
 
@@ -2002,7 +2320,9 @@ function carregarPetton() {
 
     }
 
-    let imagem = null;
+    let imagem =
+
+        null;
 
     try {
 
@@ -2028,7 +2348,9 @@ function carregarPetton() {
 
     } catch (erro) {
 
-        imagem = null;
+        imagem =
+
+            null;
 
     }
 
@@ -2094,45 +2416,21 @@ function carregarPetton() {
 
     const externa =
 
-        imagem.startsWith(
+        imagem.startsWith("http://") ||
 
-            "http://"
+        imagem.startsWith("https://") ||
 
-        ) ||
+        imagem.startsWith("data:") ||
 
-        imagem.startsWith(
-
-            "https://"
-
-        ) ||
-
-        imagem.startsWith(
-
-            "data:"
-
-        ) ||
-
-        imagem.startsWith(
-
-            "blob:"
-
-        );
+        imagem.startsWith("blob:");
 
     const absoluta =
 
-        imagem.startsWith(
-
-            "/"
-
-        );
+        imagem.startsWith("/");
 
     const relativaJogos =
 
-        imagem.startsWith(
-
-            "../"
-
-        );
+        imagem.startsWith("../");
 
     if (
 
@@ -2288,7 +2586,11 @@ function atualizarNivel() {
 
 ========================================================= */
 
-function obterVidaAlvo(tipo) {
+function obterVidaAlvo(
+
+    tipo
+
+) {
 
     if (
 
@@ -2316,17 +2618,25 @@ function obterVidaAlvo(tipo) {
 
     ) {
 
-        return 1800;
+        return eventoAtivo
+
+            ? 1450
+
+            : 1800;
 
     }
 
-    return 5200;
+    return eventoAtivo
+
+        ? 4000
+
+        : 5200;
 
 }
 
 /* =========================================================
 
-   SPAWN
+   SPAWN NORMAL
 
 ========================================================= */
 
@@ -2364,23 +2674,55 @@ function criarAlvo(
 
     }
 
+    /*
+
+       Durante o evento há
+
+       um pouco mais de bônus
+
+       e bombas.
+
+    */
+
     const chanceBomba =
 
-        Math.min(
+        eventoAtivo
 
-            .20,
+            ?
 
-            .06 +
+            Math.min(
 
-            (nivel - 1) *
+                .23,
 
-            .018
+                .12 +
 
-        );
+                (nivel - 1) *
+
+                .012
+
+            )
+
+            :
+
+            Math.min(
+
+                .20,
+
+                .06 +
+
+                (nivel - 1) *
+
+                .018
+
+            );
 
     const chanceBonus =
 
-        .10;
+        eventoAtivo
+
+            ? .14
+
+            : .10;
 
     let tipo =
 
@@ -2520,11 +2862,29 @@ function criarAlvo(
 
         maxY;
 
-    const movel =
+    let movel;
 
-        nivel >= 2
+    if (
 
-            ? Math.random() <
+        eventoAtivo
+
+    ) {
+
+        movel =
+
+            Math.random() <
+
+            .92;
+
+    } else {
+
+        movel =
+
+            nivel >= 2
+
+                ?
+
+                Math.random() <
 
                 Math.min(
 
@@ -2538,17 +2898,29 @@ function criarAlvo(
 
                 )
 
-            : Math.random() <
+                :
+
+                Math.random() <
 
                 .20;
 
-    let vx = 0;
+    }
 
-    let vy = 0;
+    let vx =
 
-    if (movel) {
+        0;
 
-        const velocidade =
+    let vy =
+
+        0;
+
+    if (
+
+        movel
+
+    ) {
+
+        let velocidade =
 
             38 +
 
@@ -2559,6 +2931,26 @@ function criarAlvo(
             Math.random() *
 
             42;
+
+        /*
+
+           Durante a chuva,
+
+           tudo se move mais.
+
+        */
+
+        if (
+
+            eventoAtivo
+
+        ) {
+
+            velocidade *=
+
+                1.48;
+
+        }
 
         const angulo =
 
@@ -2640,13 +3032,33 @@ function criarAlvo(
 
             tipo === "normal"
 
-                ? 2000 +
+                ?
 
-                    Math.random() *
+                (
 
-                    1000
+                    eventoAtivo
 
-                : null
+                        ?
+
+                        1500 +
+
+                        Math.random() *
+
+                        800
+
+                        :
+
+                        2000 +
+
+                        Math.random() *
+
+                        1000
+
+                )
+
+                :
+
+                null
 
     };
 
@@ -2690,7 +3102,11 @@ function criarAlvo(
 
 ========================================================= */
 
-function posicionarAlvo(alvo) {
+function posicionarAlvo(
+
+    alvo
+
+) {
 
     alvo.elemento.style.left =
 
@@ -2760,15 +3176,31 @@ function transformarEmBomba(
 
         alvo.idade +
 
-        1500;
+        (
+
+            eventoAtivo
+
+                ? 1200
+
+                : 1500
+
+        );
 
     alvo.vx *=
 
-        1.35;
+        eventoAtivo
+
+            ? 1.55
+
+            : 1.35;
 
     alvo.vy *=
 
-        1.35;
+        eventoAtivo
+
+            ? 1.55
+
+            : 1.35;
 
     if (
 
@@ -2788,11 +3220,25 @@ function transformarEmBomba(
 
         const velocidade =
 
-            65 +
+            (
 
-            nivel *
+                65 +
 
-            8;
+                nivel *
+
+                8
+
+            ) *
+
+            (
+
+                eventoAtivo
+
+                    ? 1.45
+
+                    : 1
+
+            );
 
         const angulo =
 
@@ -3258,6 +3704,338 @@ function mostrarMensagem(
 
 /* =========================================================
 
+   CHUVA DE ALVOS
+
+========================================================= */
+
+function iniciarEventoAlvos() {
+
+    if (
+
+        eventoIniciado ||
+
+        !jogando
+
+    ) {
+
+        return;
+
+    }
+
+    eventoIniciado =
+
+        true;
+
+    eventoAtivo =
+
+        true;
+
+    tempoEvento =
+
+        0;
+
+    acumuladorEvento =
+
+        0;
+
+    app.classList.add(
+
+        "evento-alvos"
+
+    );
+
+    eventoAviso.classList.remove(
+
+        "mostrar"
+
+    );
+
+    void eventoAviso.offsetWidth;
+
+    eventoAviso.classList.add(
+
+        "mostrar"
+
+    );
+
+    tocarInicioEvento();
+
+    /*
+
+       Começa já com alguns alvos.
+
+    */
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando &&
+
+                eventoAtivo
+
+            ) {
+
+                criarAlvo(
+
+                    "normal"
+
+                );
+
+                criarAlvo(
+
+                    "normal"
+
+                );
+
+            }
+
+        },
+
+        500
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando &&
+
+                eventoAtivo
+
+            ) {
+
+                criarAlvo(
+
+                    "bonus"
+
+                );
+
+            }
+
+        },
+
+        950
+
+    );
+
+    setTimeout(
+
+        function() {
+
+            if (
+
+                jogando &&
+
+                eventoAtivo
+
+            ) {
+
+                criarAlvo(
+
+                    "bomba"
+
+                );
+
+            }
+
+        },
+
+        1300
+
+    );
+
+}
+
+/* =========================================================
+
+   ATUALIZAR EVENTO
+
+========================================================= */
+
+function atualizarEvento(
+
+    delta
+
+) {
+
+    if (
+
+        !eventoIniciado &&
+
+        tempoRestante <=
+
+        EVENTO_INICIO_RESTANTE
+
+    ) {
+
+        iniciarEventoAlvos();
+
+    }
+
+    if (
+
+        !eventoAtivo
+
+    ) {
+
+        return;
+
+    }
+
+    tempoEvento +=
+
+        delta;
+
+    acumuladorEvento +=
+
+        delta *
+
+        1000;
+
+    /*
+
+       Muitos alvos durante
+
+       os 9 segundos.
+
+    */
+
+    if (
+
+        acumuladorEvento >=
+
+        230
+
+    ) {
+
+        acumuladorEvento =
+
+            0;
+
+        const maximoEvento =
+
+            12;
+
+        if (
+
+            alvos.length <
+
+            maximoEvento
+
+        ) {
+
+            criarAlvo();
+
+        }
+
+        /*
+
+           Algumas rajadas duplas.
+
+        */
+
+        if (
+
+            alvos.length <
+
+            maximoEvento &&
+
+            Math.random() <
+
+            .38
+
+        ) {
+
+            setTimeout(
+
+                function() {
+
+                    if (
+
+                        jogando &&
+
+                        eventoAtivo &&
+
+                        alvos.length <
+
+                        maximoEvento
+
+                    ) {
+
+                        criarAlvo();
+
+                    }
+
+                },
+
+                90
+
+            );
+
+        }
+
+    }
+
+    if (
+
+        tempoEvento >=
+
+        EVENTO_DURACAO
+
+    ) {
+
+        finalizarEventoAlvos();
+
+    }
+
+}
+
+/* =========================================================
+
+   FINALIZAR EVENTO
+
+========================================================= */
+
+function finalizarEventoAlvos() {
+
+    if (
+
+        !eventoAtivo
+
+    ) {
+
+        return;
+
+    }
+
+    eventoAtivo =
+
+        false;
+
+    app.classList.remove(
+
+        "evento-alvos"
+
+    );
+
+    mostrarMensagem(
+
+        "✨ PASSOU!"
+
+    );
+
+    tocarFimEvento();
+
+}
+
+/* =========================================================
+
    HUD
 
 ========================================================= */
@@ -3340,11 +4118,15 @@ function atualizarAlvos(
 
         if (
 
-            alvo.tipo === "normal" &&
+            alvo.tipo ===
+
+                "normal" &&
 
             !alvo.virouBomba &&
 
-            alvo.tempoParaVirarBomba !== null &&
+            alvo.tempoParaVirarBomba !==
+
+                null &&
 
             alvo.idade >=
 
@@ -3506,13 +4288,21 @@ function loop(
 
 ) {
 
-    if (!jogando) {
+    if (
+
+        !jogando
+
+    ) {
 
         return;
 
     }
 
-    if (!ultimoTempo) {
+    if (
+
+        !ultimoTempo
+
+    ) {
 
         ultimoTempo =
 
@@ -3568,89 +4358,121 @@ function loop(
 
     }
 
-    acumuladorSpawn +=
+    /*
 
-        delta *
+       EVENTO ESPECIAL
 
-        1000;
+    */
 
-    const intervalo =
+    atualizarEvento(
 
-        obterIntervaloSpawn();
+        delta
+
+    );
+
+    /*
+
+       Spawn normal.
+
+       Durante a chuva, o evento
+
+       assume o controle do ritmo.
+
+    */
 
     if (
 
-        acumuladorSpawn >=
-
-        intervalo
+        !eventoAtivo
 
     ) {
 
-        acumuladorSpawn =
+        acumuladorSpawn +=
 
-            0;
+            delta *
 
-        const maximo =
+            1000;
 
-            Math.min(
+        const intervalo =
 
-                9,
-
-                3 +
-
-                Math.floor(
-
-                    nivel / 2
-
-                )
-
-            );
+            obterIntervaloSpawn();
 
         if (
 
-            alvos.length <
+            acumuladorSpawn >=
 
-            maximo
-
-        ) {
-
-            criarAlvo();
-
-        }
-
-        if (
-
-            nivel >= 3 &&
-
-            alvos.length <
-
-            maximo &&
-
-            Math.random() <
-
-                .28
+            intervalo
 
         ) {
 
-            setTimeout(
+            acumuladorSpawn =
 
-                function() {
+                0;
 
-                    if (
+            const maximo =
 
-                        jogando
+                Math.min(
 
-                    ) {
+                    9,
 
-                        criarAlvo();
+                    3 +
 
-                    }
+                    Math.floor(
 
-                },
+                        nivel / 2
 
-                120
+                    )
 
-            );
+                );
+
+            if (
+
+                alvos.length <
+
+                maximo
+
+            ) {
+
+                criarAlvo();
+
+            }
+
+            if (
+
+                nivel >= 3 &&
+
+                alvos.length <
+
+                    maximo &&
+
+                Math.random() <
+
+                    .28
+
+            ) {
+
+                setTimeout(
+
+                    function() {
+
+                        if (
+
+                            jogando &&
+
+                            !eventoAtivo
+
+                        ) {
+
+                            criarAlvo();
+
+                        }
+
+                    },
+
+                    120
+
+                );
+
+            }
 
         }
 
@@ -3750,6 +4572,16 @@ function iniciarJogo() {
 
     limparAlvos();
 
+    /*
+
+       Reseta somente o estado
+
+       da partida.
+
+       NÃO mexe no localStorage.
+
+    */
+
     pontos =
 
         0;
@@ -3777,6 +4609,34 @@ function iniciarJogo() {
     acumuladorSpawn =
 
         0;
+
+    eventoIniciado =
+
+        false;
+
+    eventoAtivo =
+
+        false;
+
+    tempoEvento =
+
+        0;
+
+    acumuladorEvento =
+
+        0;
+
+    app.classList.remove(
+
+        "evento-alvos"
+
+    );
+
+    eventoAviso.classList.remove(
+
+        "mostrar"
+
+    );
 
     atualizarHUD();
 
@@ -3913,6 +4773,22 @@ function finalizarJogo() {
     jogando =
 
         false;
+
+    eventoAtivo =
+
+        false;
+
+    app.classList.remove(
+
+        "evento-alvos"
+
+    );
+
+    eventoAviso.classList.remove(
+
+        "mostrar"
+
+    );
 
     if (
 
@@ -4071,6 +4947,16 @@ function voltarMenu() {
     jogando =
 
         false;
+
+    eventoAtivo =
+
+        false;
+
+    app.classList.remove(
+
+        "evento-alvos"
+
+    );
 
     if (
 
@@ -4531,6 +5417,128 @@ function tocarNivel() {
         .04,
 
         .15
+
+    );
+
+}
+
+/* =========================================================
+
+   SOM CHUVA DE ALVOS
+
+========================================================= */
+
+function tocarInicioEvento() {
+
+    tocarTom(
+
+        260,
+
+        .10,
+
+        "square",
+
+        .05
+
+    );
+
+    tocarTom(
+
+        390,
+
+        .10,
+
+        "square",
+
+        .05,
+
+        .11
+
+    );
+
+    tocarTom(
+
+        540,
+
+        .12,
+
+        "square",
+
+        .05,
+
+        .22
+
+    );
+
+    tocarTom(
+
+        780,
+
+        .15,
+
+        "triangle",
+
+        .05,
+
+        .34
+
+    );
+
+    tocarTom(
+
+        1050,
+
+        .22,
+
+        "triangle",
+
+        .05,
+
+        .48
+
+    );
+
+}
+
+function tocarFimEvento() {
+
+    tocarTom(
+
+        900,
+
+        .07,
+
+        "sine",
+
+        .04
+
+    );
+
+    tocarTom(
+
+        1150,
+
+        .09,
+
+        "sine",
+
+        .04,
+
+        .07
+
+    );
+
+    tocarTom(
+
+        1400,
+
+        .13,
+
+        "sine",
+
+        .04,
+
+        .16
 
     );
 
