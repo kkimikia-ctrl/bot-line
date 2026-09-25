@@ -354,8 +354,6 @@ body {
 
     display: block;
 
-    /* começa invisível */
-
     opacity: 0;
 
     transition:
@@ -753,6 +751,74 @@ body {
 #animacaoEscova {
 
     font-size: 42px;
+
+}
+
+/* =========================================================
+
+   NOVO - VASSOURA VARRRENDO
+
+========================================================= */
+
+@keyframes varrerPetton {
+
+    0% {
+
+        transform: translateX(-28px) rotate(-28deg);
+
+    }
+
+    50% {
+
+        transform: translateX(28px) rotate(20deg);
+
+    }
+
+    100% {
+
+        transform: translateX(-28px) rotate(-28deg);
+
+    }
+
+}
+
+#animacaoVassoura.varrendo {
+
+    animation: varrerPetton .32s ease-in-out infinite;
+
+}
+
+/* =========================================================
+
+   NOVO - ESCOVA ESCOVANDO
+
+========================================================= */
+
+@keyframes escovarDentePetton {
+
+    0% {
+
+        transform: translateX(-8px) rotate(-25deg);
+
+    }
+
+    50% {
+
+        transform: translateX(8px) rotate(15deg);
+
+    }
+
+    100% {
+
+        transform: translateX(-8px) rotate(-25deg);
+
+    }
+
+}
+
+#animacaoEscova.escovando {
+
+    animation: escovarDentePetton .22s ease-in-out infinite;
 
 }
 
@@ -3284,21 +3350,39 @@ function limparCocoPetton() {
 
         );
 
-    if (vassoura) {
+    if (!coco || !vassoura) {
 
-        vassoura.style.display =
-
-            "block";
-
-        vassoura.style.left =
-
-            "55%";
-
-        vassoura.style.top =
-
-            "55%";
+        return;
 
     }
+
+    const rect =
+
+        coco.getBoundingClientRect();
+
+    vassoura.style.left =
+
+        (rect.left - 25) + "px";
+
+    vassoura.style.top =
+
+        (rect.top - 25) + "px";
+
+    vassoura.style.display =
+
+        "block";
+
+    vassoura.classList.add(
+
+        "varrendo"
+
+    );
+
+    mostrarMensagem(
+
+        "🧹 Limpando o cocô..."
+
+    );
 
     setTimeout(() => {
 
@@ -3318,45 +3402,27 @@ function limparCocoPetton() {
 
         } catch (erro) {
 
-            console.error(erro);
+            console.error(
 
-        }
-
-        if (coco) {
-
-            coco.style.display =
-
-                "none";
-
-        }
-
-        const btn =
-
-            document.getElementById(
-
-                "btnLimparCoco"
+                erro
 
             );
 
-        if (btn) {
-
-            btn.style.display =
-
-                "none";
-
         }
 
-        if (vassoura) {
+        vassoura.classList.remove(
 
-            vassoura.style.display =
+            "varrendo"
 
-                "none";
+        );
 
-        }
+        vassoura.style.display =
+
+            "none";
 
         atualizarTela();
 
-    }, 1000);
+    }, 2200);
 
 }
 
@@ -3390,111 +3456,123 @@ function escovarPetton() {
 
     }
 
+    let iniciou = false;
+
+    try {
+
+        if (
+
+            typeof Petton !== "undefined" &&
+
+            typeof Petton.escovarDentes === "function"
+
+        ) {
+
+            iniciou =
+
+                Petton.escovarDentes();
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            erro
+
+        );
+
+    }
+
+    if (!iniciou) {
+
+        return;
+
+    }
+
     const rect =
 
         carie.getBoundingClientRect();
 
-    const centroX =
+    escova.style.left =
 
-        rect.left +
+        (
 
-        rect.width / 2;
+            rect.left +
 
-    const centroY =
+            rect.width / 2 -
 
-        rect.top +
+            21
 
-        rect.height / 2;
+        ) + "px";
+
+    escova.style.top =
+
+        (
+
+            rect.top +
+
+            rect.height / 2 -
+
+            21
+
+        ) + "px";
 
     escova.style.display =
 
         "block";
 
-    escova.style.left =
+    escova.classList.add(
 
-        (centroX - 21) + "px";
+        "escovando"
 
-    escova.style.top =
+    );
 
-        (centroY - 21) + "px";
+    mostrarMensagem(
 
-    escova.style.transform =
+        "🪥 Escovando os dentinhos..."
 
-        "rotate(-20deg)";
+    );
 
-    let movimentos = 0;
+    setTimeout(() => {
 
-    const intervalo =
+        escova.classList.remove(
 
-        setInterval(() => {
+            "escovando"
 
-            movimentos++;
+        );
 
-            const deslocamento =
+        escova.style.display =
 
-                movimentos % 2 === 0
+            "none";
 
-                    ? 5
+        try {
 
-                    : -5;
+            if (
 
-            escova.style.left =
+                typeof Petton !== "undefined" &&
 
-                (
+                typeof Petton.estaEscovando === "function"
 
-                    centroX -
+            ) {
 
-                    21 +
-
-                    deslocamento
-
-                ) + "px";
-
-            if (movimentos >= 8) {
-
-                clearInterval(
-
-                    intervalo
-
-                );
-
-                setTimeout(() => {
-
-                    escova.style.display =
-
-                        "none";
-
-                    try {
-
-                        if (
-
-                            typeof Petton !== "undefined" &&
-
-                            typeof Petton.escovarDentes === "function"
-
-                        ) {
-
-                            Petton.escovarDentes();
-
-                        }
-
-                    } catch (erro) {
-
-                        console.error(
-
-                            erro
-
-                        );
-
-                    }
-
-                    atualizarTela();
-
-                }, 300);
+                Petton.estaEscovando();
 
             }
 
-        }, 180);
+        } catch (erro) {
+
+            console.error(
+
+                erro
+
+            );
+
+        }
+
+        atualizarTela();
+
+    }, 3200);
 
 }
 
