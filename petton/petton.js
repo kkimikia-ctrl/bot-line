@@ -1,125 +1,91 @@
 /* =========================================================
-
    PETTON 🐾
-
    Sistema principal do Petton
-
-   ========================================================= */
+========================================================= */
 
 const PETTON_CHAVE = "petton_dados_v3";
 
 /* =========================================================
-
    CONFIGURAÇÕES DO OVO
-
-   ========================================================= */
+========================================================= */
 
 const PETTON_INCUBACAO_MS = 24 * 60 * 60 * 1000;
-
 const PETTON_AQUECEDOR_DURACAO_MS = 2 * 60 * 1000;
-
 const PETTON_AQUECEDOR_MULTIPLICADOR = 5;
 
 /* =========================================================
-
    CONFIGURAÇÕES DOS CUIDADOS
-
-   ========================================================= */
+========================================================= */
 
 const PETTON_COCO_ALERTA_MS = 10 * 60 * 1000;
-
 const PETTON_COCO_DOENCA_MS = 30 * 60 * 1000;
-
 const PETTON_CARIE_APOS_COMER_MS = 5 * 60 * 1000;
-
 const PETTON_HOSPITAL_MS = 5 * 1000;
-
 const PETTON_PASSEIO_MS = 8 * 1000;
 
 /* =========================================================
-
    TEMPO REAL DOS STATUS
-
 ========================================================= */
 
 const PETTON_TEMPO_FOME_MS = 30 * 60 * 1000;
-
 const PETTON_TEMPO_FELICIDADE_MS = 60 * 60 * 1000;
-
 const PETTON_TEMPO_ENERGIA_MS = 45 * 60 * 1000;
-
 const PETTON_TEMPO_HIGIENE_MS = 60 * 60 * 1000;
-
 const PETTON_TEMPO_SAUDE_RISCO_MS = 60 * 60 * 1000;
-
 const PETTON_TEMPO_DOENTE_MS = 60 * 60 * 1000;
-
 const PETTON_TEMPO_COCO_HIGIENE_MS = 60 * 60 * 1000;
 
 /* =========================================================
-
    RECOMPENSAS
-
-   ========================================================= */
+========================================================= */
 
 const PETTON_MOEDAS_ALIMENTAR = 5;
-
 const PETTON_MOEDAS_BRINCAR = 5;
-
 const PETTON_MOEDAS_CARINHO = 2;
-
 const PETTON_MOEDAS_LIMPAR = 3;
-
 const PETTON_MOEDAS_LIMPAR_COCO = 5;
-
 const PETTON_MOEDAS_ESCOVAR = 3;
-
 const PETTON_MOEDAS_PASSEAR = 5;
 
 /* =========================================================
-
    ESPÉCIES
-
-   ========================================================= */
+========================================================= */
 
 function escolherEspecie() {
 
     const especies = [
-
         "gato",
-
         "cachorro",
-
         "coelho"
-
     ];
 
     return especies[
-
-        Math.floor(Math.random() * especies.length)
-
+        Math.floor(
+            Math.random() *
+            especies.length
+        )
     ];
 
 }
 
 /* =========================================================
-
    UTILITÁRIOS
-
-   ========================================================= */
+========================================================= */
 
 function escolherItem(lista) {
 
-    if (!Array.isArray(lista) || !lista.length) {
-
+    if (
+        !Array.isArray(lista) ||
+        !lista.length
+    ) {
         return null;
-
     }
 
     return lista[
-
-        Math.floor(Math.random() * lista.length)
-
+        Math.floor(
+            Math.random() *
+            lista.length
+        )
     ];
 
 }
@@ -127,24 +93,19 @@ function escolherItem(lista) {
 function gerarIdVisual() {
 
     return (
-
         "petton-" +
-
         Date.now().toString(36) +
-
         "-" +
-
-        Math.random().toString(36).substring(2, 10)
-
+        Math.random()
+            .toString(36)
+            .substring(2, 10)
     );
 
 }
 
 /* =========================================================
-
    DNA VISUAL
-
-   ========================================================= */
+========================================================= */
 
 function criarIdentidadeVisual(especie) {
 
@@ -153,127 +114,74 @@ function criarIdentidadeVisual(especie) {
         gato: {
 
             cores: [
-
                 "branco",
-
                 "preto",
-
                 "cinza",
-
                 "laranja",
-
                 "creme",
-
                 "marrom",
-
                 "cinza-azulado",
-
                 "bege"
-
             ],
 
             coresSecundarias: [
-
                 "branco",
-
                 "creme",
-
                 "cinza",
-
                 "marrom",
-
                 "preto"
-
             ],
 
             padroes: [
-
                 "liso",
-
                 "listrado",
-
                 "manchado",
-
                 "bicolor",
-
                 "malhado",
-
                 "com manchas no rosto"
-
             ],
 
             olhos: [
-
                 "redondos",
-
                 "grandes",
-
                 "ovais",
-
                 "brilhantes",
-
                 "grandes e brilhantes"
-
             ],
 
             orelhas: [
-
                 "pontudas",
-
                 "arredondadas",
-
                 "pequenas e pontudas",
-
                 "grandes e pontudas"
-
             ],
 
             narizes: [
-
                 "pequeno",
-
                 "redondo",
-
                 "pequeno e delicado"
-
             ],
 
             patas: [
-
                 "pequenas",
-
                 "fofinhas",
-
                 "delicadas",
-
                 "curtinhas"
-
             ],
 
             caudas: [
-
                 "longa",
-
                 "curta",
-
                 "fofa",
-
                 "longa e fofa"
-
             ],
 
             pelagens: [
-
                 "curta e macia",
-
                 "fofinha",
-
                 "sedosa",
-
                 "macia",
-
                 "levemente felpuda"
-
             ]
 
         },
@@ -281,135 +189,78 @@ function criarIdentidadeVisual(especie) {
         cachorro: {
 
             cores: [
-
                 "branco",
-
                 "preto",
-
                 "caramelo",
-
                 "marrom",
-
                 "cinza",
-
                 "creme",
-
                 "bege",
-
                 "marrom-claro"
-
             ],
 
             coresSecundarias: [
-
                 "branco",
-
                 "creme",
-
                 "caramelo",
-
                 "marrom",
-
                 "preto"
-
             ],
 
             padroes: [
-
                 "liso",
-
                 "manchado",
-
                 "bicolor",
-
                 "malhado",
-
                 "com manchas no rosto",
-
                 "com uma mancha no olho"
-
             ],
 
             olhos: [
-
                 "redondos",
-
                 "grandes",
-
                 "ovais",
-
                 "brilhantes",
-
                 "grandes e brilhantes"
-
             ],
 
             orelhas: [
-
                 "caídas",
-
                 "pontudas",
-
                 "arredondadas",
-
                 "grandes e caídas",
-
                 "pequenas e caídas"
-
             ],
 
             narizes: [
-
                 "pequeno",
-
                 "redondo",
-
                 "escuro",
-
                 "pequeno e escuro"
-
             ],
 
             patas: [
-
                 "pequenas",
-
                 "fofinhas",
-
                 "fortes",
-
                 "curtinhas",
-
                 "grandes e fofinhas"
-
             ],
 
             caudas: [
-
                 "longa",
-
                 "curta",
-
                 "enrolada",
-
                 "fofa",
-
                 "longa e fofa"
-
             ],
 
             pelagens: [
-
                 "curta e macia",
-
                 "fofinha",
-
                 "macia",
-
                 "levemente felpuda",
-
                 "sedosa"
-
             ]
 
         },
@@ -417,129 +268,75 @@ function criarIdentidadeVisual(especie) {
         coelho: {
 
             cores: [
-
                 "branco",
-
                 "cinza",
-
                 "marrom",
-
                 "creme",
-
                 "preto",
-
                 "caramelo",
-
                 "bege",
-
                 "cinza-claro"
-
             ],
 
             coresSecundarias: [
-
                 "branco",
-
                 "creme",
-
                 "cinza",
-
                 "marrom",
-
                 "caramelo"
-
             ],
 
             padroes: [
-
                 "liso",
-
                 "manchado",
-
                 "bicolor",
-
                 "malhado",
-
                 "com manchas no rosto",
-
                 "com uma mancha no olho"
-
             ],
 
             olhos: [
-
                 "redondos",
-
                 "grandes",
-
                 "brilhantes",
-
                 "grandes e brilhantes",
-
                 "ovais"
-
             ],
 
             orelhas: [
-
                 "longas",
-
                 "muito longas",
-
                 "arredondadas",
-
                 "longas e fofinhas"
-
             ],
 
             narizes: [
-
                 "pequeno",
-
                 "redondo",
-
                 "pequeno e delicado"
-
             ],
 
             patas: [
-
                 "pequenas",
-
                 "fofinhas",
-
                 "delicadas",
-
                 "curtinhas",
-
                 "grandes e fofinhas"
-
             ],
 
             caudas: [
-
                 "pequena",
-
                 "fofa",
-
                 "redonda",
-
                 "pequena e redonda"
-
             ],
 
             pelagens: [
-
                 "fofinha",
-
                 "macia",
-
                 "sedosa",
-
                 "levemente felpuda",
-
                 "muito fofinha"
-
             ]
 
         }
@@ -547,9 +344,7 @@ function criarIdentidadeVisual(especie) {
     };
 
     const opcoes =
-
         identidades[especie] ||
-
         identidades.gato;
 
     const identidade = {
@@ -557,110 +352,99 @@ function criarIdentidadeVisual(especie) {
         id: gerarIdVisual(),
 
         seed:
-
             Date.now().toString(36) +
-
             "-" +
-
-            Math.random().toString(36).substring(2, 12),
+            Math.random()
+                .toString(36)
+                .substring(2, 12),
 
         especie: especie,
 
         cor:
-            escolherItem(opcoes.cores),
+            escolherItem(
+                opcoes.cores
+            ),
 
         corSecundaria:
-            escolherItem(opcoes.coresSecundarias),
+            escolherItem(
+                opcoes.coresSecundarias
+            ),
 
         padrao:
-            escolherItem(opcoes.padroes),
+            escolherItem(
+                opcoes.padroes
+            ),
 
         olhos:
-            escolherItem(opcoes.olhos),
+            escolherItem(
+                opcoes.olhos
+            ),
 
         orelhas:
-            escolherItem(opcoes.orelhas),
+            escolherItem(
+                opcoes.orelhas
+            ),
 
         nariz:
-            escolherItem(opcoes.narizes),
+            escolherItem(
+                opcoes.narizes
+            ),
 
         patas:
-            escolherItem(opcoes.patas),
+            escolherItem(
+                opcoes.patas
+            ),
 
         cauda:
-            escolherItem(opcoes.caudas),
+            escolherItem(
+                opcoes.caudas
+            ),
 
         pelagem:
-            escolherItem(opcoes.pelagens),
+            escolherItem(
+                opcoes.pelagens
+            ),
 
         marca:
             escolherItem([
-
                 "nenhuma marca especial",
-
                 "pequena mancha na testa",
-
                 "pequena mancha na bochecha",
-
                 "pequena mancha perto do olho",
-
                 "pequena marca no peito",
-
                 "pequena mancha na orelha"
-
             ]),
 
         acessorio:
             escolherItem([
-
                 "nenhum",
-
                 "nenhum",
-
                 "nenhum",
-
                 "coleira simples",
-
                 "lacinho pequeno",
-
                 "pingente pequeno",
-
                 "lenço pequeno"
-
             ]),
 
         expressao:
             escolherItem([
-
                 "fofa",
-
                 "curiosa",
-
                 "alegre",
-
                 "tranquila",
-
                 "brincalhona",
-
                 "carinhosa"
-
             ]),
 
         estiloBase:
             "Petton fofo, corpo compacto, aparência infantil e amigável",
 
         imagens: {
-
             ovo: null,
-
             bebe: null,
-
             filhote: null,
-
             jovem: null,
-
             adulto: null
-
         },
 
         descricaoBase: null
@@ -668,149 +452,132 @@ function criarIdentidadeVisual(especie) {
     };
 
     identidade.descricaoBase =
-        criarDescricaoVisualPetton(identidade);
+        criarDescricaoVisualPetton(
+            identidade
+        );
 
     return identidade;
 
 }
 
 /* =========================================================
-
    DESCRIÇÃO VISUAL
+========================================================= */
 
-   ========================================================= */
-
-function criarDescricaoVisualPetton(identidade) {
+function criarDescricaoVisualPetton(
+    identidade
+) {
 
     if (!identidade) {
-
         return "";
-
     }
 
     const especie =
-        identidade.especie || "gato";
+        identidade.especie ||
+        "gato";
 
     const cor =
-        identidade.cor || "fofo";
+        identidade.cor ||
+        "fofo";
 
     const corSecundaria =
-        identidade.corSecundaria || "branco";
+        identidade.corSecundaria ||
+        "branco";
 
     const padrao =
-        identidade.padrao || "liso";
+        identidade.padrao ||
+        "liso";
 
     const olhos =
-        identidade.olhos || "grandes";
+        identidade.olhos ||
+        "grandes";
 
     const orelhas =
-        identidade.orelhas || "fofinhas";
+        identidade.orelhas ||
+        "fofinhas";
 
     const nariz =
-        identidade.nariz || "pequeno";
+        identidade.nariz ||
+        "pequeno";
 
     const patas =
-        identidade.patas || "fofinhas";
+        identidade.patas ||
+        "fofinhas";
 
     const cauda =
-        identidade.cauda || "fofa";
+        identidade.cauda ||
+        "fofa";
 
     const pelagem =
-        identidade.pelagem || "macia";
+        identidade.pelagem ||
+        "macia";
 
     const marca =
         identidade.marca ||
         "nenhuma marca especial";
 
     const acessorio =
-        identidade.acessorio || "nenhum";
+        identidade.acessorio ||
+        "nenhum";
 
     const expressao =
-        identidade.expressao || "fofa";
+        identidade.expressao ||
+        "fofa";
 
     return (
-
         "Personagem Petton original, espécie " +
-
         especie +
-
         ", corpo compacto e extremamente fofo, " +
-
         "estilo visual Petton consistente, " +
-
         "cor principal " +
-
         cor +
-
         ", cor secundária " +
-
         corSecundaria +
-
         ", padrão " +
-
         padrao +
-
         ", olhos " +
-
         olhos +
-
         ", orelhas " +
-
         orelhas +
-
         ", nariz " +
-
         nariz +
-
         ", patas " +
-
         patas +
-
         ", cauda " +
-
         cauda +
-
         ", pelagem " +
-
         pelagem +
-
         ", " +
-
         marca +
-
         ", acessório " +
-
         acessorio +
-
         ", expressão " +
-
         expressao +
-
         ". Manter exatamente essas características " +
-
         "em todas as fases de crescimento."
-
     );
 
 }
 
 /* =========================================================
-
    PROMPT POR FASE
+========================================================= */
 
-   ========================================================= */
-
-function criarPromptFasePetton(fase) {
+function criarPromptFasePetton(
+    fase
+) {
 
     const dados =
         carregarPetton();
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+        dados
+    );
 
-    if (!dados.identidadeVisual) {
-
+    if (
+        !dados.identidadeVisual
+    ) {
         return "";
-
     }
 
     const identidade =
@@ -863,46 +630,36 @@ function criarPromptFasePetton(fase) {
     }
 
     return (
-
         identidade.descricaoBase +
-
         " " +
-
         descricaoFase +
-
         ". " +
-
         "Não trocar espécie, cor, padrão, olhos, orelhas, " +
-
         "nariz, patas, cauda, pelagem, marca ou acessório. " +
-
         "O personagem deve continuar reconhecível como o mesmo Petton."
-
     );
 
 }
 
 /* =========================================================
-
    GARANTIR IDENTIDADE VISUAL
+========================================================= */
 
-   ========================================================= */
-
-function garantirIdentidadeVisual(dados) {
+function garantirIdentidadeVisual(
+    dados
+) {
 
     if (!dados) {
-
         return dados;
-
     }
 
-    if (!dados.identidadeVisual) {
+    if (
+        !dados.identidadeVisual
+    ) {
 
         if (!dados.especie) {
-
             dados.especie =
                 escolherEspecie();
-
         }
 
         dados.identidadeVisual =
@@ -916,18 +673,19 @@ function garantirIdentidadeVisual(dados) {
         dados.identidadeVisual;
 
     if (!identidade.id) {
-
         identidade.id =
             gerarIdVisual();
-
     }
 
     if (!identidade.seed) {
 
         identidade.seed =
-            Date.now().toString(36) +
+            Date.now()
+                .toString(36) +
             "-" +
-            Math.random().toString(36).substring(2, 12);
+            Math.random()
+                .toString(36)
+                .substring(2, 12);
 
     }
 
@@ -950,8 +708,11 @@ function garantirIdentidadeVisual(dados) {
         identidade.cor = "branco";
     }
 
-    if (!identidade.corSecundaria) {
-        identidade.corSecundaria = "branco";
+    if (
+        !identidade.corSecundaria
+    ) {
+        identidade.corSecundaria =
+            "branco";
     }
 
     if (!identidade.padrao) {
@@ -963,23 +724,28 @@ function garantirIdentidadeVisual(dados) {
     }
 
     if (!identidade.orelhas) {
-        identidade.orelhas = "arredondadas";
+        identidade.orelhas =
+            "arredondadas";
     }
 
     if (!identidade.nariz) {
-        identidade.nariz = "pequeno";
+        identidade.nariz =
+            "pequeno";
     }
 
     if (!identidade.patas) {
-        identidade.patas = "fofinhas";
+        identidade.patas =
+            "fofinhas";
     }
 
     if (!identidade.cauda) {
-        identidade.cauda = "fofa";
+        identidade.cauda =
+            "fofa";
     }
 
     if (!identidade.pelagem) {
-        identidade.pelagem = "macia";
+        identidade.pelagem =
+            "macia";
     }
 
     if (!identidade.marca) {
@@ -990,11 +756,17 @@ function garantirIdentidadeVisual(dados) {
     }
 
     if (!identidade.acessorio) {
-        identidade.acessorio = "nenhum";
+
+        identidade.acessorio =
+            "nenhum";
+
     }
 
     if (!identidade.expressao) {
-        identidade.expressao = "fofa";
+
+        identidade.expressao =
+            "fofa";
+
     }
 
     if (!identidade.estiloBase) {
@@ -1007,44 +779,70 @@ function garantirIdentidadeVisual(dados) {
     if (!identidade.imagens) {
 
         identidade.imagens = {
-
             ovo: null,
-
             bebe: null,
-
             filhote: null,
-
             jovem: null,
-
             adulto: null
-
         };
 
     } else {
 
-        if (!("ovo" in identidade.imagens)) {
-            identidade.imagens.ovo = null;
+        if (
+            !(
+                "ovo" in
+                identidade.imagens
+            )
+        ) {
+            identidade.imagens.ovo =
+                null;
         }
 
-        if (!("bebe" in identidade.imagens)) {
-            identidade.imagens.bebe = null;
+        if (
+            !(
+                "bebe" in
+                identidade.imagens
+            )
+        ) {
+            identidade.imagens.bebe =
+                null;
         }
 
-        if (!("filhote" in identidade.imagens)) {
-            identidade.imagens.filhote = null;
+        if (
+            !(
+                "filhote" in
+                identidade.imagens
+            )
+        ) {
+            identidade.imagens.filhote =
+                null;
         }
 
-        if (!("jovem" in identidade.imagens)) {
-            identidade.imagens.jovem = null;
+        if (
+            !(
+                "jovem" in
+                identidade.imagens
+            )
+        ) {
+            identidade.imagens.jovem =
+                null;
         }
 
-        if (!("adulto" in identidade.imagens)) {
-            identidade.imagens.adulto = null;
+        if (
+            !(
+                "adulto" in
+                identidade.imagens
+            )
+        ) {
+            identidade.imagens.adulto =
+                null;
         }
 
     }
 
-    if (!identidade.descricaoBase) {
+    if (
+        !identidade.descricaoBase
+    ) {
 
         identidade.descricaoBase =
             criarDescricaoVisualPetton(
@@ -1058,41 +856,32 @@ function garantirIdentidadeVisual(dados) {
 }
 
 /* =========================================================
-
    ACESSÓRIOS
-
-   ========================================================= */
+========================================================= */
 
 const PETTON_TIPOS_ACESSORIOS = [
-
     "chapeu",
-
     "oculos",
-
     "lacinho",
-
     "coroa",
-
     "lenco"
-
 ];
 
-function garantirAcessorios(dados) {
+function garantirAcessorios(
+    dados
+) {
 
     if (!dados) {
-
         return dados;
-
     }
 
     if (
-
         !dados.acessorios ||
-
-        typeof dados.acessorios !== "object" ||
-
-        Array.isArray(dados.acessorios)
-
+        typeof dados.acessorios !==
+            "object" ||
+        Array.isArray(
+            dados.acessorios
+        )
     ) {
 
         dados.acessorios = {};
@@ -1100,70 +889,80 @@ function garantirAcessorios(dados) {
     }
 
     PETTON_TIPOS_ACESSORIOS.forEach(
-
-        function (tipo) {
+        function(tipo) {
 
             if (
-
-                !Object.prototype.hasOwnProperty.call(
-
-                    dados.acessorios,
-
-                    tipo
-
-                )
-
+                !Object.prototype
+                    .hasOwnProperty
+                    .call(
+                        dados.acessorios,
+                        tipo
+                    )
             ) {
 
-                dados.acessorios[tipo] = null;
+                dados.acessorios[tipo] =
+                    null;
 
             }
 
         }
-
     );
 
     return dados;
 
 }
 
-function tipoAcessorioValido(tipo) {
+function tipoAcessorioValido(
+    tipo
+) {
 
-    return PETTON_TIPOS_ACESSORIOS.includes(
-
-        String(tipo || "").toLowerCase()
-
-    );
+    return PETTON_TIPOS_ACESSORIOS
+        .includes(
+            String(
+                tipo ||
+                ""
+            ).toLowerCase()
+        );
 
 }
 
-function equiparAcessorio(tipo, id) {
+function equiparAcessorio(
+    tipo,
+    id
+) {
 
     tipo =
-        String(tipo || "").toLowerCase().trim();
+        String(
+            tipo ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
 
-    if (!tipoAcessorioValido(tipo)) {
-
+    if (
+        !tipoAcessorioValido(
+            tipo
+        )
+    ) {
         return false;
-
     }
 
     const dados =
         carregarPetton();
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
     if (
-
         id === null ||
-
-        typeof id === "undefined" ||
-
+        typeof id ===
+            "undefined" ||
         id === ""
-
     ) {
 
-        dados.acessorios[tipo] = null;
+        dados.acessorios[tipo] =
+            null;
 
     } else {
 
@@ -1172,31 +971,47 @@ function equiparAcessorio(tipo, id) {
 
     }
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados.acessorios;
 
 }
 
-function removerAcessorio(tipo) {
+function removerAcessorio(
+    tipo
+) {
 
     tipo =
-        String(tipo || "").toLowerCase().trim();
+        String(
+            tipo ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
 
-    if (!tipoAcessorioValido(tipo)) {
-
+    if (
+        !tipoAcessorioValido(
+            tipo
+        )
+    ) {
         return false;
-
     }
 
     const dados =
         carregarPetton();
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
-    dados.acessorios[tipo] = null;
+    dados.acessorios[tipo] =
+        null;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
@@ -1207,50 +1022,79 @@ function obterAcessoriosPetton() {
     const dados =
         carregarPetton();
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados.acessorios;
 
 }
 
-function obterAcessorioPetton(tipo) {
+function obterAcessorioPetton(
+    tipo
+) {
 
     tipo =
-        String(tipo || "").toLowerCase().trim();
+        String(
+            tipo ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
 
-    if (!tipoAcessorioValido(tipo)) {
-
+    if (
+        !tipoAcessorioValido(
+            tipo
+        )
+    ) {
         return null;
-
     }
 
     const dados =
         carregarPetton();
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
-    return dados.acessorios[tipo] || null;
+    return (
+        dados.acessorios[tipo] ||
+        null
+    );
 
 }
 
 /* =========================================================
-
    POSIÇÃO DOS ACESSÓRIOS
+========================================================= */
 
-   ========================================================= */
-
-function obterPosicaoAcessorio(tipo, especie, fase) {
+function obterPosicaoAcessorio(
+    tipo,
+    especie,
+    fase
+) {
 
     tipo =
-        String(tipo || "").toLowerCase();
+        String(
+            tipo ||
+            ""
+        ).toLowerCase();
 
     especie =
-        String(especie || "gato").toLowerCase();
+        String(
+            especie ||
+            "gato"
+        ).toLowerCase();
 
     fase =
-        String(fase || "bebe").toLowerCase();
+        String(
+            fase ||
+            "bebe"
+        ).toLowerCase();
 
     const posicoesBase = {
 
@@ -1260,35 +1104,40 @@ function obterPosicaoAcessorio(tipo, especie, fase) {
                 top: "3%",
                 left: "50%",
                 width: "38%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             oculos: {
                 top: "34%",
                 left: "50%",
                 width: "32%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             lacinho: {
                 top: "28%",
                 left: "72%",
                 width: "20%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             coroa: {
                 top: "0%",
                 left: "50%",
                 width: "30%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             lenco: {
                 top: "63%",
                 left: "50%",
                 width: "32%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             }
 
         },
@@ -1299,35 +1148,40 @@ function obterPosicaoAcessorio(tipo, especie, fase) {
                 top: "4%",
                 left: "50%",
                 width: "40%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             oculos: {
                 top: "34%",
                 left: "50%",
                 width: "34%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             lacinho: {
                 top: "30%",
                 left: "72%",
                 width: "21%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             coroa: {
                 top: "1%",
                 left: "50%",
                 width: "32%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             lenco: {
                 top: "62%",
                 left: "50%",
                 width: "34%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             }
 
         },
@@ -1338,35 +1192,40 @@ function obterPosicaoAcessorio(tipo, especie, fase) {
                 top: "2%",
                 left: "50%",
                 width: "36%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             oculos: {
                 top: "31%",
                 left: "50%",
                 width: "30%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             lacinho: {
                 top: "24%",
                 left: "70%",
                 width: "20%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             coroa: {
                 top: "0%",
                 left: "50%",
                 width: "28%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             },
 
             lenco: {
                 top: "59%",
                 left: "50%",
                 width: "31%",
-                transform: "translateX(-50%)"
+                transform:
+                    "translateX(-50%)"
             }
 
         }
@@ -1382,37 +1241,42 @@ function obterPosicaoAcessorio(tipo, especie, fase) {
         especieBase.chapeu;
 
     return {
-
-        top: posicao.top,
-
-        left: posicao.left,
-
-        width: posicao.width,
-
-        transform: posicao.transform,
-
-        fase: fase,
-
-        especie: especie,
-
-        tipo: tipo
-
+        top:
+            posicao.top,
+        left:
+            posicao.left,
+        width:
+            posicao.width,
+        transform:
+            posicao.transform,
+        fase:
+            fase,
+        especie:
+            especie,
+        tipo:
+            tipo
     };
 
 }
 
-function posicaoAcessorioPetton(tipo, fase) {
+function posicaoAcessorioPetton(
+    tipo,
+    fase
+) {
 
     const dados =
         carregarPetton();
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+        dados
+    );
 
     const especie =
         dados.especie ||
         (
             dados.identidadeVisual
-                ? dados.identidadeVisual.especie
+                ? dados.identidadeVisual
+                    .especie
                 : "gato"
         );
 
@@ -1422,22 +1286,16 @@ function posicaoAcessorioPetton(tipo, fase) {
         "bebe";
 
     return obterPosicaoAcessorio(
-
         tipo,
-
         especie,
-
         faseAtual
-
     );
 
 }
 
 /* =========================================================
-
    CRIAR PETTON
-
-   ========================================================= */
+========================================================= */
 
 function criarPettonNovo() {
 
@@ -1449,16 +1307,22 @@ function criarPettonNovo() {
 
     const novo = {
 
-        especie: especie,
+        especie:
+            especie,
 
-        nome: null,
+        nome:
+            null,
 
-        fase: "ovo",
+        fase:
+            "ovo",
 
-        dateNascimento: null,
+        dateNascimento:
+            null,
 
         dataCriacao:
-            new Date(agora).toISOString(),
+            new Date(
+                agora
+            ).toISOString(),
 
         incubacaoRestanteMs:
             PETTON_INCUBACAO_MS,
@@ -1466,132 +1330,170 @@ function criarPettonNovo() {
         incubacaoAtualizadaEm:
             agora,
 
-        aquecedorAte: null,
+        aquecedorAte:
+            null,
 
-        fome: 70,
+        fome:
+            70,
 
-        felicidade: 100,
+        felicidade:
+            100,
 
-        energia: 100,
+        energia:
+            100,
 
-        higiene: 100,
+        higiene:
+            100,
 
-        saude: 100,
+        saude:
+            100,
 
-        doente: false,
+        doente:
+            false,
 
-        doenteDesde: null,
+        doenteDesde:
+            null,
 
-        hospitalAte: null,
+        hospitalAte:
+            null,
 
-        cocoAtivo: false,
+        cocoAtivo:
+            false,
 
-        cocoNasceuEm: null,
+        cocoNasceuEm:
+            null,
 
-        carieAtiva: false,
+        carieAtiva:
+            false,
 
-        carieNasceuEm: null,
+        carieNasceuEm:
+            null,
 
-        ultimaAlimentacaoEm: null,
+        ultimaAlimentacaoEm:
+            null,
 
-        ultimaAlimentacaoCarieEm: null,
+        ultimaAlimentacaoCarieEm:
+            null,
 
-        ultimaAlimentacaoCocoEm: null,
+        ultimaAlimentacaoCocoEm:
+            null,
 
-        passeandoAte: null,
+        passeandoAte:
+            null,
 
-        escovandoAte: null,
+        escovandoAte:
+            null,
 
-        moedas: 100,
+        moedas:
+            100,
 
-        pontos: 0,
+        pontos:
+            0,
 
-        nivel: 1,
+        nivel:
+            1,
 
         acessorios: {
-
             chapeu: null,
-
             oculos: null,
-
             lacinho: null,
-
             coroa: null,
-
             lenco: null
-
         },
 
-        identidadeVisual: null,
+        identidadeVisual:
+            null,
 
         caracteristicas: {
-
             cor: false,
-
             orelhas: false,
-
             olhos: false,
-
             nariz: false,
-
             padrao: false,
-
             patas: false,
-
             cauda: false
-
         },
 
-        album: []
+        album:
+            []
 
     };
 
-    garantirIdentidadeVisual(novo);
+    garantirIdentidadeVisual(
+        novo
+    );
 
-    garantirAcessorios(novo);
+    garantirAcessorios(
+        novo
+    );
 
     return novo;
 
 }
 
 /* =========================================================
-
    CAMPOS NOVOS
+========================================================= */
 
-   ========================================================= */
+function garantirCamposNovos(
+    dados
+) {
 
-function garantirCamposNovos(dados) {
-
-    if (typeof dados.doente !== "boolean") {
+    if (
+        typeof dados.doente !==
+        "boolean"
+    ) {
         dados.doente = false;
     }
 
-    if (typeof dados.doenteDesde === "undefined") {
+    if (
+        typeof dados.doenteDesde ===
+        "undefined"
+    ) {
         dados.doenteDesde = null;
     }
 
-    if (typeof dados.hospitalAte === "undefined") {
+    if (
+        typeof dados.hospitalAte ===
+        "undefined"
+    ) {
         dados.hospitalAte = null;
     }
 
-    if (typeof dados.cocoAtivo !== "boolean") {
+    if (
+        typeof dados.cocoAtivo !==
+        "boolean"
+    ) {
         dados.cocoAtivo = false;
     }
 
-    if (typeof dados.cocoNasceuEm === "undefined") {
+    if (
+        typeof dados.cocoNasceuEm ===
+        "undefined"
+    ) {
         dados.cocoNasceuEm = null;
     }
 
-    if (typeof dados.carieAtiva !== "boolean") {
+    if (
+        typeof dados.carieAtiva !==
+        "boolean"
+    ) {
         dados.carieAtiva = false;
     }
 
-    if (typeof dados.carieNasceuEm === "undefined") {
+    if (
+        typeof dados.carieNasceuEm ===
+        "undefined"
+    ) {
         dados.carieNasceuEm = null;
     }
 
-    if (typeof dados.ultimaAlimentacaoEm === "undefined") {
-        dados.ultimaAlimentacaoEm = null;
+    if (
+        typeof dados.ultimaAlimentacaoEm ===
+        "undefined"
+    ) {
+        dados.ultimaAlimentacaoEm =
+            null;
     }
 
     if (
@@ -1616,23 +1518,37 @@ function garantirCamposNovos(dados) {
 
     }
 
-    if (typeof dados.passeandoAte === "undefined") {
+    if (
+        typeof dados.passeandoAte ===
+        "undefined"
+    ) {
         dados.passeandoAte = null;
     }
 
-    if (typeof dados.escovandoAte === "undefined") {
+    if (
+        typeof dados.escovandoAte ===
+        "undefined"
+    ) {
         dados.escovandoAte = null;
     }
 
-    if (typeof dados.identidadeVisual === "undefined") {
+    if (
+        typeof dados.identidadeVisual ===
+        "undefined"
+    ) {
         dados.identidadeVisual = null;
     }
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
     if (
-        typeof dados.moedas !== "number" ||
-        !Number.isFinite(dados.moedas)
+        typeof dados.moedas !==
+            "number" ||
+        !Number.isFinite(
+            dados.moedas
+        )
     ) {
 
         dados.moedas = 100;
@@ -1642,12 +1558,17 @@ function garantirCamposNovos(dados) {
     dados.moedas =
         Math.max(
             0,
-            Math.floor(dados.moedas)
+            Math.floor(
+                dados.moedas
+            )
         );
 
     if (
-        typeof dados.pontos !== "number" ||
-        !Number.isFinite(dados.pontos)
+        typeof dados.pontos !==
+            "number" ||
+        !Number.isFinite(
+            dados.pontos
+        )
     ) {
 
         dados.pontos = 0;
@@ -1657,35 +1578,33 @@ function garantirCamposNovos(dados) {
     dados.pontos =
         Math.max(
             0,
-            Math.floor(dados.pontos)
+            Math.floor(
+                dados.pontos
+            )
         );
 
-    if (!dados.caracteristicas) {
+    if (
+        !dados.caracteristicas
+    ) {
 
         dados.caracteristicas = {
-
             cor: false,
-
             orelhas: false,
-
             olhos: false,
-
             nariz: false,
-
             padrao: false,
-
             patas: false,
-
             cauda: false
-
         };
 
     }
 
-    if (!Array.isArray(dados.album)) {
-
+    if (
+        !Array.isArray(
+            dados.album
+        )
+    ) {
         dados.album = [];
-
     }
 
     return dados;
@@ -1693,17 +1612,18 @@ function garantirCamposNovos(dados) {
 }
 
 /* =========================================================
+   IDADE
+========================================================= */
 
-   IDADE DIRETA
+function calcularIdadeDiasDireto(
+    dados
+) {
 
-   ========================================================= */
-
-function calcularIdadeDiasDireto(dados) {
-
-    if (!dados || !dados.dateNascimento) {
-
+    if (
+        !dados ||
+        !dados.dateNascimento
+    ) {
         return 0;
-
     }
 
     const nascimento =
@@ -1711,10 +1631,12 @@ function calcularIdadeDiasDireto(dados) {
             dados.dateNascimento
         ).getTime();
 
-    if (!Number.isFinite(nascimento)) {
-
+    if (
+        !Number.isFinite(
+            nascimento
+        )
+    ) {
         return 0;
-
     }
 
     const diferenca =
@@ -1722,35 +1644,31 @@ function calcularIdadeDiasDireto(dados) {
         nascimento;
 
     return Math.max(
-
         0,
-
         Math.floor(
-
             diferenca /
-            (1000 * 60 * 60 * 24)
-
+            (
+                1000 *
+                60 *
+                60 *
+                24
+            )
         )
-
     );
 
 }
 
-/* =========================================================
-
-   TEXTO DA IDADE
-
-   ========================================================= */
-
-function obterIdadeTexto(dados) {
+function obterIdadeTexto(
+    dados
+) {
 
     if (!dados) {
-
         return "🥚 Carregando Petton...";
-
     }
 
-    if (!dados.dateNascimento) {
+    if (
+        !dados.dateNascimento
+    ) {
 
         const restante =
             Number(
@@ -1758,43 +1676,51 @@ function obterIdadeTexto(dados) {
             );
 
         if (
-            Number.isFinite(restante) &&
+            Number.isFinite(
+                restante
+            ) &&
             restante > 0
         ) {
 
             const totalSegundos =
                 Math.ceil(
-                    restante / 1000
+                    restante /
+                    1000
                 );
 
             const horas =
                 Math.floor(
-                    totalSegundos / 3600
+                    totalSegundos /
+                    3600
                 );
 
             const minutos =
                 Math.floor(
-                    (totalSegundos % 3600) / 60
+                    (
+                        totalSegundos %
+                        3600
+                    ) /
+                    60
                 );
 
-            if (horas > 0) {
-
+            if (
+                horas > 0
+            ) {
                 return (
                     "🥚 Nascimento em " +
                     horas +
                     "h"
                 );
-
             }
 
-            if (minutos > 0) {
-
+            if (
+                minutos > 0
+            ) {
                 return (
                     "🥚 Nascimento em " +
                     minutos +
                     " min"
                 );
-
             }
 
             return "🥚 Nascimento em breve";
@@ -1810,44 +1736,46 @@ function obterIdadeTexto(dados) {
             dados
         );
 
-    if (dias <= 0) {
-
+    if (
+        dias <= 0
+    ) {
         return "Recém-nascido 🐣";
-
     }
 
-    if (dias === 1) {
-
+    if (
+        dias === 1
+    ) {
         return "1 dia";
-
     }
 
-    return dias + " dias";
+    return (
+        dias +
+        " dias"
+    );
 
 }
 
 /* =========================================================
-
    ATUALIZAR INCUBAÇÃO
-
-   ========================================================= */
+========================================================= */
 
 function atualizarIncubacao() {
 
     const dados =
         carregarPetton();
 
-    if (dados.dateNascimento) {
-
+    if (
+        dados.dateNascimento
+    ) {
         return dados;
-
     }
 
     const agora =
         Date.now();
 
     if (
-        typeof dados.incubacaoAtualizadaEm !== "number" ||
+        typeof dados.incubacaoAtualizadaEm !==
+            "number" ||
         !Number.isFinite(
             dados.incubacaoAtualizadaEm
         )
@@ -1863,25 +1791,26 @@ function atualizarIncubacao() {
         dados.incubacaoAtualizadaEm;
 
     if (
-        !Number.isFinite(tempoPassado) ||
+        !Number.isFinite(
+            tempoPassado
+        ) ||
         tempoPassado < 0
     ) {
-
         tempoPassado = 0;
-
     }
 
     const aquecedorLigado =
         dados.aquecedorAte &&
-        dados.aquecedorAte > agora;
+        dados.aquecedorAte >
+            agora;
 
     if (
         dados.aquecedorAte &&
-        dados.aquecedorAte <= agora
+        dados.aquecedorAte <=
+            agora
     ) {
-
-        dados.aquecedorAte = null;
-
+        dados.aquecedorAte =
+            null;
     }
 
     const multiplicador =
@@ -1897,7 +1826,8 @@ function atualizarIncubacao() {
         Math.max(
             0,
             Number(
-                dados.incubacaoRestanteMs || 0
+                dados.incubacaoRestanteMs ||
+                0
             ) -
             desconto
         );
@@ -1906,10 +1836,12 @@ function atualizarIncubacao() {
         agora;
 
     if (
-        dados.incubacaoRestanteMs <= 0
+        dados.incubacaoRestanteMs <=
+        0
     ) {
 
-        dados.incubacaoRestanteMs = 0;
+        dados.incubacaoRestanteMs =
+            0;
 
         nascerPettonInterno(
             dados
@@ -1919,32 +1851,39 @@ function atualizarIncubacao() {
 
     }
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados;
 
 }
 
 /* =========================================================
-
    NASCIMENTO
+========================================================= */
 
-   ========================================================= */
+function nascerPettonInterno(
+    dados
+) {
 
-function nascerPettonInterno(dados) {
-
-    if (dados.dateNascimento) {
-
+    if (
+        dados.dateNascimento
+    ) {
         return dados;
-
     }
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+        dados
+    );
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
     dados.dateNascimento =
-        new Date().toISOString();
+        new Date()
+            .toISOString();
 
     dados.fase =
         "bebe";
@@ -1998,55 +1937,51 @@ function nascerPettonInterno(dados) {
         null;
 
     dados.caracteristicas = {
-
         cor: true,
-
         orelhas: true,
-
         olhos: false,
-
         nariz: true,
-
         padrao: false,
-
         patas: false,
-
         cauda: false
-
     };
 
-    if (!Array.isArray(dados.album)) {
-
+    if (
+        !Array.isArray(
+            dados.album
+        )
+    ) {
         dados.album = [];
-
     }
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados;
 
 }
-
-/* =========================================================
-
-   NASCER API
-
-   ========================================================= */
 
 function nascerPetton() {
 
     const dados =
         carregarPetton();
 
-    if (dados.dateNascimento) {
+    if (
+        dados.dateNascimento
+    ) {
 
         garantirIdentidadeVisual(
             dados
         );
 
-        garantirAcessorios(dados);
+        garantirAcessorios(
+            dados
+        );
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
         return dados;
 
@@ -2061,27 +1996,23 @@ function nascerPetton() {
     dados.incubacaoAtualizadaEm =
         Date.now();
 
-    nascerPettonInterno(dados);
+    nascerPettonInterno(
+        dados
+    );
 
     return carregarPetton();
 
 }
-
-/* =========================================================
-
-   TESTAR NASCIMENTO
-
-   ========================================================= */
 
 function testarNascimentoPetton() {
 
     const dados =
         carregarPetton();
 
-    if (dados.dateNascimento) {
-
+    if (
+        dados.dateNascimento
+    ) {
         return dados;
-
     }
 
     dados.incubacaoRestanteMs =
@@ -2093,17 +2024,17 @@ function testarNascimentoPetton() {
     dados.incubacaoAtualizadaEm =
         Date.now();
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return nascerPetton();
 
 }
 
 /* =========================================================
-
-   CARREGAR PETTON
-
-   ========================================================= */
+   CARREGAR
+========================================================= */
 
 function carregarPetton() {
 
@@ -2117,7 +2048,9 @@ function carregarPetton() {
         const novo =
             criarPettonNovo();
 
-        salvarPetton(novo);
+        salvarPetton(
+            novo
+        );
 
         return novo;
 
@@ -2126,7 +2059,9 @@ function carregarPetton() {
     try {
 
         const dados =
-            JSON.parse(salvo);
+            JSON.parse(
+                salvo
+            );
 
         garantirCamposNovos(
             dados
@@ -2136,35 +2071,33 @@ function carregarPetton() {
             !dados.dataCriacao &&
             dados.criadoEm
         ) {
-
             dados.dataCriacao =
                 dados.criadoEm;
-
         }
 
         if (
-            typeof dados.incubacaoRestanteMs !== "number" ||
+            typeof dados.incubacaoRestanteMs !==
+                "number" ||
             !Number.isFinite(
                 dados.incubacaoRestanteMs
             )
         ) {
 
-            if (!dados.dateNascimento) {
-
+            if (
+                !dados.dateNascimento
+            ) {
                 dados.incubacaoRestanteMs =
                     PETTON_INCUBACAO_MS;
-
             } else {
-
                 dados.incubacaoRestanteMs =
                     0;
-
             }
 
         }
 
         if (
-            typeof dados.incubacaoAtualizadaEm !== "number" ||
+            typeof dados.incubacaoAtualizadaEm !==
+                "number" ||
             !Number.isFinite(
                 dados.incubacaoAtualizadaEm
             )
@@ -2178,22 +2111,26 @@ function carregarPetton() {
                     : Date.now();
 
             dados.incubacaoAtualizadaEm =
-                Number.isFinite(criacao)
+                Number.isFinite(
+                    criacao
+                )
                     ? criacao
                     : Date.now();
 
         }
 
-        if (!dados.dateNascimento) {
+        if (
+            !dados.dateNascimento
+        ) {
 
             dados.fase =
                 "ovo";
 
-            if (!dados.especie) {
-
+            if (
+                !dados.especie
+            ) {
                 dados.especie =
                     escolherEspecie();
-
             }
 
             garantirIdentidadeVisual(
@@ -2208,7 +2145,9 @@ function carregarPetton() {
 
         }
 
-        garantirAcessorios(dados);
+        garantirAcessorios(
+            dados
+        );
 
         const dias =
             calcularIdadeDiasDireto(
@@ -2230,7 +2169,9 @@ function carregarPetton() {
             dados.fase ||
             (
                 dados.dateNascimento
-                    ? descobrirFase(dias)
+                    ? descobrirFase(
+                        dias
+                    )
                     : "ovo"
             );
 
@@ -2246,7 +2187,9 @@ function carregarPetton() {
         const novo =
             criarPettonNovo();
 
-        salvarPetton(novo);
+        salvarPetton(
+            novo
+        );
 
         return novo;
 
@@ -2255,44 +2198,46 @@ function carregarPetton() {
 }
 
 /* =========================================================
-
    SALVAR
+========================================================= */
 
-   ========================================================= */
-
-function salvarPetton(dados) {
+function salvarPetton(
+    dados
+) {
 
     if (!dados) {
-
         return null;
-
     }
 
-    garantirCamposNovos(dados);
+    garantirCamposNovos(
+        dados
+    );
 
-    garantirIdentidadeVisual(dados);
+    garantirIdentidadeVisual(
+        dados
+    );
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
     const copia =
         JSON.parse(
-            JSON.stringify(dados)
+            JSON.stringify(
+                dados
+            )
         );
 
     delete copia.nascido;
-
     delete copia.idadeDias;
-
     delete copia.idadeTexto;
-
     delete copia.faseAtual;
 
     localStorage.setItem(
-
         PETTON_CHAVE,
-
-        JSON.stringify(copia)
-
+        JSON.stringify(
+            copia
+        )
     );
 
     tentarAvisarTela(
@@ -2304,32 +2249,30 @@ function salvarPetton(dados) {
 }
 
 /* =========================================================
-
    AVISAR TELA
+========================================================= */
 
-   ========================================================= */
-
-function tentarAvisarTela(dados) {
+function tentarAvisarTela(
+    dados
+) {
 
     try {
 
         if (
-            typeof window !== "undefined" &&
-            typeof window.dispatchEvent === "function"
+            typeof window !==
+                "undefined" &&
+            typeof window.dispatchEvent ===
+                "function"
         ) {
 
             window.dispatchEvent(
-
                 new CustomEvent(
-
                     "petton-atualizado",
-
                     {
-                        detail: dados
+                        detail:
+                            dados
                     }
-
                 )
-
             );
 
         }
@@ -2346,10 +2289,8 @@ function tentarAvisarTela(dados) {
 }
 
 /* =========================================================
-
    MOEDAS
-
-   ========================================================= */
+========================================================= */
 
 function obterMoedasPetton() {
 
@@ -2357,10 +2298,14 @@ function obterMoedasPetton() {
         carregarPetton();
 
     let moedas =
-        Number(dados.moedas);
+        Number(
+            dados.moedas
+        );
 
     if (
-        !Number.isFinite(moedas) ||
+        !Number.isFinite(
+            moedas
+        ) ||
         moedas < 0
     ) {
 
@@ -2368,32 +2313,34 @@ function obterMoedasPetton() {
 
         dados.moedas = 0;
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
     }
 
-    return Math.floor(moedas);
+    return Math.floor(
+        moedas
+    );
 
 }
 
-/* =========================================================
-
-   ADICIONAR MOEDAS
-
-   ========================================================= */
-
-function adicionarMoedasPetton(valor) {
+function adicionarMoedasPetton(
+    valor
+) {
 
     const quantidade =
-        Number(valor);
+        Number(
+            valor
+        );
 
     if (
-        !Number.isFinite(quantidade) ||
+        !Number.isFinite(
+            quantidade
+        ) ||
         quantidade <= 0
     ) {
-
         return false;
-
     }
 
     const dados =
@@ -2403,37 +2350,42 @@ function adicionarMoedasPetton(valor) {
         Math.max(
             0,
             Math.floor(
-                Number(dados.moedas || 0)
+                Number(
+                    dados.moedas ||
+                    0
+                )
             )
         );
 
     dados.moedas +=
-        Math.floor(quantidade);
+        Math.floor(
+            quantidade
+        );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados.moedas;
 
 }
 
-/* =========================================================
-
-   GASTAR MOEDAS
-
-   ========================================================= */
-
-function gastarMoedasPetton(valor) {
+function gastarMoedasPetton(
+    valor
+) {
 
     const quantidade =
-        Number(valor);
+        Number(
+            valor
+        );
 
     if (
-        !Number.isFinite(quantidade) ||
+        !Number.isFinite(
+            quantidade
+        ) ||
         quantidade <= 0
     ) {
-
         return false;
-
     }
 
     const dados =
@@ -2443,35 +2395,39 @@ function gastarMoedasPetton(valor) {
         Math.max(
             0,
             Math.floor(
-                Number(dados.moedas || 0)
+                Number(
+                    dados.moedas ||
+                    0
+                )
             )
         );
 
     const preco =
-        Math.floor(quantidade);
+        Math.floor(
+            quantidade
+        );
 
     if (
-        dados.moedas < preco
+        dados.moedas <
+        preco
     ) {
-
         return false;
-
     }
 
     dados.moedas -=
         preco;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    RECOMPENSA
-
-   ========================================================= */
+========================================================= */
 
 function darRecompensa(
     dados,
@@ -2480,14 +2436,14 @@ function darRecompensa(
 ) {
 
     if (!dados) {
-
         return;
-
     }
 
     if (
         Number.isFinite(
-            Number(pontos)
+            Number(
+                pontos
+            )
         )
     ) {
 
@@ -2496,11 +2452,14 @@ function darRecompensa(
                 0,
                 Math.floor(
                     Number(
-                        dados.pontos || 0
+                        dados.pontos ||
+                        0
                     )
                 ) +
                 Math.floor(
-                    Number(pontos)
+                    Number(
+                        pontos
+                    )
                 )
             );
 
@@ -2508,7 +2467,9 @@ function darRecompensa(
 
     if (
         Number.isFinite(
-            Number(moedas)
+            Number(
+                moedas
+            )
         )
     ) {
 
@@ -2517,11 +2478,14 @@ function darRecompensa(
                 0,
                 Math.floor(
                     Number(
-                        dados.moedas || 0
+                        dados.moedas ||
+                        0
                     )
                 ) +
                 Math.floor(
-                    Number(moedas)
+                    Number(
+                        moedas
+                    )
                 )
             );
 
@@ -2530,77 +2494,76 @@ function darRecompensa(
 }
 
 /* =========================================================
-
    NOME
+========================================================= */
 
-   ========================================================= */
-
-function definirNome(nome) {
+function definirNome(
+    nome
+) {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
-
     }
 
-    if (dados.hospitalAte) {
-
+    if (
+        dados.hospitalAte
+    ) {
         return false;
-
     }
 
-    if (typeof nome !== "string") {
-
+    if (
+        typeof nome !==
+        "string"
+    ) {
         return false;
-
     }
 
     nome =
         nome.trim();
 
     if (!nome) {
-
         return false;
-
     }
 
-    if (nome.length > 20) {
-
+    if (
+        nome.length > 20
+    ) {
         nome =
             nome.substring(
                 0,
                 20
             );
-
     }
 
     dados.nome =
         nome;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados;
 
 }
 
 /* =========================================================
-
    AQUECEDOR
-
-   ========================================================= */
+========================================================= */
 
 function ligarAquecedor() {
 
     let dados =
         atualizarIncubacao();
 
-    if (dados.dateNascimento) {
-
+    if (
+        dados.dateNascimento
+    ) {
         return false;
-
     }
 
     const agora =
@@ -2613,7 +2576,9 @@ function ligarAquecedor() {
     dados.incubacaoAtualizadaEm =
         agora;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
@@ -2624,16 +2589,16 @@ function aquecedorAtivo() {
     const dados =
         carregarPetton();
 
-    if (dados.dateNascimento) {
-
+    if (
+        dados.dateNascimento
+    ) {
         return false;
-
     }
 
     return !!(
         dados.aquecedorAte &&
         dados.aquecedorAte >
-        Date.now()
+            Date.now()
     );
 
 }
@@ -2643,10 +2608,10 @@ function tempoAquecedorRestante() {
     const dados =
         carregarPetton();
 
-    if (!dados.aquecedorAte) {
-
+    if (
+        !dados.aquecedorAte
+    ) {
         return 0;
-
     }
 
     return Math.max(
@@ -2662,10 +2627,10 @@ function tempoIncubacaoRestante() {
     const dados =
         atualizarIncubacao();
 
-    if (dados.dateNascimento) {
-
+    if (
+        dados.dateNascimento
+    ) {
         return 0;
-
     }
 
     return Math.max(
@@ -2679,38 +2644,40 @@ function tempoIncubacaoRestante() {
 }
 
 /* =========================================================
-
    FASE
+========================================================= */
 
-   ========================================================= */
+function descobrirFase(
+    dias
+) {
 
-function descobrirFase(dias) {
-
-    if (dias < 1) {
+    if (
+        dias < 1
+    ) {
         return "bebe";
     }
 
-    if (dias < 8) {
+    if (
+        dias < 8
+    ) {
         return "bebe";
     }
 
-    if (dias < 31) {
+    if (
+        dias < 31
+    ) {
         return "filhote";
     }
 
-    if (dias < 91) {
+    if (
+        dias < 91
+    ) {
         return "jovem";
     }
 
     return "adulto";
 
 }
-
-/* =========================================================
-
-   IDADE
-
-   ========================================================= */
 
 function idadeDias() {
 
@@ -2724,22 +2691,24 @@ function idadeDias() {
 }
 
 /* =========================================================
-
    CRESCIMENTO
-
-   ========================================================= */
+========================================================= */
 
 function verificarCrescimento() {
 
     let dados =
         atualizarIncubacao();
 
-    if (!dados.dateNascimento) {
+    if (
+        !dados.dateNascimento
+    ) {
 
         dados.fase =
             "ovo";
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
         return dados;
 
@@ -2749,7 +2718,9 @@ function verificarCrescimento() {
         dados
     );
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
     const dias =
         calcularIdadeDiasDireto(
@@ -2761,7 +2732,9 @@ function verificarCrescimento() {
             dias
         );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     atualizarCaracteristicasVisiveis();
 
@@ -2770,37 +2743,31 @@ function verificarCrescimento() {
 }
 
 /* =========================================================
-
    CARACTERÍSTICAS
-
-   ========================================================= */
+========================================================= */
 
 function atualizarCaracteristicasVisiveis() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
+    if (
+        !dados.dateNascimento
+    ) {
 
         dados.caracteristicas = {
-
             cor: false,
-
             orelhas: false,
-
             olhos: false,
-
             nariz: false,
-
             padrao: false,
-
             patas: false,
-
             cauda: false
-
         };
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
         return dados;
 
@@ -2810,7 +2777,9 @@ function atualizarCaracteristicasVisiveis() {
         dados
     );
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
     const dias =
         calcularIdadeDiasDireto(
@@ -2838,30 +2807,32 @@ function atualizarCaracteristicasVisiveis() {
     dados.caracteristicas.cauda =
         dias >= 5;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados;
 
 }
 
 /* =========================================================
-
    DOENÇA
+========================================================= */
 
-   ========================================================= */
+function verificarDoenca(
+    dados
+) {
 
-function verificarDoenca(dados) {
-
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return dados;
-
     }
 
-    if (dados.doente) {
-
+    if (
+        dados.doente
+    ) {
         return dados;
-
     }
 
     if (
@@ -2881,13 +2852,15 @@ function verificarDoenca(dados) {
             dados.higiene =
                 Math.max(
                     0,
-                    dados.higiene - 1
+                    dados.higiene -
+                    1
                 );
 
             dados.saude =
                 Math.max(
                     0,
-                    dados.saude - 0.5
+                    dados.saude -
+                    0.5
                 );
 
         }
@@ -2919,7 +2892,9 @@ function verificarDoenca(dados) {
 
     }
 
-    if (dados.saude <= 10) {
+    if (
+        dados.saude <= 10
+    ) {
 
         dados.doente =
             true;
@@ -2935,23 +2910,23 @@ function verificarDoenca(dados) {
 }
 
 /* =========================================================
+   CÁRIE
+========================================================= */
 
-   CÁRIE - CORRIGIDO
+function verificarCarie(
+    dados
+) {
 
-   ========================================================= */
-
-function verificarCarie(dados) {
-
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return dados;
-
     }
 
-    if (dados.carieAtiva) {
-
+    if (
+        dados.carieAtiva
+    ) {
         return dados;
-
     }
 
     if (
@@ -2970,7 +2945,8 @@ function verificarCarie(dados) {
         ) {
 
             if (
-                Math.random() < 0.45
+                Math.random() <
+                0.45
             ) {
 
                 dados.carieAtiva =
@@ -2987,10 +2963,8 @@ function verificarCarie(dados) {
             if (
                 !dados.ultimaAlimentacaoCocoEm
             ) {
-
                 dados.ultimaAlimentacaoEm =
                     null;
-
             }
 
         }
@@ -3002,12 +2976,12 @@ function verificarCarie(dados) {
 }
 
 /* =========================================================
-
    HOSPITAL
+========================================================= */
 
-   ========================================================= */
-
-function finalizarHospital(dados) {
+function finalizarHospital(
+    dados
+) {
 
     dados.hospitalAte =
         null;
@@ -3027,21 +3001,26 @@ function finalizarHospital(dados) {
     dados.felicidade =
         Math.min(
             100,
-            dados.felicidade + 10
+            dados.felicidade +
+            10
         );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados;
 
 }
 
-function atualizarHospital(dados) {
+function atualizarHospital(
+    dados
+) {
 
     if (
         dados.hospitalAte &&
         Date.now() >=
-        dados.hospitalAte
+            dados.hospitalAte
     ) {
 
         return finalizarHospital(
@@ -3055,23 +3034,25 @@ function atualizarHospital(dados) {
 }
 
 /* =========================================================
-
    PASSEIO
+========================================================= */
 
-   ========================================================= */
-
-function atualizarPasseio(dados) {
+function atualizarPasseio(
+    dados
+) {
 
     if (
         dados.passeandoAte &&
         Date.now() >=
-        dados.passeandoAte
+            dados.passeandoAte
     ) {
 
         dados.passeandoAte =
             null;
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
     }
 
@@ -3080,17 +3061,17 @@ function atualizarPasseio(dados) {
 }
 
 /* =========================================================
-
    ESCOVAÇÃO
+========================================================= */
 
-   ========================================================= */
-
-function atualizarEscovacao(dados) {
+function atualizarEscovacao(
+    dados
+) {
 
     if (
         dados.escovandoAte &&
         Date.now() >=
-        dados.escovandoAte
+            dados.escovandoAte
     ) {
 
         dados.escovandoAte =
@@ -3105,29 +3086,35 @@ function atualizarEscovacao(dados) {
         dados.higiene =
             Math.min(
                 100,
-                dados.higiene + 10
+                dados.higiene +
+                10
             );
 
         dados.saude =
             Math.min(
                 100,
-                dados.saude + 2
+                dados.saude +
+                2
             );
 
-        dados.pontos += 3;
+        dados.pontos +=
+            3;
 
         dados.moedas =
             Math.max(
                 0,
                 Number(
-                    dados.moedas || 0
+                    dados.moedas ||
+                    0
                 )
             );
 
         dados.moedas +=
             PETTON_MOEDAS_ESCOVAR;
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
     }
 
@@ -3136,53 +3123,68 @@ function atualizarEscovacao(dados) {
 }
 
 /* =========================================================
-
-   TEMPO
-
-   ========================================================= */
+   TEMPO ANTIGO
+========================================================= */
 
 function atualizarTempo() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return dados;
-
     }
 
-    verificarDoenca(dados);
+    verificarDoenca(
+        dados
+    );
 
-    verificarCarie(dados);
+    verificarCarie(
+        dados
+    );
 
-    atualizarHospital(dados);
+    atualizarHospital(
+        dados
+    );
 
-    atualizarPasseio(dados);
+    atualizarPasseio(
+        dados
+    );
 
-    atualizarEscovacao(dados);
+    atualizarEscovacao(
+        dados
+    );
 
-    if (dados.doente) {
+    if (
+        dados.doente
+    ) {
 
         dados.felicidade =
             Math.max(
                 0,
-                dados.felicidade - 1
+                dados.felicidade -
+                1
             );
 
         dados.energia =
             Math.max(
                 0,
-                dados.energia - 0.5
+                dados.energia -
+                0.5
             );
 
         dados.saude =
             Math.max(
                 0,
-                dados.saude - 0.3
+                dados.saude -
+                0.3
             );
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
         return dados;
 
@@ -3191,25 +3193,29 @@ function atualizarTempo() {
     dados.fome =
         Math.max(
             0,
-            dados.fome - 1
+            dados.fome -
+            1
         );
 
     dados.felicidade =
         Math.max(
             0,
-            dados.felicidade - 0.5
+            dados.felicidade -
+            0.5
         );
 
     dados.energia =
         Math.max(
             0,
-            dados.energia - 0.3
+            dados.energia -
+            0.3
         );
 
     dados.higiene =
         Math.max(
             0,
-            dados.higiene - 0.3
+            dados.higiene -
+            0.3
         );
 
     if (
@@ -3220,65 +3226,70 @@ function atualizarTempo() {
         dados.saude =
             Math.max(
                 0,
-                dados.saude - 0.2
+                dados.saude -
+                0.2
             );
 
     }
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados;
 
 }
 
 /* =========================================================
-
    ALIMENTAR
-
-   ========================================================= */
+========================================================= */
 
 function alimentar() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
-
     }
 
-    if (dados.doente) {
-
+    if (
+        dados.doente
+    ) {
         return false;
-
     }
 
-    if (dados.hospitalAte) {
-
+    if (
+        dados.hospitalAte
+    ) {
         return false;
-
     }
 
     dados.fome =
         Math.min(
             100,
-            dados.fome + 20
+            dados.fome +
+            20
         );
 
     dados.saude =
         Math.min(
             100,
-            dados.saude + 2
+            dados.saude +
+            2
         );
 
-    dados.pontos += 5;
+    dados.pontos +=
+        5;
 
     dados.moedas =
         Math.max(
             0,
             Number(
-                dados.moedas || 0
+                dados.moedas ||
+                0
             )
         );
 
@@ -3297,42 +3308,42 @@ function alimentar() {
     dados.ultimaAlimentacaoCocoEm =
         agoraAlimentacao;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
+   COCÔ
+========================================================= */
 
-   PRODUZIR COCÔ DEPOIS DA COMIDA - CORRIGIDO
-
-   ========================================================= */
-
-function verificarCoco(dadosRecebidos) {
+function verificarCoco(
+    dadosRecebidos
+) {
 
     const dados =
         dadosRecebidos ||
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return dados;
-
     }
 
-    if (dados.cocoAtivo) {
-
+    if (
+        dados.cocoAtivo
+    ) {
         return dados;
-
     }
 
     if (
         !dados.ultimaAlimentacaoCocoEm
     ) {
-
         return dados;
-
     }
 
     const tempo =
@@ -3343,7 +3354,9 @@ function verificarCoco(dadosRecebidos) {
 
     if (
         tempo >=
-        10 * 60 * 1000
+        10 *
+        60 *
+        1000
     ) {
 
         dados.cocoAtivo =
@@ -3358,13 +3371,13 @@ function verificarCoco(dadosRecebidos) {
         if (
             !dados.ultimaAlimentacaoCarieEm
         ) {
-
             dados.ultimaAlimentacaoEm =
                 null;
-
         }
 
-        salvarPetton(dados);
+        salvarPetton(
+            dados
+        );
 
     }
 
@@ -3373,212 +3386,216 @@ function verificarCoco(dadosRecebidos) {
 }
 
 /* =========================================================
-
    BRINCAR
-
-   ========================================================= */
+========================================================= */
 
 function brincar() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-        return false;
-    }
-
-    if (dados.doente) {
-        return false;
-    }
-
-    if (dados.hospitalAte) {
+    if (
+        !dados.dateNascimento ||
+        dados.doente ||
+        dados.hospitalAte
+    ) {
         return false;
     }
 
     dados.felicidade =
         Math.min(
             100,
-            dados.felicidade + 20
+            dados.felicidade +
+            20
         );
 
     dados.energia =
         Math.max(
             0,
-            dados.energia - 10
+            dados.energia -
+            10
         );
 
     dados.higiene =
         Math.max(
             0,
-            dados.higiene - 1
+            dados.higiene -
+            1
         );
 
-    dados.pontos += 5;
+    dados.pontos +=
+        5;
 
     dados.moedas =
         Math.max(
             0,
             Number(
-                dados.moedas || 0
+                dados.moedas ||
+                0
             )
         );
 
     dados.moedas +=
         PETTON_MOEDAS_BRINCAR;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    CARINHO
-
-   ========================================================= */
+========================================================= */
 
 function carinho() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-        return false;
-    }
-
-    if (dados.doente) {
-        return false;
-    }
-
-    if (dados.hospitalAte) {
+    if (
+        !dados.dateNascimento ||
+        dados.doente ||
+        dados.hospitalAte
+    ) {
         return false;
     }
 
     dados.felicidade =
         Math.min(
             100,
-            dados.felicidade + 10
+            dados.felicidade +
+            10
         );
 
-    dados.pontos += 2;
+    dados.pontos +=
+        2;
 
     dados.moedas =
         Math.max(
             0,
             Number(
-                dados.moedas || 0
+                dados.moedas ||
+                0
             )
         );
 
     dados.moedas +=
         PETTON_MOEDAS_CARINHO;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    DORMIR
-
-   ========================================================= */
+========================================================= */
 
 function dormir() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-        return false;
-    }
-
-    if (dados.doente) {
-        return false;
-    }
-
-    if (dados.hospitalAte) {
+    if (
+        !dados.dateNascimento ||
+        dados.doente ||
+        dados.hospitalAte
+    ) {
         return false;
     }
 
     dados.energia =
         Math.min(
             100,
-            dados.energia + 30
+            dados.energia +
+            30
         );
 
     dados.felicidade =
         Math.min(
             100,
-            dados.felicidade + 5
+            dados.felicidade +
+            5
         );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    LIMPAR / BANHO
-
-   ========================================================= */
+========================================================= */
 
 function limpar() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
     }
 
     dados.higiene =
         Math.min(
             100,
-            dados.higiene + 30
+            dados.higiene +
+            30
         );
 
     dados.saude =
         Math.min(
             100,
-            dados.saude + 5
+            dados.saude +
+            5
         );
 
-    dados.pontos += 3;
+    dados.pontos +=
+        3;
 
     dados.moedas =
         Math.max(
             0,
             Number(
-                dados.moedas || 0
+                dados.moedas ||
+                0
             )
         );
 
     dados.moedas +=
         PETTON_MOEDAS_LIMPAR;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    LIMPAR COCÔ - CORRIGIDO
-
-   ========================================================= */
+========================================================= */
 
 function limparCoco() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
     }
 
@@ -3587,7 +3604,9 @@ function limparCoco() {
         dados.temCoco === true ||
         dados.coco === true;
 
-    if (!temCocoAgora) {
+    if (
+        !temCocoAgora
+    ) {
         return false;
     }
 
@@ -3607,18 +3626,16 @@ function limparCoco() {
         Math.min(
             100,
             Number(
-                dados.higiene || 0
-            ) + 20
+                dados.higiene ||
+                0
+            ) +
+            20
         );
 
     darRecompensa(
-
         dados,
-
         5,
-
         PETTON_MOEDAS_LIMPAR_COCO
-
     );
 
     salvarPetton(
@@ -3630,64 +3647,65 @@ function limparCoco() {
 }
 
 /* =========================================================
-
    ESCOVAR DENTES
-
-   ========================================================= */
+========================================================= */
 
 function escovarDentes() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
     }
 
-    if (!dados.carieAtiva) {
+    if (
+        !dados.carieAtiva
+    ) {
         return false;
     }
 
-    if (dados.escovandoAte) {
+    if (
+        dados.escovandoAte
+    ) {
         return false;
     }
 
     dados.escovandoAte =
-        Date.now() + 3000;
+        Date.now() +
+        3000;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    PASSEAR
-
-   ========================================================= */
+========================================================= */
 
 function passear() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-        return false;
-    }
-
-    if (dados.doente) {
-        return false;
-    }
-
-    if (dados.hospitalAte) {
+    if (
+        !dados.dateNascimento ||
+        dados.doente ||
+        dados.hospitalAte
+    ) {
         return false;
     }
 
     if (
         dados.passeandoAte &&
         dados.passeandoAte >
-        Date.now()
+            Date.now()
     ) {
         return false;
     }
@@ -3699,60 +3717,61 @@ function passear() {
     dados.felicidade =
         Math.min(
             100,
-            dados.felicidade + 15
+            dados.felicidade +
+            15
         );
 
     dados.energia =
         Math.max(
             0,
-            dados.energia - 8
+            dados.energia -
+            8
         );
 
     dados.higiene =
         Math.max(
             0,
-            dados.higiene - 2
+            dados.higiene -
+            2
         );
 
-    dados.pontos += 5;
+    dados.pontos +=
+        5;
 
     dados.moedas =
         Math.max(
             0,
             Number(
-                dados.moedas || 0
+                dados.moedas ||
+                0
             )
         );
 
     dados.moedas +=
         PETTON_MOEDAS_PASSEAR;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    HOSPITAL
-
-   ========================================================= */
+========================================================= */
 
 function levarHospital() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-        return false;
-    }
-
-    if (!dados.doente) {
-        return false;
-    }
-
-    if (dados.hospitalAte) {
+    if (
+        !dados.dateNascimento ||
+        !dados.doente ||
+        dados.hospitalAte
+    ) {
         return false;
     }
 
@@ -3760,17 +3779,17 @@ function levarHospital() {
         Date.now() +
         PETTON_HOSPITAL_MS;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
 /* =========================================================
-
    ESTADOS
-
-   ========================================================= */
+========================================================= */
 
 function estaDoente() {
 
@@ -3808,12 +3827,14 @@ function estaPasseando() {
     const dados =
         carregarPetton();
 
-    atualizarPasseio(dados);
+    atualizarPasseio(
+        dados
+    );
 
     return !!(
         dados.passeandoAte &&
         dados.passeandoAte >
-        Date.now()
+            Date.now()
     );
 
 }
@@ -3823,12 +3844,14 @@ function estaEscovando() {
     const dados =
         carregarPetton();
 
-    atualizarEscovacao(dados);
+    atualizarEscovacao(
+        dados
+    );
 
     return !!(
         dados.escovandoAte &&
         dados.escovandoAte >
-        Date.now()
+            Date.now()
     );
 
 }
@@ -3838,21 +3861,21 @@ function estaNoHospital() {
     const dados =
         carregarPetton();
 
-    atualizarHospital(dados);
+    atualizarHospital(
+        dados
+    );
 
     return !!(
         dados.hospitalAte &&
         dados.hospitalAte >
-        Date.now()
+            Date.now()
     );
 
 }
 
 /* =========================================================
-
    STATUS
-
-   ========================================================= */
+========================================================= */
 
 function statusPetton() {
 
@@ -3866,10 +3889,14 @@ function statusPetton() {
         dados
     );
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
     dados =
-        verificarCoco(dados);
+        verificarCoco(
+            dados
+        );
 
     verificarDoenca(
         dados
@@ -3907,7 +3934,9 @@ function statusPetton() {
             dados
         );
 
-    if (dados.dateNascimento) {
+    if (
+        dados.dateNascimento
+    ) {
 
         dados.fase =
             descobrirFase(
@@ -3921,17 +3950,17 @@ function statusPetton() {
 
     }
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return carregarPetton();
 
 }
 
 /* =========================================================
-
    IDENTIDADE
-
-   ========================================================= */
+========================================================= */
 
 function identidadePetton() {
 
@@ -3942,9 +3971,13 @@ function identidadePetton() {
         dados
     );
 
-    garantirAcessorios(dados);
+    garantirAcessorios(
+        dados
+    );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     const dias =
         calcularIdadeDiasDireto(
@@ -3988,7 +4021,8 @@ function identidadePetton() {
 
         descricaoVisual:
             dados.identidadeVisual
-                ? dados.identidadeVisual.descricaoBase
+                ? dados.identidadeVisual
+                    .descricaoBase
                 : null,
 
         caracteristicas:
@@ -3999,12 +4033,14 @@ function identidadePetton() {
 
         moedas:
             Number(
-                dados.moedas || 0
+                dados.moedas ||
+                0
             ),
 
         pontos:
             Number(
-                dados.pontos || 0
+                dados.pontos ||
+                0
             ),
 
         doente:
@@ -4020,21 +4056,21 @@ function identidadePetton() {
             !!(
                 dados.passeandoAte &&
                 dados.passeandoAte >
-                Date.now()
+                    Date.now()
             ),
 
         noHospital:
             !!(
                 dados.hospitalAte &&
                 dados.hospitalAte >
-                Date.now()
+                    Date.now()
             ),
 
         escovando:
             !!(
                 dados.escovandoAte &&
                 dados.escovandoAte >
-                Date.now()
+                    Date.now()
             )
 
     };
@@ -4042,20 +4078,21 @@ function identidadePetton() {
 }
 
 /* =========================================================
-
    ÁLBUM
-
-   ========================================================= */
+========================================================= */
 
 function atualizarAlbum() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
-        return dados.album || [];
-
+    if (
+        !dados.dateNascimento
+    ) {
+        return (
+            dados.album ||
+            []
+        );
     }
 
     const dias =
@@ -4064,56 +4101,53 @@ function atualizarAlbum() {
         );
 
     const momentos = [
-
         0,
-
         3,
-
         7,
-
         15,
-
         30,
-
         60,
-
         90,
-
         120
-
     ];
 
-    if (!Array.isArray(dados.album)) {
-
+    if (
+        !Array.isArray(
+            dados.album
+        )
+    ) {
         dados.album = [];
-
     }
 
     momentos.forEach(
+        function(dia) {
 
-        function (dia) {
-
-            if (dias >= dia) {
+            if (
+                dias >= dia
+            ) {
 
                 const jaExiste =
                     dados.album.some(
-
-                        function (foto) {
-
-                            return foto.dia === dia;
-
+                        function(foto) {
+                            return (
+                                foto.dia ===
+                                dia
+                            );
                         }
-
                     );
 
-                if (!jaExiste) {
+                if (
+                    !jaExiste
+                ) {
 
                     dados.album.push({
 
-                        dia: dia,
+                        dia:
+                            dia,
 
                         data:
-                            new Date().toISOString(),
+                            new Date()
+                                .toISOString(),
 
                         especie:
                             dados.especie,
@@ -4130,7 +4164,8 @@ function atualizarAlbum() {
                                 ? dados.identidadeVisual
                                     .imagens[
                                         dados.fase
-                                    ] || null
+                                    ] ||
+                                    null
                                 : null
 
                     });
@@ -4140,20 +4175,19 @@ function atualizarAlbum() {
             }
 
         }
-
     );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados.album;
 
 }
 
 /* =========================================================
-
-   DEFINIR IMAGEM
-
-   ========================================================= */
+   IMAGENS
+========================================================= */
 
 function definirImagemGerada(
     fase,
@@ -4171,23 +4205,15 @@ function definirImagemGerada(
         !dados.identidadeVisual ||
         !dados.identidadeVisual.imagens
     ) {
-
         return false;
-
     }
 
     const fasesValidas = [
-
         "ovo",
-
         "bebe",
-
         "filhote",
-
         "jovem",
-
         "adulto"
-
     ];
 
     if (
@@ -4195,38 +4221,32 @@ function definirImagemGerada(
             fase
         )
     ) {
-
         return false;
-
     }
 
     if (
-        typeof imagem !== "string" ||
+        typeof imagem !==
+            "string" ||
         !imagem.trim()
     ) {
-
         return false;
-
     }
 
-    dados.identidadeVisual.imagens[
-        fase
-    ] =
+    dados.identidadeVisual
+        .imagens[fase] =
         imagem.trim();
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 }
 
-/* =========================================================
-
-   OBTER IMAGEM
-
-   ========================================================= */
-
-function obterImagemFase(fase) {
+function obterImagemFase(
+    fase
+) {
 
     const dados =
         carregarPetton();
@@ -4239,24 +4259,20 @@ function obterImagemFase(fase) {
         !dados.identidadeVisual ||
         !dados.identidadeVisual.imagens
     ) {
-
         return null;
-
     }
 
-    return dados.identidadeVisual.imagens[
-        fase
-    ] || null;
+    return (
+        dados.identidadeVisual
+            .imagens[fase] ||
+        null
+    );
 
 }
 
-/* =========================================================
-
-   PROMPT VISUAL
-
-   ========================================================= */
-
-function obterPromptVisual(fase) {
+function obterPromptVisual(
+    fase
+) {
 
     const dados =
         carregarPetton();
@@ -4266,405 +4282,366 @@ function obterPromptVisual(fase) {
     );
 
     return criarPromptFasePetton(
-        fase || dados.fase
+        fase ||
+        dados.fase
     );
 
 }
 
 /* =========================================================
-
-   RESETAR
-
-   ========================================================= */
+   RESET
+========================================================= */
 
 function resetarPetton() {
 
     const novo =
         criarPettonNovo();
 
-    salvarPetton(novo);
+    salvarPetton(
+        novo
+    );
 
     return novo;
 
 }
 
 /* =========================================================
-
-   API PETTON
-
-   ========================================================= */
+   API
+========================================================= */
 
 window.Petton = {
 
     get dados() {
-
         return carregarPetton();
-
     },
 
-    salvar: function (dados) {
-
-        const atual =
-            dados ||
-            carregarPetton();
-
-        salvarPetton(atual);
-
-        return atual;
-
-    },
-
-    carregar: function () {
-
-        return carregarPetton();
-
-    },
-
-    carregarPetton: function () {
-
-        return carregarPetton();
-
-    },
-
-    nascer: function () {
-
-        return nascerPetton();
-
-    },
-
-    testarNascimento: function () {
-
-        return testarNascimentoPetton();
-
-    },
-
-    definirNome: function (nome) {
-
-        return definirNome(nome);
-
-    },
-
-    alimentar: function () {
-
-        return alimentar();
-
-    },
-
-    brincar: function () {
-
-        return brincar();
-
-    },
-
-    carinho: function () {
-
-        return carinho();
-
-    },
-
-    dormir: function () {
-
-        return dormir();
-
-    },
-
-    limpar: function () {
-
-        return limpar();
-
-    },
-
-    limparCoco: function () {
-
-        return limparCoco();
-
-    },
-
-    temCoco: function () {
-
-        return temCoco();
-
-    },
-
-    escovarDentes: function () {
-
-        return escovarDentes();
-
-    },
-
-    temCarie: function () {
-
-        return temCarie();
-
-    },
-
-    estaEscovando: function () {
-
-        return estaEscovando();
-
-    },
-
-    passear: function () {
-
-        return passear();
-
-    },
-
-    estaPasseando: function () {
-
-        return estaPasseando();
-
-    },
-
-    levarHospital: function () {
-
-        return levarHospital();
-
-    },
-
-    estaDoente: function () {
-
-        return estaDoente();
-
-    },
-
-    estaNoHospital: function () {
-
-        return estaNoHospital();
-
-    },
-
-    status: function () {
-
-        return statusPetton();
-
-    },
-
-    identidade: function () {
-
-        return identidadePetton();
-
-    },
-
-    verificarCrescimento: function () {
-
-        return verificarCrescimento();
-
-    },
-
-    atualizarCaracteristicas: function () {
-
-        return atualizarCaracteristicasVisiveis();
-
-    },
-
-    idadeDias: function () {
-
-        return idadeDias();
-
-    },
-
-    idadeTexto: function () {
-
-        return obterIdadeTexto(
-            carregarPetton()
-        );
-
-    },
-
-    fase: function () {
-
-        return carregarPetton().fase;
-
-    },
-
-    moedas: function () {
-
-        return obterMoedasPetton();
-
-    },
-
-    adicionarMoedas: function (valor) {
-
-        return adicionarMoedasPetton(
-            valor
-        );
-
-    },
-
-    gastarMoedas: function (valor) {
-
-        return gastarMoedasPetton(
-            valor
-        );
-
-    },
-
-    album: function () {
-
-        return atualizarAlbum();
-
-    },
-
-    identidadeVisual: function () {
-
-        const dados =
-            carregarPetton();
-
-        garantirIdentidadeVisual(
-            dados
-        );
-
-        salvarPetton(dados);
-
-        return dados.identidadeVisual;
-
-    },
-
-    descricaoVisual: function () {
-
-        const dados =
-            carregarPetton();
-
-        garantirIdentidadeVisual(
-            dados
-        );
-
-        if (!dados.identidadeVisual) {
-
-            return null;
-
-        }
-
-        return criarDescricaoVisualPetton(
-            dados.identidadeVisual
-        );
-
-    },
-
-    promptVisual: function (fase) {
-
-        return obterPromptVisual(
-            fase
-        );
-
-    },
-
-    definirImagem: function (
-        fase,
-        imagem
-    ) {
-
-        return definirImagemGerada(
+    salvar:
+        function(dados) {
+
+            const atual =
+                dados ||
+                carregarPetton();
+
+            salvarPetton(
+                atual
+            );
+
+            return atual;
+
+        },
+
+    carregar:
+        function() {
+            return carregarPetton();
+        },
+
+    carregarPetton:
+        function() {
+            return carregarPetton();
+        },
+
+    nascer:
+        function() {
+            return nascerPetton();
+        },
+
+    testarNascimento:
+        function() {
+            return testarNascimentoPetton();
+        },
+
+    definirNome:
+        function(nome) {
+            return definirNome(
+                nome
+            );
+        },
+
+    alimentar:
+        function() {
+            return alimentar();
+        },
+
+    brincar:
+        function() {
+            return brincar();
+        },
+
+    carinho:
+        function() {
+            return carinho();
+        },
+
+    dormir:
+        function() {
+            return dormir();
+        },
+
+    limpar:
+        function() {
+            return limpar();
+        },
+
+    limparCoco:
+        function() {
+            return limparCoco();
+        },
+
+    temCoco:
+        function() {
+            return temCoco();
+        },
+
+    escovarDentes:
+        function() {
+            return escovarDentes();
+        },
+
+    temCarie:
+        function() {
+            return temCarie();
+        },
+
+    estaEscovando:
+        function() {
+            return estaEscovando();
+        },
+
+    passear:
+        function() {
+            return passear();
+        },
+
+    estaPasseando:
+        function() {
+            return estaPasseando();
+        },
+
+    levarHospital:
+        function() {
+            return levarHospital();
+        },
+
+    estaDoente:
+        function() {
+            return estaDoente();
+        },
+
+    estaNoHospital:
+        function() {
+            return estaNoHospital();
+        },
+
+    status:
+        function() {
+            return statusPetton();
+        },
+
+    identidade:
+        function() {
+            return identidadePetton();
+        },
+
+    verificarCrescimento:
+        function() {
+            return verificarCrescimento();
+        },
+
+    atualizarCaracteristicas:
+        function() {
+            return atualizarCaracteristicasVisiveis();
+        },
+
+    idadeDias:
+        function() {
+            return idadeDias();
+        },
+
+    idadeTexto:
+        function() {
+            return obterIdadeTexto(
+                carregarPetton()
+            );
+        },
+
+    fase:
+        function() {
+            return carregarPetton()
+                .fase;
+        },
+
+    moedas:
+        function() {
+            return obterMoedasPetton();
+        },
+
+    adicionarMoedas:
+        function(valor) {
+            return adicionarMoedasPetton(
+                valor
+            );
+        },
+
+    gastarMoedas:
+        function(valor) {
+            return gastarMoedasPetton(
+                valor
+            );
+        },
+
+    album:
+        function() {
+            return atualizarAlbum();
+        },
+
+    identidadeVisual:
+        function() {
+
+            const dados =
+                carregarPetton();
+
+            garantirIdentidadeVisual(
+                dados
+            );
+
+            salvarPetton(
+                dados
+            );
+
+            return dados.identidadeVisual;
+
+        },
+
+    descricaoVisual:
+        function() {
+
+            const dados =
+                carregarPetton();
+
+            garantirIdentidadeVisual(
+                dados
+            );
+
+            if (
+                !dados.identidadeVisual
+            ) {
+                return null;
+            }
+
+            return criarDescricaoVisualPetton(
+                dados.identidadeVisual
+            );
+
+        },
+
+    promptVisual:
+        function(fase) {
+            return obterPromptVisual(
+                fase
+            );
+        },
+
+    definirImagem:
+        function(
             fase,
             imagem
-        );
+        ) {
 
-    },
+            return definirImagemGerada(
+                fase,
+                imagem
+            );
 
-    obterImagem: function (fase) {
+        },
 
-        return obterImagemFase(
-            fase
-        );
+    obterImagem:
+        function(fase) {
+            return obterImagemFase(
+                fase
+            );
+        },
 
-    },
+    acessorios:
+        function() {
+            return obterAcessoriosPetton();
+        },
 
-    acessorios: function () {
+    acessorio:
+        function(tipo) {
+            return obterAcessorioPetton(
+                tipo
+            );
+        },
 
-        return obterAcessoriosPetton();
-
-    },
-
-    acessorio: function (tipo) {
-
-        return obterAcessorioPetton(
-            tipo
-        );
-
-    },
-
-    equiparAcessorio: function (
-        tipo,
-        id
-    ) {
-
-        return equiparAcessorio(
+    equiparAcessorio:
+        function(
             tipo,
             id
-        );
+        ) {
+            return equiparAcessorio(
+                tipo,
+                id
+            );
+        },
 
-    },
+    removerAcessorio:
+        function(tipo) {
+            return removerAcessorio(
+                tipo
+            );
+        },
 
-    removerAcessorio: function (
-        tipo
-    ) {
-
-        return removerAcessorio(
-            tipo
-        );
-
-    },
-
-    posicaoAcessorio: function (
-        tipo,
-        fase
-    ) {
-
-        return posicaoAcessorioPetton(
+    posicaoAcessorio:
+        function(
             tipo,
             fase
-        );
+        ) {
+            return posicaoAcessorioPetton(
+                tipo,
+                fase
+            );
+        },
 
-    },
+    tiposAcessorios:
+        function() {
+            return PETTON_TIPOS_ACESSORIOS
+                .slice();
+        },
 
-    tiposAcessorios: function () {
+    incubacaoRestante:
+        function() {
+            return tempoIncubacaoRestante();
+        },
 
-        return PETTON_TIPOS_ACESSORIOS.slice();
+    ligarAquecedor:
+        function() {
+            return ligarAquecedor();
+        },
 
-    },
+    aquecedorAtivo:
+        function() {
+            return aquecedorAtivo();
+        },
 
-    incubacaoRestante: function () {
+    aquecedorRestante:
+        function() {
+            return tempoAquecedorRestante();
+        },
 
-        return tempoIncubacaoRestante();
-
-    },
-
-    ligarAquecedor: function () {
-
-        return ligarAquecedor();
-
-    },
-
-    aquecedorAtivo: function () {
-
-        return aquecedorAtivo();
-
-    },
-
-    aquecedorRestante: function () {
-
-        return tempoAquecedorRestante();
-
-    },
-
-    resetar: function () {
-
-        return resetarPetton();
-
-    }
+    resetar:
+        function() {
+            return resetarPetton();
+        }
 
 };
 
 /* =========================================================
-
    ATUALIZAÇÃO AUTOMÁTICA
-
-   ========================================================= */
+========================================================= */
 
 setInterval(
 
-    function () {
+    function() {
 
         try {
 
@@ -4687,7 +4664,9 @@ setInterval(
                     dados
                 );
 
-            if (dados.dateNascimento) {
+            if (
+                dados.dateNascimento
+            ) {
 
                 atualizarTempo();
 
@@ -4722,10 +4701,8 @@ setInterval(
 );
 
 /* =========================================================
-
    INICIALIZAÇÃO
-
-   ========================================================= */
+========================================================= */
 
 try {
 
@@ -4807,19 +4784,24 @@ try {
 }
 
 /* =========================================================
-
-   PETTON - CONTROLE DE TEMPO REAL CORRIGIDO
-
+   CONTROLE DE TEMPO REAL V2
 ========================================================= */
 
-function limitarStatusPetton(valor) {
+function limitarStatusPetton(
+    valor
+) {
 
-    valor = Number(valor);
+    valor =
+        Number(
+            valor
+        );
 
-    if (!Number.isFinite(valor)) {
-
+    if (
+        !Number.isFinite(
+            valor
+        )
+    ) {
         return 0;
-
     }
 
     return Math.max(
@@ -4839,20 +4821,22 @@ function calcularPassosTempoPetton(
 ) {
 
     ultimo =
-        Number(ultimo);
+        Number(
+            ultimo
+        );
 
     if (
-        !Number.isFinite(ultimo) ||
+        !Number.isFinite(
+            ultimo
+        ) ||
         ultimo <= 0 ||
         ultimo > agora
     ) {
 
         return {
-
             passos: 0,
-
-            novoUltimo: agora
-
+            novoUltimo:
+                agora
         };
 
     }
@@ -4860,32 +4844,35 @@ function calcularPassosTempoPetton(
     const diferenca =
         Math.max(
             0,
-            agora - ultimo
+            agora -
+            ultimo
         );
 
     const passos =
         Math.floor(
-            diferenca / intervalo
+            diferenca /
+            intervalo
         );
 
     return {
-
-        passos: passos,
-
+        passos:
+            passos,
         novoUltimo:
             ultimo +
-            (passos * intervalo)
-
+            (
+                passos *
+                intervalo
+            )
     };
 
 }
 
-function garantirControleTempoPetton(dados) {
+function garantirControleTempoPetton(
+    dados
+) {
 
     if (!dados) {
-
         return dados;
-
     }
 
     const agora =
@@ -4893,26 +4880,28 @@ function garantirControleTempoPetton(dados) {
 
     if (
         !dados.tempoStatusV2 ||
-        typeof dados.tempoStatusV2 !== "object" ||
-        Array.isArray(dados.tempoStatusV2)
+        typeof dados.tempoStatusV2 !==
+            "object" ||
+        Array.isArray(
+            dados.tempoStatusV2
+        )
     ) {
 
         dados.tempoStatusV2 = {
-
-            fome: agora,
-
-            felicidade: agora,
-
-            energia: agora,
-
-            higiene: agora,
-
-            saudeRisco: agora,
-
-            doente: agora,
-
-            cocoHigiene: agora
-
+            fome:
+                agora,
+            felicidade:
+                agora,
+            energia:
+                agora,
+            higiene:
+                agora,
+            saudeRisco:
+                agora,
+            doente:
+                agora,
+            cocoHigiene:
+                agora
         };
 
         return dados;
@@ -4920,36 +4909,36 @@ function garantirControleTempoPetton(dados) {
     }
 
     const campos = [
-
         "fome",
-
         "felicidade",
-
         "energia",
-
         "higiene",
-
         "saudeRisco",
-
         "doente",
-
         "cocoHigiene"
-
     ];
 
     campos.forEach(
-        function (campo) {
+        function(campo) {
 
             if (
-                typeof dados.tempoStatusV2[campo] !== "number" ||
+                typeof dados
+                    .tempoStatusV2[campo] !==
+                    "number" ||
                 !Number.isFinite(
-                    dados.tempoStatusV2[campo]
+                    dados
+                        .tempoStatusV2[campo]
                 ) ||
-                dados.tempoStatusV2[campo] <= 0 ||
-                dados.tempoStatusV2[campo] > agora
+                dados
+                    .tempoStatusV2[campo] <=
+                    0 ||
+                dados
+                    .tempoStatusV2[campo] >
+                    agora
             ) {
 
-                dados.tempoStatusV2[campo] =
+                dados
+                    .tempoStatusV2[campo] =
                     agora;
 
             }
@@ -4962,20 +4951,17 @@ function garantirControleTempoPetton(dados) {
 }
 
 /* =========================================================
-
-   DOENÇA CORRIGIDA
-
+   DOENÇA V2
 ========================================================= */
 
-verificarDoenca = function (dados) {
+verificarDoenca =
+function(dados) {
 
     if (
         !dados ||
         !dados.dateNascimento
     ) {
-
         return dados;
-
     }
 
     const agora =
@@ -4994,9 +4980,11 @@ verificarDoenca = function (dados) {
             );
 
         if (
-            Number.isFinite(tempoCoco) &&
+            Number.isFinite(
+                tempoCoco
+            ) &&
             tempoCoco >=
-            PETTON_COCO_DOENCA_MS
+                PETTON_COCO_DOENCA_MS
         ) {
 
             dados.doente =
@@ -5025,7 +5013,9 @@ verificarDoenca = function (dados) {
                 dados
             );
 
-            dados.tempoStatusV2.doente =
+            dados
+                .tempoStatusV2
+                .doente =
                 agora;
 
         }
@@ -5050,7 +5040,9 @@ verificarDoenca = function (dados) {
             dados
         );
 
-        dados.tempoStatusV2.doente =
+        dados
+            .tempoStatusV2
+            .doente =
             agora;
 
     }
@@ -5060,20 +5052,19 @@ verificarDoenca = function (dados) {
 };
 
 /* =========================================================
-
-   TEMPO REAL
-
+   TEMPO REAL V2
 ========================================================= */
 
-atualizarTempo = function () {
+atualizarTempo =
+function() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return dados;
-
     }
 
     garantirControleTempoPetton(
@@ -5088,21 +5079,20 @@ atualizarTempo = function () {
 
     let calculo =
         calcularPassosTempoPetton(
-
             agora,
-
             tempo.fome,
-
             PETTON_TEMPO_FOME_MS
-
         );
 
-    if (calculo.passos > 0) {
+    if (
+        calculo.passos > 0
+    ) {
 
         dados.fome =
             limitarStatusPetton(
                 Number(
-                    dados.fome || 0
+                    dados.fome ||
+                    0
                 ) -
                 calculo.passos
             );
@@ -5114,21 +5104,20 @@ atualizarTempo = function () {
 
     calculo =
         calcularPassosTempoPetton(
-
             agora,
-
             tempo.felicidade,
-
             PETTON_TEMPO_FELICIDADE_MS
-
         );
 
-    if (calculo.passos > 0) {
+    if (
+        calculo.passos > 0
+    ) {
 
         dados.felicidade =
             limitarStatusPetton(
                 Number(
-                    dados.felicidade || 0
+                    dados.felicidade ||
+                    0
                 ) -
                 calculo.passos
             );
@@ -5140,21 +5129,20 @@ atualizarTempo = function () {
 
     calculo =
         calcularPassosTempoPetton(
-
             agora,
-
             tempo.energia,
-
             PETTON_TEMPO_ENERGIA_MS
-
         );
 
-    if (calculo.passos > 0) {
+    if (
+        calculo.passos > 0
+    ) {
 
         dados.energia =
             limitarStatusPetton(
                 Number(
-                    dados.energia || 0
+                    dados.energia ||
+                    0
                 ) -
                 calculo.passos
             );
@@ -5166,21 +5154,20 @@ atualizarTempo = function () {
 
     calculo =
         calcularPassosTempoPetton(
-
             agora,
-
             tempo.higiene,
-
             PETTON_TEMPO_HIGIENE_MS
-
         );
 
-    if (calculo.passos > 0) {
+    if (
+        calculo.passos > 0
+    ) {
 
         dados.higiene =
             limitarStatusPetton(
                 Number(
-                    dados.higiene || 0
+                    dados.higiene ||
+                    0
                 ) -
                 calculo.passos
             );
@@ -5208,7 +5195,8 @@ atualizarTempo = function () {
             Number.isFinite(
                 nascimentoCoco
             ) &&
-            agora >= inicioPenalidade
+            agora >=
+                inicioPenalidade
         ) {
 
             let ultimoCoco =
@@ -5221,7 +5209,7 @@ atualizarTempo = function () {
                     ultimoCoco
                 ) ||
                 ultimoCoco <
-                inicioPenalidade
+                    inicioPenalidade
             ) {
 
                 ultimoCoco =
@@ -5231,29 +5219,28 @@ atualizarTempo = function () {
 
             const calculoCoco =
                 calcularPassosTempoPetton(
-
                     agora,
-
                     ultimoCoco,
-
                     PETTON_TEMPO_COCO_HIGIENE_MS
-
                 );
 
             if (
-                calculoCoco.passos > 0
+                calculoCoco.passos >
+                0
             ) {
 
                 dados.higiene =
                     limitarStatusPetton(
                         Number(
-                            dados.higiene || 0
+                            dados.higiene ||
+                            0
                         ) -
                         calculoCoco.passos
                     );
 
                 tempo.cocoHigiene =
-                    calculoCoco.novoUltimo;
+                    calculoCoco
+                        .novoUltimo;
 
             }
 
@@ -5267,36 +5254,41 @@ atualizarTempo = function () {
     }
 
     const emRisco =
-        Number(dados.fome) < 20 ||
-        Number(dados.higiene) < 20;
+        Number(
+            dados.fome
+        ) < 20 ||
+        Number(
+            dados.higiene
+        ) < 20;
 
-    if (emRisco) {
+    if (
+        emRisco
+    ) {
 
         const calculoSaude =
             calcularPassosTempoPetton(
-
                 agora,
-
                 tempo.saudeRisco,
-
                 PETTON_TEMPO_SAUDE_RISCO_MS
-
             );
 
         if (
-            calculoSaude.passos > 0
+            calculoSaude.passos >
+            0
         ) {
 
             dados.saude =
                 limitarStatusPetton(
                     Number(
-                        dados.saude || 0
+                        dados.saude ||
+                        0
                     ) -
                     calculoSaude.passos
                 );
 
             tempo.saudeRisco =
-                calculoSaude.novoUltimo;
+                calculoSaude
+                    .novoUltimo;
 
         }
 
@@ -5307,29 +5299,31 @@ atualizarTempo = function () {
 
     }
 
-    verificarDoenca(dados);
+    verificarDoenca(
+        dados
+    );
 
-    if (dados.doente) {
+    if (
+        dados.doente
+    ) {
 
         const calculoDoente =
             calcularPassosTempoPetton(
-
                 agora,
-
                 tempo.doente,
-
                 PETTON_TEMPO_DOENTE_MS
-
             );
 
         if (
-            calculoDoente.passos > 0
+            calculoDoente.passos >
+            0
         ) {
 
             dados.felicidade =
                 limitarStatusPetton(
                     Number(
-                        dados.felicidade || 0
+                        dados.felicidade ||
+                        0
                     ) -
                     calculoDoente.passos
                 );
@@ -5337,7 +5331,8 @@ atualizarTempo = function () {
             dados.energia =
                 limitarStatusPetton(
                     Number(
-                        dados.energia || 0
+                        dados.energia ||
+                        0
                     ) -
                     calculoDoente.passos
                 );
@@ -5345,13 +5340,15 @@ atualizarTempo = function () {
             dados.saude =
                 limitarStatusPetton(
                     Number(
-                        dados.saude || 0
+                        dados.saude ||
+                        0
                     ) -
                     calculoDoente.passos
                 );
 
             tempo.doente =
-                calculoDoente.novoUltimo;
+                calculoDoente
+                    .novoUltimo;
 
         }
 
@@ -5362,80 +5359,89 @@ atualizarTempo = function () {
 
     }
 
-    verificarCarie(dados);
+    verificarCarie(
+        dados
+    );
 
-    verificarCoco(dados);
+    verificarCoco(
+        dados
+    );
 
-    atualizarHospital(dados);
+    atualizarHospital(
+        dados
+    );
 
-    atualizarPasseio(dados);
+    atualizarPasseio(
+        dados
+    );
 
-    atualizarEscovacao(dados);
+    atualizarEscovacao(
+        dados
+    );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return dados;
 
 };
 
 /* =========================================================
-
    REGRAS DAS AÇÕES
-
 ========================================================= */
 
-alimentar = function () {
+alimentar =
+function() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
-
     }
 
     if (
         dados.doente ||
         dados.hospitalAte
     ) {
-
         return false;
-
     }
 
     if (
-        Number(dados.fome) >= 90
+        Number(
+            dados.fome
+        ) >= 90
     ) {
-
         return false;
-
     }
 
     dados.fome =
         Math.min(
             100,
             Number(
-                dados.fome || 0
-            ) + 20
+                dados.fome ||
+                0
+            ) +
+            20
         );
 
     dados.saude =
         Math.min(
             100,
             Number(
-                dados.saude || 0
-            ) + 2
+                dados.saude ||
+                0
+            ) +
+            2
         );
 
     darRecompensa(
-
         dados,
-
         5,
-
         PETTON_MOEDAS_ALIMENTAR
-
     );
 
     const agoraAlimentacao =
@@ -5450,30 +5456,31 @@ alimentar = function () {
     dados.ultimaAlimentacaoCocoEm =
         agoraAlimentacao;
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 };
 
-brincar = function () {
+brincar =
+function() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
-
     }
 
     if (
         dados.doente ||
         dados.hospitalAte
     ) {
-
         return false;
-
     }
 
     if (
@@ -5481,9 +5488,7 @@ brincar = function () {
             dados.felicidade
         ) >= 90
     ) {
-
         return false;
-
     }
 
     if (
@@ -5491,69 +5496,70 @@ brincar = function () {
             dados.energia
         ) < 15
     ) {
-
         return false;
-
     }
 
     dados.felicidade =
         Math.min(
             100,
             Number(
-                dados.felicidade || 0
-            ) + 20
+                dados.felicidade ||
+                0
+            ) +
+            20
         );
 
     dados.energia =
         Math.max(
             0,
             Number(
-                dados.energia || 0
-            ) - 10
+                dados.energia ||
+                0
+            ) -
+            10
         );
 
     dados.higiene =
         Math.max(
             0,
             Number(
-                dados.higiene || 0
-            ) - 1
+                dados.higiene ||
+                0
+            ) -
+            1
         );
 
     darRecompensa(
-
         dados,
-
         5,
-
         PETTON_MOEDAS_BRINCAR
-
     );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 };
 
-carinho = function () {
+carinho =
+function() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
-
     }
 
     if (
         dados.doente ||
         dados.hospitalAte
     ) {
-
         return false;
-
     }
 
     if (
@@ -5561,53 +5567,50 @@ carinho = function () {
             dados.felicidade
         ) >= 95
     ) {
-
         return false;
-
     }
 
     dados.felicidade =
         Math.min(
             100,
             Number(
-                dados.felicidade || 0
-            ) + 10
+                dados.felicidade ||
+                0
+            ) +
+            10
         );
 
     darRecompensa(
-
         dados,
-
         2,
-
         PETTON_MOEDAS_CARINHO
-
     );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 };
 
-dormir = function () {
+dormir =
+function() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
-
     }
 
     if (
         dados.doente ||
         dados.hospitalAte
     ) {
-
         return false;
-
     }
 
     if (
@@ -5615,128 +5618,123 @@ dormir = function () {
             dados.energia
         ) >= 90
     ) {
-
         return false;
-
     }
 
     dados.energia =
         Math.min(
             100,
             Number(
-                dados.energia || 0
-            ) + 30
+                dados.energia ||
+                0
+            ) +
+            30
         );
 
     dados.felicidade =
         Math.min(
             100,
             Number(
-                dados.felicidade || 0
-            ) + 5
+                dados.felicidade ||
+                0
+            ) +
+            5
         );
 
-    salvarPetton(dados);
-
-    return true;
-
-};
-
-limpar = function () {
-
-    const dados =
-        carregarPetton();
-
-    if (!dados.dateNascimento) {
-
-        return false;
-
-    }
-
-    if (dados.hospitalAte) {
-
-        return false;
-
-    }
-
-    if (
-        Number(
-            dados.higiene
-        ) >= 90
-    ) {
-
-        return false;
-
-    }
-
-    dados.higiene =
-        Math.min(
-            100,
-            Number(
-                dados.higiene || 0
-            ) + 30
-        );
-
-    dados.saude =
-        Math.min(
-            100,
-            Number(
-                dados.saude || 0
-            ) + 5
-        );
-
-    darRecompensa(
-
-        dados,
-
-        3,
-
-        PETTON_MOEDAS_LIMPAR
-
+    salvarPetton(
+        dados
     );
-
-    salvarPetton(dados);
 
     return true;
 
 };
 
 /* =========================================================
-
-   PASSEAR - CORRIGIDO
-
-   Pode passear mesmo com felicidade 90 ou 100.
-
+   BANHO - CORRIGIDO
+   Agora funciona mesmo com higiene 90, 91, 100.
 ========================================================= */
 
-passear = function () {
+limpar =
+function() {
 
     const dados =
         carregarPetton();
 
-    if (!dados.dateNascimento) {
-
+    if (
+        !dados.dateNascimento
+    ) {
         return false;
+    }
 
+    if (
+        dados.hospitalAte
+    ) {
+        return false;
+    }
+
+    dados.higiene =
+        Math.min(
+            100,
+            Number(
+                dados.higiene ||
+                0
+            ) +
+            30
+        );
+
+    dados.saude =
+        Math.min(
+            100,
+            Number(
+                dados.saude ||
+                0
+            ) +
+            5
+        );
+
+    darRecompensa(
+        dados,
+        3,
+        PETTON_MOEDAS_LIMPAR
+    );
+
+    salvarPetton(
+        dados
+    );
+
+    return true;
+
+};
+
+/* =========================================================
+   PASSEAR
+========================================================= */
+
+passear =
+function() {
+
+    const dados =
+        carregarPetton();
+
+    if (
+        !dados.dateNascimento
+    ) {
+        return false;
     }
 
     if (
         dados.doente ||
         dados.hospitalAte
     ) {
-
         return false;
-
     }
 
     if (
         dados.passeandoAte &&
         dados.passeandoAte >
-        Date.now()
+            Date.now()
     ) {
-
         return false;
-
     }
 
     if (
@@ -5744,9 +5742,7 @@ passear = function () {
             dados.energia
         ) < 20
     ) {
-
         return false;
-
     }
 
     dados.passeandoAte =
@@ -5757,46 +5753,48 @@ passear = function () {
         Math.min(
             100,
             Number(
-                dados.felicidade || 0
-            ) + 15
+                dados.felicidade ||
+                0
+            ) +
+            15
         );
 
     dados.energia =
         Math.max(
             0,
             Number(
-                dados.energia || 0
-            ) - 8
+                dados.energia ||
+                0
+            ) -
+            8
         );
 
     dados.higiene =
         Math.max(
             0,
             Number(
-                dados.higiene || 0
-            ) - 2
+                dados.higiene ||
+                0
+            ) -
+            2
         );
 
     darRecompensa(
-
         dados,
-
         5,
-
         PETTON_MOEDAS_PASSEAR
-
     );
 
-    salvarPetton(dados);
+    salvarPetton(
+        dados
+    );
 
     return true;
 
 };
 
 /* =========================================================
-
-   INICIAR CONTROLE DE TEMPO
-
+   INICIAR TEMPO REAL
 ========================================================= */
 
 try {
