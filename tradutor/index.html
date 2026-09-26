@@ -2,17 +2,34 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajuda JP - Início</title>
-    <!-- SDK do LINE LIFF -->
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    
-    <!-- SDKs do Firebase (Modular v10) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração do Firebase (Substitua pelas credenciais do seu projeto)
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <meta name="google" content="notranslate">
+
+    <title>Ajuda JP - Início</title>
+
+    <!-- LINE LIFF -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+    <!-- FIREBASE -->
+    <script type="module">
+
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "SEU_AUTH_DOMAIN",
@@ -22,620 +39,2193 @@
             appId: "SEU_APP_ID"
         };
 
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
 
-        // Tornar acessível globalmente
-        window.db = db;
-        window.firebaseDocs = { doc, getDoc, setDoc };
+        try {
+
+            const app = initializeApp(firebaseConfig);
+
+            const db = getFirestore(app);
+
+            window.db = db;
+
+            window.firebaseDocs = {
+                doc,
+                getDoc,
+                setDoc
+            };
+
+        } catch (erro) {
+
+            console.log("Firebase ainda não configurado:", erro);
+
+        }
+
     </script>
 
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 15px;
-            color: #333;
-            padding-bottom: 80px;
-        }
 
-        #login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #f4f6f9;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 9999;
-            text-align: center;
-        }
+<style>
 
-        .login-card {
-            background: white;
-            padding: 30px 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            max-width: 380px;
-            width: 100%;
-        }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        .login-card h2 {
-            color: #0047ab;
-            margin-top: 0;
-            font-size: 22px;
-        }
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
 
-        .login-card p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
+body {
 
-        .btn-line-login {
-            background-color: #06c755;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(6, 199, 85, 0.3);
-        }
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 
-        #app-content {
-            display: none;
-        }
+    background-color: #f4f6f9;
 
-        .header {
-            background-color: #0047ab;
-            color: white;
-            padding: 10px 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            justify-content: space-between;
-        }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .saldo-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: normal;
-        }
-        .logo-img {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: white;
-            border: 2px solid white;
-            flex-shrink: 0;
-        }
-        
-        .destaques-container {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            margin-bottom: 12px;
-            padding-bottom: 3px;
-        }
-        .destaque-card {
-            background: #e0f2fe;
-            min-width: 110px;
-            height: 65px;
-            flex: 0 0 auto;
-            padding: 8px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid #bae6fd;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .destaque-card h4 {
-            margin: 0;
-            font-size: 13px;
-            color: #0369a1;
-            font-weight: bold;
-        }
-        .destaque-card span {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 2px;
-        }
+    color: #333;
 
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 12px;
-        }
-        h3 {
-            margin-top: 0;
-            font-size: 16px;
-        }
-        textarea, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-top: 8px;
-            margin-bottom: 12px;
-            box-sizing: border-box;
-            background-color: #fff;
-        }
-        button.btn-primary {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .result-box {
-            background-color: #ecfdf5;
-            border: 1px solid #10b981;
-            color: #065f46;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 16px;
-            white-space: pre-wrap;
-            display: none;
-        }
+    padding: 15px;
 
-        .grid-menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .menu-item {
-            padding: 15px 10px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-        }
-        .menu-item span {
-            display: block;
-            font-size: 11px;
-            color: #f0f0f0;
-            font-weight: normal;
-            margin-top: 3px;
-        }
-        .btn-tradutor { background-color: #2563eb; }
-        .btn-carteira { background-color: #059669; }
-        .btn-entretenimento { background-color: #7c3aed; }
-        .btn-servicos { background-color: #d97706; }
-        .btn-empregos { background-color: #db2777; }
-        .btn-fale { background-color: #059669; }
+    padding-bottom: 80px;
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: white;
-            width: 98%;
-            max-width: 520px;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-            text-align: left;
-        }
-        .modal-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        #videoContainer {
-            display: none;
-            text-align: center;
-            margin-top: 10px;
-        }
-        video {
-            width: 100%;
-            height: 380px;
-            background: #000;
-            border-radius: 10px;
-            object-fit: cover;
-            transform: scaleX(-1);
-        }
-        .timer-badge {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 60px;
-            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-            z-index: 999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            flex-grow: 1;
-        }
-        .nav-item.active {
-            color: #0047ab;
-            font-weight: bold;
-        }
-        .nav-item span.icon {
-            font-size: 1.2rem;
-            margin-bottom: 2px;
-        }
-    </style>
+}
+
+
+/* =========================================================
+LOGIN
+========================================================= */
+
+#login-overlay {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: #f4f6f9;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 20px;
+
+    z-index: 9999;
+
+    text-align: center;
+
+}
+
+
+.login-card {
+
+    background: white;
+
+    padding: 30px 20px;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.08);
+
+    max-width: 380px;
+
+    width: 100%;
+
+}
+
+
+.login-card h2 {
+
+    color: #0047ab;
+
+    margin-top: 0;
+
+    font-size: 22px;
+
+}
+
+
+.login-card p {
+
+    color: #666;
+
+    font-size: 14px;
+
+    margin-bottom: 25px;
+
+    line-height: 1.5;
+
+}
+
+
+.btn-line-login {
+
+    background-color: #06c755;
+
+    color: white;
+
+    border: none;
+
+    width: 100%;
+
+    padding: 14px;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+#app-content {
+    display: none;
+}
+
+
+/* =========================================================
+CABEÇALHO
+========================================================= */
+
+.header {
+
+    background-color: #0047ab;
+
+    color: white;
+
+    padding: 10px 15px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    border-radius: 8px;
+
+    margin-bottom: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    justify-content: space-between;
+
+}
+
+
+.header-left {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.saldo-badge {
+
+    background: rgba(255,255,255,0.2);
+
+    padding: 4px 10px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: normal;
+
+    white-space: nowrap;
+
+}
+
+
+.logo-img {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    background: white;
+
+    border: 2px solid white;
+
+    flex-shrink: 0;
+
+}
+
+
+/* =========================================================
+DESTAQUES
+========================================================= */
+
+.destaques-container {
+
+    display: flex;
+
+    gap: 8px;
+
+    overflow-x: auto;
+
+    margin-bottom: 12px;
+
+    padding-bottom: 3px;
+
+}
+
+
+.destaque-card {
+
+    background: #e0f2fe;
+
+    min-width: 110px;
+
+    height: 65px;
+
+    flex: 0 0 auto;
+
+    padding: 8px;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    border: 1px solid #bae6fd;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.destaque-card h4 {
+
+    margin: 0;
+
+    font-size: 13px;
+
+    color: #0369a1;
+
+}
+
+
+.destaque-card span {
+
+    font-size: 12px;
+
+    color: #64748b;
+
+    margin-top: 2px;
+
+}
+
+
+/* =========================================================
+CARDS
+========================================================= */
+
+.card {
+
+    background: white;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,0.05);
+
+    margin-bottom: 12px;
+
+}
+
+
+h3 {
+
+    margin-top: 0;
+
+    font-size: 16px;
+
+}
+
+
+/* =========================================================
+TRADUTOR
+========================================================= */
+
+#textoInput {
+
+    width: 100%;
+
+    min-height: 100px;
+
+    resize: vertical;
+
+    padding: 12px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    margin-top: 8px;
+
+    margin-bottom: 12px;
+
+    background: white;
+
+    font-family: inherit;
+
+}
+
+
+.btn-primary {
+
+    background-color: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    width: 100%;
+
+    padding: 13px;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.btn-primary:active {
+
+    transform: scale(0.98);
+
+}
+
+
+.btn-primary:disabled {
+
+    opacity: 0.65;
+
+    cursor: default;
+
+}
+
+
+.result-box {
+
+    background-color: #ecfdf5;
+
+    border: 1px solid #10b981;
+
+    color: #065f46;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    margin-top: 12px;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    display: none;
+
+}
+
+
+.result-box.erro {
+
+    background: #fef2f2;
+
+    border-color: #ef4444;
+
+    color: #991b1b;
+
+}
+
+
+/* =========================================================
+MENU
+========================================================= */
+
+.grid-menu {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+}
+
+
+.menu-item {
+
+    padding: 15px 10px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,0.05);
+
+    text-align: center;
+
+    cursor: pointer;
+
+    border: none;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    color: white;
+
+}
+
+
+.menu-item span {
+
+    display: block;
+
+    font-size: 11px;
+
+    color: #f0f0f0;
+
+    font-weight: normal;
+
+    margin-top: 3px;
+
+}
+
+
+.btn-tradutor {
+    background-color: #2563eb;
+}
+
+.btn-carteira {
+    background-color: #059669;
+}
+
+.btn-entretenimento {
+    background-color: #7c3aed;
+}
+
+.btn-servicos {
+    background-color: #d97706;
+}
+
+.btn-empregos {
+    background-color: #db2777;
+}
+
+.btn-fale {
+    background-color: #059669;
+}
+
+
+/* =========================================================
+SELECT
+========================================================= */
+
+select {
+
+    width: 100%;
+
+    padding: 10px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    margin-top: 8px;
+
+    margin-bottom: 12px;
+
+    background-color: white;
+
+}
+
+
+/* =========================================================
+MODAIS
+========================================================= */
+
+.modal {
+
+    display: none;
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: rgba(0,0,0,0.6);
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 1000;
+
+    padding: 10px;
+
+}
+
+
+.modal-content {
+
+    background: white;
+
+    width: 100%;
+
+    max-width: 520px;
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 6px 15px rgba(0,0,0,0.3);
+
+}
+
+
+.modal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.modal-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+#videoContainer {
+
+    display: none;
+
+    text-align: center;
+
+    margin-top: 10px;
+
+}
+
+
+video {
+
+    width: 100%;
+
+    height: 380px;
+
+    background: #000;
+
+    border-radius: 10px;
+
+    object-fit: cover;
+
+    transform: scaleX(-1);
+
+}
+
+
+.timer-badge {
+
+    background: #d1fae5;
+
+    color: #065f46;
+
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+}
+
+
+/* =========================================================
+MENU INFERIOR
+========================================================= */
+
+.bottom-nav {
+
+    position: fixed;
+
+    bottom: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    background-color: #fff;
+
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    height: 60px;
+
+    box-shadow:
+        0 -2px 6px rgba(0,0,0,0.1);
+
+    z-index: 999;
+
+}
+
+
+.nav-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-decoration: none;
+
+    color: #666;
+
+    font-size: 0.75rem;
+
+    flex-grow: 1;
+
+}
+
+
+.nav-item.active {
+
+    color: #0047ab;
+
+    font-weight: bold;
+
+}
+
+
+.nav-item span.icon {
+
+    font-size: 1.2rem;
+
+    margin-bottom: 2px;
+
+}
+
+</style>
+
 </head>
+
+
 <body>
 
-    <div id="login-overlay">
-        <div class="login-card">
-            <h2>Ajuda JP</h2>
-            <p>Para acessar o mini app, visualizar seus créditos e gerenciar sua conta, é necessário entrar com sua conta do LINE.</p>
-            <button class="btn-line-login" onclick="fazerLoginLine()">Entrar com o LINE</button>
-        </div>
+
+<!-- =========================================================
+LOGIN
+========================================================= -->
+
+<div id="login-overlay">
+
+    <div class="login-card">
+
+        <h2>Ajuda JP</h2>
+
+        <p>
+            Para acessar o mini app, visualizar seus créditos
+            e gerenciar sua conta, entre com sua conta do LINE.
+        </p>
+
+        <button
+            type="button"
+            class="btn-line-login"
+            id="btnLoginLine"
+        >
+            Entrar com o LINE
+        </button>
+
     </div>
 
-    <div id="app-content">
-        <div class="header">
-            <div class="header-left">
-                <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-                <span>Ajuda JP - Início</span>
-            </div>
-            <div id="saldoBadge" class="saldo-badge">Créditos: 0</div>
+</div>
+
+
+
+<!-- =========================================================
+APP
+========================================================= -->
+
+<div id="app-content">
+
+
+    <div class="header">
+
+        <div class="header-left">
+
+            <img
+                src="logo.jpeg"
+                class="logo-img"
+                alt="Logo"
+                onerror="this.onerror=null;this.src='logo.png';"
+            >
+
+            <span>
+                Ajuda JP - Início
+            </span>
+
         </div>
 
-        <div class="destaques-container">
-            <div class="destaque-card">
-                <h4>Destaque 1</h4>
-                <span>📢 Novidade</span>
-            </div>
-            <div class="destaque-card">
-                <h4>Destaque 2</h4>
-                <span>⭐ Especial</span>
-            </div>
-            <div class="destaque-card">
-                <h4>Destaque 3</h4>
-                <span>❓ Ajuda</span>
-            </div>
-            <div class="destaque-card">
-                <h4>Destaque 4</h4>
-                <span>❓ FAQ</span>
-            </div>
+        <div
+            id="saldoBadge"
+            class="saldo-badge"
+        >
+            Créditos: 0
         </div>
 
-        <div class="card">
-            <h3>📸 Tradução de Texto e Fotos</h3>
-            <p style="font-size: 14px; color: #666; margin-top:0;">Digite o texto em japonês ou português para traduzir na hora:</p>
-            <textarea id="textoInput" rows="3" placeholder="Digite aqui..."></textarea>
-            <button class="btn-primary" onclick="traduzirTexto()">Traduzir Agora</button>
-            <div id="resultadoBox" class="result-box"></div>
-        </div>
-
-        <div class="grid-menu">
-            <button class="menu-item btn-tradutor" onclick="verificarSaldoEChamar()">
-                📞 Tradutor
-                <span>Prefeitura / Hospital</span>
-            </button>
-            <button class="menu-item btn-carteira" onclick="window.location.href='perfil.html'">
-                💰 Carteira
-                <span>Saldo e Ganhos</span>
-            </button>
-            <button class="menu-item btn-entretenimento" onclick="window.location.href='entretenimento.html'">
-                🎮 Entretenimento
-                <span>Lives, Aulas e Notícias</span>
-            </button>
-            <button class="menu-item btn-servicos" onclick="window.location.href='servicos.html'">
-                📋 Serviços
-                <span>Lojas, Ar-condicionado</span>
-            </button>
-            <button class="menu-item btn-empregos" onclick="alert('Tela de Empregos em desenvolvimento')">
-                💼 Empregos
-                <span>Vagas das Empreiteiras</span>
-            </button>
-            <button class="menu-item btn-fale" onclick="window.location.href='fale-conosco.html'">
-                📞 Fale Conosco
-                <span>Suporte via LINE</span>
-            </button>
-        </div>
-
-        <div id="modalTradutor" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-                    <h3 style="margin:0;">Chamar Tradutor</h3>
-                </div>
-                <label style="font-size: 14px; font-weight: bold;">Onde você está?</label>
-                <select id="localAtendimento">
-                    <option value="Hospital">Hospital</option>
-                    <option value="Prefeitura">Prefeitura</option>
-                    <option value="Escola">Escola</option>
-                    <option value="Outros">Outros</option>
-                </select>
-                <label style="font-size: 14px; font-weight: bold;">Tempo de atendimento:</label>
-                <select id="tempoAtendimento">
-                    <option value="1800">30 minutos</option>
-                    <option value="3600">1 hora</option>
-                    <option value="7200">Mais de 1 hora</option>
-                </select>
-                <div class="modal-buttons">
-                    <button class="btn-primary" style="background-color: #6b7280;" onclick="fecharModalTradutor()">Cancelar</button>
-                    <button class="btn-primary" onclick="iniciarEspera()">Confirmar Pedido</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="modalEspera" class="modal">
-            <div class="modal-content" style="text-align: center;">
-                <div class="modal-header" style="justify-content: center;">
-                    <img src="logo.jpeg" class="logo-img" alt="Logo" onerror="this.onerror=null; this.src='logo.png';">
-                    <h3 id="statusTexto" style="margin:0;">Procurando tradutor...</h3>
-                </div>
-                <p id="subStatus" style="font-size: 14px; color: #666;">Aguarde um momento enquanto conectamos você.</p>
-                <div id="videoContainer">
-                    <div id="timerDisplay" class="timer-badge">⏱️ Tempo em chamada: 0s</div>
-                    <video id="webcam" autoplay playsinline muted></video>
-                    <p style="font-size: 13px; color: #10b981; font-weight: bold; margin-top: 5px;">🟢 Conectado à Sala de Vídeo</p>
-                </div>
-                <button id="btnSairChamada" class="btn-primary" style="background-color: #dc2626; margin-top: 15px;" onclick="finalizarChamadaNormal()">Sair / Encerrar</button>
-            </div>
-        </div>
-
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-item active">
-                <span class="icon">🏠</span>
-                <span>Home</span>
-            </a>
-            <a href="servicos.html" class="nav-item">
-                <span class="icon">📋</span>
-                <span>Serviços</span>
-            </a>
-            <a href="entretenimento.html" class="nav-item">
-                <span class="icon">🎬</span>
-                <span>Lazer</span>
-            </a>
-            <a href="perfil.html" class="nav-item">
-                <span class="icon">👤</span>
-                <span>Perfil</span>
-            </a>
-        </nav>
     </div>
 
-    <script>
-        const liffId = "2010902449-KWNNNsxn";
 
-        async function inicializarApp() {
+
+    <!-- DESTAQUES -->
+
+    <div class="destaques-container">
+
+        <div class="destaque-card">
+            <h4>Destaque 1</h4>
+            <span>📢 Novidade</span>
+        </div>
+
+        <div class="destaque-card">
+            <h4>Destaque 2</h4>
+            <span>⭐ Especial</span>
+        </div>
+
+        <div class="destaque-card">
+            <h4>Destaque 3</h4>
+            <span>❓ Ajuda</span>
+        </div>
+
+        <div class="destaque-card">
+            <h4>Destaque 4</h4>
+            <span>❓ FAQ</span>
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+    TRADUTOR DE TEXTO
+    ====================================================== -->
+
+    <div class="card">
+
+        <h3>
+            🌐 Tradutor Português ↔ Japonês
+        </h3>
+
+        <p
+            style="
+                font-size:14px;
+                color:#666;
+                margin-top:0;
+            "
+        >
+            Digite em português ou japonês.
+            O idioma será reconhecido automaticamente.
+        </p>
+
+
+        <textarea
+            id="textoInput"
+            placeholder="Exemplo: Preciso marcar uma consulta."
+        ></textarea>
+
+
+        <button
+            type="button"
+            class="btn-primary"
+            id="btnTraduzirTexto"
+        >
+            Traduzir Agora
+        </button>
+
+
+        <div
+            id="resultadoBox"
+            class="result-box"
+        ></div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+    MENU
+    ====================================================== -->
+
+    <div class="grid-menu">
+
+
+        <button
+            type="button"
+            class="menu-item btn-tradutor"
+            id="btnChamarTradutor"
+        >
+
+            📞 Tradutor
+
+            <span>
+                Prefeitura / Hospital
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="menu-item btn-carteira"
+            onclick="window.location.href='perfil.html'"
+        >
+
+            💰 Carteira
+
+            <span>
+                Saldo e Ganhos
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="menu-item btn-entretenimento"
+            onclick="window.location.href='entretenimento.html'"
+        >
+
+            🎮 Entretenimento
+
+            <span>
+                Lives, Aulas e Notícias
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="menu-item btn-servicos"
+            onclick="window.location.href='servicos.html'"
+        >
+
+            📋 Serviços
+
+            <span>
+                Lojas, Ar-condicionado
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="menu-item btn-empregos"
+            onclick="alert('Tela de Empregos em desenvolvimento')"
+        >
+
+            💼 Empregos
+
+            <span>
+                Vagas das Empreiteiras
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="menu-item btn-fale"
+            onclick="window.location.href='fale-conosco.html'"
+        >
+
+            📞 Fale Conosco
+
+            <span>
+                Suporte via LINE
+            </span>
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+    MODAL TRADUTOR
+    ====================================================== -->
+
+    <div
+        id="modalTradutor"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <img
+                    src="logo.jpeg"
+                    class="logo-img"
+                    alt="Logo"
+                    onerror="this.onerror=null;this.src='logo.png';"
+                >
+
+                <h3 style="margin:0;">
+                    Chamar Tradutor
+                </h3>
+
+            </div>
+
+
+            <label
+                style="
+                    font-size:14px;
+                    font-weight:bold;
+                "
+            >
+                Onde você está?
+            </label>
+
+
+            <select id="localAtendimento">
+
+                <option value="Hospital">
+                    Hospital
+                </option>
+
+                <option value="Prefeitura">
+                    Prefeitura
+                </option>
+
+                <option value="Escola">
+                    Escola
+                </option>
+
+                <option value="Outros">
+                    Outros
+                </option>
+
+            </select>
+
+
+            <label
+                style="
+                    font-size:14px;
+                    font-weight:bold;
+                "
+            >
+                Tempo de atendimento:
+            </label>
+
+
+            <select id="tempoAtendimento">
+
+                <option value="1800">
+                    30 minutos
+                </option>
+
+                <option value="3600">
+                    1 hora
+                </option>
+
+                <option value="7200">
+                    Mais de 1 hora
+                </option>
+
+            </select>
+
+
+            <div class="modal-buttons">
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    id="btnCancelarTradutor"
+                    style="background:#6b7280;"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    id="btnConfirmarTradutor"
+                >
+                    Confirmar Pedido
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+    MODAL ESPERA
+    ====================================================== -->
+
+    <div
+        id="modalEspera"
+        class="modal"
+    >
+
+        <div
+            class="modal-content"
+            style="text-align:center;"
+        >
+
+
+            <div
+                class="modal-header"
+                style="justify-content:center;"
+            >
+
+                <img
+                    src="logo.jpeg"
+                    class="logo-img"
+                    alt="Logo"
+                    onerror="this.onerror=null;this.src='logo.png';"
+                >
+
+                <h3
+                    id="statusTexto"
+                    style="margin:0;"
+                >
+                    Procurando tradutor...
+                </h3>
+
+            </div>
+
+
+            <p
+                id="subStatus"
+                style="
+                    font-size:14px;
+                    color:#666;
+                "
+            >
+                Aguarde um momento enquanto conectamos você.
+            </p>
+
+
+            <div id="videoContainer">
+
+
+                <div
+                    id="timerDisplay"
+                    class="timer-badge"
+                >
+                    ⏱️ Tempo em chamada: 0s
+                </div>
+
+
+                <video
+                    id="webcam"
+                    autoplay
+                    playsinline
+                    muted
+                ></video>
+
+
+                <p
+                    style="
+                        font-size:13px;
+                        color:#10b981;
+                        font-weight:bold;
+                        margin-top:5px;
+                    "
+                >
+                    🟢 Conectado à Sala de Vídeo
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="btnSairChamada"
+                class="btn-primary"
+                style="
+                    background:#dc2626;
+                    margin-top:15px;
+                "
+            >
+                Sair / Encerrar
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+    MENU INFERIOR
+    ====================================================== -->
+
+    <nav class="bottom-nav">
+
+        <a
+            href="index.html"
+            class="nav-item active"
+        >
+            <span class="icon">
+                🏠
+            </span>
+
+            <span>
+                Home
+            </span>
+        </a>
+
+
+        <a
+            href="servicos.html"
+            class="nav-item"
+        >
+            <span class="icon">
+                📋
+            </span>
+
+            <span>
+                Serviços
+            </span>
+        </a>
+
+
+        <a
+            href="entretenimento.html"
+            class="nav-item"
+        >
+            <span class="icon">
+                🎬
+            </span>
+
+            <span>
+                Lazer
+            </span>
+        </a>
+
+
+        <a
+            href="perfil.html"
+            class="nav-item"
+        >
+            <span class="icon">
+                👤
+            </span>
+
+            <span>
+                Perfil
+            </span>
+        </a>
+
+    </nav>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+CONFIGURAÇÃO LINE
+========================================================= */
+
+const liffId = "2010902449-KWNNNsxn";
+
+let tempoInterval = null;
+
+let segundosChamada = 0;
+
+
+
+/* =========================================================
+INICIALIZAÇÃO
+========================================================= */
+
+async function inicializarApp() {
+
+    try {
+
+        await liff.init({
+            liffId: liffId
+        });
+
+
+        if (
+            liff.isLoggedIn() ||
+            localStorage.getItem("line_user_id")
+        ) {
+
+            let userId =
+                localStorage.getItem("line_user_id");
+
+            let userName =
+                localStorage.getItem("line_user_name");
+
+
+            if (
+                liff.isLoggedIn() &&
+                !userId
+            ) {
+
+                const profile =
+                    await liff.getProfile();
+
+                userId =
+                    profile.userId;
+
+                userName =
+                    profile.displayName;
+
+                localStorage.setItem(
+                    "line_user_id",
+                    userId
+                );
+
+                localStorage.setItem(
+                    "line_user_name",
+                    userName
+                );
+
+            }
+
+
+            if (userId) {
+
+                carregarOuCriarSaldoFirebase(
+                    userId,
+                    userName || "Usuário LINE"
+                );
+
+            }
+
+
+            document.getElementById(
+                "login-overlay"
+            ).style.display = "none";
+
+
+            document.getElementById(
+                "app-content"
+            ).style.display = "block";
+
+
+        } else {
+
+            document.getElementById(
+                "login-overlay"
+            ).style.display = "flex";
+
+        }
+
+
+    } catch (erro) {
+
+        console.log(
+            "Erro no LIFF:",
+            erro
+        );
+
+
+        /*
+        Se já entrou antes,
+        deixa abrir mesmo que o LIFF dê erro.
+        */
+
+        if (
+            localStorage.getItem(
+                "line_user_id"
+            )
+        ) {
+
+            document.getElementById(
+                "login-overlay"
+            ).style.display = "none";
+
+
+            document.getElementById(
+                "app-content"
+            ).style.display = "block";
+
+        }
+
+    }
+
+}
+
+
+
+/* =========================================================
+FIREBASE / SALDO
+========================================================= */
+
+async function carregarOuCriarSaldoFirebase(
+    userId,
+    userName
+) {
+
+    try {
+
+        /*
+        Dá alguns segundos para o módulo do Firebase carregar.
+        */
+
+        let tentativas = 0;
+
+
+        while (
+            !window.db &&
+            tentativas < 30
+        ) {
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        100
+                    )
+            );
+
+            tentativas++;
+
+        }
+
+
+        /*
+        Se o Firebase ainda não estiver configurado,
+        não trava a página.
+        */
+
+        if (
+            !window.db ||
+            !window.firebaseDocs
+        ) {
+
+            document.getElementById(
+                "saldoBadge"
+            ).innerText =
+                "Créditos: " +
+                (
+                    localStorage.getItem(
+                        "saldo_atual"
+                    ) || "0"
+                );
+
+            return;
+
+        }
+
+
+        const {
+            doc,
+            getDoc,
+            setDoc
+        } = window.firebaseDocs;
+
+
+        const userRef =
+            doc(
+                window.db,
+                "creditos_usuario",
+                userId
+            );
+
+
+        const userSnap =
+            await getDoc(
+                userRef
+            );
+
+
+        let saldoAtual = 0;
+
+
+        if (
+            userSnap.exists()
+        ) {
+
+            saldoAtual =
+                Number(
+                    userSnap.data().saldo || 0
+                );
+
+        } else {
+
+            saldoAtual = 0;
+
+
+            await setDoc(
+                userRef,
+                {
+
+                    nome:
+                        userName,
+
+                    saldo:
+                        saldoAtual,
+
+                    ultimaAtualizacao:
+                        new Date().toISOString()
+
+                }
+            );
+
+        }
+
+
+        document.getElementById(
+            "saldoBadge"
+        ).innerText =
+            `Créditos: ${saldoAtual}`;
+
+
+        localStorage.setItem(
+            "saldo_atual",
+            String(saldoAtual)
+        );
+
+
+    } catch (erro) {
+
+        console.log(
+            "Erro Firebase:",
+            erro
+        );
+
+
+        const saldoLocal =
+            localStorage.getItem(
+                "saldo_atual"
+            ) || "0";
+
+
+        document.getElementById(
+            "saldoBadge"
+        ).innerText =
+            `Créditos: ${saldoLocal}`;
+
+    }
+
+}
+
+
+
+/* =========================================================
+LOGIN
+========================================================= */
+
+function fazerLoginLine() {
+
+    try {
+
+        if (
+            !liff.isLoggedIn()
+        ) {
+
+            liff.login();
+
+        }
+
+    } catch (erro) {
+
+        console.log(
+            "Erro login LINE:",
+            erro
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+TRADUTOR DE TEXTO
+========================================================= */
+
+async function traduzirTexto() {
+
+    const textarea =
+        document.getElementById(
+            "textoInput"
+        );
+
+
+    const box =
+        document.getElementById(
+            "resultadoBox"
+        );
+
+
+    const botao =
+        document.getElementById(
+            "btnTraduzirTexto"
+        );
+
+
+    const texto =
+        textarea.value.trim();
+
+
+    /*
+    Se estiver vazio
+    */
+
+    if (!texto) {
+
+        box.classList.add(
+            "erro"
+        );
+
+        box.style.display =
+            "block";
+
+        box.innerText =
+            "Digite uma frase para traduzir.";
+
+        textarea.focus();
+
+        return;
+
+    }
+
+
+    /*
+    Mostra imediatamente que o botão funcionou.
+    */
+
+    box.classList.remove(
+        "erro"
+    );
+
+    box.style.display =
+        "block";
+
+    box.innerText =
+        "Traduzindo...";
+
+
+    botao.disabled = true;
+
+    botao.innerText =
+        "Traduzindo...";
+
+
+    try {
+
+        /*
+        Detecta caracteres japoneses:
+        hiragana
+        katakana
+        kanji
+        */
+
+        const temJapones =
+            /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(
+                texto
+            );
+
+
+        const idiomaOrigem =
+            temJapones
+                ? "ja"
+                : "pt";
+
+
+        const idiomaDestino =
+            temJapones
+                ? "pt"
+                : "ja";
+
+
+        /*
+        Tradutor Google simples.
+        */
+
+        const url =
+            "https://translate.googleapis.com/translate_a/single" +
+            "?client=gtx" +
+            "&sl=" +
+            encodeURIComponent(
+                idiomaOrigem
+            ) +
+            "&tl=" +
+            encodeURIComponent(
+                idiomaDestino
+            ) +
+            "&dt=t" +
+            "&q=" +
+            encodeURIComponent(
+                texto
+            );
+
+
+        const resposta =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (
+            !resposta.ok
+        ) {
+
+            throw new Error(
+                "HTTP " +
+                resposta.status
+            );
+
+        }
+
+
+        const dados =
+            await resposta.json();
+
+
+        let traducao = "";
+
+
+        /*
+        Junta todos os pedaços da tradução.
+        */
+
+        if (
+            Array.isArray(
+                dados[0]
+            )
+        ) {
+
+            for (
+                const parte
+                of dados[0]
+            ) {
+
+                if (
+                    parte &&
+                    typeof parte[0] ===
+                        "string"
+                ) {
+
+                    traducao +=
+                        parte[0];
+
+                }
+
+            }
+
+        }
+
+
+        if (!traducao) {
+
+            throw new Error(
+                "Tradução vazia"
+            );
+
+        }
+
+
+        box.innerText =
+            traducao;
+
+
+    } catch (erro) {
+
+        console.log(
+            "Erro tradução:",
+            erro
+        );
+
+
+        box.classList.add(
+            "erro"
+        );
+
+
+        box.innerText =
+            "Não foi possível traduzir agora.\n\nTente novamente em alguns segundos.";
+
+    } finally {
+
+        botao.disabled = false;
+
+        botao.innerText =
+            "Traduzir Agora";
+
+    }
+
+}
+
+
+
+/* =========================================================
+CHAMAR TRADUTOR HUMANO
+========================================================= */
+
+function verificarSaldoEChamar() {
+
+    const saldo =
+        parseInt(
+            localStorage.getItem(
+                "saldo_atual"
+            ) || "0",
+            10
+        );
+
+
+    if (
+        saldo <= 0
+    ) {
+
+        alert(
+            "Você não possui créditos suficientes. Adquira créditos na sua carteira."
+        );
+
+
+        window.location.href =
+            "perfil.html";
+
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "modalTradutor"
+    ).style.display = "flex";
+
+}
+
+
+
+/* =========================================================
+FECHAR MODAL
+========================================================= */
+
+function fecharModalTradutor() {
+
+    document.getElementById(
+        "modalTradutor"
+    ).style.display = "none";
+
+}
+
+
+
+/* =========================================================
+INICIAR ESPERA
+========================================================= */
+
+function iniciarEspera() {
+
+    document.getElementById(
+        "modalTradutor"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "modalEspera"
+    ).style.display = "flex";
+
+
+    document.getElementById(
+        "statusTexto"
+    ).innerText =
+        "Procurando tradutor...";
+
+
+    const subStatus =
+        document.getElementById(
+            "subStatus"
+        );
+
+
+    subStatus.style.display =
+        "block";
+
+
+    subStatus.innerText =
+        "Aguarde um momento enquanto conectamos você.";
+
+
+    document.getElementById(
+        "videoContainer"
+    ).style.display =
+        "none";
+
+
+    segundosChamada = 0;
+
+
+    document.getElementById(
+        "timerDisplay"
+    ).innerText =
+        "⏱️ Tempo em chamada: 0s";
+
+
+    setTimeout(
+        async () => {
+
+            document.getElementById(
+                "statusTexto"
+            ).innerText =
+                "Tradutor Conectado!";
+
+
+            subStatus.style.display =
+                "none";
+
+
+            document.getElementById(
+                "videoContainer"
+            ).style.display =
+                "block";
+
+
+            if (
+                tempoInterval
+            ) {
+
+                clearInterval(
+                    tempoInterval
+                );
+
+            }
+
+
+            tempoInterval =
+                setInterval(
+                    () => {
+
+                        segundosChamada++;
+
+
+                        document.getElementById(
+                            "timerDisplay"
+                        ).innerText =
+                            `⏱️ Tempo em chamada: ${segundosChamada}s`;
+
+                    },
+                    1000
+                );
+
+
             try {
-                await liff.init({ liffId: liffId });
-                if (liff.isLoggedIn() || localStorage.getItem('line_user_id')) {
-                    let userId = localStorage.getItem('line_user_id');
-                    let userName = localStorage.getItem('line_user_name');
 
-                    if (liff.isLoggedIn() && !userId) {
-                        const profile = await liff.getProfile();
-                        userId = profile.userId;
-                        userName = profile.displayName;
-                        localStorage.setItem('line_user_id', userId);
-                        localStorage.setItem('line_user_name', userName);
-                    }
-
-                    // Buscar ou criar dados do usuário no Firestore (`creditos_usuario`) com saldo inicial 0
-                    if (userId) {
-                        await carregarOuCriarSaldoFirebase(userId, userName || "Usuário LINE");
-                    }
-
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('app-content').style.display = 'block';
-                } else {
-                    document.getElementById('login-overlay').style.display = 'flex';
-                }
-            } catch (err) {
-                console.log("Erro no LIFF/Login:", err);
-                if (localStorage.getItem('line_user_id')) {
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('app-content').style.display = 'block';
-                }
-            }
-        }
-
-        async function carregarOuCriarSaldoFirebase(userId, userName) {
-            try {
-                while (!window.db) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                }
-
-                const { doc, getDoc, setDoc } = window.firebaseDocs;
-                const userRef = doc(window.db, "creditos_usuario", userId);
-                const userSnap = await getDoc(userRef);
-
-                let saldoAtual = 0;
-
-                if (userSnap.exists()) {
-                    saldoAtual = userSnap.data().saldo || 0;
-                } else {
-                    // Novo usuário começa com saldo 0
-                    saldoAtual = 0;
-                    await setDoc(userRef, {
-                        nome: userName,
-                        saldo: saldoAtual,
-                        ultimaAtualizacao: new Date().toISOString()
-                    });
-                }
-
-                document.getElementById('saldoBadge').innerText = `Créditos: ${saldoAtual}`;
-                localStorage.setItem('saldo_atual', saldoAtual);
-
-            } catch (error) {
-                console.error("Erro ao carregar saldo do Firebase:", error);
-                document.getElementById('saldoBadge').innerText = `Créditos: 0`;
-            }
-        }
-
-        function fazerLoginLine() {
-            if (!liff.isLoggedIn()) { liff.login(); }
-        }
-
-        function verificarSaldoEChamar() {
-            const saldo = parseInt(localStorage.getItem('saldo_atual') || '0');
-            if (saldo <= 0) {
-                alert('Você não possui créditos suficientes. Adquira um bloco de créditos (1500, 3000 ou 5000) na sua carteira.');
-                window.location.href = 'perfil.html';
-                return;
-            }
-            document.getElementById('modalTradutor').style.display = 'flex';
-        }
-
-        function fecharModalTradutor() {
-            document.getElementById('modalTradutor').style.display = 'none';
-        }
-
-        let tempoInterval = null;
-        let segundosChamada = 0;
-
-        function iniciarEspera() {
-            document.getElementById('modalTradutor').style.display = 'none';
-            document.getElementById('modalEspera').style.display = 'flex';
-            document.getElementById('statusTexto').innerText = "Procurando tradutor...";
-            document.getElementById('subStatus').style.display = 'block';
-            document.getElementById('subStatus').innerText = "Aguarde um momento enquanto conectamos você.";
-            document.getElementById('videoContainer').style.display = 'none';
-            
-            segundosChamada = 0;
-            document.getElementById('timerDisplay').innerText = "⏱️ Tempo em chamada: 0s";
-
-            setTimeout(() => {
-                document.getElementById('statusTexto').innerText = "Tradutor Conectado!";
-                document.getElementById('subStatus').style.display = 'none';
-                document.getElementById('videoContainer').style.display = 'block';
-                
-                if (tempoInterval) clearInterval(tempoInterval);
-                tempoInterval = setInterval(() => {
-                    segundosChamada++;
-                    document.getElementById('timerDisplay').innerText = `⏱️ Tempo em chamada: ${segundosChamada}s`;
-                }, 1000);
-
-                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                    .then(stream => {
-                        const videoElement = document.getElementById('webcam');
-                        videoElement.srcObject = stream;
-                    })
-                    .catch(e => console.log("Câmera bloqueada"));
-            }, 3000);
-        }
-
-        function finalizarChamadaNormal() {
-            document.getElementById('modalEspera').style.display = 'none';
-            if (tempoInterval) clearInterval(tempoInterval);
-            const videoElement = document.getElementById('webcam');
-            if (videoElement.srcObject) {
-                videoElement.srcObject.getTracks().forEach(track => track.stop());
-            }
-        }
-
-        async function traduzirTexto() {
-            const texto = document.getElementById('textoInput').value.trim();
-            const box = document.getElementById('resultadoBox');
-            
-            if (!texto) {
-                alert('Por favor, digite algum texto para traduzir.');
-                return;
-            }
-
-            box.style.display = 'block';
-            box.innerText = "Traduzindo...";
-
-            try {
-                const contemJapones = /[\u3000-\u30ff\u4e00-\u9faf]/.test(texto);
-                const langTarget = contemJapones ? 'pt' : 'ja';
-                const langSource = contemJapones ? 'ja' : 'pt';
-
-                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${langSource}&tl=${langTarget}&dt=t&q=` + encodeURIComponent(texto);
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data && data[0]) {
-                    let traducaoReal = "";
-                    data[0].forEach(item => {
-                        if (item[0]) traducaoReal += item[0];
-                    });
-
-                    if (langTarget === 'ja') {
-                        let romajiText = data[3] && data[3][0] && data[3][0][2] ? data[3][0][2] : "";
-                        if (romajiText && romajiText !== traducaoReal) {
-                            box.innerText = `${traducaoReal} (${romajiText})`;
-                        } else {
-                            box.innerText = `${traducaoReal}`;
+                const stream =
+                    await navigator.mediaDevices.getUserMedia(
+                        {
+                            video: true,
+                            audio: true
                         }
-                    } else {
-                        box.innerText = traducaoReal;
-                    }
-                } else {
-                    box.innerText = "Erro ao traduzir. Tente novamente.";
-                }
-            } catch (error) {
-                box.innerText = "Erro de conexão com o tradutor.";
+                    );
+
+
+                document.getElementById(
+                    "webcam"
+                ).srcObject =
+                    stream;
+
+
+            } catch (erro) {
+
+                console.log(
+                    "Câmera/microfone bloqueados:",
+                    erro
+                );
+
             }
+
+        },
+        3000
+    );
+
+}
+
+
+
+/* =========================================================
+FINALIZAR CHAMADA
+========================================================= */
+
+function finalizarChamadaNormal() {
+
+    document.getElementById(
+        "modalEspera"
+    ).style.display =
+        "none";
+
+
+    if (
+        tempoInterval
+    ) {
+
+        clearInterval(
+            tempoInterval
+        );
+
+        tempoInterval = null;
+
+    }
+
+
+    const videoElement =
+        document.getElementById(
+            "webcam"
+        );
+
+
+    if (
+        videoElement.srcObject
+    ) {
+
+        videoElement
+            .srcObject
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+
+        videoElement.srcObject =
+            null;
+
+    }
+
+}
+
+
+
+/* =========================================================
+BOTÕES
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+
+        /*
+        TRADUTOR
+        */
+
+        const btnTraduzir =
+            document.getElementById(
+                "btnTraduzirTexto"
+            );
+
+
+        if (
+            btnTraduzir
+        ) {
+
+            btnTraduzir.addEventListener(
+                "click",
+                traduzirTexto
+            );
+
         }
 
-        document.addEventListener("DOMContentLoaded", inicializarApp);
-    </script>
+
+        /*
+        Também permite traduzir com Ctrl + Enter
+        */
+
+        const textarea =
+            document.getElementById(
+                "textoInput"
+            );
+
+
+        if (
+            textarea
+        ) {
+
+            textarea.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key === "Enter" &&
+                        event.ctrlKey
+                    ) {
+
+                        event.preventDefault();
+
+                        traduzirTexto();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /*
+        LOGIN
+        */
+
+        document.getElementById(
+            "btnLoginLine"
+        ).addEventListener(
+            "click",
+            fazerLoginLine
+        );
+
+
+        /*
+        CHAMAR TRADUTOR
+        */
+
+        document.getElementById(
+            "btnChamarTradutor"
+        ).addEventListener(
+            "click",
+            verificarSaldoEChamar
+        );
+
+
+        /*
+        CANCELAR
+        */
+
+        document.getElementById(
+            "btnCancelarTradutor"
+        ).addEventListener(
+            "click",
+            fecharModalTradutor
+        );
+
+
+        /*
+        CONFIRMAR
+        */
+
+        document.getElementById(
+            "btnConfirmarTradutor"
+        ).addEventListener(
+            "click",
+            iniciarEspera
+        );
+
+
+        /*
+        ENCERRAR
+        */
+
+        document.getElementById(
+            "btnSairChamada"
+        ).addEventListener(
+            "click",
+            finalizarChamadaNormal
+        );
+
+
+        /*
+        INICIA O LINE
+        */
+
+        inicializarApp();
+
+    }
+);
+
+</script>
+
+
 </body>
 </html>
