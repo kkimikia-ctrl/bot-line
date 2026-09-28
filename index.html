@@ -296,9 +296,7 @@ select {
 
     background: white;
 
-    box-shadow:
-
-        0 5px 18px rgba(0,0,0,.08);
+    box-shadow: 0 5px 18px rgba(0,0,0,.08);
 
 }
 
@@ -594,9 +592,7 @@ select {
 
     display: grid;
 
-    grid-template-columns:
-
-        repeat(2,1fr);
+    grid-template-columns: repeat(2,1fr);
 
     gap: 11px;
 
@@ -806,9 +802,7 @@ select {
 
     display: grid;
 
-    grid-template-columns:
-
-        1fr 1.4fr;
+    grid-template-columns: 1fr 1.4fr;
 
     gap: 9px;
 
@@ -844,7 +838,7 @@ select {
 
 /* =========================================================
 
-   ESPERA / CHAMADA
+   ESPERA
 
 ========================================================= */
 
@@ -1104,9 +1098,7 @@ select {
 
     display: grid;
 
-    grid-template-columns:
-
-        1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
     gap: 9px;
 
@@ -1176,9 +1168,7 @@ select {
 
     display: grid;
 
-    grid-template-columns:
-
-        repeat(4,1fr);
+    grid-template-columns: repeat(4,1fr);
 
     align-items: center;
 
@@ -1226,11 +1216,7 @@ select {
 
 <body>
 
-<!-- ======================================================
-
-     LOGIN
-
-====================================================== -->
+<!-- LOGIN -->
 
 <div id="login-overlay">
 
@@ -1248,11 +1234,7 @@ select {
 
         >
 
-        <h1>
-
-            Ajuda JP
-
-        </h1>
+        <h1>Ajuda JP</h1>
 
         <p>
 
@@ -1278,11 +1260,7 @@ select {
 
 </div>
 
-<!-- ======================================================
-
-     APP
-
-====================================================== -->
+<!-- APP -->
 
 <div id="app-content">
 
@@ -1610,11 +1588,7 @@ select {
 
 </div>
 
-<!-- ======================================================
-
-     MODAL PEDIDO
-
-====================================================== -->
+<!-- MODAL PEDIDO -->
 
 <div
 
@@ -1740,11 +1714,7 @@ select {
 
 </div>
 
-<!-- ======================================================
-
-     ESPERA / VIDEOCHAMADA
-
-====================================================== -->
+<!-- ESPERA / VIDEOCHAMADA -->
 
 <div
 
@@ -1760,7 +1730,7 @@ select {
 
     <div class="wait-area">
 
-        <div class="wait-icon">
+        <div class="wait-icon" id="waitIcon">
 
             🌐
 
@@ -1826,8 +1796,6 @@ select {
 
             <div class="video-area">
 
-                <!-- VÍDEO DO TRADUTOR -->
-
                 <video
 
                     id="videoRemoto"
@@ -1852,15 +1820,19 @@ select {
 
                     </div>
 
-                    <div class="video-placeholder-text">
+                    <div
 
-                        Aguardando vídeo do tradutor
+                        class="video-placeholder-text"
+
+                        id="videoPlaceholderText"
+
+                    >
+
+                        Conectando com o tradutor...
 
                     </div>
 
                 </div>
-
-                <!-- VÍDEO DO CLIENTE -->
 
                 <video
 
@@ -1940,11 +1912,7 @@ select {
 
     >
 
-        <span class="nav-icon">
-
-            🏠
-
-        </span>
+        <span class="nav-icon">🏠</span>
 
         Início
 
@@ -1958,11 +1926,7 @@ select {
 
     >
 
-        <span class="nav-icon">
-
-            🛠️
-
-        </span>
+        <span class="nav-icon">🛠️</span>
 
         Serviços
 
@@ -1976,11 +1940,7 @@ select {
 
     >
 
-        <span class="nav-icon">
-
-            🎬
-
-        </span>
+        <span class="nav-icon">🎬</span>
 
         Lazer
 
@@ -1994,11 +1954,7 @@ select {
 
     >
 
-        <span class="nav-icon">
-
-            👤
-
-        </span>
+        <span class="nav-icon">👤</span>
 
         Perfil
 
@@ -2078,19 +2034,11 @@ const firebaseConfig = {
 
 const firebaseApp =
 
-    initializeApp(
-
-        firebaseConfig
-
-    );
+    initializeApp(firebaseConfig);
 
 const db =
 
-    getFirestore(
-
-        firebaseApp
-
-    );
+    getFirestore(firebaseApp);
 
 const LIFF_ID =
 
@@ -2102,53 +2050,31 @@ const LIFF_ID =
 
 ========================================================= */
 
-let usuarioAtual =
+let usuarioAtual = null;
 
-    null;
+let solicitacaoAtualId = null;
 
-let solicitacaoAtualId =
+let pararMonitoramento = null;
 
-    null;
+let unsubscribeTradutorCandidates = null;
 
-let pararMonitoramento =
+let peerConnection = null;
 
-    null;
+let localStream = null;
 
-let unsubscribeTradutorCandidates =
+let remoteStream = null;
 
-    null;
+let tempoInterval = null;
 
-let peerConnection =
+let segundosChamada = 0;
 
-    null;
+let microfoneLigado = true;
 
-let localStream =
+let cameraLigada = true;
 
-    null;
+let offerCriada = false;
 
-let remoteStream =
-
-    null;
-
-let tempoInterval =
-
-    null;
-
-let segundosChamada =
-
-    0;
-
-let microfoneLigado =
-
-    true;
-
-let cameraLigada =
-
-    true;
-
-let offerCriada =
-
-    false;
+let chamadaConectada = false;
 
 /* =========================================================
 
@@ -2282,11 +2208,27 @@ const videoPlaceholder =
 
     );
 
+const videoPlaceholderText =
+
+    document.getElementById(
+
+        "videoPlaceholderText"
+
+    );
+
 const callStatus =
 
     document.getElementById(
 
         "callStatus"
+
+    );
+
+const waitIcon =
+
+    document.getElementById(
+
+        "waitIcon"
 
     );
 
@@ -2302,9 +2244,7 @@ async function inicializarApp() {
 
         await liff.init({
 
-            liffId:
-
-                LIFF_ID
+            liffId: LIFF_ID
 
         });
 
@@ -2380,11 +2320,7 @@ async function inicializarApp() {
 
             } catch (erro) {
 
-                console.log(
-
-                    erro
-
-                );
+                console.log(erro);
 
             }
 
@@ -2524,15 +2460,9 @@ async function carregarSaldo() {
 
         const snap =
 
-            await getDoc(
+            await getDoc(ref);
 
-                ref
-
-            );
-
-        let saldo =
-
-            0;
+        let saldo = 0;
 
         if (snap.exists()) {
 
@@ -2582,11 +2512,7 @@ async function carregarSaldo() {
 
     } catch (erro) {
 
-        console.error(
-
-            erro
-
-        );
+        console.error(erro);
 
     }
 
@@ -2708,27 +2634,17 @@ async function traduzirTexto() {
 
             "&dt=t&q=" +
 
-            encodeURIComponent(
-
-                texto
-
-            );
+            encodeURIComponent(texto);
 
         const resposta =
 
-            await fetch(
-
-                url
-
-            );
+            await fetch(url);
 
         const dados =
 
             await resposta.json();
 
-        let traducao =
-
-            "";
+        let traducao = "";
 
         dados[0].forEach(
 
@@ -2914,6 +2830,20 @@ async function criarSolicitacao() {
 
             ref.id;
 
+        offerCriada =
+
+            false;
+
+        chamadaConectada =
+
+            false;
+
+        segundosChamada =
+
+            0;
+
+        atualizarCronometro();
+
         modalTradutor.style.display =
 
             "none";
@@ -2921,6 +2851,10 @@ async function criarSolicitacao() {
         modalEspera.style.display =
 
             "flex";
+
+        waitIcon.textContent =
+
+            "🌐";
 
         statusTexto.textContent =
 
@@ -2938,9 +2872,23 @@ async function criarSolicitacao() {
 
             "none";
 
+        callStatus.classList.remove(
+
+            "connected"
+
+        );
+
         videoContainer.style.display =
 
             "none";
+
+        videoPlaceholder.style.display =
+
+            "flex";
+
+        videoPlaceholderText.textContent =
+
+            "Conectando com o tradutor...";
 
         document.getElementById(
 
@@ -2958,11 +2906,7 @@ async function criarSolicitacao() {
 
     } catch (erro) {
 
-        console.error(
-
-            erro
-
-        );
+        console.error(erro);
 
         alert(
 
@@ -2986,21 +2930,83 @@ async function criarSolicitacao() {
 
 /* =========================================================
 
+   TRADUTOR ACEITOU
+
+========================================================= */
+
+function mostrarTradutorAceitou() {
+
+    waitIcon.textContent =
+
+        "🎥";
+
+    statusTexto.textContent =
+
+        "Tradutor aceitou!";
+
+    subStatus.textContent =
+
+        "Conectando vídeo e áudio...";
+
+    loaderEspera.style.display =
+
+        "none";
+
+    callStatus.style.display =
+
+        "block";
+
+    callStatus.classList.remove(
+
+        "connected"
+
+    );
+
+    callStatus.textContent =
+
+        "🔗 Conectando vídeo...";
+
+    /*
+
+    IMPORTANTE:
+
+    mostramos a área da chamada IMEDIATAMENTE.
+
+    Não esperamos getUserMedia terminar.
+
+    */
+
+    videoContainer.style.display =
+
+        "block";
+
+    videoPlaceholder.style.display =
+
+        "flex";
+
+    videoPlaceholderText.textContent =
+
+        "Preparando videochamada...";
+
+    document.getElementById(
+
+        "btnSairChamada"
+
+    ).textContent =
+
+        "Encerrar atendimento";
+
+}
+
+/* =========================================================
+
    MONITORAR PEDIDO
 
 ========================================================= */
 
-function monitorarSolicitacao(
+function monitorarSolicitacao(id) {
 
-    id
-
-) {
-
-    if (
-
-        pararMonitoramento
-
-    ) {
+    if (pararMonitoramento) {
 
         pararMonitoramento();
 
@@ -3036,14 +3042,6 @@ function monitorarSolicitacao(
 
                     snapshot.data();
 
-                /*
-
-                TRADUTOR ACEITOU.
-
-                Cliente cria a OFFER.
-
-                */
-
                 if (
 
                     (
@@ -3058,9 +3056,31 @@ function monitorarSolicitacao(
 
                 ) {
 
+                    /*
+
+                    Marca primeiro para impedir
+
+                    chamadas duplicadas do snapshot.
+
+                    */
+
                     offerCriada =
 
                         true;
+
+                    /*
+
+                    A tela muda imediatamente.
+
+                    */
+
+                    mostrarTradutorAceitou();
+
+                    /*
+
+                    Depois iniciamos câmera/WebRTC.
+
+                    */
 
                     await iniciarWebRTCCliente(
 
@@ -3069,12 +3089,6 @@ function monitorarSolicitacao(
                     );
 
                 }
-
-                /*
-
-                Tradutor criou a ANSWER.
-
-                */
 
                 if (
 
@@ -3160,71 +3174,75 @@ async function iniciarWebRTCCliente(
 
 ) {
 
-    statusTexto.textContent =
-
-        "Tradutor encontrado!";
-
-    subStatus.textContent =
-
-        "Permita câmera e microfone para iniciar a videochamada.";
-
-    loaderEspera.style.display =
-
-        "none";
-
-    callStatus.style.display =
-
-        "block";
-
-    callStatus.textContent =
-
-        "🎥 Preparando câmera...";
-
     try {
 
-        /*
+        callStatus.textContent =
 
-        Câmera e microfone do cliente.
+            "📷 Preparando câmera...";
 
-        */
+        videoPlaceholderText.textContent =
+
+            "Preparando sua câmera...";
+
+        /* =================================================
+
+           CÂMERA E MICROFONE
+
+        ================================================= */
 
         localStream =
 
             await navigator.mediaDevices
 
-                .getUserMedia(
+                .getUserMedia({
 
-                    {
+                    video: {
 
-                        video: {
+                        facingMode:
 
-                            facingMode:
+                            "user"
 
-                                "user"
+                    },
 
-                        },
+                    audio:
 
-                        audio:
+                        true
 
-                            true
-
-                    }
-
-                );
+                });
 
         videoLocal.srcObject =
 
             localStream;
 
-        videoContainer.style.display =
+        try {
 
-            "block";
+            await videoLocal.play();
 
-        /*
+        } catch (erro) {
 
-        Cria conexão WebRTC.
+            console.log(
 
-        */
+                "Autoplay local:",
+
+                erro
+
+            );
+
+        }
+
+        callStatus.textContent =
+
+            "🔗 Conectando com o tradutor...";
+
+        videoPlaceholderText.textContent =
+
+            "Aguardando vídeo do tradutor...";
+
+        /* =================================================
+
+           PEER CONNECTION
+
+        ================================================= */
 
         peerConnection =
 
@@ -3241,14 +3259,6 @@ async function iniciarWebRTCCliente(
         videoRemoto.srcObject =
 
             remoteStream;
-
-        /*
-
-        Envia câmera/microfone
-
-        do cliente.
-
-        */
 
         localStream
 
@@ -3270,13 +3280,11 @@ async function iniciarWebRTCCliente(
 
             );
 
-        /*
+        /* =================================================
 
-        Recebe vídeo/áudio
+           RECEBER VÍDEO DO TRADUTOR
 
-        do tradutor.
-
-        */
+        ================================================= */
 
         peerConnection.ontrack =
 
@@ -3324,17 +3332,29 @@ async function iniciarWebRTCCliente(
 
                     "none";
 
+                videoRemoto
+
+                    .play()
+
+                    .catch(() => {});
+
             };
 
-        /*
+        /* =================================================
 
-        Estado da conexão.
+           ESTADO DA CONEXÃO
 
-        */
+        ================================================= */
 
         peerConnection.onconnectionstatechange =
 
             async () => {
+
+                if (!peerConnection) {
+
+                    return;
+
+                }
 
                 const estado =
 
@@ -3354,9 +3374,35 @@ async function iniciarWebRTCCliente(
 
                     estado ===
 
-                    "connected"
+                    "connecting"
 
                 ) {
+
+                    callStatus.textContent =
+
+                        "🔗 Conectando...";
+
+                }
+
+                if (
+
+                    estado ===
+
+                    "connected" &&
+
+                    !chamadaConectada
+
+                ) {
+
+                    /*
+
+                    Impede executar duas vezes.
+
+                    */
+
+                    chamadaConectada =
+
+                        true;
 
                     callStatus.textContent =
 
@@ -3375,6 +3421,10 @@ async function iniciarWebRTCCliente(
                     subStatus.textContent =
 
                         "Videochamada em andamento.";
+
+                    videoPlaceholderText.textContent =
+
+                        "Aguardando vídeo do tradutor...";
 
                     document.getElementById(
 
@@ -3426,6 +3476,8 @@ async function iniciarWebRTCCliente(
 
                         console.error(
 
+                            "Status conectado:",
+
                             erro
 
                         );
@@ -3452,19 +3504,55 @@ async function iniciarWebRTCCliente(
 
                     );
 
+                    statusTexto.textContent =
+
+                        "Problema na conexão";
+
                     subStatus.textContent =
 
                         "Não foi possível estabelecer a videochamada.";
+
+                    videoPlaceholder.style.display =
+
+                        "flex";
+
+                    videoPlaceholderText.textContent =
+
+                        "Não foi possível receber o vídeo.";
+
+                }
+
+                if (
+
+                    estado ===
+
+                    "disconnected"
+
+                ) {
+
+                    callStatus.textContent =
+
+                        "⚠️ Reconectando...";
+
+                    callStatus.classList.remove(
+
+                        "connected"
+
+                    );
+
+                    subStatus.textContent =
+
+                        "A conexão foi interrompida. Tentando recuperar...";
 
                 }
 
             };
 
-        /*
+        /* =================================================
 
-        ICE CLIENTE.
+           ICE CLIENTE
 
-        */
+        ================================================= */
 
         peerConnection.onicecandidate =
 
@@ -3492,9 +3580,7 @@ async function iniciarWebRTCCliente(
 
                         ),
 
-                        event.candidate
-
-                            .toJSON()
+                        event.candidate.toJSON()
 
                     );
 
@@ -3512,11 +3598,11 @@ async function iniciarWebRTCCliente(
 
             };
 
-        /*
+        /* =================================================
 
-        Escuta ICE do tradutor.
+           ICE DO TRADUTOR
 
-        */
+        ================================================= */
 
         unsubscribeTradutorCandidates =
 
@@ -3556,6 +3642,12 @@ async function iniciarWebRTCCliente(
 
                                 try {
 
+                                    if (!peerConnection) {
+
+                                        return;
+
+                                    }
+
                                     const candidate =
 
                                         new RTCIceCandidate(
@@ -3592,11 +3684,11 @@ async function iniciarWebRTCCliente(
 
             );
 
-        /*
+        /* =================================================
 
-        Cria OFFER.
+           OFFER
 
-        */
+        ================================================= */
 
         const offer =
 
@@ -3652,11 +3744,11 @@ async function iniciarWebRTCCliente(
 
         callStatus.textContent =
 
-            "🔗 Conectando...";
+            "🔗 Conectando vídeo...";
 
         subStatus.textContent =
 
-            "Conectando com o tradutor...";
+            "Tradutor aceitou. Estabelecendo a videochamada...";
 
     } catch (erro) {
 
@@ -3668,7 +3760,19 @@ async function iniciarWebRTCCliente(
 
         );
 
+        /*
+
+        Permite nova tentativa se a inicialização
+
+        realmente falhou.
+
+        */
+
         offerCriada =
+
+            false;
+
+        chamadaConectada =
 
             false;
 
@@ -3684,9 +3788,17 @@ async function iniciarWebRTCCliente(
 
                 "⚠️ Câmera não autorizada";
 
+            statusTexto.textContent =
+
+                "Permissão necessária";
+
             subStatus.textContent =
 
-                "É necessário permitir câmera e microfone para continuar.";
+                "Permita o acesso à câmera e ao microfone para continuar.";
+
+            videoPlaceholderText.textContent =
+
+                "Câmera e microfone não autorizados.";
 
         } else {
 
@@ -3694,9 +3806,17 @@ async function iniciarWebRTCCliente(
 
                 "⚠️ Erro na chamada";
 
+            statusTexto.textContent =
+
+                "Não foi possível conectar";
+
             subStatus.textContent =
 
                 "Não foi possível iniciar a videochamada.";
+
+            videoPlaceholderText.textContent =
+
+                "Erro ao iniciar o vídeo.";
 
         }
 
@@ -3942,11 +4062,19 @@ function encerrarWebRTC() {
 
     }
 
-    if (
+    if (peerConnection) {
 
-        peerConnection
+        peerConnection.ontrack =
 
-    ) {
+            null;
+
+        peerConnection.onicecandidate =
+
+            null;
+
+        peerConnection.onconnectionstatechange =
+
+            null;
 
         peerConnection.close();
 
@@ -3956,11 +4084,7 @@ function encerrarWebRTC() {
 
     }
 
-    if (
-
-        localStream
-
-    ) {
+    if (localStream) {
 
         localStream
 
@@ -3980,11 +4104,7 @@ function encerrarWebRTC() {
 
     }
 
-    if (
-
-        remoteStream
-
-    ) {
+    if (remoteStream) {
 
         remoteStream
 
@@ -4016,11 +4136,11 @@ function encerrarWebRTC() {
 
         "flex";
 
-    if (
+    videoPlaceholderText.textContent =
 
-        tempoInterval
+        "Conectando com o tradutor...";
 
-    ) {
+    if (tempoInterval) {
 
         clearInterval(
 
@@ -4034,9 +4154,63 @@ function encerrarWebRTC() {
 
     }
 
+    segundosChamada =
+
+        0;
+
+    atualizarCronometro();
+
     offerCriada =
 
         false;
+
+    chamadaConectada =
+
+        false;
+
+    microfoneLigado =
+
+        true;
+
+    cameraLigada =
+
+        true;
+
+    const btnMicrofone =
+
+        document.getElementById(
+
+            "btnMicrofone"
+
+        );
+
+    const btnCamera =
+
+        document.getElementById(
+
+            "btnCamera"
+
+        );
+
+    btnMicrofone.textContent =
+
+        "🎤 Microfone";
+
+    btnMicrofone.classList.remove(
+
+        "off"
+
+    );
+
+    btnCamera.textContent =
+
+        "📹 Câmera";
+
+    btnCamera.classList.remove(
+
+        "off"
+
+    );
 
 }
 
@@ -4072,11 +4246,7 @@ async function cancelarOuEncerrar() {
 
         const snap =
 
-            await getDoc(
-
-                ref
-
-            );
+            await getDoc(ref);
 
         if (snap.exists()) {
 
@@ -4144,11 +4314,7 @@ async function cancelarOuEncerrar() {
 
     } catch (erro) {
 
-        console.error(
-
-            erro
-
-        );
+        console.error(erro);
 
     }
 
@@ -4170,11 +4336,7 @@ function fecharEspera() {
 
     encerrarWebRTC();
 
-    if (
-
-        pararMonitoramento
-
-    ) {
+    if (pararMonitoramento) {
 
         pararMonitoramento();
 
