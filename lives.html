@@ -1,830 +1,3399 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lives da Comunidade</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 8px;
-            text-align: center;
-        }
-        .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-        .back-btn {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: #1976d2;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            font-size: 12px;
-        }
-        .page-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: #d32f2f;
-            margin: 0;
-        }
-        
-        .wallet-badge {
-            background: linear-gradient(135deg, #ffb300, #ff8f00);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
 
-        /* --- CARROSSEL INFINITO DINÂMICO --- */
-        .carousel-container {
-            width: 100%;
-            overflow-x: auto;
-            background: #ffffff;
-            padding: 10px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 12px;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-        }
-        .carousel-container::-webkit-scrollbar {
-            display: none;
-        }
-        .carousel-track {
-            display: flex;
-            gap: 10px;
-            width: max-content;
-            animation: rolarInfinito 30s linear infinite;
-        }
-        .carousel-container:hover .carousel-track,
-        .carousel-container:active .carousel-track {
-            animation-play-state: paused;
-        }
-        .carousel-track a {
-            display: block;
-            flex-shrink: 0;
-            width: 150px;
-            height: 85px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            background: #eee;
-            border: 1px solid #ddd;
-        }
-        .carousel-track img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        @keyframes rolarInfinito {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(var(--scroll-amount)); }
-        }
+<meta charset="UTF-8">
 
-        .section-subtitle {
-            text-align: left;
-            font-size: 10px;
-            font-weight: bold;
-            color: #444;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-        .live-card {
-            background: white;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-align: left;
-            cursor: pointer;
-        }
-        .live-info h4 {
-            margin: 0 0 3px 0;
-            font-size: 13px;
-            color: #222;
-        }
-        .live-info p {
-            margin: 0;
-            font-size: 11px;
-            color: #666;
-        }
-        .live-badge {
-            background-color: #f44336;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .start-live-btn {
-            background: linear-gradient(135deg, #7c4dff, #512da8);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        
-        #live-player-container {
-            display: none;
-            text-align: left;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        .live-info-bottom {
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 8px 10px;
-            margin-bottom: 6px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-            border: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .live-info-bottom h3 {
-            margin: 0 0 2px 0;
-            font-size: 13px;
-            color: #222;
-        }
-        .live-info-bottom p {
-            margin: 0;
-            font-size: 11px;
-            color: #666;
-        }
+<meta name="google" content="notranslate">
 
-        .header-right-side {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+<title>Lives da Comunidade</title>
 
-        .timer-badge {
-            background: #333;
-            color: #00e676;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            font-family: monospace;
-            display: none;
-        }
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
-        .report-btn {
-            background: #f5f5f5;
-            border: 1px solid #ccc;
-            color: #d32f2f;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-        .report-btn:hover {
-            background: #ffebee;
-        }
+<style>
 
-        .video-box {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #000;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .video-box img, .video-box video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .live-tag-overlay {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: #f44336;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: bold;
-            z-index: 10;
-        }
-        .gift-bar {
-            display: flex;
-            gap: 5px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            margin-bottom: 6px;
-        }
-        .gift-chip {
-            background: #fff;
-            border: 1px solid #ffca28;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: bold;
-            color: #f57f17;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        
-        .chat-box {
-            background: white;
-            border-radius: 10px;
-            padding: 8px;
-            height: 150px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            margin-bottom: 6px;
-            font-size: 11px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
-        }
-        .chat-msg {
-            margin-bottom: 5px;
-        }
-        .chat-msg span {
-            font-weight: bold;
-            color: #1976d2;
-        }
-        .chat-input-area {
-            display: flex;
-            gap: 5px;
-        }
-        .chat-input-area input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 12px;
-        }
-        .chat-input-area button {
-            background: #1976d2;
-            color: white;
-            border: none;
-            padding: 0 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 11px;
-        }
+*{
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-        .modal-content {
-            background: white;
-            width: 100%;
-            max-width: 450px;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: left;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-content h3 {
-            margin-top: 0;
-            color: #512da8;
-            font-size: 16px;
-            text-align: center;
-        }
-        .terms-text {
-            font-size: 11px;
-            color: #555;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            height: 130px;
-            overflow-y: auto;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-        .modal-content label {
-            font-size: 11px;
-            font-weight: bold;
-            color: #333;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .modal-content input[type="text"], .modal-content select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 12px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-        .modal-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .modal-btn-cancel {
-            flex: 1;
-            background: #ccc;
-            color: #333;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .modal-btn-confirm {
-            flex: 2;
-            background: #512da8;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-        }
-    </style>
+    box-sizing:border-box;
+
+    -webkit-tap-highlight-color:transparent;
+
+}
+
+:root{
+
+    --bg:#071426;
+
+    --bg2:#0b1d35;
+
+    --card:#10243e;
+
+    --card2:#132a48;
+
+    --line:rgba(255,255,255,.09);
+
+    --text:#ffffff;
+
+    --muted:#9fb0c8;
+
+    --purple:#7c3cff;
+
+    --purple2:#9b4dff;
+
+    --pink:#ff2d73;
+
+    --red:#ff3b5c;
+
+    --gold:#ffc928;
+
+    --green:#22c55e;
+
+    --blue:#2f80ff;
+
+}
+
+html,body{
+
+    margin:0;
+
+    padding:0;
+
+    width:100%;
+
+    min-height:100%;
+
+}
+
+body{
+
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+
+    background:
+
+        radial-gradient(circle at 90% 0%,rgba(124,60,255,.24),transparent 28%),
+
+        linear-gradient(180deg,#071426 0%,#09182c 45%,#061220 100%);
+
+    color:var(--text);
+
+    overflow-x:hidden;
+
+}
+
+button,input,select{
+
+    font:inherit;
+
+}
+
+button{
+
+    cursor:pointer;
+
+}
+
+.page{
+
+    width:100%;
+
+    max-width:600px;
+
+    margin:auto;
+
+    min-height:100vh;
+
+    padding-bottom:90px;
+
+}
+
+/* HEADER */
+
+.topbar{
+
+    height:66px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    padding:10px 14px;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    background:rgba(7,20,38,.93);
+
+    backdrop-filter:blur(14px);
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+
+}
+
+.back-btn{
+
+    border:0;
+
+    color:#fff;
+
+    background:#10233d;
+
+    border-radius:15px;
+
+    padding:9px 12px;
+
+    font-weight:800;
+
+    font-size:12px;
+
+}
+
+.page-title{
+
+    flex:1;
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:900;
+
+    white-space:nowrap;
+
+}
+
+.live-dot{
+
+    display:inline-block;
+
+    width:11px;
+
+    height:11px;
+
+    background:var(--pink);
+
+    border-radius:50%;
+
+    margin-right:6px;
+
+    box-shadow:0 0 15px var(--pink);
+
+}
+
+.wallet{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:5px;
+
+    border-radius:15px;
+
+    background:#111c31;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    padding:8px 10px;
+
+    font-weight:900;
+
+    font-size:12px;
+
+    white-space:nowrap;
+
+}
+
+.coin{
+
+    color:#8b5e00;
+
+    background:var(--gold);
+
+    width:20px;
+
+    height:20px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    font-size:11px;
+
+}
+
+.wallet-plus{
+
+    border:0;
+
+    width:22px;
+
+    height:22px;
+
+    padding:0;
+
+    border-radius:7px;
+
+    margin-left:3px;
+
+    background:var(--gold);
+
+    color:#422d00;
+
+    font-weight:900;
+
+}
+
+/* CONTEÚDO */
+
+.content{
+
+    padding:12px;
+
+}
+
+/* HERO */
+
+.hero{
+
+    min-height:184px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:22px;
+
+    padding:22px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:flex-end;
+
+    background:
+
+        linear-gradient(90deg,rgba(10,15,35,.88),rgba(23,26,70,.38)),
+
+        linear-gradient(135deg,#264bbd,#8b3dce 55%,#e73d88);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.25);
+
+}
+
+.hero:before{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    right:-30px;
+
+    top:-55px;
+
+    background:rgba(255,255,255,.13);
+
+}
+
+.hero:after{
+
+    content:"🇯🇵";
+
+    position:absolute;
+
+    right:18px;
+
+    top:22px;
+
+    font-size:70px;
+
+    opacity:.22;
+
+    transform:rotate(8deg);
+
+}
+
+.hero h2{
+
+    position:relative;
+
+    z-index:2;
+
+    font-size:26px;
+
+    line-height:1.05;
+
+    margin:0 0 7px;
+
+    max-width:320px;
+
+}
+
+.hero p{
+
+    position:relative;
+
+    z-index:2;
+
+    margin:0;
+
+    max-width:300px;
+
+    color:#e5e9ff;
+
+    font-size:12px;
+
+    line-height:1.45;
+
+}
+
+.start-live{
+
+    position:relative;
+
+    z-index:3;
+
+    margin-top:15px;
+
+    width:max-content;
+
+    border:0;
+
+    border-radius:30px;
+
+    padding:11px 18px;
+
+    background:linear-gradient(135deg,#ff3c74,#ff2463);
+
+    color:#fff;
+
+    font-size:13px;
+
+    font-weight:900;
+
+    box-shadow:0 8px 25px rgba(255,45,115,.32);
+
+}
+
+/* MINI BANNERS */
+
+.banner-scroll{
+
+    display:flex;
+
+    gap:9px;
+
+    overflow-x:auto;
+
+    padding:11px 0 3px;
+
+    scrollbar-width:none;
+
+}
+
+.banner-scroll::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+.banner-scroll a{
+
+    min-width:135px;
+
+    height:68px;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:#10243e;
+
+}
+
+.banner-scroll img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+/* CATEGORIAS */
+
+.categories{
+
+    display:flex;
+
+    gap:8px;
+
+    overflow-x:auto;
+
+    padding:13px 0 5px;
+
+    scrollbar-width:none;
+
+}
+
+.categories::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+.category{
+
+    flex:none;
+
+    border:1px solid rgba(255,255,255,.10);
+
+    background:#10233d;
+
+    color:#d9e3f3;
+
+    padding:9px 14px;
+
+    border-radius:25px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+}
+
+.category.active{
+
+    background:linear-gradient(135deg,#6d32ff,#963cff);
+
+    border-color:transparent;
+
+    color:#fff;
+
+    box-shadow:0 5px 20px rgba(124,60,255,.3);
+
+}
+
+/* SECTION */
+
+.section-head{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin:18px 2px 10px;
+
+}
+
+.section-head h3{
+
+    margin:0;
+
+    font-size:17px;
+
+}
+
+.section-head span{
+
+    color:#b987ff;
+
+    font-size:11px;
+
+}
+
+/* LIVE GRID */
+
+.live-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+
+    gap:10px;
+
+}
+
+.live-card{
+
+    min-width:0;
+
+    overflow:hidden;
+
+    border-radius:17px;
+
+    background:linear-gradient(180deg,#122945,#0d2038);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 7px 20px rgba(0,0,0,.18);
+
+}
+
+.thumb{
+
+    height:116px;
+
+    position:relative;
+
+    background:linear-gradient(135deg,#17305a,#692f92);
+
+    overflow:hidden;
+
+}
+
+.thumb img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.live-badge{
+
+    position:absolute;
+
+    top:7px;
+
+    left:7px;
+
+    background:var(--pink);
+
+    color:#fff;
+
+    padding:5px 7px;
+
+    border-radius:7px;
+
+    font-size:8px;
+
+    font-weight:900;
+
+}
+
+.viewer-badge{
+
+    position:absolute;
+
+    right:7px;
+
+    top:7px;
+
+    padding:4px 7px;
+
+    border-radius:8px;
+
+    background:rgba(4,10,22,.72);
+
+    color:#fff;
+
+    font-size:9px;
+
+    font-weight:800;
+
+}
+
+.live-card-info{
+
+    padding:9px;
+
+}
+
+.live-card-title{
+
+    font-size:12px;
+
+    font-weight:900;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
+
+.live-card-host{
+
+    margin-top:5px;
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
+
+.tag{
+
+    display:inline-block;
+
+    margin-top:7px;
+
+    border-radius:20px;
+
+    padding:4px 8px;
+
+    font-size:8px;
+
+    font-weight:900;
+
+    background:#e8327d;
+
+}
+
+/* NAV */
+
+.bottom-nav{
+
+    position:fixed;
+
+    left:50%;
+
+    bottom:0;
+
+    transform:translateX(-50%);
+
+    width:100%;
+
+    max-width:600px;
+
+    height:72px;
+
+    z-index:500;
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    background:rgba(7,20,38,.97);
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+}
+
+.nav-item{
+
+    border:0;
+
+    background:none;
+
+    color:#899bb5;
+
+    font-size:9px;
+
+    font-weight:700;
+
+}
+
+.nav-item span{
+
+    display:block;
+
+    font-size:20px;
+
+    margin-bottom:3px;
+
+}
+
+.nav-item.active{
+
+    color:#a56cff;
+
+}
+
+/* PLAYER */
+
+#live-player-container{
+
+    display:none;
+
+    min-height:100vh;
+
+}
+
+.player-header{
+
+    height:64px;
+
+    padding:9px 12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    background:#071426;
+
+}
+
+.exit-btn{
+
+    border:0;
+
+    color:white;
+
+    background:#10233d;
+
+    border-radius:12px;
+
+    padding:8px 10px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+}
+
+.host-area{
+
+    min-width:0;
+
+    flex:1;
+
+}
+
+.host-name{
+
+    font-size:13px;
+
+    font-weight:900;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+.host-viewers{
+
+    color:var(--muted);
+
+    font-size:9px;
+
+    margin-top:2px;
+
+}
+
+.player-wallet{
+
+    font-size:11px;
+
+}
+
+/* VIDEO */
+
+.video-box{
+
+    width:100%;
+
+    aspect-ratio:9/10;
+
+    max-height:540px;
+
+    background:#020712;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.video-box img,
+
+.video-box video{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.player-live-tag{
+
+    position:absolute;
+
+    left:10px;
+
+    top:10px;
+
+    z-index:5;
+
+    padding:6px 9px;
+
+    border-radius:8px;
+
+    background:var(--pink);
+
+    font-size:9px;
+
+    font-weight:900;
+
+}
+
+.timer-badge{
+
+    position:absolute;
+
+    top:10px;
+
+    right:10px;
+
+    z-index:6;
+
+    padding:6px 9px;
+
+    border-radius:8px;
+
+    background:rgba(0,0,0,.65);
+
+    font-family:monospace;
+
+    font-size:10px;
+
+    font-weight:900;
+
+}
+
+/* INFO LIVE */
+
+.player-info{
+
+    padding:12px;
+
+    border-bottom:1px solid var(--line);
+
+}
+
+.player-info h2{
+
+    margin:0;
+
+    font-size:16px;
+
+}
+
+.player-actions{
+
+    margin-top:9px;
+
+    display:flex;
+
+    gap:7px;
+
+    flex-wrap:wrap;
+
+}
+
+.small-tag{
+
+    border-radius:20px;
+
+    background:#172d4b;
+
+    color:#b7c6da;
+
+    padding:5px 9px;
+
+    font-size:9px;
+
+}
+
+.report{
+
+    margin-left:auto;
+
+    border:0;
+
+    color:#ff879c;
+
+    background:#261829;
+
+    border-radius:20px;
+
+    padding:5px 9px;
+
+    font-size:9px;
+
+}
+
+/* TABS */
+
+.tabs{
+
+    margin:10px 10px 0;
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    background:#10233d;
+
+    border-radius:14px;
+
+    padding:4px;
+
+}
+
+.tab{
+
+    border:0;
+
+    background:transparent;
+
+    color:#9fb0c8;
+
+    border-radius:10px;
+
+    padding:9px 3px;
+
+    font-size:10px;
+
+    font-weight:800;
+
+}
+
+.tab.active{
+
+    background:linear-gradient(135deg,#6330ff,#8c38ff);
+
+    color:white;
+
+}
+
+/* PRESENTES */
+
+.gifts-panel{
+
+    padding:11px;
+
+}
+
+.gift-title{
+
+    font-size:11px;
+
+    color:#cbd6e6;
+
+    margin-bottom:8px;
+
+    font-weight:800;
+
+}
+
+.gift-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(5,1fr);
+
+    gap:6px;
+
+}
+
+.gift{
+
+    min-width:0;
+
+    border:1px solid rgba(255,255,255,.09);
+
+    background:#10243e;
+
+    border-radius:13px;
+
+    padding:8px 2px;
+
+    text-align:center;
+
+    color:white;
+
+}
+
+.gift-icon{
+
+    font-size:23px;
+
+    display:block;
+
+    margin-bottom:4px;
+
+}
+
+.gift-name{
+
+    font-size:8px;
+
+    display:block;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
+
+.gift-price{
+
+    margin-top:3px;
+
+    color:var(--gold);
+
+    font-size:8px;
+
+    font-weight:900;
+
+}
+
+/* CHAT */
+
+.chat-panel{
+
+    padding:0 11px 12px;
+
+}
+
+.chat-box{
+
+    height:175px;
+
+    overflow-y:auto;
+
+    background:#0a1a2e;
+
+    border:1px solid var(--line);
+
+    border-radius:15px;
+
+    padding:10px;
+
+    font-size:11px;
+
+}
+
+.chat-msg{
+
+    margin-bottom:8px;
+
+    color:#dbe5f3;
+
+    line-height:1.35;
+
+}
+
+.chat-msg span{
+
+    color:#9b6cff;
+
+    font-weight:900;
+
+}
+
+.chat-input{
+
+    display:flex;
+
+    gap:7px;
+
+    margin-top:8px;
+
+}
+
+.chat-input input{
+
+    min-width:0;
+
+    flex:1;
+
+    background:#10233d;
+
+    color:#fff;
+
+    border:1px solid var(--line);
+
+    border-radius:13px;
+
+    padding:11px;
+
+    outline:none;
+
+    font-size:11px;
+
+}
+
+.chat-input button{
+
+    border:0;
+
+    border-radius:13px;
+
+    padding:0 15px;
+
+    color:#fff;
+
+    font-weight:900;
+
+    font-size:10px;
+
+    background:linear-gradient(135deg,#6432ff,#963dff);
+
+}
+
+/* MODAIS */
+
+.modal-overlay{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:9999;
+
+    padding:15px;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:rgba(0,0,0,.72);
+
+    backdrop-filter:blur(7px);
+
+}
+
+.modal-content{
+
+    width:100%;
+
+    max-width:440px;
+
+    max-height:90vh;
+
+    overflow:auto;
+
+    background:#10233d;
+
+    border:1px solid rgba(255,255,255,.10);
+
+    border-radius:22px;
+
+    padding:20px;
+
+    color:white;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+
+}
+
+.modal-content h3{
+
+    margin:0 0 14px;
+
+    text-align:center;
+
+    font-size:18px;
+
+}
+
+.modal-content label{
+
+    display:block;
+
+    margin:12px 0 5px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+}
+
+.modal-content input,
+
+.modal-content select{
+
+    width:100%;
+
+    padding:11px;
+
+    color:#fff;
+
+    background:#0a1a2e;
+
+    border:1px solid rgba(255,255,255,.12);
+
+    border-radius:11px;
+
+    outline:none;
+
+}
+
+.terms{
+
+    max-height:230px;
+
+    overflow:auto;
+
+    background:#0a1a2e;
+
+    border-radius:13px;
+
+    padding:12px;
+
+    color:#c5d1e1;
+
+    font-size:10px;
+
+    line-height:1.55;
+
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:17px;
+
+}
+
+.modal-cancel,
+
+.modal-confirm{
+
+    border:0;
+
+    border-radius:12px;
+
+    padding:11px;
+
+    font-size:11px;
+
+    font-weight:900;
+
+}
+
+.modal-cancel{
+
+    flex:1;
+
+    background:#263951;
+
+    color:#c7d3e2;
+
+}
+
+.modal-confirm{
+
+    flex:2;
+
+    color:#fff;
+
+    background:linear-gradient(135deg,#6b31ff,#963dff);
+
+}
+
+@media(max-width:370px){
+
+    .hero h2{
+
+        font-size:23px;
+
+    }
+
+    .gift-grid{
+
+        gap:4px;
+
+    }
+
+    .gift{
+
+        padding-left:1px;
+
+        padding-right:1px;
+
+    }
+
+    .page-title{
+
+        font-size:15px;
+
+    }
+
+}
+
+</style>
+
 </head>
+
 <body>
 
-    <div id="lives-home">
-        <div class="top-bar">
-            <button class="back-btn" onclick="window.location.href='entretenimento.html'">⬅ Voltar</button>
-            <h1 class="page-title">🔴 Lives da Comunidade</h1>
-            <div class="wallet-badge" onclick="adicionarCreditosSimulados()">
-                🪙 <span id="user-wallet">500</span>¥
-            </div>
-        </div>
+<div class="page" id="lives-home">
 
-        <!-- Carrossel Infinito Principal -->
-        <section class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-                <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-                <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-                <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-                <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            </div>
-        </section>
+    <header class="topbar">
 
-        <div class="section-subtitle">Transmissões acontecendo agora:</div>
+        <button class="back-btn"
 
-        <div class="live-card" onclick="abrirLiveGravada('Receitas de Bolos Japoneses', 'Ana Silva', '45 assistindo', 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&auto=format&fit=crop&q=60')">
-            <div class="live-info">
-                <h4>🍰 Receitas de Bolos Japoneses</h4>
-                <p>Ana Silva • 45 assistindo</p>
-            </div>
-            <div class="live-badge">Ao Vivo</div>
-        </div>
+            onclick="window.location.href='entretenimento.html'">
 
-        <div class="live-card" onclick="abrirLiveGravada('Truques de Mágica', 'Mágico Hiro', '120 assistindo', 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=600&auto=format&fit=crop&q=60')">
-            <div class="live-info">
-                <h4>🎩 Truques de Mágica</h4>
-                <p>Mágico Hiro • 120 assistindo</p>
-            </div>
-            <div class="live-badge">Ao Vivo</div>
-        </div>
+            ← Voltar
 
-        <button class="start-live-btn" onclick="abrirModalLive()">
-            🎥 Iniciar Minha Própria Live
         </button>
-    </div>
 
-    <!-- MODAL DE REGULAMENTO E INÍCIO DE LIVE -->
-    <div class="modal-overlay" id="liveModal">
-        <div class="modal-content">
-            <h3>📋 Regulamento & Início de Live</h3>
-            <div class="terms-text">
-                <b>1. Conteúdo Adequado:</b> É proibido transmitir violência, nudez, discurso de ódio ou atividades ilícitas.<br><br>
-                <b>2. Respeito Mútuo:</b> Mantenha cordialidade com os espectadores. Comportamentos abusivos resultam em banimento.<br><br>
-                <b>3. Monetização e Presentes:</b><br>
-                - As lives são <b>100% gratuitas</b> para iniciar.<br>
-                - Os primeiros <b>300¥</b> arrecadados em presentes vão <b>100% para o autor da live</b>.<br>
-                - Após esse valor, a divisão passa a ser de **70% para o criador** e **30% para a manutenção du app**.<br><br>
-                <b>4. Duração:</b> A live inicia com limite de **60 minutos**, com opção ilimitada de extensão por mais 30 minutos quando necessário.<br><br>
-                <b>5. Responsabilidade:</b> O autor é o único responsável pelo conteúdo transmitido.
-            </div>
+        <h1 class="page-title">
 
-            <label for="inputLiveTitle">Título da sua Transmissão:</label>
-            <input type="text" id="inputLiveTitle" placeholder="Ex: Bate-papo sobre o dia a dia no Japão">
+            <span class="live-dot"></span>
 
-            <div class="modal-buttons">
-                <button class="modal-btn-cancel" onclick="fecharModalLive()">Cancelar</button>
-                <button class="modal-btn-confirm" onclick="iniciarMinhaLiveCamera()">Concordar e Iniciar Live</button>
-            </div>
-        </div>
-    </div>
+            Lives
 
-    <!-- PLAYER / TELA DA LIVE -->
-    <div id="live-player-container">
-        <div class="top-bar">
-            <button class="back-btn" onclick="fecharLive()">⬅ Sair da Live</button>
-            <h1 class="page-title">🔴 Transmissão</h1>
-            <div class="wallet-badge" onclick="adicionarCreditosSimulados()">
-                🪙 <span id="user-wallet-live">500</span>¥
-            </div>
+        </h1>
+
+        <div class="wallet">
+
+            <span class="coin">●</span>
+
+            <span id="user-wallet">1.500</span>
+
+            <button class="wallet-plus" onclick="abrirCarteira()">+</button>
+
         </div>
 
-        <!-- Mesmo Carrossel Infinito inserido na tela da Live -->
-        <section class="carousel-container">
-            <div class="carousel-track" id="carouselTrackLive">
-                <a href="fale-conosco.html"><img src="mini-banner-1.jpg" alt="Destaque 1"></a>
-                <a href="fale-conosco.html"><img src="mini-banner-2.jpg" alt="Destaque 2"></a>
-                <a href="fale-conosco.html"><img src="mini-banner-3.jpg" alt="Destaque 3"></a>
-                <a href="fale-conosco.html"><img src="mini-banner-4.jpg" alt="Destaque 4"></a>
-            </div>
+    </header>
+
+    <main class="content">
+
+        <section class="hero">
+
+            <h2>
+
+                Compartilhe seu talento com a comunidade!
+
+            </h2>
+
+            <p>
+
+                Mostre sua cultura, seus hobbies e seu dia a dia no Japão.
+
+            </p>
+
+            <button class="start-live" onclick="abrirModalLive()">
+
+                📹 Iniciar minha Live
+
+            </button>
+
         </section>
 
-        <!-- Bloco de Informações da Live -->
-        <div class="live-info-bottom">
-            <div>
-                <h3 id="player-title">Título da Transmissão</h3>
-                <p id="player-host">Criador • 0 assistindo</p>
+        <div class="banner-scroll">
+
+            <a href="fale-conosco.html">
+
+                <img src="mini-banner-1.jpg" alt="">
+
+            </a>
+
+            <a href="fale-conosco.html">
+
+                <img src="mini-banner-2.jpg" alt="">
+
+            </a>
+
+            <a href="fale-conosco.html">
+
+                <img src="mini-banner-3.jpg" alt="">
+
+            </a>
+
+            <a href="fale-conosco.html">
+
+                <img src="mini-banner-4.jpg" alt="">
+
+            </a>
+
+        </div>
+
+        <div class="categories">
+
+            <button class="category active">▦ Todas</button>
+
+            <button class="category">🎵 Música</button>
+
+            <button class="category">🍴 Culinária</button>
+
+            <button class="category">💬 Bate-papo</button>
+
+            <button class="category">🎮 Jogos</button>
+
+        </div>
+
+        <div class="section-head">
+
+            <h3>
+
+                <span class="live-dot"></span>
+
+                Transmissões ao vivo
+
+            </h3>
+
+            <span>Ver todas ›</span>
+
+        </div>
+
+        <div class="live-grid">
+
+            <div class="live-card"
+
+                onclick="abrirLiveGravada(
+
+                    'Receitas de Bolos Japoneses',
+
+                    'Ana Silva',
+
+                    '45 assistindo',
+
+                    'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=900&auto=format&fit=crop&q=75'
+
+                )">
+
+                <div class="thumb">
+
+                    <img
+
+                        src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&auto=format&fit=crop&q=70"
+
+                        alt=""
+
+                    >
+
+                    <span class="live-badge">
+
+                        ● AO VIVO
+
+                    </span>
+
+                    <span class="viewer-badge">
+
+                        👁 45
+
+                    </span>
+
+                </div>
+
+                <div class="live-card-info">
+
+                    <div class="live-card-title">
+
+                        🍰 Receitas de Bolos
+
+                    </div>
+
+                    <div class="live-card-host">
+
+                        Ana Silva
+
+                    </div>
+
+                    <span class="tag">
+
+                        Culinária
+
+                    </span>
+
+                </div>
+
             </div>
-            <div class="header-right-side">
-                <button class="report-btn" onclick="abrirModalDenuncia()">⚠️ Denunciar</button>
+
+            <div class="live-card"
+
+                onclick="abrirLiveGravada(
+
+                    'Truques de Mágica',
+
+                    'Mágico Hiro',
+
+                    '120 assistindo',
+
+                    'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=900&auto=format&fit=crop&q=75'
+
+                )">
+
+                <div class="thumb">
+
+                    <img
+
+                        src="https://images.unsplash.com/photo-1514539079130-25950c84af65?w=600&auto=format&fit=crop&q=70"
+
+                        alt=""
+
+                    >
+
+                    <span class="live-badge">
+
+                        ● AO VIVO
+
+                    </span>
+
+                    <span class="viewer-badge">
+
+                        👁 120
+
+                    </span>
+
+                </div>
+
+                <div class="live-card-info">
+
+                    <div class="live-card-title">
+
+                        🎩 Truques de Mágica
+
+                    </div>
+
+                    <div class="live-card-host">
+
+                        Mágico Hiro
+
+                    </div>
+
+                    <span class="tag"
+
+                        style="background:#6d3cff;">
+
+                        Entretenimento
+
+                    </span>
+
+                </div>
+
             </div>
+
+            <div class="live-card"
+
+                onclick="abrirLiveGravada(
+
+                    'Música e Bate-papo',
+
+                    'Yumi Tanaka',
+
+                    '89 assistindo',
+
+                    'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=900&auto=format&fit=crop&q=75'
+
+                )">
+
+                <div class="thumb">
+
+                    <img
+
+                        src="https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=600&auto=format&fit=crop&q=70"
+
+                        alt=""
+
+                    >
+
+                    <span class="live-badge">
+
+                        ● AO VIVO
+
+                    </span>
+
+                    <span class="viewer-badge">
+
+                        👁 89
+
+                    </span>
+
+                </div>
+
+                <div class="live-card-info">
+
+                    <div class="live-card-title">
+
+                        🎵 Música e Bate-papo
+
+                    </div>
+
+                    <div class="live-card-host">
+
+                        Yumi Tanaka
+
+                    </div>
+
+                    <span class="tag"
+
+                        style="background:#198cff;">
+
+                        Música
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="live-card"
+
+                onclick="abrirLiveGravada(
+
+                    'Dia a dia no Japão',
+
+                    'Carlos Sato',
+
+                    '56 assistindo',
+
+                    'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&auto=format&fit=crop&q=75'
+
+                )">
+
+                <div class="thumb">
+
+                    <img
+
+                        src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&auto=format&fit=crop&q=70"
+
+                        alt=""
+
+                    >
+
+                    <span class="live-badge">
+
+                        ● AO VIVO
+
+                    </span>
+
+                    <span class="viewer-badge">
+
+                        👁 56
+
+                    </span>
+
+                </div>
+
+                <div class="live-card-info">
+
+                    <div class="live-card-title">
+
+                        🇯🇵 Dia a dia no Japão
+
+                    </div>
+
+                    <div class="live-card-host">
+
+                        Carlos Sato
+
+                    </div>
+
+                    <span class="tag"
+
+                        style="background:#15b85a;">
+
+                        Bate-papo
+
+                    </span>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="video-box" id="video-container-box">
-            <div class="live-tag-overlay">AO VIVO</div>
-            <div class="timer-badge" style="position: absolute; top: 8px; right: 8px; z-index: 10;" id="timer-display">60:00</div>
-            <video id="camera-stream" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
-            <img id="player-img" src="" alt="Live Stream" style="display:block; width:100%; height:100%; object-fit:cover;">
+    </main>
+
+    <nav class="bottom-nav">
+
+        <button class="nav-item active">
+
+            <span>🏠</span>
+
+            Início
+
+        </button>
+
+        <button class="nav-item">
+
+            <span>🔎</span>
+
+            Explorar
+
+        </button>
+
+        <button class="nav-item"
+
+            onclick="abrirModalLive()">
+
+            <span>📹</span>
+
+            Iniciar Live
+
+        </button>
+
+        <button class="nav-item"
+
+            onclick="window.location.href='perfil.html'">
+
+            <span>👤</span>
+
+            Perfil
+
+        </button>
+
+    </nav>
+
+</div>
+
+<!-- PLAYER -->
+
+<div class="page" id="live-player-container">
+
+    <header class="player-header">
+
+        <button class="exit-btn"
+
+            onclick="fecharLive()">
+
+            ← Sair
+
+        </button>
+
+        <div class="host-area">
+
+            <div class="host-name"
+
+                id="player-host-name">
+
+                Criador
+
+            </div>
+
+            <div class="host-viewers"
+
+                id="player-host">
+
+                0 assistindo
+
+            </div>
+
         </div>
 
-        <div class="section-subtitle">🎁 Enviar Presente ao Liver:</div>
-        <div class="gift-bar">
-            <div class="gift-chip" onclick="enviarPresente('☕ Café', 100)">☕ Café (100¥)</div>
-            <div class="gift-chip" onclick="enviarPresente('🌹 Rosa', 300)">🌹 Rosa (300¥)</div>
-            <div class="gift-chip" onclick="enviarPresente('⭐ Estrela', 500)">⭐ Estrela (500¥)</div>
-            <div class="gift-chip" onclick="enviarPresente('🚗 Carrão', 1000)">🚗 Carrão (1000¥)</div>
+        <div class="wallet player-wallet">
+
+            <span class="coin">●</span>
+
+            <span id="user-wallet-live">1.500</span>
+
+            <button class="wallet-plus"
+
+                onclick="abrirCarteira()">
+
+                +
+
+            </button>
+
         </div>
 
-        <div class="section-subtitle">Chat ao Vivo</div>
-        <div class="chat-box" id="chat-messages">
-            <div class="chat-msg"><span>Sistema:</span> Seja bem-vindo à live! Clique no seu saldo no topo se precisar recarregar créditos.</div>
+    </header>
+
+    <div class="video-box">
+
+        <div class="player-live-tag">
+
+            ● AO VIVO
+
         </div>
 
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Escreva uma mensagem...">
-            <button onclick="enviarMensagem()">Enviar</button>
+        <div class="timer-badge"
+
+            id="timer-display"
+
+            style="display:none;">
+
+            60:00
+
         </div>
+
+        <video
+
+            id="camera-stream"
+
+            autoplay
+
+            playsinline
+
+            muted
+
+            style="display:none;">
+
+        </video>
+
+        <img
+
+            id="player-img"
+
+            src=""
+
+            alt=""
+
+            style="display:block;"
+
+        >
+
     </div>
 
-    <!-- MODAL DE EXTENSÃO DE TEMPO -->
-    <div class="modal-overlay" id="extendModal">
-        <div class="modal-content" style="text-align: center;">
-            <h3>⏰ Tempo Quase Acabando!</h3>
-            <p style="font-size: 13px; color: #555; margin-bottom: 20px;">
-                Sua live atingiu o limite atual. Deseja estender por mais **30 minutos** para continuar transmitindo?
-            </p>
-            <div class="modal-buttons">
-                <button class="modal-btn-cancel" onclick="fecharLive()">Encerrar Live</button>
-                <button class="modal-btn-confirm" onclick="estenderTempoLive()">Sim, +30 Minutos</button>
-            </div>
+    <section class="player-info">
+
+        <h2 id="player-title">
+
+            Título da transmissão
+
+        </h2>
+
+        <div class="player-actions">
+
+            <span class="small-tag">
+
+                🇯🇵 Japão
+
+            </span>
+
+            <span class="small-tag">
+
+                💬 Comunidade
+
+            </span>
+
+            <button class="report"
+
+                onclick="abrirModalDenuncia()">
+
+                ⚠️ Denunciar
+
+            </button>
+
         </div>
+
+    </section>
+
+    <div class="tabs">
+
+        <button class="tab active">
+
+            💬 Chat
+
+        </button>
+
+        <button class="tab">
+
+            🎁 Presentes
+
+        </button>
+
+        <button class="tab">
+
+            👑 Ranking
+
+        </button>
+
     </div>
 
-    <!-- MODAL DE DENÚNCIA -->
-    <div class="modal-overlay" id="reportModal">
-        <div class="modal-content">
-            <h3>🚨 Denunciar Transmissão</h3>
-            <label for="reportReason">Selecione o motivo:</label>
-            <select id="reportReason">
-                <option value="conteudo_improprio">Conteúdo impróprio ou adulto</option>
-                <option value="ofensas">Discurso de ódio ou ofensas</option>
-                <option value="spam">Spam ou propaganda enganosa</option>
-                <option value="outro">Outro motivo</option>
-            </select>
-            
-            <label for="reportDetails">Detalhes (opcional):</label>
-            <input type="text" id="reportDetails" placeholder="Descreva brevemente o que aconteceu...">
+    <section class="gifts-panel">
 
-            <div class="modal-buttons">
-                <button class="modal-btn-cancel" onclick="fecharModalDenuncia()">Cancelar</button>
-                <button class="modal-btn-confirm" style="background: #d32f2f;" onclick="enviarDenuncia()">Enviar Denúncia</button>
-            </div>
+        <div class="gift-title">
+
+            🎁 Envie um presente
+
         </div>
+
+        <div class="gift-grid">
+
+            <button class="gift"
+
+                onclick="enviarPresente('☕ Café',50)">
+
+                <span class="gift-icon">☕</span>
+
+                <span class="gift-name">Café</span>
+
+                <span class="gift-price">🪙 50</span>
+
+            </button>
+
+            <button class="gift"
+
+                onclick="enviarPresente('🌹 Rosa',100)">
+
+                <span class="gift-icon">🌹</span>
+
+                <span class="gift-name">Rosa</span>
+
+                <span class="gift-price">🪙 100</span>
+
+            </button>
+
+            <button class="gift"
+
+                onclick="enviarPresente('⭐ Estrela',200)">
+
+                <span class="gift-icon">⭐</span>
+
+                <span class="gift-name">Estrela</span>
+
+                <span class="gift-price">🪙 200</span>
+
+            </button>
+
+            <button class="gift"
+
+                onclick="enviarPresente('💖 Coração',300)">
+
+                <span class="gift-icon">💖</span>
+
+                <span class="gift-name">Coração</span>
+
+                <span class="gift-price">🪙 300</span>
+
+            </button>
+
+            <button class="gift"
+
+                onclick="enviarPresente('🚗 Carrão',500)">
+
+                <span class="gift-icon">🚗</span>
+
+                <span class="gift-name">Carrão</span>
+
+                <span class="gift-price">🪙 500</span>
+
+            </button>
+
+        </div>
+
+    </section>
+
+    <section class="chat-panel">
+
+        <div class="chat-box"
+
+            id="chat-messages">
+
+            <div class="chat-msg">
+
+                <span>Sistema:</span>
+
+                Seja bem-vindo à live! 💜
+
+            </div>
+
+        </div>
+
+        <div class="chat-input">
+
+            <input
+
+                id="chat-input"
+
+                type="text"
+
+                placeholder="Escreva uma mensagem..."
+
+            >
+
+            <button onclick="enviarMensagem()">
+
+                Enviar
+
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- MODAL INICIAR LIVE -->
+
+<div class="modal-overlay"
+
+    id="liveModal">
+
+    <div class="modal-content">
+
+        <h3>
+
+            📹 Iniciar minha Live
+
+        </h3>
+
+        <div class="terms">
+
+            <b>1. Conteúdo</b><br>
+
+            Não é permitido conteúdo ilegal, violência explícita,
+
+            nudez ou assédio.<br><br>
+
+            <b>2. Respeito</b><br>
+
+            Trate os participantes e espectadores com respeito.<br><br>
+
+            <b>3. Iniciar uma Live</b><br>
+
+            Criar uma transmissão é gratuito.<br><br>
+
+            <b>4. Presentes</b><br>
+
+            Os espectadores poderão apoiar o criador utilizando
+
+            pontos do Ajuda JP.<br><br>
+
+            <b>5. Divisão</b><br>
+
+            Dos valores destinados à monetização dos presentes,
+
+            70% correspondem ao criador e 30% ao Ajuda JP,
+
+            conforme as regras de monetização aplicáveis.<br><br>
+
+            <b>6. Duração</b><br>
+
+            A Live começa com até 60 minutos.
+
+            O criador poderá estender a transmissão em blocos
+
+            adicionais de 30 minutos.<br><br>
+
+            <b>7. Responsabilidade</b><br>
+
+            O criador é responsável pelo conteúdo transmitido.
+
+        </div>
+
+        <label>
+
+            Título da transmissão
+
+        </label>
+
+        <input
+
+            type="text"
+
+            id="inputLiveTitle"
+
+            placeholder="Ex: Meu dia no Japão"
+
+        >
+
+        <div class="modal-buttons">
+
+            <button
+
+                class="modal-cancel"
+
+                onclick="fecharModalLive()">
+
+                Cancelar
+
+            </button>
+
+            <button
+
+                class="modal-confirm"
+
+                onclick="iniciarMinhaLiveCamera()">
+
+                Concordar e iniciar
+
+            </button>
+
+        </div>
+
     </div>
 
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script>
-        let mediaStream = null;
-        let meuSaldo = 500; 
-        let tempoRestanteSegundos = 60 * 60; 
-        let timerInterval = null;
-        let souCriadorDaLive = false;
-        let globalUserId = "Não informado";
-        let carrosselLiveInicializado = false;
+</div>
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            let idUrl = urlParams.get('userId');
+<!-- MODAL EXTENSÃO -->
 
-            if (!idUrl && window.location.search.includes('{userId}')) {
-                idUrl = '{userId}';
-            }
+<div class="modal-overlay"
 
-            if (idUrl && idUrl !== '{userId}' && idUrl !== '%7BuserId%7D') {
-                globalUserId = idUrl;
-                localStorage.setItem('userId', globalUserId);
-            } else if (localStorage.getItem('userId')) {
-                globalUserId = localStorage.getItem('userId');
-            }
+    id="extendModal">
 
-            try {
-                if (typeof liff !== 'undefined') {
-                    await liff.init({ liffId: "2010902449-KWNNNsxn" });
-                    if (liff.isLoggedIn()) {
-                        const profile = await liff.getProfile();
-                        if (profile && profile.userId) {
-                            globalUserId = profile.userId;
-                            localStorage.setItem('userId', globalUserId);
-                        }
-                    } else {
-                        liff.login();
-                    }
-                }
-            } catch (e) {
-                console.warn('Erro na inicialização automática do LIFF:', e);
-            }
-        });
+    <div class="modal-content">
 
-        function atualizarSaldoNaTela() {
-            document.getElementById('user-wallet').innerText = meuSaldo;
-            document.getElementById('user-wallet-live').innerText = meuSaldo;
-        }
+        <h3>
 
-        function adicionarCreditosSimulados() {
-            meuSaldo += 500;
-            atualizarSaldoNaTela();
-            alert("🪙 Você ganhou +500¥ de créditos simulados para testes!");
-        }
+            ⏰ Continuar a Live?
 
-        // Função corrigida para carrosséis (evita duplicação excessiva e calcula corretamente)
-        function configurarCarrosselInfinito(trackId) {
-            const track = document.getElementById(trackId);
-            if (!track || track.dataset.initialized === "true") return;
-            
-            const items = Array.from(track.children);
-            items.forEach(item => {
-                const clone = item.cloneNode(true);
-                track.appendChild(clone);
+        </h3>
+
+        <p style="font-size:12px;color:#b9c7da;text-align:center;">
+
+            O tempo atual terminou.
+
+            Deseja continuar por mais 30 minutos?
+
+        </p>
+
+        <div class="modal-buttons">
+
+            <button
+
+                class="modal-cancel"
+
+                onclick="fecharLive()">
+
+                Encerrar
+
+            </button>
+
+            <button
+
+                class="modal-confirm"
+
+                onclick="estenderTempoLive()">
+
+                +30 minutos
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- DENÚNCIA -->
+
+<div class="modal-overlay"
+
+    id="reportModal">
+
+    <div class="modal-content">
+
+        <h3>
+
+            ⚠️ Denunciar Live
+
+        </h3>
+
+        <label>Motivo</label>
+
+        <select id="reportReason">
+
+            <option value="conteudo_improprio">
+
+                Conteúdo impróprio
+
+            </option>
+
+            <option value="ofensas">
+
+                Ofensas ou assédio
+
+            </option>
+
+            <option value="spam">
+
+                Spam ou golpe
+
+            </option>
+
+            <option value="outro">
+
+                Outro
+
+            </option>
+
+        </select>
+
+        <label>Detalhes</label>
+
+        <input
+
+            type="text"
+
+            id="reportDetails"
+
+            placeholder="Conte o que aconteceu..."
+
+        >
+
+        <div class="modal-buttons">
+
+            <button
+
+                class="modal-cancel"
+
+                onclick="fecharModalDenuncia()">
+
+                Cancelar
+
+            </button>
+
+            <button
+
+                class="modal-confirm"
+
+                style="background:#d93452;"
+
+                onclick="enviarDenuncia()">
+
+                Enviar denúncia
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let mediaStream = null;
+
+let meuSaldo = 1500;
+
+let tempoRestanteSegundos = 60 * 60;
+
+let timerInterval = null;
+
+let souCriadorDaLive = false;
+
+let globalUserId = "";
+
+const LIFF_ID =
+
+    "2010902449-KWNNNsxn";
+
+window.addEventListener(
+
+    "DOMContentLoaded",
+
+    async () => {
+
+        try {
+
+            await liff.init({
+
+                liffId: LIFF_ID
+
             });
-            
-            const totalWidth = track.scrollWidth / 2;
-            track.style.setProperty('--scroll-amount', `-${totalWidth}px`);
-            track.dataset.initialized = "true";
-        }
 
-        window.addEventListener('load', () => {
-            configurarCarrosselInfinito('carouselTrack');
-        });
+            if (liff.isLoggedIn()) {
+
+                const profile =
+
+                    await liff.getProfile();
+
+                globalUserId =
+
+                    profile.userId;
+
+                localStorage.setItem(
+
+                    "line_user_id",
+
+                    profile.userId
+
+                );
+
+                localStorage.setItem(
+
+                    "line_user_name",
+
+                    profile.displayName
+
+                );
+
+                if (profile.pictureUrl) {
+
+                    localStorage.setItem(
+
+                        "line_user_picture",
+
+                        profile.pictureUrl
+
+                    );
+
+                }
+
+            } else {
+
+                globalUserId =
+
+                    localStorage.getItem(
+
+                        "line_user_id"
+
+                    ) || "";
+
+            }
+
+        } catch(error) {
+
+            console.log(
+
+                "LIFF:",
+
+                error
+
+            );
+
+            globalUserId =
+
+                localStorage.getItem(
+
+                    "line_user_id"
+
+                ) || "";
+
+        }
 
         atualizarSaldoNaTela();
 
-        function iniciarCronometro() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (tempoRestanteSegundos > 0) {
-                    tempoRestanteSegundos--;
-                    let minutos = Math.floor(tempoRestanteSegundos / 60);
-                    let segundos = tempoRestanteSegundos % 60;
-                    document.getElementById('timer-display').innerText = 
-                        (minutos < 10 ? "0" : "") + minutos + ":" + (segundos < 10 ? "0" : "") + segundos;
-                } else {
-                    clearInterval(timerInterval);
-                    if (souCriadorDaLive) {
-                        document.getElementById('extendModal').style.display = 'flex';
-                    }
-                }
-            }, 1000);
-        }
+    }
 
-        function estenderTempoLive() {
-            document.getElementById('extendModal').style.display = 'none';
-            tempoRestanteSegundos = 30 * 60; 
-            iniciarCronometro();
-            
-            const chatBox = document.getElementById('chat-messages');
-            const novaMsg = document.createElement('div');
-            novaMsg.className = 'chat-msg';
-            novaMsg.style.color = '#2e7d32';
-            novaMsg.innerHTML = `<span>Sistema:</span> A live foi estendida por mais 30 minutos!`;
-            chatBox.appendChild(novaMsg);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+);
 
-        function abrirModalDenuncia() {
-            document.getElementById('reportModal').style.display = 'flex';
-        }
+function atualizarSaldoNaTela(){
 
-        function fecharModalDenuncia() {
-            document.getElementById('reportModal').style.display = 'none';
-        }
+    document.getElementById(
 
-        function enviarDenuncia() {
-            const motivo = document.getElementById('reportReason').value;
-            const detalhes = document.getElementById('reportDetails').value;
-            const tituloLive = document.getElementById('player-title').innerText;
-            const criadorLive = document.getElementById('player-host').innerText;
+        "user-wallet"
 
-            const dadosEnvio = {
-                userId: globalUserId,
-                liveTitle: tituloLive,
-                creator: criadorLive,
-                motivo: motivo,
-                detalhes: detalhes || "Nenhum detalhe informado"
-            };
+    ).innerText =
 
-            fetch('/api/denuncia', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dadosEnvio)
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Erro na rede');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Sucesso:', data);
-                alert("⚠️ Denúncia enviada com sucesso! A administração analisará a transmissão.");
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert("⚠️ Erro ao enviar denúncia para o servidor.");
-            });
+        meuSaldo.toLocaleString(
 
-            fecharModalDenuncia();
-            document.getElementById('reportDetails').value = ''; 
-        }
+            "pt-BR"
 
-        function prepararEntradaNaLive() {
-            document.getElementById('lives-home').style.display = 'none';
-            document.getElementById('live-player-container').style.display = 'block';
-            
-            // Força a leitura correta do tamanho da tela agora que o container está visível
-            setTimeout(() => {
-                configurarCarrosselInfinito('carouselTrackLive');
-            }, 50);
+        );
 
-            window.scrollTo(0, 0);
-        }
+    document.getElementById(
 
-        function abrirLiveGravada(titulo, host, espectadores, imagemUrl) {
-            pararCamera();
-            souCriadorDaLive = false;
-            document.getElementById('timer-display').style.display = 'none';
+        "user-wallet-live"
 
-            prepararEntradaNaLive();
-            
-            document.getElementById('player-title').innerText = titulo;
-            document.getElementById('player-host').innerText = host + " • " + espectadores;
-            
-            document.getElementById('camera-stream').style.display = 'none';
-            document.getElementById('player-img').style.display = 'block';
-            document.getElementById('player-img').src = imagemUrl;
-        }
+    ).innerText =
 
-        function abrirModalLive() {
-            document.getElementById('liveModal').style.display = 'flex';
-        }
+        meuSaldo.toLocaleString(
 
-        function fecharModalLive() {
-            document.getElementById('liveModal').style.display = 'none';
-        }
+            "pt-BR"
 
-        async function iniciarMinhaLiveCamera() {
-            const tituloInput = document.getElementById('inputLiveTitle');
-            const tituloLive = tituloInput.value.trim();
+        );
 
-            if (tituloLive === '') {
-                alert('Por favor, digite o título da sua transmissão.');
-                tituloInput.focus();
-                return;
-            }
+}
 
-            fecharModalLive();
-            souCriadorDaLive = true;
+function abrirCarteira(){
 
-            prepararEntradaNaLive();
-            
-            document.getElementById('player-title').innerText = tituloLive;
-            document.getElementById('player-host').innerText = 'Você (Transmitindo) • 1 assistindo';
+    window.location.href =
 
-            document.getElementById('player-img').style.display = 'none';
-            const videoElement = document.getElementById('camera-stream');
-            videoElement.style.display = 'block';
+        "historicocreditos.html";
 
-            const timerBadge = document.getElementById('timer-display');
-            timerBadge.style.display = 'block';
-            tempoRestanteSegundos = 60 * 60;
-            iniciarCronometro();
+}
 
-            try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' }, 
-                    audio: true 
+function abrirModalLive(){
+
+    document.getElementById(
+
+        "liveModal"
+
+    ).style.display =
+
+        "flex";
+
+}
+
+function fecharModalLive(){
+
+    document.getElementById(
+
+        "liveModal"
+
+    ).style.display =
+
+        "none";
+
+}
+
+function prepararEntradaNaLive(){
+
+    document.getElementById(
+
+        "lives-home"
+
+    ).style.display =
+
+        "none";
+
+    document.getElementById(
+
+        "live-player-container"
+
+    ).style.display =
+
+        "block";
+
+    window.scrollTo(
+
+        0,
+
+        0
+
+    );
+
+}
+
+function abrirLiveGravada(
+
+    titulo,
+
+    host,
+
+    espectadores,
+
+    imagemUrl
+
+){
+
+    pararCamera();
+
+    souCriadorDaLive =
+
+        false;
+
+    document.getElementById(
+
+        "timer-display"
+
+    ).style.display =
+
+        "none";
+
+    prepararEntradaNaLive();
+
+    document.getElementById(
+
+        "player-title"
+
+    ).innerText =
+
+        titulo;
+
+    document.getElementById(
+
+        "player-host-name"
+
+    ).innerText =
+
+        host;
+
+    document.getElementById(
+
+        "player-host"
+
+    ).innerText =
+
+        espectadores;
+
+    const camera =
+
+        document.getElementById(
+
+            "camera-stream"
+
+        );
+
+    const imagem =
+
+        document.getElementById(
+
+            "player-img"
+
+        );
+
+    camera.style.display =
+
+        "none";
+
+    imagem.style.display =
+
+        "block";
+
+    imagem.src =
+
+        imagemUrl;
+
+}
+
+async function iniciarMinhaLiveCamera(){
+
+    const input =
+
+        document.getElementById(
+
+            "inputLiveTitle"
+
+        );
+
+    const titulo =
+
+        input.value.trim();
+
+    if (!titulo){
+
+        alert(
+
+            "Digite um título para sua Live."
+
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+    fecharModalLive();
+
+    souCriadorDaLive =
+
+        true;
+
+    prepararEntradaNaLive();
+
+    document.getElementById(
+
+        "player-title"
+
+    ).innerText =
+
+        titulo;
+
+    document.getElementById(
+
+        "player-host-name"
+
+    ).innerText =
+
+        localStorage.getItem(
+
+            "line_user_name"
+
+        ) || "Você";
+
+    document.getElementById(
+
+        "player-host"
+
+    ).innerText =
+
+        "Você está transmitindo";
+
+    document.getElementById(
+
+        "player-img"
+
+    ).style.display =
+
+        "none";
+
+    const video =
+
+        document.getElementById(
+
+            "camera-stream"
+
+        );
+
+    video.style.display =
+
+        "block";
+
+    const timer =
+
+        document.getElementById(
+
+            "timer-display"
+
+        );
+
+    timer.style.display =
+
+        "block";
+
+    tempoRestanteSegundos =
+
+        60 * 60;
+
+    atualizarTimer();
+
+    iniciarCronometro();
+
+    try{
+
+        mediaStream =
+
+            await navigator.mediaDevices
+
+                .getUserMedia({
+
+                    video:{
+
+                        facingMode:"user"
+
+                    },
+
+                    audio:true
+
                 });
-                videoElement.srcObject = mediaStream;
-            } catch (error) {
-                alert('Não foi possível acessar a câmera. Verifique as permissões do seu navegador.');
-                console.error(error);
-                fecharLive();
-            }
+
+        video.srcObject =
+
+            mediaStream;
+
+        await video.play();
+
+    }catch(error){
+
+        console.error(
+
+            error
+
+        );
+
+        alert(
+
+            "Não foi possível acessar a câmera e o microfone."
+
+        );
+
+        fecharLive();
+
+    }
+
+}
+
+function iniciarCronometro(){
+
+    clearInterval(
+
+        timerInterval
+
+    );
+
+    timerInterval =
+
+        setInterval(
+
+            () => {
+
+                if(
+
+                    tempoRestanteSegundos >
+
+                    0
+
+                ){
+
+                    tempoRestanteSegundos--;
+
+                    atualizarTimer();
+
+                }else{
+
+                    clearInterval(
+
+                        timerInterval
+
+                    );
+
+                    timerInterval =
+
+                        null;
+
+                    if(
+
+                        souCriadorDaLive
+
+                    ){
+
+                        document.getElementById(
+
+                            "extendModal"
+
+                        ).style.display =
+
+                            "flex";
+
+                    }
+
+                }
+
+            },
+
+            1000
+
+        );
+
+}
+
+function atualizarTimer(){
+
+    const minutos =
+
+        Math.floor(
+
+            tempoRestanteSegundos /
+
+            60
+
+        );
+
+    const segundos =
+
+        tempoRestanteSegundos %
+
+        60;
+
+    document.getElementById(
+
+        "timer-display"
+
+    ).innerText =
+
+        String(minutos)
+
+            .padStart(2,"0") +
+
+        ":" +
+
+        String(segundos)
+
+            .padStart(2,"0");
+
+}
+
+function estenderTempoLive(){
+
+    document.getElementById(
+
+        "extendModal"
+
+    ).style.display =
+
+        "none";
+
+    tempoRestanteSegundos =
+
+        30 * 60;
+
+    atualizarTimer();
+
+    iniciarCronometro();
+
+    adicionarMensagemSistema(
+
+        "A Live foi estendida por mais 30 minutos! 🎉"
+
+    );
+
+}
+
+function pararCamera(){
+
+    if(mediaStream){
+
+        mediaStream
+
+            .getTracks()
+
+            .forEach(
+
+                track =>
+
+                    track.stop()
+
+            );
+
+        mediaStream =
+
+            null;
+
+    }
+
+    if(timerInterval){
+
+        clearInterval(
+
+            timerInterval
+
+        );
+
+        timerInterval =
+
+            null;
+
+    }
+
+}
+
+function fecharLive(){
+
+    pararCamera();
+
+    document.getElementById(
+
+        "extendModal"
+
+    ).style.display =
+
+        "none";
+
+    document.getElementById(
+
+        "reportModal"
+
+    ).style.display =
+
+        "none";
+
+    document.getElementById(
+
+        "live-player-container"
+
+    ).style.display =
+
+        "none";
+
+    document.getElementById(
+
+        "lives-home"
+
+    ).style.display =
+
+        "block";
+
+    window.scrollTo(
+
+        0,
+
+        0
+
+    );
+
+}
+
+function enviarMensagem(){
+
+    const input =
+
+        document.getElementById(
+
+            "chat-input"
+
+        );
+
+    const texto =
+
+        input.value.trim();
+
+    if(!texto){
+
+        return;
+
+    }
+
+    const chat =
+
+        document.getElementById(
+
+            "chat-messages"
+
+        );
+
+    const mensagem =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    mensagem.className =
+
+        "chat-msg";
+
+    const nome =
+
+        document.createElement(
+
+            "span"
+
+        );
+
+    nome.textContent =
+
+        "Você: ";
+
+    mensagem.appendChild(
+
+        nome
+
+    );
+
+    mensagem.appendChild(
+
+        document.createTextNode(
+
+            texto
+
+        )
+
+    );
+
+    chat.appendChild(
+
+        mensagem
+
+    );
+
+    input.value =
+
+        "";
+
+    chat.scrollTop =
+
+        chat.scrollHeight;
+
+}
+
+function adicionarMensagemSistema(
+
+    texto
+
+){
+
+    const chat =
+
+        document.getElementById(
+
+            "chat-messages"
+
+        );
+
+    const mensagem =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    mensagem.className =
+
+        "chat-msg";
+
+    const sistema =
+
+        document.createElement(
+
+            "span"
+
+        );
+
+    sistema.textContent =
+
+        "Sistema: ";
+
+    mensagem.appendChild(
+
+        sistema
+
+    );
+
+    mensagem.appendChild(
+
+        document.createTextNode(
+
+            texto
+
+        )
+
+    );
+
+    chat.appendChild(
+
+        mensagem
+
+    );
+
+    chat.scrollTop =
+
+        chat.scrollHeight;
+
+}
+
+/*
+
+=========================================================
+
+PRESENTES — SOMENTE TESTE VISUAL NESTA ETAPA
+
+Depois vamos conectar ao Firebase.
+
+=========================================================
+
+*/
+
+function enviarPresente(
+
+    nome,
+
+    valor
+
+){
+
+    if(
+
+        meuSaldo <
+
+        valor
+
+    ){
+
+        const irCarteira =
+
+            confirm(
+
+                "Saldo insuficiente.\n\n" +
+
+                "Este presente custa " +
+
+                valor +
+
+                " pontos.\n\n" +
+
+                "Deseja abrir sua Carteira?"
+
+            );
+
+        if(irCarteira){
+
+            abrirCarteira();
+
         }
 
-        function pararCamera() {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-                mediaStream = null;
-            }
-            clearInterval(timerInterval);
+        return;
+
+    }
+
+    meuSaldo -=
+
+        valor;
+
+    atualizarSaldoNaTela();
+
+    const chat =
+
+        document.getElementById(
+
+            "chat-messages"
+
+        );
+
+    const mensagem =
+
+        document.createElement(
+
+            "div"
+
+        );
+
+    mensagem.className =
+
+        "chat-msg";
+
+    mensagem.style.color =
+
+        "#ff79ac";
+
+    const destaque =
+
+        document.createElement(
+
+            "span"
+
+        );
+
+    destaque.textContent =
+
+        "🎁 Você enviou " +
+
+        nome +
+
+        " por " +
+
+        valor +
+
+        " pts!";
+
+    mensagem.appendChild(
+
+        destaque
+
+    );
+
+    chat.appendChild(
+
+        mensagem
+
+    );
+
+    chat.scrollTop =
+
+        chat.scrollHeight;
+
+}
+
+function abrirModalDenuncia(){
+
+    document.getElementById(
+
+        "reportModal"
+
+    ).style.display =
+
+        "flex";
+
+}
+
+function fecharModalDenuncia(){
+
+    document.getElementById(
+
+        "reportModal"
+
+    ).style.display =
+
+        "none";
+
+}
+
+async function enviarDenuncia(){
+
+    const motivo =
+
+        document.getElementById(
+
+            "reportReason"
+
+        ).value;
+
+    const detalhes =
+
+        document.getElementById(
+
+            "reportDetails"
+
+        ).value;
+
+    const titulo =
+
+        document.getElementById(
+
+            "player-title"
+
+        ).innerText;
+
+    const criador =
+
+        document.getElementById(
+
+            "player-host-name"
+
+        ).innerText;
+
+    const dados = {
+
+        userId:
+
+            globalUserId,
+
+        liveTitle:
+
+            titulo,
+
+        creator:
+
+            criador,
+
+        motivo:
+
+            motivo,
+
+        detalhes:
+
+            detalhes ||
+
+            "Nenhum detalhe informado"
+
+    };
+
+    try{
+
+        const resposta =
+
+            await fetch(
+
+                "/api/denuncia",
+
+                {
+
+                    method:
+
+                        "POST",
+
+                    headers:{
+
+                        "Content-Type":
+
+                            "application/json"
+
+                    },
+
+                    body:
+
+                        JSON.stringify(
+
+                            dados
+
+                        )
+
+                }
+
+            );
+
+        if(!resposta.ok){
+
+            throw new Error(
+
+                "Erro"
+
+            );
+
         }
 
-        function fecharLive() {
-            pararCamera();
-            document.getElementById('extendModal').style.display = 'none';
-            document.getElementById('reportModal').style.display = 'none';
-            document.getElementById('live-player-container').style.display = 'none';
-            document.getElementById('lives-home').style.display = 'block';
-            window.scrollTo(0, 0);
+        alert(
+
+            "Denúncia enviada. A equipe do Ajuda JP irá analisar."
+
+        );
+
+    }catch(error){
+
+        console.error(
+
+            error
+
+        );
+
+        alert(
+
+            "Não foi possível enviar a denúncia agora."
+
+        );
+
+    }
+
+    document.getElementById(
+
+        "reportDetails"
+
+    ).value =
+
+        "";
+
+    fecharModalDenuncia();
+
+}
+
+document.getElementById(
+
+    "chat-input"
+
+).addEventListener(
+
+    "keydown",
+
+    event => {
+
+        if(
+
+            event.key ===
+
+            "Enter"
+
+        ){
+
+            event.preventDefault();
+
+            enviarMensagem();
+
         }
 
-        function enviarMensagem() {
-            const input = document.getElementById('chat-input');
-            const texto = input.value.trim();
-            if(texto !== '') {
-                const chatBox = document.getElementById('chat-messages');
-                const novaMsg = document.createElement('div');
-                novaMsg.className = 'chat-msg';
-                novaMsg.innerHTML = `<span>Você:</span> ${texto}`;
-                chatBox.appendChild(novaMsg);
-                input.value = '';
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        }
+    }
 
-        function enviarPresente(nomePresente, valor) {
-            if (meuSaldo < valor) {
-                alert("❌ Saldo insuficiente! Toque no ícone de moedas no topo para recarregar créditos.");
-                return;
-            }
+);
 
-            meuSaldo -= valor;
-            atualizarSaldoNaTela();
+atualizarSaldoNaTela();
 
-            const chatBox = document.getElementById('chat-messages');
-            const novaMsg = document.createElement('div');
-            novaMsg.className = 'chat-msg';
-            novaMsg.style.color = '#d81b60';
-            novaMsg.innerHTML = `🎁 <span>Você enviou ${nomePresente} (${valor}¥)!</span> O criador agradece o apoio!`;
-            chatBox.appendChild(novaMsg);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    </script>
+</script>
+
 </body>
+
 </html>
