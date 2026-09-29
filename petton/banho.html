@@ -222,7 +222,7 @@ body {
 
 /* =========================================================
 
-   PALCO DO BANHO
+   PALCO
 
 ========================================================= */
 
@@ -240,9 +240,7 @@ body {
 
         );
 
-    aspect-ratio:
-
-        1 / 1;
+    aspect-ratio: 1 / 1;
 
     margin:
 
@@ -266,9 +264,7 @@ body {
 
 /* =========================================================
 
-   CAMADA 1
-
-   FUNDO DO BANHEIRO
+   FUNDO COMPLETO
 
 ========================================================= */
 
@@ -290,13 +286,13 @@ body {
 
     pointer-events: none;
 
+    user-select: none;
+
 }
 
 /* =========================================================
 
    PETTON
-
-   FICA ENTRE O FUNDO E A FRENTE
 
 ========================================================= */
 
@@ -348,65 +344,49 @@ body {
 
 }
 
-/* =========================================================
-
-   COELHO
-
-========================================================= */
+/* COELHO */
 
 #pettonBanho.pet-coelho {
 
     width: 42%;
 
-    max-height: 42%;
+    max-height: 43%;
 
     top: 38%;
 
 }
 
-/* =========================================================
-
-   GATO
-
-========================================================= */
+/* GATO */
 
 #pettonBanho.pet-gato {
 
     width: 40%;
 
-    max-height: 41%;
+    max-height: 42%;
 
     top: 39%;
 
 }
 
-/* =========================================================
-
-   CACHORRO
-
-========================================================= */
+/* CACHORRO */
 
 #pettonBanho.pet-cachorro {
 
     width: 41%;
 
-    max-height: 41%;
+    max-height: 42%;
 
     top: 39%;
 
 }
 
-/* =========================================================
-
-   URSO
-
-========================================================= */
+/* URSO */
 
 #pettonBanho.pet-urso {
 
     width: 41%;
 
-    max-height: 41%;
+    max-height: 42%;
 
     top: 39%;
 
@@ -414,7 +394,7 @@ body {
 
 /* =========================================================
 
-   MOVIMENTO LEVE
+   RESPIRAÇÃO
 
 ========================================================= */
 
@@ -444,25 +424,41 @@ body {
 
 /* =========================================================
 
-   CAMADA 3
-
    FRENTE DA BANHEIRA
 
-   FICA NA FRENTE DO PETTON
-
 ========================================================= */
+
+/*
+
+   IMPORTANTE:
+
+   A imagem banho-frente.png NÃO vai mais preencher
+
+   o quadrado inteiro.
+
+   Ela fica somente na região da banheira.
+
+   Isso evita que uma imagem transparente enorme
+
+   fique cobrindo toda a cena.
+
+*/
 
 #banhoFrente {
 
     position: absolute;
 
-    left: 0;
+    left: 50%;
 
-    bottom: 0;
+    bottom: 3%;
 
     width: 100%;
 
-    height: 100%;
+    height: auto;
+
+    transform:
+
+        translateX(-50%);
 
     object-fit: contain;
 
@@ -474,13 +470,69 @@ body {
 
     pointer-events: none;
 
+    user-select: none;
+
 }
 
 /* =========================================================
 
-   CHUVEIRO / GOTAS
+   MÁSCARA DA BORDA TRASEIRA
 
-   FICA ACIMA DE TUDO
+========================================================= */
+
+/*
+
+   Esta camada reutiliza banho-fundo.png.
+
+   Só mostramos uma faixa da região da borda traseira
+
+   da banheira.
+
+   Ela fica NA FRENTE do Petton, mas ATRÁS da espuma.
+
+   Assim a borda branca não parece quebrada.
+
+*/
+
+.borda-traseira {
+
+    position: absolute;
+
+    left: 0;
+
+    top: 43%;
+
+    width: 100%;
+
+    height: 18%;
+
+    z-index: 4;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+}
+
+.borda-traseira img {
+
+    position: absolute;
+
+    left: 0;
+
+    top: -239%;
+
+    width: 100%;
+
+    height: auto;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+
+   ÁGUA DO CHUVEIRO
 
 ========================================================= */
 
@@ -616,7 +668,7 @@ body {
 
 /* =========================================================
 
-   BOLHAS FLUTUANDO
+   BOLHAS ANIMADAS
 
 ========================================================= */
 
@@ -906,11 +958,7 @@ body {
 
 ========================================================= */
 
-@media (
-
-    max-width: 380px
-
-) {
+@media (max-width: 380px) {
 
     .titulo h2 {
 
@@ -934,11 +982,7 @@ body {
 
 <div class="app">
 
-    <!-- =====================================================
-
-         TOPO
-
-    ====================================================== -->
+    <!-- TOPO -->
 
     <div class="topo">
 
@@ -966,11 +1010,7 @@ body {
 
     </div>
 
-    <!-- =====================================================
-
-         TÍTULO
-
-    ====================================================== -->
+    <!-- TÍTULO -->
 
     <div class="titulo">
 
@@ -990,19 +1030,13 @@ body {
 
     <!-- =====================================================
 
-         CENA
+         CENA DO BANHO
 
     ====================================================== -->
 
     <div class="banho-palco">
 
-        <!--
-
-            CAMADA 1
-
-            FUNDO
-
-        -->
+        <!-- 1 - FUNDO COMPLETO -->
 
         <img
 
@@ -1014,13 +1048,7 @@ body {
 
         >
 
-        <!--
-
-            CAMADA 2
-
-            PETTON DO JOGADOR
-
-        -->
+        <!-- 2 - PETTON -->
 
         <img
 
@@ -1034,11 +1062,27 @@ body {
 
         <!--
 
-            CAMADA 3
+             3 - BORDA TRASEIRA
 
-            FRENTE DA BANHEIRA + ESPUMA
+             Reutilizamos banho-fundo.png,
+
+             mas mostramos somente a faixa da borda.
 
         -->
+
+        <div class="borda-traseira">
+
+            <img
+
+                src="banho-fundo.png"
+
+                alt=""
+
+            >
+
+        </div>
+
+        <!-- 4 - FRENTE / ESPUMA -->
 
         <img
 
@@ -1050,11 +1094,7 @@ body {
 
         >
 
-        <!--
-
-            GOTAS
-
-        -->
+        <!-- 5 - CHUVEIRO -->
 
         <div id="aguaChuveiro">
 
@@ -1070,21 +1110,13 @@ body {
 
         </div>
 
-        <!--
-
-            BOLHAS
-
-        -->
+        <!-- 6 - BOLHAS -->
 
         <div id="bolhas"></div>
 
     </div>
 
-    <!-- =====================================================
-
-         HIGIENE
-
-    ====================================================== -->
+    <!-- HIGIENE -->
 
     <div class="status">
 
@@ -1112,11 +1144,7 @@ body {
 
     </div>
 
-    <!-- =====================================================
-
-         BOTÃO
-
-    ====================================================== -->
+    <!-- BOTÃO -->
 
     <button
 
@@ -1142,11 +1170,7 @@ body {
 
 /* =========================================================
 
-   IMAGENS DE SEGURANÇA
-
-   SÓ SERÃO USADAS CASO O PETTON NÃO TENHA
-
-   UMA IMAGEM PRÓPRIA SALVA.
+   IMAGENS PADRÃO
 
 ========================================================= */
 
@@ -1172,7 +1196,7 @@ const IMAGENS_PETTON = {
 
 /* =========================================================
 
-   CARREGAR PETTON
+   CARREGAR DADOS
 
 ========================================================= */
 
@@ -1182,13 +1206,9 @@ function pegarDados() {
 
         if (
 
-            typeof Petton !==
+            typeof Petton !== "undefined" &&
 
-            "undefined" &&
-
-            typeof Petton.carregar ===
-
-            "function"
+            typeof Petton.carregar === "function"
 
         ) {
 
@@ -1214,15 +1234,11 @@ function pegarDados() {
 
 /* =========================================================
 
-   DESCOBRIR ESPÉCIE
+   ESPÉCIE
 
 ========================================================= */
 
-function pegarEspecie(
-
-    dados
-
-) {
+function pegarEspecie(dados) {
 
     let especie =
 
@@ -1244,23 +1260,13 @@ function pegarEspecie(
 
     if (
 
-        especie.includes(
+        especie.includes("cach") ||
 
-            "cach"
+        especie === "dog" ||
 
-        ) ||
+        especie === "cao" ||
 
-        especie ===
-
-            "dog" ||
-
-        especie ===
-
-            "cao" ||
-
-        especie ===
-
-            "cão"
+        especie === "cão"
 
     ) {
 
@@ -1270,19 +1276,11 @@ function pegarEspecie(
 
     if (
 
-        especie.includes(
+        especie.includes("coelh") ||
 
-            "coelh"
+        especie === "rabbit" ||
 
-        ) ||
-
-        especie ===
-
-            "rabbit" ||
-
-        especie ===
-
-            "bunny"
+        especie === "bunny"
 
     ) {
 
@@ -1292,15 +1290,9 @@ function pegarEspecie(
 
     if (
 
-        especie.includes(
+        especie.includes("urso") ||
 
-            "urso"
-
-        ) ||
-
-        especie ===
-
-            "bear"
+        especie === "bear"
 
     ) {
 
@@ -1314,29 +1306,15 @@ function pegarEspecie(
 
 /* =========================================================
 
-   IMAGEM DO PETTON
-
-   PRIMEIRO TENTA PEGAR A IMAGEM REAL SALVA.
-
-   ISSO É IMPORTANTE PARA FUTURAMENTE FUNCIONAR
-
-   COM PETTONS DE CORES DIFERENTES.
+   PEGAR IMAGEM
 
 ========================================================= */
 
-function pegarImagem(
-
-    dados
-
-) {
+function pegarImagem(dados) {
 
     if (!dados) {
 
-        return (
-
-            IMAGENS_PETTON.gato
-
-        );
+        return IMAGENS_PETTON.gato;
 
     }
 
@@ -1372,49 +1350,29 @@ function pegarImagem(
 
     } catch (erro) {
 
-        console.error(
-
-            erro
-
-        );
+        console.error(erro);
 
     }
 
-    if (
-
-        dados.imagem
-
-    ) {
+    if (dados.imagem) {
 
         return dados.imagem;
 
     }
 
-    if (
-
-        dados.image
-
-    ) {
+    if (dados.image) {
 
         return dados.image;
 
     }
 
-    if (
-
-        dados.img
-
-    ) {
+    if (dados.img) {
 
         return dados.img;
 
     }
 
-    if (
-
-        dados.sprite
-
-    ) {
+    if (dados.sprite) {
 
         return dados.sprite;
 
@@ -1422,11 +1380,7 @@ function pegarImagem(
 
     const especie =
 
-        pegarEspecie(
-
-            dados
-
-        );
+        pegarEspecie(dados);
 
     return (
 
@@ -1440,15 +1394,11 @@ function pegarImagem(
 
 /* =========================================================
 
-   AJUSTAR TAMANHO/POSIÇÃO PELA ESPÉCIE
+   AJUSTAR PETTON
 
 ========================================================= */
 
-function ajustarPetton(
-
-    dados
-
-) {
+function ajustarPetton(dados) {
 
     const imagem =
 
@@ -1458,11 +1408,7 @@ function ajustarPetton(
 
         );
 
-    if (
-
-        !imagem
-
-    ) {
+    if (!imagem) {
 
         return;
 
@@ -1470,11 +1416,7 @@ function ajustarPetton(
 
     const especie =
 
-        pegarEspecie(
-
-            dados
-
-        );
+        pegarEspecie(dados);
 
     imagem.classList.remove(
 
@@ -1490,9 +1432,7 @@ function ajustarPetton(
 
     imagem.classList.add(
 
-        "pet-" +
-
-        especie
+        "pet-" + especie
 
     );
 
@@ -1510,11 +1450,7 @@ function atualizarTelaBanho() {
 
         pegarDados();
 
-    if (
-
-        !dados
-
-    ) {
+    if (!dados) {
 
         console.warn(
 
@@ -1526,11 +1462,7 @@ function atualizarTelaBanho() {
 
     }
 
-    /* =====================================================
-
-       PETTON
-
-    ====================================================== */
+    /* PETTON */
 
     const imagem =
 
@@ -1540,51 +1472,27 @@ function atualizarTelaBanho() {
 
         );
 
-    if (
+    if (imagem) {
 
-        imagem
-
-    ) {
-
-        ajustarPetton(
-
-            dados
-
-        );
+        ajustarPetton(dados);
 
         const src =
 
-            pegarImagem(
-
-                dados
-
-            );
+            pegarImagem(dados);
 
         if (
 
-            imagem.getAttribute(
-
-                "src"
-
-            ) !==
-
-            src
+            imagem.getAttribute("src") !== src
 
         ) {
 
-            imagem.src =
-
-                src;
+            imagem.src = src;
 
         }
 
     }
 
-    /* =====================================================
-
-       HIGIENE
-
-    ====================================================== */
+    /* HIGIENE */
 
     let higiene =
 
@@ -1600,17 +1508,11 @@ function atualizarTelaBanho() {
 
     if (
 
-        Number.isNaN(
-
-            higiene
-
-        )
+        Number.isNaN(higiene)
 
     ) {
 
-        higiene =
-
-            0;
+        higiene = 0;
 
     }
 
@@ -1646,29 +1548,17 @@ function atualizarTelaBanho() {
 
         );
 
-    if (
-
-        valor
-
-    ) {
+    if (valor) {
 
         valor.textContent =
 
-            Math.round(
-
-                higiene
-
-            ) +
+            Math.round(higiene) +
 
             "%";
 
     }
 
-    if (
-
-        barra
-
-    ) {
+    if (barra) {
 
         barra.style.width =
 
@@ -1678,11 +1568,7 @@ function atualizarTelaBanho() {
 
     }
 
-    /* =====================================================
-
-       BOTÃO / MENSAGEM
-
-    ====================================================== */
+    /* BOTÃO */
 
     const mensagem =
 
@@ -1700,21 +1586,13 @@ function atualizarTelaBanho() {
 
         );
 
-    if (
-
-        higiene >=
-
-        90
-
-    ) {
+    if (higiene >= 90) {
 
         mensagem.textContent =
 
             "✨ Seu Petton já está limpinho!";
 
-        botao.disabled =
-
-            true;
+        botao.disabled = true;
 
     } else {
 
@@ -1722,9 +1600,7 @@ function atualizarTelaBanho() {
 
             "🫧 Seu Petton está pronto para o banho.";
 
-        botao.disabled =
-
-            false;
+        botao.disabled = false;
 
     }
 
@@ -1732,7 +1608,7 @@ function atualizarTelaBanho() {
 
 /* =========================================================
 
-   CRIAR BOLHAS
+   BOLHAS
 
 ========================================================= */
 
@@ -1746,19 +1622,13 @@ function criarBolhas() {
 
         );
 
-    if (
-
-        !area
-
-    ) {
+    if (!area) {
 
         return;
 
     }
 
-    area.innerHTML =
-
-        "";
+    area.innerHTML = "";
 
     const bolhas = [
 
@@ -1782,11 +1652,7 @@ function criarBolhas() {
 
     bolhas.forEach(
 
-        function(
-
-            item
-
-        ) {
+        function(item) {
 
             const bolha =
 
@@ -1848,11 +1714,7 @@ function darBanho() {
 
         pegarDados();
 
-    if (
-
-        !dados
-
-    ) {
+    if (!dados) {
 
         return;
 
@@ -1870,13 +1732,7 @@ function darBanho() {
 
         );
 
-    if (
-
-        higiene >=
-
-        90
-
-    ) {
+    if (higiene >= 90) {
 
         return;
 
@@ -1898,21 +1754,13 @@ function darBanho() {
 
         );
 
-    botao.disabled =
-
-        true;
+    botao.disabled = true;
 
     mensagem.textContent =
 
         "🫧 Tomando banho...";
 
     criarBolhas();
-
-    /* =====================================================
-
-       ANIMAÇÃO DO PETTON DURANTE O BANHO
-
-    ====================================================== */
 
     const pet =
 
@@ -1922,11 +1770,7 @@ function darBanho() {
 
         );
 
-    if (
-
-        pet
-
-    ) {
+    if (pet) {
 
         pet.animate(
 
@@ -1976,13 +1820,9 @@ function darBanho() {
 
             {
 
-                duration:
+                duration: 900,
 
-                    900,
-
-                iterations:
-
-                    3
+                iterations: 3
 
             }
 
@@ -1990,31 +1830,19 @@ function darBanho() {
 
     }
 
-    /* =====================================================
-
-       FINALIZAR BANHO
-
-    ====================================================== */
-
     setTimeout(
 
         function() {
 
-            let sucesso =
-
-                false;
+            let sucesso = false;
 
             try {
 
                 if (
 
-                    typeof Petton !==
+                    typeof Petton !== "undefined" &&
 
-                    "undefined" &&
-
-                    typeof Petton.limpar ===
-
-                    "function"
+                    typeof Petton.limpar === "function"
 
                 ) {
 
@@ -2024,27 +1852,15 @@ function darBanho() {
 
                 }
 
-            } catch (
+            } catch (erro) {
 
-                erro
-
-            ) {
-
-                console.error(
-
-                    erro
-
-                );
+                console.error(erro);
 
             }
 
             atualizarTelaBanho();
 
-            if (
-
-                sucesso
-
-            ) {
+            if (sucesso) {
 
                 mensagem.textContent =
 
@@ -2118,4 +1934,4 @@ document.addEventListener(
 
 </body>
 
-</html
+</html>
