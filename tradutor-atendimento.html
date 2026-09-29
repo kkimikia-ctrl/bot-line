@@ -526,11 +526,17 @@ button {
 
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2,1fr);
 
     gap: 10px;
 
     margin-bottom: 17px;
+
+}
+
+.stats.stats-3 {
+
+    grid-template-columns: repeat(3,1fr);
 
 }
 
@@ -574,6 +580,12 @@ button {
 
 }
 
+.stat-value.small {
+
+    font-size: 18px;
+
+}
+
 .section-title {
 
     display: flex;
@@ -582,7 +594,13 @@ button {
 
     align-items: center;
 
-    margin: 4px 2px 11px;
+    margin: 20px 2px 11px;
+
+}
+
+.section-title:first-of-type {
+
+    margin-top: 4px;
 
 }
 
@@ -592,7 +610,7 @@ button {
 
 }
 
-#atualizando {
+.section-small {
 
     font-size: 11px;
 
@@ -804,7 +822,7 @@ button {
 
     border-radius: 21px;
 
-    padding: 36px 20px;
+    padding: 30px 20px;
 
     text-align: center;
 
@@ -839,6 +857,158 @@ button {
     margin-top: 6px;
 
     line-height: 1.45;
+
+}
+
+/* =========================================================
+
+   HISTÓRICO
+
+========================================================= */
+
+#listaHistorico {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+.historico-card {
+
+    background: white;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 18px;
+
+    padding: 15px;
+
+    box-shadow:
+
+        0 7px 22px rgba(15,23,42,.05);
+
+}
+
+.historico-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+}
+
+.historico-cliente {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+.historico-avatar {
+
+    width: 40px;
+
+    height: 40px;
+
+    border-radius: 13px;
+
+    background: #ecfdf5;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 19px;
+
+}
+
+.historico-nome {
+
+    font-size: 14px;
+
+    font-weight: 900;
+
+}
+
+.historico-data {
+
+    margin-top: 3px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+
+}
+
+.historico-badge {
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    border-radius: 20px;
+
+    padding: 6px 9px;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+}
+
+.historico-info {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+
+    margin-top: 12px;
+
+}
+
+.historico-info-box {
+
+    background: #f8fafc;
+
+    border-radius: 12px;
+
+    padding: 10px;
+
+}
+
+.historico-info-label {
+
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 9px;
+
+    margin-bottom: 3px;
+
+}
+
+.historico-info-value {
+
+    display: block;
+
+    font-size: 12px;
+
+    font-weight: 800;
 
 }
 
@@ -1188,6 +1358,22 @@ button {
 
 }
 
+@media (max-width: 390px) {
+
+    .stats.stats-3 {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+    .stats.stats-3 .stat:last-child {
+
+        grid-column: 1 / -1;
+
+    }
+
+}
+
 </style>
 
 </head>
@@ -1396,7 +1582,7 @@ button {
 
     </section>
 
-    <div class="stats">
+    <div class="stats stats-3">
 
         <div class="stat">
 
@@ -1424,7 +1610,7 @@ button {
 
             <span class="stat-label">
 
-                Status
+                Atendimentos hoje
 
             </span>
 
@@ -1432,11 +1618,33 @@ button {
 
                 class="stat-value"
 
-                style="font-size:16px;color:#10b981;"
+                id="totalHoje"
 
             >
 
-                Online
+                0
+
+            </span>
+
+        </div>
+
+        <div class="stat">
+
+            <span class="stat-label">
+
+                Tempo hoje
+
+            </span>
+
+            <span
+
+                class="stat-value small"
+
+                id="tempoHoje"
+
+            >
+
+                0 min
 
             </span>
 
@@ -1452,7 +1660,7 @@ button {
 
         </strong>
 
-        <span id="atualizando">
+        <span class="section-small">
 
             Tempo real
 
@@ -1479,6 +1687,48 @@ button {
             <div class="vazio-sub">
 
                 Buscando solicitações.
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==================================================
+
+         HISTÓRICO
+
+    =================================================== -->
+
+    <div class="section-title">
+
+        <strong>
+
+            📋 Meu histórico
+
+        </strong>
+
+        <span class="section-small">
+
+            Atendimentos finalizados
+
+        </span>
+
+    </div>
+
+    <div id="listaHistorico">
+
+        <div class="vazio">
+
+            <div class="vazio-icon">
+
+                📋
+
+            </div>
+
+            <div class="vazio-title">
+
+                Carregando histórico...
 
             </div>
 
@@ -1648,7 +1898,11 @@ button {
 
                 <span>Cliente</span>
 
-                <span id="atendimentoCliente">-</span>
+                <span id="atendimentoCliente">
+
+                    -
+
+                </span>
 
             </div>
 
@@ -1656,15 +1910,23 @@ button {
 
                 <span>Local</span>
 
-                <span id="atendimentoLocal">-</span>
+                <span id="atendimentoLocal">
+
+                    -
+
+                </span>
 
             </div>
 
             <div class="dado">
 
-                <span>Tempo</span>
+                <span>Tempo solicitado</span>
 
-                <span id="atendimentoTempo">-</span>
+                <span id="atendimentoTempo">
+
+                    -
+
+                </span>
 
             </div>
 
@@ -1754,6 +2016,12 @@ import {
 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+/* =========================================================
+
+   CONFIGURAÇÃO
+
+========================================================= */
+
 const firebaseConfig = {
 
     apiKey:
@@ -1806,63 +2074,147 @@ const auth =
 
 const telaLogin =
 
-    document.getElementById("telaLogin");
+    document.getElementById(
+
+        "telaLogin"
+
+    );
 
 const painelTradutor =
 
-    document.getElementById("painelTradutor");
+    document.getElementById(
+
+        "painelTradutor"
+
+    );
 
 const loginEmail =
 
-    document.getElementById("loginEmail");
+    document.getElementById(
+
+        "loginEmail"
+
+    );
 
 const loginSenha =
 
-    document.getElementById("loginSenha");
+    document.getElementById(
+
+        "loginSenha"
+
+    );
 
 const btnLogin =
 
-    document.getElementById("btnLogin");
+    document.getElementById(
+
+        "btnLogin"
+
+    );
 
 const loginErro =
 
-    document.getElementById("loginErro");
+    document.getElementById(
+
+        "loginErro"
+
+    );
 
 const listaSolicitacoes =
 
-    document.getElementById("listaSolicitacoes");
+    document.getElementById(
+
+        "listaSolicitacoes"
+
+    );
 
 const totalAguardando =
 
-    document.getElementById("totalAguardando");
+    document.getElementById(
+
+        "totalAguardando"
+
+    );
+
+const totalHoje =
+
+    document.getElementById(
+
+        "totalHoje"
+
+    );
+
+const tempoHoje =
+
+    document.getElementById(
+
+        "tempoHoje"
+
+    );
+
+const listaHistorico =
+
+    document.getElementById(
+
+        "listaHistorico"
+
+    );
 
 const telaPedidos =
 
-    document.getElementById("telaPedidos");
+    document.getElementById(
+
+        "telaPedidos"
+
+    );
 
 const telaAtendimento =
 
-    document.getElementById("telaAtendimento");
+    document.getElementById(
+
+        "telaAtendimento"
+
+    );
 
 const videoLocal =
 
-    document.getElementById("videoLocal");
+    document.getElementById(
+
+        "videoLocal"
+
+    );
 
 const videoRemoto =
 
-    document.getElementById("videoRemoto");
+    document.getElementById(
+
+        "videoRemoto"
+
+    );
 
 const videoPlaceholder =
 
-    document.getElementById("videoPlaceholder");
+    document.getElementById(
+
+        "videoPlaceholder"
+
+    );
 
 const callStatus =
 
-    document.getElementById("callStatus");
+    document.getElementById(
+
+        "callStatus"
+
+    );
 
 const textoConexao =
 
-    document.getElementById("textoConexao");
+    document.getElementById(
+
+        "textoConexao"
+
+    );
 
 /* =========================================================
 
@@ -1873,6 +2225,8 @@ const textoConexao =
 let tradutorAtual = null;
 
 let unsubscribePedidos = null;
+
+let unsubscribeHistorico = null;
 
 let atendimentoAtualId = null;
 
@@ -1889,6 +2243,8 @@ let unsubscribeClienteCandidates = null;
 let microfoneLigado = true;
 
 let cameraLigada = true;
+
+let chamadaConectada = false;
 
 /* =========================================================
 
@@ -2022,14 +2378,6 @@ async function verificarTradutor(user) {
 
     try {
 
-        /*
-
-        O ID do documento precisa ser
-
-        exatamente o UID do Firebase Authentication.
-
-        */
-
         const tradutorRef =
 
             doc(
@@ -2084,9 +2432,13 @@ async function verificarTradutor(user) {
 
         tradutorAtual = {
 
-            uid: user.uid,
+            uid:
 
-            email: user.email,
+                user.uid,
+
+            email:
+
+                user.email,
 
             nome:
 
@@ -2124,7 +2476,7 @@ async function verificarTradutor(user) {
 
 /* =========================================================
 
-   ESTADO DO LOGIN
+   ESTADO LOGIN
 
 ========================================================= */
 
@@ -2141,6 +2493,8 @@ onAuthStateChanged(
                 null;
 
             pararPedidos();
+
+            pararHistorico();
 
             painelTradutor.style.display =
 
@@ -2164,7 +2518,11 @@ onAuthStateChanged(
 
         const permitido =
 
-            await verificarTradutor(user);
+            await verificarTradutor(
+
+                user
+
+            );
 
         if (!permitido) {
 
@@ -2194,6 +2552,8 @@ onAuthStateChanged(
 
         iniciarPedidos();
 
+        iniciarHistorico();
+
     }
 
 );
@@ -2209,6 +2569,8 @@ async function sair() {
     encerrarWebRTC();
 
     pararPedidos();
+
+    pararHistorico();
 
     await signOut(auth);
 
@@ -2246,7 +2608,13 @@ loginSenha.addEventListener(
 
     event => {
 
-        if (event.key === "Enter") {
+        if (
+
+            event.key ===
+
+            "Enter"
+
+        ) {
 
             fazerLogin();
 
@@ -2302,7 +2670,9 @@ function iniciarPedidos() {
 
             snapshot => {
 
-                const pedidos = [];
+                const pedidos =
+
+                    [];
 
                 snapshot.forEach(
 
@@ -2310,7 +2680,9 @@ function iniciarPedidos() {
 
                         pedidos.push({
 
-                            id: documento.id,
+                            id:
+
+                                documento.id,
 
                             ...documento.data()
 
@@ -2390,6 +2762,814 @@ function pararPedidos() {
 
 /* =========================================================
 
+   HISTÓRICO
+
+========================================================= */
+
+function iniciarHistorico() {
+
+    if (
+
+        !tradutorAtual ||
+
+        unsubscribeHistorico
+
+    ) {
+
+        return;
+
+    }
+
+    /*
+
+    Buscamos somente documentos deste tradutor.
+
+    O filtro de "finalizado" é feito no navegador.
+
+    Isso evita a necessidade de criar índice composto
+
+    agora no Firestore.
+
+    */
+
+    const consulta =
+
+        query(
+
+            collection(
+
+                db,
+
+                "solicitacoes"
+
+            ),
+
+            where(
+
+                "tradutorId",
+
+                "==",
+
+                tradutorAtual.uid
+
+            )
+
+        );
+
+    unsubscribeHistorico =
+
+        onSnapshot(
+
+            consulta,
+
+            snapshot => {
+
+                const atendimentos =
+
+                    [];
+
+                snapshot.forEach(
+
+                    documento => {
+
+                        const dados =
+
+                            documento.data();
+
+                        if (
+
+                            dados.status ===
+
+                            "finalizado"
+
+                        ) {
+
+                            atendimentos.push({
+
+                                id:
+
+                                    documento.id,
+
+                                ...dados
+
+                            });
+
+                        }
+
+                    }
+
+                );
+
+                /*
+
+                Mais recente primeiro.
+
+                */
+
+                atendimentos.sort(
+
+                    (a,b) => {
+
+                        const ta =
+
+                            timestampParaMillis(
+
+                                a.finalizadoEm
+
+                            );
+
+                        const tb =
+
+                            timestampParaMillis(
+
+                                b.finalizadoEm
+
+                            );
+
+                        return tb - ta;
+
+                    }
+
+                );
+
+                atualizarEstatisticas(
+
+                    atendimentos
+
+                );
+
+                mostrarHistorico(
+
+                    atendimentos
+
+                );
+
+            },
+
+            erro => {
+
+                console.error(
+
+                    "Erro histórico:",
+
+                    erro
+
+                );
+
+                listaHistorico.innerHTML = `
+
+                    <div class="vazio">
+
+                        <div class="vazio-icon">
+
+                            ⚠️
+
+                        </div>
+
+                        <div class="vazio-title">
+
+                            Não foi possível carregar o histórico
+
+                        </div>
+
+                        <div class="vazio-sub">
+
+                            Tente novamente mais tarde.
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+        );
+
+}
+
+function pararHistorico() {
+
+    if (unsubscribeHistorico) {
+
+        unsubscribeHistorico();
+
+        unsubscribeHistorico =
+
+            null;
+
+    }
+
+}
+
+/* =========================================================
+
+   TIMESTAMP
+
+========================================================= */
+
+function timestampParaData(timestamp) {
+
+    if (!timestamp) {
+
+        return null;
+
+    }
+
+    if (
+
+        typeof timestamp.toDate ===
+
+        "function"
+
+    ) {
+
+        return timestamp.toDate();
+
+    }
+
+    if (
+
+        timestamp.seconds
+
+    ) {
+
+        return new Date(
+
+            timestamp.seconds *
+
+            1000
+
+        );
+
+    }
+
+    return null;
+
+}
+
+function timestampParaMillis(timestamp) {
+
+    const data =
+
+        timestampParaData(
+
+            timestamp
+
+        );
+
+    if (!data) {
+
+        return 0;
+
+    }
+
+    return data.getTime();
+
+}
+
+/* =========================================================
+
+   DURAÇÃO REAL
+
+========================================================= */
+
+function calcularDuracaoSegundos(
+
+    atendimento
+
+) {
+
+    const inicio =
+
+        timestampParaData(
+
+            atendimento.conectadoEm
+
+        );
+
+    const fim =
+
+        timestampParaData(
+
+            atendimento.finalizadoEm
+
+        );
+
+    if (!inicio || !fim) {
+
+        return 0;
+
+    }
+
+    const segundos =
+
+        Math.floor(
+
+            (
+
+                fim.getTime() -
+
+                inicio.getTime()
+
+            ) /
+
+            1000
+
+        );
+
+    return Math.max(
+
+        0,
+
+        segundos
+
+    );
+
+}
+
+function formatarDuracao(segundos) {
+
+    if (!segundos) {
+
+        return "0 min";
+
+    }
+
+    const minutos =
+
+        Math.floor(
+
+            segundos /
+
+            60
+
+        );
+
+    const resto =
+
+        segundos %
+
+        60;
+
+    if (minutos === 0) {
+
+        return resto +
+
+            " seg";
+
+    }
+
+    if (resto === 0) {
+
+        return minutos +
+
+            " min";
+
+    }
+
+    return minutos +
+
+        " min " +
+
+        resto +
+
+        " seg";
+
+}
+
+/* =========================================================
+
+   HOJE
+
+========================================================= */
+
+function mesmaData(
+
+    dataA,
+
+    dataB
+
+) {
+
+    return (
+
+        dataA.getFullYear() ===
+
+            dataB.getFullYear() &&
+
+        dataA.getMonth() ===
+
+            dataB.getMonth() &&
+
+        dataA.getDate() ===
+
+            dataB.getDate()
+
+    );
+
+}
+
+function atualizarEstatisticas(
+
+    atendimentos
+
+) {
+
+    const hoje =
+
+        new Date();
+
+    let quantidade =
+
+        0;
+
+    let segundos =
+
+        0;
+
+    atendimentos.forEach(
+
+        atendimento => {
+
+            const finalizado =
+
+                timestampParaData(
+
+                    atendimento.finalizadoEm
+
+                );
+
+            if (
+
+                finalizado &&
+
+                mesmaData(
+
+                    finalizado,
+
+                    hoje
+
+                )
+
+            ) {
+
+                quantidade++;
+
+                segundos +=
+
+                    calcularDuracaoSegundos(
+
+                        atendimento
+
+                    );
+
+            }
+
+        }
+
+    );
+
+    totalHoje.textContent =
+
+        quantidade;
+
+    const minutos =
+
+        Math.floor(
+
+            segundos /
+
+            60
+
+        );
+
+    if (
+
+        minutos <
+
+        60
+
+    ) {
+
+        tempoHoje.textContent =
+
+            minutos +
+
+            " min";
+
+    } else {
+
+        const horas =
+
+            Math.floor(
+
+                minutos /
+
+                60
+
+            );
+
+        const resto =
+
+            minutos %
+
+            60;
+
+        tempoHoje.textContent =
+
+            horas +
+
+            "h " +
+
+            resto +
+
+            "m";
+
+    }
+
+}
+
+/* =========================================================
+
+   FORMATAR DATA
+
+========================================================= */
+
+function formatarDataHora(timestamp) {
+
+    const data =
+
+        timestampParaData(
+
+            timestamp
+
+        );
+
+    if (!data) {
+
+        return "Data não disponível";
+
+    }
+
+    try {
+
+        return new Intl.DateTimeFormat(
+
+            "pt-BR",
+
+            {
+
+                day:
+
+                    "2-digit",
+
+                month:
+
+                    "2-digit",
+
+                year:
+
+                    "numeric",
+
+                hour:
+
+                    "2-digit",
+
+                minute:
+
+                    "2-digit"
+
+            }
+
+        ).format(data);
+
+    } catch (erro) {
+
+        return data.toLocaleString();
+
+    }
+
+}
+
+/* =========================================================
+
+   MOSTRAR HISTÓRICO
+
+========================================================= */
+
+function mostrarHistorico(
+
+    atendimentos
+
+) {
+
+    if (
+
+        atendimentos.length ===
+
+        0
+
+    ) {
+
+        listaHistorico.innerHTML = `
+
+            <div class="vazio">
+
+                <div class="vazio-icon">
+
+                    📋
+
+                </div>
+
+                <div class="vazio-title">
+
+                    Nenhum atendimento finalizado
+
+                </div>
+
+                <div class="vazio-sub">
+
+                    Seus atendimentos concluídos aparecerão aqui.
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    listaHistorico.innerHTML =
+
+        "";
+
+    /*
+
+    Mostramos os 20 mais recentes.
+
+    */
+
+    atendimentos
+
+        .slice(0,20)
+
+        .forEach(
+
+            atendimento => {
+
+                const nome =
+
+                    escaparHTML(
+
+                        atendimento.clienteNome ||
+
+                        "Cliente"
+
+                    );
+
+                const local =
+
+                    escaparHTML(
+
+                        atendimento.local ||
+
+                        "Não informado"
+
+                    );
+
+                const data =
+
+                    escaparHTML(
+
+                        formatarDataHora(
+
+                            atendimento.finalizadoEm
+
+                        )
+
+                    );
+
+                const duracao =
+
+                    escaparHTML(
+
+                        formatarDuracao(
+
+                            calcularDuracaoSegundos(
+
+                                atendimento
+
+                            )
+
+                        )
+
+                    );
+
+                const card =
+
+                    document.createElement(
+
+                        "div"
+
+                    );
+
+                card.className =
+
+                    "historico-card";
+
+                card.innerHTML = `
+
+                    <div class="historico-top">
+
+                        <div class="historico-cliente">
+
+                            <div class="historico-avatar">
+
+                                👤
+
+                            </div>
+
+                            <div>
+
+                                <div class="historico-nome">
+
+                                    ${nome}
+
+                                </div>
+
+                                <div class="historico-data">
+
+                                    ${data}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="historico-badge">
+
+                            CONCLUÍDO
+
+                        </div>
+
+                    </div>
+
+                    <div class="historico-info">
+
+                        <div class="historico-info-box">
+
+                            <span class="historico-info-label">
+
+                                LOCAL
+
+                            </span>
+
+                            <span class="historico-info-value">
+
+                                📍 ${local}
+
+                            </span>
+
+                        </div>
+
+                        <div class="historico-info-box">
+
+                            <span class="historico-info-label">
+
+                                DURAÇÃO
+
+                            </span>
+
+                            <span class="historico-info-value">
+
+                                ⏱️ ${duracao}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                listaHistorico.appendChild(
+
+                    card
+
+                );
+
+            }
+
+        );
+
+}
+
+/* =========================================================
+
    SEGURANÇA HTML
 
 ========================================================= */
@@ -2422,7 +3602,13 @@ function escaparHTML(valor) {
 
 function mostrarPedidos(pedidos) {
 
-    if (pedidos.length === 0) {
+    if (
+
+        pedidos.length ===
+
+        0
+
+    ) {
 
         listaSolicitacoes.innerHTML = `
 
@@ -2712,6 +3898,14 @@ async function aceitarAtendimento(
 
         }
 
+        /*
+
+        Mantemos o comportamento atual:
+
+        primeiro abrimos câmera/microfone.
+
+        */
+
         localStream =
 
             await navigator.mediaDevices
@@ -2720,17 +3914,27 @@ async function aceitarAtendimento(
 
                     video: {
 
-                        facingMode: "user"
+                        facingMode:
+
+                            "user"
 
                     },
 
-                    audio: true
+                    audio:
+
+                        true
 
                 });
 
         videoLocal.srcObject =
 
             localStream;
+
+        videoLocal
+
+            .play()
+
+            .catch(() => {});
 
         await updateDoc(
 
@@ -2773,6 +3977,10 @@ async function aceitarAtendimento(
         atendimentoAtualId =
 
             pedido.id;
+
+        chamadaConectada =
+
+            false;
 
         abrirAtendimento({
 
@@ -2840,7 +4048,11 @@ async function aceitarAtendimento(
 
 ========================================================= */
 
-function abrirAtendimento(pedido) {
+function abrirAtendimento(
+
+    pedido
+
+) {
 
     telaPedidos.style.display =
 
@@ -2885,6 +4097,20 @@ function abrirAtendimento(pedido) {
         ) +
 
         " minutos";
+
+    callStatus.textContent =
+
+        "⏳ Aguardando cliente";
+
+    callStatus.classList.remove(
+
+        "connected"
+
+    );
+
+    textoConexao.textContent =
+
+        "Preparando videochamada...";
 
 }
 
@@ -3014,7 +4240,9 @@ async function iniciarWebRTCTradutor(
 
             const estado =
 
-                peerConnection.connectionState;
+                peerConnection
+
+                    .connectionState;
 
             console.log(
 
@@ -3024,7 +4252,19 @@ async function iniciarWebRTCTradutor(
 
             );
 
-            if (estado === "connected") {
+            if (
+
+                estado ===
+
+                "connected" &&
+
+                !chamadaConectada
+
+            ) {
+
+                chamadaConectada =
+
+                    true;
 
                 callStatus.textContent =
 
@@ -3082,7 +4322,13 @@ async function iniciarWebRTCTradutor(
 
             }
 
-            if (estado === "failed") {
+            if (
+
+                estado ===
+
+                "failed"
+
+            ) {
 
                 callStatus.textContent =
 
@@ -3097,6 +4343,30 @@ async function iniciarWebRTCTradutor(
                 textoConexao.textContent =
 
                     "Não foi possível conectar a chamada.";
+
+            }
+
+            if (
+
+                estado ===
+
+                "disconnected"
+
+            ) {
+
+                callStatus.textContent =
+
+                    "⚠️ Reconectando...";
+
+                callStatus.classList.remove(
+
+                    "connected"
+
+                );
+
+                textoConexao.textContent =
+
+                    "Conexão interrompida. Tentando reconectar...";
 
             }
 
@@ -3262,15 +4532,19 @@ async function iniciarWebRTCTradutor(
 
                     dados.status ===
 
-                    "finalizado" ||
+                        "finalizado" ||
 
                     dados.status ===
 
-                    "cancelado"
+                        "cancelado"
 
                 ) {
 
                     encerrarWebRTC();
+
+                    atendimentoAtualId =
+
+                        null;
 
                     telaAtendimento.style.display =
 
@@ -3327,6 +4601,12 @@ async function iniciarWebRTCTradutor(
                             }
 
                             try {
+
+                                if (!peerConnection) {
+
+                                    return;
+
+                                }
 
                                 const candidate =
 
@@ -3514,7 +4794,11 @@ function alternarCamera() {
 
 function encerrarWebRTC() {
 
-    if (unsubscribeSolicitacao) {
+    if (
+
+        unsubscribeSolicitacao
+
+    ) {
 
         unsubscribeSolicitacao();
 
@@ -3524,7 +4808,11 @@ function encerrarWebRTC() {
 
     }
 
-    if (unsubscribeClienteCandidates) {
+    if (
+
+        unsubscribeClienteCandidates
+
+    ) {
 
         unsubscribeClienteCandidates();
 
@@ -3535,6 +4823,18 @@ function encerrarWebRTC() {
     }
 
     if (peerConnection) {
+
+        peerConnection.ontrack =
+
+            null;
+
+        peerConnection.onicecandidate =
+
+            null;
+
+        peerConnection.onconnectionstatechange =
+
+            null;
 
         peerConnection.close();
 
@@ -3606,6 +4906,58 @@ function encerrarWebRTC() {
 
     );
 
+    textoConexao.textContent =
+
+        "Preparando videochamada...";
+
+    chamadaConectada =
+
+        false;
+
+    microfoneLigado =
+
+        true;
+
+    cameraLigada =
+
+        true;
+
+    const btnMic =
+
+        document.getElementById(
+
+            "btnMicrofone"
+
+        );
+
+    const btnCam =
+
+        document.getElementById(
+
+            "btnCamera"
+
+        );
+
+    btnMic.textContent =
+
+        "🎤 Microfone";
+
+    btnMic.classList.remove(
+
+        "off"
+
+    );
+
+    btnCam.textContent =
+
+        "📹 Câmera";
+
+    btnCam.classList.remove(
+
+        "off"
+
+    );
+
 }
 
 /* =========================================================
@@ -3654,6 +5006,10 @@ async function finalizarAtendimento() {
 
     try {
 
+        const idFinalizado =
+
+            atendimentoAtualId;
+
         const ref =
 
             doc(
@@ -3662,7 +5018,7 @@ async function finalizarAtendimento() {
 
                 "solicitacoes",
 
-                atendimentoAtualId
+                idFinalizado
 
             );
 
