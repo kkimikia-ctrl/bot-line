@@ -318,6 +318,10 @@ button {
 
     margin-bottom: 18px;
 
+    position: relative;
+
+    z-index: 50;
+
 }
 
 .header-left {
@@ -374,37 +378,93 @@ button {
 
 }
 
-.online {
+/* =========================================================
+
+   BOTÃO ONLINE / OFFLINE
+
+========================================================= */
+
+.status-btn {
+
+    appearance: none;
+
+    -webkit-appearance: none;
 
     display: flex;
 
     align-items: center;
 
+    justify-content: center;
+
     gap: 6px;
 
-    padding: 8px 10px;
+    min-height: 38px;
 
-    background: #ecfdf5;
+    padding: 8px 12px;
 
-    color: #047857;
+    border: 0;
 
     border-radius: 30px;
 
     font-size: 11px;
 
-    font-weight: 800;
+    font-weight: 900;
+
+    position: relative;
+
+    z-index: 100;
+
+    touch-action: manipulation;
+
+    -webkit-user-select: none;
+
+    user-select: none;
 
 }
 
-.online-dot {
+.status-btn.online {
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+}
+
+.status-btn.offline {
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+}
+
+.status-dot {
 
     width: 8px;
 
     height: 8px;
 
+    border-radius: 50%;
+
+    flex-shrink: 0;
+
+}
+
+.status-btn.online .status-dot {
+
     background: #10b981;
 
-    border-radius: 50%;
+}
+
+.status-btn.offline .status-dot {
+
+    background: #94a3b8;
+
+}
+
+.status-btn:disabled {
+
+    opacity: .55;
 
 }
 
@@ -481,6 +541,8 @@ button {
     right: -50px;
 
     top: -55px;
+
+    pointer-events: none;
 
 }
 
@@ -1526,13 +1588,23 @@ button {
 
     <div class="header-right">
 
-        <div class="online">
+        <!-- BOTÃO ONLINE / OFFLINE -->
 
-            <span class="online-dot"></span>
+        <button
 
-            Online
+            type="button"
 
-        </div>
+            id="btnStatus"
+
+            class="status-btn online"
+
+        >
+
+            <span class="status-dot"></span>
+
+            <span id="textoStatus">Online</span>
+
+        </button>
 
         <button
 
@@ -1693,12 +1765,6 @@ button {
         </div>
 
     </div>
-
-    <!-- ==================================================
-
-         HISTÓRICO
-
-    =================================================== -->
 
     <div class="section-title">
 
@@ -1898,11 +1964,7 @@ button {
 
                 <span>Cliente</span>
 
-                <span id="atendimentoCliente">
-
-                    -
-
-                </span>
+                <span id="atendimentoCliente">-</span>
 
             </div>
 
@@ -1910,11 +1972,7 @@ button {
 
                 <span>Local</span>
 
-                <span id="atendimentoLocal">
-
-                    -
-
-                </span>
+                <span id="atendimentoLocal">-</span>
 
             </div>
 
@@ -1922,11 +1980,7 @@ button {
 
                 <span>Tempo solicitado</span>
 
-                <span id="atendimentoTempo">
-
-                    -
-
-                </span>
+                <span id="atendimentoTempo">-</span>
 
             </div>
 
@@ -1958,7 +2012,7 @@ button {
 
 /* =========================================================
 
-   FIREBASE APP
+   FIREBASE
 
 ========================================================= */
 
@@ -1967,12 +2021,6 @@ import {
     initializeApp
 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-/* =========================================================
-
-   FIREBASE AUTH
-
-========================================================= */
 
 import {
 
@@ -1985,12 +2033,6 @@ import {
     onAuthStateChanged
 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-/* =========================================================
-
-   FIRESTORE
-
-========================================================= */
 
 import {
 
@@ -2074,147 +2116,83 @@ const auth =
 
 const telaLogin =
 
-    document.getElementById(
-
-        "telaLogin"
-
-    );
+    document.getElementById("telaLogin");
 
 const painelTradutor =
 
-    document.getElementById(
-
-        "painelTradutor"
-
-    );
+    document.getElementById("painelTradutor");
 
 const loginEmail =
 
-    document.getElementById(
-
-        "loginEmail"
-
-    );
+    document.getElementById("loginEmail");
 
 const loginSenha =
 
-    document.getElementById(
-
-        "loginSenha"
-
-    );
+    document.getElementById("loginSenha");
 
 const btnLogin =
 
-    document.getElementById(
-
-        "btnLogin"
-
-    );
+    document.getElementById("btnLogin");
 
 const loginErro =
 
-    document.getElementById(
-
-        "loginErro"
-
-    );
+    document.getElementById("loginErro");
 
 const listaSolicitacoes =
 
-    document.getElementById(
-
-        "listaSolicitacoes"
-
-    );
+    document.getElementById("listaSolicitacoes");
 
 const totalAguardando =
 
-    document.getElementById(
-
-        "totalAguardando"
-
-    );
+    document.getElementById("totalAguardando");
 
 const totalHoje =
 
-    document.getElementById(
-
-        "totalHoje"
-
-    );
+    document.getElementById("totalHoje");
 
 const tempoHoje =
 
-    document.getElementById(
-
-        "tempoHoje"
-
-    );
+    document.getElementById("tempoHoje");
 
 const listaHistorico =
 
-    document.getElementById(
-
-        "listaHistorico"
-
-    );
+    document.getElementById("listaHistorico");
 
 const telaPedidos =
 
-    document.getElementById(
-
-        "telaPedidos"
-
-    );
+    document.getElementById("telaPedidos");
 
 const telaAtendimento =
 
-    document.getElementById(
-
-        "telaAtendimento"
-
-    );
+    document.getElementById("telaAtendimento");
 
 const videoLocal =
 
-    document.getElementById(
-
-        "videoLocal"
-
-    );
+    document.getElementById("videoLocal");
 
 const videoRemoto =
 
-    document.getElementById(
-
-        "videoRemoto"
-
-    );
+    document.getElementById("videoRemoto");
 
 const videoPlaceholder =
 
-    document.getElementById(
-
-        "videoPlaceholder"
-
-    );
+    document.getElementById("videoPlaceholder");
 
 const callStatus =
 
-    document.getElementById(
-
-        "callStatus"
-
-    );
+    document.getElementById("callStatus");
 
 const textoConexao =
 
-    document.getElementById(
+    document.getElementById("textoConexao");
 
-        "textoConexao"
+const btnStatus =
 
-    );
+    document.getElementById("btnStatus");
+
+const textoStatus =
+
+    document.getElementById("textoStatus");
 
 /* =========================================================
 
@@ -2223,6 +2201,8 @@ const textoConexao =
 ========================================================= */
 
 let tradutorAtual = null;
+
+let tradutorOnline = true;
 
 let unsubscribePedidos = null;
 
@@ -2275,6 +2255,186 @@ const rtcConfiguration = {
     ]
 
 };
+
+/* =========================================================
+
+   ONLINE / OFFLINE
+
+========================================================= */
+
+function atualizarTelaStatus() {
+
+    if (tradutorOnline) {
+
+        btnStatus.classList.remove("offline");
+
+        btnStatus.classList.add("online");
+
+        textoStatus.textContent =
+
+            "Online";
+
+    } else {
+
+        btnStatus.classList.remove("online");
+
+        btnStatus.classList.add("offline");
+
+        textoStatus.textContent =
+
+            "Offline";
+
+    }
+
+}
+
+function mostrarOfflinePedidos() {
+
+    totalAguardando.textContent =
+
+        "0";
+
+    listaSolicitacoes.innerHTML = `
+
+        <div class="vazio">
+
+            <div class="vazio-icon">
+
+                📴
+
+            </div>
+
+            <div class="vazio-title">
+
+                Você está offline
+
+            </div>
+
+            <div class="vazio-sub">
+
+                Toque em Offline no topo para ficar
+
+                online e receber novas solicitações.
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+async function alternarStatus() {
+
+    if (!tradutorAtual) {
+
+        return;
+
+    }
+
+    if (atendimentoAtualId) {
+
+        alert(
+
+            "Finalize o atendimento antes de ficar offline."
+
+        );
+
+        return;
+
+    }
+
+    const novoStatus =
+
+        !tradutorOnline;
+
+    btnStatus.disabled =
+
+        true;
+
+    try {
+
+        const tradutorRef =
+
+            doc(
+
+                db,
+
+                "tradutor_usuarios",
+
+                tradutorAtual.uid
+
+            );
+
+        await updateDoc(
+
+            tradutorRef,
+
+            {
+
+                online:
+
+                    novoStatus,
+
+                statusAtualizadoEm:
+
+                    serverTimestamp()
+
+            }
+
+        );
+
+        tradutorOnline =
+
+            novoStatus;
+
+        atualizarTelaStatus();
+
+        if (tradutorOnline) {
+
+            iniciarPedidos();
+
+        } else {
+
+            pararPedidos();
+
+            mostrarOfflinePedidos();
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+
+            "Erro alterando online/offline:",
+
+            erro
+
+        );
+
+        alert(
+
+            "Não foi possível alterar o status."
+
+        );
+
+    } finally {
+
+        btnStatus.disabled =
+
+            false;
+
+    }
+
+}
+
+btnStatus.addEventListener(
+
+    "click",
+
+    alternarStatus
+
+);
 
 /* =========================================================
 
@@ -2448,6 +2608,20 @@ async function verificarTradutor(user) {
 
         };
 
+        /*
+
+        Se o campo online existir, usa o valor dele.
+
+        Se ainda não existir, começa online.
+
+        */
+
+        tradutorOnline =
+
+            dados.online !== false;
+
+        atualizarTelaStatus();
+
         return true;
 
     } catch (erro) {
@@ -2550,7 +2724,17 @@ onAuthStateChanged(
 
             ". Novos pedidos aparecem aqui automaticamente.";
 
-        iniciarPedidos();
+        if (tradutorOnline) {
+
+            iniciarPedidos();
+
+        } else {
+
+            pararPedidos();
+
+            mostrarOfflinePedidos();
+
+        }
 
         iniciarHistorico();
 
@@ -2632,6 +2816,12 @@ loginSenha.addEventListener(
 
 function iniciarPedidos() {
 
+    if (!tradutorOnline) {
+
+        return;
+
+    }
+
     if (unsubscribePedidos) {
 
         return;
@@ -2669,6 +2859,12 @@ function iniciarPedidos() {
             consulta,
 
             snapshot => {
+
+                if (!tradutorOnline) {
+
+                    return;
+
+                }
 
                 const pedidos =
 
@@ -2780,18 +2976,6 @@ function iniciarHistorico() {
 
     }
 
-    /*
-
-    Buscamos somente documentos deste tradutor.
-
-    O filtro de "finalizado" é feito no navegador.
-
-    Isso evita a necessidade de criar índice composto
-
-    agora no Firestore.
-
-    */
-
     const consulta =
 
         query(
@@ -2859,12 +3043,6 @@ function iniciarHistorico() {
                     }
 
                 );
-
-                /*
-
-                Mais recente primeiro.
-
-                */
 
                 atendimentos.sort(
 
@@ -2988,11 +3166,7 @@ function timestampParaData(timestamp) {
 
     }
 
-    if (
-
-        timestamp.seconds
-
-    ) {
+    if (timestamp.seconds) {
 
         return new Date(
 
@@ -3030,7 +3204,7 @@ function timestampParaMillis(timestamp) {
 
 /* =========================================================
 
-   DURAÇÃO REAL
+   DURAÇÃO
 
 ========================================================= */
 
@@ -3244,13 +3418,7 @@ function atualizarEstatisticas(
 
         );
 
-    if (
-
-        minutos <
-
-        60
-
-    ) {
+    if (minutos < 60) {
 
         tempoHoje.textContent =
 
@@ -3405,12 +3573,6 @@ function mostrarHistorico(
     listaHistorico.innerHTML =
 
         "";
-
-    /*
-
-    Mostramos os 20 mais recentes.
-
-    */
 
     atendimentos
 
@@ -3601,6 +3763,14 @@ function escaparHTML(valor) {
 ========================================================= */
 
 function mostrarPedidos(pedidos) {
+
+    if (!tradutorOnline) {
+
+        mostrarOfflinePedidos();
+
+        return;
+
+    }
 
     if (
 
@@ -3820,7 +3990,7 @@ function mostrarPedidos(pedidos) {
 
 /* =========================================================
 
-   ACEITAR ATENDIMENTO
+   ACEITAR
 
 ========================================================= */
 
@@ -3833,6 +4003,18 @@ async function aceitarAtendimento(
 ) {
 
     if (!tradutorAtual) {
+
+        return;
+
+    }
+
+    if (!tradutorOnline) {
+
+        alert(
+
+            "Você está offline. Fique online para aceitar atendimentos."
+
+        );
 
         return;
 
@@ -3897,14 +4079,6 @@ async function aceitarAtendimento(
             return;
 
         }
-
-        /*
-
-        Mantemos o comportamento atual:
-
-        primeiro abrimos câmera/microfone.
-
-        */
 
         localStream =
 
@@ -4116,7 +4290,7 @@ function abrirAtendimento(
 
 /* =========================================================
 
-   WEBRTC DO TRADUTOR
+   WEBRTC
 
 ========================================================= */
 
@@ -4240,9 +4414,7 @@ async function iniciarWebRTCTradutor(
 
             const estado =
 
-                peerConnection
-
-                    .connectionState;
+                peerConnection.connectionState;
 
             console.log(
 
@@ -4794,11 +4966,7 @@ function alternarCamera() {
 
 function encerrarWebRTC() {
 
-    if (
-
-        unsubscribeSolicitacao
-
-    ) {
+    if (unsubscribeSolicitacao) {
 
         unsubscribeSolicitacao();
 
@@ -4808,11 +4976,7 @@ function encerrarWebRTC() {
 
     }
 
-    if (
-
-        unsubscribeClienteCandidates
-
-    ) {
+    if (unsubscribeClienteCandidates) {
 
         unsubscribeClienteCandidates();
 
