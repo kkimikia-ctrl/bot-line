@@ -1,178 +1,2471 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ajuda JP - Histórico de Créditos</title>
-    
-    <!-- SDKs do Firebase (Modular v10) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração do Firebase com as suas chaves reais
-        const firebaseConfig = {
-            apiKey: "AIzaSyCTQTWEyj8f-Ddk",
-            authDomain: "ajuda-jp.firebaseapp.com",
-            projectId: "ajuda-jp",
-            storageBucket: "ajuda-jp.appspot.com",
-            messagingSenderId: "40121072206",
-            appId: "1:40121072206:web:8a844e632f004f61d0a11f"
-        };
+    <meta
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        name="viewport"
 
-        window.db = db;
-        window.firebaseQuery = { collection, query, where, getDocs };
-    </script>
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+    >
+
+    <meta name="google" content="notranslate">
+
+    <title>Ajuda JP - Carteira</title>
 
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-            color: #333;
+
+        * {
+
+            box-sizing: border-box;
+
+            -webkit-tap-highlight-color: transparent;
+
         }
 
+        html,
+
+        body {
+
+            margin: 0;
+
+            padding: 0;
+
+            width: 100%;
+
+            min-height: 100%;
+
+        }
+
+        body {
+
+            font-family:
+
+                -apple-system,
+
+                BlinkMacSystemFont,
+
+                "Segoe UI",
+
+                Roboto,
+
+                Helvetica,
+
+                Arial,
+
+                sans-serif;
+
+            background:
+
+                linear-gradient(
+
+                    180deg,
+
+                    #eef5ff 0%,
+
+                    #f8fafc 45%,
+
+                    #f1f5f9 100%
+
+                );
+
+            color: #1e293b;
+
+            padding-bottom: 40px;
+
+        }
+
+        button {
+
+            font-family: inherit;
+
+            cursor: pointer;
+
+        }
+
+        /* =====================================================
+
+           HEADER
+
+        ===================================================== */
+
         .header {
-            background-color: #1a73e8;
+
+            background:
+
+                linear-gradient(
+
+                    135deg,
+
+                    #1d4ed8,
+
+                    #2563eb
+
+                );
+
             color: white;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
+
+            padding: 14px 15px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+            box-shadow:
+
+                0 3px 12px rgba(37,99,235,.22);
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 20;
+
+        }
+
+        .header-title {
+
+            font-size: 18px;
+
+            font-weight: 900;
+
         }
 
         .btn-voltar {
-            background: rgba(255, 255, 255, 0.2);
+
+            background:
+
+                rgba(255,255,255,.18);
+
             color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
+
+            border:
+
+                1px solid rgba(255,255,255,.3);
+
+            padding: 7px 13px;
+
+            border-radius: 9px;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
             text-decoration: none;
+
         }
 
+        .header-space {
+
+            width: 64px;
+
+        }
+
+        /* =====================================================
+
+           CONTAINER
+
+        ===================================================== */
+
         .container {
+
+            width: 100%;
+
             max-width: 600px;
-            margin: 20px auto;
-            padding: 0 15px;
+
+            margin: 0 auto;
+
+            padding: 16px;
+
+        }
+
+        /* =====================================================
+
+           CARTEIRA
+
+        ===================================================== */
+
+        .wallet-card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+
+                linear-gradient(
+
+                    135deg,
+
+                    #2563eb,
+
+                    #4f46e5
+
+                );
+
+            color: white;
+
+            border-radius: 24px;
+
+            padding: 23px;
+
+            box-shadow:
+
+                0 15px 35px rgba(37,99,235,.25);
+
+        }
+
+        .wallet-card::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 170px;
+
+            height: 170px;
+
+            border-radius: 50%;
+
+            background:
+
+                rgba(255,255,255,.08);
+
+            right: -55px;
+
+            top: -65px;
+
+        }
+
+        .wallet-label {
+
+            position: relative;
+
+            z-index: 2;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            opacity: .85;
+
+        }
+
+        .wallet-balance {
+
+            position: relative;
+
+            z-index: 2;
+
+            margin-top: 5px;
+
+            font-size: 36px;
+
+            font-weight: 900;
+
+            letter-spacing: -.5px;
+
+        }
+
+        .wallet-description {
+
+            position: relative;
+
+            z-index: 2;
+
+            margin-top: 5px;
+
+            font-size: 12px;
+
+            opacity: .82;
+
+        }
+
+        /* =====================================================
+
+           STATUS DO CRÉDITO
+
+        ===================================================== */
+
+        .credit-status {
+
+            margin-top: 15px;
+
+            background: white;
+
+            border:
+
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            padding: 16px;
+
+            box-shadow:
+
+                0 7px 22px rgba(15,23,42,.06);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+
+        }
+
+        .credit-icon {
+
+            width: 50px;
+
+            height: 50px;
+
+            border-radius: 16px;
+
+            background: #ecfdf5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 25px;
+
+            flex-shrink: 0;
+
+        }
+
+        .credit-status-title {
+
+            font-size: 14px;
+
+            font-weight: 900;
+
+        }
+
+        .credit-status-text {
+
+            margin-top: 3px;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.4;
+
+        }
+
+        .saldo-ok {
+
+            color: #059669;
+
+        }
+
+        .saldo-baixo {
+
+            color: #dc2626;
+
+        }
+
+        /* =====================================================
+
+           BLOCO 30 MIN
+
+        ===================================================== */
+
+        .service-card {
+
+            margin-top: 15px;
+
+            background: white;
+
+            border:
+
+                1px solid #e2e8f0;
+
+            border-radius: 20px;
+
+            padding: 18px;
+
+            box-shadow:
+
+                0 7px 22px rgba(15,23,42,.06);
+
+        }
+
+        .service-title {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+        }
+
+        .service-title-left {
+
+            font-size: 16px;
+
+            font-weight: 900;
+
+        }
+
+        .service-badge {
+
+            background: #eff6ff;
+
+            color: #1d4ed8;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+        }
+
+        .service-time {
+
+            margin-top: 17px;
+
+            display: flex;
+
+            align-items: flex-end;
+
+            gap: 7px;
+
+        }
+
+        .service-points {
+
+            font-size: 27px;
+
+            font-weight: 900;
+
+            color: #1d4ed8;
+
+        }
+
+        .service-unit {
+
+            font-size: 12px;
+
+            color: #64748b;
+
+            padding-bottom: 4px;
+
+        }
+
+        .service-description {
+
+            margin-top: 9px;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+        }
+
+        /* =====================================================
+
+           COMPRAR
+
+        ===================================================== */
+
+        .btn-comprar {
+
+            width: 100%;
+
+            margin-top: 16px;
+
+            border: 0;
+
+            border-radius: 15px;
+
+            padding: 15px;
+
+            background:
+
+                linear-gradient(
+
+                    135deg,
+
+                    #16a34a,
+
+                    #059669
+
+                );
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 900;
+
+            box-shadow:
+
+                0 7px 18px rgba(5,150,105,.22);
+
+        }
+
+        .btn-comprar:active {
+
+            transform: scale(.99);
+
+        }
+
+        /* =====================================================
+
+           INFORMAÇÃO
+
+        ===================================================== */
+
+        .info-box {
+
+            margin-top: 15px;
+
+            background: #fff7ed;
+
+            border:
+
+                1px solid #fed7aa;
+
+            border-radius: 16px;
+
+            padding: 14px;
+
+            color: #9a3412;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+        }
+
+        .info-box strong {
+
+            display: block;
+
+            margin-bottom: 3px;
+
+            font-size: 13px;
+
+        }
+
+        /* =====================================================
+
+           HISTÓRICO
+
+        ===================================================== */
+
+        .section-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin:
+
+                24px 2px
+
+                11px;
+
+        }
+
+        .section-title {
+
+            font-size: 17px;
+
+            font-weight: 900;
+
+        }
+
+        .section-sub {
+
+            color: #94a3b8;
+
+            font-size: 11px;
+
+        }
+
+        #listaHistorico {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
         }
 
         .historico-card {
+
             background: white;
+
             padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border: 1px solid #e2e8f0;
+
+            border-radius: 17px;
+
+            box-shadow:
+
+                0 6px 20px rgba(15,23,42,.05);
+
+            border:
+
+                1px solid #e2e8f0;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
+            gap: 12px;
+
+        }
+
+        .historico-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            min-width: 0;
+
+        }
+
+        .historico-icon {
+
+            width: 43px;
+
+            height: 43px;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
+
+            flex-shrink: 0;
+
+        }
+
+        .historico-icon.entrada {
+
+            background: #ecfdf5;
+
+        }
+
+        .historico-icon.saida {
+
+            background: #fef2f2;
+
+        }
+
+        .info-transacao {
+
+            min-width: 0;
+
         }
 
         .info-transacao h4 {
-            margin: 0 0 5px 0;
-            font-size: 15px;
-            color: #1a73e8;
+
+            margin: 0;
+
+            font-size: 14px;
+
+            color: #1e293b;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
         }
 
         .info-transacao p {
-            margin: 0;
-            font-size: 12px;
-            color: #666;
+
+            margin:
+
+                4px 0 0;
+
+            font-size: 11px;
+
+            color: #94a3b8;
+
         }
 
         .valor-transacao {
-            font-size: 15px;
-            font-weight: bold;
-            color: #059669;
+
+            font-size: 14px;
+
+            font-weight: 900;
+
+            white-space: nowrap;
+
         }
+
+        .valor-entrada {
+
+            color: #059669;
+
+        }
+
+        .valor-saida {
+
+            color: #dc2626;
+
+        }
+
+        /* =====================================================
+
+           SEM HISTÓRICO
+
+        ===================================================== */
 
         .sem-historico {
+
             text-align: center;
-            padding: 40px 20px;
-            color: #666;
+
+            padding: 32px 20px;
+
+            color: #64748b;
+
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+            border-radius: 18px;
+
+            box-shadow:
+
+                0 6px 20px rgba(15,23,42,.05);
+
+            border:
+
+                1px solid #e2e8f0;
+
         }
+
+        .sem-icon {
+
+            font-size: 35px;
+
+            margin-bottom: 8px;
+
+        }
+
+        .sem-title {
+
+            color: #334155;
+
+            font-size: 14px;
+
+            font-weight: 900;
+
+        }
+
+        .sem-text {
+
+            margin-top: 5px;
+
+            font-size: 12px;
+
+            line-height: 1.4;
+
+        }
+
+        /* =====================================================
+
+           MODAL COMPRA
+
+        ===================================================== */
+
+        .modal-overlay {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 1000;
+
+            background:
+
+                rgba(15,23,42,.58);
+
+            padding: 18px;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+        .modal-overlay.show {
+
+            display: flex;
+
+        }
+
+        .modal {
+
+            width: 100%;
+
+            max-width: 430px;
+
+            background: white;
+
+            border-radius: 23px;
+
+            padding: 22px;
+
+            box-shadow:
+
+                0 20px 60px rgba(0,0,0,.25);
+
+        }
+
+        .modal-icon {
+
+            width: 62px;
+
+            height: 62px;
+
+            margin:
+
+                0 auto 12px;
+
+            border-radius: 20px;
+
+            background: #ecfdf5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+
+        }
+
+        .modal-title {
+
+            text-align: center;
+
+            font-size: 19px;
+
+            font-weight: 900;
+
+        }
+
+        .modal-text {
+
+            margin-top: 8px;
+
+            text-align: center;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+        }
+
+        .modal-price {
+
+            margin-top: 17px;
+
+            background: #f8fafc;
+
+            border-radius: 15px;
+
+            padding: 14px;
+
+            text-align: center;
+
+        }
+
+        .modal-price strong {
+
+            display: block;
+
+            color: #1d4ed8;
+
+            font-size: 22px;
+
+        }
+
+        .modal-price span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color: #64748b;
+
+            font-size: 11px;
+
+        }
+
+        .modal-warning {
+
+            margin-top: 13px;
+
+            background: #fff7ed;
+
+            color: #9a3412;
+
+            border-radius: 13px;
+
+            padding: 11px;
+
+            font-size: 11px;
+
+            line-height: 1.45;
+
+            text-align: center;
+
+        }
+
+        .modal-buttons {
+
+            display: grid;
+
+            grid-template-columns:
+
+                1fr 1fr;
+
+            gap: 9px;
+
+            margin-top: 17px;
+
+        }
+
+        .modal-btn {
+
+            border: 0;
+
+            border-radius: 13px;
+
+            padding: 13px;
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+        }
+
+        .modal-btn-close {
+
+            background: #f1f5f9;
+
+            color: #475569;
+
+        }
+
+        .modal-btn-payment {
+
+            background: #16a34a;
+
+            color: white;
+
+        }
+
+        .modal-btn-payment:disabled {
+
+            opacity: .5;
+
+            cursor: default;
+
+        }
+
     </style>
+
 </head>
+
 <body>
 
+    <!-- =====================================================
+
+         HEADER
+
+    ====================================================== -->
+
     <div class="header">
-        <a href="perfil.html" class="btn-voltar">← Voltar</a>
-        <span>Histórico de Créditos</span>
-        <div style="width: 60px;"></div>
+
+        <a
+
+            href="perfil.html"
+
+            class="btn-voltar"
+
+        >
+
+            ← Voltar
+
+        </a>
+
+        <span class="header-title">
+
+            Minha Carteira
+
+        </span>
+
+        <div class="header-space"></div>
+
     </div>
 
-    <div class="container" id="listaHistorico">
-        <div class="sem-historico">Carregando histórico...</div>
+    <main class="container">
+
+        <!-- =================================================
+
+             SALDO
+
+        ================================================== -->
+
+        <section class="wallet-card">
+
+            <div class="wallet-label">
+
+                SALDO DISPONÍVEL
+
+            </div>
+
+            <div
+
+                class="wallet-balance"
+
+                id="saldoDisplay"
+
+            >
+
+                ...
+
+            </div>
+
+            <div class="wallet-description">
+
+                Créditos para usar nos atendimentos do Ajuda JP
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+
+             SITUAÇÃO DO SALDO
+
+        ================================================== -->
+
+        <section class="credit-status">
+
+            <div class="credit-icon">
+
+                🎥
+
+            </div>
+
+            <div>
+
+                <div
+
+                    class="credit-status-title"
+
+                    id="statusTitulo"
+
+                >
+
+                    Verificando seus créditos...
+
+                </div>
+
+                <div
+
+                    class="credit-status-text"
+
+                    id="statusTexto"
+
+                >
+
+                    Aguarde um momento.
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =================================================
+
+             TRADUÇÃO 30 MIN
+
+        ================================================== -->
+
+        <section class="service-card">
+
+            <div class="service-title">
+
+                <div class="service-title-left">
+
+                    🌐 Tradutor por vídeo
+
+                </div>
+
+                <div class="service-badge">
+
+                    30 MIN
+
+                </div>
+
+            </div>
+
+            <div class="service-time">
+
+                <div class="service-points">
+
+                    1.500
+
+                </div>
+
+                <div class="service-unit">
+
+                    pontos
+
+                </div>
+
+            </div>
+
+            <div class="service-description">
+
+                Um bloco dá direito a até 30 minutos
+
+                de atendimento com um tradutor.
+
+            </div>
+
+            <button
+
+                type="button"
+
+                class="btn-comprar"
+
+                id="btnComprar"
+
+            >
+
+                + Comprar créditos
+
+            </button>
+
+        </section>
+
+        <!-- =================================================
+
+             REGRA DE CONTINUAÇÃO
+
+        ================================================== -->
+
+        <div class="info-box">
+
+            <strong>
+
+                ⏱️ Precisa de mais tempo?
+
+            </strong>
+
+            Quando estiver perto do final dos 30 minutos,
+
+            o Ajuda JP perguntará se você deseja continuar.
+
+            Se você tiver mais 1.500 pontos,
+
+            poderá adicionar outros 30 minutos
+
+            sem interromper a chamada.
+
+        </div>
+
+        <!-- =================================================
+
+             HISTÓRICO
+
+        ================================================== -->
+
+        <div class="section-header">
+
+            <div class="section-title">
+
+                Histórico
+
+            </div>
+
+            <div class="section-sub">
+
+                Entradas e usos
+
+            </div>
+
+        </div>
+
+        <div id="listaHistorico">
+
+            <div class="sem-historico">
+
+                <div class="sem-icon">
+
+                    ⏳
+
+                </div>
+
+                <div class="sem-title">
+
+                    Carregando...
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- =====================================================
+
+         MODAL COMPRAR
+
+    ====================================================== -->
+
+    <div
+
+        class="modal-overlay"
+
+        id="modalComprar"
+
+    >
+
+        <div class="modal">
+
+            <div class="modal-icon">
+
+                💳
+
+            </div>
+
+            <div class="modal-title">
+
+                Comprar créditos
+
+            </div>
+
+            <div class="modal-text">
+
+                Créditos para um bloco de
+
+                30 minutos de tradução.
+
+            </div>
+
+            <div class="modal-price">
+
+                <strong>
+
+                    1.500 pts
+
+                </strong>
+
+                <span>
+
+                    30 minutos de atendimento
+
+                </span>
+
+            </div>
+
+            <div class="modal-warning">
+
+                O pagamento online ainda não está ativado.
+
+                Nenhuma cobrança será realizada nesta tela.
+
+            </div>
+
+            <div class="modal-buttons">
+
+                <button
+
+                    type="button"
+
+                    class="modal-btn modal-btn-close"
+
+                    id="btnFecharModal"
+
+                >
+
+                    Fechar
+
+                </button>
+
+                <button
+
+                    type="button"
+
+                    class="modal-btn modal-btn-payment"
+
+                    disabled
+
+                >
+
+                    Pagamento em breve
+
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            const userId = localStorage.getItem('line_user_id');
-            const container = document.getElementById('listaHistorico');
+    <!-- =====================================================
 
-            if (!userId) {
-                container.innerHTML = `<div class="sem-historico">Usuário não identificado. Faça login novamente.</div>`;
-                return;
+         FIREBASE
+
+    ====================================================== -->
+
+    <script type="module">
+
+        import {
+
+            initializeApp
+
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+        import {
+
+            getFirestore,
+
+            doc,
+
+            getDoc,
+
+            collection,
+
+            query,
+
+            where,
+
+            getDocs
+
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        /* =====================================================
+
+           FIREBASE CONFIG
+
+        ===================================================== */
+
+        const firebaseConfig = {
+
+            apiKey:
+
+                "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+
+            authDomain:
+
+                "ajuda-jp.firebaseapp.com",
+
+            databaseURL:
+
+                "https://ajuda-jp-default-rtdb.firebaseio.com",
+
+            projectId:
+
+                "ajuda-jp",
+
+            storageBucket:
+
+                "ajuda-jp.firebasestorage.app",
+
+            messagingSenderId:
+
+                "40121072206",
+
+            appId:
+
+                "1:40121072206:web:23168abd254affb6d0a11f"
+
+        };
+
+        const app =
+
+            initializeApp(firebaseConfig);
+
+        const db =
+
+            getFirestore(app);
+
+        /* =====================================================
+
+           CONFIGURAÇÃO DO SERVIÇO
+
+        ===================================================== */
+
+        const PRECO_30_MIN =
+
+            1500;
+
+        /* =====================================================
+
+           ELEMENTOS
+
+        ===================================================== */
+
+        const saldoDisplay =
+
+            document.getElementById(
+
+                "saldoDisplay"
+
+            );
+
+        const statusTitulo =
+
+            document.getElementById(
+
+                "statusTitulo"
+
+            );
+
+        const statusTexto =
+
+            document.getElementById(
+
+                "statusTexto"
+
+            );
+
+        const listaHistorico =
+
+            document.getElementById(
+
+                "listaHistorico"
+
+            );
+
+        const modalComprar =
+
+            document.getElementById(
+
+                "modalComprar"
+
+            );
+
+        const btnComprar =
+
+            document.getElementById(
+
+                "btnComprar"
+
+            );
+
+        const btnFecharModal =
+
+            document.getElementById(
+
+                "btnFecharModal"
+
+            );
+
+        /* =====================================================
+
+           UTILIDADES
+
+        ===================================================== */
+
+        function escaparHTML(valor) {
+
+            return String(
+
+                valor ?? ""
+
+            )
+
+            .replaceAll(
+
+                "&",
+
+                "&amp;"
+
+            )
+
+            .replaceAll(
+
+                "<",
+
+                "&lt;"
+
+            )
+
+            .replaceAll(
+
+                ">",
+
+                "&gt;"
+
+            )
+
+            .replaceAll(
+
+                '"',
+
+                "&quot;"
+
+            )
+
+            .replaceAll(
+
+                "'",
+
+                "&#039;"
+
+            );
+
+        }
+
+        function formatarPontos(valor) {
+
+            const numero =
+
+                Number(valor) || 0;
+
+            return new Intl.NumberFormat(
+
+                "pt-BR"
+
+            ).format(numero) +
+
+            " pts";
+
+        }
+
+        function formatarData(timestamp) {
+
+            if (!timestamp) {
+
+                return "Data não disponível";
+
             }
 
             try {
-                while (!window.db) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                let data;
+
+                if (
+
+                    typeof timestamp.toDate ===
+
+                    "function"
+
+                ) {
+
+                    data =
+
+                        timestamp.toDate();
+
+                } else if (
+
+                    timestamp.seconds
+
+                ) {
+
+                    data =
+
+                        new Date(
+
+                            timestamp.seconds *
+
+                            1000
+
+                        );
+
+                } else {
+
+                    data =
+
+                        new Date(timestamp);
+
                 }
 
-                const { collection, query, where, getDocs } = window.firebaseQuery;
-                const q = query(collection(window.db, "transacoes"), where("userId", "==", userId));
-                const querySnapshot = await getDocs(q);
+                return new Intl.DateTimeFormat(
 
-                if (querySnapshot.empty) {
-                    container.innerHTML = `<div class="sem-historico">Nenhuma compra ou transação real registrada ainda.</div>`;
-                    return;
-                }
+                    "pt-BR",
 
-                let html = "";
-                querySnapshot.forEach((doc) => {
-                    const dados = doc.data();
-                    const descricao = dados.descricao || "Compra de Créditos";
-                    const valor = dados.valor || 0;
-                    
-                    let dataFormatada = "Data recente";
-                    if (dados.data && dados.data.toDate) {
-                        dataFormatada = dados.data.toDate().toLocaleString('pt-BR');
+                    {
+
+                        day:
+
+                            "2-digit",
+
+                        month:
+
+                            "2-digit",
+
+                        year:
+
+                            "numeric",
+
+                        hour:
+
+                            "2-digit",
+
+                        minute:
+
+                            "2-digit"
+
                     }
 
-                    html += `
-                        <div class="historico-card">
-                            <div class="info-transacao">
-                                <h4>${descricao}</h4>
-                                <p>Data: ${dataFormatada}</p>
-                            </div>
-                            <div class="valor-transacao">
-                                +${valor} pts
-                            </div>
-                        </div>
-                    `;
-                });
+                ).format(data);
 
-                container.innerHTML = html;
+            } catch (erro) {
 
-            } catch (error) {
-                console.error("Erro ao buscar histórico:", error);
-                container.innerHTML = `<div class="sem-historico">Erro ao carregar o histórico.</div>`;
+                return "Data não disponível";
+
             }
-        });
+
+        }
+
+        function pegarMillis(timestamp) {
+
+            if (!timestamp) {
+
+                return 0;
+
+            }
+
+            try {
+
+                if (
+
+                    typeof timestamp.toMillis ===
+
+                    "function"
+
+                ) {
+
+                    return timestamp.toMillis();
+
+                }
+
+                if (
+
+                    timestamp.seconds
+
+                ) {
+
+                    return (
+
+                        timestamp.seconds *
+
+                        1000
+
+                    );
+
+                }
+
+                return new Date(
+
+                    timestamp
+
+                ).getTime() || 0;
+
+            } catch {
+
+                return 0;
+
+            }
+
+        }
+
+        /* =====================================================
+
+           SALDO
+
+        ===================================================== */
+
+        async function carregarSaldo(
+
+            userId
+
+        ) {
+
+            try {
+
+                const userRef =
+
+                    doc(
+
+                        db,
+
+                        "creditos_usuario",
+
+                        userId
+
+                    );
+
+                const userSnap =
+
+                    await getDoc(
+
+                        userRef
+
+                    );
+
+                let saldo =
+
+                    0;
+
+                if (
+
+                    userSnap.exists()
+
+                ) {
+
+                    const dados =
+
+                        userSnap.data();
+
+                    saldo =
+
+                        Number(
+
+                            dados.saldo
+
+                        ) || 0;
+
+                }
+
+                saldoDisplay.textContent =
+
+                    formatarPontos(
+
+                        saldo
+
+                    );
+
+                localStorage.setItem(
+
+                    "saldo_atual",
+
+                    String(saldo)
+
+                );
+
+                atualizarStatusSaldo(
+
+                    saldo
+
+                );
+
+            } catch (erro) {
+
+                console.error(
+
+                    "Erro ao carregar saldo:",
+
+                    erro
+
+                );
+
+                const saldoLocal =
+
+                    Number(
+
+                        localStorage.getItem(
+
+                            "saldo_atual"
+
+                        )
+
+                    ) || 0;
+
+                saldoDisplay.textContent =
+
+                    formatarPontos(
+
+                        saldoLocal
+
+                    );
+
+                atualizarStatusSaldo(
+
+                    saldoLocal
+
+                );
+
+            }
+
+        }
+
+        function atualizarStatusSaldo(
+
+            saldo
+
+        ) {
+
+            statusTitulo.classList.remove(
+
+                "saldo-ok",
+
+                "saldo-baixo"
+
+            );
+
+            if (
+
+                saldo >=
+
+                PRECO_30_MIN
+
+            ) {
+
+                statusTitulo.textContent =
+
+                    "Você tem crédito para uma chamada";
+
+                statusTitulo.classList.add(
+
+                    "saldo-ok"
+
+                );
+
+                const blocos =
+
+                    Math.floor(
+
+                        saldo /
+
+                        PRECO_30_MIN
+
+                    );
+
+                if (
+
+                    blocos ===
+
+                    1
+
+                ) {
+
+                    statusTexto.textContent =
+
+                        "Seu saldo permite 1 bloco de até 30 minutos.";
+
+                } else {
+
+                    statusTexto.textContent =
+
+                        "Seu saldo permite " +
+
+                        blocos +
+
+                        " blocos de até 30 minutos.";
+
+                }
+
+            } else {
+
+                const faltam =
+
+                    PRECO_30_MIN -
+
+                    saldo;
+
+                statusTitulo.textContent =
+
+                    "Saldo insuficiente para iniciar";
+
+                statusTitulo.classList.add(
+
+                    "saldo-baixo"
+
+                );
+
+                statusTexto.textContent =
+
+                    "Faltam " +
+
+                    formatarPontos(
+
+                        faltam
+
+                    ) +
+
+                    " para um atendimento de 30 minutos.";
+
+            }
+
+        }
+
+        /* =====================================================
+
+           HISTÓRICO
+
+        ===================================================== */
+
+        async function carregarHistorico(
+
+            userId
+
+        ) {
+
+            try {
+
+                const consulta =
+
+                    query(
+
+                        collection(
+
+                            db,
+
+                            "transacoes"
+
+                        ),
+
+                        where(
+
+                            "userId",
+
+                            "==",
+
+                            userId
+
+                        )
+
+                    );
+
+                const snapshot =
+
+                    await getDocs(
+
+                        consulta
+
+                    );
+
+                if (
+
+                    snapshot.empty
+
+                ) {
+
+                    listaHistorico.innerHTML = `
+
+                        <div class="sem-historico">
+
+                            <div class="sem-icon">
+
+                                💳
+
+                            </div>
+
+                            <div class="sem-title">
+
+                                Nenhuma transação
+
+                            </div>
+
+                            <div class="sem-text">
+
+                                Suas compras e usos de créditos
+
+                                aparecerão aqui.
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+                const transacoes =
+
+                    [];
+
+                snapshot.forEach(
+
+                    documento => {
+
+                        transacoes.push({
+
+                            id:
+
+                                documento.id,
+
+                            ...documento.data()
+
+                        });
+
+                    }
+
+                );
+
+                transacoes.sort(
+
+                    (a,b) => {
+
+                        const dataA =
+
+                            pegarMillis(
+
+                                a.data ||
+
+                                a.criadoEm
+
+                            );
+
+                        const dataB =
+
+                            pegarMillis(
+
+                                b.data ||
+
+                                b.criadoEm
+
+                            );
+
+                        return (
+
+                            dataB -
+
+                            dataA
+
+                        );
+
+                    }
+
+                );
+
+                listaHistorico.innerHTML =
+
+                    "";
+
+                transacoes.forEach(
+
+                    transacao => {
+
+                        const descricao =
+
+                            escaparHTML(
+
+                                transacao.descricao ||
+
+                                "Transação de créditos"
+
+                            );
+
+                        /*
+
+                           Aceita tanto valores positivos
+
+                           quanto negativos.
+
+                           Exemplo:
+
+                           compra: +1500
+
+                           uso:    -1500
+
+                        */
+
+                        let valor =
+
+                            Number(
+
+                                transacao.valor
+
+                            ) || 0;
+
+                        /*
+
+                           Se futuramente usarmos um campo
+
+                           tipo = "uso", mas o valor tiver
+
+                           sido salvo positivo, mostramos
+
+                           como saída.
+
+                        */
+
+                        const tipo =
+
+                            String(
+
+                                transacao.tipo ||
+
+                                ""
+
+                            ).toLowerCase();
+
+                        if (
+
+                            (
+
+                                tipo === "uso" ||
+
+                                tipo === "debito" ||
+
+                                tipo === "débito"
+
+                            ) &&
+
+                            valor > 0
+
+                        ) {
+
+                            valor =
+
+                                -valor;
+
+                        }
+
+                        const entrada =
+
+                            valor >= 0;
+
+                        const data =
+
+                            formatarData(
+
+                                transacao.data ||
+
+                                transacao.criadoEm
+
+                            );
+
+                        const card =
+
+                            document.createElement(
+
+                                "div"
+
+                            );
+
+                        card.className =
+
+                            "historico-card";
+
+                        card.innerHTML = `
+
+                            <div class="historico-left">
+
+                                <div
+
+                                    class="historico-icon ${
+
+                                        entrada
+
+                                            ? "entrada"
+
+                                            : "saida"
+
+                                    }"
+
+                                >
+
+                                    ${
+
+                                        entrada
+
+                                            ? "💰"
+
+                                            : "🎥"
+
+                                    }
+
+                                </div>
+
+                                <div class="info-transacao">
+
+                                    <h4>
+
+                                        ${descricao}
+
+                                    </h4>
+
+                                    <p>
+
+                                        ${escaparHTML(data)}
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div
+
+                                class="valor-transacao ${
+
+                                    entrada
+
+                                        ? "valor-entrada"
+
+                                        : "valor-saida"
+
+                                }"
+
+                            >
+
+                                ${
+
+                                    entrada
+
+                                        ? "+"
+
+                                        : "−"
+
+                                }${formatarPontos(
+
+                                    Math.abs(valor)
+
+                                )}
+
+                            </div>
+
+                        `;
+
+                        listaHistorico.appendChild(
+
+                            card
+
+                        );
+
+                    }
+
+                );
+
+            } catch (erro) {
+
+                console.error(
+
+                    "Erro ao carregar histórico:",
+
+                    erro
+
+                );
+
+                listaHistorico.innerHTML = `
+
+                    <div class="sem-historico">
+
+                        <div class="sem-icon">
+
+                            ⚠️
+
+                        </div>
+
+                        <div class="sem-title">
+
+                            Erro ao carregar histórico
+
+                        </div>
+
+                        <div class="sem-text">
+
+                            Tente novamente em alguns instantes.
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+        /* =====================================================
+
+           MODAL COMPRA
+
+        ===================================================== */
+
+        function abrirComprar() {
+
+            modalComprar.classList.add(
+
+                "show"
+
+            );
+
+        }
+
+        function fecharComprar() {
+
+            modalComprar.classList.remove(
+
+                "show"
+
+            );
+
+        }
+
+        btnComprar.addEventListener(
+
+            "click",
+
+            abrirComprar
+
+        );
+
+        btnFecharModal.addEventListener(
+
+            "click",
+
+            fecharComprar
+
+        );
+
+        modalComprar.addEventListener(
+
+            "click",
+
+            event => {
+
+                if (
+
+                    event.target ===
+
+                    modalComprar
+
+                ) {
+
+                    fecharComprar();
+
+                }
+
+            }
+
+        );
+
+        /* =====================================================
+
+           INICIAR
+
+        ===================================================== */
+
+        async function iniciar() {
+
+            const userId =
+
+                localStorage.getItem(
+
+                    "line_user_id"
+
+                );
+
+            if (!userId) {
+
+                saldoDisplay.textContent =
+
+                    "0 pts";
+
+                statusTitulo.textContent =
+
+                    "Usuário não identificado";
+
+                statusTitulo.classList.add(
+
+                    "saldo-baixo"
+
+                );
+
+                statusTexto.textContent =
+
+                    "Volte ao início e entre novamente pelo LINE.";
+
+                listaHistorico.innerHTML = `
+
+                    <div class="sem-historico">
+
+                        <div class="sem-icon">
+
+                            👤
+
+                        </div>
+
+                        <div class="sem-title">
+
+                            Conta não identificada
+
+                        </div>
+
+                        <div class="sem-text">
+
+                            Faça login novamente para visualizar
+
+                            seus créditos.
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+            await Promise.all([
+
+                carregarSaldo(
+
+                    userId
+
+                ),
+
+                carregarHistorico(
+
+                    userId
+
+                )
+
+            ]);
+
+        }
+
+        iniciar();
+
     </script>
+
 </body>
+
 </html>
