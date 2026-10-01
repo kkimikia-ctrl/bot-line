@@ -393,16 +393,19 @@ const firebaseConfig = {
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+const db =
+    getFirestore(app);
 
 
 /* =========================================================
    LINE
 ========================================================= */
 
-const LIFF_ID = "2010902449-KWNNNsxn";
+const LIFF_ID =
+    "2010902449-KWNNNsxn";
 
 
 let tradutor = {
@@ -421,10 +424,14 @@ let tradutor = {
 ========================================================= */
 
 const listaSolicitacoes =
-    document.getElementById("listaSolicitacoes");
+    document.getElementById(
+        "listaSolicitacoes"
+    );
 
 const tradutorNome =
-    document.getElementById("tradutorNome");
+    document.getElementById(
+        "tradutorNome"
+    );
 
 
 /* =========================================================
@@ -461,7 +468,8 @@ async function iniciarLINE() {
 
 
         tradutor.nome =
-            profile.displayName || "Tradutor";
+            profile.displayName ||
+            "Tradutor";
 
 
         localStorage.setItem(
@@ -490,11 +498,6 @@ async function iniciarLINE() {
             erro
         );
 
-
-        /*
-        Se já houver dados salvos do LINE,
-        permite continuar o teste.
-        */
 
         if (tradutor.id) {
 
@@ -527,14 +530,8 @@ async function iniciarLINE() {
 function iniciarEscutaSolicitacoes() {
 
     /*
-    IMPORTANTE:
-
-    O Ajuda JP grava os novos pedidos com:
-
-    status = "aguardando"
-
-    Por isso o painel precisa procurar exatamente
-    esse status.
+       O cliente cria a solicitação com:
+       status = "aguardando"
     */
 
     const q = query(
@@ -579,17 +576,19 @@ function iniciarEscutaSolicitacoes() {
 
 
             /*
-            Mais novos primeiro.
+               MAIS NOVOS PRIMEIRO
             */
 
             solicitacoes.sort(
                 (a, b) => {
 
                     const dataA =
-                        a.criadoEm?.toMillis?.() || 0;
+                        a.criadoEm?.toMillis?.() ||
+                        0;
 
                     const dataB =
-                        b.criadoEm?.toMillis?.() || 0;
+                        b.criadoEm?.toMillis?.() ||
+                        0;
 
                     return dataB - dataA;
 
@@ -660,14 +659,17 @@ function renderizarSolicitacoes(
     }
 
 
-    listaSolicitacoes.innerHTML = "";
+    listaSolicitacoes.innerHTML =
+        "";
 
 
     solicitacoes.forEach(
         (solicitacao) => {
 
             const card =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             card.className =
@@ -706,8 +708,11 @@ function renderizarSolicitacoes(
                     data.toLocaleTimeString(
                         "pt-BR",
                         {
-                            hour: "2-digit",
-                            minute: "2-digit"
+                            hour:
+                                "2-digit",
+
+                            minute:
+                                "2-digit"
                         }
                     );
 
@@ -830,7 +835,8 @@ async function aceitarSolicitacao(
     }
 
 
-    botao.disabled = true;
+    botao.disabled =
+        true;
 
     botao.textContent =
         "ACEITANDO...";
@@ -872,8 +878,8 @@ async function aceitarSolicitacao(
 
 
                 /*
-                Evita que dois tradutores
-                aceitem o mesmo pedido.
+                   Evita que dois tradutores
+                   aceitem o mesmo pedido.
                 */
 
                 if (
@@ -888,12 +894,23 @@ async function aceitarSolicitacao(
                 }
 
 
+                /*
+                   IMPORTANTE:
+
+                   O INDEX DO CLIENTE ESPERA:
+
+                   status = "aceito"
+
+                   Portanto usamos exatamente
+                   "aceito" aqui.
+                */
+
                 transaction.update(
                     referencia,
                     {
 
                         status:
-                            "aceita",
+                            "aceito",
 
                         tradutorId:
                             tradutor.id,
@@ -922,13 +939,20 @@ async function aceitarSolicitacao(
 
 
         alert(
-            "Solicitação aceita! Agora o cliente será conectado a você."
+            "Solicitação aceita! O cliente foi avisado."
         );
 
 
         /*
-        Próxima etapa:
-        aqui vamos abrir a sala de vídeo.
+           O pedido desaparecerá desta lista
+           automaticamente porque não terá
+           mais status "aguardando".
+
+           O cliente receberá status "aceito"
+           pelo onSnapshot do index.html.
+
+           A próxima etapa será criar
+           a sala de vídeo entre os dois.
         */
 
 
@@ -947,7 +971,8 @@ async function aceitarSolicitacao(
         );
 
 
-        botao.disabled = false;
+        botao.disabled =
+            false;
 
         botao.textContent =
             "ACEITAR SOLICITAÇÃO";
