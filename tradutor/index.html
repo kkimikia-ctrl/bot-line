@@ -12,25 +12,9 @@
 
 <meta name="google" content="notranslate">
 
-<title>Ajuda JP</title>
-
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<title>Ajuda JP - Painel do Tradutor</title>
 
 <style>
-
-:root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --green: #10b981;
-    --red: #ef4444;
-    --bg: #f4f7fb;
-    --card: #ffffff;
-    --text: #172033;
-    --muted: #718096;
-    --border: #e5eaf2;
-    --shadow: 0 8px 30px rgba(31, 50, 81, 0.08);
-    --radius: 20px;
-}
 
 * {
     box-sizing: border-box;
@@ -50,100 +34,140 @@ body {
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
-        Roboto,
-        Helvetica,
         Arial,
         sans-serif;
 
     background:
         linear-gradient(
             180deg,
-            #edf5ff 0px,
-            #f7f9fc 240px,
-            #f4f7fb 100%
+            #eef5ff 0%,
+            #f8fafc 45%,
+            #f1f5f9 100%
         );
 
-    color: var(--text);
-    padding-bottom: 90px;
+    color: #1e293b;
 }
 
 button,
-textarea,
-select {
+input {
     font-family: inherit;
+}
+
+button {
+    cursor: pointer;
 }
 
 /* =========================================================
    LOGIN
 ========================================================= */
 
-#login-overlay {
-    position: fixed;
-    inset: 0;
-    background:
-        linear-gradient(
-            160deg,
-            #eff6ff,
-            #ffffff 50%,
-            #ecfdf5
-        );
+#telaLogin {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
-    z-index: 9999;
+    padding: 22px;
 }
 
 .login-card {
     width: 100%;
-    max-width: 400px;
-    background: rgba(255,255,255,.96);
-    padding: 34px 24px;
-    border-radius: 28px;
-    box-shadow:
-        0 20px 60px rgba(30,64,175,.14);
-    text-align: center;
+    max-width: 430px;
+    background: white;
+    border-radius: 26px;
+    padding: 28px 22px;
+    box-shadow: 0 18px 55px rgba(15,23,42,.12);
+    border: 1px solid #e2e8f0;
 }
 
 .login-logo {
-    width: 76px;
-    height: 76px;
-    border-radius: 24px;
+    width: 72px;
+    height: 72px;
+    display: block;
+    margin: 0 auto 14px;
+    border-radius: 22px;
     object-fit: cover;
-    margin-bottom: 14px;
-    box-shadow:
-        0 8px 24px rgba(37,99,235,.18);
+    background: white;
+    box-shadow: 0 8px 25px rgba(15,23,42,.12);
 }
 
-.login-card h1 {
-    margin: 0;
-    font-size: 27px;
+.login-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 900;
 }
 
-.login-card p {
-    margin: 12px 0 26px;
-    color: var(--muted);
-    line-height: 1.55;
-    font-size: 14px;
+.login-sub {
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 7px;
+    margin-bottom: 23px;
+    line-height: 1.45;
 }
 
-.btn-line {
+.login-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 13px 2px 6px;
+    color: #475569;
+}
+
+.login-input {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 14px;
+    outline: none;
+    font-size: 16px;
+}
+
+.login-input:focus {
+    border-color: #2563eb;
+    background: white;
+}
+
+.btn-login {
     width: 100%;
     border: 0;
-    border-radius: 14px;
+    border-radius: 15px;
     padding: 15px;
-    background: #06c755;
+    margin-top: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
     color: white;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.btn-login:disabled {
+    opacity: .55;
+}
+
+.login-erro {
+    display: none;
+    margin-top: 13px;
+    padding: 11px;
+    background: #fef2f2;
+    color: #b91c1c;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
 }
 
 /* =========================================================
-   APP
+   PAINEL
 ========================================================= */
 
-#app-content {
+#painelTradutor {
     display: none;
 }
 
@@ -151,73 +175,118 @@ select {
     width: 100%;
     max-width: 560px;
     margin: 0 auto;
-    padding: 14px;
+    padding: 16px;
+    padding-bottom: 50px;
 }
 
 /* =========================================================
    HEADER
 ========================================================= */
 
-.topbar {
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
     margin-bottom: 18px;
+    position: relative;
+    z-index: 50;
 }
 
-.brand {
+.header-left {
     display: flex;
     align-items: center;
     gap: 11px;
 }
 
 .logo {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
     border-radius: 15px;
     object-fit: cover;
     background: white;
-    box-shadow:
-        0 5px 18px rgba(0,0,0,.08);
+    box-shadow: 0 5px 18px rgba(0,0,0,.08);
 }
 
-.brand-title {
+.header-title {
     font-size: 19px;
     font-weight: 900;
 }
 
-.brand-subtitle {
-    color: var(--muted);
-    font-size: 12px;
+.header-sub {
     margin-top: 2px;
+    font-size: 12px;
+    color: #64748b;
 }
 
-.credit-box {
-    background: white;
-    border: 1px solid var(--border);
-    padding: 9px 12px;
-    border-radius: 14px;
-    box-shadow:
-        0 4px 16px rgba(31,50,81,.06);
-    text-align: center;
-    white-space: nowrap;
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
 }
 
-.credit-label {
-    display: block;
-    color: var(--muted);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-}
+/* =========================================================
+   ONLINE / OFFLINE
+========================================================= */
 
-.credit-value {
-    display: block;
-    color: var(--primary);
-    font-size: 16px;
+.status-btn {
+    appearance: none;
+    -webkit-appearance: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-height: 38px;
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 30px;
+
+    font-size: 11px;
     font-weight: 900;
-    margin-top: 1px;
+
+    touch-action: manipulation;
+}
+
+.status-btn.online {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-btn.offline {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-btn.online .status-dot {
+    background: #10b981;
+}
+
+.status-btn.offline .status-dot {
+    background: #94a3b8;
+}
+
+.status-btn:disabled {
+    opacity: .55;
+}
+
+.btn-sair {
+    border: 0;
+    background: #f1f5f9;
+    color: #475569;
+
+    border-radius: 12px;
+    padding: 8px 10px;
+
+    font-size: 11px;
+    font-weight: 800;
 }
 
 /* =========================================================
@@ -227,531 +296,402 @@ select {
 .hero {
     position: relative;
     overflow: hidden;
+
     background:
         linear-gradient(
             135deg,
             #2563eb,
             #4f46e5
         );
+
     color: white;
-    border-radius: 25px;
+
+    border-radius: 24px;
     padding: 22px;
-    margin-bottom: 16px;
+
     box-shadow:
         0 14px 35px rgba(37,99,235,.22);
+
+    margin-bottom: 17px;
 }
 
 .hero::after {
     content: "";
+
     position: absolute;
-    width: 160px;
-    height: 160px;
+
+    width: 150px;
+    height: 150px;
+
     border-radius: 50%;
+
     background:
-        rgba(255,255,255,.09);
-    right: -55px;
-    top: -65px;
+        rgba(255,255,255,.08);
+
+    right: -50px;
+    top: -55px;
+
+    pointer-events: none;
 }
 
 .hero-small {
-    font-size: 12px;
-    opacity: .86;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 800;
+    opacity: .85;
     margin-bottom: 5px;
 }
 
-.hero h2 {
+.hero h1 {
     margin: 0;
     font-size: 23px;
-    line-height: 1.2;
 }
 
 .hero p {
-    margin: 9px 0 0;
+    margin: 8px 0 0;
     font-size: 13px;
-    opacity: .88;
     line-height: 1.45;
-    max-width: 330px;
+    opacity: .88;
 }
 
 /* =========================================================
-   CARD
+   ESTATÍSTICAS
 ========================================================= */
 
-.card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 17px;
-    margin-bottom: 15px;
-    box-shadow: var(--shadow);
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+    margin-bottom: 17px;
 }
 
-.card-title {
+.stat {
+    background: white;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 17px;
+
+    padding: 15px;
+
+    box-shadow:
+        0 7px 22px rgba(15,23,42,.05);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.stat-value {
+    display: block;
+    margin-top: 3px;
+    font-size: 25px;
+    font-weight: 900;
+    color: #2563eb;
+}
+
+.stat-value.small {
+    font-size: 18px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 20px 2px 11px;
+}
+
+.section-title strong {
+    font-size: 16px;
+}
+
+.section-small {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* =========================================================
+   SOLICITAÇÕES
+========================================================= */
+
+#listaSolicitacoes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.solicitacao {
+    background: white;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 20px;
+
+    padding: 17px;
+
+    box-shadow:
+        0 8px 28px rgba(15,23,42,.06);
+}
+
+.solicitacao-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.cliente {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.avatar {
+    width: 43px;
+    height: 43px;
+
+    border-radius: 14px;
+
+    background: #eff6ff;
+
     display: flex;
     align-items: center;
-    gap: 9px;
-    margin-bottom: 5px;
-    font-size: 17px;
+    justify-content: center;
+
+    font-size: 21px;
+}
+
+.cliente-nome {
+    font-size: 15px;
     font-weight: 900;
 }
 
-.card-description {
-    color: var(--muted);
+.cliente-sub {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.badge {
+    padding: 6px 9px;
+
+    border-radius: 20px;
+
+    background: #fff7ed;
+    color: #c2410c;
+
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    margin-top: 14px;
+}
+
+.info-item {
+    background: #f8fafc;
+    border-radius: 13px;
+    padding: 11px;
+}
+
+.info-label {
+    display: block;
+    font-size: 10px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    display: block;
     font-size: 13px;
-    margin: 0 0 14px;
-    line-height: 1.45;
+    font-weight: 800;
 }
 
-/* =========================================================
-   TRADUTOR RÁPIDO
-========================================================= */
-
-#textoInput {
+.btn-aceitar {
     width: 100%;
-    min-height: 110px;
-    resize: vertical;
+
+    margin-top: 14px;
     padding: 14px;
-    border: 1px solid #dbe2ea;
-    border-radius: 15px;
-    background: #f9fbfd;
-    color: var(--text);
-    font-size: 16px;
-    outline: none;
-}
 
-#textoInput:focus {
-    border-color: var(--primary);
-    background: white;
-    box-shadow:
-        0 0 0 3px rgba(37,99,235,.09);
-}
-
-.btn {
     border: 0;
     border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: 900;
 }
 
-.btn:active {
-    transform: scale(.98);
-}
-
-.btn:disabled {
+.btn-aceitar:disabled {
     opacity: .55;
 }
 
-.btn-primary {
-    width: 100%;
-    margin-top: 11px;
-    background:
-        linear-gradient(
-            135deg,
-            var(--primary),
-            var(--primary-dark)
-        );
-    color: white;
-}
-
-.result-box {
-    display: none;
-    margin-top: 13px;
-    padding: 14px;
-    border-radius: 14px;
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #065f46;
-    line-height: 1.55;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.result-box.erro {
-    background: #fef2f2;
-    border-color: #fecaca;
-    color: #991b1b;
-}
-
 /* =========================================================
-   SERVIÇOS
+   VAZIO
 ========================================================= */
 
-.section-title {
-    margin: 20px 2px 10px;
-    font-size: 15px;
+.vazio {
+    background: white;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 21px;
+
+    padding: 30px 20px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 28px rgba(15,23,42,.05);
+}
+
+.vazio-icon {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.vazio-title {
+    font-size: 16px;
     font-weight: 900;
 }
 
-.services-grid {
-    display: grid;
-    grid-template-columns:
-        repeat(2, 1fr);
-    gap: 11px;
+.vazio-sub {
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 6px;
+    line-height: 1.45;
 }
 
-.service {
-    position: relative;
-    min-height: 120px;
-    border-radius: 19px;
-    padding: 16px;
-    background: white;
-    box-shadow: var(--shadow);
-    text-align: left;
-    cursor: pointer;
-    overflow: hidden;
-    border: 1px solid var(--border);
-}
+/* =========================================================
+   HISTÓRICO
+========================================================= */
 
-.service-icon {
+#listaHistorico {
     display: flex;
-    width: 42px;
-    height: 42px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.historico-card {
+    background: white;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 18px;
+
+    padding: 15px;
+
+    box-shadow:
+        0 7px 22px rgba(15,23,42,.05);
+}
+
+.historico-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.historico-cliente {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.historico-avatar {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 13px;
+
+    background: #ecfdf5;
+
+    display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 13px;
-    font-size: 21px;
-    margin-bottom: 11px;
+
+    font-size: 19px;
 }
 
-.service-title {
-    display: block;
+.historico-nome {
     font-size: 14px;
     font-weight: 900;
-    color: var(--text);
 }
 
-.service-sub {
-    display: block;
-    margin-top: 4px;
-    color: var(--muted);
-    font-size: 11px;
-    line-height: 1.3;
-}
-
-.icon-blue {
-    background: #eff6ff;
-}
-
-.icon-green {
-    background: #ecfdf5;
-}
-
-.icon-purple {
-    background: #f5f3ff;
-}
-
-.icon-orange {
-    background: #fff7ed;
-}
-
-.icon-pink {
-    background: #fdf2f8;
-}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background:
-        rgba(15,23,42,.58);
-    backdrop-filter: blur(5px);
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 3000;
-}
-
-.modal-content {
-    width: 100%;
-    max-width: 560px;
-    max-height: 92vh;
-    overflow-y: auto;
-    background: white;
-    border-radius:
-        26px 26px 0 0;
-    padding:
-        23px 18px 28px;
-    animation:
-        modalUp .25s ease;
-}
-
-@keyframes modalUp {
-
-    from {
-        transform:
-            translateY(60px);
-        opacity: 0;
-    }
-
-    to {
-        transform:
-            translateY(0);
-        opacity: 1;
-    }
-
-}
-
-.modal-handle {
-    width: 42px;
-    height: 5px;
-    border-radius: 10px;
-    background: #dbe2ea;
-    margin:
-        -8px auto 18px;
-}
-
-.modal-title {
-    font-size: 21px;
-    font-weight: 900;
-    margin-bottom: 5px;
-}
-
-.modal-sub {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.45;
-    margin-bottom: 20px;
-}
-
-.field-label {
-    display: block;
-    margin:
-        14px 0 7px;
-    font-size: 13px;
-    font-weight: 800;
-}
-
-select {
-    width: 100%;
-    padding: 13px;
-    border:
-        1px solid #dbe2ea;
-    border-radius: 13px;
-    background: white;
-    font-size: 15px;
-    outline: none;
-}
-
-.modal-buttons {
-    display: grid;
-    grid-template-columns:
-        1fr 1.4fr;
-    gap: 9px;
-    margin-top: 20px;
-}
-
-.btn-secondary {
-    background: #eef2f7;
-    color: #475569;
-}
-
-.btn-confirm {
-    background:
-        linear-gradient(
-            135deg,
-            var(--primary),
-            var(--primary-dark)
-        );
-    color: white;
-}
-
-/* =========================================================
-   ESPERA
-========================================================= */
-
-.wait-area {
-    text-align: center;
-    padding:
-        8px 4px 0;
-}
-
-.wait-icon {
-    width: 88px;
-    height: 88px;
-    margin:
-        4px auto 18px;
-    border-radius: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background:
-        linear-gradient(
-            135deg,
-            #eff6ff,
-            #dbeafe
-        );
-    font-size: 38px;
-}
-
-.loader {
-    width: 46px;
-    height: 46px;
-    border:
-        4px solid #dbeafe;
-    border-top-color:
-        var(--primary);
-    border-radius: 50%;
-    margin:
-        18px auto;
-    animation:
-        spin .85s linear infinite;
-}
-
-@keyframes spin {
-
-    to {
-        transform:
-            rotate(360deg);
-    }
-
-}
-
-.status-title {
-    font-size: 21px;
-    font-weight: 900;
-}
-
-.status-sub {
-    margin:
-        7px auto;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.5;
-    max-width: 330px;
-}
-
-.request-id {
-    display: none;
-    margin:
-        12px 0;
+.historico-data {
+    margin-top: 3px;
     color: #94a3b8;
     font-size: 10px;
-    word-break: break-all;
 }
 
-.btn-danger {
-    width: 100%;
-    margin-top: 18px;
-    background: #fee2e2;
-    color: #b91c1c;
-}
-
-/* =========================================================
-   TRADUTOR CONECTADO
-========================================================= */
-
-.tradutor-conectado {
-    display: none;
-    margin:
-        18px auto 8px;
-    padding: 15px;
-    max-width: 340px;
-    border-radius: 16px;
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-}
-
-.tradutor-conectado-label {
-    color: #047857;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.tradutor-conectado-nome {
-    color: #065f46;
-    font-size: 19px;
-    font-weight: 900;
-    margin-top: 4px;
-}
-
-/* =========================================================
-   VIDEO
-========================================================= */
-
-#videoContainer {
-    display: none;
-    margin-top: 15px;
-}
-
-video {
-    width: 100%;
-    max-height: 420px;
-    border-radius: 18px;
-    background: #111827;
-    object-fit: cover;
-    transform: scaleX(-1);
-}
-
-.timer-badge {
-    display: inline-block;
-    margin-bottom: 9px;
-    padding:
-        7px 12px;
-    border-radius: 30px;
+.historico-badge {
     background: #ecfdf5;
     color: #047857;
-    font-size: 12px;
+
+    border-radius: 20px;
+
+    padding: 6px 9px;
+
+    font-size: 9px;
     font-weight: 900;
 }
 
-/* =========================================================
-   MENU INFERIOR
-========================================================= */
-
-.bottom-nav {
-    position: fixed;
-    left: 50%;
-    bottom: 0;
-    transform:
-        translateX(-50%);
-    width: 100%;
-    max-width: 560px;
-    height: 70px;
+.historico-info {
     display: grid;
-    grid-template-columns:
-        repeat(4,1fr);
-    align-items: center;
-    background:
-        rgba(255,255,255,.96);
-    backdrop-filter:
-        blur(12px);
-    border-top:
-        1px solid var(--border);
-    z-index: 2000;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+    margin-top: 12px;
 }
 
-.nav-item {
-    text-decoration: none;
-    color: #94a3b8;
-    text-align: center;
-    font-size: 10px;
-    font-weight: 700;
+.historico-info-box {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 10px;
 }
 
-.nav-icon {
+.historico-info-label {
     display: block;
-    font-size: 20px;
+    color: #94a3b8;
+    font-size: 9px;
     margin-bottom: 3px;
 }
 
-.nav-item.active {
-    color: var(--primary);
+.historico-info-value {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
 }
 
-@media (min-width: 560px) {
+/* =========================================================
+   RESPONSIVO
+========================================================= */
 
-    .modal {
-        align-items: center;
+@media (max-width:390px) {
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
     }
 
-    .modal-content {
-        border-radius: 26px;
+    .stats .stat:last-child {
+        grid-column: 1 / -1;
     }
 
 }
@@ -766,356 +706,244 @@ video {
      LOGIN
 ====================================================== -->
 
-<div id="login-overlay">
+<div id="telaLogin">
 
     <div class="login-card">
 
         <img
-            src="logo.jpeg"
+            src="../logo.jpeg"
             class="login-logo"
             alt="Ajuda JP"
-            onerror="this.onerror=null;this.src='logo.png';"
+            onerror="this.onerror=null;this.src='../logo.png';"
         >
 
-        <h1>
-            Ajuda JP
-        </h1>
+        <div class="login-title">
+            Painel do Tradutor
+        </div>
 
-        <p>
-            Serviços e suporte para brasileiros no Japão,
-            direto pelo seu celular.
-        </p>
+        <div class="login-sub">
+            Entre com sua conta de tradutor do Ajuda JP.
+        </div>
+
+        <label class="login-label">
+            E-mail
+        </label>
+
+        <input
+            type="email"
+            id="loginEmail"
+            class="login-input"
+            autocomplete="username"
+            placeholder="seu@email.com"
+        >
+
+        <label class="login-label">
+            Senha
+        </label>
+
+        <input
+            type="password"
+            id="loginSenha"
+            class="login-input"
+            autocomplete="current-password"
+            placeholder="Sua senha"
+        >
 
         <button
             type="button"
-            class="btn-line"
-            id="btnLoginLine"
+            id="btnLogin"
+            class="btn-login"
         >
-            Entrar com o LINE
+            Entrar
         </button>
+
+        <div
+            id="loginErro"
+            class="login-erro"
+        ></div>
 
     </div>
 
 </div>
 
 <!-- ======================================================
-     CONTEÚDO PRINCIPAL
+     PAINEL
 ====================================================== -->
 
-<div id="app-content">
+<div id="painelTradutor">
 
 <div class="app">
 
-<header class="topbar">
+<header class="header">
 
-    <div class="brand">
+    <div class="header-left">
 
         <img
-            src="logo.jpeg"
+            src="../logo.jpeg"
             class="logo"
             alt="Ajuda JP"
-            onerror="this.onerror=null;this.src='logo.png';"
+            onerror="this.onerror=null;this.src='../logo.png';"
         >
 
         <div>
 
-            <div class="brand-title">
+            <div class="header-title">
                 Ajuda JP
             </div>
 
-            <div class="brand-subtitle">
-                Seu apoio no Japão
+            <div class="header-sub">
+                Painel do Tradutor
             </div>
 
         </div>
 
     </div>
 
-    <div class="credit-box">
+    <div class="header-right">
 
-        <span class="credit-label">
-            Créditos
+        <button
+            type="button"
+            id="btnStatus"
+            class="status-btn online"
+        >
+            <span class="status-dot"></span>
+            <span id="textoStatus">
+                Online
+            </span>
+        </button>
+
+        <button
+            type="button"
+            class="btn-sair"
+            id="btnSair"
+        >
+            Sair
+        </button>
+
+    </div>
+
+</header>
+
+<section class="hero">
+
+    <div class="hero-small">
+        PAINEL DO TRADUTOR
+    </div>
+
+    <h1>
+        Solicitações
+    </h1>
+
+    <p id="boasVindas">
+        Novos pedidos aparecem aqui automaticamente.
+    </p>
+
+</section>
+
+<div class="stats">
+
+    <div class="stat">
+
+        <span class="stat-label">
+            Aguardando
         </span>
 
         <span
-            class="credit-value"
-            id="saldoBadge"
+            class="stat-value"
+            id="totalAguardando"
         >
             0
         </span>
 
     </div>
 
-</header>
+    <div class="stat">
 
-<!-- HERO -->
+        <span class="stat-label">
+            Atendimentos hoje
+        </span>
 
-<section class="hero">
+        <span
+            class="stat-value"
+            id="totalHoje"
+        >
+            0
+        </span>
 
-    <div class="hero-small">
-        🇯🇵 BRASILEIROS NO JAPÃO
     </div>
 
-    <h2>
-        Precisou de ajuda?<br>
-        Estamos aqui.
-    </h2>
+    <div class="stat">
 
-    <p>
-        Tradução, atendimento e serviços
-        para facilitar sua vida no Japão.
-    </p>
+        <span class="stat-label">
+            Tempo hoje
+        </span>
 
-</section>
+        <span
+            class="stat-value small"
+            id="tempoHoje"
+        >
+            0 min
+        </span>
 
-<!-- TRADUÇÃO -->
-
-<section class="card">
-
-    <div class="card-title">
-        🌐 Tradução rápida
     </div>
 
-    <p class="card-description">
-        Português ↔ Japonês.
-        O idioma é identificado automaticamente.
-    </p>
-
-    <textarea
-        id="textoInput"
-        placeholder="Digite aqui o que deseja traduzir..."
-    ></textarea>
-
-    <button
-        type="button"
-        class="btn btn-primary"
-        id="btnTraduzirTexto"
-    >
-        Traduzir agora
-    </button>
-
-    <div
-        id="resultadoBox"
-        class="result-box"
-    ></div>
-
-</section>
-
-<!-- SERVIÇOS -->
+</div>
 
 <div class="section-title">
-    Serviços
-</div>
 
-<div class="services-grid">
+    <strong>
+        Clientes aguardando
+    </strong>
 
-    <button
-        type="button"
-        class="service"
-        id="btnChamarTradutor"
-    >
-
-        <span class="service-icon icon-blue">
-            🎥
-        </span>
-
-        <span class="service-title">
-            Tradutor ao vivo
-        </span>
-
-        <span class="service-sub">
-            Hospital, prefeitura e mais
-        </span>
-
-    </button>
-
-    <button
-        type="button"
-        class="service"
-        onclick="window.location.href='perfil.html'"
-    >
-
-        <span class="service-icon icon-green">
-            💰
-        </span>
-
-        <span class="service-title">
-            Carteira
-        </span>
-
-        <span class="service-sub">
-            Créditos e histórico
-        </span>
-
-    </button>
-
-    <button
-        type="button"
-        class="service"
-        onclick="window.location.href='entretenimento.html'"
-    >
-
-        <span class="service-icon icon-purple">
-            🎮
-        </span>
-
-        <span class="service-title">
-            Entretenimento
-        </span>
-
-        <span class="service-sub">
-            Lives, aulas e notícias
-        </span>
-
-    </button>
-
-    <button
-        type="button"
-        class="service"
-        onclick="window.location.href='servicos.html'"
-    >
-
-        <span class="service-icon icon-orange">
-            🛠️
-        </span>
-
-        <span class="service-title">
-            Serviços
-        </span>
-
-        <span class="service-sub">
-            Profissionais e lojas
-        </span>
-
-    </button>
-
-    <button
-        type="button"
-        class="service"
-        onclick="window.location.href='empregos.html'"
-    >
-
-        <span class="service-icon icon-pink">
-            💼
-        </span>
-
-        <span class="service-title">
-            Empregos
-        </span>
-
-        <span class="service-sub">
-            Vagas no Japão
-        </span>
-
-    </button>
-
-    <button
-        type="button"
-        class="service"
-        onclick="window.location.href='fale-conosco.html'"
-    >
-
-        <span class="service-icon icon-green">
-            💬
-        </span>
-
-        <span class="service-title">
-            Fale conosco
-        </span>
-
-        <span class="service-sub">
-            Suporte Ajuda JP
-        </span>
-
-    </button>
+    <span class="section-small">
+        Tempo real
+    </span>
 
 </div>
 
-</div>
+<div id="listaSolicitacoes">
 
-<!-- ======================================================
-     MODAL TRADUTOR
-====================================================== -->
+    <div class="vazio">
 
-<div
-    id="modalTradutor"
-    class="modal"
->
+        <div class="vazio-icon">
+            ⏳
+        </div>
 
-<div class="modal-content">
+        <div class="vazio-title">
+            Carregando...
+        </div>
 
-    <div class="modal-handle"></div>
+        <div class="vazio-sub">
+            Buscando solicitações.
+        </div>
 
-    <div class="modal-title">
-        🎥 Tradutor ao vivo
     </div>
 
-    <div class="modal-sub">
-        Informe onde você está.
-        Procuraremos um tradutor disponível.
-    </div>
+</div>
 
-    <label class="field-label">
-        Onde você está?
-    </label>
+<div class="section-title">
 
-    <select id="localAtendimento">
+    <strong>
+        📋 Meu histórico
+    </strong>
 
-        <option value="Hospital">
-            🏥 Hospital
-        </option>
+    <span class="section-small">
+        Atendimentos finalizados
+    </span>
 
-        <option value="Prefeitura">
-            🏛️ Prefeitura
-        </option>
+</div>
 
-        <option value="Escola">
-            🏫 Escola
-        </option>
+<div id="listaHistorico">
 
-        <option value="Outros">
-            📍 Outro local
-        </option>
+    <div class="vazio">
 
-    </select>
+        <div class="vazio-icon">
+            📋
+        </div>
 
-    <label class="field-label">
-        Tempo estimado
-    </label>
-
-    <select id="tempoAtendimento">
-
-        <option value="30">
-            30 minutos
-        </option>
-
-        <option value="60">
-            1 hora
-        </option>
-
-        <option value="90">
-            Mais de 1 hora
-        </option>
-
-    </select>
-
-    <div class="modal-buttons">
-
-        <button
-            type="button"
-            class="btn btn-secondary"
-            id="btnCancelarTradutor"
-        >
-            Voltar
-        </button>
-
-        <button
-            type="button"
-            class="btn btn-confirm"
-            id="btnConfirmarTradutor"
-        >
-            Procurar tradutor
-        </button>
+        <div class="vazio-title">
+            Carregando histórico...
+        </div>
 
     </div>
 
@@ -1123,170 +951,13 @@ video {
 
 </div>
 
-<!-- ======================================================
-     MODAL ESPERA
-====================================================== -->
-
-<div
-    id="modalEspera"
-    class="modal"
->
-
-<div class="modal-content">
-
-    <div class="modal-handle"></div>
-
-    <div class="wait-area">
-
-        <div
-            class="wait-icon"
-            id="waitIcon"
-        >
-            🌐
-        </div>
-
-        <div
-            class="status-title"
-            id="statusTexto"
-        >
-            Procurando tradutor...
-        </div>
-
-        <div
-            class="status-sub"
-            id="subStatus"
-        >
-            Sua solicitação foi enviada.
-            Aguarde enquanto procuramos um tradutor disponível.
-        </div>
-
-        <div
-            class="loader"
-            id="loaderEspera"
-        ></div>
-
-        <div
-            id="tradutorConectado"
-            class="tradutor-conectado"
-        >
-
-            <div class="tradutor-conectado-label">
-                SEU TRADUTOR
-            </div>
-
-            <div
-                class="tradutor-conectado-nome"
-                id="tradutorConectadoNome"
-            >
-                Tradutor
-            </div>
-
-        </div>
-
-        <div
-            id="requestId"
-            class="request-id"
-        ></div>
-
-        <div id="videoContainer">
-
-            <div
-                id="timerDisplay"
-                class="timer-badge"
-            >
-                ⏱️ 00:00
-            </div>
-
-            <video
-                id="webcam"
-                autoplay
-                playsinline
-                muted
-            ></video>
-
-        </div>
-
-        <button
-            type="button"
-            class="btn btn-danger"
-            id="btnSairChamada"
-        >
-            Cancelar solicitação
-        </button>
-
-    </div>
-
 </div>
-
-</div>
-
-<!-- ======================================================
-     MENU INFERIOR
-====================================================== -->
-
-<nav class="bottom-nav">
-
-    <a
-        href="index.html"
-        class="nav-item active"
-    >
-
-        <span class="nav-icon">
-            🏠
-        </span>
-
-        Início
-
-    </a>
-
-    <a
-        href="servicos.html"
-        class="nav-item"
-    >
-
-        <span class="nav-icon">
-            🛠️
-        </span>
-
-        Serviços
-
-    </a>
-
-    <a
-        href="entretenimento.html"
-        class="nav-item"
-    >
-
-        <span class="nav-icon">
-            🎬
-        </span>
-
-        Lazer
-
-    </a>
-
-    <a
-        href="perfil.html"
-        class="nav-item"
-    >
-
-        <span class="nav-icon">
-            👤
-        </span>
-
-        Perfil
-
-    </a>
-
-</nav>
-
-</div>
-
-<!-- ======================================================
-     FIREBASE + LINE
-====================================================== -->
 
 <script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 import {
     initializeApp
@@ -1295,22 +966,27 @@ from
 "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
 import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
     getFirestore,
+    collection,
+    query,
+    where,
+    onSnapshot,
     doc,
     getDoc,
-    setDoc,
-    collection,
-    addDoc,
     updateDoc,
-    onSnapshot,
     serverTimestamp
 }
 from
 "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-/* =========================================================
-   FIREBASE
-========================================================= */
 
 const firebaseConfig = {
 
@@ -1343,785 +1019,1145 @@ const firebaseApp =
 const db =
     getFirestore(firebaseApp);
 
-/* =========================================================
-   LINE
-========================================================= */
-
-const LIFF_ID =
-    "2010902449-KWNNNsxn";
-
-/* =========================================================
-   VARIÁVEIS
-========================================================= */
-
-let usuarioAtual = null;
-
-let solicitacaoAtualId = null;
-
-let pararMonitoramento = null;
-
-let tempoInterval = null;
-
-let segundosChamada = 0;
-
-let cameraIniciada = false;
+const auth =
+    getAuth(firebaseApp);
 
 /* =========================================================
    ELEMENTOS
 ========================================================= */
 
-const loginOverlay =
+const telaLogin =
     document.getElementById(
-        "login-overlay"
+        "telaLogin"
     );
 
-const appContent =
+const painelTradutor =
     document.getElementById(
-        "app-content"
+        "painelTradutor"
     );
 
-const saldoBadge =
+const loginEmail =
     document.getElementById(
-        "saldoBadge"
+        "loginEmail"
     );
 
-const modalTradutor =
+const loginSenha =
     document.getElementById(
-        "modalTradutor"
+        "loginSenha"
     );
 
-const modalEspera =
+const btnLogin =
     document.getElementById(
-        "modalEspera"
+        "btnLogin"
     );
 
-const statusTexto =
+const loginErro =
     document.getElementById(
-        "statusTexto"
+        "loginErro"
     );
 
-const subStatus =
+const listaSolicitacoes =
     document.getElementById(
-        "subStatus"
+        "listaSolicitacoes"
     );
 
-const loaderEspera =
+const totalAguardando =
     document.getElementById(
-        "loaderEspera"
+        "totalAguardando"
     );
 
-const videoContainer =
+const totalHoje =
     document.getElementById(
-        "videoContainer"
+        "totalHoje"
     );
 
-const requestId =
+const tempoHoje =
     document.getElementById(
-        "requestId"
+        "tempoHoje"
     );
 
-const waitIcon =
+const listaHistorico =
     document.getElementById(
-        "waitIcon"
+        "listaHistorico"
     );
 
-const tradutorConectado =
+const btnStatus =
     document.getElementById(
-        "tradutorConectado"
+        "btnStatus"
     );
 
-const tradutorConectadoNome =
+const textoStatus =
     document.getElementById(
-        "tradutorConectadoNome"
+        "textoStatus"
     );
 
 /* =========================================================
-   INICIALIZAÇÃO
+   VARIÁVEIS
 ========================================================= */
 
-async function inicializarApp() {
+let tradutorAtual =
+    null;
+
+let tradutorOnline =
+    true;
+
+let unsubscribePedidos =
+    null;
+
+let unsubscribeHistorico =
+    null;
+
+let aceitandoAtendimento =
+    false;
+
+/* =========================================================
+   ONLINE / OFFLINE
+========================================================= */
+
+function atualizarTelaStatus() {
+
+    if (tradutorOnline) {
+
+        btnStatus.classList.remove(
+            "offline"
+        );
+
+        btnStatus.classList.add(
+            "online"
+        );
+
+        textoStatus.textContent =
+            "Online";
+
+    } else {
+
+        btnStatus.classList.remove(
+            "online"
+        );
+
+        btnStatus.classList.add(
+            "offline"
+        );
+
+        textoStatus.textContent =
+            "Offline";
+
+    }
+
+}
+
+function mostrarOfflinePedidos() {
+
+    totalAguardando.textContent =
+        "0";
+
+    listaSolicitacoes.innerHTML = `
+
+        <div class="vazio">
+
+            <div class="vazio-icon">
+                📴
+            </div>
+
+            <div class="vazio-title">
+                Você está offline
+            </div>
+
+            <div class="vazio-sub">
+                Toque em Offline no topo para ficar
+                online e receber novas solicitações.
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+async function alternarStatus() {
+
+    if (!tradutorAtual) {
+        return;
+    }
+
+    if (aceitandoAtendimento) {
+        return;
+    }
+
+    const novoStatus =
+        !tradutorOnline;
+
+    btnStatus.disabled =
+        true;
 
     try {
 
-        await liff.init({
-            liffId: LIFF_ID
-        });
+        const tradutorRef =
+            doc(
+                db,
+                "tradutor_usuarios",
+                tradutorAtual.uid
+            );
 
-        if (!liff.isLoggedIn()) {
+        await updateDoc(
+            tradutorRef,
+            {
+                online:
+                    novoStatus,
 
-            const idSalvo =
-                localStorage.getItem(
-                    "line_user_id"
-                );
-
-            if (!idSalvo) {
-
-                loginOverlay.style.display =
-                    "flex";
-
-                return;
-
+                statusAtualizadoEm:
+                    serverTimestamp()
             }
+        );
+
+        tradutorOnline =
+            novoStatus;
+
+        atualizarTelaStatus();
+
+        if (tradutorOnline) {
+
+            iniciarPedidos();
+
+        } else {
+
+            pararPedidos();
+
+            mostrarOfflinePedidos();
 
         }
 
-        let userId =
-            localStorage.getItem(
-                "line_user_id"
+    } catch (erro) {
+
+        console.error(
+            "Erro alterando status:",
+            erro
+        );
+
+        alert(
+            "Não foi possível alterar o status."
+        );
+
+    } finally {
+
+        btnStatus.disabled =
+            false;
+
+    }
+
+}
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function fazerLogin() {
+
+    const email =
+        loginEmail.value.trim();
+
+    const senha =
+        loginSenha.value;
+
+    loginErro.style.display =
+        "none";
+
+    if (!email || !senha) {
+
+        mostrarErroLogin(
+            "Digite o e-mail e a senha."
+        );
+
+        return;
+
+    }
+
+    btnLogin.disabled =
+        true;
+
+    btnLogin.textContent =
+        "Entrando...";
+
+    try {
+
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            senha
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro login:",
+            erro
+        );
+
+        mostrarErroLogin(
+            "E-mail ou senha incorretos."
+        );
+
+        btnLogin.disabled =
+            false;
+
+        btnLogin.textContent =
+            "Entrar";
+
+    }
+
+}
+
+function mostrarErroLogin(
+    mensagem
+) {
+
+    loginErro.textContent =
+        mensagem;
+
+    loginErro.style.display =
+        "block";
+
+}
+
+/* =========================================================
+   VERIFICAR TRADUTOR
+========================================================= */
+
+async function verificarTradutor(
+    user
+) {
+
+    try {
+
+        const tradutorRef =
+            doc(
+                db,
+                "tradutor_usuarios",
+                user.uid
             );
 
-        let userName =
-            localStorage.getItem(
-                "line_user_name"
+        const tradutorSnap =
+            await getDoc(
+                tradutorRef
             );
 
-        if (liff.isLoggedIn()) {
+        if (!tradutorSnap.exists()) {
 
-            try {
+            await signOut(auth);
 
-                const profile =
-                    await liff.getProfile();
+            mostrarErroLogin(
+                "Esta conta não está cadastrada como tradutor."
+            );
 
-                userId =
-                    profile.userId;
-
-                userName =
-                    profile.displayName;
-
-                localStorage.setItem(
-                    "line_user_id",
-                    userId
-                );
-
-                localStorage.setItem(
-                    "line_user_name",
-                    userName
-                );
-
-            }
-            catch (erro) {
-
-                console.log(
-                    "Erro perfil LINE:",
-                    erro
-                );
-
-            }
+            return false;
 
         }
 
-        if (!userId) {
+        const dados =
+            tradutorSnap.data();
 
-            loginOverlay.style.display =
+        if (dados.ativo !== true) {
+
+            await signOut(auth);
+
+            mostrarErroLogin(
+                "Esta conta de tradutor está desativada."
+            );
+
+            return false;
+
+        }
+
+        tradutorAtual = {
+
+            uid:
+                user.uid,
+
+            email:
+                user.email,
+
+            nome:
+                dados.nome ||
+                "Tradutor"
+
+        };
+
+        tradutorOnline =
+            dados.online !== false;
+
+        atualizarTelaStatus();
+
+        return true;
+
+    } catch (erro) {
+
+        console.error(
+            "Erro verificando tradutor:",
+            erro
+        );
+
+        await signOut(auth);
+
+        mostrarErroLogin(
+            "Não foi possível verificar a conta."
+        );
+
+        return false;
+
+    }
+
+}
+
+/* =========================================================
+   ESTADO DO LOGIN
+========================================================= */
+
+onAuthStateChanged(
+    auth,
+
+    async user => {
+
+        if (!user) {
+
+            tradutorAtual =
+                null;
+
+            pararPedidos();
+
+            pararHistorico();
+
+            painelTradutor.style.display =
+                "none";
+
+            telaLogin.style.display =
                 "flex";
+
+            btnLogin.disabled =
+                false;
+
+            btnLogin.textContent =
+                "Entrar";
 
             return;
 
         }
 
-        usuarioAtual = {
+        const permitido =
+            await verificarTradutor(
+                user
+            );
 
-            id:
-                userId,
+        if (!permitido) {
+            return;
+        }
 
-            nome:
-                userName ||
-                "Usuário LINE"
-
-        };
-
-        loginOverlay.style.display =
+        telaLogin.style.display =
             "none";
 
-        appContent.style.display =
+        painelTradutor.style.display =
             "block";
 
-        await carregarSaldo();
+        document.getElementById(
+            "boasVindas"
+        ).textContent =
+            "Olá, " +
+            tradutorAtual.nome +
+            ". Novos pedidos aparecem aqui automaticamente.";
 
-    }
-    catch (erro) {
+        if (tradutorOnline) {
 
-        console.error(
-            "Erro ao iniciar:",
-            erro
-        );
+            iniciarPedidos();
 
-        const idSalvo =
-            localStorage.getItem(
-                "line_user_id"
-            );
+        } else {
 
-        if (idSalvo) {
-
-            usuarioAtual = {
-
-                id:
-                    idSalvo,
-
-                nome:
-                    localStorage.getItem(
-                        "line_user_name"
-                    ) ||
-                    "Usuário LINE"
-
-            };
-
-            loginOverlay.style.display =
-                "none";
-
-            appContent.style.display =
-                "block";
-
-            await carregarSaldo();
-
-        }
-        else {
-
-            loginOverlay.style.display =
-                "flex";
+            mostrarOfflinePedidos();
 
         }
 
-    }
+        iniciarHistorico();
 
-}
+    }
+);
 
 /* =========================================================
-   LOGIN LINE
+   SAIR
 ========================================================= */
 
-function loginLine() {
+async function sair() {
 
-    if (!liff.isLoggedIn()) {
+    pararPedidos();
 
-        liff.login();
+    pararHistorico();
 
-    }
-
-}
-
-/* =========================================================
-   SALDO
-========================================================= */
-
-async function carregarSaldo() {
-
-    if (!usuarioAtual) {
-        return;
-    }
-
-    try {
-
-        const ref =
-            doc(
-                db,
-                "creditos_usuario",
-                usuarioAtual.id
-            );
-
-        const snap =
-            await getDoc(ref);
-
-        let saldo = 0;
-
-        if (snap.exists()) {
-
-            saldo =
-                Number(
-                    snap.data().saldo ||
-                    0
-                );
-
-        }
-        else {
-
-            await setDoc(
-                ref,
-                {
-                    nome:
-                        usuarioAtual.nome,
-
-                    saldo:
-                        0,
-
-                    criadoEm:
-                        serverTimestamp(),
-
-                    ultimaAtualizacao:
-                        serverTimestamp()
-                }
-            );
-
-        }
-
-        saldoBadge.textContent =
-            saldo;
-
-        localStorage.setItem(
-            "saldo_atual",
-            String(saldo)
-        );
-
-    }
-    catch (erro) {
-
-        console.error(
-            "Erro saldo:",
-            erro
-        );
-
-        saldoBadge.textContent =
-            localStorage.getItem(
-                "saldo_atual"
-            ) || "0";
-
-    }
-
-}
-
-/* =========================================================
-   TRADUÇÃO RÁPIDA
-========================================================= */
-
-async function traduzirTexto() {
-
-    const textarea =
-        document.getElementById(
-            "textoInput"
-        );
-
-    const resultado =
-        document.getElementById(
-            "resultadoBox"
-        );
-
-    const botao =
-        document.getElementById(
-            "btnTraduzirTexto"
-        );
-
-    const texto =
-        textarea.value.trim();
-
-    if (!texto) {
-
-        resultado.style.display =
-            "block";
-
-        resultado.classList.add(
-            "erro"
-        );
-
-        resultado.textContent =
-            "Digite uma frase para traduzir.";
-
-        return;
-
-    }
-
-    resultado.style.display =
-        "block";
-
-    resultado.classList.remove(
-        "erro"
+    await signOut(
+        auth
     );
 
-    resultado.textContent =
-        "Traduzindo...";
-
-    botao.disabled =
-        true;
-
-    botao.textContent =
-        "Traduzindo...";
-
-    try {
-
-        const japones =
-            /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(
-                texto
-            );
-
-        const origem =
-            japones
-                ? "ja"
-                : "pt";
-
-        const destino =
-            japones
-                ? "pt"
-                : "ja";
-
-        const url =
-            "https://translate.googleapis.com/translate_a/single" +
-            "?client=gtx" +
-            "&sl=" +
-            encodeURIComponent(origem) +
-            "&tl=" +
-            encodeURIComponent(destino) +
-            "&dt=t" +
-            "&q=" +
-            encodeURIComponent(texto);
-
-        const resposta =
-            await fetch(
-                url,
-                {
-                    cache:
-                        "no-store"
-                }
-            );
-
-        if (!resposta.ok) {
-
-            throw new Error(
-                "HTTP " +
-                resposta.status
-            );
-
-        }
-
-        const dados =
-            await resposta.json();
-
-        let traducao =
-            "";
-
-        if (
-            dados &&
-            Array.isArray(dados[0])
-        ) {
-
-            dados[0].forEach(
-                parte => {
-
-                    if (
-                        parte &&
-                        typeof parte[0] ===
-                        "string"
-                    ) {
-
-                        traducao +=
-                            parte[0];
-
-                    }
-
-                }
-            );
-
-        }
-
-        if (!traducao) {
-
-            throw new Error(
-                "Resposta vazia"
-            );
-
-        }
-
-        resultado.textContent =
-            traducao;
-
-    }
-    catch (erro) {
-
-        console.error(
-            "Erro tradução:",
-            erro
-        );
-
-        resultado.classList.add(
-            "erro"
-        );
-
-        resultado.textContent =
-            "Não foi possível traduzir agora. Tente novamente.";
-
-    }
-    finally {
-
-        botao.disabled =
-            false;
-
-        botao.textContent =
-            "Traduzir agora";
-
-    }
-
 }
 
 /* =========================================================
-   ABRIR TRADUTOR HUMANO
+   PEDIDOS
 ========================================================= */
 
-function abrirTradutor() {
+function iniciarPedidos() {
 
-    if (!usuarioAtual) {
-
-        alert(
-            "Entre com o LINE primeiro."
-        );
-
+    if (!tradutorOnline) {
         return;
-
     }
 
-    modalTradutor.style.display =
-        "flex";
-
-}
-
-/* =========================================================
-   FECHAR MODAL
-========================================================= */
-
-function fecharTradutor() {
-
-    modalTradutor.style.display =
-        "none";
-
-}
-
-/* =========================================================
-   CRIAR SOLICITAÇÃO
-========================================================= */
-
-async function criarSolicitacao() {
-
-    if (!usuarioAtual) {
-
-        alert(
-            "Usuário não identificado."
-        );
-
+    if (unsubscribePedidos) {
         return;
-
     }
 
-    const botao =
-        document.getElementById(
-            "btnConfirmarTradutor"
+    const consulta =
+        query(
+            collection(
+                db,
+                "solicitacoes"
+            ),
+
+            where(
+                "status",
+                "==",
+                "aguardando"
+            )
         );
 
-    const local =
-        document.getElementById(
-            "localAtendimento"
-        ).value;
-
-    const tempo =
-        Number(
-            document.getElementById(
-                "tempoAtendimento"
-            ).value
-        );
-
-    botao.disabled =
-        true;
-
-    botao.textContent =
-        "Enviando...";
-
-    try {
-
-        const ref =
-            await addDoc(
-                collection(
-                    db,
-                    "solicitacoes"
-                ),
-                {
-                    clienteId:
-                        usuarioAtual.id,
-
-                    status:
-                        "aguardando",
-
-                    tradutorId:
-                        "",
-
-                    tradutorNome:
-                        "",
-
-                    criadoEm:
-                        serverTimestamp(),
-
-                    clienteNome:
-                        usuarioAtual.nome,
-
-                    local:
-                        local,
-
-                    tempoMinutos:
-                        tempo,
-
-                    origem:
-                        "Ajuda JP",
-
-                    atualizadoEm:
-                        serverTimestamp()
-                }
-            );
-
-        solicitacaoAtualId =
-            ref.id;
-
-        requestId.textContent =
-            "Pedido: " +
-            solicitacaoAtualId;
-
-        modalTradutor.style.display =
-            "none";
-
-        modalEspera.style.display =
-            "flex";
-
-        waitIcon.textContent =
-            "🌐";
-
-        statusTexto.textContent =
-            "Procurando tradutor...";
-
-        subStatus.textContent =
-            "Sua solicitação foi enviada. Aguarde enquanto procuramos um tradutor disponível.";
-
-        loaderEspera.style.display =
-            "block";
-
-        tradutorConectado.style.display =
-            "none";
-
-        videoContainer.style.display =
-            "none";
-
-        cameraIniciada =
-            false;
-
-        document.getElementById(
-            "btnSairChamada"
-        ).textContent =
-            "Cancelar solicitação";
-
-        monitorarSolicitacao(
-            solicitacaoAtualId
-        );
-
-    }
-    catch (erro) {
-
-        console.error(
-            "Erro ao criar solicitação:",
-            erro
-        );
-
-        alert(
-            "Não foi possível enviar a solicitação.\n\n" +
-            "Verifique a conexão ou as regras do Firestore."
-        );
-
-    }
-    finally {
-
-        botao.disabled =
-            false;
-
-        botao.textContent =
-            "Procurar tradutor";
-
-    }
-
-}
-
-/* =========================================================
-   MONITORAR SOLICITAÇÃO
-========================================================= */
-
-function monitorarSolicitacao(id) {
-
-    if (pararMonitoramento) {
-
-        pararMonitoramento();
-
-        pararMonitoramento =
-            null;
-
-    }
-
-    const ref =
-        doc(
-            db,
-            "solicitacoes",
-            id
-        );
-
-    pararMonitoramento =
+    unsubscribePedidos =
         onSnapshot(
-            ref,
+
+            consulta,
 
             snapshot => {
 
-                if (!snapshot.exists()) {
+                if (!tradutorOnline) {
                     return;
                 }
 
-                const dados =
-                    snapshot.data();
+                const pedidos =
+                    [];
 
-                console.log(
-                    "Status da solicitação:",
-                    dados.status
+                snapshot.forEach(
+                    documento => {
+
+                        pedidos.push({
+
+                            id:
+                                documento.id,
+
+                            ...documento.data()
+
+                        });
+
+                    }
                 );
 
-                /*
-                IMPORTANTE:
+                totalAguardando.textContent =
+                    pedidos.length;
 
-                O Painel do Tradutor grava:
-                status = "aceita"
-
-                Portanto o cliente precisa
-                reconhecer "aceita".
-                */
-
-                if (
-                    dados.status === "aceita" ||
-                    dados.status === "aceito" ||
-                    dados.status === "conectado"
-                ) {
-
-                    tradutorEncontrado(
-                        dados
-                    );
-
-                    return;
-
-                }
-
-                if (
-                    dados.status ===
-                    "cancelado"
-                ) {
-
-                    fecharEspera();
-
-                    return;
-
-                }
-
-                if (
-                    dados.status ===
-                    "finalizado"
-                ) {
-
-                    finalizarLocal();
-
-                }
+                mostrarPedidos(
+                    pedidos
+                );
 
             },
 
             erro => {
 
                 console.error(
-                    "Erro monitorando pedido:",
+                    "Erro Firestore:",
                     erro
+                );
+
+                listaSolicitacoes.innerHTML = `
+
+                    <div class="vazio">
+
+                        <div class="vazio-icon">
+                            ⚠️
+                        </div>
+
+                        <div class="vazio-title">
+                            Não foi possível carregar
+                        </div>
+
+                        <div class="vazio-sub">
+                            Verifique a conexão e tente novamente.
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+        );
+
+}
+
+function pararPedidos() {
+
+    if (unsubscribePedidos) {
+
+        unsubscribePedidos();
+
+        unsubscribePedidos =
+            null;
+
+    }
+
+}
+
+/* =========================================================
+   HISTÓRICO
+========================================================= */
+
+function iniciarHistorico() {
+
+    if (
+        !tradutorAtual ||
+        unsubscribeHistorico
+    ) {
+        return;
+    }
+
+    const consulta =
+        query(
+            collection(
+                db,
+                "solicitacoes"
+            ),
+
+            where(
+                "tradutorId",
+                "==",
+                tradutorAtual.uid
+            )
+        );
+
+    unsubscribeHistorico =
+        onSnapshot(
+
+            consulta,
+
+            snapshot => {
+
+                const atendimentos =
+                    [];
+
+                snapshot.forEach(
+                    documento => {
+
+                        const dados =
+                            documento.data();
+
+                        if (
+                            dados.status ===
+                            "finalizado"
+                        ) {
+
+                            atendimentos.push({
+
+                                id:
+                                    documento.id,
+
+                                ...dados
+
+                            });
+
+                        }
+
+                    }
+                );
+
+                atendimentos.sort(
+                    (a,b) => {
+
+                        const ta =
+                            timestampParaMillis(
+                                a.finalizadoEm
+                            );
+
+                        const tb =
+                            timestampParaMillis(
+                                b.finalizadoEm
+                            );
+
+                        return tb - ta;
+
+                    }
+                );
+
+                atualizarEstatisticas(
+                    atendimentos
+                );
+
+                mostrarHistorico(
+                    atendimentos
+                );
+
+            },
+
+            erro => {
+
+                console.error(
+                    "Erro histórico:",
+                    erro
+                );
+
+            }
+
+        );
+
+}
+
+function pararHistorico() {
+
+    if (unsubscribeHistorico) {
+
+        unsubscribeHistorico();
+
+        unsubscribeHistorico =
+            null;
+
+    }
+
+}
+
+/* =========================================================
+   DATAS / DURAÇÃO
+========================================================= */
+
+function timestampParaData(
+    timestamp
+) {
+
+    if (!timestamp) {
+        return null;
+    }
+
+    if (
+        typeof timestamp.toDate ===
+        "function"
+    ) {
+
+        return timestamp.toDate();
+
+    }
+
+    if (timestamp.seconds) {
+
+        return new Date(
+            timestamp.seconds *
+            1000
+        );
+
+    }
+
+    return null;
+
+}
+
+function timestampParaMillis(
+    timestamp
+) {
+
+    const data =
+        timestampParaData(
+            timestamp
+        );
+
+    return data
+        ? data.getTime()
+        : 0;
+
+}
+
+function calcularDuracaoSegundos(
+    atendimento
+) {
+
+    const inicio =
+        timestampParaData(
+            atendimento.conectadoEm
+        );
+
+    const fim =
+        timestampParaData(
+            atendimento.finalizadoEm
+        );
+
+    if (!inicio || !fim) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.floor(
+            (
+                fim.getTime() -
+                inicio.getTime()
+            ) / 1000
+        )
+    );
+
+}
+
+function formatarDuracao(
+    segundos
+) {
+
+    if (!segundos) {
+        return "0 min";
+    }
+
+    const minutos =
+        Math.floor(
+            segundos / 60
+        );
+
+    const resto =
+        segundos % 60;
+
+    if (minutos === 0) {
+        return resto + " seg";
+    }
+
+    if (resto === 0) {
+        return minutos + " min";
+    }
+
+    return (
+        minutos +
+        " min " +
+        resto +
+        " seg"
+    );
+
+}
+
+function mesmaData(
+    dataA,
+    dataB
+) {
+
+    return (
+        dataA.getFullYear() ===
+            dataB.getFullYear() &&
+
+        dataA.getMonth() ===
+            dataB.getMonth() &&
+
+        dataA.getDate() ===
+            dataB.getDate()
+    );
+
+}
+
+/* =========================================================
+   ESTATÍSTICAS
+========================================================= */
+
+function atualizarEstatisticas(
+    atendimentos
+) {
+
+    const hoje =
+        new Date();
+
+    let quantidade =
+        0;
+
+    let segundos =
+        0;
+
+    atendimentos.forEach(
+        atendimento => {
+
+            const finalizado =
+                timestampParaData(
+                    atendimento.finalizadoEm
+                );
+
+            if (
+                finalizado &&
+                mesmaData(
+                    finalizado,
+                    hoje
+                )
+            ) {
+
+                quantidade++;
+
+                segundos +=
+                    calcularDuracaoSegundos(
+                        atendimento
+                    );
+
+            }
+
+        }
+    );
+
+    totalHoje.textContent =
+        quantidade;
+
+    const minutos =
+        Math.floor(
+            segundos / 60
+        );
+
+    if (minutos < 60) {
+
+        tempoHoje.textContent =
+            minutos + " min";
+
+    } else {
+
+        const horas =
+            Math.floor(
+                minutos / 60
+            );
+
+        const resto =
+            minutos % 60;
+
+        tempoHoje.textContent =
+            horas +
+            "h " +
+            resto +
+            "m";
+
+    }
+
+}
+
+/* =========================================================
+   FORMATAR DATA
+========================================================= */
+
+function formatarDataHora(
+    timestamp
+) {
+
+    const data =
+        timestampParaData(
+            timestamp
+        );
+
+    if (!data) {
+        return "Data não disponível";
+    }
+
+    try {
+
+        return new Intl.DateTimeFormat(
+            "pt-BR",
+            {
+                day:
+                    "2-digit",
+
+                month:
+                    "2-digit",
+
+                year:
+                    "numeric",
+
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit"
+            }
+        ).format(data);
+
+    } catch {
+
+        return data.toLocaleString();
+
+    }
+
+}
+
+/* =========================================================
+   SEGURANÇA HTML
+========================================================= */
+
+function escaparHTML(
+    valor
+) {
+
+    return String(
+        valor ?? ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+/* =========================================================
+   MOSTRAR HISTÓRICO
+========================================================= */
+
+function mostrarHistorico(
+    atendimentos
+) {
+
+    if (
+        atendimentos.length ===
+        0
+    ) {
+
+        listaHistorico.innerHTML = `
+
+            <div class="vazio">
+
+                <div class="vazio-icon">
+                    📋
+                </div>
+
+                <div class="vazio-title">
+                    Nenhum atendimento finalizado
+                </div>
+
+                <div class="vazio-sub">
+                    Seus atendimentos concluídos aparecerão aqui.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    listaHistorico.innerHTML =
+        "";
+
+    atendimentos
+        .slice(
+            0,
+            20
+        )
+        .forEach(
+            atendimento => {
+
+                const nome =
+                    escaparHTML(
+                        atendimento.clienteNome ||
+                        "Cliente"
+                    );
+
+                const local =
+                    escaparHTML(
+                        atendimento.local ||
+                        "Não informado"
+                    );
+
+                const data =
+                    escaparHTML(
+                        formatarDataHora(
+                            atendimento.finalizadoEm
+                        )
+                    );
+
+                const duracao =
+                    escaparHTML(
+                        formatarDuracao(
+                            calcularDuracaoSegundos(
+                                atendimento
+                            )
+                        )
+                    );
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+                card.className =
+                    "historico-card";
+
+                card.innerHTML = `
+
+                    <div class="historico-top">
+
+                        <div class="historico-cliente">
+
+                            <div class="historico-avatar">
+                                👤
+                            </div>
+
+                            <div>
+
+                                <div class="historico-nome">
+                                    ${nome}
+                                </div>
+
+                                <div class="historico-data">
+                                    ${data}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="historico-badge">
+                            CONCLUÍDO
+                        </div>
+
+                    </div>
+
+                    <div class="historico-info">
+
+                        <div class="historico-info-box">
+
+                            <span class="historico-info-label">
+                                LOCAL
+                            </span>
+
+                            <span class="historico-info-value">
+                                📍 ${local}
+                            </span>
+
+                        </div>
+
+                        <div class="historico-info-box">
+
+                            <span class="historico-info-label">
+                                DURAÇÃO
+                            </span>
+
+                            <span class="historico-info-value">
+                                ⏱️ ${duracao}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                listaHistorico.appendChild(
+                    card
                 );
 
             }
@@ -2130,182 +2166,211 @@ function monitorarSolicitacao(id) {
 }
 
 /* =========================================================
-   TRADUTOR ENCONTRADO
+   MOSTRAR PEDIDOS
 ========================================================= */
 
-async function tradutorEncontrado(
-    dados
+function mostrarPedidos(
+    pedidos
 ) {
 
-    const nomeTradutor =
-        dados.tradutorNome ||
-        "Tradutor Ajuda JP";
+    if (!tradutorOnline) {
 
-    waitIcon.textContent =
-        "✅";
+        mostrarOfflinePedidos();
 
-    statusTexto.textContent =
-        "Tradutor encontrado!";
-
-    subStatus.textContent =
-        "Seu tradutor aceitou a solicitação. Preparando o atendimento...";
-
-    loaderEspera.style.display =
-        "none";
-
-    tradutorConectadoNome.textContent =
-        nomeTradutor;
-
-    tradutorConectado.style.display =
-        "block";
-
-    document.getElementById(
-        "btnSairChamada"
-    ).textContent =
-        "Encerrar atendimento";
-
-    /*
-    Evita pedir câmera várias vezes,
-    porque o onSnapshot pode disparar
-    novamente.
-    */
-
-    if (cameraIniciada) {
         return;
+
     }
 
-    cameraIniciada =
-        true;
+    if (
+        pedidos.length ===
+        0
+    ) {
 
-    try {
+        listaSolicitacoes.innerHTML = `
 
-        if (
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ) {
+            <div class="vazio">
 
-            throw new Error(
-                "Câmera não disponível neste navegador."
+                <div class="vazio-icon">
+                    ☕
+                </div>
+
+                <div class="vazio-title">
+                    Nenhum cliente aguardando
+                </div>
+
+                <div class="vazio-sub">
+                    Quando alguém solicitar um tradutor,
+                    aparecerá aqui automaticamente.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    listaSolicitacoes.innerHTML =
+        "";
+
+    pedidos.forEach(
+        pedido => {
+
+            const nome =
+                escaparHTML(
+                    pedido.clienteNome ||
+                    "Cliente"
+                );
+
+            const local =
+                escaparHTML(
+                    pedido.local ||
+                    "Não informado"
+                );
+
+            const tempo =
+                Number(
+                    pedido.tempoMinutos ||
+                    30
+                );
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "solicitacao";
+
+            card.innerHTML = `
+
+                <div class="solicitacao-top">
+
+                    <div class="cliente">
+
+                        <div class="avatar">
+                            👤
+                        </div>
+
+                        <div>
+
+                            <div class="cliente-nome">
+                                ${nome}
+                            </div>
+
+                            <div class="cliente-sub">
+                                Solicitação de tradução
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="badge">
+                        AGUARDANDO
+                    </div>
+
+                </div>
+
+                <div class="info">
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            LOCAL
+                        </span>
+
+                        <span class="info-value">
+                            📍 ${local}
+                        </span>
+
+                    </div>
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            TEMPO
+                        </span>
+
+                        <span class="info-value">
+                            ⏱️ ${tempo} min
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-aceitar"
+                >
+                    Aceitar atendimento
+                </button>
+
+            `;
+
+            const botao =
+                card.querySelector(
+                    ".btn-aceitar"
+                );
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    aceitarAtendimento(
+                        pedido,
+                        botao
+                    );
+
+                }
+            );
+
+            listaSolicitacoes.appendChild(
+                card
             );
 
         }
-
-        const stream =
-            await navigator.mediaDevices
-                .getUserMedia(
-                    {
-                        video:
-                            true,
-
-                        audio:
-                            true
-                    }
-                );
-
-        const webcam =
-            document.getElementById(
-                "webcam"
-            );
-
-        webcam.srcObject =
-            stream;
-
-        videoContainer.style.display =
-            "block";
-
-        subStatus.textContent =
-            "Tradutor conectado ao atendimento.";
-
-        iniciarCronometro();
-
-    }
-    catch (erro) {
-
-        console.error(
-            "Câmera/microfone:",
-            erro
-        );
-
-        cameraIniciada =
-            false;
-
-        subStatus.textContent =
-            "Tradutor encontrado. Permita o acesso à câmera e ao microfone para continuar.";
-
-    }
+    );
 
 }
 
 /* =========================================================
-   CRONÔMETRO
+   ACEITAR ATENDIMENTO
 ========================================================= */
 
-function iniciarCronometro() {
+async function aceitarAtendimento(
+    pedido,
+    botao
+) {
 
-    if (tempoInterval) {
-
-        clearInterval(
-            tempoInterval
-        );
-
+    if (!tradutorAtual) {
+        return;
     }
 
-    segundosChamada =
-        0;
+    if (!tradutorOnline) {
 
-    atualizarCronometro();
-
-    tempoInterval =
-        setInterval(
-            () => {
-
-                segundosChamada++;
-
-                atualizarCronometro();
-
-            },
-            1000
+        alert(
+            "Você está offline."
         );
-
-}
-
-function atualizarCronometro() {
-
-    const minutos =
-        Math.floor(
-            segundosChamada /
-            60
-        );
-
-    const segundos =
-        segundosChamada %
-        60;
-
-    document.getElementById(
-        "timerDisplay"
-    ).textContent =
-        "⏱️ " +
-        String(minutos)
-            .padStart(2, "0") +
-        ":" +
-        String(segundos)
-            .padStart(2, "0");
-
-}
-
-/* =========================================================
-   CANCELAR / ENCERRAR
-========================================================= */
-
-async function cancelarOuEncerrar() {
-
-    if (!solicitacaoAtualId) {
-
-        fecharEspera();
 
         return;
 
     }
+
+    if (aceitandoAtendimento) {
+        return;
+    }
+
+    aceitandoAtendimento =
+        true;
+
+    botao.disabled =
+        true;
+
+    botao.textContent =
+        "Aceitando...";
 
     try {
 
@@ -2313,157 +2378,95 @@ async function cancelarOuEncerrar() {
             doc(
                 db,
                 "solicitacoes",
-                solicitacaoAtualId
+                pedido.id
             );
 
         const snap =
-            await getDoc(ref);
+            await getDoc(
+                ref
+            );
 
-        if (snap.exists()) {
+        if (!snap.exists()) {
 
-            const status =
-                snap.data().status;
+            alert(
+                "Esta solicitação não existe mais."
+            );
 
-            if (
-                status ===
-                "aguardando"
-            ) {
-
-                await updateDoc(
-                    ref,
-                    {
-                        status:
-                            "cancelado",
-
-                        canceladoEm:
-                            serverTimestamp(),
-
-                        atualizadoEm:
-                            serverTimestamp()
-                    }
-                );
-
-            }
-            else {
-
-                await updateDoc(
-                    ref,
-                    {
-                        status:
-                            "finalizado",
-
-                        finalizadoEm:
-                            serverTimestamp(),
-
-                        atualizadoEm:
-                            serverTimestamp()
-                    }
-                );
-
-            }
+            return;
 
         }
 
-    }
-    catch (erro) {
+        const dadosAtuais =
+            snap.data();
+
+        if (
+            dadosAtuais.status !==
+            "aguardando"
+        ) {
+
+            alert(
+                "Outro tradutor já aceitou esta solicitação."
+            );
+
+            return;
+
+        }
+
+        await updateDoc(
+            ref,
+            {
+                status:
+                    "aceito",
+
+                tradutorId:
+                    tradutorAtual.uid,
+
+                tradutorNome:
+                    tradutorAtual.nome,
+
+                tradutorEmail:
+                    tradutorAtual.email,
+
+                aceitoEm:
+                    serverTimestamp(),
+
+                atualizadoEm:
+                    serverTimestamp(),
+
+                webrtcEstado:
+                    "tradutor_aceitou"
+            }
+        );
+
+        pararPedidos();
+
+        window.location.href =
+            "chamada.html?id=" +
+            encodeURIComponent(
+                pedido.id
+            );
+
+    } catch (erro) {
 
         console.error(
-            "Erro encerrando:",
+            "Erro ao aceitar:",
             erro
         );
 
-    }
-
-    fecharEspera();
-
-}
-
-/* =========================================================
-   FECHAR ESPERA
-========================================================= */
-
-function fecharEspera() {
-
-    modalEspera.style.display =
-        "none";
-
-    pararCamera();
-
-    tradutorConectado.style.display =
-        "none";
-
-    waitIcon.textContent =
-        "🌐";
-
-    if (pararMonitoramento) {
-
-        pararMonitoramento();
-
-        pararMonitoramento =
-            null;
-
-    }
-
-    solicitacaoAtualId =
-        null;
-
-}
-
-/* =========================================================
-   FINALIZAÇÃO
-========================================================= */
-
-function finalizarLocal() {
-
-    fecharEspera();
-
-    alert(
-        "Atendimento finalizado."
-    );
-
-}
-
-/* =========================================================
-   PARAR CÂMERA
-========================================================= */
-
-function pararCamera() {
-
-    cameraIniciada =
-        false;
-
-    if (tempoInterval) {
-
-        clearInterval(
-            tempoInterval
+        alert(
+            "Não foi possível aceitar o atendimento."
         );
 
-        tempoInterval =
-            null;
+        aceitandoAtendimento =
+            false;
+
+        botao.disabled =
+            false;
+
+        botao.textContent =
+            "Aceitar atendimento";
 
     }
-
-    const webcam =
-        document.getElementById(
-            "webcam"
-        );
-
-    if (webcam.srcObject) {
-
-        webcam.srcObject
-            .getTracks()
-            .forEach(
-                track =>
-                    track.stop()
-            );
-
-        webcam.srcObject =
-            null;
-
-    }
-
-    videoContainer.style.display =
-        "none";
 
 }
 
@@ -2471,62 +2474,34 @@ function pararCamera() {
    BOTÕES
 ========================================================= */
 
-document.getElementById(
-    "btnLoginLine"
-).addEventListener(
+btnStatus.addEventListener(
     "click",
-    loginLine
+    alternarStatus
+);
+
+btnLogin.addEventListener(
+    "click",
+    fazerLogin
 );
 
 document.getElementById(
-    "btnTraduzirTexto"
+    "btnSair"
 ).addEventListener(
     "click",
-    traduzirTexto
+    sair
 );
 
-document.getElementById(
-    "btnChamarTradutor"
-).addEventListener(
-    "click",
-    abrirTradutor
-);
-
-document.getElementById(
-    "btnCancelarTradutor"
-).addEventListener(
-    "click",
-    fecharTradutor
-);
-
-document.getElementById(
-    "btnConfirmarTradutor"
-).addEventListener(
-    "click",
-    criarSolicitacao
-);
-
-document.getElementById(
-    "btnSairChamada"
-).addEventListener(
-    "click",
-    cancelarOuEncerrar
-);
-
-document.getElementById(
-    "textoInput"
-).addEventListener(
+loginSenha.addEventListener(
     "keydown",
+
     event => {
 
         if (
-            event.key === "Enter" &&
-            event.ctrlKey
+            event.key ===
+            "Enter"
         ) {
 
-            event.preventDefault();
-
-            traduzirTexto();
+            fazerLogin();
 
         }
 
@@ -2534,10 +2509,19 @@ document.getElementById(
 );
 
 /* =========================================================
-   INICIAR
+   FECHAR PÁGINA
 ========================================================= */
 
-inicializarApp();
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        pararPedidos();
+
+        pararHistorico();
+
+    }
+);
 
 </script>
 
