@@ -1,1037 +1,573 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
 
 <meta
-
     name="viewport"
-
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-
 >
 
 <meta name="google" content="notranslate">
 
-<title>Ajuda JP - Painel do Tradutor</title>
+<title>Painel do Tradutor - Ajuda JP</title>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 <style>
 
-*{
-
-    box-sizing:border-box;
-
-    -webkit-tap-highlight-color:transparent;
-
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
-
-body{
-
-    margin:0;
-
-    padding:0;
-
-    width:100%;
-
-    min-height:100%;
-
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
 }
 
-body{
-
+body {
     font-family:
-
         -apple-system,
-
         BlinkMacSystemFont,
-
         "Segoe UI",
-
         Arial,
-
         sans-serif;
 
-    background:#f4f6f9;
-
-    color:#333;
-
+    background: #f4f7fb;
+    color: #1f2937;
 }
 
-header{
-
-    background:#1a73e8;
-
-    color:white;
-
-    padding:16px;
-
-    text-align:center;
-
-    position:sticky;
-
-    top:0;
-
-    z-index:10;
-
-    box-shadow:0 2px 8px rgba(0,0,0,.12);
-
+.header {
+    background: #2474e5;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
 }
 
-header h1{
-
-    margin:0;
-
-    font-size:20px;
-
+.header h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
 }
 
-header p{
-
-    margin:5px 0 0;
-
-    font-size:13px;
-
-    opacity:.9;
-
+.header p {
+    margin: 8px 0 0;
+    font-size: 18px;
 }
 
-.container{
-
-    width:100%;
-
-    max-width:600px;
-
-    margin:auto;
-
-    padding:16px;
-
+.container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 32px;
 }
 
-.status-tradutor{
-
-    background:white;
-
-    border-radius:16px;
-
-    padding:16px;
-
-    margin-bottom:16px;
-
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
-
+.status-card {
+    background: white;
+    border-radius: 28px;
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
-.status-linha{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:12px;
-
+.status-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
-.status-info{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
+.status-dot-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e1f7ea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.status-bolinha{
-
-    width:12px;
-
-    height:12px;
-
-    border-radius:50%;
-
-    background:#20b15a;
-
-    box-shadow:0 0 0 5px rgba(32,177,90,.12);
-
+.status-dot {
+    width: 24px;
+    height: 24px;
+    background: #1dbb68;
+    border-radius: 50%;
 }
 
-.status-titulo{
-
-    font-weight:700;
-
-    font-size:16px;
-
+.status-title {
+    font-size: 27px;
+    font-weight: 800;
 }
 
-.status-texto{
-
-    font-size:13px;
-
-    color:#777;
-
-    margin-top:3px;
-
+.status-subtitle {
+    margin-top: 4px;
+    font-size: 19px;
+    color: #777;
 }
 
-.tradutor-nome{
-
-    font-size:13px;
-
-    color:#666;
-
-    text-align:right;
-
+.tradutor-nome {
+    font-size: 18px;
+    color: #666;
+    font-weight: 700;
 }
 
-.titulo-area{
-
-    margin:22px 3px 12px;
-
-    font-size:18px;
-
-    font-weight:800;
-
+.section-title {
+    margin: 44px 6px 24px;
+    font-size: 29px;
+    font-weight: 800;
 }
 
-#listaSolicitacoes{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:14px;
-
+#listaSolicitacoes {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.vazio{
-
-    background:white;
-
-    border-radius:18px;
-
-    padding:35px 20px;
-
-    text-align:center;
-
-    box-shadow:0 3px 12px rgba(0,0,0,.06);
-
+.vazio {
+    background: white;
+    border-radius: 28px;
+    padding: 75px 30px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
 }
 
-.vazio-icone{
-
-    font-size:45px;
-
-    margin-bottom:12px;
-
+.vazio-icon {
+    font-size: 68px;
+    margin-bottom: 24px;
 }
 
-.vazio-titulo{
-
-    font-weight:800;
-
-    font-size:17px;
-
+.vazio-titulo {
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 15px;
 }
 
-.vazio-texto{
-
-    margin-top:7px;
-
-    color:#777;
-
-    font-size:14px;
-
-    line-height:1.5;
-
+.vazio-texto {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #777;
 }
 
-.pedido{
-
-    background:white;
-
-    border-radius:18px;
-
-    overflow:hidden;
-
-    box-shadow:0 4px 14px rgba(0,0,0,.09);
-
-    border:1px solid #e8e8e8;
-
+.solicitacao-card {
+    background: white;
+    border-radius: 28px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
-.pedido-topo{
-
-    background:#fff3f3;
-
-    padding:12px 15px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:10px;
-
+.solicitacao-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.novo-pedido{
-
-    color:#d93025;
-
-    font-size:13px;
-
-    font-weight:900;
-
+.cliente-nome {
+    font-size: 24px;
+    font-weight: 800;
 }
 
-.hora-pedido{
-
-    color:#777;
-
-    font-size:12px;
-
+.novo-badge {
+    background: #e7f0ff;
+    color: #1765d8;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
 }
 
-.pedido-corpo{
-
-    padding:16px;
-
+.info {
+    background: #f6f8fb;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 18px;
 }
 
-.cliente{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    margin-bottom:15px;
-
+.info-linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 8px 0;
+    font-size: 17px;
 }
 
-.avatar{
-
-    width:43px;
-
-    height:43px;
-
-    border-radius:50%;
-
-    background:#e8f0fe;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-size:22px;
-
+.info-label {
+    color: #777;
 }
 
-.cliente-nome{
-
-    font-weight:800;
-
-    font-size:16px;
-
+.info-valor {
+    font-weight: 700;
+    text-align: right;
 }
 
-.cliente-label{
-
-    color:#888;
-
-    font-size:12px;
-
-    margin-top:2px;
-
+.botao-aceitar {
+    width: 100%;
+    border: none;
+    border-radius: 18px;
+    padding: 18px;
+    background: #20b866;
+    color: white;
+    font-size: 20px;
+    font-weight: 800;
+    cursor: pointer;
 }
 
-.dados{
-
-    background:#f7f9fc;
-
-    border-radius:13px;
-
-    padding:12px 14px;
-
-    margin-bottom:14px;
-
+.botao-aceitar:disabled {
+    opacity: 0.55;
 }
 
-.dado{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:15px;
-
-    padding:7px 0;
-
-    border-bottom:1px solid #e9edf3;
-
+.aviso {
+    margin-top: 38px;
+    background: #fff7d9;
+    color: #7b5a00;
+    border-radius: 22px;
+    padding: 23px;
+    font-size: 17px;
+    line-height: 1.5;
+    font-weight: 600;
 }
 
-.dado:last-child{
-
-    border-bottom:none;
-
+.erro {
+    background: #ffe4e4;
+    color: #a30000;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    font-weight: 700;
 }
 
-.dado-label{
+@media (max-width: 600px) {
 
-    color:#777;
+    .container {
+        padding: 24px 16px;
+    }
 
-    font-size:13px;
+    .header {
+        padding: 28px 15px;
+    }
 
-}
+    .header h1 {
+        font-size: 27px;
+    }
 
-.dado-valor{
+    .status-card {
+        padding: 24px 20px;
+    }
 
-    font-weight:700;
+    .status-title {
+        font-size: 24px;
+    }
 
-    text-align:right;
+    .status-subtitle {
+        font-size: 17px;
+    }
 
-    font-size:14px;
-
-}
-
-.btn-aceitar{
-
-    width:100%;
-
-    border:none;
-
-    border-radius:13px;
-
-    background:#20b15a;
-
-    color:white;
-
-    font-size:16px;
-
-    font-weight:900;
-
-    padding:14px;
-
-    cursor:pointer;
-
-}
-
-.btn-aceitar:active{
-
-    transform:scale(.98);
-
-}
-
-.btn-aceitar:disabled{
-
-    background:#aaa;
-
-    cursor:not-allowed;
-
-    transform:none;
-
-}
-
-.aviso{
-
-    margin-top:20px;
-
-    padding:13px;
-
-    border-radius:12px;
-
-    background:#fff8e1;
-
-    color:#735b00;
-
-    font-size:12px;
-
-    line-height:1.5;
-
+    .tradutor-nome {
+        font-size: 16px;
+    }
 }
 
 </style>
-
 </head>
 
 <body>
 
-<header>
-
+<header class="header">
     <h1>🌐 Painel do Tradutor</h1>
-
     <p>Ajuda JP • Tradução Online</p>
-
 </header>
 
-<div class="container">
+<main class="container">
 
-    <div class="status-tradutor">
+    <section class="status-card">
 
-        <div class="status-linha">
+        <div class="status-left">
 
-            <div class="status-info">
-
-                <div class="status-bolinha"></div>
-
-                <div>
-
-                    <div class="status-titulo">
-
-                        Disponível
-
-                    </div>
-
-                    <div class="status-texto">
-
-                        Aguardando solicitações
-
-                    </div>
-
-                </div>
-
+            <div class="status-dot-wrap">
+                <div class="status-dot"></div>
             </div>
 
-            <div
+            <div>
+                <div class="status-title">
+                    Disponível
+                </div>
 
-                class="tradutor-nome"
-
-                id="tradutorNome"
-
-            >
-
-                Carregando...
-
+                <div class="status-subtitle">
+                    Aguardando solicitações
+                </div>
             </div>
 
         </div>
 
-    </div>
+        <div
+            class="tradutor-nome"
+            id="tradutorNome"
+        >
+            Tradutor
+        </div>
 
-    <div class="titulo-area">
+    </section>
 
+    <h2 class="section-title">
         Solicitações
+    </h2>
 
-    </div>
-
-    <div id="listaSolicitacoes">
+    <section id="listaSolicitacoes">
 
         <div class="vazio">
 
-            <div class="vazio-icone">
-
-                🔎
-
+            <div class="vazio-icon">
+                🕐
             </div>
 
             <div class="vazio-titulo">
-
-                Procurando solicitações...
-
+                Nenhuma solicitação agora
             </div>
 
             <div class="vazio-texto">
-
-                Novos pedidos aparecerão aqui automaticamente.
-
+                Quando alguém chamar um tradutor,
+                o pedido aparecerá aqui.
             </div>
 
         </div>
 
-    </div>
+    </section>
 
     <div class="aviso">
-
-        ⚠️ Ao aceitar uma solicitação,
-
-        ela deixa de ficar disponível
-
-        para os outros tradutores.
-
+        ⚠️ Ao aceitar uma solicitação, ela deixa de ficar
+        disponível para os outros tradutores.
     </div>
 
-</div>
+</main>
 
 <script type="module">
 
-/* =========================================================
-
-   FIREBASE
-
-========================================================= */
-
 import {
-
     initializeApp
-
-}
-
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
 import {
-
     getFirestore,
-
     collection,
-
     query,
-
     where,
-
     onSnapshot,
-
     doc,
-
     runTransaction,
-
     serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-}
 
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 const firebaseConfig = {
 
     apiKey:
-
         "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
 
     authDomain:
-
         "ajuda-jp.firebaseapp.com",
 
-    projectId:
+    databaseURL:
+        "https://ajuda-jp-default-rtdb.firebaseio.com",
 
+    projectId:
         "ajuda-jp",
 
     storageBucket:
-
         "ajuda-jp.firebasestorage.app",
 
     messagingSenderId:
-
         "40121072206",
 
     appId:
-
         "1:40121072206:web:23168abd254affb6d0a11f"
-
 };
 
-const app =
 
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const db =
+const db = getFirestore(app);
 
-    getFirestore(app);
 
 /* =========================================================
-
    LINE
-
 ========================================================= */
 
-const LIFF_ID =
+const LIFF_ID = "2010902449-KWNNNsxn";
 
-    "2010902449-KWNNNsxn";
 
 let tradutor = {
 
     id:
-
-        localStorage.getItem(
-
-            "line_user_id"
-
-        ) || "",
+        localStorage.getItem("line_user_id") || "",
 
     nome:
-
-        localStorage.getItem(
-
-            "line_user_name"
-
-        ) || "Tradutor"
+        localStorage.getItem("line_user_name") || "Tradutor"
 
 };
 
-async function iniciarLINE(){
 
-    try{
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const listaSolicitacoes =
+    document.getElementById("listaSolicitacoes");
+
+const tradutorNome =
+    document.getElementById("tradutorNome");
+
+
+/* =========================================================
+   INICIAR LINE
+========================================================= */
+
+async function iniciarLINE() {
+
+    try {
 
         await liff.init({
-
-            liffId:LIFF_ID
-
+            liffId: LIFF_ID
         });
 
-        if(!liff.isLoggedIn()){
 
-            liff.login();
+        if (!liff.isLoggedIn()) {
+
+            liff.login({
+                redirectUri:
+                    window.location.origin +
+                    "/tradutor-painel.html"
+            });
 
             return;
+        }
+
+
+        const profile =
+            await liff.getProfile();
+
+
+        tradutor.id =
+            profile.userId;
+
+
+        tradutor.nome =
+            profile.displayName || "Tradutor";
+
+
+        localStorage.setItem(
+            "line_user_id",
+            tradutor.id
+        );
+
+
+        localStorage.setItem(
+            "line_user_name",
+            tradutor.nome
+        );
+
+
+        tradutorNome.textContent =
+            tradutor.nome;
+
+
+        iniciarEscutaSolicitacoes();
+
+    }
+    catch (erro) {
+
+        console.error(
+            "Erro LINE:",
+            erro
+        );
+
+
+        /*
+        Se já houver dados salvos do LINE,
+        permite continuar o teste.
+        */
+
+        if (tradutor.id) {
+
+            tradutorNome.textContent =
+                tradutor.nome;
+
+            iniciarEscutaSolicitacoes();
+
+        }
+        else {
+
+            listaSolicitacoes.innerHTML = `
+                <div class="erro">
+                    Não foi possível identificar
+                    o tradutor pelo LINE.
+                </div>
+            `;
 
         }
 
-        const perfil =
-
-            await liff.getProfile();
-
-        tradutor.id =
-
-            perfil.userId;
-
-        tradutor.nome =
-
-            perfil.displayName
-
-            || "Tradutor";
-
-        localStorage.setItem(
-
-            "line_user_id",
-
-            tradutor.id
-
-        );
-
-        localStorage.setItem(
-
-            "line_user_name",
-
-            tradutor.nome
-
-        );
-
-        document.getElementById(
-
-            "tradutorNome"
-
-        ).innerText =
-
-            tradutor.nome;
-
-    }
-
-    catch(error){
-
-        console.error(
-
-            "Erro LINE:",
-
-            error
-
-        );
-
-        document.getElementById(
-
-            "tradutorNome"
-
-        ).innerText =
-
-            "Tradutor";
-
     }
 
 }
 
-/* =========================================================
-
-   PROTEÇÃO DO TEXTO
-
-========================================================= */
-
-function escaparHTML(texto){
-
-    const elemento =
-
-        document.createElement("div");
-
-    elemento.textContent =
-
-        texto == null
-
-        ? ""
-
-        : String(texto);
-
-    return elemento.innerHTML;
-
-}
 
 /* =========================================================
-
-   FORMATAR LOCAL
-
+   ESCUTAR SOLICITAÇÕES
 ========================================================= */
 
-function formatarLocal(valor){
+function iniciarEscutaSolicitacoes() {
 
-    if(!valor){
+    /*
+    IMPORTANTE:
 
-        return "Não informado";
+    O Ajuda JP grava os novos pedidos com:
 
-    }
+    status = "aguardando"
 
-    const locais = {
+    Por isso o painel precisa procurar exatamente
+    esse status.
+    */
 
-        hospital:
+    const q = query(
 
-            "🏥 Hospital",
+        collection(
+            db,
+            "solicitacoes"
+        ),
 
-        prefeitura:
+        where(
+            "status",
+            "==",
+            "aguardando"
+        )
 
-            "🏢 Prefeitura",
+    );
 
-        escola:
-
-            "🏫 Escola",
-
-        outros:
-
-            "📍 Outros"
-
-    };
-
-    const chave =
-
-        String(valor)
-
-        .toLowerCase();
-
-    return locais[chave]
-
-        || escaparHTML(valor);
-
-}
-
-/* =========================================================
-
-   FORMATAR TEMPO
-
-========================================================= */
-
-function formatarTempo(valor){
-
-    if(!valor){
-
-        return "30 minutos";
-
-    }
-
-    const texto =
-
-        String(valor);
-
-    if(
-
-        texto === "30"
-
-        ||
-
-        texto === "30m"
-
-    ){
-
-        return "30 minutos";
-
-    }
-
-    if(
-
-        texto === "60"
-
-        ||
-
-        texto === "1h"
-
-    ){
-
-        return "1 hora";
-
-    }
-
-    if(
-
-        texto === "120"
-
-        ||
-
-        texto === "2h+"
-
-    ){
-
-        return "2 horas ou mais";
-
-    }
-
-    return escaparHTML(texto);
-
-}
-
-/* =========================================================
-
-   FORMATAR DATA
-
-========================================================= */
-
-function formatarHora(timestamp){
-
-    if(
-
-        !timestamp
-
-        ||
-
-        typeof timestamp.toDate
-
-        !== "function"
-
-    ){
-
-        return "Agora";
-
-    }
-
-    try{
-
-        return timestamp
-
-            .toDate()
-
-            .toLocaleTimeString(
-
-                "pt-BR",
-
-                {
-
-                    hour:"2-digit",
-
-                    minute:"2-digit"
-
-                }
-
-            );
-
-    }
-
-    catch{
-
-        return "Agora";
-
-    }
-
-}
-
-/* =========================================================
-
-   MOSTRAR SOLICITAÇÕES
-
-========================================================= */
-
-function iniciarSolicitacoes(){
-
-    const lista =
-
-        document.getElementById(
-
-            "listaSolicitacoes"
-
-        );
-
-    const consulta =
-
-        query(
-
-            collection(
-
-                db,
-
-                "solicitacoes"
-
-            ),
-
-            where(
-
-                "status",
-
-                "==",
-
-                "procurando"
-
-            )
-
-        );
 
     onSnapshot(
 
-        consulta,
+        q,
 
-        snapshot => {
+        (snapshot) => {
 
-            lista.innerHTML = "";
+            const solicitacoes = [];
 
-            if(snapshot.empty){
-
-                lista.innerHTML = `
-
-                    <div class="vazio">
-
-                        <div class="vazio-icone">
-
-                            🕐
-
-                        </div>
-
-                        <div class="vazio-titulo">
-
-                            Nenhuma solicitação agora
-
-                        </div>
-
-                        <div class="vazio-texto">
-
-                            Quando alguém chamar um tradutor,
-
-                            o pedido aparecerá aqui.
-
-                        </div>
-
-                    </div>
-
-                `;
-
-                return;
-
-            }
-
-            const pedidos = [];
 
             snapshot.forEach(
+                (documento) => {
 
-                documento => {
-
-                    pedidos.push({
+                    solicitacoes.push({
 
                         id:
-
                             documento.id,
 
                         ...documento.data()
@@ -1039,113 +575,47 @@ function iniciarSolicitacoes(){
                     });
 
                 }
-
             );
 
+
             /*
-
-               Mais novos primeiro.
-
+            Mais novos primeiro.
             */
 
-            pedidos.sort(
-
-                (a,b) => {
+            solicitacoes.sort(
+                (a, b) => {
 
                     const dataA =
-
-                        a.criadaEm
-
-                        &&
-
-                        typeof a.criadaEm.toMillis
-
-                        === "function"
-
-                        ?
-
-                        a.criadaEm.toMillis()
-
-                        :
-
-                        0;
+                        a.criadoEm?.toMillis?.() || 0;
 
                     const dataB =
-
-                        b.criadaEm
-
-                        &&
-
-                        typeof b.criadaEm.toMillis
-
-                        === "function"
-
-                        ?
-
-                        b.criadaEm.toMillis()
-
-                        :
-
-                        0;
+                        b.criadoEm?.toMillis?.() || 0;
 
                     return dataB - dataA;
 
                 }
-
             );
 
-            pedidos.forEach(
 
-                pedido => {
-
-                    criarCard(
-
-                        pedido,
-
-                        lista
-
-                    );
-
-                }
-
+            renderizarSolicitacoes(
+                solicitacoes
             );
 
         },
 
-        error => {
+        (erro) => {
 
             console.error(
-
-                "Erro solicitações:",
-
-                error
-
+                "Erro ao ouvir solicitações:",
+                erro
             );
 
-            lista.innerHTML = `
 
-                <div class="vazio">
-
-                    <div class="vazio-icone">
-
-                        ⚠️
-
-                    </div>
-
-                    <div class="vazio-titulo">
-
-                        Não foi possível carregar
-
-                    </div>
-
-                    <div class="vazio-texto">
-
-                        Verifique a conexão e as regras do Firebase.
-
-                    </div>
-
+            listaSolicitacoes.innerHTML = `
+                <div class="erro">
+                    Não foi possível carregar
+                    as solicitações.
                 </div>
-
             `;
 
         }
@@ -1154,454 +624,382 @@ function iniciarSolicitacoes(){
 
 }
 
+
 /* =========================================================
-
-   CARD DA SOLICITAÇÃO
-
+   RENDERIZAR SOLICITAÇÕES
 ========================================================= */
 
-function criarCard(
+function renderizarSolicitacoes(
+    solicitacoes
+) {
 
-    pedido,
+    if (!solicitacoes.length) {
 
-    lista
+        listaSolicitacoes.innerHTML = `
 
-){
+            <div class="vazio">
 
-    const card =
-
-        document.createElement(
-
-            "div"
-
-        );
-
-    card.className =
-
-        "pedido";
-
-    const clienteNome =
-
-        pedido.usuarioNome
-
-        ||
-
-        pedido.clienteNome
-
-        ||
-
-        pedido.nome
-
-        ||
-
-        "Cliente";
-
-    const local =
-
-        pedido.localAtendimento
-
-        ||
-
-        pedido.local
-
-        ||
-
-        "Não informado";
-
-    const tempo =
-
-        pedido.tempoAtendimento
-
-        ||
-
-        pedido.tempo
-
-        ||
-
-        "30";
-
-    const dataPedido =
-
-        pedido.criadaEm
-
-        ||
-
-        pedido.dataHora
-
-        ||
-
-        pedido.data;
-
-    card.innerHTML = `
-
-        <div class="pedido-topo">
-
-            <div class="novo-pedido">
-
-                🔴 NOVA SOLICITAÇÃO
-
-            </div>
-
-            <div class="hora-pedido">
-
-                ${formatarHora(dataPedido)}
-
-            </div>
-
-        </div>
-
-        <div class="pedido-corpo">
-
-            <div class="cliente">
-
-                <div class="avatar">
-
-                    👤
-
+                <div class="vazio-icon">
+                    🕐
                 </div>
 
-                <div>
+                <div class="vazio-titulo">
+                    Nenhuma solicitação agora
+                </div>
+
+                <div class="vazio-texto">
+                    Quando alguém chamar um tradutor,
+                    o pedido aparecerá aqui.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    listaSolicitacoes.innerHTML = "";
+
+
+    solicitacoes.forEach(
+        (solicitacao) => {
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "solicitacao-card";
+
+
+            const clienteNome =
+                solicitacao.clienteNome ||
+                "Cliente";
+
+
+            const local =
+                solicitacao.local ||
+                "Não informado";
+
+
+            const tempo =
+                solicitacao.tempoMinutos ||
+                30;
+
+
+            let horario =
+                "Agora";
+
+
+            if (
+                solicitacao.criadoEm &&
+                solicitacao.criadoEm.toDate
+            ) {
+
+                const data =
+                    solicitacao.criadoEm.toDate();
+
+
+                horario =
+                    data.toLocaleTimeString(
+                        "pt-BR",
+                        {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    );
+
+            }
+
+
+            card.innerHTML = `
+
+                <div class="solicitacao-topo">
 
                     <div class="cliente-nome">
+                        👤 ${escaparHTML(clienteNome)}
+                    </div>
 
-                        ${escaparHTML(clienteNome)}
+                    <div class="novo-badge">
+                        NOVA
+                    </div>
+
+                </div>
+
+
+                <div class="info">
+
+                    <div class="info-linha">
+
+                        <span class="info-label">
+                            Local
+                        </span>
+
+                        <span class="info-valor">
+                            ${escaparHTML(local)}
+                        </span>
 
                     </div>
 
-                    <div class="cliente-label">
 
-                        Cliente
+                    <div class="info-linha">
+
+                        <span class="info-label">
+                            Tempo
+                        </span>
+
+                        <span class="info-valor">
+                            ${tempo} minutos
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-linha">
+
+                        <span class="info-label">
+                            Solicitado
+                        </span>
+
+                        <span class="info-valor">
+                            ${horario}
+                        </span>
 
                     </div>
 
                 </div>
 
-            </div>
 
-            <div class="dados">
+                <button
+                    class="botao-aceitar"
+                    data-id="${solicitacao.id}"
+                >
+                    ACEITAR SOLICITAÇÃO
+                </button>
 
-                <div class="dado">
+            `;
 
-                    <div class="dado-label">
 
-                        Local
+            const botao =
+                card.querySelector(
+                    ".botao-aceitar"
+                );
 
-                    </div>
 
-                    <div class="dado-valor">
+            botao.addEventListener(
+                "click",
+                () => {
 
-                        ${formatarLocal(local)}
+                    aceitarSolicitacao(
+                        solicitacao.id,
+                        botao
+                    );
 
-                    </div>
+                }
+            );
 
-                </div>
 
-                <div class="dado">
-
-                    <div class="dado-label">
-
-                        Tempo
-
-                    </div>
-
-                    <div class="dado-valor">
-
-                        ${formatarTempo(tempo)}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <button
-
-                class="btn-aceitar"
-
-                id="aceitar-${pedido.id}"
-
-            >
-
-                ACEITAR
-
-            </button>
-
-        </div>
-
-    `;
-
-    const botao =
-
-        card.querySelector(
-
-            ".btn-aceitar"
-
-        );
-
-    botao.addEventListener(
-
-        "click",
-
-        () => {
-
-            aceitarSolicitacao(
-
-                pedido.id,
-
-                botao
-
+            listaSolicitacoes.appendChild(
+                card
             );
 
         }
-
-    );
-
-    lista.appendChild(
-
-        card
-
     );
 
 }
 
+
 /* =========================================================
-
    ACEITAR SOLICITAÇÃO
-
 ========================================================= */
 
 async function aceitarSolicitacao(
-
     solicitacaoId,
-
     botao
+) {
 
-){
-
-    if(!tradutor.id){
+    if (!tradutor.id) {
 
         alert(
-
-            "Não foi possível identificar o tradutor pelo LINE."
-
+            "Não foi possível identificar o tradutor."
         );
 
         return;
-
     }
+
 
     botao.disabled = true;
 
-    botao.innerText =
-
+    botao.textContent =
         "ACEITANDO...";
 
-    try{
 
-        const solicitacaoRef =
+    try {
 
+        const referencia =
             doc(
-
                 db,
-
                 "solicitacoes",
-
                 solicitacaoId
-
             );
+
 
         await runTransaction(
 
             db,
 
-            async transaction => {
+            async (transaction) => {
 
                 const snapshot =
-
                     await transaction.get(
-
-                        solicitacaoRef
-
+                        referencia
                     );
 
-                if(!snapshot.exists()){
+
+                if (!snapshot.exists()) {
 
                     throw new Error(
-
-                        "SOLICITACAO_NAO_EXISTE"
-
+                        "Solicitação não encontrada."
                     );
 
                 }
+
 
                 const dados =
-
                     snapshot.data();
 
+
                 /*
-
-                   Evita dois tradutores
-
-                   aceitarem o mesmo pedido.
-
+                Evita que dois tradutores
+                aceitem o mesmo pedido.
                 */
 
-                if(
-
+                if (
                     dados.status !==
-
-                    "procurando"
-
-                ){
+                    "aguardando"
+                ) {
 
                     throw new Error(
-
-                        "JA_ACEITA"
-
+                        "Esta solicitação já foi aceita ou cancelada."
                     );
 
                 }
 
+
                 transaction.update(
-
-                    solicitacaoRef,
-
+                    referencia,
                     {
 
                         status:
-
                             "aceita",
 
                         tradutorId:
-
                             tradutor.id,
 
                         tradutorNome:
-
                             tradutor.nome,
 
-                        aceitaEm:
+                        aceitoEm:
+                            serverTimestamp(),
 
+                        atualizadoEm:
                             serverTimestamp()
 
                     }
-
                 );
 
             }
 
         );
 
-        alert(
-
-            "✅ Solicitação aceita!"
-
-        );
-
-        /*
-
-           Guardamos para a próxima tela
-
-           de atendimento.
-
-        */
 
         localStorage.setItem(
-
             "solicitacao_tradutor_atual",
-
             solicitacaoId
-
         );
+
+
+        alert(
+            "Solicitação aceita! Agora o cliente será conectado a você."
+        );
+
 
         /*
-
-           Depois vamos trocar isto
-
-           pela sala de vídeo.
-
+        Próxima etapa:
+        aqui vamos abrir a sala de vídeo.
         */
 
-        botao.innerText =
-
-            "ACEITA";
 
     }
-
-    catch(error){
+    catch (erro) {
 
         console.error(
-
             "Erro ao aceitar:",
-
-            error
-
+            erro
         );
 
-        if(
 
-            error.message ===
+        alert(
+            erro.message ||
+            "Não foi possível aceitar a solicitação."
+        );
 
-            "JA_ACEITA"
-
-        ){
-
-            alert(
-
-                "Outro tradutor já aceitou esta solicitação."
-
-            );
-
-        }
-
-        else if(
-
-            error.message ===
-
-            "SOLICITACAO_NAO_EXISTE"
-
-        ){
-
-            alert(
-
-                "Esta solicitação não existe mais."
-
-            );
-
-        }
-
-        else{
-
-            alert(
-
-                "Não foi possível aceitar a solicitação."
-
-            );
-
-        }
 
         botao.disabled = false;
 
-        botao.innerText =
-
-            "ACEITAR";
+        botao.textContent =
+            "ACEITAR SOLICITAÇÃO";
 
     }
 
 }
 
+
 /* =========================================================
-
-   INICIAR
-
+   SEGURANÇA HTML
 ========================================================= */
 
-await iniciarLINE();
+function escaparHTML(valor) {
 
-iniciarSolicitacoes();
+    return String(valor)
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+iniciarLINE();
 
 </script>
 
 </body>
-
 </html>
