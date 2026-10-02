@@ -1,59 +1,240 @@
-const https = require('https');
+const line = require('@line/bot-sdk');
 
-module.exports = async (req, res) => {
-  if (req.method !== 'POST') {
-    return res.status(200).json({ status: 'ok', message: 'Webhook ativo e pronto!' });
-  }
+const {
+  validateSignature
+} = line;
 
-  const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-  const events = body && body.events;
+export default {
+  async fetch(request) {
+    if (request.method !== 'POST') {
+      return Response.json(
+        {
+          status: 'ok',
+          message: 'Webhook ativo e pronto!'
+        },
+        {
+          status: 200
+        }
+      );
+    }
 
-  if (!events || !Array.isArray(events)) {
-    return res.status(200).json({ status: 'ok' });
-  }
+    try {
+      const channelSecret =
+        process.env.LINE_CHANNEL_SECRET;
 
-  for (const event of events) {
-    if (event.type === 'message' && event.message.type === 'text') {
-      const userMessage = event.message.text.trim();
-      const lowerMsg = userMessage.toLowerCase();
-      const replyToken = event.replyToken;
+      const channelAccessToken =
+        process.env.LINE_ACCESS_TOKEN;
 
-      if (lowerMsg.includes('tradutor')) {
-        await replyText(replyToken, "Modo Tradutor ativado! Envie o texto para traduzirmos.");
-      } else {
-        await replyText(replyToken, `Mensagem recebida: "${userMessage}"`);
+      if (
+        !channelSecret ||
+        !channelAccessToken
+      ) {
+        console.error(
+          'Variáveis do LINE não configuradas.'
+        );
+
+        return Response.json(
+          {
+            error:
+              'Erro de configuração do servidor.'
+          },
+          {
+            status: 500
+          }
+        );
       }
+
+      /* ============================================
+         CORPO BRUTO
+      ============================================ */
+
+      const rawBody =
+        await request.text();
+
+      /* ============================================
+         ASSINATURA DO LINE
+      ============================================ */
+
+      const signature =
+        request.headers.get(
+          'x-line-signature'
+        );
+
+      if (!signature) {
+        console.warn(
+          'Webhook recebido sem assinatura.'
+        );
+
+        return Response.json(
+          {
+            error:
+              'Assinatura ausente.'
+          },
+          {
+            status: 401
+          }
+        );
+      }
+
+      const assinaturaValida =
+        validateSignature(
+          rawBody,
+          channelSecret,
+          signature
+        );
+
+      if (!assinaturaValida) {
+        console.warn(
+          'Assinatura LINE inválida.'
+        );
+
+        return Response.json(
+          {
+            error:
+              'Assinatura inválida.'
+          },
+          {
+            status: 401
+          }
+        );
+      }
+
+      /* ============================================
+         JSON
+      ============================================ */
+
+      let body;
+
+      try {
+        body =
+          JSON.parse(rawBody);
+      } catch {
+        return Response.json(
+          {
+            error:
+              'JSON inválido.'
+          },
+          {
+            status: 400
+          }
+        );
+      }
+
+      const events =
+        Array.isArray(body?.events)
+          ? body.events
+          : [];
+
+      /*
+        A LINE envia events: []
+        quando testa o webhook.
+
+        Precisamos responder 200.
+      */
+
+      if (events.length === 0) {
+        return Response.json(
+          {
+            status: 'ok'
+          },
+          {
+            status: 200
+          }
+        );
+      }
+
+      /* ============================================
+         CLIENTE LINE
+      ============================================ */
+
+      const client =
+        new line.Client({
+          channelAccessToken,
+          channelSecret
+        });
+
+      /* ============================================
+         EVENTOS
+      ============================================ */
+
+      for (const event of events) {
+        if (
+          event?.type !== 'message' ||
+          event?.message?.type !== 'text'
+        ) {
+          continue;
+        }
+
+        const userMessage =
+          String(
+            event.message.text || ''
+          ).trim();
+
+        if (!userMessage) {
+          continue;
+        }
+
+        const lowerMsg =
+          userMessage.toLowerCase();
+
+        let resposta;
+
+        if (
+          lowerMsg.includes(
+            'tradutor'
+          )
+        ) {
+          resposta =
+            'Modo Tradutor ativado! Envie o texto para traduzirmos.';
+        } else {
+          resposta =
+            `Mensagem recebida: "${userMessage}"`;
+        }
+
+        if (!event.replyToken) {
+          continue;
+        }
+
+        try {
+          await client.replyMessage(
+            event.replyToken,
+            {
+              type: 'text',
+              text: resposta
+            }
+          );
+        } catch (replyError) {
+          console.error(
+            'Erro ao responder no LINE:',
+            replyError
+          );
+        }
+      }
+
+      return Response.json(
+        {
+          status: 'success'
+        },
+        {
+          status: 200
+        }
+      );
+
+    } catch (error) {
+      console.error(
+        'Erro no webhook:',
+        error
+      );
+
+      return Response.json(
+        {
+          error:
+            'Erro interno no webhook.'
+        },
+        {
+          status: 500
+        }
+      );
     }
   }
-
-  return res.status(200).json({ status: 'success' });
 };
-
-async function replyText(replyToken, textMessage) {
-  const token = process.env.LINE_ACCESS_TOKEN;
-  const payload = JSON.stringify({
-    replyToken: replyToken,
-    messages: [{ type: "text", text: textMessage }]
-  });
-
-  const options = {
-    hostname: 'api.line.me',
-    path: '/v2/bot/message/reply',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
-    }
-  };
-
-  return new Promise((resolve, reject) => {
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve(data));
-    });
-    req.on('error', error => reject(error));
-    req.write(payload);
-    req.end();
-  });
-}
