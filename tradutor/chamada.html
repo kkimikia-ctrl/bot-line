@@ -1059,77 +1059,54 @@ let filaTradutorCandidates =
 let answerPublicada =
     false;
 
+
+
 /* =========================================================
    METERED TURN
 ========================================================= */
 
-const METERED_API_KEY =
-    "   a";
-
 async function obterRtcConfiguration() {
+    try {
+        const response = await fetch("/api/turn", {
+            method: "GET",
+            cache: "no-store"
+        });
 
-    const url =
-        "https://ajudajp.metered.live/api/v1/turn/credentials?apiKey=" +
-        encodeURIComponent(
-            METERED_API_KEY
+        if (!response.ok) {
+            throw new Error(
+                "Erro ao obter TURN: " + response.status
+            );
+        }
+
+        const iceServers = await response.json();
+
+        if (!Array.isArray(iceServers) || iceServers.length === 0) {
+            throw new Error("Nenhum servidor ICE recebido");
+        }
+
+        console.log(
+            "Servidores ICE carregados:",
+            iceServers.length
         );
 
-    const response =
-        await fetch(
-            url,
-            {
-                method:
-                    "GET",
+        return {
+            iceServers: iceServers
+        };
 
-                cache:
-                    "no-store"
-            }
-        );
-
-    if (!response.ok) {
-
+    } catch (error) {
         console.error(
-            "Erro Metered:",
-            response.status
+            "Erro ao carregar TURN:",
+            error
         );
 
-        throw new Error(
-            "TURN_CONFIG"
-        );
-
+        return {
+            iceServers: [
+                {
+                    urls: "stun:stun.l.google.com:19302"
+                }
+            ]
+        };
     }
-
-    const iceServers =
-        await response.json();
-
-    if (
-        !Array.isArray(
-            iceServers
-        ) ||
-        iceServers.length === 0
-    ) {
-
-        console.error(
-            "Resposta TURN inválida:",
-            iceServers
-        );
-
-        throw new Error(
-            "TURN_CONFIG"
-        );
-
-    }
-
-    console.log(
-        "Servidores ICE carregados:",
-        iceServers.length
-    );
-
-    return {
-        iceServers:
-            iceServers
-    };
-
 }
 
 /* =========================================================
