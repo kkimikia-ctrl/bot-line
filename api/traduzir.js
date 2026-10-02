@@ -1,10 +1,9 @@
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return res.status(204).end();
   }
 
   if (req.method !== 'POST') {
@@ -17,12 +16,18 @@ export default async function handler(req, res) {
     let body = req.body;
 
     if (typeof body === 'string') {
-      body = JSON.parse(body);
+      try {
+        body = JSON.parse(body);
+      } catch {
+        return res.status(400).json({
+          error: 'JSON inválido.'
+        });
+      }
     }
 
     const texto = body?.q || body?.texto;
 
-    if (!texto) {
+    if (typeof texto !== 'string' || !texto.trim()) {
       return res.status(400).json({
         error: 'Nenhum texto enviado.'
       });
@@ -30,17 +35,24 @@ export default async function handler(req, res) {
 
     const termo = texto.trim();
 
-    const temJapones = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(termo);
+    if (termo.length > 5000) {
+      return res.status(413).json({
+        error: 'Texto muito grande.'
+      });
+    }
+
+    const temJapones =
+      /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(termo);
 
     const sl = temJapones ? 'ja' : 'pt';
     const tl = temJapones ? 'pt' : 'ja';
 
     const urlTraducao =
-      `https://translate.googleapis.com/translate_a/single` +
-      `?client=gtx` +
+      'https://translate.googleapis.com/translate_a/single' +
+      '?client=gtx' +
       `&sl=${sl}` +
       `&tl=${tl}` +
-      `&dt=t` +
+      '&dt=t' +
       `&q=${encodeURIComponent(termo)}`;
 
     const respostaGoogle = await fetch(urlTraducao);
@@ -48,9 +60,14 @@ export default async function handler(req, res) {
     const textoGoogle = await respostaGoogle.text();
 
     if (!respostaGoogle.ok) {
-      return res.status(200).json({
-        error: `Google respondeu HTTP ${respostaGoogle.status}`,
-        detalhe: textoGoogle.substring(0, 500)
+      console.error(
+        'Erro Google Translate:',
+        respostaGoogle.status,
+        textoGoogle.substring(0, 300)
+      );
+
+      return res.status(502).json({
+        error: 'Falha ao consultar o serviço de tradução.'
       });
     }
 
@@ -59,15 +76,14 @@ export default async function handler(req, res) {
     try {
       dados = JSON.parse(textoGoogle);
     } catch {
-      return res.status(200).json({
-        error: 'Google não retornou JSON válido.',
-        detalhe: textoGoogle.substring(0, 500)
+      return res.status(502).json({
+        error: 'Resposta inválida do serviço de tradução.'
       });
     }
 
     let traducao = '';
 
-    if (dados?.[0]) {
+    if (Array.isArray(dados?.[0])) {
       for (const parte of dados[0]) {
         if (parte?.[0]) {
           traducao += parte[0];
@@ -76,23 +92,23 @@ export default async function handler(req, res) {
     }
 
     if (!traducao) {
-      return res.status(200).json({
-        error: 'Google não retornou uma tradução.',
-        detalhe: JSON.stringify(dados).substring(0, 500)
+      return res.status(502).json({
+        error: 'O serviço não retornou uma tradução.'
       });
     }
 
     return res.status(200).json({
-      traducao: traducao,
-      translatedText: traducao
+      traducao,
+      translatedText: traducao,
+      origem: sl,
+      destino: tl
     });
 
   } catch (erro) {
     console.error('Erro no tradutor:', erro);
 
     return res.status(500).json({
-      error: 'Erro interno no tradutor.',
-      detalhe: erro?.message || String(erro)
+      error: 'Erro interno no tradutor.'
     });
   }
 }
