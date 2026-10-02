@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -633,10 +632,6 @@ button {
 
 <body>
 
-<!-- ======================================================
-     CARREGANDO
-====================================================== -->
-
 <div id="telaCarregando">
 
     <div class="loader"></div>
@@ -650,10 +645,6 @@ button {
     </div>
 
 </div>
-
-<!-- ======================================================
-     ERRO
-====================================================== -->
 
 <div id="telaErro">
 
@@ -685,10 +676,6 @@ button {
     </div>
 
 </div>
-
-<!-- ======================================================
-     ATENDIMENTO
-====================================================== -->
 
 <div id="appAtendimento">
 
@@ -1063,21 +1050,8 @@ let remoteDescriptionPronta =
 let answerCriada =
     false;
 
-/*
-Candidatos recebidos antes de carregar
-a OFFER ficam guardados aqui.
-*/
-
 let filaClienteCandidates =
     [];
-
-/*
-Candidatos do tradutor podem surgir
-antes de a ANSWER estar registrada
-no Firestore.
-
-Guardamos aqui até a ANSWER ser salva.
-*/
 
 let filaTradutorCandidates =
     [];
@@ -1086,26 +1060,77 @@ let answerPublicada =
     false;
 
 /* =========================================================
-   WEBRTC
+   METERED TURN
 ========================================================= */
 
-const rtcConfiguration = {
+const METERED_API_KEY =
+    "COLE_AQUI_SUA_API_KEY";
 
-    iceServers: [
+async function obterRtcConfiguration() {
 
-        {
-            urls:
-                "stun:stun.l.google.com:19302"
-        },
+    const url =
+        "https://ajudajp.metered.live/api/v1/turn/credentials?apiKey=" +
+        encodeURIComponent(
+            METERED_API_KEY
+        );
 
-        {
-            urls:
-                "stun:stun1.l.google.com:19302"
-        }
+    const response =
+        await fetch(
+            url,
+            {
+                method:
+                    "GET",
 
-    ]
+                cache:
+                    "no-store"
+            }
+        );
 
-};
+    if (!response.ok) {
+
+        console.error(
+            "Erro Metered:",
+            response.status
+        );
+
+        throw new Error(
+            "TURN_CONFIG"
+        );
+
+    }
+
+    const iceServers =
+        await response.json();
+
+    if (
+        !Array.isArray(
+            iceServers
+        ) ||
+        iceServers.length === 0
+    ) {
+
+        console.error(
+            "Resposta TURN inválida:",
+            iceServers
+        );
+
+        throw new Error(
+            "TURN_CONFIG"
+        );
+
+    }
+
+    console.log(
+        "Servidores ICE carregados:",
+        iceServers.length
+    );
+
+    return {
+        iceServers:
+            iceServers
+    };
+
+}
 
 /* =========================================================
    ID DA SOLICITAÇÃO
@@ -1432,13 +1457,6 @@ async function adicionarCandidateCliente(
         return;
     }
 
-    /*
-    Ainda não carregamos a OFFER.
-
-    Não tenta adicionar agora.
-    Guarda para depois.
-    */
-
     if (
         !remoteDescriptionPronta ||
         !peerConnection
@@ -1550,11 +1568,6 @@ async function processarOffer(
         remoteDescriptionPronta =
             true;
 
-        /*
-        Agora os ICE que chegaram antes
-        podem ser adicionados.
-        */
-
         await liberarCandidatesCliente();
 
         const answer =
@@ -1592,11 +1605,6 @@ async function processarOffer(
         answerPublicada =
             true;
 
-        /*
-        Só manda os ICE do tradutor
-        depois da ANSWER estar publicada.
-        */
-
         await liberarCandidatesTradutor();
 
     } catch (erro) {
@@ -1624,6 +1632,15 @@ async function processarOffer(
 ========================================================= */
 
 async function iniciarWebRTC() {
+
+    textoConexao.textContent =
+        "Carregando servidores de conexão...";
+
+    callStatus.textContent =
+        "🌐 Preparando conexão...";
+
+    const rtcConfiguration =
+        await obterRtcConfiguration();
 
     peerConnection =
         new RTCPeerConnection(
@@ -1886,14 +1903,6 @@ async function iniciarWebRTC() {
                 return;
             }
 
-            /*
-            Se a ANSWER ainda não foi publicada,
-            segura o ICE.
-
-            Isso reduz a chance de o cliente
-            receber candidato cedo demais.
-            */
-
             if (!answerPublicada) {
 
                 filaTradutorCandidates.push(
@@ -1959,10 +1968,6 @@ async function iniciarWebRTC() {
                     return;
 
                 }
-
-                /*
-                OFFER DO CLIENTE
-                */
 
                 if (
                     dados.webrtcOffer
@@ -2435,13 +2440,6 @@ async function iniciarAtendimento(
 
         await iniciarWebRTC();
 
-        /*
-        A OFFER pode já ter sido gravada
-        enquanto a nova página estava abrindo.
-
-        Fazemos uma leitura imediata também.
-        */
-
         const snap =
             await getDoc(
                 solicitacaoRef
@@ -2549,6 +2547,14 @@ async function iniciarAtendimento(
 
                 mostrarErro(
                     "Esta conta de tradutor está desativada."
+                );
+
+                break;
+
+            case "TURN_CONFIG":
+
+                mostrarErro(
+                    "Não foi possível carregar o servidor de videochamada. Tente novamente."
                 );
 
                 break;
