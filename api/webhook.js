@@ -5,6 +5,37 @@ const client = new line.Client({
   channelSecret: process.env.LINE_CHANNEL_SECRET
 });
 
+/*
+  IMPORTANTE:
+  Desliga o body parser automático para conseguirmos
+  pegar o corpo ORIGINAL enviado pelo LINE.
+*/
+module.exports.config = {
+  api: {
+    bodyParser: false
+  }
+};
+
+function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+
+    req.on('data', chunk => {
+      chunks.push(
+        Buffer.isBuffer(chunk)
+          ? chunk
+          : Buffer.from(chunk)
+      );
+    });
+
+    req.on('end', () => {
+      resolve(Buffer.concat(chunks));
+    });
+
+    req.on('error', reject);
+  });
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({
@@ -13,11 +44,16 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const channelSecret = process.env.LINE_CHANNEL_SECRET;
-    const channelAccessToken = process.env.LINE_ACCESS_TOKEN;
+    const channelSecret =
+      process.env.LINE_CHANNEL_SECRET;
+
+    const channelAccessToken =
+      process.env.LINE_ACCESS_TOKEN;
 
     if (!channelSecret || !channelAccessToken) {
-      console.error('Variáveis do LINE não configuradas.');
+      console.error(
+        'Variáveis do LINE não configuradas.'
+      );
 
       return res.status(500).json({
         error: 'Erro de configuração do servidor.'
@@ -25,11 +61,12 @@ module.exports = async (req, res) => {
     }
 
     const signature =
-      req.headers['x-line-signature'] ||
-      req.headers['X-Line-Signature'];
+      req.headers['x-line-signature'];
 
     if (!signature) {
-      console.warn('Webhook recebido sem assinatura.');
+      console.warn(
+        'Webhook recebido sem assinatura.'
+      );
 
       return res.status(401).json({
         error: 'Assinatura ausente.'
@@ -37,37 +74,27 @@ module.exports = async (req, res) => {
     }
 
     /*
-      IMPORTANTE:
-      A assinatura do LINE precisa ser validada usando
-      exatamente o corpo original recebido.
-
-      Em algumas execuções da Vercel, req.body pode já vir
-      como string; em outras, pode vir como objeto.
+      Pega exatamente os bytes enviados pelo LINE.
     */
+    const rawBodyBuffer = await getRawBody(req);
 
-    let rawBody;
+    const rawBody =
+      rawBodyBuffer.toString('utf8');
 
-    if (typeof req.body === 'string') {
-      rawBody = req.body;
-    } else if (Buffer.isBuffer(req.body)) {
-      rawBody = req.body.toString('utf8');
-    } else {
-      /*
-        Fallback para o projeto atual.
-        Se a Vercel tiver alterado o corpo antes daqui,
-        a validação pode falhar.
-      */
-      rawBody = JSON.stringify(req.body || {});
-    }
-
-    const assinaturaValida = line.validateSignature(
-      rawBody,
-      channelSecret,
-      signature
-    );
+    /*
+      Valida a assinatura ANTES de fazer JSON.parse().
+    */
+    const assinaturaValida =
+      line.validateSignature(
+        rawBody,
+        channelSecret,
+        signature
+      );
 
     if (!assinaturaValida) {
-      console.warn('Assinatura LINE inválida.');
+      console.warn(
+        'Assinatura LINE inválida.'
+      );
 
       return res.status(401).json({
         error: 'Assinatura inválida.'
@@ -76,33 +103,35 @@ module.exports = async (req, res) => {
 
     let body;
 
-    if (typeof req.body === 'object' && !Buffer.isBuffer(req.body)) {
-      body = req.body;
-    } else {
-      try {
-        body = JSON.parse(rawBody);
-      } catch {
-        return res.status(400).json({
-          error: 'JSON inválido.'
-        });
-      }
+    try {
+      body = JSON.parse(rawBody);
+    } catch (error) {
+      console.error(
+        'Erro ao converter JSON:',
+        error
+      );
+
+      return res.status(400).json({
+        error: 'JSON inválido.'
+      });
     }
 
-    const events = Array.isArray(body?.events)
-      ? body.events
-      : [];
+    const events =
+      Array.isArray(body.events)
+        ? body.events
+        : [];
 
     /*
-      O LINE pode enviar:
-      {
-        "events": []
-      }
+      O botão Verify do LINE normalmente envia
+      events: []
 
-      durante o teste do webhook.
-      Nesse caso precisamos devolver HTTP 200.
+      Nesse caso precisamos responder 200.
     */
-
     if (events.length === 0) {
+      console.log(
+        'Verificação do webhook recebida com sucesso.'
+      );
+
       return res.status(200).json({
         status: 'ok'
       });
@@ -116,25 +145,30 @@ module.exports = async (req, res) => {
         continue;
       }
 
-      const userMessage = String(
-        event.message.text || ''
-      ).trim();
+      const userMessage =
+        String(
+          event.message.text || ''
+        ).trim();
 
       if (!userMessage) {
         continue;
       }
 
-      const replyToken = event.replyToken;
+      const replyToken =
+        event.replyToken;
 
       if (!replyToken) {
         continue;
       }
 
-      const lowerMsg = userMessage.toLowerCase();
+      const lowerMsg =
+        userMessage.toLowerCase();
 
       let resposta;
 
-      if (lowerMsg.includes('tradutor')) {
+      if (
+        lowerMsg.includes('tradutor')
+      ) {
         resposta =
           'Modo Tradutor ativado! Envie o texto para traduzirmos.';
       } else {
@@ -163,7 +197,10 @@ module.exports = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erro no webhook:', error);
+    console.error(
+      'Erro no webhook:',
+      error
+    );
 
     return res.status(500).json({
       error: 'Erro interno no webhook.'
