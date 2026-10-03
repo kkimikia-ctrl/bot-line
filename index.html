@@ -142,6 +142,7 @@ select {
 .login-card h1 {
 
     margin: 0;
+
     font-size: 27px;
 
 }
@@ -239,6 +240,7 @@ select {
 .brand-title {
 
     font-size: 19px;
+
     font-weight: 900;
 
 }
@@ -440,17 +442,17 @@ select {
     grid-template-columns:
         repeat(2, 1fr);
 
-    gap: 12px;
+    gap: 10px;
 
 }
 
 .service {
 
-    min-height: 128px;
+    min-height: 98px;
 
-    border-radius: 21px;
+    border-radius: 18px;
 
-    padding: 16px;
+    padding: 12px;
 
     text-align: left;
 
@@ -459,7 +461,7 @@ select {
     cursor: pointer;
 
     box-shadow:
-        0 10px 24px rgba(31,50,81,.08);
+        0 8px 18px rgba(31,50,81,.07);
 
     transition:
         transform .15s ease,
@@ -477,17 +479,17 @@ select {
 
     display: flex;
 
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
 
     align-items: center;
     justify-content: center;
 
-    border-radius: 16px;
+    border-radius: 13px;
 
-    font-size: 24px;
+    font-size: 20px;
 
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 
     background:
         rgba(255,255,255,.52);
@@ -498,11 +500,11 @@ select {
 
     display: block;
 
-    font-size: 15px;
+    font-size: 13px;
 
     font-weight: 900;
 
-    line-height: 1.2;
+    line-height: 1.15;
 
 }
 
@@ -510,11 +512,11 @@ select {
 
     display: block;
 
-    margin-top: 6px;
+    margin-top: 4px;
 
-    font-size: 12px;
+    font-size: 10px;
 
-    line-height: 1.35;
+    line-height: 1.25;
 
     color: #64748b;
 
@@ -1106,8 +1108,10 @@ select {
 @keyframes spin {
 
     to {
+
         transform:
             rotate(360deg);
+
     }
 
 }
@@ -1200,6 +1204,7 @@ select {
     width: 100%;
 
     min-height: 390px;
+
     max-height: 550px;
 
     object-fit: cover;
@@ -2394,7 +2399,9 @@ async function carregarSaldo() {
 
 }
 
-/* TRADUÇÃO */
+/* =========================================================
+   TRADUÇÃO DE TEXTO
+========================================================= */
 
 async function traduzirTexto() {
 
@@ -2445,20 +2452,23 @@ async function traduzirTexto() {
     botao.disabled =
         true;
 
+    botao.textContent =
+        "Traduzindo...";
+
     try {
 
-        const japones =
+        const temJapones =
             /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(
                 texto
             );
 
         const origem =
-            japones
+            temJapones
                 ? "ja"
                 : "pt";
 
         const destino =
-            japones
+            temJapones
                 ? "pt"
                 : "ja";
 
@@ -2469,23 +2479,56 @@ async function traduzirTexto() {
             origem +
             "&tl=" +
             destino +
-            "&dt=t&q=" +
+            "&dt=t" +
+            "&q=" +
             encodeURIComponent(
                 texto
             );
 
         const resposta =
-            await fetch(url);
+            await fetch(
+                url,
+                {
+                    method:
+                        "GET",
+
+                    cache:
+                        "no-store"
+                }
+            );
+
+        if (!resposta.ok) {
+
+            throw new Error(
+                "HTTP " +
+                resposta.status
+            );
+
+        }
 
         const dados =
             await resposta.json();
+
+        if (
+            !Array.isArray(dados) ||
+            !Array.isArray(dados[0])
+        ) {
+
+            throw new Error(
+                "Resposta inválida"
+            );
+
+        }
 
         let traducao = "";
 
         dados[0].forEach(
             parte => {
 
-                if (parte[0]) {
+                if (
+                    Array.isArray(parte) &&
+                    parte[0]
+                ) {
 
                     traducao +=
                         parte[0];
@@ -2495,22 +2538,44 @@ async function traduzirTexto() {
             }
         );
 
+        if (
+            !traducao.trim()
+        ) {
+
+            throw new Error(
+                "Tradução vazia"
+            );
+
+        }
+
+        resultado.classList.remove(
+            "erro"
+        );
+
         resultado.textContent =
             traducao;
 
     } catch (erro) {
+
+        console.error(
+            "Erro tradução:",
+            erro
+        );
 
         resultado.classList.add(
             "erro"
         );
 
         resultado.textContent =
-            "Não foi possível traduzir agora.";
+            "Não foi possível traduzir agora. Tente novamente.";
 
     } finally {
 
         botao.disabled =
             false;
+
+        botao.textContent =
+            "Traduzir agora";
 
     }
 
@@ -2857,8 +2922,13 @@ async function cobrarAtendimento(
                     ) {
 
                         return {
-                            cobrado: false,
-                            jaCobrado: true
+
+                            cobrado:
+                                false,
+
+                            jaCobrado:
+                                true
+
                         };
 
                     }
@@ -3082,7 +3152,9 @@ function monitorarSolicitacao(
     id
 ) {
 
-    if (pararMonitoramento) {
+    if (
+        pararMonitoramento
+    ) {
 
         pararMonitoramento();
 
@@ -3119,6 +3191,7 @@ function monitorarSolicitacao(
                         dados.status ===
                         "conectado"
                     ) &&
+
                     !offerCriada
                 ) {
 
@@ -3166,7 +3239,9 @@ function monitorarSolicitacao(
                                     }
                                 );
 
-                            } catch (erroCancelamento) {
+                            } catch (
+                                erroCancelamento
+                            ) {
 
                                 console.error(
                                     erroCancelamento
