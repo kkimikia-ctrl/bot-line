@@ -679,7 +679,7 @@ select {
 
 }
 
-/* PETTON CARD */
+/* PETTON */
 
 .petton-feature {
 
@@ -867,7 +867,7 @@ select {
 }
 
 /* =========================================================
-   PETTON ANDANDO
+   PETTON ANDANDO - WEBP ANIMADO
 ========================================================= */
 
 #pettonWalkerLayer {
@@ -893,11 +893,15 @@ select {
 
     position: absolute;
 
-    left: -125px;
-    bottom: 0;
+    left: -130px;
+    bottom: 2px;
 
-    width: 105px;
-    height: 145px;
+    width: 110px;
+    height: 142px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 
     animation:
         pettonAtravessarTela
@@ -907,36 +911,18 @@ select {
 
 }
 
-.petton-walk-frame {
+#pettonWalkerImg {
 
-    position: relative;
+    display: block;
 
     width: 105px;
     height: 140px;
 
-    overflow: hidden;
+    object-fit: contain;
 
-}
-
-#pettonWalkerImg {
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 420px;
-    height: 140px;
+    object-position: center bottom;
 
     max-width: none;
-
-    object-fit: fill;
-
-    animation:
-        pettonTrocarPassos
-        .52s
-        steps(1,end)
-        infinite;
 
 }
 
@@ -944,7 +930,7 @@ select {
 
     position: absolute;
 
-    left: 14px;
+    left: 17px;
     bottom: 1px;
 
     width: 76px;
@@ -958,69 +944,22 @@ select {
     filter:
         blur(4px);
 
+    z-index: -1;
+
 }
 
 @keyframes pettonAtravessarTela {
 
     0% {
 
-        left: -125px;
+        left: -130px;
 
     }
 
     100% {
 
         left:
-            calc(100% + 125px);
-
-    }
-
-}
-
-@keyframes pettonTrocarPassos {
-
-    0% {
-
-        left: 0;
-
-        transform:
-            translateY(0);
-
-    }
-
-    25% {
-
-        left: -105px;
-
-        transform:
-            translateY(-3px);
-
-    }
-
-    50% {
-
-        left: -210px;
-
-        transform:
-            translateY(0);
-
-    }
-
-    75% {
-
-        left: -315px;
-
-        transform:
-            translateY(-3px);
-
-    }
-
-    100% {
-
-        left: 0;
-
-        transform:
-            translateY(0);
+            calc(100% + 130px);
 
     }
 
@@ -1429,9 +1368,6 @@ select {
         scaleX(-1);
 
     z-index: 5;
-
-    box-shadow:
-        0 5px 18px rgba(0,0,0,.35);
 
 }
 
@@ -2113,15 +2049,11 @@ select {
 
     <div id="pettonWalker">
 
-        <div class="petton-walk-frame">
-
-            <img
-                id="pettonWalkerImg"
-                src="petton-walk.png"
-                alt=""
-            >
-
-        </div>
+        <img
+            id="pettonWalkerImg"
+            src="petton-gato-animado.webp"
+            alt=""
+        >
 
         <div id="pettonWalkerShadow"></div>
 
@@ -2234,16 +2166,16 @@ const CUSTO_TRADUTOR =
     1500;
 
 /* =========================================================
-   PETTONS ANDANDO
+   PETTONS ANIMADOS
 ========================================================= */
 
 const pettonsAndando = [
 
-    "petton-walk.png",
+    "petton-gato-animado.webp",
 
-    "petton-cachorro-walk.png",
+    "petton-cachorro-animado.webp",
 
-    "petton-coelho-walk.png"
+    "petton-coelho-animado.webp"
 
 ];
 
@@ -2260,22 +2192,22 @@ const pettonWalkerImg =
         "pettonWalkerImg"
     );
 
-/* GUARDA AS 3 IMAGENS NA MEMÓRIA */
+/* PRÉ-CARREGA OS 3 */
 
-const imagensPettonCarregadas =
+const pettonsPreCarregados =
     [];
 
 pettonsAndando.forEach(
     arquivo => {
 
-        const imagem =
+        const img =
             new Image();
 
-        imagem.src =
+        img.src =
             arquivo;
 
-        imagensPettonCarregadas.push(
-            imagem
+        pettonsPreCarregados.push(
+            img
         );
 
     }
@@ -2286,25 +2218,11 @@ pettonsAndando.forEach(
 pettonWalkerImg.src =
     pettonsAndando[0];
 
-/*
-   IMPORTANTE:
-   troca somente quando a animação
-   da travessia terminar.
-   Ignora a animação das patinhas.
-*/
+/* TROCA APÓS CADA PASSAGEM */
 
 pettonWalker.addEventListener(
     "animationiteration",
     evento => {
-
-        if (
-            evento.target !==
-            pettonWalker
-        ) {
-
-            return;
-
-        }
 
         if (
             evento.animationName !==
@@ -2322,27 +2240,10 @@ pettonWalker.addEventListener(
             ) %
             pettonsAndando.length;
 
-        const proximaImagem =
-            imagensPettonCarregadas[
+        pettonWalkerImg.src =
+            pettonsAndando[
                 indicePettonAndando
             ];
-
-        if (
-            proximaImagem &&
-            proximaImagem.complete
-        ) {
-
-            pettonWalkerImg.src =
-                proximaImagem.src;
-
-        } else {
-
-            pettonWalkerImg.src =
-                pettonsAndando[
-                    indicePettonAndando
-                ];
-
-        }
 
     }
 );
@@ -2834,9 +2735,7 @@ async function traduzirTexto() {
             }
         );
 
-        if (
-            !traducao.trim()
-        ) {
+        if (!traducao.trim()) {
 
             throw new Error(
                 "Tradução vazia"
@@ -3150,17 +3049,13 @@ async function cobrarAtendimento(
     solicitacaoId
 ) {
 
-    if (
-        cobrancaConfirmada
-    ) {
+    if (cobrancaConfirmada) {
 
         return true;
 
     }
 
-    if (
-        cobrancaEmAndamento
-    ) {
+    if (cobrancaEmAndamento) {
 
         return false;
 
@@ -3507,9 +3402,7 @@ function monitorarSolicitacao(
                                 id
                             );
 
-                        if (
-                            !cobrado
-                        ) {
+                        if (!cobrado) {
 
                             statusTexto.textContent =
                                 "Saldo insuficiente";
@@ -3744,9 +3637,7 @@ async function iniciarWebRTCCliente(
                                             track.id
                                     );
 
-                            if (
-                                !existe
-                            ) {
+                            if (!existe) {
 
                                 remoteStream.addTrack(
                                     track
@@ -3771,9 +3662,7 @@ async function iniciarWebRTCCliente(
         peerConnection.onconnectionstatechange =
             async () => {
 
-                if (
-                    !peerConnection
-                ) {
+                if (!peerConnection) {
 
                     return;
 
@@ -3781,11 +3670,6 @@ async function iniciarWebRTCCliente(
 
                 const estado =
                     peerConnection.connectionState;
-
-                console.log(
-                    "WebRTC cliente:",
-                    estado
-                );
 
                 if (
                     estado ===
@@ -3818,9 +3702,6 @@ async function iniciarWebRTCCliente(
 
                     subStatus.textContent =
                         "Videochamada em andamento.";
-
-                    videoPlaceholderText.textContent =
-                        "Aguardando vídeo do tradutor...";
 
                     document.getElementById(
                         "btnSairChamada"
@@ -3862,49 +3743,6 @@ async function iniciarWebRTCCliente(
                         );
 
                     }
-
-                }
-
-                if (
-                    estado ===
-                    "failed"
-                ) {
-
-                    callStatus.textContent =
-                        "⚠️ Falha na conexão";
-
-                    callStatus.classList.remove(
-                        "connected"
-                    );
-
-                    statusTexto.textContent =
-                        "Problema na conexão";
-
-                    subStatus.textContent =
-                        "Não foi possível estabelecer a videochamada.";
-
-                    videoPlaceholder.style.display =
-                        "flex";
-
-                    videoPlaceholderText.textContent =
-                        "Não foi possível receber o vídeo.";
-
-                }
-
-                if (
-                    estado ===
-                    "disconnected"
-                ) {
-
-                    callStatus.textContent =
-                        "⚠️ Reconectando...";
-
-                    callStatus.classList.remove(
-                        "connected"
-                    );
-
-                    subStatus.textContent =
-                        "A conexão foi interrompida. Tentando recuperar...";
 
                 }
 
@@ -4038,12 +3876,6 @@ async function iniciarWebRTCCliente(
             }
         );
 
-        callStatus.textContent =
-            "🔗 Conectando vídeo...";
-
-        subStatus.textContent =
-            "Tradutor aceitou. Estabelecendo a videochamada...";
-
     } catch (erro) {
 
         console.error(
@@ -4057,39 +3889,6 @@ async function iniciarWebRTCCliente(
         chamadaConectada =
             false;
 
-        if (
-            erro.name ===
-            "NotAllowedError"
-        ) {
-
-            callStatus.textContent =
-                "⚠️ Câmera não autorizada";
-
-            statusTexto.textContent =
-                "Permissão necessária";
-
-            subStatus.textContent =
-                "Permita o acesso à câmera e ao microfone para continuar.";
-
-            videoPlaceholderText.textContent =
-                "Câmera e microfone não autorizados.";
-
-        } else {
-
-            callStatus.textContent =
-                "⚠️ Erro na chamada";
-
-            statusTexto.textContent =
-                "Não foi possível conectar";
-
-            subStatus.textContent =
-                "Não foi possível iniciar a videochamada.";
-
-            videoPlaceholderText.textContent =
-                "Erro ao iniciar o vídeo.";
-
-        }
-
     }
 
 }
@@ -4098,9 +3897,7 @@ async function iniciarWebRTCCliente(
 
 function alternarMicrofone() {
 
-    if (
-        !localStream
-    ) {
+    if (!localStream) {
 
         return;
 
@@ -4153,9 +3950,7 @@ function alternarMicrofone() {
 
 function alternarCamera() {
 
-    if (
-        !localStream
-    ) {
+    if (!localStream) {
 
         return;
 
@@ -4284,15 +4079,6 @@ function encerrarWebRTC() {
         peerConnection
     ) {
 
-        peerConnection.ontrack =
-            null;
-
-        peerConnection.onicecandidate =
-            null;
-
-        peerConnection.onconnectionstatechange =
-            null;
-
         peerConnection.close();
 
         peerConnection =
@@ -4338,12 +4124,6 @@ function encerrarWebRTC() {
     videoRemoto.srcObject =
         null;
 
-    videoPlaceholder.style.display =
-        "flex";
-
-    videoPlaceholderText.textContent =
-        "Conectando com o tradutor...";
-
     if (
         tempoInterval
     ) {
@@ -4373,30 +4153,6 @@ function encerrarWebRTC() {
 
     cameraLigada =
         true;
-
-    const btnMicrofone =
-        document.getElementById(
-            "btnMicrofone"
-        );
-
-    const btnCamera =
-        document.getElementById(
-            "btnCamera"
-        );
-
-    btnMicrofone.textContent =
-        "🎤 Microfone";
-
-    btnMicrofone.classList.remove(
-        "off"
-    );
-
-    btnCamera.textContent =
-        "📹 Câmera";
-
-    btnCamera.classList.remove(
-        "off"
-    );
 
 }
 
@@ -4521,7 +4277,7 @@ function fecharEspera() {
 
 }
 
-/* FINALIZAÇÃO REMOTA */
+/* FINALIZAÇÃO */
 
 function finalizarLocal() {
 
