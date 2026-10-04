@@ -211,16 +211,11 @@ body {
 
     left: 50%;
 
-    /*
-       Subimos e aumentamos o Petton.
-       Continua atrás da banheira.
-    */
-
-    top: 37%;
+    top: 40%;
 
     z-index: 3;
 
-    width: 39%;
+    width: 38%;
 
     max-height: 40%;
 
@@ -255,21 +250,21 @@ body {
 ========================================================= */
 
 #pettonBanho.pet-gato {
-    width: 39%;
+    width: 38%;
     max-height: 40%;
-    top: 37%;
+    top: 40%;
 }
 
 #pettonBanho.pet-cachorro {
-    width: 39%;
+    width: 38%;
     max-height: 40%;
-    top: 37%;
+    top: 40%;
 }
 
 #pettonBanho.pet-coelho {
-    width: 39%;
+    width: 38%;
     max-height: 40%;
-    top: 37%;
+    top: 40%;
 }
 
 /* =========================================================
@@ -292,6 +287,182 @@ body {
 }
 
 /* =========================================================
+   ÁGUA DENTRO DA BANHEIRA
+   FICA NA FRENTE DO PETTON
+========================================================= */
+
+#aguaBanheira {
+    position: absolute;
+
+    left: 9%;
+    right: 9%;
+
+    top: 61%;
+
+    height: 17%;
+
+    z-index: 4;
+
+    overflow: hidden;
+
+    border-radius:
+        50%
+        50%
+        42%
+        42%;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(201,247,255,.96) 0%,
+            rgba(92,207,247,.94) 35%,
+            rgba(44,177,233,.94) 100%
+        );
+
+    box-shadow:
+        inset 0 6px 10px
+        rgba(255,255,255,.50),
+        inset 0 -5px 12px
+        rgba(22,139,206,.20);
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   BRILHO DA ÁGUA
+========================================================= */
+
+#aguaBanheira::after {
+    content: "";
+
+    position: absolute;
+
+    left: 8%;
+    right: 8%;
+
+    top: 28%;
+
+    height: 10px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .35
+        );
+
+    filter:
+        blur(2px);
+}
+
+/* =========================================================
+   ESPUMA NA SUPERFÍCIE DA ÁGUA
+========================================================= */
+
+#espumaBanheira {
+    position: absolute;
+
+    left: 7%;
+    right: 7%;
+
+    top: 57%;
+
+    height: 13%;
+
+    z-index: 4;
+
+    pointer-events: none;
+}
+
+.espuma {
+    position: absolute;
+
+    bottom: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #e8faff
+        );
+
+    box-shadow:
+        0 2px 5px
+        rgba(47,158,201,.14);
+}
+
+/* ESQUERDA */
+
+.espuma.e1 {
+    left: 2%;
+    width: 38px;
+    height: 28px;
+}
+
+.espuma.e2 {
+    left: 10%;
+    width: 31px;
+    height: 31px;
+}
+
+.espuma.e3 {
+    left: 18%;
+    width: 40px;
+    height: 31px;
+}
+
+.espuma.e4 {
+    left: 28%;
+    width: 33px;
+    height: 26px;
+}
+
+/* CENTRO */
+
+.espuma.e5 {
+    left: 37%;
+    width: 37px;
+    height: 28px;
+}
+
+.espuma.e6 {
+    left: 46%;
+    width: 41px;
+    height: 31px;
+}
+
+.espuma.e7 {
+    left: 56%;
+    width: 34px;
+    height: 27px;
+}
+
+/* DIREITA */
+
+.espuma.e8 {
+    left: 65%;
+    width: 39px;
+    height: 30px;
+}
+
+.espuma.e9 {
+    left: 75%;
+    width: 34px;
+    height: 28px;
+}
+
+.espuma.e10 {
+    left: 84%;
+    width: 38px;
+    height: 29px;
+}
+
+/* =========================================================
    FRENTE DA BANHEIRA
 ========================================================= */
 
@@ -299,6 +470,7 @@ body {
     position: absolute;
 
     left: 50%;
+
     bottom: 2%;
 
     width: 96%;
@@ -624,7 +796,6 @@ body {
     .topo h1 {
         font-size: 19px;
     }
-
 }
 
 </style>
@@ -689,6 +860,28 @@ body {
             alt="Petton tomando banho"
         >
 
+        <!-- ÁGUA DA BANHEIRA -->
+        <!-- FICA NA FRENTE DA PARTE DE BAIXO DO PETTON -->
+
+        <div id="aguaBanheira"></div>
+
+        <!-- ESPUMA DA SUPERFÍCIE -->
+
+        <div id="espumaBanheira">
+
+            <span class="espuma e1"></span>
+            <span class="espuma e2"></span>
+            <span class="espuma e3"></span>
+            <span class="espuma e4"></span>
+            <span class="espuma e5"></span>
+            <span class="espuma e6"></span>
+            <span class="espuma e7"></span>
+            <span class="espuma e8"></span>
+            <span class="espuma e9"></span>
+            <span class="espuma e10"></span>
+
+        </div>
+
         <!-- FRENTE DA BANHEIRA -->
 
         <img
@@ -697,7 +890,7 @@ body {
             alt="Banheira"
         >
 
-        <!-- ÁGUA -->
+        <!-- ÁGUA DO CHUVEIRO -->
 
         <div id="aguaChuveiro">
 
@@ -1133,8 +1326,16 @@ function darBanho() {
         );
 
     if (
+        Number.isNaN(higiene)
+    ) {
+
+        higiene = 0;
+    }
+
+    if (
         higiene >= 90
     ) {
+
         return;
     }
 
