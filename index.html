@@ -84,7 +84,9 @@ select {
 
 }
 
-/* LOGIN */
+/* =========================================================
+   LOGIN
+========================================================= */
 
 #login-overlay {
 
@@ -179,7 +181,9 @@ select {
 
 }
 
-/* APP */
+/* =========================================================
+   APP
+========================================================= */
 
 #app-content {
 
@@ -198,7 +202,9 @@ select {
 
 }
 
-/* HEADER */
+/* =========================================================
+   HEADER
+========================================================= */
 
 .topbar {
 
@@ -293,7 +299,9 @@ select {
 
 }
 
-/* CARD */
+/* =========================================================
+   CARD
+========================================================= */
 
 .card {
 
@@ -333,7 +341,9 @@ select {
 
 }
 
-/* TRADUÇÃO */
+/* =========================================================
+   TRADUÇÃO
+========================================================= */
 
 #textoInput {
 
@@ -422,7 +432,9 @@ select {
 
 }
 
-/* SERVIÇOS */
+/* =========================================================
+   SERVIÇOS
+========================================================= */
 
 .section-title {
 
@@ -523,7 +535,7 @@ select {
 
 }
 
-/* CORES DOS 8 BOTÕES */
+/* CORES */
 
 .service-tradutor {
 
@@ -677,7 +689,9 @@ select {
 
 }
 
-/* PETTON */
+/* =========================================================
+   PETTON CARD
+========================================================= */
 
 .petton-feature {
 
@@ -807,9 +821,6 @@ select {
     font-size: 10px;
 
     font-weight: 900;
-
-    box-shadow:
-        0 4px 12px rgba(0,0,0,.12);
 
 }
 
@@ -1027,7 +1038,9 @@ select {
 
 }
 
-/* MODAL */
+/* =========================================================
+   MODAL
+========================================================= */
 
 .modal {
 
@@ -1206,7 +1219,9 @@ select {
 
 }
 
-/* ESPERA */
+/* =========================================================
+   ESPERA
+========================================================= */
 
 .wait-area {
 
@@ -1330,7 +1345,9 @@ select {
 
 }
 
-/* VIDEO */
+/* =========================================================
+   VIDEO
+========================================================= */
 
 #videoContainer {
 
@@ -1431,9 +1448,6 @@ select {
 
     z-index: 5;
 
-    box-shadow:
-        0 5px 18px rgba(0,0,0,.35);
-
 }
 
 .timer-badge {
@@ -1509,7 +1523,9 @@ select {
 
 }
 
-/* NAV */
+/* =========================================================
+   NAV
+========================================================= */
 
 .bottom-nav {
 
@@ -1888,7 +1904,9 @@ select {
 
 </div>
 
-<!-- MODAL TRADUTOR -->
+<!-- ======================================================
+     MODAL TRADUTOR
+====================================================== -->
 
 <div
     id="modalTradutor"
@@ -1979,7 +1997,9 @@ select {
 
 </div>
 
-<!-- ESPERA / VIDEO -->
+<!-- ======================================================
+     ESPERA / VIDEO
+====================================================== -->
 
 <div
     id="modalEspera"
@@ -2105,7 +2125,9 @@ select {
 
 </div>
 
-<!-- PETTON ANDANDO -->
+<!-- ======================================================
+     PETTON ANDANDO
+====================================================== -->
 
 <div
     id="pettonWalkerLayer"
@@ -2129,6 +2151,10 @@ select {
     </div>
 
 </div>
+
+<!-- ======================================================
+     MENU INFERIOR
+====================================================== -->
 
 <nav class="bottom-nav">
 
@@ -2178,7 +2204,9 @@ select {
 
 <script type="module">
 
-/* FIREBASE */
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 import {
     initializeApp
@@ -2234,7 +2262,83 @@ const LIFF_ID =
 const CUSTO_TRADUTOR =
     1500;
 
-/* VARIÁVEIS */
+/* =========================================================
+   PETTONS ANDANDO
+========================================================= */
+
+const pettonsAndando = [
+
+    "petton-walk.png",
+
+    "petton-cachorro-walk.png",
+
+    "petton-coelho-walk.png"
+
+];
+
+let indicePettonAndando = 0;
+
+const pettonWalker =
+    document.getElementById(
+        "pettonWalker"
+    );
+
+const pettonWalkerImg =
+    document.getElementById(
+        "pettonWalkerImg"
+    );
+
+/* Pré-carrega as imagens */
+
+pettonsAndando.forEach(
+    arquivo => {
+
+        const imagem =
+            new Image();
+
+        imagem.src =
+            arquivo;
+
+    }
+);
+
+/* Começa com o gato */
+
+pettonWalkerImg.src =
+    pettonsAndando[
+        indicePettonAndando
+    ];
+
+/* Quando termina de atravessar,
+   troca para o próximo Petton */
+
+pettonWalker.addEventListener(
+    "animationiteration",
+    () => {
+
+        indicePettonAndando++;
+
+        if (
+            indicePettonAndando >=
+            pettonsAndando.length
+        ) {
+
+            indicePettonAndando =
+                0;
+
+        }
+
+        pettonWalkerImg.src =
+            pettonsAndando[
+                indicePettonAndando
+            ];
+
+    }
+);
+
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
 
 let usuarioAtual = null;
 let solicitacaoAtualId = null;
@@ -2252,7 +2356,9 @@ let chamadaConectada = false;
 let cobrancaEmAndamento = false;
 let cobrancaConfirmada = false;
 
-/* WEBRTC */
+/* =========================================================
+   WEBRTC
+========================================================= */
 
 const rtcConfiguration = {
 
@@ -2272,7 +2378,9 @@ const rtcConfiguration = {
 
 };
 
-/* ELEMENTOS */
+/* =========================================================
+   ELEMENTOS
+========================================================= */
 
 const loginOverlay =
     document.getElementById(
@@ -2349,7 +2457,9 @@ const waitIcon =
         "waitIcon"
     );
 
-/* INICIALIZAÇÃO */
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
 
 async function inicializarApp() {
 
@@ -2496,7 +2606,9 @@ async function inicializarApp() {
 
 }
 
-/* LOGIN */
+/* =========================================================
+   LOGIN
+========================================================= */
 
 function loginLine() {
 
@@ -2508,7 +2620,9 @@ function loginLine() {
 
 }
 
-/* SALDO */
+/* =========================================================
+   SALDO
+========================================================= */
 
 async function carregarSaldo() {
 
@@ -2583,7 +2697,9 @@ async function carregarSaldo() {
 
 }
 
-/* TRADUÇÃO */
+/* =========================================================
+   TRADUÇÃO
+========================================================= */
 
 async function traduzirTexto() {
 
@@ -2761,7 +2877,9 @@ async function traduzirTexto() {
 
 }
 
-/* ABRIR TRADUTOR */
+/* =========================================================
+   ABRIR TRADUTOR
+========================================================= */
 
 async function abrirTradutor() {
 
@@ -2856,7 +2974,9 @@ function fecharTradutor() {
 
 }
 
-/* CRIAR SOLICITAÇÃO */
+/* =========================================================
+   CRIAR SOLICITAÇÃO
+========================================================= */
 
 async function criarSolicitacao() {
 
@@ -3028,7 +3148,9 @@ async function criarSolicitacao() {
 
 }
 
-/* COBRANÇA */
+/* =========================================================
+   COBRANÇA
+========================================================= */
 
 async function cobrarAtendimento(
     solicitacaoId
@@ -3284,7 +3406,9 @@ async function cobrarAtendimento(
 
 }
 
-/* TRADUTOR ACEITOU */
+/* =========================================================
+   TRADUTOR ACEITOU
+========================================================= */
 
 function mostrarTradutorAceitou() {
 
@@ -3326,7 +3450,9 @@ function mostrarTradutorAceitou() {
 
 }
 
-/* MONITORAR SOLICITAÇÃO */
+/* =========================================================
+   MONITORAR SOLICITAÇÃO
+========================================================= */
 
 function monitorarSolicitacao(
     id
@@ -3527,7 +3653,9 @@ function monitorarSolicitacao(
 
 }
 
-/* WEBRTC CLIENTE */
+/* =========================================================
+   WEBRTC CLIENTE
+========================================================= */
 
 async function iniciarWebRTCCliente(
     solicitacaoId
@@ -3656,11 +3784,6 @@ async function iniciarWebRTCCliente(
                 const estado =
                     peerConnection.connectionState;
 
-                console.log(
-                    "WebRTC cliente:",
-                    estado
-                );
-
                 if (
                     estado ===
                     "connecting"
@@ -3757,12 +3880,6 @@ async function iniciarWebRTCCliente(
                     subStatus.textContent =
                         "Não foi possível estabelecer a videochamada.";
 
-                    videoPlaceholder.style.display =
-                        "flex";
-
-                    videoPlaceholderText.textContent =
-                        "Não foi possível receber o vídeo.";
-
                 }
 
                 if (
@@ -3776,9 +3893,6 @@ async function iniciarWebRTCCliente(
                     callStatus.classList.remove(
                         "connected"
                     );
-
-                    subStatus.textContent =
-                        "A conexão foi interrompida. Tentando recuperar...";
 
                 }
 
@@ -3931,44 +4045,13 @@ async function iniciarWebRTCCliente(
         chamadaConectada =
             false;
 
-        if (
-            erro.name ===
-            "NotAllowedError"
-        ) {
-
-            callStatus.textContent =
-                "⚠️ Câmera não autorizada";
-
-            statusTexto.textContent =
-                "Permissão necessária";
-
-            subStatus.textContent =
-                "Permita o acesso à câmera e ao microfone para continuar.";
-
-            videoPlaceholderText.textContent =
-                "Câmera e microfone não autorizados.";
-
-        } else {
-
-            callStatus.textContent =
-                "⚠️ Erro na chamada";
-
-            statusTexto.textContent =
-                "Não foi possível conectar";
-
-            subStatus.textContent =
-                "Não foi possível iniciar a videochamada.";
-
-            videoPlaceholderText.textContent =
-                "Erro ao iniciar o vídeo.";
-
-        }
-
     }
 
 }
 
-/* MICROFONE */
+/* =========================================================
+   MICROFONE
+========================================================= */
 
 function alternarMicrofone() {
 
@@ -4021,7 +4104,9 @@ function alternarMicrofone() {
 
 }
 
-/* CÂMERA */
+/* =========================================================
+   CÂMERA
+========================================================= */
 
 function alternarCamera() {
 
@@ -4074,7 +4159,9 @@ function alternarCamera() {
 
 }
 
-/* CRONÔMETRO */
+/* =========================================================
+   CRONÔMETRO
+========================================================= */
 
 function iniciarCronometro() {
 
@@ -4135,7 +4222,9 @@ function atualizarCronometro() {
 
 }
 
-/* ENCERRAR WEBRTC */
+/* =========================================================
+   ENCERRAR WEBRTC
+========================================================= */
 
 function encerrarWebRTC() {
 
@@ -4153,15 +4242,6 @@ function encerrarWebRTC() {
     if (
         peerConnection
     ) {
-
-        peerConnection.ontrack =
-            null;
-
-        peerConnection.onicecandidate =
-            null;
-
-        peerConnection.onconnectionstatechange =
-            null;
 
         peerConnection.close();
 
@@ -4208,12 +4288,6 @@ function encerrarWebRTC() {
     videoRemoto.srcObject =
         null;
 
-    videoPlaceholder.style.display =
-        "flex";
-
-    videoPlaceholderText.textContent =
-        "Conectando com o tradutor...";
-
     if (
         tempoInterval
     ) {
@@ -4244,33 +4318,11 @@ function encerrarWebRTC() {
     cameraLigada =
         true;
 
-    const btnMicrofone =
-        document.getElementById(
-            "btnMicrofone"
-        );
-
-    const btnCamera =
-        document.getElementById(
-            "btnCamera"
-        );
-
-    btnMicrofone.textContent =
-        "🎤 Microfone";
-
-    btnMicrofone.classList.remove(
-        "off"
-    );
-
-    btnCamera.textContent =
-        "📹 Câmera";
-
-    btnCamera.classList.remove(
-        "off"
-    );
-
 }
 
-/* CANCELAR / ENCERRAR */
+/* =========================================================
+   CANCELAR / ENCERRAR
+========================================================= */
 
 async function cancelarOuEncerrar() {
 
@@ -4360,7 +4412,9 @@ async function cancelarOuEncerrar() {
 
 }
 
-/* FECHAR */
+/* =========================================================
+   FECHAR
+========================================================= */
 
 function fecharEspera() {
 
@@ -4391,8 +4445,6 @@ function fecharEspera() {
 
 }
 
-/* FINALIZAÇÃO REMOTA */
-
 function finalizarLocal() {
 
     fecharEspera();
@@ -4405,7 +4457,9 @@ function finalizarLocal() {
 
 }
 
-/* BOTÕES */
+/* =========================================================
+   BOTÕES
+========================================================= */
 
 document.getElementById(
     "btnLoginLine"
