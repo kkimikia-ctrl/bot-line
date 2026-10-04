@@ -84,9 +84,7 @@ select {
 
 }
 
-/* =========================================================
-   LOGIN
-========================================================= */
+/* LOGIN */
 
 #login-overlay {
 
@@ -145,6 +143,7 @@ select {
 .login-card h1 {
 
     margin: 0;
+
     font-size: 27px;
 
 }
@@ -181,9 +180,7 @@ select {
 
 }
 
-/* =========================================================
-   APP
-========================================================= */
+/* APP */
 
 #app-content {
 
@@ -202,9 +199,7 @@ select {
 
 }
 
-/* =========================================================
-   HEADER
-========================================================= */
+/* HEADER */
 
 .topbar {
 
@@ -246,6 +241,7 @@ select {
 .brand-title {
 
     font-size: 19px;
+
     font-weight: 900;
 
 }
@@ -299,9 +295,7 @@ select {
 
 }
 
-/* =========================================================
-   CARD
-========================================================= */
+/* CARD */
 
 .card {
 
@@ -341,9 +335,7 @@ select {
 
 }
 
-/* =========================================================
-   TRADUÇÃO
-========================================================= */
+/* TRADUÇÃO */
 
 #textoInput {
 
@@ -432,9 +424,7 @@ select {
 
 }
 
-/* =========================================================
-   SERVIÇOS
-========================================================= */
+/* SERVIÇOS */
 
 .section-title {
 
@@ -689,9 +679,7 @@ select {
 
 }
 
-/* =========================================================
-   PETTON CARD
-========================================================= */
+/* PETTON CARD */
 
 .petton-feature {
 
@@ -1038,9 +1026,7 @@ select {
 
 }
 
-/* =========================================================
-   MODAL
-========================================================= */
+/* MODAL */
 
 .modal {
 
@@ -1219,9 +1205,7 @@ select {
 
 }
 
-/* =========================================================
-   ESPERA
-========================================================= */
+/* ESPERA */
 
 .wait-area {
 
@@ -1345,9 +1329,7 @@ select {
 
 }
 
-/* =========================================================
-   VIDEO
-========================================================= */
+/* VIDEO */
 
 #videoContainer {
 
@@ -1448,6 +1430,9 @@ select {
 
     z-index: 5;
 
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.35);
+
 }
 
 .timer-badge {
@@ -1523,9 +1508,7 @@ select {
 
 }
 
-/* =========================================================
-   NAV
-========================================================= */
+/* NAV */
 
 .bottom-nav {
 
@@ -1904,9 +1887,7 @@ select {
 
 </div>
 
-<!-- ======================================================
-     MODAL TRADUTOR
-====================================================== -->
+<!-- MODAL TRADUTOR -->
 
 <div
     id="modalTradutor"
@@ -1997,9 +1978,7 @@ select {
 
 </div>
 
-<!-- ======================================================
-     ESPERA / VIDEO
-====================================================== -->
+<!-- ESPERA / VIDEO -->
 
 <div
     id="modalEspera"
@@ -2125,9 +2104,7 @@ select {
 
 </div>
 
-<!-- ======================================================
-     PETTON ANDANDO
-====================================================== -->
+<!-- PETTON ANDANDO -->
 
 <div
     id="pettonWalkerLayer"
@@ -2151,10 +2128,6 @@ select {
     </div>
 
 </div>
-
-<!-- ======================================================
-     MENU INFERIOR
-====================================================== -->
 
 <nav class="bottom-nav">
 
@@ -2204,9 +2177,7 @@ select {
 
 <script type="module">
 
-/* =========================================================
-   FIREBASE
-========================================================= */
+/* FIREBASE */
 
 import {
     initializeApp
@@ -2276,7 +2247,8 @@ const pettonsAndando = [
 
 ];
 
-let indicePettonAndando = 0;
+let indicePettonAndando =
+    0;
 
 const pettonWalker =
     document.getElementById(
@@ -2288,7 +2260,10 @@ const pettonWalkerImg =
         "pettonWalkerImg"
     );
 
-/* Pré-carrega as imagens */
+/* GUARDA AS 3 IMAGENS NA MEMÓRIA */
+
+const imagensPettonCarregadas =
+    [];
 
 pettonsAndando.forEach(
     arquivo => {
@@ -2299,46 +2274,80 @@ pettonsAndando.forEach(
         imagem.src =
             arquivo;
 
+        imagensPettonCarregadas.push(
+            imagem
+        );
+
     }
 );
 
-/* Começa com o gato */
+/* COMEÇA PELO GATO */
 
 pettonWalkerImg.src =
-    pettonsAndando[
-        indicePettonAndando
-    ];
+    pettonsAndando[0];
 
-/* Quando termina de atravessar,
-   troca para o próximo Petton */
+/*
+   IMPORTANTE:
+   troca somente quando a animação
+   da travessia terminar.
+   Ignora a animação das patinhas.
+*/
 
 pettonWalker.addEventListener(
     "animationiteration",
-    () => {
-
-        indicePettonAndando++;
+    evento => {
 
         if (
-            indicePettonAndando >=
-            pettonsAndando.length
+            evento.target !==
+            pettonWalker
         ) {
 
-            indicePettonAndando =
-                0;
+            return;
 
         }
 
-        pettonWalkerImg.src =
-            pettonsAndando[
+        if (
+            evento.animationName !==
+            "pettonAtravessarTela"
+        ) {
+
+            return;
+
+        }
+
+        indicePettonAndando =
+            (
+                indicePettonAndando +
+                1
+            ) %
+            pettonsAndando.length;
+
+        const proximaImagem =
+            imagensPettonCarregadas[
                 indicePettonAndando
             ];
+
+        if (
+            proximaImagem &&
+            proximaImagem.complete
+        ) {
+
+            pettonWalkerImg.src =
+                proximaImagem.src;
+
+        } else {
+
+            pettonWalkerImg.src =
+                pettonsAndando[
+                    indicePettonAndando
+                ];
+
+        }
 
     }
 );
 
-/* =========================================================
-   VARIÁVEIS
-========================================================= */
+/* VARIÁVEIS */
 
 let usuarioAtual = null;
 let solicitacaoAtualId = null;
@@ -2356,9 +2365,7 @@ let chamadaConectada = false;
 let cobrancaEmAndamento = false;
 let cobrancaConfirmada = false;
 
-/* =========================================================
-   WEBRTC
-========================================================= */
+/* WEBRTC */
 
 const rtcConfiguration = {
 
@@ -2378,9 +2385,7 @@ const rtcConfiguration = {
 
 };
 
-/* =========================================================
-   ELEMENTOS
-========================================================= */
+/* ELEMENTOS */
 
 const loginOverlay =
     document.getElementById(
@@ -2457,9 +2462,7 @@ const waitIcon =
         "waitIcon"
     );
 
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
+/* INICIALIZAÇÃO */
 
 async function inicializarApp() {
 
@@ -2606,9 +2609,7 @@ async function inicializarApp() {
 
 }
 
-/* =========================================================
-   LOGIN
-========================================================= */
+/* LOGIN */
 
 function loginLine() {
 
@@ -2620,9 +2621,7 @@ function loginLine() {
 
 }
 
-/* =========================================================
-   SALDO
-========================================================= */
+/* SALDO */
 
 async function carregarSaldo() {
 
@@ -2697,9 +2696,7 @@ async function carregarSaldo() {
 
 }
 
-/* =========================================================
-   TRADUÇÃO
-========================================================= */
+/* TRADUÇÃO */
 
 async function traduzirTexto() {
 
@@ -2818,7 +2815,8 @@ async function traduzirTexto() {
 
         }
 
-        let traducao = "";
+        let traducao =
+            "";
 
         dados[0].forEach(
             parte => {
@@ -2836,7 +2834,9 @@ async function traduzirTexto() {
             }
         );
 
-        if (!traducao.trim()) {
+        if (
+            !traducao.trim()
+        ) {
 
             throw new Error(
                 "Tradução vazia"
@@ -2877,9 +2877,7 @@ async function traduzirTexto() {
 
 }
 
-/* =========================================================
-   ABRIR TRADUTOR
-========================================================= */
+/* ABRIR TRADUTOR */
 
 async function abrirTradutor() {
 
@@ -2974,9 +2972,7 @@ function fecharTradutor() {
 
 }
 
-/* =========================================================
-   CRIAR SOLICITAÇÃO
-========================================================= */
+/* CRIAR SOLICITAÇÃO */
 
 async function criarSolicitacao() {
 
@@ -3148,21 +3144,23 @@ async function criarSolicitacao() {
 
 }
 
-/* =========================================================
-   COBRANÇA
-========================================================= */
+/* COBRANÇA */
 
 async function cobrarAtendimento(
     solicitacaoId
 ) {
 
-    if (cobrancaConfirmada) {
+    if (
+        cobrancaConfirmada
+    ) {
 
         return true;
 
     }
 
-    if (cobrancaEmAndamento) {
+    if (
+        cobrancaEmAndamento
+    ) {
 
         return false;
 
@@ -3406,9 +3404,7 @@ async function cobrarAtendimento(
 
 }
 
-/* =========================================================
-   TRADUTOR ACEITOU
-========================================================= */
+/* TRADUTOR ACEITOU */
 
 function mostrarTradutorAceitou() {
 
@@ -3450,9 +3446,7 @@ function mostrarTradutorAceitou() {
 
 }
 
-/* =========================================================
-   MONITORAR SOLICITAÇÃO
-========================================================= */
+/* MONITORAR SOLICITAÇÃO */
 
 function monitorarSolicitacao(
     id
@@ -3513,7 +3507,9 @@ function monitorarSolicitacao(
                                 id
                             );
 
-                        if (!cobrado) {
+                        if (
+                            !cobrado
+                        ) {
 
                             statusTexto.textContent =
                                 "Saldo insuficiente";
@@ -3653,9 +3649,7 @@ function monitorarSolicitacao(
 
 }
 
-/* =========================================================
-   WEBRTC CLIENTE
-========================================================= */
+/* WEBRTC CLIENTE */
 
 async function iniciarWebRTCCliente(
     solicitacaoId
@@ -3750,7 +3744,9 @@ async function iniciarWebRTCCliente(
                                             track.id
                                     );
 
-                            if (!existe) {
+                            if (
+                                !existe
+                            ) {
 
                                 remoteStream.addTrack(
                                     track
@@ -3775,7 +3771,9 @@ async function iniciarWebRTCCliente(
         peerConnection.onconnectionstatechange =
             async () => {
 
-                if (!peerConnection) {
+                if (
+                    !peerConnection
+                ) {
 
                     return;
 
@@ -3783,6 +3781,11 @@ async function iniciarWebRTCCliente(
 
                 const estado =
                     peerConnection.connectionState;
+
+                console.log(
+                    "WebRTC cliente:",
+                    estado
+                );
 
                 if (
                     estado ===
@@ -3880,6 +3883,12 @@ async function iniciarWebRTCCliente(
                     subStatus.textContent =
                         "Não foi possível estabelecer a videochamada.";
 
+                    videoPlaceholder.style.display =
+                        "flex";
+
+                    videoPlaceholderText.textContent =
+                        "Não foi possível receber o vídeo.";
+
                 }
 
                 if (
@@ -3893,6 +3902,9 @@ async function iniciarWebRTCCliente(
                     callStatus.classList.remove(
                         "connected"
                     );
+
+                    subStatus.textContent =
+                        "A conexão foi interrompida. Tentando recuperar...";
 
                 }
 
@@ -4045,17 +4057,50 @@ async function iniciarWebRTCCliente(
         chamadaConectada =
             false;
 
+        if (
+            erro.name ===
+            "NotAllowedError"
+        ) {
+
+            callStatus.textContent =
+                "⚠️ Câmera não autorizada";
+
+            statusTexto.textContent =
+                "Permissão necessária";
+
+            subStatus.textContent =
+                "Permita o acesso à câmera e ao microfone para continuar.";
+
+            videoPlaceholderText.textContent =
+                "Câmera e microfone não autorizados.";
+
+        } else {
+
+            callStatus.textContent =
+                "⚠️ Erro na chamada";
+
+            statusTexto.textContent =
+                "Não foi possível conectar";
+
+            subStatus.textContent =
+                "Não foi possível iniciar a videochamada.";
+
+            videoPlaceholderText.textContent =
+                "Erro ao iniciar o vídeo.";
+
+        }
+
     }
 
 }
 
-/* =========================================================
-   MICROFONE
-========================================================= */
+/* MICROFONE */
 
 function alternarMicrofone() {
 
-    if (!localStream) {
+    if (
+        !localStream
+    ) {
 
         return;
 
@@ -4104,13 +4149,13 @@ function alternarMicrofone() {
 
 }
 
-/* =========================================================
-   CÂMERA
-========================================================= */
+/* CÂMERA */
 
 function alternarCamera() {
 
-    if (!localStream) {
+    if (
+        !localStream
+    ) {
 
         return;
 
@@ -4159,9 +4204,7 @@ function alternarCamera() {
 
 }
 
-/* =========================================================
-   CRONÔMETRO
-========================================================= */
+/* CRONÔMETRO */
 
 function iniciarCronometro() {
 
@@ -4222,9 +4265,7 @@ function atualizarCronometro() {
 
 }
 
-/* =========================================================
-   ENCERRAR WEBRTC
-========================================================= */
+/* ENCERRAR WEBRTC */
 
 function encerrarWebRTC() {
 
@@ -4242,6 +4283,15 @@ function encerrarWebRTC() {
     if (
         peerConnection
     ) {
+
+        peerConnection.ontrack =
+            null;
+
+        peerConnection.onicecandidate =
+            null;
+
+        peerConnection.onconnectionstatechange =
+            null;
 
         peerConnection.close();
 
@@ -4288,6 +4338,12 @@ function encerrarWebRTC() {
     videoRemoto.srcObject =
         null;
 
+    videoPlaceholder.style.display =
+        "flex";
+
+    videoPlaceholderText.textContent =
+        "Conectando com o tradutor...";
+
     if (
         tempoInterval
     ) {
@@ -4318,11 +4374,33 @@ function encerrarWebRTC() {
     cameraLigada =
         true;
 
+    const btnMicrofone =
+        document.getElementById(
+            "btnMicrofone"
+        );
+
+    const btnCamera =
+        document.getElementById(
+            "btnCamera"
+        );
+
+    btnMicrofone.textContent =
+        "🎤 Microfone";
+
+    btnMicrofone.classList.remove(
+        "off"
+    );
+
+    btnCamera.textContent =
+        "📹 Câmera";
+
+    btnCamera.classList.remove(
+        "off"
+    );
+
 }
 
-/* =========================================================
-   CANCELAR / ENCERRAR
-========================================================= */
+/* CANCELAR / ENCERRAR */
 
 async function cancelarOuEncerrar() {
 
@@ -4412,9 +4490,7 @@ async function cancelarOuEncerrar() {
 
 }
 
-/* =========================================================
-   FECHAR
-========================================================= */
+/* FECHAR */
 
 function fecharEspera() {
 
@@ -4445,6 +4521,8 @@ function fecharEspera() {
 
 }
 
+/* FINALIZAÇÃO REMOTA */
+
 function finalizarLocal() {
 
     fecharEspera();
@@ -4457,9 +4535,7 @@ function finalizarLocal() {
 
 }
 
-/* =========================================================
-   BOTÕES
-========================================================= */
+/* BOTÕES */
 
 document.getElementById(
     "btnLoginLine"
