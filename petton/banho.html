@@ -49,7 +49,6 @@ body {
         );
 
     color: #34454d;
-
     overflow-x: hidden;
 }
 
@@ -61,7 +60,6 @@ body {
     width: 100%;
     max-width: 520px;
     min-height: 100vh;
-
     margin: 0 auto;
 
     padding:
@@ -91,9 +89,7 @@ body {
 
 .topo h1 {
     margin: 0;
-
     text-align: center;
-
     font-size: 20px;
 }
 
@@ -137,7 +133,6 @@ body {
 
 .titulo h2 {
     margin: 0;
-
     font-size: 22px;
 }
 
@@ -183,7 +178,7 @@ body {
 }
 
 /* =========================================================
-   FUNDO DO BANHEIRO
+   FUNDO
 ========================================================= */
 
 #banhoFundo {
@@ -215,8 +210,7 @@ body {
     width: 96%;
     height: auto;
 
-    transform:
-        translateX(-50%);
+    transform: translateX(-50%);
 
     object-fit: contain;
 
@@ -234,18 +228,9 @@ body {
     position: absolute;
 
     left: 50%;
+    top: 39%;
 
-    /*
-       Mais afundado dentro da banheira.
-       A frente da banheira cobre melhor
-       a parte inferior do corpo.
-    */
-
-    top: 44.5%;
-
-    width: 33%;
-    max-height: 39%;
-
+    width: 42%;
     height: auto;
 
     object-fit: contain;
@@ -278,34 +263,29 @@ body {
    AJUSTE POR ESPÉCIE
 ========================================================= */
 
-/*
-   Gato e cachorro:
-   um pouco mais baixos que antes.
-*/
+/* GATO */
 
 #pettonBanho.pet-gato {
-    width: 33%;
-    top: 44.5%;
+    width: 42%;
+    top: 39%;
 }
+
+/* CACHORRO */
 
 #pettonBanho.pet-cachorro {
-    width: 33%;
-    top: 44.5%;
+    width: 42%;
+    top: 39%;
 }
 
-/*
-   Coelho:
-   um pouco mais afundado porque
-   a pata traseira dele aparece mais.
-*/
+/* COELHO */
 
 #pettonBanho.pet-coelho {
-    width: 33%;
-    top: 46%;
+    width: 43%;
+    top: 38%;
 }
 
 /* =========================================================
-   MOVIMENTO LEVE
+   RESPIRAÇÃO
 ========================================================= */
 
 @keyframes pettonRespira {
@@ -441,7 +421,7 @@ body {
 }
 
 /* =========================================================
-   BOLHAS ANIMADAS
+   BOLHAS
 ========================================================= */
 
 #bolhas {
@@ -712,7 +692,7 @@ body {
             alt="Banheiro do Petton"
         >
 
-        <!-- PARTE DE TRÁS -->
+        <!-- PARTE DE TRÁS DA BANHEIRA -->
 
         <img
             id="banheiraTras"
@@ -728,7 +708,7 @@ body {
             alt="Petton tomando banho"
         >
 
-        <!-- PARTE DA FRENTE -->
+        <!-- PARTE DA FRENTE DA BANHEIRA -->
 
         <img
             id="banheiraFrente"
@@ -771,7 +751,9 @@ body {
         </div>
 
         <div class="barra">
+
             <div id="barraHigiene"></div>
+
         </div>
 
     </div>
@@ -884,49 +866,6 @@ function pegarEspecie(dados) {
 
 function pegarImagem(dados) {
 
-    if (!dados) {
-
-        return IMAGENS_PETTON.gato;
-    }
-
-    const fase =
-        String(
-            dados.fase ||
-            "bebe"
-        );
-
-    try {
-
-        if (
-            dados.identidadeVisual &&
-            dados.identidadeVisual.imagens &&
-            dados.identidadeVisual.imagens[fase]
-        ) {
-
-            return dados.identidadeVisual.imagens[fase];
-        }
-
-    } catch (erro) {
-
-        console.error(erro);
-    }
-
-    if (dados.imagem) {
-        return dados.imagem;
-    }
-
-    if (dados.image) {
-        return dados.image;
-    }
-
-    if (dados.img) {
-        return dados.img;
-    }
-
-    if (dados.sprite) {
-        return dados.sprite;
-    }
-
     const especie =
         pegarEspecie(dados);
 
@@ -994,6 +933,25 @@ function atualizarTelaBanho() {
 
         const src =
             pegarImagem(dados);
+
+        imagem.onerror =
+            function() {
+
+                console.error(
+                    "Imagem não encontrada:",
+                    this.src
+                );
+
+                this.style.display =
+                    "none";
+            };
+
+        imagem.onload =
+            function() {
+
+                this.style.display =
+                    "block";
+            };
 
         if (
             imagem.getAttribute("src") !== src
