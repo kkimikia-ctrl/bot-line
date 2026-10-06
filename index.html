@@ -586,20 +586,6 @@ select {
     background-position: 0% 0%;
 }
 
-/* CACHORRO - CANVAS */
-
-#pettonWalkerCanvas {
-    display: none;
-
-    position: absolute;
-
-    left: 0;
-    bottom: 4px;
-
-    width: 125px;
-    height: 125px;
-}
-
 /* SOMBRA */
 
 #pettonWalkerShadow {
@@ -1417,12 +1403,6 @@ select {
 
         <div id="pettonWalkerSprite"></div>
 
-        <canvas
-            id="pettonWalkerCanvas"
-            width="500"
-            height="500"
-        ></canvas>
-
         <div id="pettonWalkerShadow"></div>
 
     </div>
@@ -1530,382 +1510,96 @@ const CUSTO_TRADUTOR =
 ========================================================= */
 
 const pettonsAndando = [
-
-    {
-        tipo: "gato",
-        arquivo: "petton-gato-animado.webp"
-    },
-
-    {
-        tipo: "cachorro",
-        arquivo: "cachorro-andando.PNG"
-    },
-
-    {
-        tipo: "coelho",
-        arquivo: "coelho-andando.PNG"
-    }
-
+    { tipo: "gato", arquivo: "petton-gato-animado.webp" },
+    { tipo: "cachorro", arquivo: "cachorro-andando.PNG" },
+    { tipo: "coelho", arquivo: "coelho-andando.PNG" }
 ];
 
-let indicePettonAndando =
-    0;
+let indicePettonAndando = 0;
+let framePetton = 0;
+let intervaloFrames = null;
+const TOTAL_FRAMES = 12;
 
-let framePetton =
-    0;
+const pettonWalker = document.getElementById("pettonWalker");
+const pettonWalkerImg = document.getElementById("pettonWalkerImg");
+const pettonWalkerSprite = document.getElementById("pettonWalkerSprite");
 
-let intervaloFrames =
-    null;
-
-const TOTAL_FRAMES =
-    12;
-
-const pettonWalker =
-    document.getElementById(
-        "pettonWalker"
-    );
-
-const pettonWalkerImg =
-    document.getElementById(
-        "pettonWalkerImg"
-    );
-
-const pettonWalkerSprite =
-    document.getElementById(
-        "pettonWalkerSprite"
-    );
-
-const pettonWalkerCanvas =
-    document.getElementById(
-        "pettonWalkerCanvas"
-    );
-
-const ctxPetton =
-    pettonWalkerCanvas.getContext(
-        "2d"
-    );
-
-const imagemCachorro =
-    new Image();
-
-imagemCachorro.src =
-    "cachorro-andando.PNG";
-
-/* PRÉ CARREGAMENTO */
-
-pettonsAndando.forEach(
-    petton => {
-
-        const img =
-            new Image();
-
-        img.src =
-            petton.arquivo;
-
-    }
-);
-
-/* PARAR FRAMES */
+pettonsAndando.forEach(petton => {
+    const img = new Image();
+    img.src = petton.arquivo;
+});
 
 function pararAnimacaoFrames() {
-
-    if (
-        intervaloFrames
-    ) {
-
-        clearInterval(
-            intervaloFrames
-        );
-
-        intervaloFrames =
-            null;
-
+    if (intervaloFrames) {
+        clearInterval(intervaloFrames);
+        intervaloFrames = null;
     }
-
 }
 
-/* =========================================================
-   COELHO
-   mantém exatamente pelo método antigo
-========================================================= */
+/* CACHORRO E COELHO: MESMO SISTEMA DE SPRITE 6 x 2 */
+function mostrarFrameSprite() {
+    const coluna = framePetton % 6;
+    const linha = Math.floor(framePetton / 6);
+    const posX = coluna * 20;
+    const posY = linha === 0 ? 0 : 100;
 
-function mostrarFrameCoelho() {
-
-    const coluna =
-        framePetton %
-        6;
-
-    const linha =
-        Math.floor(
-            framePetton /
-            6
-        );
-
-    const posX =
-        coluna *
-        20;
-
-    const posY =
-        linha === 0
-            ? 0
-            : 100;
-
-    pettonWalkerSprite
-        .style
-        .backgroundPosition =
-            posX +
-            "% " +
-            posY +
-            "%";
-
+    pettonWalkerSprite.style.backgroundPosition =
+        posX + "% " + posY + "%";
 }
 
-function iniciarCoelho() {
-
+function iniciarSprite(arquivo) {
     pararAnimacaoFrames();
+    framePetton = 0;
 
-    framePetton =
-        0;
+    pettonWalkerImg.style.display = "none";
+    pettonWalkerSprite.style.display = "block";
+    pettonWalkerSprite.style.backgroundImage = 'url("' + arquivo + '")';
 
-    pettonWalkerImg.style.display =
-        "none";
+    mostrarFrameSprite();
 
-    pettonWalkerCanvas.style.display =
-        "none";
-
-    pettonWalkerSprite.style.display =
-        "block";
-
-    pettonWalkerSprite.style.backgroundImage =
-        'url("coelho-andando.PNG")';
-
-    mostrarFrameCoelho();
-
-    intervaloFrames =
-        setInterval(
-            () => {
-
-                framePetton =
-                    (
-                        framePetton +
-                        1
-                    ) %
-                    TOTAL_FRAMES;
-
-                mostrarFrameCoelho();
-
-            },
-            120
-        );
-
+    intervaloFrames = setInterval(() => {
+        framePetton = (framePetton + 1) % TOTAL_FRAMES;
+        mostrarFrameSprite();
+    }, 120);
 }
-
-/* =========================================================
-   CACHORRO
-   CANVAS - recorta quadro por quadro
-========================================================= */
-
-function desenharFrameCachorro() {
-
-    if (
-        !imagemCachorro.complete ||
-        !imagemCachorro.naturalWidth
-    ) {
-
-        return;
-
-    }
-
-    const larguraImagem =
-        imagemCachorro.naturalWidth;
-
-    const alturaImagem =
-        imagemCachorro.naturalHeight;
-
-    const larguraFrame =
-        larguraImagem /
-        6;
-
-    const alturaFrame =
-        alturaImagem /
-        2;
-
-    const coluna =
-        framePetton %
-        6;
-
-    const linha =
-        Math.floor(
-            framePetton /
-            6
-        );
-
-    const sx =
-        coluna *
-        larguraFrame;
-
-    const sy =
-        linha *
-        alturaFrame;
-
-    ctxPetton.clearRect(
-        0,
-        0,
-        pettonWalkerCanvas.width,
-        pettonWalkerCanvas.height
-    );
-
-    ctxPetton.drawImage(
-        imagemCachorro,
-
-        sx,
-        sy,
-        larguraFrame,
-        alturaFrame,
-
-        0,
-        0,
-        pettonWalkerCanvas.width,
-        pettonWalkerCanvas.height
-    );
-
-}
-
-function iniciarCachorro() {
-
-    pararAnimacaoFrames();
-
-    framePetton =
-        0;
-
-    pettonWalkerImg.style.display =
-        "none";
-
-    pettonWalkerSprite.style.display =
-        "none";
-
-    pettonWalkerCanvas.style.display =
-        "block";
-
-    desenharFrameCachorro();
-
-    intervaloFrames =
-        setInterval(
-            () => {
-
-                framePetton =
-                    (
-                        framePetton +
-                        1
-                    ) %
-                    TOTAL_FRAMES;
-
-                desenharFrameCachorro();
-
-            },
-            120
-        );
-
-}
-
-/* =========================================================
-   GATO
-========================================================= */
 
 function iniciarGato() {
-
     pararAnimacaoFrames();
-
-    pettonWalkerSprite.style.display =
-        "none";
-
-    pettonWalkerCanvas.style.display =
-        "none";
-
-    pettonWalkerImg.style.display =
-        "block";
-
-    pettonWalkerImg.src =
-        "petton-gato-animado.webp";
-
+    pettonWalkerSprite.style.display = "none";
+    pettonWalkerImg.style.display = "block";
+    pettonWalkerImg.src = "petton-gato-animado.webp";
 }
 
-/* =========================================================
-   APLICAR PETTON
-========================================================= */
+function aplicarPetton(indice) {
+    const petton = pettonsAndando[indice];
 
-function aplicarPetton(
-    indice
-) {
-
-    const petton =
-        pettonsAndando[
-            indice
-        ];
-
-    if (
-        petton.tipo ===
-        "gato"
-    ) {
-
+    if (petton.tipo === "gato") {
         iniciarGato();
-
+        return;
     }
 
-    if (
-        petton.tipo ===
-        "cachorro"
-    ) {
-
-        iniciarCachorro();
-
+    if (petton.tipo === "cachorro") {
+        iniciarSprite("cachorro-andando.PNG");
+        return;
     }
 
-    if (
-        petton.tipo ===
-        "coelho"
-    ) {
-
-        iniciarCoelho();
-
+    if (petton.tipo === "coelho") {
+        iniciarSprite("coelho-andando.PNG");
     }
-
 }
 
-/* COMEÇA PELO GATO */
+aplicarPetton(0);
 
-aplicarPetton(
-    0
-);
-
-/* TROCA APÓS CADA PASSAGEM */
-
-pettonWalker.addEventListener(
-    "animationiteration",
-    evento => {
-
-        if (
-            evento.animationName !==
-            "pettonAtravessarTela"
-        ) {
-
-            return;
-
-        }
-
-        indicePettonAndando =
-            (
-                indicePettonAndando +
-                1
-            ) %
-            pettonsAndando.length;
-
-        aplicarPetton(
-            indicePettonAndando
-        );
-
+pettonWalker.addEventListener("animationiteration", evento => {
+    if (evento.animationName !== "pettonAtravessarTela") {
+        return;
     }
-);
+
+    indicePettonAndando =
+        (indicePettonAndando + 1) % pettonsAndando.length;
+
+    aplicarPetton(indicePettonAndando);
+});
 
 /* VARIÁVEIS */
 
