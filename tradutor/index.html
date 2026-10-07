@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -12,7 +13,11 @@
 
 <meta name="google" content="notranslate">
 
-<title>Ajuda JP - Painel do Tradutor</title>
+<title>Petton 🐾</title>
+
+<link rel="stylesheet" href="petton.css">
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 <style>
 
@@ -37,663 +42,738 @@ body {
         Arial,
         sans-serif;
 
-    background:
-        linear-gradient(
-            180deg,
-            #eef5ff 0%,
-            #f8fafc 45%,
-            #f1f5f9 100%
-        );
-
-    color: #1e293b;
-}
-
-button,
-input {
-    font-family: inherit;
+    background: #f4f8f3;
+    color: #333;
+    overflow-x: hidden;
 }
 
 button {
+    font-family: inherit;
+}
+
+/* =========================================================
+   BLOQUEIO LINE
+========================================================= */
+
+#bloqueioLine {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #f4f8f3;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+}
+
+.bloqueio-box {
+    width: 100%;
+    max-width: 340px;
+    background: #fff;
+    border-radius: 22px;
+    padding: 28px 20px;
+    box-shadow: 0 6px 25px rgba(0,0,0,.12);
+}
+
+.bloqueio-icon {
+    font-size: 54px;
+}
+
+.bloqueio-box h2 {
+    margin: 8px 0;
+}
+
+.bloqueio-box p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+#pettonConteudo {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 35px;
+}
+
+/* =========================================================
+   TOPO
+========================================================= */
+
+.top-bar {
+    display: grid;
+    grid-template-columns: 42px 1fr 42px;
+    align-items: center;
+    min-height: 56px;
+    padding: 6px 10px;
+}
+
+.top-bar h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 21px;
+}
+
+.top-bar button {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    font-size: 21px;
+    box-shadow: 0 2px 9px rgba(0,0,0,.08);
     cursor: pointer;
 }
 
 /* =========================================================
-   LOGIN
+   CARD
 ========================================================= */
 
-#telaLogin {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 22px;
-}
-
-.login-card {
-    width: 100%;
-    max-width: 430px;
+.pet-card {
+    margin: 4px 10px 10px;
     background: white;
-    border-radius: 26px;
-    padding: 28px 22px;
-    box-shadow: 0 18px 55px rgba(15,23,42,.12);
-    border: 1px solid #e2e8f0;
-}
-
-.login-logo {
-    width: 72px;
-    height: 72px;
-    display: block;
-    margin: 0 auto 14px;
     border-radius: 22px;
-    object-fit: cover;
-    background: white;
-    box-shadow: 0 8px 25px rgba(15,23,42,.12);
+    padding: 11px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
 }
 
-.login-title {
+#nomePetton {
     text-align: center;
-    font-size: 24px;
-    font-weight: 900;
+    font-size: 21px;
+    font-weight: 700;
+    margin: 5px 0 2px;
 }
 
-.login-sub {
+#idadePetton {
     text-align: center;
-    color: #64748b;
     font-size: 13px;
-    margin-top: 7px;
-    margin-bottom: 23px;
-    line-height: 1.45;
+    color: #777;
+    margin-bottom: 6px;
 }
 
-.login-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 800;
-    margin: 13px 2px 6px;
-    color: #475569;
-}
+/* =========================================================
+   OVO
+========================================================= */
 
-.login-input {
-    width: 100%;
-    border: 1px solid #cbd5e1;
-    background: #f8fafc;
-    border-radius: 14px;
-    padding: 14px;
-    outline: none;
-    font-size: 16px;
-}
-
-.login-input:focus {
-    border-color: #2563eb;
-    background: white;
-}
-
-.btn-login {
-    width: 100%;
-    border: 0;
-    border-radius: 15px;
+#ovoPetton {
+    display: none;
+    text-align: center;
     padding: 15px;
-    margin-top: 18px;
+}
+
+#ovoImagem {
+    font-size: 82px;
+    animation: ovoBalancar 1.5s ease-in-out infinite;
+}
+
+@keyframes ovoBalancar {
+
+    0%,
+    100% {
+        transform: rotate(-3deg);
+    }
+
+    50% {
+        transform: rotate(3deg);
+    }
+}
+
+#textoOvo {
+    color: #777;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+#barraOvo {
+    width: 90%;
+    height: 10px;
+    margin: 10px auto 0;
+    background: #eee;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#progressoOvo {
+    height: 100%;
+    width: 0;
+    background: #7acb70;
+    border-radius: 20px;
+}
+
+/* =========================================================
+   PETTON
+========================================================= */
+
+#imagemPetContainer {
+    position: relative;
+    width: 100%;
+    min-height: 230px;
+    border-radius: 18px;
 
     background:
         linear-gradient(
-            135deg,
-            #2563eb,
-            #4f46e5
+            to bottom,
+            #fafff9,
+            #edf7eb
         );
-
-    color: white;
-    font-size: 15px;
-    font-weight: 900;
-}
-
-.btn-login:disabled {
-    opacity: .55;
-}
-
-.login-erro {
-    display: none;
-    margin-top: 13px;
-    padding: 11px;
-    background: #fef2f2;
-    color: #b91c1c;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.4;
-}
-
-/* =========================================================
-   PAINEL
-========================================================= */
-
-#painelTradutor {
-    display: none;
-}
-
-.app {
-    width: 100%;
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 16px;
-    padding-bottom: 50px;
-}
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-    position: relative;
-    z-index: 50;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-}
-
-.logo {
-    width: 48px;
-    height: 48px;
-    border-radius: 15px;
-    object-fit: cover;
-    background: white;
-    box-shadow: 0 5px 18px rgba(0,0,0,.08);
-}
-
-.header-title {
-    font-size: 19px;
-    font-weight: 900;
-}
-
-.header-sub {
-    margin-top: 2px;
-    font-size: 12px;
-    color: #64748b;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-}
-
-/* =========================================================
-   ONLINE / OFFLINE
-========================================================= */
-
-.status-btn {
-    appearance: none;
-    -webkit-appearance: none;
 
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-
-    min-height: 38px;
-    padding: 8px 12px;
-
-    border: 0;
-    border-radius: 30px;
-
-    font-size: 11px;
-    font-weight: 900;
-
-    touch-action: manipulation;
-}
-
-.status-btn.online {
-    background: #ecfdf5;
-    color: #047857;
-}
-
-.status-btn.offline {
-    background: #f1f5f9;
-    color: #64748b;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.status-btn.online .status-dot {
-    background: #10b981;
-}
-
-.status-btn.offline .status-dot {
-    background: #94a3b8;
-}
-
-.status-btn:disabled {
-    opacity: .55;
-}
-
-.btn-sair {
-    border: 0;
-    background: #f1f5f9;
-    color: #475569;
-
-    border-radius: 12px;
-    padding: 8px 10px;
-
-    font-size: 11px;
-    font-weight: 800;
-}
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero {
-    position: relative;
     overflow: hidden;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #4f46e5
-        );
-
-    color: white;
-
-    border-radius: 24px;
-    padding: 22px;
-
-    box-shadow:
-        0 14px 35px rgba(37,99,235,.22);
-
-    margin-bottom: 17px;
 }
 
-.hero::after {
-    content: "";
+#imagemPetton {
+    width: auto;
+    max-width: 92%;
+    max-height: 225px;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity .2s;
+}
 
+#imagemPetton.petton-pronto {
+    opacity: 1;
+}
+
+#simboloDoente {
+    display: none;
     position: absolute;
-
-    width: 150px;
-    height: 150px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(255,255,255,.08);
-
-    right: -50px;
-    top: -55px;
-
-    pointer-events: none;
+    right: 12px;
+    top: 8px;
+    font-size: 30px;
+    z-index: 5;
 }
 
-.hero-small {
-    font-size: 11px;
-    font-weight: 800;
-    opacity: .85;
-    margin-bottom: 5px;
+#cocoPetton {
+    display: none;
+    position: absolute;
+    right: 18px;
+    bottom: 10px;
+    font-size: 36px;
+    z-index: 7;
 }
 
-.hero h1 {
-    margin: 0;
-    font-size: 23px;
-}
-
-.hero p {
-    margin: 8px 0 0;
-    font-size: 13px;
-    line-height: 1.45;
-    opacity: .88;
-}
-
-/* =========================================================
-   ESTATÍSTICAS
-========================================================= */
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 10px;
-    margin-bottom: 17px;
-}
-
-.stat {
-    background: white;
-
-    border:
-        1px solid #e2e8f0;
-
-    border-radius: 17px;
-
-    padding: 15px;
-
-    box-shadow:
-        0 7px 22px rgba(15,23,42,.05);
-}
-
-.stat-label {
-    font-size: 11px;
-    color: #64748b;
-    font-weight: 700;
-}
-
-.stat-value {
-    display: block;
-    margin-top: 3px;
-    font-size: 25px;
-    font-weight: 900;
-    color: #2563eb;
-}
-
-.stat-value.small {
+#cariePetton {
+    display: none;
+    position: absolute;
+    z-index: 7;
     font-size: 18px;
 }
 
-.section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* =========================================================
+   STATUS
+========================================================= */
 
-    margin: 20px 2px 11px;
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 6px;
+    margin-top: 8px;
 }
 
-.section-title strong {
-    font-size: 16px;
+.status-card {
+    background: #f5f8f4;
+    border-radius: 11px;
+    min-height: 38px;
+    padding: 5px 3px;
+    text-align: center;
 }
 
-.section-small {
-    font-size: 11px;
-    color: #94a3b8;
+.status-label {
+    display: block;
+    font-size: 10px;
+    color: #777;
+}
+
+.status-value {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 1px;
 }
 
 /* =========================================================
-   SOLICITAÇÕES
+   BOTÕES
 ========================================================= */
 
-#listaSolicitacoes {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.cuidados-grid,
+.especiais-grid,
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 7px;
+    margin-top: 8px;
 }
 
-.solicitacao {
-    background: white;
-
-    border:
-        1px solid #e2e8f0;
-
-    border-radius: 20px;
-
-    padding: 17px;
-
-    box-shadow:
-        0 8px 28px rgba(15,23,42,.06);
+.cuidado-btn,
+.especial-btn,
+.menu-btn {
+    border: none;
+    border-radius: 13px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-.solicitacao-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: flex-start;
+.cuidado-btn {
+    min-height: 47px;
+    background: #f1f7ef;
+    font-size: 14px;
 }
 
-.cliente {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.especial-btn {
+    min-height: 43px;
+    background: #fff6dc;
+    font-size: 13px;
 }
 
-.avatar {
-    width: 43px;
-    height: 43px;
+.menu-btn {
+    min-height: 45px;
+    background: #f7faf6;
+    font-size: 13px;
+}
 
-    border-radius: 14px;
+.menu-btn-loja {
+    background: #fff5d9;
+}
 
-    background: #eff6ff;
+#btnLimparCoco,
+#btnEscovar,
+#btnHospital {
+    display: none;
+}
 
+.bonus-card {
+    margin-top: 9px;
+    min-height: 44px;
+    border-radius: 13px;
+    background: #fff8df;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    font-size: 21px;
-}
-
-.cliente-nome {
-    font-size: 15px;
-    font-weight: 900;
-}
-
-.cliente-sub {
-    margin-top: 3px;
-    color: #94a3b8;
-    font-size: 10px;
-}
-
-.badge {
-    padding: 6px 9px;
-
-    border-radius: 20px;
-
-    background: #fff7ed;
-    color: #c2410c;
-
-    font-size: 10px;
-    font-weight: 900;
-}
-
-.info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-
-    margin-top: 14px;
-}
-
-.info-item {
-    background: #f8fafc;
-    border-radius: 13px;
-    padding: 11px;
-}
-
-.info-label {
-    display: block;
-    font-size: 10px;
-    color: #94a3b8;
-    margin-bottom: 4px;
-}
-
-.info-value {
-    display: block;
     font-size: 13px;
-    font-weight: 800;
 }
 
-.btn-aceitar {
+#mensagemPetton {
+    min-height: 18px;
+    margin-top: 8px;
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+}
+
+/* =========================================================
+   NOME
+========================================================= */
+
+#modalNomePetton {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    background: rgba(0,0,0,.45);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.nome-box {
     width: 100%;
+    max-width: 340px;
+    padding: 20px;
+    border-radius: 20px;
+    background: white;
+    text-align: center;
+}
 
-    margin-top: 14px;
+.nome-box input {
+    width: 100%;
+    height: 44px;
+    border: 1px solid #ddd;
+    border-radius: 11px;
+    padding: 0 12px;
+    font-size: 16px;
+}
+
+.nome-box button {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 11px;
+    margin-top: 10px;
+    background: #70b96b;
+    color: white;
+    font-weight: 700;
+}
+
+/* =========================================================
+   VASSOURA / ESCOVA
+========================================================= */
+
+#animacaoVassoura,
+#animacaoEscova {
+    display: none;
+    position: fixed;
+    pointer-events: none;
+    z-index: 7000;
+}
+
+#animacaoVassoura {
+    font-size: 55px;
+}
+
+#animacaoEscova {
+    font-size: 44px;
+}
+
+#animacaoVassoura.varrendo {
+    animation: varrer .3s ease-in-out infinite alternate;
+}
+
+@keyframes varrer {
+
+    from {
+        transform: translateX(-24px) rotate(-25deg);
+    }
+
+    to {
+        transform: translateX(24px) rotate(20deg);
+    }
+}
+
+#animacaoEscova.escovando {
+    animation: escovar .22s ease-in-out infinite alternate;
+}
+
+@keyframes escovar {
+
+    from {
+        transform: translateX(-8px) rotate(-20deg);
+    }
+
+    to {
+        transform: translateX(8px) rotate(15deg);
+    }
+}
+
+/* =========================================================
+   COMIDA / CARINHO / SONO
+========================================================= */
+
+#animacaoComida,
+#animacaoCarinho,
+#animacaoDormir {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 6200;
+    pointer-events: none;
+}
+
+.comidaPetton {
+    position: absolute;
+    font-size: 38px;
+    animation: comidaPiscar .6s infinite alternate;
+}
+
+@keyframes comidaPiscar {
+
+    from {
+        transform: scale(.9);
+        opacity: .5;
+    }
+
+    to {
+        transform: scale(1.12);
+        opacity: 1;
+    }
+}
+
+.coracaoCarinho {
+    position: absolute;
+    font-size: 30px;
+    animation: coracaoSubir 1.8s ease-out forwards;
+}
+
+@keyframes coracaoSubir {
+
+    from {
+        opacity: 0;
+        transform: translateY(0) scale(.7);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-120px) scale(1.2);
+    }
+}
+
+.zzzPetton {
+    position: absolute;
+    font-size: 28px;
+    font-weight: bold;
+    animation: zzzSubir 1.8s ease-out infinite;
+}
+
+@keyframes zzzSubir {
+
+    from {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-75px);
+    }
+}
+
+/* =========================================================
+   HOSPITAL
+========================================================= */
+
+#hospitalOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 8400;
+    background: rgba(255,255,255,.96);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#hospitalPetImagem {
+    max-width: 80%;
+    max-height: 230px;
+    object-fit: contain;
+}
+
+.hospital-texto {
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   PASSEIO
+========================================================= */
+
+#passeioOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 8300;
+    background: rgba(255,255,255,.96);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     padding: 14px;
+}
 
-    border: 0;
-    border-radius: 14px;
+.passeio-cenario {
+    position: relative;
+    width: min(94vw,420px);
+    height: 300px;
+    overflow: hidden;
+    border-radius: 24px;
 
     background:
         linear-gradient(
-            135deg,
-            #2563eb,
-            #1d4ed8
+            to bottom,
+            #dff4ff 0%,
+            #eaf9ff 62%,
+            #bfe7b9 62%,
+            #9ad08c 100%
         );
 
-    color: white;
-
-    font-size: 14px;
-    font-weight: 900;
+    box-shadow: 0 12px 30px rgba(0,0,0,.15);
 }
 
-.btn-aceitar:disabled {
-    opacity: .55;
+.passeio-sol {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-size: 34px;
 }
 
-/* =========================================================
-   VAZIO
-========================================================= */
-
-.vazio {
-    background: white;
-
-    border:
-        1px solid #e2e8f0;
-
-    border-radius: 21px;
-
-    padding: 30px 20px;
-
-    text-align: center;
-
-    box-shadow:
-        0 8px 28px rgba(15,23,42,.05);
+.passeio-nuvem {
+    position: absolute;
+    font-size: 28px;
 }
 
-.vazio-icon {
-    font-size: 42px;
-    margin-bottom: 10px;
+.passeio-nuvem.n1 {
+    top: 18px;
+    left: 22px;
 }
 
-.vazio-title {
+.passeio-nuvem.n2 {
+    top: 50px;
+    left: 105px;
+}
+
+.passeio-arvore {
+    position: absolute;
+    bottom: 68px;
+    font-size: 34px;
+}
+
+.passeio-arvore.a1 {
+    left: 24px;
+}
+
+.passeio-arvore.a2 {
+    left: 160px;
+}
+
+.passeio-arvore.a3 {
+    right: 24px;
+}
+
+.passeio-rua {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 72px;
+    background: linear-gradient(#8d8d8d,#747474);
+}
+
+.passeio-rua::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 4px;
+
+    background:
+        repeating-linear-gradient(
+            to right,
+            white 0 18px,
+            transparent 18px 34px
+        );
+}
+
+#passeioPetImagem {
+    position: absolute;
+    left: -145px;
+    bottom: 62px;
+    max-width: 110px;
+    max-height: 110px;
+    object-fit: contain;
+    z-index: 8;
+}
+
+#passeioOverlay.ativo #passeioPetImagem {
+    animation:
+        passeioVaiVolta 15s linear forwards,
+        passeioPulo .34s ease-in-out infinite alternate;
+}
+
+@keyframes passeioVaiVolta {
+
+    0% {
+        left: -145px;
+        transform: scaleX(1);
+    }
+
+    48% {
+        left: calc(100% - 115px);
+        transform: scaleX(1);
+    }
+
+    50% {
+        left: calc(100% - 115px);
+        transform: scaleX(-1);
+    }
+
+    98% {
+        left: -145px;
+        transform: scaleX(-1);
+    }
+
+    100% {
+        left: -145px;
+        transform: scaleX(1);
+    }
+}
+
+@keyframes passeioPulo {
+
+    from {
+        margin-bottom: 0;
+    }
+
+    to {
+        margin-bottom: 7px;
+    }
+}
+
+#passeioPegadas {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.passeio-passinho {
+    position: absolute;
+    font-size: 18px;
+    animation: pegadaSumir 1.5s ease-out forwards;
+}
+
+@keyframes pegadaSumir {
+
+    from {
+        opacity: 0;
+    }
+
+    20% {
+        opacity: .8;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.passeio-texto {
+    margin-top: 10px;
     font-size: 16px;
-    font-weight: 900;
-}
-
-.vazio-sub {
-    color: #64748b;
-    font-size: 12px;
-    margin-top: 6px;
-    line-height: 1.45;
+    font-weight: 700;
+    color: #4d6a48;
 }
 
 /* =========================================================
-   HISTÓRICO
+   MENSAGEM
 ========================================================= */
 
-#listaHistorico {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.historico-card {
-    background: white;
-
-    border:
-        1px solid #e2e8f0;
-
-    border-radius: 18px;
-
-    padding: 15px;
-
-    box-shadow:
-        0 7px 22px rgba(15,23,42,.05);
-}
-
-.historico-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.historico-cliente {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.historico-avatar {
-    width: 40px;
-    height: 40px;
-
-    border-radius: 13px;
-
-    background: #ecfdf5;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 19px;
-}
-
-.historico-nome {
-    font-size: 14px;
-    font-weight: 900;
-}
-
-.historico-data {
-    margin-top: 3px;
-    color: #94a3b8;
-    font-size: 10px;
-}
-
-.historico-badge {
-    background: #ecfdf5;
-    color: #047857;
-
-    border-radius: 20px;
-
-    padding: 6px 9px;
-
-    font-size: 9px;
-    font-weight: 900;
-}
-
-.historico-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.historico-info-box {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 10px;
-}
-
-.historico-info-label {
-    display: block;
-    color: #94a3b8;
-    font-size: 9px;
-    margin-bottom: 3px;
-}
-
-.historico-info-value {
-    display: block;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-/* =========================================================
-   RESPONSIVO
-========================================================= */
-
-@media (max-width:390px) {
-
-    .stats {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .stats .stat:last-child {
-        grid-column: 1 / -1;
-    }
-
+#mensagemTemp {
+    display: none;
+    position: fixed;
+    left: 50%;
+    bottom: 25px;
+    transform: translateX(-50%);
+    z-index: 10000;
+    background: rgba(0,0,0,.82);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 22px;
+    font-size: 13px;
+    white-space: nowrap;
 }
 
 </style>
@@ -702,1825 +782,1817 @@ button {
 
 <body>
 
-<!-- ======================================================
-     LOGIN
-====================================================== -->
+<div id="bloqueioLine">
 
-<div id="telaLogin">
+    <div class="bloqueio-box">
 
-    <div class="login-card">
+        <div class="bloqueio-icon">🐾</div>
 
-        <img
-            src="../logo.jpeg"
-            class="login-logo"
-            alt="Ajuda JP"
-            onerror="this.onerror=null;this.src='../logo.png';"
-        >
+        <h2>Petton</h2>
 
-        <div class="login-title">
-            Painel do Tradutor
-        </div>
-
-        <div class="login-sub">
-            Entre com sua conta de tradutor do Ajuda JP.
-        </div>
-
-        <label class="login-label">
-            E-mail
-        </label>
-
-        <input
-            type="email"
-            id="loginEmail"
-            class="login-input"
-            autocomplete="username"
-            placeholder="seu@email.com"
-        >
-
-        <label class="login-label">
-            Senha
-        </label>
-
-        <input
-            type="password"
-            id="loginSenha"
-            class="login-input"
-            autocomplete="current-password"
-            placeholder="Sua senha"
-        >
-
-        <button
-            type="button"
-            id="btnLogin"
-            class="btn-login"
-        >
-            Entrar
-        </button>
-
-        <div
-            id="loginErro"
-            class="login-erro"
-        ></div>
+        <p>
+            Este jogo funciona dentro do LINE.
+        </p>
 
     </div>
 
 </div>
 
-<!-- ======================================================
-     PAINEL
-====================================================== -->
+<div id="pettonConteudo">
 
-<div id="painelTradutor">
-
-<div class="app">
-
-<header class="header">
-
-    <div class="header-left">
-
-        <img
-            src="../logo.jpeg"
-            class="logo"
-            alt="Ajuda JP"
-            onerror="this.onerror=null;this.src='../logo.png';"
-        >
-
-        <div>
-
-            <div class="header-title">
-                Ajuda JP
-            </div>
-
-            <div class="header-sub">
-                Painel do Tradutor
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="header-right">
+    <div class="top-bar">
 
         <button
             type="button"
-            id="btnStatus"
-            class="status-btn online"
+            onclick="voltarPetton()"
         >
-            <span class="status-dot"></span>
-            <span id="textoStatus">
-                Online
-            </span>
+            ←
         </button>
 
+        <h1>Petton 🐾</h1>
+
         <button
             type="button"
-            class="btn-sair"
-            id="btnSair"
+            onclick="abrirAlbum()"
         >
-            Sair
+            📖
         </button>
 
     </div>
 
-</header>
+    <main class="pet-card">
 
-<section class="hero">
-
-    <div class="hero-small">
-        PAINEL DO TRADUTOR
-    </div>
-
-    <h1>
-        Solicitações
-    </h1>
-
-    <p id="boasVindas">
-        Novos pedidos aparecem aqui automaticamente.
-    </p>
-
-</section>
-
-<div class="stats">
-
-    <div class="stat">
-
-        <span class="stat-label">
-            Aguardando
-        </span>
-
-        <span
-            class="stat-value"
-            id="totalAguardando"
-        >
-            0
-        </span>
-
-    </div>
-
-    <div class="stat">
-
-        <span class="stat-label">
-            Atendimentos hoje
-        </span>
-
-        <span
-            class="stat-value"
-            id="totalHoje"
-        >
-            0
-        </span>
-
-    </div>
-
-    <div class="stat">
-
-        <span class="stat-label">
-            Tempo hoje
-        </span>
-
-        <span
-            class="stat-value small"
-            id="tempoHoje"
-        >
-            0 min
-        </span>
-
-    </div>
-
-</div>
-
-<div class="section-title">
-
-    <strong>
-        Clientes aguardando
-    </strong>
-
-    <span class="section-small">
-        Tempo real
-    </span>
-
-</div>
-
-<div id="listaSolicitacoes">
-
-    <div class="vazio">
-
-        <div class="vazio-icon">
-            ⏳
+        <div id="nomePetton">
+            Petton
         </div>
 
-        <div class="vazio-title">
+        <div id="idadePetton">
             Carregando...
         </div>
 
-        <div class="vazio-sub">
-            Buscando solicitações.
+        <div id="ovoPetton">
+
+            <div id="ovoImagem">
+                🥚
+            </div>
+
+            <div id="textoOvo">
+                Seu Petton ainda está no ovo...
+            </div>
+
+            <div id="barraOvo">
+                <div id="progressoOvo"></div>
+            </div>
+
         </div>
+
+        <div id="imagemPetContainer">
+
+            <img
+                id="imagemPetton"
+                alt="Petton"
+            >
+
+            <div id="simboloDoente">
+                🤒
+            </div>
+
+            <div id="cocoPetton">
+                💩
+            </div>
+
+            <div id="cariePetton">
+                🦷
+            </div>
+
+        </div>
+
+        <div class="status-grid">
+
+            <div class="status-card">
+
+                <span class="status-label">
+                    🍖 Fome
+                </span>
+
+                <span
+                    class="status-value"
+                    id="fomePetton"
+                >
+                    100
+                </span>
+
+            </div>
+
+            <div class="status-card">
+
+                <span class="status-label">
+                    ❤️ Felicidade
+                </span>
+
+                <span
+                    class="status-value"
+                    id="felicidadePetton"
+                >
+                    100
+                </span>
+
+            </div>
+
+            <div class="status-card">
+
+                <span class="status-label">
+                    ⚡ Energia
+                </span>
+
+                <span
+                    class="status-value"
+                    id="energiaPetton"
+                >
+                    100
+                </span>
+
+            </div>
+
+            <div class="status-card">
+
+                <span class="status-label">
+                    🧼 Higiene
+                </span>
+
+                <span
+                    class="status-value"
+                    id="higienePetton"
+                >
+                    100
+                </span>
+
+            </div>
+
+            <div class="status-card">
+
+                <span class="status-label">
+                    ❤️ Saúde
+                </span>
+
+                <span
+                    class="status-value"
+                    id="saudePetton"
+                >
+                    100
+                </span>
+
+            </div>
+
+            <div class="status-card">
+
+                <span class="status-label">
+                    🪙 Moedas
+                </span>
+
+                <span
+                    class="status-value"
+                    id="moedasPetton"
+                >
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="cuidados-grid">
+
+            <button
+                class="cuidado-btn"
+                onclick="alimentarPetton()"
+            >
+                🍖 Alimentar
+            </button>
+
+            <button
+                class="cuidado-btn"
+                onclick="brincarPetton()"
+            >
+                🎮 Brincar
+            </button>
+
+            <button
+                class="cuidado-btn"
+                onclick="banhoPetton()"
+            >
+                🛁 Banho
+            </button>
+
+            <button
+                class="cuidado-btn"
+                onclick="limparPetton()"
+            >
+                🧹 Limpar
+            </button>
+
+            <button
+                class="cuidado-btn"
+                onclick="dormirPetton()"
+            >
+                😴 Dormir
+            </button>
+
+            <button
+                class="cuidado-btn"
+                onclick="carinhoPetton()"
+            >
+                ❤️ Carinho
+            </button>
+
+        </div>
+
+        <div class="especiais-grid">
+
+            <button
+                class="especial-btn"
+                onclick="passearPetton()"
+            >
+                🐕 Passear
+            </button>
+
+            <button
+                id="btnLimparCoco"
+                class="especial-btn"
+                onclick="limparCocoPetton()"
+            >
+                💩 Limpar cocô
+            </button>
+
+            <button
+                id="btnEscovar"
+                class="especial-btn"
+                onclick="escovarPetton()"
+            >
+                🪥 Escovar dentes
+            </button>
+
+            <button
+                id="btnHospital"
+                class="especial-btn"
+                onclick="hospitalPetton()"
+            >
+                🏥 Hospital
+            </button>
+
+        </div>
+
+        <div
+            id="bonusPetton"
+            class="bonus-card"
+        >
+            🎁 Bônus diário
+        </div>
+
+        <div class="menu-grid">
+
+            <button
+                class="menu-btn"
+                onclick="mostrarMensagem('🐾 Você já está no seu Petton!')"
+            >
+                🐾 Meu Petton
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="abrirAlbum()"
+            >
+                📖 Álbum
+            </button>
+
+            <button
+                class="menu-btn menu-btn-loja"
+                onclick="abrirLoja()"
+            >
+                🛒 Loja
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="abrirQuarto()"
+            >
+                🏠 Quarto
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="mostrarMensagem('🏆 Ranking em breve!')"
+            >
+                🏆 Ranking
+            </button>
+
+            <button
+                class="menu-btn"
+                onclick="irParaInicio()"
+            >
+                🏠 Início
+            </button>
+
+        </div>
+
+        <div id="mensagemPetton"></div>
+
+    </main>
+
+</div>
+
+<!-- NOME -->
+
+<div id="modalNomePetton">
+
+    <div class="nome-box">
+
+        <h3>
+            🐾 Dê um nome ao seu Petton
+        </h3>
+
+        <input
+            id="inputNomePetton"
+            maxlength="20"
+            placeholder="Nome"
+        >
+
+        <button onclick="salvarNomePetton()">
+            Salvar
+        </button>
 
     </div>
 
 </div>
 
-<div class="section-title">
+<!-- ANIMAÇÕES -->
 
-    <strong>
-        📋 Meu histórico
-    </strong>
+<div id="animacaoVassoura">🧹</div>
 
-    <span class="section-small">
-        Atendimentos finalizados
-    </span>
+<div id="animacaoEscova">🪥</div>
 
-</div>
+<div id="animacaoComida"></div>
 
-<div id="listaHistorico">
+<div id="animacaoCarinho"></div>
 
-    <div class="vazio">
+<div id="animacaoDormir"></div>
 
-        <div class="vazio-icon">
-            📋
-        </div>
+<!-- HOSPITAL -->
 
-        <div class="vazio-title">
-            Carregando histórico...
-        </div>
+<div id="hospitalOverlay">
 
+    <img
+        id="hospitalPetImagem"
+        alt="Petton"
+    >
+
+    <div class="hospital-texto">
+        🏥 Cuidando do seu Petton...
     </div>
 
 </div>
 
-</div>
+<!-- PASSEIO -->
+
+<div id="passeioOverlay">
+
+    <div class="passeio-cenario">
+
+        <div class="passeio-sol">
+            ☀️
+        </div>
+
+        <div class="passeio-nuvem n1">
+            ☁️
+        </div>
+
+        <div class="passeio-nuvem n2">
+            ☁️
+        </div>
+
+        <div class="passeio-arvore a1">
+            🌳
+        </div>
+
+        <div class="passeio-arvore a2">
+            🌳
+        </div>
+
+        <div class="passeio-arvore a3">
+            🌳
+        </div>
+
+        <div id="passeioPegadas"></div>
+
+        <img
+            id="passeioPetImagem"
+            alt="Petton passeando"
+        >
+
+        <div class="passeio-rua"></div>
+
+    </div>
+
+    <div class="passeio-texto">
+        🐾 Passeando!
+    </div>
 
 </div>
 
-<script type="module">
+<div id="mensagemTemp"></div>
+
+<script src="petton.js"></script>
+
+<script>
 
 /* =========================================================
-   FIREBASE
+   IMAGENS
 ========================================================= */
 
-import {
-    initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+const PETTON_IMAGENS = {
 
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    gato:
+        "petton-original.png",
 
-import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    onSnapshot,
-    doc,
-    getDoc,
-    updateDoc,
-    serverTimestamp
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    cachorro:
+        "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png",
 
-const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
-
-    authDomain:
-        "ajuda-jp.firebaseapp.com",
-
-    databaseURL:
-        "https://ajuda-jp-default-rtdb.firebaseio.com",
-
-    projectId:
-        "ajuda-jp",
-
-    storageBucket:
-        "ajuda-jp.firebasestorage.app",
-
-    messagingSenderId:
-        "40121072206",
-
-    appId:
-        "1:40121072206:web:23168abd254affb6d0a11f"
+    coelho:
+        "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png"
 
 };
 
-const firebaseApp =
-    initializeApp(firebaseConfig);
-
-const db =
-    getFirestore(firebaseApp);
-
-const auth =
-    getAuth(firebaseApp);
-
 /* =========================================================
-   ELEMENTOS
+   IMAGEM DO PETTON
 ========================================================= */
 
-const telaLogin =
-    document.getElementById(
-        "telaLogin"
-    );
+function obterImagemPetton(dados) {
 
-const painelTradutor =
-    document.getElementById(
-        "painelTradutor"
-    );
+    if (!dados) {
 
-const loginEmail =
-    document.getElementById(
-        "loginEmail"
-    );
-
-const loginSenha =
-    document.getElementById(
-        "loginSenha"
-    );
-
-const btnLogin =
-    document.getElementById(
-        "btnLogin"
-    );
-
-const loginErro =
-    document.getElementById(
-        "loginErro"
-    );
-
-const listaSolicitacoes =
-    document.getElementById(
-        "listaSolicitacoes"
-    );
-
-const totalAguardando =
-    document.getElementById(
-        "totalAguardando"
-    );
-
-const totalHoje =
-    document.getElementById(
-        "totalHoje"
-    );
-
-const tempoHoje =
-    document.getElementById(
-        "tempoHoje"
-    );
-
-const listaHistorico =
-    document.getElementById(
-        "listaHistorico"
-    );
-
-const btnStatus =
-    document.getElementById(
-        "btnStatus"
-    );
-
-const textoStatus =
-    document.getElementById(
-        "textoStatus"
-    );
-
-/* =========================================================
-   VARIÁVEIS
-========================================================= */
-
-let tradutorAtual =
-    null;
-
-let tradutorOnline =
-    true;
-
-let unsubscribePedidos =
-    null;
-
-let unsubscribeHistorico =
-    null;
-
-let aceitandoAtendimento =
-    false;
-
-/* =========================================================
-   ONLINE / OFFLINE
-========================================================= */
-
-function atualizarTelaStatus() {
-
-    if (tradutorOnline) {
-
-        btnStatus.classList.remove(
-            "offline"
-        );
-
-        btnStatus.classList.add(
-            "online"
-        );
-
-        textoStatus.textContent =
-            "Online";
-
-    } else {
-
-        btnStatus.classList.remove(
-            "online"
-        );
-
-        btnStatus.classList.add(
-            "offline"
-        );
-
-        textoStatus.textContent =
-            "Offline";
+        return PETTON_IMAGENS.gato;
 
     }
 
-}
+    let especie =
+        String(
+            dados.especie ||
+            "gato"
+        ).toLowerCase();
 
-function mostrarOfflinePedidos() {
+    if (especie.includes("cach")) {
 
-    totalAguardando.textContent =
-        "0";
+        especie =
+            "cachorro";
 
-    listaSolicitacoes.innerHTML = `
-
-        <div class="vazio">
-
-            <div class="vazio-icon">
-                📴
-            </div>
-
-            <div class="vazio-title">
-                Você está offline
-            </div>
-
-            <div class="vazio-sub">
-                Toque em Offline no topo para ficar
-                online e receber novas solicitações.
-            </div>
-
-        </div>
-
-    `;
-
-}
-
-async function alternarStatus() {
-
-    if (!tradutorAtual) {
-        return;
     }
 
-    if (aceitandoAtendimento) {
-        return;
+    if (especie.includes("coelh")) {
+
+        especie =
+            "coelho";
+
     }
 
-    const novoStatus =
-        !tradutorOnline;
-
-    btnStatus.disabled =
-        true;
+    const fase =
+        dados.fase ||
+        "bebe";
 
     try {
 
-        const tradutorRef =
-            doc(
-                db,
-                "tradutor_usuarios",
-                tradutorAtual.uid
+        if (
+            dados.identidadeVisual &&
+            dados.identidadeVisual.imagens &&
+            dados.identidadeVisual.imagens[fase]
+        ) {
+
+            return dados.identidadeVisual.imagens[fase];
+
+        }
+
+    } catch (erro) {
+
+        console.warn(erro);
+
+    }
+
+    return (
+        PETTON_IMAGENS[especie] ||
+        PETTON_IMAGENS.gato
+    );
+
+}
+
+/* =========================================================
+   ATUALIZAR TELA
+========================================================= */
+
+function atualizarTela() {
+
+    try {
+
+        if (
+            typeof Petton ===
+            "undefined"
+        ) {
+
+            return;
+
+        }
+
+        let dados =
+            Petton.carregar();
+
+        if (
+            typeof Petton.status ===
+            "function"
+        ) {
+
+            dados =
+                Petton.status();
+
+        }
+
+        if (!dados) {
+
+            return;
+
+        }
+
+        const nome =
+            document.getElementById(
+                "nomePetton"
             );
 
-        await updateDoc(
-            tradutorRef,
-            {
-                online:
-                    novoStatus,
+        const idade =
+            document.getElementById(
+                "idadePetton"
+            );
 
-                statusAtualizadoEm:
-                    serverTimestamp()
+        const ovo =
+            document.getElementById(
+                "ovoPetton"
+            );
+
+        const petArea =
+            document.getElementById(
+                "imagemPetContainer"
+            );
+
+        const imagem =
+            document.getElementById(
+                "imagemPetton"
+            );
+
+        if (dados.dateNascimento) {
+
+            if (ovo) {
+
+                ovo.style.display =
+                    "none";
+
             }
-        );
 
-        tradutorOnline =
-            novoStatus;
+            if (petArea) {
 
-        atualizarTelaStatus();
+                petArea.style.display =
+                    "flex";
 
-        if (tradutorOnline) {
+            }
 
-            iniciarPedidos();
+            if (nome) {
+
+                nome.textContent =
+                    dados.nome ||
+                    "Petton";
+
+            }
+
+            if (idade) {
+
+                idade.textContent =
+                    dados.idadeTexto ||
+                    "Recém-nascido 🐣";
+
+            }
+
+            if (imagem) {
+
+                const src =
+                    obterImagemPetton(
+                        dados
+                    );
+
+                if (
+                    imagem.getAttribute(
+                        "src"
+                    ) !== src
+                ) {
+
+                    imagem.classList.remove(
+                        "petton-pronto"
+                    );
+
+                    imagem.onload =
+                        function() {
+
+                            imagem.classList.add(
+                                "petton-pronto"
+                            );
+
+                        };
+
+                    imagem.src =
+                        src;
+
+                } else {
+
+                    imagem.classList.add(
+                        "petton-pronto"
+                    );
+
+                }
+
+            }
 
         } else {
 
-            pararPedidos();
+            if (ovo) {
 
-            mostrarOfflinePedidos();
+                ovo.style.display =
+                    "block";
 
-        }
+            }
 
-    } catch (erro) {
+            if (petArea) {
 
-        console.error(
-            "Erro alterando status:",
-            erro
-        );
+                petArea.style.display =
+                    "none";
 
-        alert(
-            "Não foi possível alterar o status."
-        );
+            }
 
-    } finally {
+            if (nome) {
 
-        btnStatus.disabled =
-            false;
+                nome.textContent =
+                    "Petton";
 
-    }
+            }
 
-}
+            if (idade) {
 
-/* =========================================================
-   LOGIN
-========================================================= */
+                idade.textContent =
+                    dados.idadeTexto ||
+                    "🥚 Ainda no ovo";
 
-async function fazerLogin() {
+            }
 
-    const email =
-        loginEmail.value.trim();
+            const restante =
+                Number(
+                    dados.incubacaoRestanteMs ||
+                    0
+                );
 
-    const senha =
-        loginSenha.value;
+            let progresso =
+                100 -
+                (
+                    restante /
+                    (
+                        24 *
+                        60 *
+                        60 *
+                        1000
+                    )
+                ) *
+                100;
 
-    loginErro.style.display =
-        "none";
+            progresso =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        progresso
+                    )
+                );
 
-    if (!email || !senha) {
+            const barra =
+                document.getElementById(
+                    "progressoOvo"
+                );
 
-        mostrarErroLogin(
-            "Digite o e-mail e a senha."
-        );
+            if (barra) {
 
-        return;
+                barra.style.width =
+                    progresso +
+                    "%";
 
-    }
-
-    btnLogin.disabled =
-        true;
-
-    btnLogin.textContent =
-        "Entrando...";
-
-    try {
-
-        await signInWithEmailAndPassword(
-            auth,
-            email,
-            senha
-        );
-
-    } catch (erro) {
-
-        console.error(
-            "Erro login:",
-            erro
-        );
-
-        mostrarErroLogin(
-            "E-mail ou senha incorretos."
-        );
-
-        btnLogin.disabled =
-            false;
-
-        btnLogin.textContent =
-            "Entrar";
-
-    }
-
-}
-
-function mostrarErroLogin(
-    mensagem
-) {
-
-    loginErro.textContent =
-        mensagem;
-
-    loginErro.style.display =
-        "block";
-
-}
-
-/* =========================================================
-   VERIFICAR TRADUTOR
-========================================================= */
-
-async function verificarTradutor(
-    user
-) {
-
-    try {
-
-        const tradutorRef =
-            doc(
-                db,
-                "tradutor_usuarios",
-                user.uid
-            );
-
-        const tradutorSnap =
-            await getDoc(
-                tradutorRef
-            );
-
-        if (!tradutorSnap.exists()) {
-
-            await signOut(auth);
-
-            mostrarErroLogin(
-                "Esta conta não está cadastrada como tradutor."
-            );
-
-            return false;
+            }
 
         }
 
-        const dados =
-            tradutorSnap.data();
+        const valores = {
 
-        if (dados.ativo !== true) {
+            fomePetton:
+                dados.fome,
 
-            await signOut(auth);
+            felicidadePetton:
+                dados.felicidade,
 
-            mostrarErroLogin(
-                "Esta conta de tradutor está desativada."
-            );
+            energiaPetton:
+                dados.energia,
 
-            return false;
+            higienePetton:
+                dados.higiene,
 
-        }
+            saudePetton:
+                dados.saude,
 
-        tradutorAtual = {
-
-            uid:
-                user.uid,
-
-            email:
-                user.email,
-
-            nome:
-                dados.nome ||
-                "Tradutor"
+            moedasPetton:
+                dados.moedas
 
         };
 
-        tradutorOnline =
-            dados.online !== false;
+        Object.keys(
+            valores
+        ).forEach(
 
-        atualizarTelaStatus();
+            function(id) {
 
-        return true;
+                const el =
+                    document.getElementById(
+                        id
+                    );
+
+                if (el) {
+
+                    el.textContent =
+                        Math.round(
+                            Number(
+                                valores[id] ||
+                                0
+                            )
+                        );
+
+                }
+
+            }
+
+        );
+
+        const temCoco =
+            dados.cocoAtivo === true ||
+            dados.temCoco === true ||
+            dados.coco === true;
+
+        const coco =
+            document.getElementById(
+                "cocoPetton"
+            );
+
+        const btnCoco =
+            document.getElementById(
+                "btnLimparCoco"
+            );
+
+        if (coco) {
+
+            coco.style.display =
+                temCoco
+                    ? "block"
+                    : "none";
+
+        }
+
+        if (btnCoco) {
+
+            btnCoco.style.display =
+                temCoco
+                    ? "block"
+                    : "none";
+
+        }
+
+        const temCarie =
+            dados.carieAtiva === true;
+
+        const carie =
+            document.getElementById(
+                "cariePetton"
+            );
+
+        const btnEscovar =
+            document.getElementById(
+                "btnEscovar"
+            );
+
+        if (carie) {
+
+            carie.style.display =
+                temCarie
+                    ? "block"
+                    : "none";
+
+            carie.style.left =
+                "56%";
+
+            carie.style.top =
+                "44%";
+
+        }
+
+        if (btnEscovar) {
+
+            btnEscovar.style.display =
+                temCarie
+                    ? "block"
+                    : "none";
+
+        }
+
+        const doente =
+            dados.doente === true;
+
+        const doenteIcone =
+            document.getElementById(
+                "simboloDoente"
+            );
+
+        const hospital =
+            document.getElementById(
+                "btnHospital"
+            );
+
+        if (doenteIcone) {
+
+            doenteIcone.style.display =
+                doente
+                    ? "block"
+                    : "none";
+
+        }
+
+        if (hospital) {
+
+            hospital.style.display =
+                doente
+                    ? "block"
+                    : "none";
+
+        }
 
     } catch (erro) {
 
         console.error(
-            "Erro verificando tradutor:",
+            "Erro ao atualizar tela:",
             erro
         );
-
-        await signOut(auth);
-
-        mostrarErroLogin(
-            "Não foi possível verificar a conta."
-        );
-
-        return false;
 
     }
 
 }
 
 /* =========================================================
-   ESTADO DO LOGIN
+   BANHO
+   ABRE banho.html
 ========================================================= */
 
-onAuthStateChanged(
-    auth,
+function banhoPetton() {
 
-    async user => {
+    window.location.href =
+        "./banho.html";
 
-        if (!user) {
-
-            tradutorAtual =
-                null;
-
-            pararPedidos();
-
-            pararHistorico();
-
-            painelTradutor.style.display =
-                "none";
-
-            telaLogin.style.display =
-                "flex";
-
-            btnLogin.disabled =
-                false;
-
-            btnLogin.textContent =
-                "Entrar";
-
-            return;
-
-        }
-
-        const permitido =
-            await verificarTradutor(
-                user
-            );
-
-        if (!permitido) {
-            return;
-        }
-
-        telaLogin.style.display =
-            "none";
-
-        painelTradutor.style.display =
-            "block";
-
-        document.getElementById(
-            "boasVindas"
-        ).textContent =
-            "Olá, " +
-            tradutorAtual.nome +
-            ". Novos pedidos aparecem aqui automaticamente.";
-
-        if (tradutorOnline) {
-
-            iniciarPedidos();
-
-        } else {
-
-            mostrarOfflinePedidos();
-
-        }
-
-        iniciarHistorico();
-
-    }
-);
+}
 
 /* =========================================================
-   SAIR
+   ALIMENTAR
+   ABRE alimentacao.html
 ========================================================= */
 
-async function sair() {
+function alimentarPetton() {
 
-    pararPedidos();
+    window.location.href =
+        "./alimentacao.html";
 
-    pararHistorico();
+}
 
-    await signOut(
-        auth
+/* =========================================================
+   BRINCAR
+========================================================= */
+
+function brincarPetton() {
+
+    window.location.href =
+        "./jogos/brincar.html";
+
+}
+
+/* =========================================================
+   LIMPAR
+========================================================= */
+
+function limparPetton() {
+
+    try {
+
+        const ok =
+            Petton.limpar();
+
+        if (!ok) {
+
+            mostrarMensagem(
+                "🧹 O Petton não pode ser limpo agora."
+            );
+
+        }
+
+        atualizarTela();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+}
+
+/* =========================================================
+   COCÔ
+========================================================= */
+
+function limparCocoPetton() {
+
+    const coco =
+        document.getElementById(
+            "cocoPetton"
+        );
+
+    const vassoura =
+        document.getElementById(
+            "animacaoVassoura"
+        );
+
+    if (
+        !coco ||
+        !vassoura
+    ) {
+
+        return;
+
+    }
+
+    let ok =
+        false;
+
+    try {
+
+        ok =
+            Petton.limparCoco();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+    if (!ok) {
+
+        mostrarMensagem(
+            "💩 Não há cocô para limpar."
+        );
+
+        atualizarTela();
+
+        return;
+
+    }
+
+    const rect =
+        coco.getBoundingClientRect();
+
+    vassoura.style.left =
+        (
+            rect.left -
+            25
+        ) +
+        "px";
+
+    vassoura.style.top =
+        (
+            rect.top -
+            25
+        ) +
+        "px";
+
+    vassoura.style.display =
+        "block";
+
+    vassoura.classList.add(
+        "varrendo"
+    );
+
+    setTimeout(
+
+        function() {
+
+            vassoura.classList.remove(
+                "varrendo"
+            );
+
+            vassoura.style.display =
+                "none";
+
+            atualizarTela();
+
+        },
+
+        1300
+
     );
 
 }
 
 /* =========================================================
-   PEDIDOS
+   ESCOVAR
 ========================================================= */
 
-function iniciarPedidos() {
+function escovarPetton() {
 
-    if (!tradutorOnline) {
-        return;
-    }
-
-    if (unsubscribePedidos) {
-        return;
-    }
-
-    const consulta =
-        query(
-            collection(
-                db,
-                "solicitacoes"
-            ),
-
-            where(
-                "status",
-                "==",
-                "aguardando"
-            )
+    const carie =
+        document.getElementById(
+            "cariePetton"
         );
 
-    unsubscribePedidos =
-        onSnapshot(
+    const escova =
+        document.getElementById(
+            "animacaoEscova"
+        );
 
-            consulta,
+    let ok =
+        false;
 
-            snapshot => {
+    try {
 
-                if (!tradutorOnline) {
-                    return;
-                }
+        ok =
+            Petton.escovarDentes();
 
-                const pedidos =
-                    [];
+    } catch (erro) {
 
-                snapshot.forEach(
-                    documento => {
+        console.error(erro);
 
-                        pedidos.push({
+    }
 
-                            id:
-                                documento.id,
+    if (
+        !ok ||
+        !carie ||
+        !escova
+    ) {
 
-                            ...documento.data()
+        return;
 
-                        });
+    }
 
-                    }
-                );
+    const rect =
+        carie.getBoundingClientRect();
 
-                totalAguardando.textContent =
-                    pedidos.length;
+    escova.style.left =
+        (
+            rect.left -
+            12
+        ) +
+        "px";
 
-                mostrarPedidos(
-                    pedidos
-                );
+    escova.style.top =
+        (
+            rect.top -
+            12
+        ) +
+        "px";
 
-            },
+    escova.style.display =
+        "block";
 
-            erro => {
+    escova.classList.add(
+        "escovando"
+    );
 
-                console.error(
-                    "Erro Firestore:",
-                    erro
-                );
+    setTimeout(
 
-                listaSolicitacoes.innerHTML = `
+        function() {
 
-                    <div class="vazio">
+            try {
 
-                        <div class="vazio-icon">
-                            ⚠️
-                        </div>
+                Petton.estaEscovando();
 
-                        <div class="vazio-title">
-                            Não foi possível carregar
-                        </div>
+            } catch (erro) {
 
-                        <div class="vazio-sub">
-                            Verifique a conexão e tente novamente.
-                        </div>
-
-                    </div>
-
-                `;
+                console.error(erro);
 
             }
 
-        );
+            escova.classList.remove(
+                "escovando"
+            );
 
-}
+            escova.style.display =
+                "none";
 
-function pararPedidos() {
+            atualizarTela();
 
-    if (unsubscribePedidos) {
+        },
 
-        unsubscribePedidos();
+        3300
 
-        unsubscribePedidos =
-            null;
-
-    }
+    );
 
 }
 
 /* =========================================================
-   HISTÓRICO
+   CARINHO
 ========================================================= */
 
-function iniciarHistorico() {
+function carinhoPetton() {
 
-    if (
-        !tradutorAtual ||
-        unsubscribeHistorico
-    ) {
-        return;
+    let ok =
+        false;
+
+    try {
+
+        ok =
+            Petton.carinho();
+
+    } catch (erro) {
+
+        console.error(erro);
+
     }
 
-    const consulta =
-        query(
-            collection(
-                db,
-                "solicitacoes"
-            ),
+    if (!ok) {
 
-            where(
-                "tradutorId",
-                "==",
-                tradutorAtual.uid
-            )
+        mostrarMensagem(
+            "❤️ O Petton já está muito feliz."
         );
 
-    unsubscribeHistorico =
-        onSnapshot(
+        return;
 
-            consulta,
+    }
 
-            snapshot => {
+    const area =
+        document.getElementById(
+            "animacaoCarinho"
+        );
 
-                const atendimentos =
-                    [];
+    if (area) {
 
-                snapshot.forEach(
-                    documento => {
+        area.innerHTML =
+            "";
 
-                        const dados =
-                            documento.data();
+        const posicoes = [
 
-                        if (
-                            dados.status ===
-                            "finalizado"
-                        ) {
+            [28,50],
+            [42,43],
+            [55,48],
+            [68,40],
+            [48,60]
 
-                            atendimentos.push({
+        ];
 
-                                id:
-                                    documento.id,
+        posicoes.forEach(
 
-                                ...dados
+            function(pos,i) {
 
-                            });
+                const coracao =
+                    document.createElement(
+                        "div"
+                    );
 
-                        }
+                coracao.className =
+                    "coracaoCarinho";
 
-                    }
-                );
+                coracao.textContent =
+                    "❤️";
 
-                atendimentos.sort(
-                    (a,b) => {
+                coracao.style.left =
+                    pos[0] +
+                    "%";
 
-                        const ta =
-                            timestampParaMillis(
-                                a.finalizadoEm
-                            );
+                coracao.style.top =
+                    pos[1] +
+                    "%";
 
-                        const tb =
-                            timestampParaMillis(
-                                b.finalizadoEm
-                            );
+                coracao.style.animationDelay =
+                    (
+                        i *
+                        .15
+                    ) +
+                    "s";
 
-                        return tb - ta;
-
-                    }
-                );
-
-                atualizarEstatisticas(
-                    atendimentos
-                );
-
-                mostrarHistorico(
-                    atendimentos
-                );
-
-            },
-
-            erro => {
-
-                console.error(
-                    "Erro histórico:",
-                    erro
+                area.appendChild(
+                    coracao
                 );
 
             }
 
         );
 
+        area.style.display =
+            "block";
+
+        setTimeout(
+
+            function() {
+
+                area.style.display =
+                    "none";
+
+                area.innerHTML =
+                    "";
+
+            },
+
+            2500
+
+        );
+
+    }
+
+    atualizarTela();
+
 }
 
-function pararHistorico() {
+/* =========================================================
+   DORMIR
+========================================================= */
 
-    if (unsubscribeHistorico) {
+function dormirPetton() {
 
-        unsubscribeHistorico();
+    let ok =
+        false;
 
-        unsubscribeHistorico =
-            null;
+    try {
+
+        ok =
+            Petton.dormir();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+    if (!ok) {
+
+        mostrarMensagem(
+            "😴 O Petton não está com sono."
+        );
+
+        return;
+
+    }
+
+    const area =
+        document.getElementById(
+            "animacaoDormir"
+        );
+
+    if (area) {
+
+        area.innerHTML =
+            "";
+
+        const posicoes = [
+
+            [58,40],
+            [64,32],
+            [69,24]
+
+        ];
+
+        posicoes.forEach(
+
+            function(pos,i) {
+
+                const z =
+                    document.createElement(
+                        "div"
+                    );
+
+                z.className =
+                    "zzzPetton";
+
+                z.textContent =
+                    "Z";
+
+                z.style.left =
+                    pos[0] +
+                    "%";
+
+                z.style.top =
+                    pos[1] +
+                    "%";
+
+                z.style.animationDelay =
+                    (
+                        i *
+                        .35
+                    ) +
+                    "s";
+
+                area.appendChild(
+                    z
+                );
+
+            }
+
+        );
+
+        area.style.display =
+            "block";
+
+        setTimeout(
+
+            function() {
+
+                area.style.display =
+                    "none";
+
+                area.innerHTML =
+                    "";
+
+            },
+
+            3200
+
+        );
+
+    }
+
+    atualizarTela();
+
+}
+
+/* =========================================================
+   PASSEIO
+========================================================= */
+
+function passearPetton() {
+
+    let ok =
+        false;
+
+    try {
+
+        ok =
+            Petton.passear();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+    if (!ok) {
+
+        mostrarMensagem(
+            "🐾 O Petton não pode passear agora."
+        );
+
+        return;
+
+    }
+
+    const overlay =
+        document.getElementById(
+            "passeioOverlay"
+        );
+
+    const pet =
+        document.getElementById(
+            "passeioPetImagem"
+        );
+
+    const principal =
+        document.getElementById(
+            "imagemPetton"
+        );
+
+    if (
+        pet &&
+        principal
+    ) {
+
+        pet.src =
+            principal.src;
+
+    }
+
+    if (overlay) {
+
+        overlay.style.display =
+            "flex";
+
+        overlay.classList.remove(
+            "ativo"
+        );
+
+        void overlay.offsetWidth;
+
+        overlay.classList.add(
+            "ativo"
+        );
+
+    }
+
+    criarPegadasPasseio();
+
+    setTimeout(
+
+        function() {
+
+            if (overlay) {
+
+                overlay.classList.remove(
+                    "ativo"
+                );
+
+                overlay.style.display =
+                    "none";
+
+            }
+
+            atualizarTela();
+
+        },
+
+        15000
+
+    );
+
+}
+
+function criarPegadasPasseio() {
+
+    const area =
+        document.getElementById(
+            "passeioPegadas"
+        );
+
+    if (!area) {
+
+        return;
+
+    }
+
+    area.innerHTML =
+        "";
+
+    const dados = [
+
+        [10,75,900],
+        [22,73,1800],
+        [34,75,2800],
+        [46,73,3800],
+        [58,75,4800],
+        [70,73,5800],
+        [82,75,6800],
+        [80,73,8300],
+        [68,75,9300],
+        [56,73,10300],
+        [44,75,11300],
+        [32,73,12300],
+        [20,75,13300]
+
+    ];
+
+    dados.forEach(
+
+        function(item) {
+
+            setTimeout(
+
+                function() {
+
+                    const p =
+                        document.createElement(
+                            "div"
+                        );
+
+                    p.className =
+                        "passeio-passinho";
+
+                    p.textContent =
+                        "🐾";
+
+                    p.style.left =
+                        item[0] +
+                        "%";
+
+                    p.style.top =
+                        item[1] +
+                        "%";
+
+                    area.appendChild(
+                        p
+                    );
+
+                    setTimeout(
+
+                        function() {
+
+                            p.remove();
+
+                        },
+
+                        1500
+
+                    );
+
+                },
+
+                item[2]
+
+            );
+
+        }
+
+    );
+
+}
+
+/* =========================================================
+   HOSPITAL
+========================================================= */
+
+function hospitalPetton() {
+
+    let ok =
+        false;
+
+    try {
+
+        ok =
+            Petton.levarHospital();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+    if (!ok) {
+
+        return;
+
+    }
+
+    const overlay =
+        document.getElementById(
+            "hospitalOverlay"
+        );
+
+    const pet =
+        document.getElementById(
+            "hospitalPetImagem"
+        );
+
+    const principal =
+        document.getElementById(
+            "imagemPetton"
+        );
+
+    if (
+        pet &&
+        principal
+    ) {
+
+        pet.src =
+            principal.src;
+
+    }
+
+    if (overlay) {
+
+        overlay.style.display =
+            "flex";
+
+    }
+
+    setTimeout(
+
+        function() {
+
+            try {
+
+                Petton.estaNoHospital();
+
+            } catch (erro) {
+
+                console.error(erro);
+
+            }
+
+            if (overlay) {
+
+                overlay.style.display =
+                    "none";
+
+            }
+
+            atualizarTela();
+
+        },
+
+        5200
+
+    );
+
+}
+
+/* =========================================================
+   NOME
+========================================================= */
+
+function salvarNomePetton() {
+
+    const input =
+        document.getElementById(
+            "inputNomePetton"
+        );
+
+    if (!input) {
+
+        return;
+
+    }
+
+    const nome =
+        input.value.trim();
+
+    if (!nome) {
+
+        return;
+
+    }
+
+    try {
+
+        Petton.definirNome(
+            nome
+        );
+
+    } catch (erro) {
+
+        console.error(erro);
+
+    }
+
+    document.getElementById(
+        "modalNomePetton"
+    ).style.display =
+        "none";
+
+    atualizarTela();
+
+}
+
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
+
+function voltarPetton() {
+
+    window.history.back();
+
+}
+
+function abrirAlbum() {
+
+    window.location.href =
+        "./album.html";
+
+}
+
+function abrirLoja() {
+
+    window.location.href =
+        "./loja.html";
+
+}
+
+function abrirQuarto() {
+
+    window.location.href =
+        "./quarto.html";
+
+}
+
+function irParaInicio() {
+
+    window.location.href =
+        "../index.html";
+
+}
+
+/* =========================================================
+   MENSAGEM
+========================================================= */
+
+function mostrarMensagem(mensagem) {
+
+    const caixa =
+        document.getElementById(
+            "mensagemTemp"
+        );
+
+    if (!caixa) {
+
+        return;
+
+    }
+
+    caixa.textContent =
+        mensagem;
+
+    caixa.style.display =
+        "block";
+
+    setTimeout(
+
+        function() {
+
+            caixa.style.display =
+                "none";
+
+        },
+
+        2200
+
+    );
+
+}
+
+/* =========================================================
+   EVENTO
+========================================================= */
+
+window.addEventListener(
+
+    "petton-atualizado",
+
+    function() {
+
+        atualizarTela();
+
+    }
+
+);
+
+/* =========================================================
+   LINE
+========================================================= */
+
+async function iniciarLine() {
+
+    try {
+
+        await liff.init({
+
+            liffId:
+                "2010902449-KWNNNsxn"
+
+        });
+
+        atualizarTela();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        atualizarTela();
 
     }
 
 }
 
 /* =========================================================
-   DATAS / DURAÇÃO
+   INICIAR
 ========================================================= */
 
-function timestampParaData(
-    timestamp
-) {
+document.addEventListener(
 
-    if (!timestamp) {
-        return null;
-    }
+    "DOMContentLoaded",
 
-    if (
-        typeof timestamp.toDate ===
-        "function"
-    ) {
+    function() {
 
-        return timestamp.toDate();
+        atualizarTela();
 
-    }
+        iniciarLine();
 
-    if (timestamp.seconds) {
-
-        return new Date(
-            timestamp.seconds *
+        setInterval(
+            atualizarTela,
             1000
         );
 
     }
 
-    return null;
-
-}
-
-function timestampParaMillis(
-    timestamp
-) {
-
-    const data =
-        timestampParaData(
-            timestamp
-        );
-
-    return data
-        ? data.getTime()
-        : 0;
-
-}
-
-function calcularDuracaoSegundos(
-    atendimento
-) {
-
-    const inicio =
-        timestampParaData(
-            atendimento.conectadoEm
-        );
-
-    const fim =
-        timestampParaData(
-            atendimento.finalizadoEm
-        );
-
-    if (!inicio || !fim) {
-        return 0;
-    }
-
-    return Math.max(
-        0,
-        Math.floor(
-            (
-                fim.getTime() -
-                inicio.getTime()
-            ) / 1000
-        )
-    );
-
-}
-
-function formatarDuracao(
-    segundos
-) {
-
-    if (!segundos) {
-        return "0 min";
-    }
-
-    const minutos =
-        Math.floor(
-            segundos / 60
-        );
-
-    const resto =
-        segundos % 60;
-
-    if (minutos === 0) {
-        return resto + " seg";
-    }
-
-    if (resto === 0) {
-        return minutos + " min";
-    }
-
-    return (
-        minutos +
-        " min " +
-        resto +
-        " seg"
-    );
-
-}
-
-function mesmaData(
-    dataA,
-    dataB
-) {
-
-    return (
-        dataA.getFullYear() ===
-            dataB.getFullYear() &&
-
-        dataA.getMonth() ===
-            dataB.getMonth() &&
-
-        dataA.getDate() ===
-            dataB.getDate()
-    );
-
-}
-
-/* =========================================================
-   ESTATÍSTICAS
-========================================================= */
-
-function atualizarEstatisticas(
-    atendimentos
-) {
-
-    const hoje =
-        new Date();
-
-    let quantidade =
-        0;
-
-    let segundos =
-        0;
-
-    atendimentos.forEach(
-        atendimento => {
-
-            const finalizado =
-                timestampParaData(
-                    atendimento.finalizadoEm
-                );
-
-            if (
-                finalizado &&
-                mesmaData(
-                    finalizado,
-                    hoje
-                )
-            ) {
-
-                quantidade++;
-
-                segundos +=
-                    calcularDuracaoSegundos(
-                        atendimento
-                    );
-
-            }
-
-        }
-    );
-
-    totalHoje.textContent =
-        quantidade;
-
-    const minutos =
-        Math.floor(
-            segundos / 60
-        );
-
-    if (minutos < 60) {
-
-        tempoHoje.textContent =
-            minutos + " min";
-
-    } else {
-
-        const horas =
-            Math.floor(
-                minutos / 60
-            );
-
-        const resto =
-            minutos % 60;
-
-        tempoHoje.textContent =
-            horas +
-            "h " +
-            resto +
-            "m";
-
-    }
-
-}
-
-/* =========================================================
-   FORMATAR DATA
-========================================================= */
-
-function formatarDataHora(
-    timestamp
-) {
-
-    const data =
-        timestampParaData(
-            timestamp
-        );
-
-    if (!data) {
-        return "Data não disponível";
-    }
-
-    try {
-
-        return new Intl.DateTimeFormat(
-            "pt-BR",
-            {
-                day:
-                    "2-digit",
-
-                month:
-                    "2-digit",
-
-                year:
-                    "numeric",
-
-                hour:
-                    "2-digit",
-
-                minute:
-                    "2-digit"
-            }
-        ).format(data);
-
-    } catch {
-
-        return data.toLocaleString();
-
-    }
-
-}
-
-/* =========================================================
-   SEGURANÇA HTML
-========================================================= */
-
-function escaparHTML(
-    valor
-) {
-
-    return String(
-        valor ?? ""
-    )
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
-
-}
-
-/* =========================================================
-   MOSTRAR HISTÓRICO
-========================================================= */
-
-function mostrarHistorico(
-    atendimentos
-) {
-
-    if (
-        atendimentos.length ===
-        0
-    ) {
-
-        listaHistorico.innerHTML = `
-
-            <div class="vazio">
-
-                <div class="vazio-icon">
-                    📋
-                </div>
-
-                <div class="vazio-title">
-                    Nenhum atendimento finalizado
-                </div>
-
-                <div class="vazio-sub">
-                    Seus atendimentos concluídos aparecerão aqui.
-                </div>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-    listaHistorico.innerHTML =
-        "";
-
-    atendimentos
-        .slice(
-            0,
-            20
-        )
-        .forEach(
-            atendimento => {
-
-                const nome =
-                    escaparHTML(
-                        atendimento.clienteNome ||
-                        "Cliente"
-                    );
-
-                const local =
-                    escaparHTML(
-                        atendimento.local ||
-                        "Não informado"
-                    );
-
-                const data =
-                    escaparHTML(
-                        formatarDataHora(
-                            atendimento.finalizadoEm
-                        )
-                    );
-
-                const duracao =
-                    escaparHTML(
-                        formatarDuracao(
-                            calcularDuracaoSegundos(
-                                atendimento
-                            )
-                        )
-                    );
-
-                const card =
-                    document.createElement(
-                        "div"
-                    );
-
-                card.className =
-                    "historico-card";
-
-                card.innerHTML = `
-
-                    <div class="historico-top">
-
-                        <div class="historico-cliente">
-
-                            <div class="historico-avatar">
-                                👤
-                            </div>
-
-                            <div>
-
-                                <div class="historico-nome">
-                                    ${nome}
-                                </div>
-
-                                <div class="historico-data">
-                                    ${data}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="historico-badge">
-                            CONCLUÍDO
-                        </div>
-
-                    </div>
-
-                    <div class="historico-info">
-
-                        <div class="historico-info-box">
-
-                            <span class="historico-info-label">
-                                LOCAL
-                            </span>
-
-                            <span class="historico-info-value">
-                                📍 ${local}
-                            </span>
-
-                        </div>
-
-                        <div class="historico-info-box">
-
-                            <span class="historico-info-label">
-                                DURAÇÃO
-                            </span>
-
-                            <span class="historico-info-value">
-                                ⏱️ ${duracao}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                `;
-
-                listaHistorico.appendChild(
-                    card
-                );
-
-            }
-        );
-
-}
-
-/* =========================================================
-   MOSTRAR PEDIDOS
-========================================================= */
-
-function mostrarPedidos(
-    pedidos
-) {
-
-    if (!tradutorOnline) {
-
-        mostrarOfflinePedidos();
-
-        return;
-
-    }
-
-    if (
-        pedidos.length ===
-        0
-    ) {
-
-        listaSolicitacoes.innerHTML = `
-
-            <div class="vazio">
-
-                <div class="vazio-icon">
-                    ☕
-                </div>
-
-                <div class="vazio-title">
-                    Nenhum cliente aguardando
-                </div>
-
-                <div class="vazio-sub">
-                    Quando alguém solicitar um tradutor,
-                    aparecerá aqui automaticamente.
-                </div>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-    listaSolicitacoes.innerHTML =
-        "";
-
-    pedidos.forEach(
-        pedido => {
-
-            const nome =
-                escaparHTML(
-                    pedido.clienteNome ||
-                    "Cliente"
-                );
-
-            const local =
-                escaparHTML(
-                    pedido.local ||
-                    "Não informado"
-                );
-
-            const tempo =
-                Number(
-                    pedido.tempoMinutos ||
-                    30
-                );
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-            card.className =
-                "solicitacao";
-
-            card.innerHTML = `
-
-                <div class="solicitacao-top">
-
-                    <div class="cliente">
-
-                        <div class="avatar">
-                            👤
-                        </div>
-
-                        <div>
-
-                            <div class="cliente-nome">
-                                ${nome}
-                            </div>
-
-                            <div class="cliente-sub">
-                                Solicitação de tradução
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="badge">
-                        AGUARDANDO
-                    </div>
-
-                </div>
-
-                <div class="info">
-
-                    <div class="info-item">
-
-                        <span class="info-label">
-                            LOCAL
-                        </span>
-
-                        <span class="info-value">
-                            📍 ${local}
-                        </span>
-
-                    </div>
-
-                    <div class="info-item">
-
-                        <span class="info-label">
-                            TEMPO
-                        </span>
-
-                        <span class="info-value">
-                            ⏱️ ${tempo} min
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="btn-aceitar"
-                >
-                    Aceitar atendimento
-                </button>
-
-            `;
-
-            const botao =
-                card.querySelector(
-                    ".btn-aceitar"
-                );
-
-            botao.addEventListener(
-                "click",
-                () => {
-
-                    aceitarAtendimento(
-                        pedido,
-                        botao
-                    );
-
-                }
-            );
-
-            listaSolicitacoes.appendChild(
-                card
-            );
-
-        }
-    );
-
-}
-
-/* =========================================================
-   ACEITAR ATENDIMENTO
-========================================================= */
-
-async function aceitarAtendimento(
-    pedido,
-    botao
-) {
-
-    if (!tradutorAtual) {
-        return;
-    }
-
-    if (!tradutorOnline) {
-
-        alert(
-            "Você está offline."
-        );
-
-        return;
-
-    }
-
-    if (aceitandoAtendimento) {
-        return;
-    }
-
-    aceitandoAtendimento =
-        true;
-
-    botao.disabled =
-        true;
-
-    botao.textContent =
-        "Aceitando...";
-
-    try {
-
-        const ref =
-            doc(
-                db,
-                "solicitacoes",
-                pedido.id
-            );
-
-        const snap =
-            await getDoc(
-                ref
-            );
-
-        if (!snap.exists()) {
-
-            alert(
-                "Esta solicitação não existe mais."
-            );
-
-            return;
-
-        }
-
-        const dadosAtuais =
-            snap.data();
-
-        if (
-            dadosAtuais.status !==
-            "aguardando"
-        ) {
-
-            alert(
-                "Outro tradutor já aceitou esta solicitação."
-            );
-
-            return;
-
-        }
-
-        await updateDoc(
-            ref,
-            {
-                status:
-                    "aceito",
-
-                tradutorId:
-                    tradutorAtual.uid,
-
-                tradutorNome:
-                    tradutorAtual.nome,
-
-                tradutorEmail:
-                    tradutorAtual.email,
-
-                aceitoEm:
-                    serverTimestamp(),
-
-                atualizadoEm:
-                    serverTimestamp(),
-
-                webrtcEstado:
-                    "tradutor_aceitou"
-            }
-        );
-
-        pararPedidos();
-
-        window.location.href =
-            "chamada.html?id=" +
-            encodeURIComponent(
-                pedido.id
-            );
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao aceitar:",
-            erro
-        );
-
-        alert(
-            "Não foi possível aceitar o atendimento."
-        );
-
-        aceitandoAtendimento =
-            false;
-
-        botao.disabled =
-            false;
-
-        botao.textContent =
-            "Aceitar atendimento";
-
-    }
-
-}
-
-/* =========================================================
-   BOTÕES
-========================================================= */
-
-btnStatus.addEventListener(
-    "click",
-    alternarStatus
-);
-
-btnLogin.addEventListener(
-    "click",
-    fazerLogin
-);
-
-document.getElementById(
-    "btnSair"
-).addEventListener(
-    "click",
-    sair
-);
-
-loginSenha.addEventListener(
-    "keydown",
-
-    event => {
-
-        if (
-            event.key ===
-            "Enter"
-        ) {
-
-            fazerLogin();
-
-        }
-
-    }
-);
-
-/* =========================================================
-   FECHAR PÁGINA
-========================================================= */
-
-window.addEventListener(
-    "beforeunload",
-    () => {
-
-        pararPedidos();
-
-        pararHistorico();
-
-    }
 );
 
 </script>
