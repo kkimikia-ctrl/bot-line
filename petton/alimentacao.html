@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -14,11 +15,11 @@
 
 <title>Alimentação - Petton</title>
 
-<style>
+<link rel="stylesheet" href="petton.css">
 
-/* =========================================================
-   GERAL
-========================================================= */
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
 
 * {
     box-sizing: border-box;
@@ -43,13 +44,14 @@ body {
 
     background:
         linear-gradient(
-            135deg,
-            #fff7ed,
-            #fdf2f8,
-            #f5f3ff
+            180deg,
+            #fff7ef 0%,
+            #fff4f6 45%,
+            #f7f4ff 100%
         );
 
-    color: #333;
+    color: #2f2f2f;
+
     overflow-x: hidden;
 }
 
@@ -57,15 +59,11 @@ button {
     font-family: inherit;
 }
 
-/* =========================================================
-   CONTAINER
-========================================================= */
-
-.container {
+.app {
     width: 100%;
-    max-width: 650px;
-    margin: auto;
-    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px 14px 40px;
 }
 
 /* =========================================================
@@ -73,359 +71,335 @@ button {
 ========================================================= */
 
 .topo {
-    display: grid;
-    grid-template-columns: 46px 1fr 46px;
+    position: relative;
+    min-height: 70px;
+
+    display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    justify-content: center;
 }
 
-.voltar {
-    width: 44px;
-    height: 44px;
-    border: 0;
+.btn-voltar {
+    position: absolute;
+
+    left: 4px;
+    top: 7px;
+
+    width: 54px;
+    height: 54px;
+
+    border: none;
     border-radius: 50%;
+
     background: white;
-    font-size: 23px;
-    box-shadow: 0 3px 10px rgba(0,0,0,.08);
+
+    font-size: 28px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.10);
+
     cursor: pointer;
 }
 
-.topo h1 {
-    text-align: center;
+.titulo {
     margin: 0;
-    font-size: 23px;
-}
 
-.espaco-topo {
-    width: 44px;
-}
+    font-size: 28px;
+    font-weight: 800;
 
-/* =========================================================
-   CARD
-========================================================= */
-
-.card {
-    background: rgba(255,255,255,.96);
-    border-radius: 22px;
-    padding: 16px;
-    margin-bottom: 14px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.08);
-}
-
-h2 {
-    margin: 0 0 10px;
-    font-size: 19px;
+    text-align: center;
 }
 
 /* =========================================================
-   PET
+   CARD PET
 ========================================================= */
+
+.pet-card {
+    background: rgba(255,255,255,.94);
+
+    border-radius: 28px;
+
+    padding: 18px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.08);
+
+    margin-top: 5px;
+}
 
 .pet-area {
-    text-align: center;
-    padding-top: 12px;
-}
-
-.pet-cenario {
     position: relative;
-    min-height: 210px;
+
+    width: 100%;
+    height: 300px;
+
+    border-radius: 26px;
+
+    overflow: hidden;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    overflow: hidden;
-
-    border-radius: 18px;
-
     background:
         linear-gradient(
-            to bottom,
-            #fffdf7,
-            #fff5df
+            180deg,
+            #fffdf5 0%,
+            #fff6df 100%
         );
 }
 
-.pet-cenario::before {
-    content: "🪴";
-    position: absolute;
-    right: 13px;
-    bottom: 9px;
-    font-size: 34px;
-    opacity: .8;
-}
-
-.pet-cenario::after {
-    content: "🍽️";
-    position: absolute;
-    left: 14px;
-    bottom: 10px;
-    font-size: 38px;
-    opacity: .8;
-}
-
-.pet-area img {
-    display: block;
+#imagemPetton {
     width: auto;
-    max-width: 90%;
-    max-height: 205px;
+    max-width: 88%;
+    max-height: 275px;
+
     object-fit: contain;
-    position: relative;
-    z-index: 2;
 }
 
-.nome-pet {
-    font-size: 20px;
+.decoracao-prato {
+    position: absolute;
+
+    left: 22px;
+    bottom: 23px;
+
+    font-size: 42px;
+}
+
+.decoracao-planta {
+    position: absolute;
+
+    right: 23px;
+    bottom: 22px;
+
+    font-size: 42px;
+}
+
+#nomePetton {
+    margin-top: 12px;
+
+    font-size: 27px;
     font-weight: 800;
-    margin-top: 9px;
-}
 
-/* =========================================================
-   OVO
-========================================================= */
-
-.ovo-area {
     text-align: center;
-    padding: 20px 8px;
-}
-
-.ovo {
-    font-size: 85px;
-    line-height: 1;
-    margin-bottom: 10px;
-}
-
-.contador {
-    font-size: 19px;
-    font-weight: 700;
-    color: #7c3aed;
-    margin-top: 10px;
-}
-
-/* =========================================================
-   INFO
-========================================================= */
-
-.info {
-    text-align: center;
-    color: #666;
-    margin-top: 7px;
-    font-size: 14px;
 }
 
 /* =========================================================
    FOME
 ========================================================= */
 
-.fome-topo {
+.status-card {
+    margin-top: 18px;
+
+    background: white;
+
+    border-radius: 26px;
+
+    padding: 20px 18px;
+
+    box-shadow:
+        0 7px 22px rgba(0,0,0,.07);
+}
+
+.status-linha {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 10px;
 }
 
-.fome-topo strong {
-    font-size: 15px;
+.status-titulo {
+    font-size: 23px;
+    font-weight: 800;
 }
 
-.fome-numero {
+.status-numero {
+    font-size: 23px;
     font-weight: 800;
 }
 
 .barra {
     width: 100%;
-    height: 15px;
-    background: #eee;
+    height: 22px;
+
+    margin-top: 15px;
+
+    background: #eeeeee;
+
     border-radius: 20px;
+
     overflow: hidden;
-    margin: 10px 0 7px;
 }
 
-.barra-interna {
-    height: 100%;
+#barraFome {
     width: 0%;
+    height: 100%;
+
     border-radius: 20px;
-    transition: width .35s;
 
     background:
         linear-gradient(
             90deg,
-            #f59e0b,
-            #fb7185
+            #ff9f0a,
+            #ff6969
         );
+
+    transition: width .35s ease;
 }
 
-.estado {
+#estadoFome {
+    margin-top: 14px;
+
     text-align: center;
-    font-size: 17px;
+
+    font-size: 23px;
     font-weight: 800;
-    margin: 8px 0 4px;
 }
 
-.estado.muita {
-    color: #dc2626;
-}
+#textoFome {
+    margin-top: 6px;
 
-.estado.ok {
-    color: #16a34a;
+    text-align: center;
+
+    font-size: 16px;
+    color: #666;
 }
 
 /* =========================================================
-   COMIDAS
+   DOENTE
 ========================================================= */
 
-.comidas-titulo {
-    margin: 2px 0 4px;
-    font-size: 19px;
-    font-weight: 800;
-}
+#avisoDoente {
+    display: none;
 
-.comidas-subtitulo {
-    color: #777;
-    font-size: 13px;
-    margin-bottom: 12px;
-}
+    margin-top: 18px;
 
-.comidas-grid {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 9px;
-}
+    background: #fff7e9;
 
-.comida-btn {
-    position: relative;
-    min-height: 142px;
-    border: 2px solid transparent;
-    border-radius: 18px;
-    padding: 12px 7px;
+    border-radius: 22px;
 
-    background: #fffaf3;
-
-    cursor: pointer;
+    padding: 18px;
 
     box-shadow:
-        0 3px 10px rgba(0,0,0,.06);
+        0 6px 20px rgba(0,0,0,.06);
 
-    transition:
-        transform .12s,
-        border-color .12s,
-        opacity .12s;
+    color: #8b351d;
 }
 
-.comida-btn:active {
-    transform: scale(.96);
-}
-
-.comida-btn:disabled {
-    opacity: .45;
-    cursor: not-allowed;
-}
-
-.comida-emoji {
+#avisoDoente strong {
     display: block;
-    font-size: 45px;
-    line-height: 52px;
+
+    font-size: 18px;
+
+    margin-bottom: 6px;
 }
 
-.comida-nome {
-    display: block;
-    font-size: 14px;
-    font-weight: 800;
-    color: #333;
-    margin-top: 3px;
-}
+#avisoDoente p {
+    margin: 0;
 
-.comida-ganho {
-    display: inline-block;
-    margin-top: 7px;
-    padding: 4px 9px;
-
-    border-radius: 13px;
-
-    background: #eaf8e7;
-
-    color: #43883b;
-
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.comida-especial {
-    grid-column: 1 / -1;
-
-    min-height: 105px;
-
-    display: grid;
-    grid-template-columns: 72px 1fr;
-    align-items: center;
-    text-align: left;
-
-    padding: 12px 18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #fff9dd,
-            #fff3cd
-        );
-}
-
-.comida-especial .comida-emoji {
-    text-align: center;
-    font-size: 48px;
-}
-
-.comida-especial .comida-nome {
-    font-size: 15px;
-}
-
-/* =========================================================
-   AVISO
-========================================================= */
-
-.aviso {
-    background: #fff7ed;
-    border-radius: 14px;
-    padding: 13px;
-    font-size: 14px;
-    color: #7c2d12;
+    font-size: 16px;
     line-height: 1.45;
 }
 
 /* =========================================================
-   MENSAGEM
+   COMIDA
 ========================================================= */
 
-#mensagemFlutuante {
-    display: none;
+.comida-card {
+    margin-top: 18px;
 
-    position: fixed;
+    background: white;
 
-    left: 50%;
-    bottom: 28px;
+    border-radius: 26px;
 
-    transform: translateX(-50%);
+    padding: 20px 16px 24px;
 
-    z-index: 10000;
+    box-shadow:
+        0 7px 22px rgba(0,0,0,.07);
+}
 
-    width: max-content;
-    max-width: calc(100% - 30px);
+.comida-titulo {
+    margin: 0;
 
-    background: rgba(0,0,0,.84);
-    color: white;
+    font-size: 25px;
+    font-weight: 800;
+}
 
-    border-radius: 22px;
+.comida-subtitulo {
+    margin-top: 5px;
 
-    padding: 11px 18px;
+    font-size: 16px;
+    color: #777;
+}
 
-    text-align: center;
+.comida-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+.comida-btn {
+    min-height: 145px;
+
+    border: none;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fffdf8 0%,
+            #fff9ed 100%
+        );
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,.06);
+
+    cursor: pointer;
+
+    padding: 14px 8px;
+}
+
+.comida-btn:active {
+    transform: scale(.97);
+}
+
+.comida-emoji {
+    display: block;
+
+    font-size: 58px;
+}
+
+.comida-nome {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.comida-valor {
+    display: block;
+
+    margin-top: 3px;
 
     font-size: 13px;
-    font-weight: 600;
+    color: #777;
+}
+
+.comida-btn.bloqueado {
+    opacity: .45;
 }
 
 /* =========================================================
-   ANIMAÇÃO COMIDA
+   ANIMAÇÃO
 ========================================================= */
 
 #animacaoComida {
@@ -434,7 +408,7 @@ h2 {
     position: fixed;
     inset: 0;
 
-    z-index: 9000;
+    z-index: 9990;
 
     pointer-events: none;
 }
@@ -443,105 +417,75 @@ h2 {
     position: absolute;
 
     left: 50%;
-    top: 55%;
+    top: 75%;
 
-    font-size: 54px;
+    font-size: 64px;
+
+    transform:
+        translate(-50%,0);
 
     animation:
-        comidaVoando 1.15s ease-in-out forwards;
+        comidaSubir 1s ease-in-out forwards;
 }
 
-@keyframes comidaVoando {
+@keyframes comidaSubir {
 
     0% {
         opacity: 0;
         transform:
-            translate(-50%,80px)
-            scale(.6);
+            translate(-50%,20px)
+            scale(.7);
     }
 
     20% {
         opacity: 1;
     }
 
-    70% {
+    80% {
         opacity: 1;
-        transform:
-            translate(-50%,-20px)
-            scale(1);
     }
 
     100% {
         opacity: 0;
-        transform:
-            translate(-50%,-80px)
-            scale(.3);
-    }
 
+        transform:
+            translate(-50%,-330px)
+            scale(1.1);
+    }
 }
 
 /* =========================================================
-   CORAÇÕES
+   MENSAGEM
 ========================================================= */
 
-.coracao-comida {
-    position: absolute;
+#mensagem {
+    display: none;
+
+    position: fixed;
 
     left: 50%;
-    top: 47%;
+    bottom: 25px;
 
-    font-size: 27px;
+    transform: translateX(-50%);
 
-    opacity: 0;
+    z-index: 10000;
 
-    animation:
-        coracaoComida 1.5s ease-out forwards;
-}
+    max-width: 90%;
 
-@keyframes coracaoComida {
+    background: rgba(0,0,0,.86);
 
-    0% {
-        opacity: 0;
-        transform:
-            translate(-50%,0)
-            scale(.6);
-    }
+    color: white;
 
-    25% {
-        opacity: 1;
-    }
+    padding: 11px 18px;
 
-    100% {
-        opacity: 0;
-        transform:
-            translate(-50%,-110px)
-            scale(1.25);
-    }
+    border-radius: 24px;
 
-}
+    text-align: center;
 
-/* =========================================================
-   RESPONSIVO
-========================================================= */
+    font-size: 14px;
 
-@media (max-width:360px) {
-
-    .container {
-        padding: 11px;
-    }
-
-    .comidas-grid {
-        gap: 7px;
-    }
-
-    .comida-btn {
-        min-height: 132px;
-    }
-
-    .comida-emoji {
-        font-size: 41px;
-    }
-
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.18);
 }
 
 </style>
@@ -550,45 +494,225 @@ h2 {
 
 <body>
 
-<div class="container">
+<div class="app">
 
     <div class="topo">
 
         <button
-            class="voltar"
-            type="button"
+            class="btn-voltar"
             onclick="voltar()"
         >
             ←
         </button>
 
-        <h1>
+        <h1 class="titulo">
             Alimentação 🍎
         </h1>
 
-        <div class="espaco-topo"></div>
-
     </div>
 
-    <div id="conteudo"></div>
+    <!-- PET -->
+
+    <section class="pet-card">
+
+        <div class="pet-area">
+
+            <img
+                id="imagemPetton"
+                alt="Petton"
+            >
+
+            <div class="decoracao-prato">
+                🍽️
+            </div>
+
+            <div class="decoracao-planta">
+                🪴
+            </div>
+
+        </div>
+
+        <div id="nomePetton">
+            Petton
+        </div>
+
+    </section>
+
+    <!-- FOME -->
+
+    <section class="status-card">
+
+        <div class="status-linha">
+
+            <div class="status-titulo">
+                🍖 Fome
+            </div>
+
+            <div
+                id="numeroFome"
+                class="status-numero"
+            >
+                0%
+            </div>
+
+        </div>
+
+        <div class="barra">
+
+            <div id="barraFome"></div>
+
+        </div>
+
+        <div id="estadoFome">
+            Carregando...
+        </div>
+
+        <div id="textoFome"></div>
+
+    </section>
+
+    <!-- AVISO DOENTE -->
+
+    <section id="avisoDoente">
+
+        <strong>
+            🤒 Seu Petton está doente.
+        </strong>
+
+        <p>
+            Ele ainda pode comer, mas a comida recupera apenas metade do normal.
+            Leve-o ao hospital pela tela principal para curá-lo.
+        </p>
+
+    </section>
+
+    <!-- COMIDAS -->
+
+    <section class="comida-card">
+
+        <h2 class="comida-titulo">
+            🍽️ Escolha a comida
+        </h2>
+
+        <div class="comida-subtitulo">
+            Toque na comida que deseja dar ao seu Petton.
+        </div>
+
+        <div class="comida-grid">
+
+            <button
+                class="comida-btn"
+                data-tipo="papinha"
+                onclick="darComida('papinha')"
+            >
+
+                <span class="comida-emoji">
+                    🥣
+                </span>
+
+                <span class="comida-nome">
+                    Papinha
+                </span>
+
+                <span class="comida-valor">
+                    +10 fome
+                </span>
+
+            </button>
+
+            <button
+                class="comida-btn"
+                data-tipo="maca"
+                onclick="darComida('maca')"
+            >
+
+                <span class="comida-emoji">
+                    🍎
+                </span>
+
+                <span class="comida-nome">
+                    Maçã
+                </span>
+
+                <span class="comida-valor">
+                    +12 fome
+                </span>
+
+            </button>
+
+            <button
+                class="comida-btn"
+                data-tipo="cenoura"
+                onclick="darComida('cenoura')"
+            >
+
+                <span class="comida-emoji">
+                    🥕
+                </span>
+
+                <span class="comida-nome">
+                    Cenoura
+                </span>
+
+                <span class="comida-valor">
+                    +15 fome
+                </span>
+
+            </button>
+
+            <button
+                class="comida-btn"
+                data-tipo="frango"
+                onclick="darComida('frango')"
+            >
+
+                <span class="comida-emoji">
+                    🍗
+                </span>
+
+                <span class="comida-nome">
+                    Frango
+                </span>
+
+                <span class="comida-valor">
+                    +25 fome
+                </span>
+
+            </button>
+
+            <button
+                class="comida-btn"
+                data-tipo="carne"
+                onclick="darComida('carne')"
+            >
+
+                <span class="comida-emoji">
+                    🥩
+                </span>
+
+                <span class="comida-nome">
+                    Carne
+                </span>
+
+                <span class="comida-valor">
+                    +35 fome
+                </span>
+
+            </button>
+
+        </div>
+
+    </section>
 
 </div>
 
 <div id="animacaoComida"></div>
 
-<div id="mensagemFlutuante"></div>
+<div id="mensagem"></div>
 
 <script src="petton.js"></script>
 
 <script>
-
-/* =========================================================
-   DADOS
-========================================================= */
-
-let dados = null;
-
-let assinaturaAnterior = "";
 
 /* =========================================================
    COMIDAS
@@ -597,304 +721,59 @@ let assinaturaAnterior = "";
 const COMIDAS = {
 
     papinha: {
-
-        nome:
-            "Papinha",
-
-        emoji:
-            "🥣",
-
-        fome:
-            10
-
+        nome: "Papinha",
+        emoji: "🥣",
+        fome: 10
     },
 
     maca: {
-
-        nome:
-            "Maçã",
-
-        emoji:
-            "🍎",
-
-        fome:
-            12
-
+        nome: "Maçã",
+        emoji: "🍎",
+        fome: 12
     },
 
     cenoura: {
-
-        nome:
-            "Cenoura",
-
-        emoji:
-            "🥕",
-
-        fome:
-            15
-
+        nome: "Cenoura",
+        emoji: "🥕",
+        fome: 15
     },
 
     frango: {
-
-        nome:
-            "Frango",
-
-        emoji:
-            "🍗",
-
-        fome:
-            25
-
+        nome: "Frango",
+        emoji: "🍗",
+        fome: 25
     },
 
     carne: {
-
-        nome:
-            "Carne",
-
-        emoji:
-            "🥩",
-
-        fome:
-            35
-
+        nome: "Carne",
+        emoji: "🥩",
+        fome: 35
     }
 
 };
 
 /* =========================================================
-   FORMATA TEMPO
+   IMAGENS
 ========================================================= */
 
-function formatarTempo(ms) {
+const PETTON_IMAGENS = {
 
-    ms =
-        Math.max(
-            0,
-            ms
-        );
+    gato:
+        "petton-original.png",
 
-    const totalSegundos =
-        Math.floor(
-            ms / 1000
-        );
+    cachorro:
+        "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png",
 
-    const horas =
-        Math.floor(
-            totalSegundos / 3600
-        );
+    coelho:
+        "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png"
 
-    const minutos =
-        Math.floor(
-            (
-                totalSegundos %
-                3600
-            ) /
-            60
-        );
+};
 
-    const segundos =
-        totalSegundos %
-        60;
-
-    if (horas > 0) {
-
-        return (
-            horas +
-            "h " +
-            String(
-                minutos
-            ).padStart(
-                2,
-                "0"
-            ) +
-            "min"
-        );
-
-    }
-
-    return (
-        String(
-            minutos
-        ).padStart(
-            2,
-            "0"
-        ) +
-        ":" +
-        String(
-            segundos
-        ).padStart(
-            2,
-            "0"
-        )
-    );
-
-}
-
-/* =========================================================
-   CARREGA DADOS
-========================================================= */
-
-function carregarDados() {
-
-    try {
-
-        dados =
-            JSON.parse(
-                localStorage.getItem(
-                    "petton_dados_v3"
-                )
-            );
-
-    } catch (erro) {
-
-        console.error(
-            erro
-        );
-
-        dados =
-            null;
-
-    }
-
-}
-
-/* =========================================================
-   SALVAR
-========================================================= */
-
-function salvarDados() {
-
-    if (!dados) {
-        return;
-    }
-
-    localStorage.setItem(
-        "petton_dados_v3",
-        JSON.stringify(
-            dados
-        )
-    );
-
-    try {
-
-        window.dispatchEvent(
-            new Event(
-                "petton-atualizado"
-            )
-        );
-
-    } catch (erro) {
-
-        console.warn(
-            erro
-        );
-
-    }
-
-}
-
-/* =========================================================
-   OVO
-========================================================= */
-
-function estaNoOvo() {
-
-    return (
-        !dados ||
-        !dados.dateNascimento ||
-        dados.fase ===
-            "ovo"
-    );
-
-}
-
-/* =========================================================
-   IDADE
-========================================================= */
-
-function idadeDias() {
-
-    if (
-        !dados ||
-        !dados.dateNascimento
-    ) {
-
-        return 0;
-
-    }
-
-    return Math.floor(
-        (
-            Date.now() -
-            Number(
-                dados.dateNascimento
-            )
-        ) /
-        (
-            24 *
-            60 *
-            60 *
-            1000
-        )
-    );
-
-}
-
-/* =========================================================
-   ESPÉCIE
-========================================================= */
-
-function especieEmoji() {
-
-    if (
-        !dados ||
-        !dados.especie
-    ) {
-
-        return "🐣";
-
-    }
-
-    const especie =
-        String(
-            dados.especie
-        ).toLowerCase();
-
-    if (
-        especie.includes(
-            "cach"
-        )
-    ) {
-
-        return "🐶";
-
-    }
-
-    if (
-        especie.includes(
-            "coelh"
-        )
-    ) {
-
-        return "🐰";
-
-    }
-
-    return "🐱";
-
-}
-
-/* =========================================================
-   IMAGEM
-========================================================= */
-
-function especieImagem() {
+function obterImagemPetton(dados) {
 
     if (!dados) {
 
-        return null;
+        return PETTON_IMAGENS.gato;
 
     }
 
@@ -939,9 +818,8 @@ function especieImagem() {
         ) {
 
             return (
-                dados.identidadeVisual.imagens[
-                    fase
-                ]
+                dados.identidadeVisual
+                    .imagens[fase]
             );
 
         }
@@ -954,210 +832,477 @@ function especieImagem() {
 
     }
 
-    if (
-        especie ===
-        "cachorro"
-    ) {
-
-        return (
-            "FBC04FD9-CEFC-4D6D-AE9B-C77174DEB4E5.png"
-        );
-
-    }
-
-    if (
-        especie ===
-        "coelho"
-    ) {
-
-        return (
-            "39CE7A33-D105-4E83-BF3B-DDE48E046D60.png"
-        );
-
-    }
-
     return (
-        "petton-original.png"
+        PETTON_IMAGENS[especie] ||
+        PETTON_IMAGENS.gato
     );
 
 }
 
 /* =========================================================
-   FOME
+   CARREGAR DADOS
 ========================================================= */
 
-function calcularFome() {
+function carregarDados() {
 
-    if (
-        estaNoOvo()
-    ) {
+    try {
 
-        return null;
+        if (
+            typeof Petton !==
+            "undefined"
+        ) {
 
-    }
+            if (
+                typeof Petton.status ===
+                "function"
+            ) {
 
-    if (
-        typeof dados.fome ===
-        "number"
-    ) {
+                return (
+                    Petton.status()
+                );
 
-        return Math.max(
-            0,
-            Math.min(
-                100,
-                dados.fome
-            )
+            }
+
+            if (
+                typeof Petton.carregar ===
+                "function"
+            ) {
+
+                return (
+                    Petton.carregar()
+                );
+
+            }
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+            erro
         );
 
     }
 
-    return 50;
+    try {
+
+        const salvo =
+            localStorage.getItem(
+                "petton_dados_v3"
+            );
+
+        if (salvo) {
+
+            return (
+                JSON.parse(
+                    salvo
+                )
+            );
+
+        }
+
+    } catch (erro) {
+
+        console.error(
+            erro
+        );
+
+    }
+
+    return null;
 
 }
 
 /* =========================================================
-   ESTADO FOME
+   SALVAR DADOS
 ========================================================= */
 
-function estadoFome(fome) {
+function salvarDados(
+    dados
+) {
 
-    if (
-        fome <= 20
-    ) {
+    try {
 
-        return {
+        localStorage.setItem(
+            "petton_dados_v3",
+            JSON.stringify(
+                dados
+            )
+        );
 
-            texto:
-                "🍽️ Muito faminto",
+    } catch (erro) {
 
-            classe:
-                "muita"
-
-        };
-
-    }
-
-    if (
-        fome <= 40
-    ) {
-
-        return {
-
-            texto:
-                "😋 Com fome",
-
-            classe:
-                ""
-
-        };
+        console.error(
+            erro
+        );
 
     }
 
-    if (
-        fome < 80
-    ) {
+    window.dispatchEvent(
 
-        return {
+        new CustomEvent(
+            "petton-atualizado"
+        )
 
-            texto:
-                "🙂 Satisfeito",
-
-            classe:
-                "ok"
-
-        };
-
-    }
-
-    return {
-
-        texto:
-            "🥰 Barriguinha cheia",
-
-        classe:
-            "ok"
-
-    };
+    );
 
 }
 
 /* =========================================================
-   PODE ALIMENTAR
+   IDADE
 ========================================================= */
 
-function podeAlimentar() {
+function obterIdadeDias(
+    dados
+) {
 
     if (!dados) {
 
-        return false;
+        return 0;
 
     }
 
     if (
-        estaNoOvo()
+        typeof dados.idadeDias ===
+        "number"
     ) {
 
-        return false;
+        return (
+            dados.idadeDias
+        );
 
     }
 
     if (
-        dados.doente
+        dados.dateNascimento
     ) {
 
-        return false;
+        const nascimento =
+            new Date(
+                dados.dateNascimento
+            );
+
+        const agora =
+            new Date();
+
+        const diferenca =
+            agora -
+            nascimento;
+
+        return Math.max(
+
+            0,
+
+            Math.floor(
+                diferenca /
+                (
+                    1000 *
+                    60 *
+                    60 *
+                    24
+                )
+            )
+
+        );
 
     }
 
-    if (
-        dados.emHospital
-    ) {
+    return 0;
 
-        return false;
+}
+
+/* =========================================================
+   ATUALIZAR TELA
+========================================================= */
+
+function atualizarTela() {
+
+    const dados =
+        carregarDados();
+
+    if (!dados) {
+
+        return;
+
+    }
+
+    const imagem =
+        document.getElementById(
+            "imagemPetton"
+        );
+
+    const nome =
+        document.getElementById(
+            "nomePetton"
+        );
+
+    if (imagem) {
+
+        imagem.src =
+            obterImagemPetton(
+                dados
+            );
+
+    }
+
+    if (nome) {
+
+        const especie =
+            String(
+                dados.especie ||
+                ""
+            ).toLowerCase();
+
+        let emoji =
+            "🐾";
+
+        if (
+            especie.includes(
+                "gato"
+            )
+        ) {
+
+            emoji =
+                "🐱";
+
+        }
+
+        if (
+            especie.includes(
+                "cach"
+            )
+        ) {
+
+            emoji =
+                "🐶";
+
+        }
+
+        if (
+            especie.includes(
+                "coelh"
+            )
+        ) {
+
+            emoji =
+                "🐰";
+
+        }
+
+        nome.textContent =
+            emoji +
+            " " +
+            (
+                dados.nome ||
+                "Petton"
+            );
 
     }
 
     const fome =
-        calcularFome();
+        Math.max(
 
-    return (
-        fome <
-        100
+            0,
+
+            Math.min(
+
+                100,
+
+                Math.round(
+                    Number(
+                        dados.fome ||
+                        0
+                    )
+                )
+
+            )
+
+        );
+
+    document.getElementById(
+        "numeroFome"
+    ).textContent =
+        fome +
+        "%";
+
+    document.getElementById(
+        "barraFome"
+    ).style.width =
+        fome +
+        "%";
+
+    atualizarEstadoFome(
+        fome
+    );
+
+    const aviso =
+        document.getElementById(
+            "avisoDoente"
+        );
+
+    if (aviso) {
+
+        aviso.style.display =
+            dados.doente === true
+                ? "block"
+                : "none";
+
+    }
+
+    atualizarComidasPorIdade(
+        dados
     );
 
 }
 
 /* =========================================================
-   COMIDA PERMITIDA POR IDADE
+   ESTADO DA FOME
 ========================================================= */
 
-function comidaPermitida(tipo) {
+function atualizarEstadoFome(
+    fome
+) {
 
-    const idade =
-        idadeDias();
+    const estado =
+        document.getElementById(
+            "estadoFome"
+        );
 
-    /*
-       Bebê:
-       papinha, maçã e cenoura.
-
-       Depois:
-       todas as comidas.
-    */
+    const texto =
+        document.getElementById(
+            "textoFome"
+        );
 
     if (
-        idade <
-        8
+        fome <=
+        20
     ) {
 
-        return (
-            tipo === "papinha" ||
-            tipo === "maca" ||
-            tipo === "cenoura"
-        );
+        estado.textContent =
+            "😫 Muita fome";
+
+        texto.textContent =
+            "Seu Petton precisa comer.";
+
+        return;
 
     }
 
-    return true;
+    if (
+        fome <=
+        45
+    ) {
+
+        estado.textContent =
+            "😋 Com fome";
+
+        texto.textContent =
+            "Já está chegando a hora de comer.";
+
+        return;
+
+    }
+
+    if (
+        fome <=
+        70
+    ) {
+
+        estado.textContent =
+            "🙂 Satisfeito";
+
+        texto.textContent =
+            "Ainda está bem alimentado.";
+
+        return;
+
+    }
+
+    if (
+        fome <=
+        90
+    ) {
+
+        estado.textContent =
+            "😊 Bem alimentado";
+
+        texto.textContent =
+            "Seu Petton está satisfeito.";
+
+        return;
+
+    }
+
+    estado.textContent =
+        "🥰 Barriguinha cheia";
+
+    texto.textContent =
+        "Seu Petton está muito bem alimentado.";
+
+}
+
+/* =========================================================
+   COMIDAS POR IDADE
+========================================================= */
+
+function atualizarComidasPorIdade(
+    dados
+) {
+
+    const idade =
+        obterIdadeDias(
+            dados
+        );
+
+    const botoes =
+        document.querySelectorAll(
+            ".comida-btn"
+        );
+
+    botoes.forEach(
+
+        function(
+            botao
+        ) {
+
+            const tipo =
+                botao.getAttribute(
+                    "data-tipo"
+                );
+
+            let permitido =
+                true;
+
+            if (
+                idade <
+                8
+            ) {
+
+                permitido =
+                    (
+                        tipo ===
+                        "papinha" ||
+
+                        tipo ===
+                        "maca" ||
+
+                        tipo ===
+                        "cenoura"
+                    );
+
+            }
+
+            botao.disabled =
+                !permitido;
+
+            botao.classList.toggle(
+                "bloqueado",
+                !permitido
+            );
+
+        }
+
+    );
 
 }
 
@@ -1165,9 +1310,9 @@ function comidaPermitida(tipo) {
    DAR COMIDA
 ========================================================= */
 
-function darComida(tipo) {
-
-    carregarDados();
+function darComida(
+    tipo
+) {
 
     const comida =
         COMIDAS[tipo];
@@ -1178,50 +1323,37 @@ function darComida(tipo) {
 
     }
 
-    if (
-        estaNoOvo()
-    ) {
+    const dados =
+        carregarDados();
+
+    if (!dados) {
 
         mostrarMensagem(
-            "🥚 Seu Petton ainda está no ovo."
+            "Não foi possível carregar o Petton."
         );
 
         return;
 
     }
 
-    if (
-        dados.doente
-    ) {
-
-        mostrarMensagem(
-            "🤒 Seu Petton está doente. Leve-o ao hospital."
+    const idade =
+        obterIdadeDias(
+            dados
         );
 
-        return;
-
-    }
-
     if (
-        dados.emHospital
-    ) {
-
-        mostrarMensagem(
-            "🏥 Seu Petton está no hospital."
-        );
-
-        return;
-
-    }
-
-    if (
-        !comidaPermitida(
-            tipo
+        idade <
+        8 &&
+        (
+            tipo ===
+            "frango" ||
+            tipo ===
+            "carne"
         )
     ) {
 
         mostrarMensagem(
-            "🐣 Essa comida ainda é muito pesada para o seu Petton."
+            "🐣 Esse alimento ainda é forte para o seu Petton."
         );
 
         return;
@@ -1229,7 +1361,10 @@ function darComida(tipo) {
     }
 
     const fomeAtual =
-        calcularFome();
+        Number(
+            dados.fome ||
+            0
+        );
 
     if (
         fomeAtual >=
@@ -1237,81 +1372,78 @@ function darComida(tipo) {
     ) {
 
         mostrarMensagem(
-            "🥰 Seu Petton já está de barriguinha cheia."
+            "🥰 O Petton já está de barriga cheia."
         );
 
         return;
 
     }
 
-    const aumento =
-        Math.min(
-            comida.fome,
-            100 -
-            fomeAtual
-        );
+    let recuperacao =
+        comida.fome;
+
+    if (
+        dados.doente ===
+        true
+    ) {
+
+        recuperacao =
+            Math.max(
+
+                1,
+
+                Math.round(
+                    recuperacao /
+                    2
+                )
+
+            );
+
+    }
 
     dados.fome =
         Math.min(
+
             100,
+
             fomeAtual +
-            aumento
+            recuperacao
+
         );
 
-    /*
-       Pequeno benefício para saúde.
-    */
+    /* pequena recuperação de saúde
+       apenas se NÃO estiver doente */
 
-    dados.saude =
-        Math.min(
-            100,
-            Number(
-                dados.saude ||
-                100
-            ) +
-            1
-        );
+    if (
+        dados.doente !==
+        true
+    ) {
 
-    /*
-       Marca última alimentação.
-    */
+        dados.saude =
+            Math.min(
+
+                100,
+
+                Number(
+                    dados.saude ||
+                    0
+                ) +
+                1
+
+            );
+
+    }
 
     dados.ultimaAlimentacaoEm =
         Date.now();
 
-    /*
-       Chance de cocô.
-
-       Quanto mais forte a comida,
-       maior a chance.
-    */
-
-    let chanceCoco =
-        .18;
-
-    if (
-        tipo ===
-        "frango"
-    ) {
-
-        chanceCoco =
-            .30;
-
-    }
-
-    if (
-        tipo ===
-        "carne"
-    ) {
-
-        chanceCoco =
-            .38;
-
-    }
+    /* =====================================================
+       CHANCE DE COCÔ
+    ===================================================== */
 
     if (
         Math.random() <
-        chanceCoco
+        0.28
     ) {
 
         dados.cocoAtivo =
@@ -1319,14 +1451,37 @@ function darComida(tipo) {
 
     }
 
-    /*
-       Pequena chance de cárie
-       depois da alimentação.
-    */
+    /* =====================================================
+       CHANCE DE CÁRIE
+       maior para maçã/papinha
+    ===================================================== */
+
+    let chanceCarie =
+        0.04;
+
+    if (
+        tipo ===
+        "maca"
+    ) {
+
+        chanceCarie =
+            0.08;
+
+    }
+
+    if (
+        tipo ===
+        "papinha"
+    ) {
+
+        chanceCarie =
+            0.06;
+
+    }
 
     if (
         Math.random() <
-        .08
+        chanceCarie
     ) {
 
         dados.carieAtiva =
@@ -1334,22 +1489,46 @@ function darComida(tipo) {
 
     }
 
-    salvarDados();
+    salvarDados(
+        dados
+    );
 
     animarComida(
         comida.emoji
     );
 
-    mostrarMensagem(
-        comida.emoji +
-        " " +
-        comida.nome +
-        "  +" +
-        aumento +
-        " de fome"
-    );
+    if (
+        dados.doente ===
+        true
+    ) {
 
-    renderizarAgora();
+        mostrarMensagem(
+
+            comida.emoji +
+            " " +
+            comida.nome +
+            ": +" +
+            recuperacao +
+            " de fome. 🤒 Como está doente, recuperou metade."
+
+        );
+
+    } else {
+
+        mostrarMensagem(
+
+            comida.emoji +
+            " " +
+            comida.nome +
+            ": +" +
+            recuperacao +
+            " de fome."
+
+        );
+
+    }
+
+    atualizarTela();
 
 }
 
@@ -1357,7 +1536,9 @@ function darComida(tipo) {
    ANIMAÇÃO
 ========================================================= */
 
-function animarComida(emoji) {
+function animarComida(
+    emoji
+) {
 
     const area =
         document.getElementById(
@@ -1373,67 +1554,26 @@ function animarComida(emoji) {
     area.innerHTML =
         "";
 
-    const comida =
+    const item =
         document.createElement(
             "div"
         );
 
-    comida.className =
+    item.className =
         "comida-voando";
 
-    comida.textContent =
+    item.textContent =
         emoji;
 
     area.appendChild(
-        comida
-    );
-
-    const coracao1 =
-        document.createElement(
-            "div"
-        );
-
-    coracao1.className =
-        "coracao-comida";
-
-    coracao1.textContent =
-        "❤️";
-
-    coracao1.style.marginLeft =
-        "-38px";
-
-    coracao1.style.animationDelay =
-        ".35s";
-
-    area.appendChild(
-        coracao1
-    );
-
-    const coracao2 =
-        document.createElement(
-            "div"
-        );
-
-    coracao2.className =
-        "coracao-comida";
-
-    coracao2.textContent =
-        "💕";
-
-    coracao2.style.marginLeft =
-        "35px";
-
-    coracao2.style.animationDelay =
-        ".55s";
-
-    area.appendChild(
-        coracao2
+        item
     );
 
     area.style.display =
         "block";
 
     setTimeout(
+
         function() {
 
             area.style.display =
@@ -1443,7 +1583,9 @@ function animarComida(emoji) {
                 "";
 
         },
-        1900
+
+        1100
+
     );
 
 }
@@ -1452,632 +1594,47 @@ function animarComida(emoji) {
    MENSAGEM
 ========================================================= */
 
-let mensagemTimer =
+let timerMensagem =
     null;
 
-function mostrarMensagem(texto) {
+function mostrarMensagem(
+    texto
+) {
 
-    const elemento =
+    const caixa =
         document.getElementById(
-            "mensagemFlutuante"
+            "mensagem"
         );
 
-    if (!elemento) {
+    if (!caixa) {
 
         return;
 
     }
 
-    if (
-        mensagemTimer
-    ) {
+    clearTimeout(
+        timerMensagem
+    );
 
-        clearTimeout(
-            mensagemTimer
-        );
-
-    }
-
-    elemento.textContent =
+    caixa.textContent =
         texto;
 
-    elemento.style.display =
+    caixa.style.display =
         "block";
 
-    mensagemTimer =
+    timerMensagem =
         setTimeout(
+
             function() {
 
-                elemento.style.display =
+                caixa.style.display =
                     "none";
 
             },
-            2600
+
+            2700
+
         );
-
-}
-
-/* =========================================================
-   PRÓXIMA REFEIÇÃO
-========================================================= */
-
-function proximidadeProxima() {
-
-    const fome =
-        calcularFome();
-
-    if (
-        fome ===
-        null
-    ) {
-
-        return "";
-
-    }
-
-    if (
-        fome <=
-        20
-    ) {
-
-        return (
-            "Seu Petton está com bastante fome."
-        );
-
-    }
-
-    if (
-        fome <=
-        40
-    ) {
-
-        return (
-            "Já está chegando a hora de comer."
-        );
-
-    }
-
-    if (
-        fome >=
-        90
-    ) {
-
-        return (
-            "Seu Petton está de barriguinha cheia."
-        );
-
-    }
-
-    return (
-        "O Petton está bem alimentado por enquanto."
-    );
-
-}
-
-/* =========================================================
-   RENDERIZA OVO
-========================================================= */
-
-function renderizarOvo() {
-
-    const conteudo =
-        document.getElementById(
-            "conteudo"
-        );
-
-    if (!conteudo) {
-
-        return;
-
-    }
-
-    let restante =
-        0;
-
-    if (
-        window.Petton &&
-        typeof window.Petton.status ===
-            "function"
-    ) {
-
-        try {
-
-            const status =
-                window.Petton.status();
-
-            if (
-                status &&
-                typeof status.incubacaoRestanteMs ===
-                    "number"
-            ) {
-
-                restante =
-                    status.incubacaoRestanteMs;
-
-            }
-
-        } catch (erro) {
-
-            console.warn(
-                erro
-            );
-
-        }
-
-    }
-
-    conteudo.innerHTML = `
-
-        <div class="card ovo-area">
-
-            <div class="ovo">
-                🥚
-            </div>
-
-            <h2>
-                Seu Petton ainda está no ovo
-            </h2>
-
-            <div class="info">
-                Aguarde a incubação terminar.
-            </div>
-
-            <div
-                id="contadorOvo"
-                class="contador"
-            >
-                ${formatarTempo(restante)}
-            </div>
-
-            <div class="info">
-                Você poderá alimentar seu Petton depois que ele nascer.
-            </div>
-
-        </div>
-
-    `;
-
-}
-
-/* =========================================================
-   CONTADOR OVO
-========================================================= */
-
-function atualizarContadorOvo() {
-
-    const contador =
-        document.getElementById(
-            "contadorOvo"
-        );
-
-    if (!contador) {
-
-        return;
-
-    }
-
-    let restante =
-        0;
-
-    if (
-        window.Petton &&
-        typeof window.Petton.status ===
-            "function"
-    ) {
-
-        try {
-
-            const status =
-                window.Petton.status();
-
-            if (
-                status &&
-                typeof status.incubacaoRestanteMs ===
-                    "number"
-            ) {
-
-                restante =
-                    status.incubacaoRestanteMs;
-
-            }
-
-        } catch (erro) {
-
-            console.warn(
-                erro
-            );
-
-        }
-
-    }
-
-    contador.textContent =
-        formatarTempo(
-            restante
-        );
-
-}
-
-/* =========================================================
-   RENDERIZA PETTON
-========================================================= */
-
-function renderizarPetton() {
-
-    const conteudo =
-        document.getElementById(
-            "conteudo"
-        );
-
-    const fome =
-        calcularFome();
-
-    const estado =
-        estadoFome(
-            fome
-        );
-
-    const imagem =
-        especieImagem();
-
-    const nome =
-        dados.nome ||
-        "Seu Petton";
-
-    const idade =
-        idadeDias();
-
-    const doente =
-        !!dados.doente;
-
-    const hospital =
-        !!dados.emHospital;
-
-    let aviso =
-        "";
-
-    if (
-        doente
-    ) {
-
-        aviso = `
-
-            <div class="card">
-
-                <div class="aviso">
-
-                    🤒 <strong>Seu Petton está doente.</strong><br>
-
-                    Ele não pode comer normalmente agora.
-
-                    Leve-o ao hospital pela tela principal.
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-    if (
-        hospital
-    ) {
-
-        aviso = `
-
-            <div class="card">
-
-                <div class="aviso">
-
-                    🏥 <strong>Seu Petton está no hospital.</strong><br>
-
-                    Espere o tratamento terminar.
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-    const bloqueado =
-        doente ||
-        hospital ||
-        fome >= 100;
-
-    conteudo.innerHTML = `
-
-        <div class="card pet-area">
-
-            <div class="pet-cenario">
-
-                <img
-                    src="${imagem}"
-                    alt="${especieEmoji()} ${nome}"
-                >
-
-            </div>
-
-            <div class="nome-pet">
-
-                ${especieEmoji()}
-                ${nome}
-
-            </div>
-
-        </div>
-
-        <div class="card">
-
-            <div class="fome-topo">
-
-                <strong>
-                    🍖 Fome
-                </strong>
-
-                <span class="fome-numero">
-                    ${Math.round(fome)}%
-                </span>
-
-            </div>
-
-            <div class="barra">
-
-                <div
-                    class="barra-interna"
-                    style="width:${fome}%"
-                ></div>
-
-            </div>
-
-            <div class="estado ${estado.classe}">
-                ${estado.texto}
-            </div>
-
-            <div class="info">
-                ${proximidadeProxima()}
-            </div>
-
-        </div>
-
-        ${aviso}
-
-        <div class="card">
-
-            <div class="comidas-titulo">
-                🍽️ Escolha a comida
-            </div>
-
-            <div class="comidas-subtitulo">
-                Toque na comida que deseja dar ao seu Petton.
-            </div>
-
-            <div class="comidas-grid">
-
-                <button
-                    class="comida-btn"
-                    type="button"
-                    onclick="darComida('maca')"
-                    ${
-                        bloqueado
-                            ? "disabled"
-                            : ""
-                    }
-                >
-
-                    <span class="comida-emoji">
-                        🍎
-                    </span>
-
-                    <span class="comida-nome">
-                        Maçã
-                    </span>
-
-                    <span class="comida-ganho">
-                        +12 fome
-                    </span>
-
-                </button>
-
-                <button
-                    class="comida-btn"
-                    type="button"
-                    onclick="darComida('cenoura')"
-                    ${
-                        bloqueado
-                            ? "disabled"
-                            : ""
-                    }
-                >
-
-                    <span class="comida-emoji">
-                        🥕
-                    </span>
-
-                    <span class="comida-nome">
-                        Cenoura
-                    </span>
-
-                    <span class="comida-ganho">
-                        +15 fome
-                    </span>
-
-                </button>
-
-                <button
-                    class="comida-btn"
-                    type="button"
-                    onclick="darComida('frango')"
-                    ${
-                        bloqueado ||
-                        idade < 8
-                            ? "disabled"
-                            : ""
-                    }
-                >
-
-                    <span class="comida-emoji">
-                        🍗
-                    </span>
-
-                    <span class="comida-nome">
-                        Frango
-                    </span>
-
-                    <span class="comida-ganho">
-                        +25 fome
-                    </span>
-
-                </button>
-
-                <button
-                    class="comida-btn"
-                    type="button"
-                    onclick="darComida('carne')"
-                    ${
-                        bloqueado ||
-                        idade < 8
-                            ? "disabled"
-                            : ""
-                    }
-                >
-
-                    <span class="comida-emoji">
-                        🥩
-                    </span>
-
-                    <span class="comida-nome">
-                        Carne
-                    </span>
-
-                    <span class="comida-ganho">
-                        +35 fome
-                    </span>
-
-                </button>
-
-                ${
-                    idade < 8
-
-                        ? `
-
-                            <button
-                                class="comida-btn comida-especial"
-                                type="button"
-                                onclick="darComida('papinha')"
-                                ${
-                                    bloqueado
-                                        ? "disabled"
-                                        : ""
-                                }
-                            >
-
-                                <span class="comida-emoji">
-                                    🥣
-                                </span>
-
-                                <span>
-
-                                    <span class="comida-nome">
-                                        Papinha para bebê
-                                    </span>
-
-                                    <span class="comida-ganho">
-                                        +10 fome
-                                    </span>
-
-                                </span>
-
-                            </button>
-
-                        `
-
-                        : ""
-                }
-
-            </div>
-
-        </div>
-
-        <div class="card">
-
-            <div class="aviso">
-
-                💡 <strong>Dica</strong><br>
-
-                Não precisa deixar a fome chegar a zero.
-
-                Alimente seu Petton quando ele começar a ficar com fome.
-
-            </div>
-
-        </div>
-
-    `;
-
-}
-
-/* =========================================================
-   RENDERIZAR
-========================================================= */
-
-function renderizar() {
-
-    carregarDados();
-
-    if (!dados) {
-
-        const conteudo =
-            document.getElementById(
-                "conteudo"
-            );
-
-        conteudo.innerHTML = `
-
-            <div class="card">
-
-                <h2>
-                    🥚 Nenhum Petton encontrado
-                </h2>
-
-                <div class="info">
-                    Volte para a página inicial.
-                </div>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-    if (
-        estaNoOvo()
-    ) {
-
-        renderizarOvo();
-
-        return;
-
-    }
-
-    renderizarPetton();
-
-}
-
-/* =========================================================
-   RENDERIZA AGORA
-========================================================= */
-
-function renderizarAgora() {
-
-    assinaturaAnterior =
-        "";
-
-    renderizar();
 
 }
 
@@ -2093,8 +1650,47 @@ function voltar() {
 }
 
 /* =========================================================
-   EVENTO
+   LINE
 ========================================================= */
+
+async function iniciarLine() {
+
+    try {
+
+        await liff.init({
+
+            liffId:
+                "2010902449-KWNNNsxn"
+
+        });
+
+    } catch (erro) {
+
+        console.error(
+            erro
+        );
+
+    }
+
+}
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    function() {
+
+        atualizarTela();
+
+        iniciarLine();
+
+    }
+
+);
 
 window.addEventListener(
 
@@ -2102,44 +1698,10 @@ window.addEventListener(
 
     function() {
 
-        renderizarAgora();
+        atualizarTela();
 
     }
 
-);
-
-/* =========================================================
-   INICIALIZA
-========================================================= */
-
-renderizar();
-
-/* =========================================================
-   ATUALIZAÇÃO
-========================================================= */
-
-setInterval(
-    function() {
-
-        carregarDados();
-
-        if (
-            estaNoOvo()
-        ) {
-
-            atualizarContadorOvo();
-
-            return;
-
-        }
-
-        /*
-           Atualiza somente os dados.
-           Não recria a tela a cada segundo.
-        */
-
-    },
-    1000
 );
 
 </script>
