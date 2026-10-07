@@ -25,14 +25,15 @@ main{width:100%;max-width:700px;margin:auto;padding-bottom:230px}
 #quarto.dormindo .lua{display:block}
 #pet-container{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);width:220px;height:240px;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:20}
 #pet{position:relative;width:180px;max-width:180px;max-height:210px;object-fit:contain;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none;z-index:20;transition:.4s}
-#quarto.dormindo #pet{transform:translateY(18px) rotate(-4deg)}
+#quarto.dormindo #pet{transform:translateY(30px) rotate(-8deg) scale(.96)}
+#quarto.dormindo #acessorio-camada{display:none}
 #acessorio-camada{position:absolute;inset:0;pointer-events:none;z-index:100}
 .acessorio{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translate(var(--x,0px),var(--y,0px)) rotate(var(--rot,0deg)) scale(var(--scale,1));transform-origin:center center;pointer-events:none;user-select:none;z-index:100}
 .acessorio img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
 .acessorio.chapeu{width:125px;height:100px}.acessorio.coroa{width:110px;height:90px}.acessorio.lacinho{width:75px;height:65px}.acessorio.lenco{width:105px;height:90px}.acessorio.oculos{width:110px;height:70px}.acessorio.corpo{width:130px;height:120px}
 #zzz-camada{position:absolute;inset:0;pointer-events:none;z-index:150}
-.zzz{position:absolute;left:62%;top:37%;font-size:27px;font-weight:800;color:#fff;animation:zzzSubir 1.8s ease-out infinite}
-.zzz:nth-child(2){left:68%;top:29%;animation-delay:.45s;font-size:23px}.zzz:nth-child(3){left:73%;top:22%;animation-delay:.9s;font-size:19px}
+.zzz{position:absolute;left:72%;top:34%;font-size:27px;font-weight:800;color:#fff;animation:zzzSubir 1.8s ease-out infinite}
+.zzz:nth-child(2){left:78%;top:26%;animation-delay:.45s;font-size:23px}.zzz:nth-child(3){left:83%;top:18%;animation-delay:.9s;font-size:19px}
 @keyframes zzzSubir{0%{opacity:0;transform:translateY(10px) scale(.8)}30%{opacity:1}100%{opacity:0;transform:translateY(-35px) scale(1.15)}}
 .objeto-quarto{position:absolute;z-index:5;pointer-events:none;user-select:none;font-size:55px;line-height:1}
 .cama{left:12px;bottom:22px}.bola{right:30px;bottom:70px}.planta{right:15px;top:30px}.pote{left:35px;bottom:45px}.tapete{left:50%;bottom:8px;transform:translateX(-50%);font-size:100px}
@@ -154,7 +155,7 @@ main{width:100%;max-width:700px;margin:auto;padding-bottom:230px}
 const CHAVE_DADOS="petton_dados_v3";
 const CHAVE_AJUSTES_V3="petton_acessorios_posicoes_v3";
 const PASTA_ACESSORIOS="./petton_acessorios_loja/";
-const MS_POR_ENERGIA=60*1000;
+const MS_POR_ENERGIA=10*1000;
 
 const ACESSORIOS={
 cartola_preta:{tipo:"chapeu",nome:"Cartola preta",imagem:"cartola_preta.png"},
@@ -292,7 +293,8 @@ if(dormindo){
 quarto.classList.add("dormindo");
 btn.textContent="☀️ Acordar";
 btn.classList.add("acordar");
-texto.textContent="😴 Dormindo... a energia está se recuperando.";
+texto.textContent="😴 Dormindo... +1 de energia a cada 10 segundos.";
+
 zzz.innerHTML='<div class="zzz">Z</div><div class="zzz">Z</div><div class="zzz">Z</div>';
 }else{
 quarto.classList.remove("dormindo");
@@ -315,7 +317,7 @@ if(dados.dormindo===true){
 aplicarRecuperacaoSono(true);
 atualizarSonoTela();
 }
-},10000);
+},1000);
 }
 
 function obterImagemPet(){
