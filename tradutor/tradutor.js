@@ -1,6 +1,7 @@
 /* =========================================================
    AJUDA JP
-   TRADUTOR RÁPIDO PT ↔ JP + ROMAJI
+   TRADUTOR RÁPIDO
+   PORTUGUÊS ↔ JAPONÊS + ROMAJI
 ========================================================= */
 
 document.addEventListener(
@@ -29,7 +30,7 @@ document.addEventListener(
         ) {
 
             console.warn(
-                "Tradutor: elementos da tela não encontrados."
+                "Tradutor rápido: elementos não encontrados."
             );
 
             return;
@@ -40,6 +41,10 @@ document.addEventListener(
             "click",
             traduzirTexto
         );
+
+        /* =====================================================
+           TRADUZIR
+        ===================================================== */
 
         async function traduzirTexto() {
 
@@ -97,85 +102,17 @@ document.addEventListener(
                         ? "pt"
                         : "ja";
 
-                const url =
-                    "https://translate.googleapis.com/translate_a/single" +
-                    "?client=gtx" +
-                    "&sl=" +
-                    origem +
-                    "&tl=" +
-                    destino +
-                    "&dt=t" +
-                    "&dt=rm" +
-                    "&q=" +
-                    encodeURIComponent(
-                        texto
+                /* =============================================
+                   TRADUÇÃO PRINCIPAL
+                   MESMO FORMATO QUE JÁ FUNCIONAVA
+                ============================================= */
+
+                const traducao =
+                    await buscarTraducao(
+                        texto,
+                        origem,
+                        destino
                     );
-
-                const resposta =
-                    await fetch(
-                        url,
-                        {
-                            method:
-                                "GET",
-
-                            cache:
-                                "no-store"
-                        }
-                    );
-
-                if (
-                    !resposta.ok
-                ) {
-
-                    throw new Error(
-                        "HTTP " +
-                        resposta.status
-                    );
-
-                }
-
-                const dados =
-                    await resposta.json();
-
-                if (
-                    !Array.isArray(
-                        dados
-                    ) ||
-                    !Array.isArray(
-                        dados[0]
-                    )
-                ) {
-
-                    throw new Error(
-                        "Resposta inválida"
-                    );
-
-                }
-
-                let traducao =
-                    "";
-
-                dados[0].forEach(
-                    parte => {
-
-                        if (
-                            Array.isArray(
-                                parte
-                            ) &&
-                            typeof parte[0] ===
-                            "string"
-                        ) {
-
-                            traducao +=
-                                parte[0];
-
-                        }
-
-                    }
-                );
-
-                traducao =
-                    traducao.trim();
 
                 if (
                     !traducao
@@ -187,60 +124,113 @@ document.addEventListener(
 
                 }
 
-                let japones =
-                    "";
-
-                let romaji =
-                    "";
-
-                if (
-                    origem ===
-                    "pt"
-                ) {
-
-                    japones =
-                        traducao;
-
-                    romaji =
-                        extrairRomanizacao(
-                            dados
-                        );
-
-                } else {
-
-                    japones =
-                        texto;
-
-                    romaji =
-                        extrairRomanizacao(
-                            dados
-                        );
-
-                }
-
                 resultado.classList.remove(
                     "erro"
                 );
 
+                /* =============================================
+                   PORTUGUÊS → JAPONÊS
+                ============================================= */
+
                 if (
                     origem ===
                     "pt"
                 ) {
 
+                    const japones =
+                        traducao;
+
                     resultado.innerHTML =
-                        criarResultadoPortuguesParaJapones(
-                            traducao,
-                            romaji
+                        montarResultadoJapones(
+                            japones,
+                            ""
                         );
 
-                } else {
+                    /* =========================================
+                       TENTA PEGAR ROMAJI SEPARADAMENTE
+
+                       SE DER ERRO,
+                       NÃO QUEBRA A TRADUÇÃO
+                    ========================================= */
+
+                    try {
+
+                        const romaji =
+                            await buscarRomaji(
+                                japones
+                            );
+
+                        if (
+                            romaji
+                        ) {
+
+                            resultado.innerHTML =
+                                montarResultadoJapones(
+                                    japones,
+                                    romaji
+                                );
+
+                        }
+
+                    } catch (
+                        erroRomaji
+                    ) {
+
+                        console.warn(
+                            "Romaji indisponível:",
+                            erroRomaji
+                        );
+
+                    }
+
+                }
+
+                /* =============================================
+                   JAPONÊS → PORTUGUÊS
+                ============================================= */
+
+                else {
+
+                    const japones =
+                        texto;
 
                     resultado.innerHTML =
-                        criarResultadoJaponesParaPortugues(
+                        montarResultadoPortugues(
                             traducao,
                             japones,
-                            romaji
+                            ""
                         );
+
+                    try {
+
+                        const romaji =
+                            await buscarRomaji(
+                                japones
+                            );
+
+                        if (
+                            romaji
+                        ) {
+
+                            resultado.innerHTML =
+                                montarResultadoPortugues(
+                                    traducao,
+                                    japones,
+                                    romaji
+                                );
+
+                        }
+
+                    } catch (
+                        erroRomaji
+                    ) {
+
+                        console.warn(
+                            "Romaji indisponível:",
+                            erroRomaji
+                        );
+
+                    }
 
                 }
 
@@ -272,14 +262,233 @@ document.addEventListener(
 
         }
 
-        function extrairRomanizacao(
-            dados
+        /* =====================================================
+           BUSCAR TRADUÇÃO
+        ===================================================== */
+
+        async function buscarTraducao(
+            texto,
+            origem,
+            destino
         ) {
+
+            const url =
+                "https://translate.googleapis.com/translate_a/single" +
+                "?client=gtx" +
+                "&sl=" +
+                origem +
+                "&tl=" +
+                destino +
+                "&dt=t" +
+                "&q=" +
+                encodeURIComponent(
+                    texto
+                );
+
+            const resposta =
+                await fetch(
+                    url,
+                    {
+                        method:
+                            "GET",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+            if (
+                !resposta.ok
+            ) {
+
+                throw new Error(
+                    "HTTP " +
+                    resposta.status
+                );
+
+            }
+
+            const dados =
+                await resposta.json();
+
+            if (
+                !Array.isArray(
+                    dados
+                ) ||
+                !Array.isArray(
+                    dados[0]
+                )
+            ) {
+
+                throw new Error(
+                    "Resposta inválida"
+                );
+
+            }
+
+            let traducao =
+                "";
+
+            dados[0].forEach(
+                parte => {
+
+                    if (
+                        Array.isArray(
+                            parte
+                        ) &&
+                        typeof parte[0] ===
+                        "string"
+                    ) {
+
+                        traducao +=
+                            parte[0];
+
+                    }
+
+                }
+            );
+
+            return traducao.trim();
+
+        }
+
+        /* =====================================================
+           BUSCAR ROMAJI
+
+           CHAMADA SEPARADA PARA NÃO QUEBRAR
+           A TRADUÇÃO PRINCIPAL
+        ===================================================== */
+
+        async function buscarRomaji(
+            japones
+        ) {
+
+            if (
+                !japones
+            ) {
+
+                return "";
+
+            }
+
+            const url =
+                "https://translate.googleapis.com/translate_a/single" +
+                "?client=gtx" +
+                "&sl=ja" +
+                "&tl=en" +
+                "&dt=t" +
+                "&dt=rm" +
+                "&q=" +
+                encodeURIComponent(
+                    japones
+                );
+
+            const resposta =
+                await fetch(
+                    url,
+                    {
+                        method:
+                            "GET",
+
+                        cache:
+                            "no-store"
+                    }
+                );
+
+            if (
+                !resposta.ok
+            ) {
+
+                return "";
+
+            }
+
+            const dados =
+                await resposta.json();
+
+            return extrairRomaji(
+                dados,
+                japones
+            );
+
+        }
+
+        /* =====================================================
+           EXTRAIR ROMAJI
+        ===================================================== */
+
+        function extrairRomaji(
+            dados,
+            japones
+        ) {
+
+            if (
+                !Array.isArray(
+                    dados
+                )
+            ) {
+
+                return "";
+
+            }
 
             let candidatos =
                 [];
 
-            procurarStringsRomanizacao(
+            /* =============================================
+               PRIMEIRO:
+               PROCURA NAS PARTES DA RESPOSTA
+            ============================================= */
+
+            if (
+                Array.isArray(
+                    dados[0]
+                )
+            ) {
+
+                dados[0].forEach(
+                    parte => {
+
+                        if (
+                            !Array.isArray(
+                                parte
+                            )
+                        ) {
+
+                            return;
+
+                        }
+
+                        for (
+                            let i = 1;
+                            i < parte.length;
+                            i++
+                        ) {
+
+                            if (
+                                typeof parte[i] ===
+                                "string"
+                            ) {
+
+                                candidatos.push(
+                                    parte[i]
+                                );
+
+                            }
+
+                        }
+
+                    }
+                );
+
+            }
+
+            /* =============================================
+               DEPOIS:
+               PROCURA NO RESTO DA RESPOSTA
+            ============================================= */
+
+            procurarStrings(
                 dados,
                 candidatos
             );
@@ -287,18 +496,82 @@ document.addEventListener(
             candidatos =
                 candidatos
                     .map(
-                        texto =>
+                        valor =>
                             String(
-                                texto
+                                valor
                             ).trim()
                     )
                     .filter(
-                        texto =>
-                            texto &&
-                            /[a-zA-Z]/.test(
-                                texto
-                            )
+                        valor =>
+                            valor.length >
+                            1
                     );
+
+            /* =============================================
+               REMOVE O PRÓPRIO JAPONÊS
+            ============================================= */
+
+            candidatos =
+                candidatos.filter(
+                    valor =>
+                        valor !==
+                        japones
+                );
+
+            /* =============================================
+               QUEREMOS TEXTO LATINO
+            ============================================= */
+
+            candidatos =
+                candidatos.filter(
+                    valor => {
+
+                        const temLatino =
+                            /[A-Za-z]/.test(
+                                valor
+                            );
+
+                        const temJapones =
+                            /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(
+                                valor
+                            );
+
+                        return (
+                            temLatino &&
+                            !temJapones
+                        );
+
+                    }
+                );
+
+            /* =============================================
+               REMOVE COISAS CURTAS OU CÓDIGOS
+            ============================================= */
+
+            candidatos =
+                candidatos.filter(
+                    valor => {
+
+                        if (
+                            valor ===
+                            "ja" ||
+                            valor ===
+                            "en" ||
+                            valor ===
+                            "pt"
+                        ) {
+
+                            return false;
+
+                        }
+
+                        return (
+                            valor.length >
+                            2
+                        );
+
+                    }
+                );
 
             if (
                 candidatos.length ===
@@ -309,40 +582,69 @@ document.addEventListener(
 
             }
 
-            const ignorar = [
-
-                "pt",
-                "ja",
-                "Portuguese",
-                "Japanese"
-
-            ];
-
-            candidatos =
-                candidatos.filter(
-                    texto =>
-                        !ignorar.includes(
-                            texto
-                        )
-                );
+            /* =============================================
+               PREFERE O CANDIDATO MAIS PARECIDO
+               COM UMA FRASE ROMANIZADA
+            ============================================= */
 
             candidatos.sort(
                 (
                     a,
                     b
-                ) =>
-                    b.length -
-                    a.length
+                ) => {
+
+                    const scoreA =
+                        pontuarRomaji(
+                            a
+                        );
+
+                    const scoreB =
+                        pontuarRomaji(
+                            b
+                        );
+
+                    if (
+                        scoreA !==
+                        scoreB
+                    ) {
+
+                        return (
+                            scoreB -
+                            scoreA
+                        );
+
+                    }
+
+                    return (
+                        b.length -
+                        a.length
+                    );
+
+                }
             );
 
-            return (
-                candidatos[0] ||
-                ""
+            const melhor =
+                candidatos[0];
+
+            if (
+                !melhor
+            ) {
+
+                return "";
+
+            }
+
+            return limparRomaji(
+                melhor
             );
 
         }
 
-        function procurarStringsRomanizacao(
+        /* =====================================================
+           PROCURAR STRINGS
+        ===================================================== */
+
+        function procurarStrings(
             valor,
             lista
         ) {
@@ -356,7 +658,7 @@ document.addEventListener(
                 valor.forEach(
                     item => {
 
-                        procurarStringsRomanizacao(
+                        procurarStrings(
                             item,
                             lista
                         );
@@ -373,26 +675,114 @@ document.addEventListener(
                 "string"
             ) {
 
-                const texto =
-                    valor.trim();
-
-                if (
-                    texto.length >
-                    1
-                ) {
-
-                    lista.push(
-                        texto
-                    );
-
-                }
+                lista.push(
+                    valor
+                );
 
             }
 
         }
 
-        function criarResultadoPortuguesParaJapones(
-            traducao,
+        /* =====================================================
+           PONTUAR CANDIDATO
+        ===================================================== */
+
+        function pontuarRomaji(
+            texto
+        ) {
+
+            let score =
+                0;
+
+            if (
+                /[A-Za-z]/.test(
+                    texto
+                )
+            ) {
+
+                score +=
+                    5;
+
+            }
+
+            if (
+                /\s/.test(
+                    texto
+                )
+            ) {
+
+                score +=
+                    4;
+
+            }
+
+            if (
+                texto.length >
+                10
+            ) {
+
+                score +=
+                    3;
+
+            }
+
+            if (
+                /^[A-Za-zÀ-ÿ0-9\s.,!?'"()\-āīūēōĀĪŪĒŌ]+$/.test(
+                    texto
+                )
+            ) {
+
+                score +=
+                    5;
+
+            }
+
+            return score;
+
+        }
+
+        /* =====================================================
+           LIMPAR ROMAJI
+        ===================================================== */
+
+        function limparRomaji(
+            texto
+        ) {
+
+            let romaji =
+                String(
+                    texto
+                )
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .trim();
+
+            if (
+                romaji
+            ) {
+
+                romaji =
+                    romaji.charAt(
+                        0
+                    ).toUpperCase() +
+                    romaji.slice(
+                        1
+                    );
+
+            }
+
+            return romaji;
+
+        }
+
+        /* =====================================================
+           RESULTADO PT → JP
+        ===================================================== */
+
+        function montarResultadoJapones(
+            japones,
             romaji
         ) {
 
@@ -411,13 +801,13 @@ document.addEventListener(
 
             html +=
                 '<div style="' +
-                'font-size:17px;' +
+                'font-size:18px;' +
                 'font-weight:700;' +
                 'line-height:1.6;' +
                 'color:#065f46;' +
                 '">' +
                 escaparHtml(
-                    traducao
+                    japones
                 ) +
                 '</div>';
 
@@ -427,8 +817,8 @@ document.addEventListener(
 
                 html +=
                     '<div style="' +
-                    'margin-top:10px;' +
-                    'padding-top:9px;' +
+                    'margin-top:11px;' +
+                    'padding-top:10px;' +
                     'border-top:1px solid #a7f3d0;' +
                     '">';
 
@@ -437,7 +827,7 @@ document.addEventListener(
                     'font-size:12px;' +
                     'font-weight:800;' +
                     'color:#047857;' +
-                    'margin-bottom:3px;' +
+                    'margin-bottom:4px;' +
                     '">' +
                     'Romaji' +
                     '</div>';
@@ -463,8 +853,12 @@ document.addEventListener(
 
         }
 
-        function criarResultadoJaponesParaPortugues(
-            traducao,
+        /* =====================================================
+           RESULTADO JP → PT
+        ===================================================== */
+
+        function montarResultadoPortugues(
+            portugues,
             japones,
             romaji
         ) {
@@ -484,20 +878,20 @@ document.addEventListener(
 
             html +=
                 '<div style="' +
-                'font-size:17px;' +
+                'font-size:18px;' +
                 'font-weight:700;' +
                 'line-height:1.55;' +
                 'color:#065f46;' +
                 '">' +
                 escaparHtml(
-                    traducao
+                    portugues
                 ) +
                 '</div>';
 
             html +=
                 '<div style="' +
-                'margin-top:10px;' +
-                'padding-top:9px;' +
+                'margin-top:11px;' +
+                'padding-top:10px;' +
                 'border-top:1px solid #a7f3d0;' +
                 '">';
 
@@ -506,7 +900,7 @@ document.addEventListener(
                 'font-size:12px;' +
                 'font-weight:800;' +
                 'color:#047857;' +
-                'margin-bottom:3px;' +
+                'margin-bottom:4px;' +
                 '">' +
                 '日本語' +
                 '</div>';
@@ -531,8 +925,8 @@ document.addEventListener(
                     'font-size:12px;' +
                     'font-weight:800;' +
                     'color:#047857;' +
-                    'margin-top:8px;' +
-                    'margin-bottom:3px;' +
+                    'margin-top:9px;' +
+                    'margin-bottom:4px;' +
                     '">' +
                     'Romaji' +
                     '</div>';
@@ -557,6 +951,10 @@ document.addEventListener(
             return html;
 
         }
+
+        /* =====================================================
+           ESCAPAR HTML
+        ===================================================== */
 
         function escaparHtml(
             texto
