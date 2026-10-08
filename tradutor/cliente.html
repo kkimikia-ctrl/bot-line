@@ -49,9 +49,9 @@ body {
     color: #1e293b;
 }
 
-button {
+button,
+select {
     font-family: inherit;
-    cursor: pointer;
 }
 
 .app {
@@ -131,7 +131,7 @@ button {
 }
 
 /* =========================================================
-   CARD PRINCIPAL
+   CARD
 ========================================================= */
 
 .card {
@@ -163,7 +163,7 @@ button {
 }
 
 /* =========================================================
-   LOCAL
+   CAMPO
 ========================================================= */
 
 .campo {
@@ -222,7 +222,7 @@ button {
 }
 
 /* =========================================================
-   BOTÃO
+   BOTÕES
 ========================================================= */
 
 .btn-principal {
@@ -245,7 +245,20 @@ button {
 
 .btn-principal:disabled {
     opacity: .55;
-    cursor: default;
+}
+
+.btn-cancelar {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    padding: 15px;
+    margin-top: 16px;
+
+    background: #fee2e2;
+    color: #b91c1c;
+
+    font-size: 15px;
+    font-weight: 800;
 }
 
 /* =========================================================
@@ -254,14 +267,13 @@ button {
 
 .status-area {
     display: none;
-    margin-top: 18px;
     text-align: center;
 }
 
 .spinner {
-    width: 43px;
-    height: 43px;
-    margin: 0 auto 13px;
+    width: 48px;
+    height: 48px;
+    margin: 6px auto 17px;
 
     border: 4px solid #dbeafe;
     border-top-color: #2563eb;
@@ -276,102 +288,36 @@ button {
     }
 }
 
+.status-icone {
+    display: none;
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
 .status-titulo {
-    font-weight: 800;
-    font-size: 17px;
+    font-weight: 900;
+    font-size: 19px;
 }
 
 .status-texto {
     color: #64748b;
     font-size: 13px;
-    margin-top: 4px;
+    line-height: 1.55;
+    margin-top: 7px;
 }
 
-/* =========================================================
-   VÍDEO
-========================================================= */
+.numero-pedido {
+    margin-top: 14px;
+    padding: 10px;
 
-.chamada-area {
-    display: none;
-    margin-top: 16px;
-}
+    border-radius: 12px;
 
-.video-box {
-    position: relative;
-    overflow: hidden;
+    background: #f8fafc;
+    color: #64748b;
 
-    width: 100%;
-    aspect-ratio: 3 / 4;
+    font-size: 11px;
 
-    background: #0f172a;
-    border-radius: 22px;
-}
-
-#videoRemoto {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    background: #111827;
-}
-
-#videoLocal {
-    position: absolute;
-    right: 12px;
-    bottom: 12px;
-
-    width: 105px;
-    height: 140px;
-
-    border-radius: 15px;
-    object-fit: cover;
-
-    background: black;
-    border: 2px solid white;
-
-    transform: scaleX(-1);
-}
-
-.timer {
-    position: absolute;
-    left: 12px;
-    top: 12px;
-
-    background: rgba(0,0,0,.65);
-    color: white;
-
-    padding: 7px 11px;
-    border-radius: 20px;
-
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.controles {
-    display: flex;
-    gap: 10px;
-    margin-top: 13px;
-}
-
-.btn-controle {
-    flex: 1;
-
-    border: none;
-    border-radius: 14px;
-
-    padding: 13px;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    background: white;
-
-    box-shadow:
-        0 4px 14px rgba(0,0,0,.08);
-}
-
-.btn-encerrar {
-    background: #dc2626;
-    color: white;
+    word-break: break-all;
 }
 
 /* =========================================================
@@ -517,8 +463,8 @@ button {
         </button>
 
         <div class="aviso">
-            Nesta etapa o saldo é real, mas o botão ainda não cria solicitação,
-            não chama tradutor e não desconta pontos.
+            TESTE: o pedido será enviado ao painel do tradutor,
+            mas nenhum ponto será descontado e a videochamada ainda não será iniciada.
         </div>
 
     </div>
@@ -538,96 +484,47 @@ button {
         ></div>
 
         <div
+            id="statusIcone"
+            class="status-icone"
+        >
+            ✅
+        </div>
+
+        <div
             id="statusTitulo"
             class="status-titulo"
         >
-            Verificando...
+            Procurando tradutor...
         </div>
 
         <div
             id="statusTexto"
             class="status-texto"
         >
-            Aguarde.
+            Sua solicitação foi enviada.
         </div>
+
+        <div
+            id="numeroPedido"
+            class="numero-pedido"
+        ></div>
 
         <button
-            id="btnVoltarStatus"
-            class="btn-principal"
-            style="margin-top:18px; display:none;"
+            id="btnCancelarPedido"
+            class="btn-cancelar"
         >
-            Voltar
+            Cancelar solicitação
         </button>
-
-    </div>
-
-    <!-- =====================================================
-         CHAMADA
-    ====================================================== -->
-
-    <div
-        id="chamadaArea"
-        class="chamada-area"
-    >
-
-        <div class="video-box">
-
-            <video
-                id="videoRemoto"
-                autoplay
-                playsinline
-            ></video>
-
-            <video
-                id="videoLocal"
-                autoplay
-                muted
-                playsinline
-            ></video>
-
-            <div
-                id="timer"
-                class="timer"
-            >
-                00:00
-            </div>
-
-        </div>
-
-        <div class="controles">
-
-            <button
-                id="btnMicrofone"
-                class="btn-controle"
-            >
-                🎤 Microfone
-            </button>
-
-            <button
-                id="btnCamera"
-                class="btn-controle"
-            >
-                📷 Câmera
-            </button>
-
-        </div>
-
-        <div class="controles">
-
-            <button
-                id="btnEncerrar"
-                class="btn-controle btn-encerrar"
-            >
-                Encerrar chamada
-            </button>
-
-        </div>
 
     </div>
 
 </div>
 
 <script type="module">
+
+/* =========================================================
+   FIREBASE IMPORTS
+========================================================= */
 
 import {
     initializeApp
@@ -638,6 +535,10 @@ import {
     doc,
     getDoc,
     setDoc,
+    collection,
+    addDoc,
+    updateDoc,
+    onSnapshot,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -690,9 +591,6 @@ const LIFF_ID =
 const PRECO_ATENDIMENTO =
     1500;
 
-const TEMPO_ATENDIMENTO =
-    30;
-
 /* =========================================================
    VARIÁVEIS
 ========================================================= */
@@ -700,19 +598,10 @@ const TEMPO_ATENDIMENTO =
 let usuarioAtual =
     null;
 
-let streamLocal =
+let solicitacaoAtualId =
     null;
 
-let micLigado =
-    true;
-
-let cameraLigada =
-    true;
-
-let segundosChamada =
-    0;
-
-let timerInterval =
+let pararMonitoramento =
     null;
 
 /* =========================================================
@@ -739,6 +628,11 @@ const spinnerStatus =
         "spinnerStatus"
     );
 
+const statusIcone =
+    document.getElementById(
+        "statusIcone"
+    );
+
 const statusTitulo =
     document.getElementById(
         "statusTitulo"
@@ -749,29 +643,9 @@ const statusTexto =
         "statusTexto"
     );
 
-const btnVoltarStatus =
+const numeroPedido =
     document.getElementById(
-        "btnVoltarStatus"
-    );
-
-const chamadaArea =
-    document.getElementById(
-        "chamadaArea"
-    );
-
-const videoLocal =
-    document.getElementById(
-        "videoLocal"
-    );
-
-const videoRemoto =
-    document.getElementById(
-        "videoRemoto"
-    );
-
-const timerEl =
-    document.getElementById(
-        "timer"
+        "numeroPedido"
     );
 
 const btnProcurar =
@@ -779,23 +653,13 @@ const btnProcurar =
         "btnProcurar"
     );
 
-const btnMicrofone =
+const btnCancelarPedido =
     document.getElementById(
-        "btnMicrofone"
-    );
-
-const btnCamera =
-    document.getElementById(
-        "btnCamera"
-    );
-
-const btnEncerrar =
-    document.getElementById(
-        "btnEncerrar"
+        "btnCancelarPedido"
     );
 
 /* =========================================================
-   INICIAR LIFF
+   LIFF
 ========================================================= */
 
 async function iniciarLIFF() {
@@ -868,20 +732,9 @@ async function iniciarLIFF() {
             btnProcurar.disabled =
                 true;
 
-            statusArea.style.display =
-                "block";
-
-            spinnerStatus.style.display =
-                "none";
-
-            statusTitulo.textContent =
-                "Conta LINE não identificada";
-
-            statusTexto.textContent =
-                "Abra esta página pelo Ajuda JP para usar sua conta e sua carteira.";
-
-            btnVoltarStatus.style.display =
-                "block";
+            alert(
+                "Não foi possível identificar sua conta LINE."
+            );
 
             return;
 
@@ -936,40 +789,14 @@ async function iniciarLIFF() {
 
             await carregarSaldo();
 
-            return;
-
         }
-
-        usuarioAtual =
-            null;
-
-        saldoEl.textContent =
-            "-- pts";
-
-        btnProcurar.disabled =
-            true;
-
-        statusArea.style.display =
-            "block";
-
-        spinnerStatus.style.display =
-            "none";
-
-        statusTitulo.textContent =
-            "Não foi possível identificar sua conta";
-
-        statusTexto.textContent =
-            "Volte ao Ajuda JP e abra novamente por lá.";
-
-        btnVoltarStatus.style.display =
-            "block";
 
     }
 
 }
 
 /* =========================================================
-   CARREGAR SALDO
+   SALDO
 ========================================================= */
 
 async function carregarSaldo() {
@@ -1048,7 +875,7 @@ async function carregarSaldo() {
     ) {
 
         console.error(
-            "Erro saldo:",
+            "Saldo:",
             erro
         );
 
@@ -1062,67 +889,124 @@ async function carregarSaldo() {
 }
 
 /* =========================================================
-   BOTÃO PROCURAR
+   CRIAR SOLICITAÇÃO
 ========================================================= */
 
-btnProcurar.addEventListener(
-    "click",
-    async () => {
+async function criarSolicitacao() {
 
-        if (
-            !usuarioAtual
-        ) {
+    if (
+        !usuarioAtual
+    ) {
 
-            alert(
-                "Não foi possível identificar sua conta LINE."
-            );
+        alert(
+            "Não foi possível identificar sua conta LINE."
+        );
 
-            return;
+        return;
 
-        }
+    }
 
-        btnProcurar.disabled =
-            true;
+    btnProcurar.disabled =
+        true;
 
-        btnProcurar.textContent =
-            "Verificando saldo...";
+    btnProcurar.textContent =
+        "Enviando...";
+
+    try {
 
         const saldo =
             await carregarSaldo();
-
-        btnProcurar.disabled =
-            false;
-
-        btnProcurar.textContent =
-            "Procurar tradutor";
 
         if (
             saldo <
             PRECO_ATENDIMENTO
         ) {
 
-            const faltam =
-                PRECO_ATENDIMENTO -
-                saldo;
-
             alert(
                 "Saldo insuficiente.\n\n" +
-                "Tradutor ao vivo: 1.500 pts / 30 minutos\n\n" +
-                "Seu saldo: " +
-                saldo.toLocaleString(
-                    "pt-BR"
-                ) +
-                " pts\n\n" +
-                "Faltam: " +
-                faltam.toLocaleString(
-                    "pt-BR"
-                ) +
-                " pts"
+                "São necessários 1.500 pontos."
             );
 
             return;
 
         }
+
+        const local =
+            document.getElementById(
+                "localAtendimento"
+            ).value;
+
+        /*
+        =====================================================
+        IMPORTANTE
+
+        ESTA É UMA SOLICITAÇÃO REAL NO FIRESTORE.
+
+        PORÉM:
+        - NÃO desconta pontos
+        - NÃO inicia WebRTC
+        - NÃO usa câmera
+        =====================================================
+        */
+
+        const ref =
+            await addDoc(
+                collection(
+                    db,
+                    "solicitacoes"
+                ),
+                {
+
+                    clienteId:
+                        usuarioAtual.id,
+
+                    clienteNome:
+                        usuarioAtual.nome,
+
+                    status:
+                        "aguardando",
+
+                    tradutorId:
+                        "",
+
+                    tradutorNome:
+                        "",
+
+                    local:
+                        local,
+
+                    tempoMinutos:
+                        30,
+
+                    custoPontos:
+                        PRECO_ATENDIMENTO,
+
+                    cobrancaRealizada:
+                        false,
+
+                    pontosCobrados:
+                        0,
+
+                    origem:
+                        "Ajuda JP",
+
+                    modoTesteClienteNovo:
+                        true,
+
+                    criadoEm:
+                        serverTimestamp(),
+
+                    atualizadoEm:
+                        serverTimestamp(),
+
+                    webrtcEstado:
+                        "aguardando"
+
+                }
+            );
+
+        solicitacaoAtualId =
+            ref.id;
 
         telaInicial.style.display =
             "none";
@@ -1131,167 +1015,384 @@ btnProcurar.addEventListener(
             "block";
 
         spinnerStatus.style.display =
+            "block";
+
+        statusIcone.style.display =
             "none";
 
         statusTitulo.textContent =
-            "Saldo confirmado ✅";
+            "Procurando tradutor...";
 
         statusTexto.textContent =
-            "Você possui saldo suficiente. Nesta etapa ainda não enviamos a solicitação ao tradutor e nenhum ponto foi descontado.";
+            "Sua solicitação foi enviada. Agora ela deve aparecer no Painel do Tradutor.";
 
-        btnVoltarStatus.style.display =
-            "block";
+        numeroPedido.textContent =
+            "Pedido: " +
+            ref.id;
 
-    }
-);
+        btnCancelarPedido.textContent =
+            "Cancelar solicitação";
 
-/* =========================================================
-   VOLTAR DA TELA DE STATUS
-========================================================= */
-
-btnVoltarStatus.addEventListener(
-    "click",
-    () => {
-
-        statusArea.style.display =
-            "none";
-
-        btnVoltarStatus.style.display =
-            "none";
-
-        telaInicial.style.display =
-            "block";
-
-    }
-);
-
-/* =========================================================
-   MICROFONE
-========================================================= */
-
-btnMicrofone.addEventListener(
-    "click",
-    () => {
-
-        if (
-            !streamLocal
-        ) {
-
-            return;
-
-        }
-
-        micLigado =
-            !micLigado;
-
-        streamLocal
-            .getAudioTracks()
-            .forEach(
-                track => {
-
-                    track.enabled =
-                        micLigado;
-
-                }
-            );
-
-        btnMicrofone.textContent =
-            micLigado
-                ? "🎤 Microfone"
-                : "🔇 Microfone";
-
-    }
-);
-
-/* =========================================================
-   CÂMERA
-========================================================= */
-
-btnCamera.addEventListener(
-    "click",
-    () => {
-
-        if (
-            !streamLocal
-        ) {
-
-            return;
-
-        }
-
-        cameraLigada =
-            !cameraLigada;
-
-        streamLocal
-            .getVideoTracks()
-            .forEach(
-                track => {
-
-                    track.enabled =
-                        cameraLigada;
-
-                }
-            );
-
-        btnCamera.textContent =
-            cameraLigada
-                ? "📷 Câmera"
-                : "🚫 Câmera";
-
-    }
-);
-
-/* =========================================================
-   ENCERRAR LOCAL
-========================================================= */
-
-btnEncerrar.addEventListener(
-    "click",
-    encerrarChamadaLocal
-);
-
-function encerrarChamadaLocal() {
-
-    if (
-        timerInterval
-    ) {
-
-        clearInterval(
-            timerInterval
+        monitorarSolicitacao(
+            ref.id
         );
 
-        timerInterval =
-            null;
-
-    }
-
-    if (
-        streamLocal
+    } catch (
+        erro
     ) {
 
-        streamLocal
-            .getTracks()
-            .forEach(
-                track => {
+        console.error(
+            "Criar solicitação:",
+            erro
+        );
 
-                    track.stop();
+        alert(
+            "Não foi possível enviar a solicitação."
+        );
+
+    } finally {
+
+        btnProcurar.disabled =
+            false;
+
+        btnProcurar.textContent =
+            "Procurar tradutor";
+
+    }
+
+}
+
+/* =========================================================
+   MONITORAR SOLICITAÇÃO
+========================================================= */
+
+function monitorarSolicitacao(
+    id
+) {
+
+    if (
+        pararMonitoramento
+    ) {
+
+        pararMonitoramento();
+
+    }
+
+    const ref =
+        doc(
+            db,
+            "solicitacoes",
+            id
+        );
+
+    pararMonitoramento =
+        onSnapshot(
+            ref,
+            snapshot => {
+
+                if (
+                    !snapshot.exists()
+                ) {
+
+                    return;
 
                 }
+
+                const dados =
+                    snapshot.data();
+
+                if (
+                    dados.status ===
+                    "aguardando"
+                ) {
+
+                    spinnerStatus.style.display =
+                        "block";
+
+                    statusIcone.style.display =
+                        "none";
+
+                    statusTitulo.textContent =
+                        "Procurando tradutor...";
+
+                    statusTexto.textContent =
+                        "A solicitação está aguardando no Painel do Tradutor.";
+
+                }
+
+                if (
+                    dados.status ===
+                    "aceito"
+                ) {
+
+                    spinnerStatus.style.display =
+                        "none";
+
+                    statusIcone.style.display =
+                        "block";
+
+                    statusIcone.textContent =
+                        "✅";
+
+                    statusTitulo.textContent =
+                        "Tradutor aceitou!";
+
+                    statusTexto.textContent =
+                        (
+                            dados.tradutorNome
+                                ? dados.tradutorNome +
+                                  " aceitou o atendimento. "
+                                : "Um tradutor aceitou o atendimento. "
+                        ) +
+                        "Neste teste a videochamada ainda não será iniciada e nenhum ponto será descontado.";
+
+                    btnCancelarPedido.textContent =
+                        "Encerrar teste";
+
+                }
+
+                if (
+                    dados.status ===
+                    "conectado"
+                ) {
+
+                    spinnerStatus.style.display =
+                        "none";
+
+                    statusIcone.style.display =
+                        "block";
+
+                    statusIcone.textContent =
+                        "✅";
+
+                    statusTitulo.textContent =
+                        "Atendimento conectado";
+
+                    statusTexto.textContent =
+                        "O status foi alterado para conectado. Nesta página de teste ainda não iniciamos vídeo nem cobrança.";
+
+                    btnCancelarPedido.textContent =
+                        "Encerrar teste";
+
+                }
+
+                if (
+                    dados.status ===
+                    "cancelado"
+                ) {
+
+                    finalizarTelaTeste(
+                        "Solicitação cancelada",
+                        "O teste foi encerrado. Nenhum ponto foi descontado."
+                    );
+
+                }
+
+                if (
+                    dados.status ===
+                    "finalizado"
+                ) {
+
+                    finalizarTelaTeste(
+                        "Atendimento finalizado",
+                        "O teste foi finalizado. Nenhum ponto foi descontado."
+                    );
+
+                }
+
+            },
+            erro => {
+
+                console.error(
+                    "Monitoramento:",
+                    erro
+                );
+
+            }
+        );
+
+}
+
+/* =========================================================
+   CANCELAR TESTE
+========================================================= */
+
+async function cancelarSolicitacao() {
+
+    if (
+        !solicitacaoAtualId
+    ) {
+
+        voltarInicio();
+
+        return;
+
+    }
+
+    btnCancelarPedido.disabled =
+        true;
+
+    btnCancelarPedido.textContent =
+        "Encerrando...";
+
+    try {
+
+        const ref =
+            doc(
+                db,
+                "solicitacoes",
+                solicitacaoAtualId
             );
 
-        streamLocal =
+        const snap =
+            await getDoc(
+                ref
+            );
+
+        if (
+            snap.exists()
+        ) {
+
+            const dados =
+                snap.data();
+
+            if (
+                dados.status ===
+                "aguardando"
+            ) {
+
+                await updateDoc(
+                    ref,
+                    {
+
+                        status:
+                            "cancelado",
+
+                        motivoCancelamento:
+                            "teste_cliente_novo",
+
+                        atualizadoEm:
+                            serverTimestamp()
+
+                    }
+                );
+
+            } else {
+
+                await updateDoc(
+                    ref,
+                    {
+
+                        status:
+                            "finalizado",
+
+                        webrtcEstado:
+                            "encerrado_teste",
+
+                        finalizadoEm:
+                            serverTimestamp(),
+
+                        atualizadoEm:
+                            serverTimestamp()
+
+                    }
+                );
+
+            }
+
+        }
+
+    } catch (
+        erro
+    ) {
+
+        console.error(
+            "Cancelar:",
+            erro
+        );
+
+        alert(
+            "Não foi possível encerrar a solicitação."
+        );
+
+        btnCancelarPedido.disabled =
+            false;
+
+        btnCancelarPedido.textContent =
+            "Cancelar solicitação";
+
+    }
+
+}
+
+/* =========================================================
+   FINALIZAR TELA
+========================================================= */
+
+function finalizarTelaTeste(
+    titulo,
+    texto
+) {
+
+    if (
+        pararMonitoramento
+    ) {
+
+        pararMonitoramento();
+
+        pararMonitoramento =
             null;
 
     }
 
-    videoLocal.srcObject =
+    solicitacaoAtualId =
         null;
 
-    videoRemoto.srcObject =
-        null;
-
-    chamadaArea.style.display =
+    spinnerStatus.style.display =
         "none";
+
+    statusIcone.style.display =
+        "block";
+
+    statusIcone.textContent =
+        "✅";
+
+    statusTitulo.textContent =
+        titulo;
+
+    statusTexto.textContent =
+        texto;
+
+    numeroPedido.textContent =
+        "";
+
+    btnCancelarPedido.disabled =
+        false;
+
+    btnCancelarPedido.textContent =
+        "Voltar";
+
+}
+
+/* =========================================================
+   VOLTAR PARA INÍCIO
+========================================================= */
+
+function voltarInicio() {
+
+    if (
+        pararMonitoramento
+    ) {
+
+        pararMonitoramento();
+
+        pararMonitoramento =
+            null;
+
+    }
+
+    solicitacaoAtualId =
+        null;
 
     statusArea.style.display =
         "none";
@@ -1302,70 +1403,32 @@ function encerrarChamadaLocal() {
 }
 
 /* =========================================================
-   CRONÔMETRO
+   EVENTOS
 ========================================================= */
 
-function iniciarTimer() {
+btnProcurar.addEventListener(
+    "click",
+    criarSolicitacao
+);
 
-    segundosChamada =
-        0;
+btnCancelarPedido.addEventListener(
+    "click",
+    async () => {
 
-    atualizarTimer();
+        if (
+            solicitacaoAtualId
+        ) {
 
-    if (
-        timerInterval
-    ) {
+            await cancelarSolicitacao();
 
-        clearInterval(
-            timerInterval
-        );
+        } else {
+
+            voltarInicio();
+
+        }
 
     }
-
-    timerInterval =
-        setInterval(
-            () => {
-
-                segundosChamada++;
-
-                atualizarTimer();
-
-            },
-            1000
-        );
-
-}
-
-function atualizarTimer() {
-
-    const minutos =
-        Math.floor(
-            segundosChamada /
-            60
-        );
-
-    const segundos =
-        segundosChamada %
-        60;
-
-    timerEl.textContent =
-        String(
-            minutos
-        ).padStart(
-            2,
-            "0"
-        )
-        +
-        ":"
-        +
-        String(
-            segundos
-        ).padStart(
-            2,
-            "0"
-        );
-
-}
+);
 
 /* =========================================================
    VOLTAR
@@ -1373,6 +1436,23 @@ function atualizarTimer() {
 
 window.voltarPagina =
     function () {
+
+        /*
+        Se existe solicitação aberta,
+        não vamos abandonar o pedido silenciosamente.
+        */
+
+        if (
+            solicitacaoAtualId
+        ) {
+
+            alert(
+                "Cancele a solicitação antes de sair."
+            );
+
+            return;
+
+        }
 
         window.location.href =
             "../index.html";
