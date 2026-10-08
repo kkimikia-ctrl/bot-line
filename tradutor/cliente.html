@@ -49,6 +49,11 @@ body {
     color: #1e293b;
 }
 
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
 .app {
     width: 100%;
     max-width: 520px;
@@ -158,6 +163,30 @@ body {
 }
 
 /* =========================================================
+   LOCAL
+========================================================= */
+
+.campo {
+    margin-bottom: 16px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.campo select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #dbe2ea;
+    border-radius: 13px;
+    background: white;
+    font-size: 15px;
+}
+
+/* =========================================================
    PREÇO
 ========================================================= */
 
@@ -216,6 +245,7 @@ body {
 
 .btn-principal:disabled {
     opacity: .55;
+    cursor: default;
 }
 
 /* =========================================================
@@ -297,6 +327,8 @@ body {
 
     background: black;
     border: 2px solid white;
+
+    transform: scaleX(-1);
 }
 
 .timer {
@@ -429,6 +461,34 @@ body {
             Converse por vídeo com um tradutor de português e japonês.
         </p>
 
+        <div class="campo">
+
+            <label for="localAtendimento">
+                Onde você está?
+            </label>
+
+            <select id="localAtendimento">
+
+                <option value="Hospital">
+                    🏥 Hospital
+                </option>
+
+                <option value="Prefeitura">
+                    🏛️ Prefeitura
+                </option>
+
+                <option value="Escola">
+                    🏫 Escola
+                </option>
+
+                <option value="Outros">
+                    📍 Outro local
+                </option>
+
+            </select>
+
+        </div>
+
         <div class="preco">
 
             <div class="preco-esquerda">
@@ -457,14 +517,14 @@ body {
         </button>
 
         <div class="aviso">
-            A cobrança de 1.500 pontos será adicionada depois que terminarmos
-            o teste completo da videochamada.
+            Nesta etapa o saldo é real, mas o botão ainda não cria solicitação,
+            não chama tradutor e não desconta pontos.
         </div>
 
     </div>
 
     <!-- =====================================================
-         PROCURANDO
+         STATUS
     ====================================================== -->
 
     <div
@@ -472,21 +532,32 @@ body {
         class="card status-area"
     >
 
-        <div class="spinner"></div>
+        <div
+            id="spinnerStatus"
+            class="spinner"
+        ></div>
 
         <div
             id="statusTitulo"
             class="status-titulo"
         >
-            Procurando tradutor...
+            Verificando...
         </div>
 
         <div
             id="statusTexto"
             class="status-texto"
         >
-            Aguarde um tradutor aceitar o atendimento.
+            Aguarde.
         </div>
+
+        <button
+            id="btnVoltarStatus"
+            class="btn-principal"
+            style="margin-top:18px; display:none;"
+        >
+            Voltar
+        </button>
 
     </div>
 
@@ -556,87 +627,175 @@ body {
 
 </div>
 
-<script>
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",
+
+    authDomain:
+        "ajuda-jp.firebaseapp.com",
+
+    databaseURL:
+        "https://ajuda-jp-default-rtdb.firebaseio.com",
+
+    projectId:
+        "ajuda-jp",
+
+    storageBucket:
+        "ajuda-jp.firebasestorage.app",
+
+    messagingSenderId:
+        "40121072206",
+
+    appId:
+        "1:40121072206:web:23168abd254affb6d0a11f"
+
+};
+
+const firebaseApp =
+    initializeApp(
+        firebaseConfig
+    );
+
+const db =
+    getFirestore(
+        firebaseApp
+    );
 
 /* =========================================================
    CONFIGURAÇÕES
 ========================================================= */
 
-const LIFF_ID = "2010902449-KWNNNsxn";
+const LIFF_ID =
+    "2010902449-KWNNNsxn";
 
-const PRECO_ATENDIMENTO = 1500;
-const TEMPO_ATENDIMENTO = 30;
+const PRECO_ATENDIMENTO =
+    1500;
 
-/*
-=========================================================
-IMPORTANTE
+const TEMPO_ATENDIMENTO =
+    30;
 
-Por enquanto NÃO colocamos Firebase nesta página nova.
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
 
-Primeiro vamos salvar a estrutura do cliente separada.
+let usuarioAtual =
+    null;
 
-No próximo passo vamos copiar SOMENTE a configuração Firebase
-e a conexão WebRTC que já funcionam no index.html atual.
+let streamLocal =
+    null;
 
-Assim não alteramos nem quebramos o sistema antigo.
-=========================================================
-*/
+let micLigado =
+    true;
 
-let lineUserId = "";
-let lineDisplayName = "";
+let cameraLigada =
+    true;
 
-let streamLocal = null;
-let micLigado = true;
-let cameraLigada = true;
+let segundosChamada =
+    0;
 
-let segundosChamada = 0;
-let timerInterval = null;
+let timerInterval =
+    null;
 
 /* =========================================================
    ELEMENTOS
 ========================================================= */
 
 const saldoEl =
-    document.getElementById("saldo");
+    document.getElementById(
+        "saldo"
+    );
 
 const telaInicial =
-    document.getElementById("telaInicial");
+    document.getElementById(
+        "telaInicial"
+    );
 
 const statusArea =
-    document.getElementById("statusArea");
+    document.getElementById(
+        "statusArea"
+    );
+
+const spinnerStatus =
+    document.getElementById(
+        "spinnerStatus"
+    );
 
 const statusTitulo =
-    document.getElementById("statusTitulo");
+    document.getElementById(
+        "statusTitulo"
+    );
 
 const statusTexto =
-    document.getElementById("statusTexto");
+    document.getElementById(
+        "statusTexto"
+    );
+
+const btnVoltarStatus =
+    document.getElementById(
+        "btnVoltarStatus"
+    );
 
 const chamadaArea =
-    document.getElementById("chamadaArea");
+    document.getElementById(
+        "chamadaArea"
+    );
 
 const videoLocal =
-    document.getElementById("videoLocal");
+    document.getElementById(
+        "videoLocal"
+    );
 
 const videoRemoto =
-    document.getElementById("videoRemoto");
+    document.getElementById(
+        "videoRemoto"
+    );
 
 const timerEl =
-    document.getElementById("timer");
+    document.getElementById(
+        "timer"
+    );
 
 const btnProcurar =
-    document.getElementById("btnProcurar");
+    document.getElementById(
+        "btnProcurar"
+    );
 
 const btnMicrofone =
-    document.getElementById("btnMicrofone");
+    document.getElementById(
+        "btnMicrofone"
+    );
 
 const btnCamera =
-    document.getElementById("btnCamera");
+    document.getElementById(
+        "btnCamera"
+    );
 
 const btnEncerrar =
-    document.getElementById("btnEncerrar");
+    document.getElementById(
+        "btnEncerrar"
+    );
 
 /* =========================================================
-   LIFF
+   INICIAR LIFF
 ========================================================= */
 
 async function iniciarLIFF() {
@@ -644,71 +803,326 @@ async function iniciarLIFF() {
     try {
 
         await liff.init({
-            liffId: LIFF_ID
+            liffId:
+                LIFF_ID
         });
 
-        if (!liff.isLoggedIn()) {
+        let userId =
+            localStorage.getItem(
+                "line_user_id"
+            );
 
-            liff.login();
+        let userName =
+            localStorage.getItem(
+                "line_user_name"
+            );
 
-            return;
+        if (
+            liff.isLoggedIn()
+        ) {
+
+            try {
+
+                const profile =
+                    await liff.getProfile();
+
+                userId =
+                    profile.userId;
+
+                userName =
+                    profile.displayName;
+
+                localStorage.setItem(
+                    "line_user_id",
+                    userId
+                );
+
+                localStorage.setItem(
+                    "line_user_name",
+                    userName
+                );
+
+            } catch (
+                erro
+            ) {
+
+                console.error(
+                    "Perfil LINE:",
+                    erro
+                );
+
+            }
+
         }
 
-        const profile =
-            await liff.getProfile();
+        if (
+            !userId
+        ) {
 
-        lineUserId =
-            profile.userId || "";
+            usuarioAtual =
+                null;
 
-        lineDisplayName =
-            profile.displayName || "";
+            saldoEl.textContent =
+                "-- pts";
 
-        localStorage.setItem(
-            "line_user_id",
-            lineUserId
-        );
+            btnProcurar.disabled =
+                true;
 
-        console.log(
-            "Cliente LINE:",
-            lineDisplayName
-        );
+            statusArea.style.display =
+                "block";
 
-    }
-    catch (erro) {
+            spinnerStatus.style.display =
+                "none";
+
+            statusTitulo.textContent =
+                "Conta LINE não identificada";
+
+            statusTexto.textContent =
+                "Abra esta página pelo Ajuda JP para usar sua conta e sua carteira.";
+
+            btnVoltarStatus.style.display =
+                "block";
+
+            return;
+
+        }
+
+        usuarioAtual = {
+
+            id:
+                userId,
+
+            nome:
+                userName ||
+                "Usuário LINE"
+
+        };
+
+        await carregarSaldo();
+
+    } catch (
+        erro
+    ) {
 
         console.error(
             "Erro LIFF:",
             erro
         );
 
-        /*
-        Permite visualizar a página fora do LINE
-        sem quebrar a tela.
-        */
-
-        lineUserId =
+        const userId =
             localStorage.getItem(
                 "line_user_id"
-            ) || "";
+            );
+
+        const userName =
+            localStorage.getItem(
+                "line_user_name"
+            );
+
+        if (
+            userId
+        ) {
+
+            usuarioAtual = {
+
+                id:
+                    userId,
+
+                nome:
+                    userName ||
+                    "Usuário LINE"
+
+            };
+
+            await carregarSaldo();
+
+            return;
+
+        }
+
+        usuarioAtual =
+            null;
+
+        saldoEl.textContent =
+            "-- pts";
+
+        btnProcurar.disabled =
+            true;
+
+        statusArea.style.display =
+            "block";
+
+        spinnerStatus.style.display =
+            "none";
+
+        statusTitulo.textContent =
+            "Não foi possível identificar sua conta";
+
+        statusTexto.textContent =
+            "Volte ao Ajuda JP e abra novamente por lá.";
+
+        btnVoltarStatus.style.display =
+            "block";
 
     }
 
 }
 
 /* =========================================================
-   PROCURAR TRADUTOR
+   CARREGAR SALDO
+========================================================= */
+
+async function carregarSaldo() {
+
+    if (
+        !usuarioAtual
+    ) {
+
+        saldoEl.textContent =
+            "-- pts";
+
+        return 0;
+
+    }
+
+    try {
+
+        const ref =
+            doc(
+                db,
+                "creditos_usuario",
+                usuarioAtual.id
+            );
+
+        const snap =
+            await getDoc(
+                ref
+            );
+
+        let saldo =
+            0;
+
+        if (
+            snap.exists()
+        ) {
+
+            saldo =
+                Number(
+                    snap.data().saldo ||
+                    0
+                );
+
+        } else {
+
+            await setDoc(
+                ref,
+                {
+
+                    nome:
+                        usuarioAtual.nome,
+
+                    saldo:
+                        0,
+
+                    criadoEm:
+                        serverTimestamp(),
+
+                    ultimaAtualizacao:
+                        serverTimestamp()
+
+                }
+            );
+
+        }
+
+        saldoEl.textContent =
+            saldo.toLocaleString(
+                "pt-BR"
+            ) +
+            " pts";
+
+        return saldo;
+
+    } catch (
+        erro
+    ) {
+
+        console.error(
+            "Erro saldo:",
+            erro
+        );
+
+        saldoEl.textContent =
+            "Erro";
+
+        return 0;
+
+    }
+
+}
+
+/* =========================================================
+   BOTÃO PROCURAR
 ========================================================= */
 
 btnProcurar.addEventListener(
     "click",
     async () => {
 
-        /*
-        Por enquanto este botão NÃO cria solicitação no Firebase.
+        if (
+            !usuarioAtual
+        ) {
 
-        Vamos ligar isso somente depois de copiar a configuração
-        correta do index.html atual.
-        */
+            alert(
+                "Não foi possível identificar sua conta LINE."
+            );
+
+            return;
+
+        }
+
+        btnProcurar.disabled =
+            true;
+
+        btnProcurar.textContent =
+            "Verificando saldo...";
+
+        const saldo =
+            await carregarSaldo();
+
+        btnProcurar.disabled =
+            false;
+
+        btnProcurar.textContent =
+            "Procurar tradutor";
+
+        if (
+            saldo <
+            PRECO_ATENDIMENTO
+        ) {
+
+            const faltam =
+                PRECO_ATENDIMENTO -
+                saldo;
+
+            alert(
+                "Saldo insuficiente.\n\n" +
+                "Tradutor ao vivo: 1.500 pts / 30 minutos\n\n" +
+                "Seu saldo: " +
+                saldo.toLocaleString(
+                    "pt-BR"
+                ) +
+                " pts\n\n" +
+                "Faltam: " +
+                faltam.toLocaleString(
+                    "pt-BR"
+                ) +
+                " pts"
+            );
+
+            return;
+
+        }
 
         telaInicial.style.display =
             "none";
@@ -716,11 +1130,37 @@ btnProcurar.addEventListener(
         statusArea.style.display =
             "block";
 
+        spinnerStatus.style.display =
+            "none";
+
         statusTitulo.textContent =
-            "Página preparada ✅";
+            "Saldo confirmado ✅";
 
         statusTexto.textContent =
-            "Ainda não enviamos a solicitação ao tradutor. Vamos ligar o Firebase no próximo passo.";
+            "Você possui saldo suficiente. Nesta etapa ainda não enviamos a solicitação ao tradutor e nenhum ponto foi descontado.";
+
+        btnVoltarStatus.style.display =
+            "block";
+
+    }
+);
+
+/* =========================================================
+   VOLTAR DA TELA DE STATUS
+========================================================= */
+
+btnVoltarStatus.addEventListener(
+    "click",
+    () => {
+
+        statusArea.style.display =
+            "none";
+
+        btnVoltarStatus.style.display =
+            "none";
+
+        telaInicial.style.display =
+            "block";
 
     }
 );
@@ -733,8 +1173,12 @@ btnMicrofone.addEventListener(
     "click",
     () => {
 
-        if (!streamLocal) {
+        if (
+            !streamLocal
+        ) {
+
             return;
+
         }
 
         micLigado =
@@ -742,12 +1186,14 @@ btnMicrofone.addEventListener(
 
         streamLocal
             .getAudioTracks()
-            .forEach(track => {
+            .forEach(
+                track => {
 
-                track.enabled =
-                    micLigado;
+                    track.enabled =
+                        micLigado;
 
-            });
+                }
+            );
 
         btnMicrofone.textContent =
             micLigado
@@ -765,8 +1211,12 @@ btnCamera.addEventListener(
     "click",
     () => {
 
-        if (!streamLocal) {
+        if (
+            !streamLocal
+        ) {
+
             return;
+
         }
 
         cameraLigada =
@@ -774,12 +1224,14 @@ btnCamera.addEventListener(
 
         streamLocal
             .getVideoTracks()
-            .forEach(track => {
+            .forEach(
+                track => {
 
-                track.enabled =
-                    cameraLigada;
+                    track.enabled =
+                        cameraLigada;
 
-            });
+                }
+            );
 
         btnCamera.textContent =
             cameraLigada
@@ -790,41 +1242,45 @@ btnCamera.addEventListener(
 );
 
 /* =========================================================
-   ENCERRAR
+   ENCERRAR LOCAL
 ========================================================= */
 
 btnEncerrar.addEventListener(
     "click",
-    () => {
-
-        encerrarChamadaLocal();
-
-    }
+    encerrarChamadaLocal
 );
 
 function encerrarChamadaLocal() {
 
-    if (timerInterval) {
+    if (
+        timerInterval
+    ) {
 
         clearInterval(
             timerInterval
         );
 
-        timerInterval = null;
+        timerInterval =
+            null;
 
     }
 
-    if (streamLocal) {
+    if (
+        streamLocal
+    ) {
 
         streamLocal
             .getTracks()
-            .forEach(track => {
+            .forEach(
+                track => {
 
-                track.stop();
+                    track.stop();
 
-            });
+                }
+            );
 
-        streamLocal = null;
+        streamLocal =
+            null;
 
     }
 
@@ -846,16 +1302,19 @@ function encerrarChamadaLocal() {
 }
 
 /* =========================================================
-   TIMER
+   CRONÔMETRO
 ========================================================= */
 
 function iniciarTimer() {
 
-    segundosChamada = 0;
+    segundosChamada =
+        0;
 
     atualizarTimer();
 
-    if (timerInterval) {
+    if (
+        timerInterval
+    ) {
 
         clearInterval(
             timerInterval
@@ -881,20 +1340,30 @@ function atualizarTimer() {
 
     const minutos =
         Math.floor(
-            segundosChamada / 60
+            segundosChamada /
+            60
         );
 
     const segundos =
-        segundosChamada % 60;
+        segundosChamada %
+        60;
 
     timerEl.textContent =
-        String(minutos)
-            .padStart(2, "0")
+        String(
+            minutos
+        ).padStart(
+            2,
+            "0"
+        )
         +
         ":"
         +
-        String(segundos)
-            .padStart(2, "0");
+        String(
+            segundos
+        ).padStart(
+            2,
+            "0"
+        );
 
 }
 
@@ -902,45 +1371,19 @@ function atualizarTimer() {
    VOLTAR
 ========================================================= */
 
-function voltarPagina() {
+window.voltarPagina =
+    function () {
 
-    if (
-        typeof liff !== "undefined"
-        &&
-        liff.isInClient()
-    ) {
+        window.location.href =
+            "../index.html";
 
-        liff.closeWindow();
-
-        return;
-    }
-
-    window.location.href =
-        "../index.html";
-
-}
+    };
 
 /* =========================================================
    INICIAR
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-
-        await iniciarLIFF();
-
-        /*
-        Temporário:
-        o saldo real será conectado ao Firestore
-        no próximo passo.
-        */
-
-        saldoEl.textContent =
-            "-- pts";
-
-    }
-);
+iniciarLIFF();
 
 </script>
 
