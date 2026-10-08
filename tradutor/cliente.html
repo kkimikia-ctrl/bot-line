@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<meta name="google" content="notranslate">
+
+<title>Ajuda JP - Tradutor ao Vivo</title>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            180deg,
+            #eef5ff 0%,
+            #f8fafc 45%,
+            #f1f5f9 100%
+        );
+
+    color: #1e293b;
+}
+
+.app {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+/* =========================================================
+   TOPO
+========================================================= */
+
+.topo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.voltar {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    font-size: 23px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+}
+
+.titulo-area {
+    flex: 1;
+}
+
+.titulo {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.subtitulo {
+    margin-top: 3px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* =========================================================
+   SALDO
+========================================================= */
+
+.saldo-card {
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: white;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 16px;
+
+    box-shadow:
+        0 10px 25px rgba(37,99,235,.22);
+}
+
+.saldo-label {
+    font-size: 13px;
+    opacity: .9;
+}
+
+.saldo-valor {
+    font-size: 29px;
+    font-weight: 900;
+    margin-top: 3px;
+}
+
+/* =========================================================
+   CARD PRINCIPAL
+========================================================= */
+
+.card {
+    background: white;
+    border-radius: 22px;
+    padding: 20px;
+
+    box-shadow:
+        0 8px 25px rgba(15,23,42,.08);
+}
+
+.icone {
+    font-size: 45px;
+    text-align: center;
+}
+
+.card h2 {
+    text-align: center;
+    margin: 10px 0 6px;
+    font-size: 21px;
+}
+
+.card p {
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 18px;
+}
+
+/* =========================================================
+   PREÇO
+========================================================= */
+
+.preco {
+    border-radius: 16px;
+    background: #eff6ff;
+    padding: 15px;
+    margin-bottom: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preco-esquerda {
+    font-size: 14px;
+    color: #475569;
+}
+
+.preco-direita {
+    text-align: right;
+}
+
+.preco-pontos {
+    font-size: 19px;
+    font-weight: 900;
+    color: #1d4ed8;
+}
+
+.preco-tempo {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* =========================================================
+   BOTÃO
+========================================================= */
+
+.btn-principal {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    padding: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: white;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.btn-principal:disabled {
+    opacity: .55;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-area {
+    display: none;
+    margin-top: 18px;
+    text-align: center;
+}
+
+.spinner {
+    width: 43px;
+    height: 43px;
+    margin: 0 auto 13px;
+
+    border: 4px solid #dbeafe;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+
+    animation: girar .8s linear infinite;
+}
+
+@keyframes girar {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.status-titulo {
+    font-weight: 800;
+    font-size: 17px;
+}
+
+.status-texto {
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* =========================================================
+   VÍDEO
+========================================================= */
+
+.chamada-area {
+    display: none;
+    margin-top: 16px;
+}
+
+.video-box {
+    position: relative;
+    overflow: hidden;
+
+    width: 100%;
+    aspect-ratio: 3 / 4;
+
+    background: #0f172a;
+    border-radius: 22px;
+}
+
+#videoRemoto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #111827;
+}
+
+#videoLocal {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+
+    width: 105px;
+    height: 140px;
+
+    border-radius: 15px;
+    object-fit: cover;
+
+    background: black;
+    border: 2px solid white;
+}
+
+.timer {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+
+    background: rgba(0,0,0,.65);
+    color: white;
+
+    padding: 7px 11px;
+    border-radius: 20px;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.controles {
+    display: flex;
+    gap: 10px;
+    margin-top: 13px;
+}
+
+.btn-controle {
+    flex: 1;
+
+    border: none;
+    border-radius: 14px;
+
+    padding: 13px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    background: white;
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,.08);
+}
+
+.btn-encerrar {
+    background: #dc2626;
+    color: white;
+}
+
+/* =========================================================
+   AVISO
+========================================================= */
+
+.aviso {
+    margin-top: 14px;
+    padding: 12px;
+
+    border-radius: 14px;
+
+    background: #fff7ed;
+    color: #9a3412;
+
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="topo">
+
+        <button
+            class="voltar"
+            onclick="voltarPagina()"
+        >
+            ‹
+        </button>
+
+        <div class="titulo-area">
+
+            <h1 class="titulo">
+                Tradutor ao Vivo
+            </h1>
+
+            <div class="subtitulo">
+                Atendimento por videochamada
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         SALDO
+    ====================================================== -->
+
+    <div class="saldo-card">
+
+        <div class="saldo-label">
+            Seu saldo
+        </div>
+
+        <div
+            id="saldo"
+            class="saldo-valor"
+        >
+            -- pts
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         TELA INICIAL
+    ====================================================== -->
+
+    <div
+        id="telaInicial"
+        class="card"
+    >
+
+        <div class="icone">
+            👩‍💻
+        </div>
+
+        <h2>
+            Falar com um tradutor
+        </h2>
+
+        <p>
+            Converse por vídeo com um tradutor de português e japonês.
+        </p>
+
+        <div class="preco">
+
+            <div class="preco-esquerda">
+                Atendimento
+            </div>
+
+            <div class="preco-direita">
+
+                <div class="preco-pontos">
+                    1.500 pts
+                </div>
+
+                <div class="preco-tempo">
+                    30 minutos
+                </div>
+
+            </div>
+
+        </div>
+
+        <button
+            id="btnProcurar"
+            class="btn-principal"
+        >
+            Procurar tradutor
+        </button>
+
+        <div class="aviso">
+            A cobrança de 1.500 pontos será adicionada depois que terminarmos
+            o teste completo da videochamada.
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         PROCURANDO
+    ====================================================== -->
+
+    <div
+        id="statusArea"
+        class="card status-area"
+    >
+
+        <div class="spinner"></div>
+
+        <div
+            id="statusTitulo"
+            class="status-titulo"
+        >
+            Procurando tradutor...
+        </div>
+
+        <div
+            id="statusTexto"
+            class="status-texto"
+        >
+            Aguarde um tradutor aceitar o atendimento.
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         CHAMADA
+    ====================================================== -->
+
+    <div
+        id="chamadaArea"
+        class="chamada-area"
+    >
+
+        <div class="video-box">
+
+            <video
+                id="videoRemoto"
+                autoplay
+                playsinline
+            ></video>
+
+            <video
+                id="videoLocal"
+                autoplay
+                muted
+                playsinline
+            ></video>
+
+            <div
+                id="timer"
+                class="timer"
+            >
+                00:00
+            </div>
+
+        </div>
+
+        <div class="controles">
+
+            <button
+                id="btnMicrofone"
+                class="btn-controle"
+            >
+                🎤 Microfone
+            </button>
+
+            <button
+                id="btnCamera"
+                class="btn-controle"
+            >
+                📷 Câmera
+            </button>
+
+        </div>
+
+        <div class="controles">
+
+            <button
+                id="btnEncerrar"
+                class="btn-controle btn-encerrar"
+            >
+                Encerrar chamada
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
+
+const LIFF_ID = "2010902449-KWNNNsxn";
+
+const PRECO_ATENDIMENTO = 1500;
+const TEMPO_ATENDIMENTO = 30;
+
+/*
+=========================================================
+IMPORTANTE
+
+Por enquanto NÃO colocamos Firebase nesta página nova.
+
+Primeiro vamos salvar a estrutura do cliente separada.
+
+No próximo passo vamos copiar SOMENTE a configuração Firebase
+e a conexão WebRTC que já funcionam no index.html atual.
+
+Assim não alteramos nem quebramos o sistema antigo.
+=========================================================
+*/
+
+let lineUserId = "";
+let lineDisplayName = "";
+
+let streamLocal = null;
+let micLigado = true;
+let cameraLigada = true;
+
+let segundosChamada = 0;
+let timerInterval = null;
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const saldoEl =
+    document.getElementById("saldo");
+
+const telaInicial =
+    document.getElementById("telaInicial");
+
+const statusArea =
+    document.getElementById("statusArea");
+
+const statusTitulo =
+    document.getElementById("statusTitulo");
+
+const statusTexto =
+    document.getElementById("statusTexto");
+
+const chamadaArea =
+    document.getElementById("chamadaArea");
+
+const videoLocal =
+    document.getElementById("videoLocal");
+
+const videoRemoto =
+    document.getElementById("videoRemoto");
+
+const timerEl =
+    document.getElementById("timer");
+
+const btnProcurar =
+    document.getElementById("btnProcurar");
+
+const btnMicrofone =
+    document.getElementById("btnMicrofone");
+
+const btnCamera =
+    document.getElementById("btnCamera");
+
+const btnEncerrar =
+    document.getElementById("btnEncerrar");
+
+/* =========================================================
+   LIFF
+========================================================= */
+
+async function iniciarLIFF() {
+
+    try {
+
+        await liff.init({
+            liffId: LIFF_ID
+        });
+
+        if (!liff.isLoggedIn()) {
+
+            liff.login();
+
+            return;
+        }
+
+        const profile =
+            await liff.getProfile();
+
+        lineUserId =
+            profile.userId || "";
+
+        lineDisplayName =
+            profile.displayName || "";
+
+        localStorage.setItem(
+            "line_user_id",
+            lineUserId
+        );
+
+        console.log(
+            "Cliente LINE:",
+            lineDisplayName
+        );
+
+    }
+    catch (erro) {
+
+        console.error(
+            "Erro LIFF:",
+            erro
+        );
+
+        /*
+        Permite visualizar a página fora do LINE
+        sem quebrar a tela.
+        */
+
+        lineUserId =
+            localStorage.getItem(
+                "line_user_id"
+            ) || "";
+
+    }
+
+}
+
+/* =========================================================
+   PROCURAR TRADUTOR
+========================================================= */
+
+btnProcurar.addEventListener(
+    "click",
+    async () => {
+
+        /*
+        Por enquanto este botão NÃO cria solicitação no Firebase.
+
+        Vamos ligar isso somente depois de copiar a configuração
+        correta do index.html atual.
+        */
+
+        telaInicial.style.display =
+            "none";
+
+        statusArea.style.display =
+            "block";
+
+        statusTitulo.textContent =
+            "Página preparada ✅";
+
+        statusTexto.textContent =
+            "Ainda não enviamos a solicitação ao tradutor. Vamos ligar o Firebase no próximo passo.";
+
+    }
+);
+
+/* =========================================================
+   MICROFONE
+========================================================= */
+
+btnMicrofone.addEventListener(
+    "click",
+    () => {
+
+        if (!streamLocal) {
+            return;
+        }
+
+        micLigado =
+            !micLigado;
+
+        streamLocal
+            .getAudioTracks()
+            .forEach(track => {
+
+                track.enabled =
+                    micLigado;
+
+            });
+
+        btnMicrofone.textContent =
+            micLigado
+                ? "🎤 Microfone"
+                : "🔇 Microfone";
+
+    }
+);
+
+/* =========================================================
+   CÂMERA
+========================================================= */
+
+btnCamera.addEventListener(
+    "click",
+    () => {
+
+        if (!streamLocal) {
+            return;
+        }
+
+        cameraLigada =
+            !cameraLigada;
+
+        streamLocal
+            .getVideoTracks()
+            .forEach(track => {
+
+                track.enabled =
+                    cameraLigada;
+
+            });
+
+        btnCamera.textContent =
+            cameraLigada
+                ? "📷 Câmera"
+                : "🚫 Câmera";
+
+    }
+);
+
+/* =========================================================
+   ENCERRAR
+========================================================= */
+
+btnEncerrar.addEventListener(
+    "click",
+    () => {
+
+        encerrarChamadaLocal();
+
+    }
+);
+
+function encerrarChamadaLocal() {
+
+    if (timerInterval) {
+
+        clearInterval(
+            timerInterval
+        );
+
+        timerInterval = null;
+
+    }
+
+    if (streamLocal) {
+
+        streamLocal
+            .getTracks()
+            .forEach(track => {
+
+                track.stop();
+
+            });
+
+        streamLocal = null;
+
+    }
+
+    videoLocal.srcObject =
+        null;
+
+    videoRemoto.srcObject =
+        null;
+
+    chamadaArea.style.display =
+        "none";
+
+    statusArea.style.display =
+        "none";
+
+    telaInicial.style.display =
+        "block";
+
+}
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function iniciarTimer() {
+
+    segundosChamada = 0;
+
+    atualizarTimer();
+
+    if (timerInterval) {
+
+        clearInterval(
+            timerInterval
+        );
+
+    }
+
+    timerInterval =
+        setInterval(
+            () => {
+
+                segundosChamada++;
+
+                atualizarTimer();
+
+            },
+            1000
+        );
+
+}
+
+function atualizarTimer() {
+
+    const minutos =
+        Math.floor(
+            segundosChamada / 60
+        );
+
+    const segundos =
+        segundosChamada % 60;
+
+    timerEl.textContent =
+        String(minutos)
+            .padStart(2, "0")
+        +
+        ":"
+        +
+        String(segundos)
+            .padStart(2, "0");
+
+}
+
+/* =========================================================
+   VOLTAR
+========================================================= */
+
+function voltarPagina() {
+
+    if (
+        typeof liff !== "undefined"
+        &&
+        liff.isInClient()
+    ) {
+
+        liff.closeWindow();
+
+        return;
+    }
+
+    window.location.href =
+        "../index.html";
+
+}
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await iniciarLIFF();
+
+        /*
+        Temporário:
+        o saldo real será conectado ao Firestore
+        no próximo passo.
+        */
+
+        saldoEl.textContent =
+            "-- pts";
+
+    }
+);
+
+</script>
+
+</body>
+</html>
