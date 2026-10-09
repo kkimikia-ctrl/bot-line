@@ -600,6 +600,99 @@ select {
     line-height: 1.45;
 }
 
+/* =========================================================
+   RENOVAÇÃO
+========================================================= */
+
+.renovacao-box {
+    display: none;
+
+    margin-top: 16px;
+
+    padding: 16px;
+
+    border-radius: 18px;
+
+    background: #fff7ed;
+
+    border:
+        1px
+        solid
+        #fdba74;
+
+    text-align: center;
+}
+
+.renovacao-titulo {
+    font-size: 18px;
+
+    font-weight: 900;
+
+    color: #9a3412;
+}
+
+.renovacao-texto {
+    margin-top: 7px;
+
+    color: #7c2d12;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.renovacao-botoes {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 9px;
+
+    margin-top: 14px;
+}
+
+.btn-renovar {
+    border: none;
+
+    border-radius: 14px;
+
+    padding:
+        14px
+        8px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 900;
+}
+
+.btn-renovar:disabled {
+    opacity: .45;
+}
+
+.btn-comprar {
+    border: none;
+
+    border-radius: 14px;
+
+    padding:
+        14px
+        8px;
+
+    background: #10b981;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 900;
+}
+
 </style>
 
 </head>
@@ -727,8 +820,8 @@ select {
         </button>
 
         <div class="aviso">
-            TESTE DE VIDEOCHAMADA:
-            o pedido e o vídeo funcionarão,
+            TESTE:
+            pedido, vídeo e limite de tempo funcionarão,
             mas os 1.500 pontos ainda NÃO serão descontados.
         </div>
 
@@ -849,6 +942,48 @@ select {
 
         </div>
 
+        <!-- =================================================
+             RENOVAÇÃO
+        ================================================== -->
+
+        <div
+            id="renovacaoBox"
+            class="renovacao-box"
+        >
+
+            <div class="renovacao-titulo">
+                ⏰ Faltam 5 minutos
+            </div>
+
+            <div
+                id="renovacaoTexto"
+                class="renovacao-texto"
+            >
+                Deseja continuar o atendimento por mais 30 minutos?
+            </div>
+
+            <div class="renovacao-botoes">
+
+                <button
+                    id="btnContinuar30"
+                    class="btn-renovar"
+                >
+                    Continuar +30 min
+                    <br>
+                    1.500 pts
+                </button>
+
+                <button
+                    id="btnComprarSaldo"
+                    class="btn-comprar"
+                >
+                    💰 Comprar saldo
+                </button>
+
+            </div>
+
+        </div>
+
         <button
             id="btnCancelarPedido"
             class="btn-cancelar"
@@ -931,6 +1066,12 @@ const LIFF_ID =
 const PRECO_ATENDIMENTO =
     1500;
 
+const BLOCO_ATENDIMENTO_SEGUNDOS =
+    30 * 60;
+
+const AVISO_RENOVACAO_SEGUNDOS =
+    5 * 60;
+
 const STORAGE_PEDIDO =
     "ajudajp_tradutor_solicitacao_ativa";
 
@@ -997,6 +1138,15 @@ let tempoInterval =
 
 let segundosChamada =
     0;
+
+let limiteChamadaSegundos =
+    BLOCO_ATENDIMENTO_SEGUNDOS;
+
+let avisoMostradoParaLimite =
+    0;
+
+let encerrandoPorTempo =
+    false;
 
 /* =========================================================
    ELEMENTOS
@@ -1095,6 +1245,26 @@ const btnMicrofone =
 const btnCamera =
     document.getElementById(
         "btnCamera"
+    );
+
+const renovacaoBox =
+    document.getElementById(
+        "renovacaoBox"
+    );
+
+const renovacaoTexto =
+    document.getElementById(
+        "renovacaoTexto"
+    );
+
+const btnContinuar30 =
+    document.getElementById(
+        "btnContinuar30"
+    );
+
+const btnComprarSaldo =
+    document.getElementById(
+        "btnComprarSaldo"
     );
 
 /* =========================================================
@@ -1378,10 +1548,6 @@ async function recuperarSolicitacaoAtiva() {
         const dados =
             snap.data();
 
-        /*
-        Impede recuperar pedido de outro usuário.
-        */
-
         if (
             dados.clienteId !==
             usuarioAtual.id
@@ -1423,9 +1589,18 @@ async function recuperarSolicitacaoAtiva() {
         btnCancelarPedido.disabled =
             false;
 
-        /*
-        Volta para o estado correto.
-        */
+        renovacaoBox.style.display =
+            "none";
+
+        const tempoMinutos =
+            Number(
+                dados.tempoMinutos ||
+                30
+            );
+
+        limiteChamadaSegundos =
+            tempoMinutos *
+            60;
 
         if (
             dados.status ===
@@ -1526,10 +1701,6 @@ async function criarSolicitacao() {
         return;
 
     }
-
-    /*
-    Evita criar dois pedidos.
-    */
 
     const pedidoSalvo =
         pegarPedidoAtivo();
@@ -1633,11 +1804,6 @@ async function criarSolicitacao() {
         solicitacaoAtualId =
             ref.id;
 
-        /*
-        SALVA O ID.
-        Esse é o conserto principal.
-        */
-
         salvarPedidoAtivo(
             ref.id
         );
@@ -1650,6 +1816,18 @@ async function criarSolicitacao() {
 
         filaIceTradutor =
             [];
+
+        segundosChamada =
+            0;
+
+        limiteChamadaSegundos =
+            BLOCO_ATENDIMENTO_SEGUNDOS;
+
+        avisoMostradoParaLimite =
+            0;
+
+        encerrandoPorTempo =
+            false;
 
         telaInicial.style.display =
             "none";
@@ -1677,6 +1855,9 @@ async function criarSolicitacao() {
             "none";
 
         videoContainer.style.display =
+            "none";
+
+        renovacaoBox.style.display =
             "none";
 
         btnCancelarPedido.textContent =
@@ -1752,9 +1933,22 @@ function monitorarSolicitacao(
                 const dados =
                     snapshot.data();
 
-                /* =========================================
-                   AGUARDANDO
-                ========================================= */
+                const tempoMinutos =
+                    Number(
+                        dados.tempoMinutos ||
+                        30
+                    );
+
+                if (
+                    tempoMinutos * 60 >
+                    limiteChamadaSegundos
+                ) {
+
+                    limiteChamadaSegundos =
+                        tempoMinutos *
+                        60;
+
+                }
 
                 if (
                     dados.status ===
@@ -1779,14 +1973,13 @@ function monitorarSolicitacao(
                     videoContainer.style.display =
                         "none";
 
+                    renovacaoBox.style.display =
+                        "none";
+
                     btnCancelarPedido.textContent =
                         "Cancelar solicitação";
 
                 }
-
-                /* =========================================
-                   ACEITO OU CONECTANDO
-                ========================================= */
 
                 if (
                     (
@@ -1862,10 +2055,6 @@ function monitorarSolicitacao(
 
                 }
 
-                /* =========================================
-                   ANSWER
-                ========================================= */
-
                 if (
                     dados.webrtcAnswer &&
                     peerConnection &&
@@ -1896,10 +2085,6 @@ function monitorarSolicitacao(
 
                 }
 
-                /* =========================================
-                   FINALIZADO
-                ========================================= */
-
                 if (
                     dados.status ===
                     "finalizado"
@@ -1913,10 +2098,6 @@ function monitorarSolicitacao(
                     );
 
                 }
-
-                /* =========================================
-                   CANCELADO
-                ========================================= */
 
                 if (
                     dados.status ===
@@ -1952,10 +2133,6 @@ function monitorarSolicitacao(
 async function iniciarWebRTCCliente(
     solicitacaoId
 ) {
-
-    /*
-    Fecha conexão antiga se existir.
-    */
 
     encerrarWebRTCSemLimparPedido();
 
@@ -2037,10 +2214,6 @@ async function iniciarWebRTCCliente(
             }
         );
 
-    /* =====================================================
-       VIDEO REMOTO
-    ====================================================== */
-
     peerConnection.ontrack =
         event => {
 
@@ -2081,10 +2254,6 @@ async function iniciarWebRTCCliente(
                 );
 
         };
-
-    /* =====================================================
-       ESTADO DA CONEXÃO
-    ====================================================== */
 
     peerConnection.onconnectionstatechange =
         async () => {
@@ -2208,10 +2377,6 @@ async function iniciarWebRTCCliente(
 
         };
 
-    /* =====================================================
-       ICE CLIENTE
-    ====================================================== */
-
     peerConnection.onicecandidate =
         async event => {
 
@@ -2247,10 +2412,6 @@ async function iniciarWebRTCCliente(
             }
 
         };
-
-    /* =====================================================
-       ICE TRADUTOR
-    ====================================================== */
 
     unsubscribeTradutorCandidates =
         onSnapshot(
@@ -2324,10 +2485,6 @@ async function iniciarWebRTCCliente(
 
             }
         );
-
-    /* =====================================================
-       OFFER
-    ====================================================== */
 
     callStatus.textContent =
         "🌐 Criando conexão...";
@@ -2547,15 +2704,36 @@ function iniciarCronometro() {
     segundosChamada =
         0;
 
+    if (
+        limiteChamadaSegundos <
+        BLOCO_ATENDIMENTO_SEGUNDOS
+    ) {
+
+        limiteChamadaSegundos =
+            BLOCO_ATENDIMENTO_SEGUNDOS;
+
+    }
+
+    avisoMostradoParaLimite =
+        0;
+
+    encerrandoPorTempo =
+        false;
+
+    renovacaoBox.style.display =
+        "none";
+
     atualizarCronometro();
 
     tempoInterval =
         setInterval(
-            () => {
+            async () => {
 
                 segundosChamada++;
 
                 atualizarCronometro();
+
+                await verificarTempoChamada();
 
             },
             1000
@@ -2590,6 +2768,326 @@ function atualizarCronometro() {
             2,
             "0"
         );
+
+}
+
+/* =========================================================
+   VERIFICAR TEMPO
+========================================================= */
+
+async function verificarTempoChamada() {
+
+    if (
+        !chamadaConectada
+    ) {
+
+        return;
+
+    }
+
+    const restante =
+        limiteChamadaSegundos -
+        segundosChamada;
+
+    if (
+        restante <=
+            AVISO_RENOVACAO_SEGUNDOS &&
+
+        restante >
+            0 &&
+
+        avisoMostradoParaLimite !==
+            limiteChamadaSegundos
+    ) {
+
+        avisoMostradoParaLimite =
+            limiteChamadaSegundos;
+
+        await mostrarAvisoRenovacao();
+
+    }
+
+    if (
+        restante <=
+        0
+    ) {
+
+        await encerrarPorTempo();
+
+    }
+
+}
+
+/* =========================================================
+   MOSTRAR AVISO
+========================================================= */
+
+async function mostrarAvisoRenovacao() {
+
+    const saldo =
+        await carregarSaldo();
+
+    renovacaoBox.style.display =
+        "block";
+
+    if (
+        saldo >=
+        PRECO_ATENDIMENTO
+    ) {
+
+        btnContinuar30.disabled =
+            false;
+
+        btnContinuar30.innerHTML =
+            "Continuar +30 min<br>1.500 pts";
+
+        renovacaoTexto.textContent =
+            "Faltam 5 minutos. Você possui saldo para continuar por mais 30 minutos.";
+
+    } else {
+
+        btnContinuar30.disabled =
+            true;
+
+        btnContinuar30.textContent =
+            "Saldo insuficiente";
+
+        renovacaoTexto.textContent =
+            "Faltam 5 minutos e você não possui 1.500 pontos. Compre saldo para continuar.";
+
+    }
+
+}
+
+/* =========================================================
+   RENOVAR +30 MIN
+========================================================= */
+
+async function renovarMais30Minutos() {
+
+    if (
+        !solicitacaoAtualId
+    ) {
+
+        return;
+
+    }
+
+    btnContinuar30.disabled =
+        true;
+
+    btnContinuar30.textContent =
+        "Verificando...";
+
+    try {
+
+        const saldo =
+            await carregarSaldo();
+
+        if (
+            saldo <
+            PRECO_ATENDIMENTO
+        ) {
+
+            renovacaoTexto.textContent =
+                "Saldo insuficiente. São necessários 1.500 pontos.";
+
+            btnContinuar30.textContent =
+                "Saldo insuficiente";
+
+            return;
+
+        }
+
+        /*
+        =====================================================
+        IMPORTANTE
+
+        TESTE:
+        ainda NÃO descontamos os 1.500 pontos.
+
+        Depois colocaremos a cobrança real aqui.
+        =====================================================
+        */
+
+        limiteChamadaSegundos +=
+            BLOCO_ATENDIMENTO_SEGUNDOS;
+
+        avisoMostradoParaLimite =
+            0;
+
+        renovacaoBox.style.display =
+            "none";
+
+        const minutosTotais =
+            Math.floor(
+                limiteChamadaSegundos /
+                60
+            );
+
+        await updateDoc(
+            doc(
+                db,
+                "solicitacoes",
+                solicitacaoAtualId
+            ),
+            {
+
+                tempoMinutos:
+                    minutosTotais,
+
+                renovacaoTeste:
+                    true,
+
+                ultimaRenovacaoEm:
+                    serverTimestamp(),
+
+                atualizadoEm:
+                    serverTimestamp()
+
+            }
+        );
+
+        statusTexto.textContent =
+            "Atendimento renovado por mais 30 minutos.";
+
+        setTimeout(
+            () => {
+
+                if (
+                    chamadaConectada
+                ) {
+
+                    statusTexto.textContent =
+                        "Videochamada em andamento.";
+
+                }
+
+            },
+            4000
+        );
+
+    } catch (
+        erro
+    ) {
+
+        console.error(
+            "Renovação:",
+            erro
+        );
+
+        btnContinuar30.disabled =
+            false;
+
+        btnContinuar30.innerHTML =
+            "Continuar +30 min<br>1.500 pts";
+
+    }
+
+}
+
+/* =========================================================
+   COMPRAR SALDO
+========================================================= */
+
+function comprarSaldo() {
+
+    /*
+    Ainda não conectamos pagamento real.
+
+    Quando fizermos a carteira/pagamento,
+    este botão irá abrir a tela correta.
+    */
+
+    alert(
+        "A compra de saldo ainda está em preparação.\n\n" +
+        "Depois este botão abrirá a Carteira sem encerrar a videochamada."
+    );
+
+}
+
+/* =========================================================
+   ENCERRAR POR TEMPO
+========================================================= */
+
+async function encerrarPorTempo() {
+
+    if (
+        encerrandoPorTempo
+    ) {
+
+        return;
+
+    }
+
+    encerrandoPorTempo =
+        true;
+
+    renovacaoBox.style.display =
+        "none";
+
+    if (
+        tempoInterval
+    ) {
+
+        clearInterval(
+            tempoInterval
+        );
+
+        tempoInterval =
+            null;
+
+    }
+
+    try {
+
+        if (
+            solicitacaoAtualId
+        ) {
+
+            await updateDoc(
+                doc(
+                    db,
+                    "solicitacoes",
+                    solicitacaoAtualId
+                ),
+                {
+
+                    status:
+                        "finalizado",
+
+                    webrtcEstado:
+                        "tempo_esgotado",
+
+                    motivoFinalizacao:
+                        "tempo_esgotado",
+
+                    finalizadoEm:
+                        serverTimestamp(),
+
+                    atualizadoEm:
+                        serverTimestamp()
+
+                }
+            );
+
+        }
+
+    } catch (
+        erro
+    ) {
+
+        console.error(
+            "Finalizar por tempo:",
+            erro
+        );
+
+    }
+
+    finalizarTela(
+        "Tempo encerrado",
+        "O tempo contratado terminou."
+    );
 
 }
 
@@ -2701,6 +3199,18 @@ function encerrarWebRTC() {
 
     cameraLigada =
         true;
+
+    limiteChamadaSegundos =
+        BLOCO_ATENDIMENTO_SEGUNDOS;
+
+    avisoMostradoParaLimite =
+        0;
+
+    encerrandoPorTempo =
+        false;
+
+    renovacaoBox.style.display =
+        "none";
 
 }
 
@@ -2857,6 +3367,9 @@ function finalizarTela(
     videoContainer.style.display =
         "none";
 
+    renovacaoBox.style.display =
+        "none";
+
     numeroPedido.textContent =
         "";
 
@@ -2926,6 +3439,16 @@ btnCancelarPedido.addEventListener(
     }
 );
 
+btnContinuar30.addEventListener(
+    "click",
+    renovarMais30Minutos
+);
+
+btnComprarSaldo.addEventListener(
+    "click",
+    comprarSaldo
+);
+
 /* =========================================================
    VOLTAR
 ========================================================= */
@@ -2951,31 +3474,17 @@ window.voltarPagina =
     };
 
 /* =========================================================
-   NÃO APAGA O PEDIDO AO TROCAR DE ABA
+   TROCA DE ABA
 ========================================================= */
-
-/*
-Importante:
-não colocamos cancelamento no beforeunload.
-
-Assim, se o navegador descarregar esta página ao trocar
-de aba, o ID continua salvo no localStorage.
-
-Quando voltar, recuperarSolicitacaoAtiva() encontra
-o mesmo pedido.
-*/
 
 window.addEventListener(
     "pagehide",
     () => {
 
         /*
-        Fecha somente câmera e WebRTC local.
+        Mantém o pedido salvo no Firebase/localStorage.
 
-        NÃO:
-        - cancela Firestore
-        - apaga localStorage
-        - finaliza solicitação
+        Fecha apenas câmera/WebRTC local.
         */
 
         encerrarWebRTCSemLimparPedido();
