@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -283,9 +284,11 @@ select {
 }
 
 @keyframes girar {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 .status-icone {
@@ -321,23 +324,191 @@ select {
 }
 
 /* =========================================================
+   VIDEO
+========================================================= */
+
+#videoContainer {
+    display: none;
+    margin-top: 18px;
+}
+
+.video-area {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 390px;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background: #0f172a;
+}
+
+#videoRemoto {
+    display: block;
+
+    width: 100%;
+
+    min-height: 390px;
+    max-height: 550px;
+
+    object-fit: cover;
+
+    background: #0f172a;
+}
+
+.video-placeholder {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    pointer-events: none;
+}
+
+.video-placeholder-icon {
+    font-size: 45px;
+}
+
+.video-placeholder-text {
+    margin-top: 10px;
+
+    font-size: 14px;
+
+    font-weight: 800;
+}
+
+#videoLocal {
+    position: absolute;
+
+    right: 12px;
+    bottom: 12px;
+
+    width: 105px;
+    height: 145px;
+
+    border-radius: 15px;
+
+    border: 3px solid white;
+
+    object-fit: cover;
+
+    background: #111827;
+
+    transform: scaleX(-1);
+
+    z-index: 5;
+}
+
+.timer {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    padding: 7px 12px;
+
+    border-radius: 30px;
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    font-size: 13px;
+
+    font-weight: 900;
+}
+
+.call-status {
+    display: none;
+
+    width: fit-content;
+
+    margin: 12px auto;
+
+    padding: 8px 13px;
+
+    border-radius: 30px;
+
+    background: #fff7ed;
+
+    color: #c2410c;
+
+    font-size: 12px;
+
+    font-weight: 900;
+}
+
+.call-status.connected {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.controles {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.btn-controle {
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 14px 8px;
+
+    background: #f1f5f9;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    font-weight: 800;
+}
+
+.btn-controle.off {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* =========================================================
    AVISO
 ========================================================= */
 
 .aviso {
     margin-top: 14px;
+
     padding: 12px;
 
     border-radius: 14px;
 
     background: #fff7ed;
+
     color: #9a3412;
 
     font-size: 12px;
+
     line-height: 1.45;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -387,7 +558,7 @@ select {
     </div>
 
     <!-- =====================================================
-         TELA INICIAL
+         INICIAL
     ====================================================== -->
 
     <div
@@ -463,14 +634,14 @@ select {
         </button>
 
         <div class="aviso">
-            TESTE: o pedido será enviado ao painel do tradutor,
-            mas nenhum ponto será descontado e a videochamada ainda não será iniciada.
+            TESTE DE VIDEOCHAMADA: o pedido e o vídeo funcionarão,
+            mas os 1.500 pontos ainda NÃO serão descontados.
         </div>
 
     </div>
 
     <!-- =====================================================
-         STATUS
+         STATUS / CHAMADA
     ====================================================== -->
 
     <div
@@ -505,9 +676,84 @@ select {
         </div>
 
         <div
+            id="callStatus"
+            class="call-status"
+        >
+            🔗 Conectando...
+        </div>
+
+        <div
             id="numeroPedido"
             class="numero-pedido"
         ></div>
+
+        <!-- =================================================
+             VIDEO
+        ================================================== -->
+
+        <div id="videoContainer">
+
+            <div
+                id="timer"
+                class="timer"
+            >
+                ⏱️ 00:00
+            </div>
+
+            <div class="video-area">
+
+                <video
+                    id="videoRemoto"
+                    autoplay
+                    playsinline
+                ></video>
+
+                <div
+                    id="videoPlaceholder"
+                    class="video-placeholder"
+                >
+
+                    <div class="video-placeholder-icon">
+                        👤
+                    </div>
+
+                    <div
+                        id="videoPlaceholderText"
+                        class="video-placeholder-text"
+                    >
+                        Aguardando vídeo do tradutor...
+                    </div>
+
+                </div>
+
+                <video
+                    id="videoLocal"
+                    autoplay
+                    muted
+                    playsinline
+                ></video>
+
+            </div>
+
+            <div class="controles">
+
+                <button
+                    id="btnMicrofone"
+                    class="btn-controle"
+                >
+                    🎤 Microfone
+                </button>
+
+                <button
+                    id="btnCamera"
+                    class="btn-controle"
+                >
+                    📹 Câmera
+                </button>
+
+            </div>
+
+        </div>
 
         <button
             id="btnCancelarPedido"
@@ -582,7 +828,7 @@ const db =
     );
 
 /* =========================================================
-   CONFIGURAÇÕES
+   CONFIG
 ========================================================= */
 
 const LIFF_ID =
@@ -590,6 +836,24 @@ const LIFF_ID =
 
 const PRECO_ATENDIMENTO =
     1500;
+
+const rtcConfiguration = {
+
+    iceServers: [
+
+        {
+            urls:
+                "stun:stun.l.google.com:19302"
+        },
+
+        {
+            urls:
+                "stun:stun1.l.google.com:19302"
+        }
+
+    ]
+
+};
 
 /* =========================================================
    VARIÁVEIS
@@ -603,6 +867,39 @@ let solicitacaoAtualId =
 
 let pararMonitoramento =
     null;
+
+let unsubscribeTradutorCandidates =
+    null;
+
+let peerConnection =
+    null;
+
+let localStream =
+    null;
+
+let remoteStream =
+    null;
+
+let filaIceTradutor =
+    [];
+
+let offerCriada =
+    false;
+
+let chamadaConectada =
+    false;
+
+let microfoneLigado =
+    true;
+
+let cameraLigada =
+    true;
+
+let tempoInterval =
+    null;
+
+let segundosChamada =
+    0;
 
 /* =========================================================
    ELEMENTOS
@@ -648,6 +945,41 @@ const numeroPedido =
         "numeroPedido"
     );
 
+const callStatus =
+    document.getElementById(
+        "callStatus"
+    );
+
+const videoContainer =
+    document.getElementById(
+        "videoContainer"
+    );
+
+const videoLocal =
+    document.getElementById(
+        "videoLocal"
+    );
+
+const videoRemoto =
+    document.getElementById(
+        "videoRemoto"
+    );
+
+const videoPlaceholder =
+    document.getElementById(
+        "videoPlaceholder"
+    );
+
+const videoPlaceholderText =
+    document.getElementById(
+        "videoPlaceholderText"
+    );
+
+const timer =
+    document.getElementById(
+        "timer"
+    );
+
 const btnProcurar =
     document.getElementById(
         "btnProcurar"
@@ -656,6 +988,16 @@ const btnProcurar =
 const btnCancelarPedido =
     document.getElementById(
         "btnCancelarPedido"
+    );
+
+const btnMicrofone =
+    document.getElementById(
+        "btnMicrofone"
+    );
+
+const btnCamera =
+    document.getElementById(
+        "btnCamera"
     );
 
 /* =========================================================
@@ -723,9 +1065,6 @@ async function iniciarLIFF() {
             !userId
         ) {
 
-            usuarioAtual =
-                null;
-
             saldoEl.textContent =
                 "-- pts";
 
@@ -758,38 +1097,9 @@ async function iniciarLIFF() {
     ) {
 
         console.error(
-            "Erro LIFF:",
+            "LIFF:",
             erro
         );
-
-        const userId =
-            localStorage.getItem(
-                "line_user_id"
-            );
-
-        const userName =
-            localStorage.getItem(
-                "line_user_name"
-            );
-
-        if (
-            userId
-        ) {
-
-            usuarioAtual = {
-
-                id:
-                    userId,
-
-                nome:
-                    userName ||
-                    "Usuário LINE"
-
-            };
-
-            await carregarSaldo();
-
-        }
 
     }
 
@@ -804,9 +1114,6 @@ async function carregarSaldo() {
     if (
         !usuarioAtual
     ) {
-
-        saldoEl.textContent =
-            "-- pts";
 
         return 0;
 
@@ -879,9 +1186,6 @@ async function carregarSaldo() {
             erro
         );
 
-        saldoEl.textContent =
-            "Erro";
-
         return 0;
 
     }
@@ -889,7 +1193,7 @@ async function carregarSaldo() {
 }
 
 /* =========================================================
-   CRIAR SOLICITAÇÃO
+   CRIAR PEDIDO
 ========================================================= */
 
 async function criarSolicitacao() {
@@ -897,10 +1201,6 @@ async function criarSolicitacao() {
     if (
         !usuarioAtual
     ) {
-
-        alert(
-            "Não foi possível identificar sua conta LINE."
-        );
 
         return;
 
@@ -935,19 +1235,6 @@ async function criarSolicitacao() {
             document.getElementById(
                 "localAtendimento"
             ).value;
-
-        /*
-        =====================================================
-        IMPORTANTE
-
-        ESTA É UMA SOLICITAÇÃO REAL NO FIRESTORE.
-
-        PORÉM:
-        - NÃO desconta pontos
-        - NÃO inicia WebRTC
-        - NÃO usa câmera
-        =====================================================
-        */
 
         const ref =
             await addDoc(
@@ -1008,6 +1295,15 @@ async function criarSolicitacao() {
         solicitacaoAtualId =
             ref.id;
 
+        offerCriada =
+            false;
+
+        chamadaConectada =
+            false;
+
+        filaIceTradutor =
+            [];
+
         telaInicial.style.display =
             "none";
 
@@ -1024,11 +1320,17 @@ async function criarSolicitacao() {
             "Procurando tradutor...";
 
         statusTexto.textContent =
-            "Sua solicitação foi enviada. Agora ela deve aparecer no Painel do Tradutor.";
+            "Sua solicitação está aguardando no Painel do Tradutor.";
 
         numeroPedido.textContent =
             "Pedido: " +
             ref.id;
+
+        callStatus.style.display =
+            "none";
+
+        videoContainer.style.display =
+            "none";
 
         btnCancelarPedido.textContent =
             "Cancelar solicitação";
@@ -1042,7 +1344,7 @@ async function criarSolicitacao() {
     ) {
 
         console.error(
-            "Criar solicitação:",
+            "Pedido:",
             erro
         );
 
@@ -1063,7 +1365,7 @@ async function criarSolicitacao() {
 }
 
 /* =========================================================
-   MONITORAR SOLICITAÇÃO
+   MONITORAR PEDIDO
 ========================================================= */
 
 function monitorarSolicitacao(
@@ -1088,7 +1390,7 @@ function monitorarSolicitacao(
     pararMonitoramento =
         onSnapshot(
             ref,
-            snapshot => {
+            async snapshot => {
 
                 if (
                     !snapshot.exists()
@@ -1100,6 +1402,10 @@ function monitorarSolicitacao(
 
                 const dados =
                     snapshot.data();
+
+                /* =========================================
+                   AGUARDANDO
+                ========================================= */
 
                 if (
                     dados.status ===
@@ -1120,10 +1426,18 @@ function monitorarSolicitacao(
 
                 }
 
+                /* =========================================
+                   ACEITO
+                ========================================= */
+
                 if (
                     dados.status ===
-                    "aceito"
+                    "aceito" &&
+                    !offerCriada
                 ) {
+
+                    offerCriada =
+                        true;
 
                     spinnerStatus.style.display =
                         "none";
@@ -1132,81 +1446,133 @@ function monitorarSolicitacao(
                         "block";
 
                     statusIcone.textContent =
-                        "✅";
+                        "🎥";
 
                     statusTitulo.textContent =
                         "Tradutor aceitou!";
 
                     statusTexto.textContent =
-                        (
-                            dados.tradutorNome
-                                ? dados.tradutorNome +
-                                  " aceitou o atendimento. "
-                                : "Um tradutor aceitou o atendimento. "
-                        ) +
-                        "Neste teste a videochamada ainda não será iniciada e nenhum ponto será descontado.";
+                        "Preparando câmera e microfone...";
+
+                    callStatus.style.display =
+                        "block";
+
+                    callStatus.textContent =
+                        "📷 Preparando chamada...";
+
+                    videoContainer.style.display =
+                        "block";
 
                     btnCancelarPedido.textContent =
-                        "Encerrar teste";
+                        "Encerrar atendimento";
+
+                    try {
+
+                        await iniciarWebRTCCliente(
+                            id
+                        );
+
+                    } catch (
+                        erro
+                    ) {
+
+                        console.error(
+                            "WebRTC:",
+                            erro
+                        );
+
+                        offerCriada =
+                            false;
+
+                        callStatus.textContent =
+                            "⚠️ Falha ao iniciar";
+
+                        statusTexto.textContent =
+                            "Não foi possível iniciar câmera ou conexão.";
+
+                    }
 
                 }
+
+                /* =========================================
+                   ANSWER DO TRADUTOR
+                ========================================= */
+
+                if (
+                    dados.webrtcAnswer &&
+                    peerConnection &&
+                    !peerConnection.currentRemoteDescription
+                ) {
+
+                    try {
+
+                        await peerConnection
+                            .setRemoteDescription(
+                                new RTCSessionDescription(
+                                    dados.webrtcAnswer
+                                )
+                            );
+
+                        await processarFilaIceTradutor();
+
+                    } catch (
+                        erro
+                    ) {
+
+                        console.error(
+                            "ANSWER:",
+                            erro
+                        );
+
+                    }
+
+                }
+
+                /* =========================================
+                   CONECTADO
+                ========================================= */
 
                 if (
                     dados.status ===
                     "conectado"
                 ) {
 
-                    spinnerStatus.style.display =
-                        "none";
-
-                    statusIcone.style.display =
-                        "block";
-
-                    statusIcone.textContent =
-                        "✅";
-
                     statusTitulo.textContent =
-                        "Atendimento conectado";
-
-                    statusTexto.textContent =
-                        "O status foi alterado para conectado. Nesta página de teste ainda não iniciamos vídeo nem cobrança.";
-
-                    btnCancelarPedido.textContent =
-                        "Encerrar teste";
+                        "Tradutor conectado";
 
                 }
 
-                if (
-                    dados.status ===
-                    "cancelado"
-                ) {
-
-                    finalizarTelaTeste(
-                        "Solicitação cancelada",
-                        "O teste foi encerrado. Nenhum ponto foi descontado."
-                    );
-
-                }
+                /* =========================================
+                   FINALIZADO
+                ========================================= */
 
                 if (
                     dados.status ===
                     "finalizado"
                 ) {
 
-                    finalizarTelaTeste(
+                    finalizarTela(
                         "Atendimento finalizado",
-                        "O teste foi finalizado. Nenhum ponto foi descontado."
+                        "A chamada foi encerrada."
                     );
 
                 }
 
-            },
-            erro => {
+                /* =========================================
+                   CANCELADO
+                ========================================= */
 
-                console.error(
-                    "Monitoramento:",
-                    erro
-                );
+                if (
+                    dados.status ===
+                    "cancelado"
+                ) {
+
+                    finalizarTela(
+                        "Solicitação cancelada",
+                        "O atendimento foi cancelado."
+                    );
+
+                }
 
             }
         );
@@ -1214,10 +1580,739 @@ function monitorarSolicitacao(
 }
 
 /* =========================================================
-   CANCELAR TESTE
+   WEBRTC CLIENTE
 ========================================================= */
 
-async function cancelarSolicitacao() {
+async function iniciarWebRTCCliente(
+    solicitacaoId
+) {
+
+    callStatus.textContent =
+        "📷 Solicitando câmera...";
+
+    localStream =
+        await navigator.mediaDevices
+            .getUserMedia(
+                {
+
+                    video: {
+
+                        facingMode:
+                            "user"
+
+                    },
+
+                    audio:
+                        true
+
+                }
+            );
+
+    videoLocal.srcObject =
+        localStream;
+
+    try {
+
+        await videoLocal.play();
+
+    } catch (
+        erro
+    ) {
+
+        console.log(
+            erro
+        );
+
+    }
+
+    peerConnection =
+        new RTCPeerConnection(
+            rtcConfiguration
+        );
+
+    remoteStream =
+        new MediaStream();
+
+    videoRemoto.srcObject =
+        remoteStream;
+
+    localStream
+        .getTracks()
+        .forEach(
+            track => {
+
+                peerConnection.addTrack(
+                    track,
+                    localStream
+                );
+
+            }
+        );
+
+    /* =====================================================
+       VIDEO REMOTO
+    ====================================================== */
+
+    peerConnection.ontrack =
+        event => {
+
+            event.streams[0]
+                .getTracks()
+                .forEach(
+                    track => {
+
+                        const existe =
+                            remoteStream
+                                .getTracks()
+                                .some(
+                                    t =>
+                                        t.id ===
+                                        track.id
+                                );
+
+                        if (
+                            !existe
+                        ) {
+
+                            remoteStream.addTrack(
+                                track
+                            );
+
+                        }
+
+                    }
+                );
+
+            videoPlaceholder.style.display =
+                "none";
+
+            videoRemoto
+                .play()
+                .catch(
+                    () => {}
+                );
+
+        };
+
+    /* =====================================================
+       ESTADO
+    ====================================================== */
+
+    peerConnection.onconnectionstatechange =
+        async () => {
+
+            if (
+                !peerConnection
+            ) {
+
+                return;
+
+            }
+
+            const estado =
+                peerConnection.connectionState;
+
+            console.log(
+                "Estado WebRTC:",
+                estado
+            );
+
+            if (
+                estado ===
+                "connecting"
+            ) {
+
+                callStatus.textContent =
+                    "🔗 Conectando...";
+
+            }
+
+            if (
+                estado ===
+                "connected" &&
+                !chamadaConectada
+            ) {
+
+                chamadaConectada =
+                    true;
+
+                spinnerStatus.style.display =
+                    "none";
+
+                statusIcone.style.display =
+                    "block";
+
+                statusIcone.textContent =
+                    "✅";
+
+                statusTitulo.textContent =
+                    "Tradutor conectado!";
+
+                statusTexto.textContent =
+                    "Videochamada em andamento.";
+
+                callStatus.textContent =
+                    "● Conectado";
+
+                callStatus.classList.add(
+                    "connected"
+                );
+
+                iniciarCronometro();
+
+                try {
+
+                    await updateDoc(
+                        doc(
+                            db,
+                            "solicitacoes",
+                            solicitacaoId
+                        ),
+                        {
+
+                            status:
+                                "conectado",
+
+                            webrtcEstado:
+                                "conectado",
+
+                            conectadoEm:
+                                serverTimestamp(),
+
+                            atualizadoEm:
+                                serverTimestamp()
+
+                        }
+                    );
+
+                } catch (
+                    erro
+                ) {
+
+                    console.error(
+                        erro
+                    );
+
+                }
+
+            }
+
+            if (
+                estado ===
+                "failed"
+            ) {
+
+                callStatus.textContent =
+                    "⚠️ Falha na conexão";
+
+            }
+
+            if (
+                estado ===
+                "disconnected"
+            ) {
+
+                callStatus.textContent =
+                    "⚠️ Conexão interrompida";
+
+            }
+
+        };
+
+    /* =====================================================
+       ICE DO CLIENTE
+    ====================================================== */
+
+    peerConnection.onicecandidate =
+        async event => {
+
+            if (
+                !event.candidate
+            ) {
+
+                return;
+
+            }
+
+            try {
+
+                await addDoc(
+                    collection(
+                        db,
+                        "solicitacoes",
+                        solicitacaoId,
+                        "clienteCandidates"
+                    ),
+                    event.candidate.toJSON()
+                );
+
+            } catch (
+                erro
+            ) {
+
+                console.error(
+                    "ICE cliente:",
+                    erro
+                );
+
+            }
+
+        };
+
+    /* =====================================================
+       ICE DO TRADUTOR
+    ====================================================== */
+
+    unsubscribeTradutorCandidates =
+        onSnapshot(
+            collection(
+                db,
+                "solicitacoes",
+                solicitacaoId,
+                "tradutorCandidates"
+            ),
+            snapshot => {
+
+                snapshot.docChanges()
+                    .forEach(
+                        async change => {
+
+                            if (
+                                change.type !==
+                                "added"
+                            ) {
+
+                                return;
+
+                            }
+
+                            const dados =
+                                change.doc.data();
+
+                            if (
+                                !peerConnection
+                            ) {
+
+                                return;
+
+                            }
+
+                            if (
+                                !peerConnection
+                                    .currentRemoteDescription
+                            ) {
+
+                                filaIceTradutor.push(
+                                    dados
+                                );
+
+                                return;
+
+                            }
+
+                            try {
+
+                                await peerConnection
+                                    .addIceCandidate(
+                                        new RTCIceCandidate(
+                                            dados
+                                        )
+                                    );
+
+                            } catch (
+                                erro
+                            ) {
+
+                                console.error(
+                                    "ICE tradutor:",
+                                    erro
+                                );
+
+                            }
+
+                        }
+                    );
+
+            }
+        );
+
+    /* =====================================================
+       OFFER
+    ====================================================== */
+
+    callStatus.textContent =
+        "🌐 Criando conexão...";
+
+    videoPlaceholderText.textContent =
+        "Aguardando vídeo do tradutor...";
+
+    const offer =
+        await peerConnection
+            .createOffer();
+
+    await peerConnection
+        .setLocalDescription(
+            offer
+        );
+
+    await updateDoc(
+        doc(
+            db,
+            "solicitacoes",
+            solicitacaoId
+        ),
+        {
+
+            webrtcOffer: {
+
+                type:
+                    offer.type,
+
+                sdp:
+                    offer.sdp
+
+            },
+
+            webrtcEstado:
+                "offer_criada",
+
+            atualizadoEm:
+                serverTimestamp()
+
+        }
+    );
+
+    callStatus.textContent =
+        "🔗 Aguardando tradutor...";
+
+}
+
+/* =========================================================
+   PROCESSAR ICE EM ESPERA
+========================================================= */
+
+async function processarFilaIceTradutor() {
+
+    if (
+        !peerConnection ||
+        !peerConnection.currentRemoteDescription
+    ) {
+
+        return;
+
+    }
+
+    while (
+        filaIceTradutor.length >
+        0
+    ) {
+
+        const dados =
+            filaIceTradutor.shift();
+
+        try {
+
+            await peerConnection
+                .addIceCandidate(
+                    new RTCIceCandidate(
+                        dados
+                    )
+                );
+
+        } catch (
+            erro
+        ) {
+
+            console.error(
+                "ICE fila:",
+                erro
+            );
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   MICROFONE
+========================================================= */
+
+btnMicrofone.addEventListener(
+    "click",
+    () => {
+
+        if (
+            !localStream
+        ) {
+
+            return;
+
+        }
+
+        microfoneLigado =
+            !microfoneLigado;
+
+        localStream
+            .getAudioTracks()
+            .forEach(
+                track => {
+
+                    track.enabled =
+                        microfoneLigado;
+
+                }
+            );
+
+        if (
+            microfoneLigado
+        ) {
+
+            btnMicrofone.textContent =
+                "🎤 Microfone";
+
+            btnMicrofone.classList.remove(
+                "off"
+            );
+
+        } else {
+
+            btnMicrofone.textContent =
+                "🔇 Sem áudio";
+
+            btnMicrofone.classList.add(
+                "off"
+            );
+
+        }
+
+    }
+);
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+btnCamera.addEventListener(
+    "click",
+    () => {
+
+        if (
+            !localStream
+        ) {
+
+            return;
+
+        }
+
+        cameraLigada =
+            !cameraLigada;
+
+        localStream
+            .getVideoTracks()
+            .forEach(
+                track => {
+
+                    track.enabled =
+                        cameraLigada;
+
+                }
+            );
+
+        if (
+            cameraLigada
+        ) {
+
+            btnCamera.textContent =
+                "📹 Câmera";
+
+            btnCamera.classList.remove(
+                "off"
+            );
+
+        } else {
+
+            btnCamera.textContent =
+                "🚫 Câmera desligada";
+
+            btnCamera.classList.add(
+                "off"
+            );
+
+        }
+
+    }
+);
+
+/* =========================================================
+   CRONOMETRO
+========================================================= */
+
+function iniciarCronometro() {
+
+    if (
+        tempoInterval
+    ) {
+
+        return;
+
+    }
+
+    segundosChamada =
+        0;
+
+    atualizarCronometro();
+
+    tempoInterval =
+        setInterval(
+            () => {
+
+                segundosChamada++;
+
+                atualizarCronometro();
+
+            },
+            1000
+        );
+
+}
+
+function atualizarCronometro() {
+
+    const minutos =
+        Math.floor(
+            segundosChamada /
+            60
+        );
+
+    const segundos =
+        segundosChamada %
+        60;
+
+    timer.textContent =
+        "⏱️ " +
+        String(
+            minutos
+        ).padStart(
+            2,
+            "0"
+        ) +
+        ":" +
+        String(
+            segundos
+        ).padStart(
+            2,
+            "0"
+        );
+
+}
+
+/* =========================================================
+   ENCERRAR WEBRTC
+========================================================= */
+
+function encerrarWebRTC() {
+
+    if (
+        unsubscribeTradutorCandidates
+    ) {
+
+        unsubscribeTradutorCandidates();
+
+        unsubscribeTradutorCandidates =
+            null;
+
+    }
+
+    if (
+        peerConnection
+    ) {
+
+        peerConnection.close();
+
+        peerConnection =
+            null;
+
+    }
+
+    if (
+        localStream
+    ) {
+
+        localStream
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+        localStream =
+            null;
+
+    }
+
+    if (
+        remoteStream
+    ) {
+
+        remoteStream
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+
+        remoteStream =
+            null;
+
+    }
+
+    videoLocal.srcObject =
+        null;
+
+    videoRemoto.srcObject =
+        null;
+
+    if (
+        tempoInterval
+    ) {
+
+        clearInterval(
+            tempoInterval
+        );
+
+        tempoInterval =
+            null;
+
+    }
+
+    segundosChamada =
+        0;
+
+    atualizarCronometro();
+
+    filaIceTradutor =
+        [];
+
+    offerCriada =
+        false;
+
+    chamadaConectada =
+        false;
+
+    microfoneLigado =
+        true;
+
+    cameraLigada =
+        true;
+
+}
+
+/* =========================================================
+   CANCELAR / ENCERRAR
+========================================================= */
+
+async function cancelarOuEncerrar() {
 
     if (
         !solicitacaoAtualId
@@ -1253,11 +2348,11 @@ async function cancelarSolicitacao() {
             snap.exists()
         ) {
 
-            const dados =
-                snap.data();
+            const status =
+                snap.data().status;
 
             if (
-                dados.status ===
+                status ===
                 "aguardando"
             ) {
 
@@ -1267,9 +2362,6 @@ async function cancelarSolicitacao() {
 
                         status:
                             "cancelado",
-
-                        motivoCancelamento:
-                            "teste_cliente_novo",
 
                         atualizadoEm:
                             serverTimestamp()
@@ -1287,7 +2379,7 @@ async function cancelarSolicitacao() {
                             "finalizado",
 
                         webrtcEstado:
-                            "encerrado_teste",
+                            "encerrado",
 
                         finalizadoEm:
                             serverTimestamp(),
@@ -1307,21 +2399,12 @@ async function cancelarSolicitacao() {
     ) {
 
         console.error(
-            "Cancelar:",
             erro
         );
 
-        alert(
-            "Não foi possível encerrar a solicitação."
-        );
-
-        btnCancelarPedido.disabled =
-            false;
-
-        btnCancelarPedido.textContent =
-            "Cancelar solicitação";
-
     }
+
+    encerrarWebRTC();
 
 }
 
@@ -1329,10 +2412,12 @@ async function cancelarSolicitacao() {
    FINALIZAR TELA
 ========================================================= */
 
-function finalizarTelaTeste(
+function finalizarTela(
     titulo,
     texto
 ) {
+
+    encerrarWebRTC();
 
     if (
         pararMonitoramento
@@ -1363,6 +2448,12 @@ function finalizarTelaTeste(
     statusTexto.textContent =
         texto;
 
+    callStatus.style.display =
+        "none";
+
+    videoContainer.style.display =
+        "none";
+
     numeroPedido.textContent =
         "";
 
@@ -1375,10 +2466,12 @@ function finalizarTelaTeste(
 }
 
 /* =========================================================
-   VOLTAR PARA INÍCIO
+   VOLTAR INICIO
 ========================================================= */
 
 function voltarInicio() {
+
+    encerrarWebRTC();
 
     if (
         pararMonitoramento
@@ -1419,7 +2512,7 @@ btnCancelarPedido.addEventListener(
             solicitacaoAtualId
         ) {
 
-            await cancelarSolicitacao();
+            await cancelarOuEncerrar();
 
         } else {
 
@@ -1437,17 +2530,12 @@ btnCancelarPedido.addEventListener(
 window.voltarPagina =
     function () {
 
-        /*
-        Se existe solicitação aberta,
-        não vamos abandonar o pedido silenciosamente.
-        */
-
         if (
             solicitacaoAtualId
         ) {
 
             alert(
-                "Cancele a solicitação antes de sair."
+                "Encerre ou cancele o atendimento antes de sair."
             );
 
             return;
