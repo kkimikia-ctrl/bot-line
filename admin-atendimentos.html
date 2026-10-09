@@ -48,6 +48,11 @@ body {
     color: #1e293b;
 }
 
+button,
+select {
+    font-family: inherit;
+}
+
 .app {
     width: 100%;
     max-width: 900px;
@@ -106,13 +111,14 @@ body {
 
 .resumo-grid {
     display: grid;
-    grid-template-columns: repeat(
-        2,
-        minmax(
-            0,
-            1fr
-        )
-    );
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
     gap: 12px;
     margin-bottom: 18px;
 }
@@ -131,15 +137,15 @@ body {
 }
 
 .card-titulo {
-    font-size: 13px;
+    font-size: 12px;
     color: #64748b;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .card-valor {
     margin-top: 6px;
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 900;
     color: #2563eb;
 }
 
@@ -165,6 +171,7 @@ body {
 .barra-linha {
     display: flex;
     gap: 10px;
+    align-items: center;
 }
 
 select {
@@ -185,11 +192,12 @@ select {
     color: white;
     font-weight: 800;
     font-size: 14px;
+    cursor: pointer;
 }
 
 
 /* =========================================================
-   ATENDIMENTOS
+   LISTA
 ========================================================= */
 
 .lista {
@@ -214,29 +222,30 @@ select {
 .atendimento-topo {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
     gap: 12px;
+    align-items: flex-start;
     margin-bottom: 12px;
 }
 
-.data {
-    font-weight: 800;
-    font-size: 15px;
+.cliente-nome {
+    font-size: 16px;
+    font-weight: 900;
 }
 
-.hora {
+.data {
     margin-top: 3px;
-    color: #64748b;
     font-size: 12px;
+    color: #64748b;
 }
 
 .status {
     padding: 6px 10px;
     border-radius: 999px;
     font-size: 11px;
-    font-weight: 800;
+    font-weight: 900;
     background: #e2e8f0;
     color: #334155;
+    white-space: nowrap;
 }
 
 .status-aguardando {
@@ -244,25 +253,36 @@ select {
     color: #92400e;
 }
 
-.status-andamento {
+.status-aceito {
     background: #dbeafe;
     color: #1d4ed8;
 }
 
-.status-finalizado {
+.status-conectado {
     background: #dcfce7;
     color: #166534;
 }
 
+.status-finalizado {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.status-cancelado {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(
-        2,
-        minmax(
-            0,
-            1fr
-        )
-    );
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
     gap: 10px;
 }
 
@@ -273,21 +293,51 @@ select {
 }
 
 .rotulo {
-    font-size: 11px;
+    font-size: 10px;
     color: #64748b;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .valor {
     margin-top: 4px;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
     word-break: break-word;
+}
+
+.separador {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 14px 0 12px;
+}
+
+.timeline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.timeline-item {
+    background: #f8fafc;
+    border-radius: 11px;
+    padding: 9px;
+}
+
+.timeline-label {
+    font-size: 9px;
+    color: #94a3b8;
+    font-weight: 800;
+}
+
+.timeline-value {
+    margin-top: 3px;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 
 /* =========================================================
-   STATUS DA PÁGINA
+   MENSAGEM
 ========================================================= */
 
 .mensagem {
@@ -299,6 +349,11 @@ select {
 .erro {
     color: #b91c1c;
 }
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (
     max-width: 520px
@@ -356,12 +411,12 @@ select {
         <div class="card">
 
             <div class="card-titulo">
-                Total
+                Aguardando
             </div>
 
             <div
                 class="card-valor"
-                id="total"
+                id="totalAguardando"
             >
                 0
             </div>
@@ -372,7 +427,23 @@ select {
         <div class="card">
 
             <div class="card-titulo">
-                Hoje
+                Em atendimento
+            </div>
+
+            <div
+                class="card-valor"
+                id="totalEmAtendimento"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-titulo">
+                Finalizados hoje
             </div>
 
             <div
@@ -380,6 +451,22 @@ select {
                 id="totalHoje"
             >
                 0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-titulo">
+                Tempo hoje
+            </div>
+
+            <div
+                class="card-valor"
+                id="tempoHoje"
+            >
+                0 min
             </div>
 
         </div>
@@ -397,20 +484,28 @@ select {
                     Todos
                 </option>
 
-                <option value="hoje">
-                    Somente hoje
-                </option>
-
                 <option value="aguardando">
                     Aguardando
                 </option>
 
-                <option value="andamento">
-                    Em andamento
+                <option value="aceito">
+                    Aceitos
+                </option>
+
+                <option value="conectado">
+                    Conectados
                 </option>
 
                 <option value="finalizado">
                     Finalizados
+                </option>
+
+                <option value="cancelado">
+                    Cancelados
+                </option>
+
+                <option value="hoje">
+                    Finalizados hoje
                 </option>
 
             </select>
@@ -521,9 +616,15 @@ const btnAtualizar =
     );
 
 
-const total =
+const totalAguardando =
     document.getElementById(
-        "total"
+        "totalAguardando"
+    );
+
+
+const totalEmAtendimento =
+    document.getElementById(
+        "totalEmAtendimento"
     );
 
 
@@ -533,100 +634,47 @@ const totalHoje =
     );
 
 
-let atendimentos =
+const tempoHoje =
+    document.getElementById(
+        "tempoHoje"
+    );
+
+
+let solicitacoes =
     [];
 
 
 /* =========================================================
-   HOJE
+   TIMESTAMP
 ========================================================= */
 
-function obterHoje() {
-
-    const agora =
-        new Date();
-
-
-    const ano =
-        agora.getFullYear();
-
-
-    const mes =
-        String(
-            agora.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const dia =
-        String(
-            agora.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    return `${ano}-${mes}-${dia}`;
-
-}
-
-
-/* =========================================================
-   CONVERTER DATA
-========================================================= */
-
-function obterDataRegistro(
-    item
+function timestampParaData(
+    timestamp
 ) {
 
-    const campos =
-        [
-            item.criadoEm,
-            item.timestamp,
-            item.dataCriacao,
-            item.createdAt
-        ];
+    if (!timestamp) {
+        return null;
+    }
 
 
-    for (
-        const campo of campos
+    if (
+        typeof timestamp.toDate ===
+        "function"
     ) {
 
-        if (
-            campo &&
-            typeof campo.toDate ===
-            "function"
-        ) {
-
-            return campo.toDate();
-
-        }
+        return timestamp.toDate();
 
     }
 
 
     if (
-        item.data
+        timestamp.seconds
     ) {
 
-        const data =
-            new Date(
-                item.data
-            );
-
-
-        if (
-            !isNaN(
-                data.getTime()
-            )
-        ) {
-
-            return data;
-
-        }
+        return new Date(
+            timestamp.seconds *
+            1000
+        );
 
     }
 
@@ -637,10 +685,208 @@ function obterDataRegistro(
 
 
 /* =========================================================
+   DATA PRINCIPAL
+========================================================= */
+
+function obterDataPrincipal(
+    item
+) {
+
+    return (
+        timestampParaData(
+            item.finalizadoEm
+        ) ||
+
+        timestampParaData(
+            item.conectadoEm
+        ) ||
+
+        timestampParaData(
+            item.aceitoEm
+        ) ||
+
+        timestampParaData(
+            item.criadoEm
+        ) ||
+
+        timestampParaData(
+            item.timestamp
+        ) ||
+
+        timestampParaData(
+            item.atualizadoEm
+        ) ||
+
+        null
+    );
+
+}
+
+
+/* =========================================================
+   HOJE
+========================================================= */
+
+function mesmaData(
+    dataA,
+    dataB
+) {
+
+    return (
+        dataA.getFullYear() ===
+        dataB.getFullYear() &&
+
+        dataA.getMonth() ===
+        dataB.getMonth() &&
+
+        dataA.getDate() ===
+        dataB.getDate()
+    );
+
+}
+
+
+/* =========================================================
+   DURAÇÃO
+========================================================= */
+
+function calcularDuracaoSegundos(
+    item
+) {
+
+    const inicio =
+        timestampParaData(
+            item.conectadoEm
+        );
+
+
+    const fim =
+        timestampParaData(
+            item.finalizadoEm
+        );
+
+
+    if (
+        !inicio ||
+        !fim
+    ) {
+
+        return 0;
+
+    }
+
+
+    return Math.max(
+        0,
+        Math.floor(
+            (
+                fim.getTime() -
+                inicio.getTime()
+            ) / 1000
+        )
+    );
+
+}
+
+
+function formatarDuracao(
+    segundos
+) {
+
+    if (!segundos) {
+        return "0 min";
+    }
+
+
+    const minutos =
+        Math.floor(
+            segundos / 60
+        );
+
+
+    const resto =
+        segundos % 60;
+
+
+    if (
+        minutos ===
+        0
+    ) {
+
+        return resto + " seg";
+
+    }
+
+
+    if (
+        resto ===
+        0
+    ) {
+
+        return minutos + " min";
+
+    }
+
+
+    return (
+        minutos +
+        " min " +
+        resto +
+        " seg"
+    );
+
+}
+
+
+/* =========================================================
+   FORMATAR DATA
+========================================================= */
+
+function formatarDataHora(
+    timestamp
+) {
+
+    const data =
+        timestampParaData(
+            timestamp
+        );
+
+
+    if (!data) {
+        return "-";
+    }
+
+
+    try {
+
+        return new Intl.DateTimeFormat(
+            "pt-BR",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        ).format(
+            data
+        );
+
+    }
+    catch {
+
+        return data.toLocaleString();
+
+    }
+
+}
+
+
+/* =========================================================
    CARREGAR
 ========================================================= */
 
-async function carregarAtendimentos() {
+async function carregar() {
 
     mensagem.style.display =
         "block";
@@ -665,29 +911,25 @@ async function carregarAtendimentos() {
             await getDocs(
                 collection(
                     db,
-                    "atendimentos"
+                    "solicitacoes"
                 )
             );
 
 
-        atendimentos =
+        solicitacoes =
             [];
 
 
         resultado.forEach(
             function(documento) {
 
-                const dados =
-                    documento.data();
-
-
-                atendimentos.push(
+                solicitacoes.push(
                     {
 
                         id:
                             documento.id,
 
-                        ...dados
+                        ...documento.data()
 
                     }
                 );
@@ -696,19 +938,17 @@ async function carregarAtendimentos() {
         );
 
 
-        /* MAIS NOVOS PRIMEIRO */
-
-        atendimentos.sort(
-            function(a, b) {
+        solicitacoes.sort(
+            function(a,b) {
 
                 const dataA =
-                    obterDataRegistro(
+                    obterDataPrincipal(
                         a
                     );
 
 
                 const dataB =
-                    obterDataRegistro(
+                    obterDataPrincipal(
                         b
                     );
 
@@ -743,11 +983,13 @@ async function carregarAtendimentos() {
         renderizar();
 
 
-    } catch (
+    }
+    catch (
         erro
     ) {
 
         console.error(
+            "Erro ao carregar solicitações:",
             erro
         );
 
@@ -758,7 +1000,7 @@ async function carregarAtendimentos() {
 
 
         mensagem.textContent =
-            "Erro ao carregar atendimentos.";
+            "Não foi possível carregar os atendimentos.";
 
     }
 
@@ -771,43 +1013,84 @@ async function carregarAtendimentos() {
 
 function atualizarResumo() {
 
-    total.textContent =
-        atendimentos.length;
-
-
     const hoje =
-        obterHoje();
+        new Date();
 
 
-    let quantidadeHoje =
+    let aguardando =
         0;
 
 
-    atendimentos.forEach(
+    let emAtendimento =
+        0;
+
+
+    let finalizadosHoje =
+        0;
+
+
+    let segundosHoje =
+        0;
+
+
+    solicitacoes.forEach(
         function(item) {
 
-            const data =
-                obterDataRegistro(
-                    item
-                );
+            const status =
+                String(
+                    item.status ||
+                    ""
+                ).toLowerCase();
 
 
             if (
-                data
+                status ===
+                "aguardando"
             ) {
 
-                const dataFormatada =
-                    formatarDataBanco(
-                        data
+                aguardando++;
+
+            }
+
+
+            if (
+                status ===
+                "aceito" ||
+                status ===
+                "conectado"
+            ) {
+
+                emAtendimento++;
+
+            }
+
+
+            if (
+                status ===
+                "finalizado"
+            ) {
+
+                const finalizado =
+                    timestampParaData(
+                        item.finalizadoEm
                     );
 
 
                 if (
-                    dataFormatada ===
-                    hoje
+                    finalizado &&
+                    mesmaData(
+                        finalizado,
+                        hoje
+                    )
                 ) {
 
-                    quantidadeHoje++;
+                    finalizadosHoje++;
+
+
+                    segundosHoje +=
+                        calcularDuracaoSegundos(
+                            item
+                        );
 
                 }
 
@@ -817,14 +1100,60 @@ function atualizarResumo() {
     );
 
 
+    totalAguardando.textContent =
+        aguardando;
+
+
+    totalEmAtendimento.textContent =
+        emAtendimento;
+
+
     totalHoje.textContent =
-        quantidadeHoje;
+        finalizadosHoje;
+
+
+    const minutos =
+        Math.floor(
+            segundosHoje / 60
+        );
+
+
+    if (
+        minutos <
+        60
+    ) {
+
+        tempoHoje.textContent =
+            minutos +
+            " min";
+
+    }
+    else {
+
+        const horas =
+            Math.floor(
+                minutos / 60
+            );
+
+
+        const resto =
+            minutos %
+            60;
+
+
+        tempoHoje.textContent =
+            horas +
+            "h " +
+            resto +
+            "m";
+
+    }
 
 }
 
 
 /* =========================================================
-   FILTRAR
+   FILTRO
 ========================================================= */
 
 function obterFiltrados() {
@@ -838,7 +1167,7 @@ function obterFiltrados() {
         "todos"
     ) {
 
-        return atendimentos;
+        return solicitacoes;
 
     }
 
@@ -849,24 +1178,34 @@ function obterFiltrados() {
     ) {
 
         const hoje =
-            obterHoje();
+            new Date();
 
 
-        return atendimentos.filter(
+        return solicitacoes.filter(
             function(item) {
 
-                const data =
-                    obterDataRegistro(
-                        item
+                if (
+                    item.status !==
+                    "finalizado"
+                ) {
+
+                    return false;
+
+                }
+
+
+                const finalizado =
+                    timestampParaData(
+                        item.finalizadoEm
                     );
 
 
                 return (
-                    data &&
-                    formatarDataBanco(
-                        data
-                    ) ===
-                    hoje
+                    finalizado &&
+                    mesmaData(
+                        finalizado,
+                        hoje
+                    )
                 );
 
             }
@@ -875,44 +1214,89 @@ function obterFiltrados() {
     }
 
 
-    return atendimentos.filter(
+    return solicitacoes.filter(
         function(item) {
 
-            const status =
+            return (
                 String(
                     item.status ||
-                    item.estado ||
                     ""
-                )
-                .toLowerCase();
-
-
-            if (
-                valor ===
-                "andamento"
-            ) {
-
-                return (
-                    status.includes(
-                        "andamento"
-                    ) ||
-                    status.includes(
-                        "atendimento"
-                    ) ||
-                    status.includes(
-                        "conectado"
-                    )
-                );
-
-            }
-
-
-            return status.includes(
+                ).toLowerCase() ===
                 valor
             );
 
         }
     );
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function obterClasseStatus(
+    status
+) {
+
+    const texto =
+        String(
+            status ||
+            ""
+        ).toLowerCase();
+
+
+    if (
+        texto ===
+        "aguardando"
+    ) {
+
+        return "status-aguardando";
+
+    }
+
+
+    if (
+        texto ===
+        "aceito"
+    ) {
+
+        return "status-aceito";
+
+    }
+
+
+    if (
+        texto ===
+        "conectado"
+    ) {
+
+        return "status-conectado";
+
+    }
+
+
+    if (
+        texto ===
+        "finalizado"
+    ) {
+
+        return "status-finalizado";
+
+    }
+
+
+    if (
+        texto ===
+        "cancelado"
+    ) {
+
+        return "status-cancelado";
+
+    }
+
+
+    return "";
 
 }
 
@@ -956,120 +1340,137 @@ function renderizar() {
     dados.forEach(
         function(item) {
 
-            const elemento =
+            const card =
                 document.createElement(
                     "div"
                 );
 
 
-            elemento.className =
+            card.className =
                 "atendimento";
 
 
-            const data =
-                obterDataRegistro(
-                    item
-                );
-
-
-            let dataTexto =
-                "-";
-
-
-            let horaTexto =
-                "-";
-
-
-            if (
-                data
-            ) {
-
-                dataTexto =
-                    data.toLocaleDateString(
-                        "pt-BR"
-                    );
-
-
-                horaTexto =
-                    data.toLocaleTimeString(
-                        "pt-BR",
-                        {
-
-                            hour:
-                                "2-digit",
-
-                            minute:
-                                "2-digit"
-
-                        }
-                    );
-
-            }
-
-
-            const statusValor =
-                item.status ||
-                item.estado ||
-                "-";
-
-
-            const classeStatus =
-                obterClasseStatus(
-                    statusValor
-                );
-
-
-            const cliente =
+            const nome =
+                item.clienteNome ||
                 item.cliente ||
-                item.clienteId ||
-                item.usuarioId ||
-                "-";
-
-
-            const tradutor =
-                item.tradutor ||
-                item.tradutorId ||
-                "-";
-
-
-            const tempo =
-                item.tempo ||
-                item.duracao ||
-                item.minutos ||
-                "-";
+                "Cliente";
 
 
             const local =
                 item.local ||
-                item.localizacao ||
+                "Não informado";
+
+
+            const tempo =
+                Number(
+                    item.tempoMinutos ||
+                    item.tempo ||
+                    30
+                );
+
+
+            const tradutor =
+                item.tradutorNome ||
+                item.tradutor ||
                 "-";
 
 
-            elemento.innerHTML =
+            const status =
+                item.status ||
+                "-";
+
+
+            const criadoEm =
+                item.criadoEm ||
+                item.timestamp ||
+                null;
+
+
+            const dataPrincipal =
+                obterDataPrincipal(
+                    item
+                );
+
+
+            let dataTopo =
+                "-";
+
+
+            if (
+                dataPrincipal
+            ) {
+
+                try {
+
+                    dataTopo =
+                        new Intl.DateTimeFormat(
+                            "pt-BR",
+                            {
+                                day:
+                                    "2-digit",
+
+                                month:
+                                    "2-digit",
+
+                                year:
+                                    "numeric",
+
+                                hour:
+                                    "2-digit",
+
+                                minute:
+                                    "2-digit"
+                            }
+                        ).format(
+                            dataPrincipal
+                        );
+
+                }
+                catch {
+
+                    dataTopo =
+                        dataPrincipal.toLocaleString();
+
+                }
+
+            }
+
+
+            const duracao =
+                formatarDuracao(
+                    calcularDuracaoSegundos(
+                        item
+                    )
+                );
+
+
+            card.innerHTML =
                 `
 
                 <div class="atendimento-topo">
 
                     <div>
 
-                        <div class="data">
-                            ${escaparHtml(
-                                dataTexto
+                        <div class="cliente-nome">
+                            ${escaparHTML(
+                                nome
                             )}
                         </div>
 
-                        <div class="hora">
-                            ${escaparHtml(
-                                horaTexto
+                        <div class="data">
+                            ${escaparHTML(
+                                dataTopo
                             )}
                         </div>
 
                     </div>
 
 
-                    <div class="status ${classeStatus}">
-                        ${escaparHtml(
-                            statusValor
+                    <div class="status ${obterClasseStatus(
+                        status
+                    )}">
+                        ${escaparHTML(
+                            status
                         )}
                     </div>
 
@@ -1082,61 +1483,132 @@ function renderizar() {
                     <div class="info">
 
                         <div class="rotulo">
-                            Cliente
+                            LOCAL
                         </div>
 
                         <div class="valor">
-                            ${escaparHtml(
-                                abreviar(
-                                    cliente
-                                )
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="info">
-
-                        <div class="rotulo">
-                            Tradutor
-                        </div>
-
-                        <div class="valor">
-                            ${escaparHtml(
-                                abreviar(
-                                    tradutor
-                                )
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="info">
-
-                        <div class="rotulo">
-                            Tempo
-                        </div>
-
-                        <div class="valor">
-                            ${escaparHtml(
-                                tempo
-                            )}
-                        </div>
-
-                    </div>
-
-
-                    <div class="info">
-
-                        <div class="rotulo">
-                            Local
-                        </div>
-
-                        <div class="valor">
-                            ${escaparHtml(
+                            📍 ${escaparHTML(
                                 local
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <div class="rotulo">
+                            TEMPO SOLICITADO
+                        </div>
+
+                        <div class="valor">
+                            ⏱️ ${tempo} min
+                        </div>
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <div class="rotulo">
+                            TRADUTOR
+                        </div>
+
+                        <div class="valor">
+                            ${escaparHTML(
+                                tradutor
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <div class="rotulo">
+                            DURAÇÃO REAL
+                        </div>
+
+                        <div class="valor">
+                            ${escaparHTML(
+                                duracao
+                            )}
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="separador"></div>
+
+
+                <div class="timeline">
+
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-label">
+                            SOLICITADO
+                        </div>
+
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(
+                                    criadoEm
+                                )
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-label">
+                            ACEITO
+                        </div>
+
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(
+                                    item.aceitoEm
+                                )
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-label">
+                            CONECTADO
+                        </div>
+
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(
+                                    item.conectadoEm
+                                )
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-label">
+                            FINALIZADO
+                        </div>
+
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(
+                                    item.finalizadoEm
+                                )
                             )}
                         </div>
 
@@ -1149,7 +1621,7 @@ function renderizar() {
 
 
             lista.appendChild(
-                elemento
+                card
             );
 
         }
@@ -1159,142 +1631,10 @@ function renderizar() {
 
 
 /* =========================================================
-   STATUS
+   ESCAPAR HTML
 ========================================================= */
 
-function obterClasseStatus(
-    status
-) {
-
-    const texto =
-        String(
-            status
-        ).toLowerCase();
-
-
-    if (
-        texto.includes(
-            "aguard"
-        )
-    ) {
-
-        return "status-aguardando";
-
-    }
-
-
-    if (
-        texto.includes(
-            "final"
-        ) ||
-        texto.includes(
-            "conclu"
-        )
-    ) {
-
-        return "status-finalizado";
-
-    }
-
-
-    if (
-        texto.includes(
-            "andamento"
-        ) ||
-        texto.includes(
-            "conect"
-        ) ||
-        texto.includes(
-            "atendimento"
-        )
-    ) {
-
-        return "status-andamento";
-
-    }
-
-
-    return "";
-
-}
-
-
-/* =========================================================
-   DATA BANCO
-========================================================= */
-
-function formatarDataBanco(
-    data
-) {
-
-    const ano =
-        data.getFullYear();
-
-
-    const mes =
-        String(
-            data.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const dia =
-        String(
-            data.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    return `${ano}-${mes}-${dia}`;
-
-}
-
-
-/* =========================================================
-   ABREVIAR
-========================================================= */
-
-function abreviar(
-    valor
-) {
-
-    const texto =
-        String(
-            valor ||
-            "-"
-        );
-
-
-    if (
-        texto.length <=
-        16
-    ) {
-
-        return texto;
-
-    }
-
-
-    return (
-        texto.substring(
-            0,
-            12
-        ) +
-        "..."
-    );
-
-}
-
-
-/* =========================================================
-   SEGURANÇA HTML
-========================================================= */
-
-function escaparHtml(
+function escaparHTML(
     valor
 ) {
 
@@ -1302,24 +1642,24 @@ function escaparHtml(
         valor ??
         ""
     )
-    .replace(
-        /&/g,
+    .replaceAll(
+        "&",
         "&amp;"
     )
-    .replace(
-        /</g,
+    .replaceAll(
+        "<",
         "&lt;"
     )
-    .replace(
-        />/g,
+    .replaceAll(
+        ">",
         "&gt;"
     )
-    .replace(
-        /"/g,
+    .replaceAll(
+        '"',
         "&quot;"
     )
-    .replace(
-        /'/g,
+    .replaceAll(
+        "'",
         "&#039;"
     );
 
@@ -1332,7 +1672,7 @@ function escaparHtml(
 
 btnAtualizar.addEventListener(
     "click",
-    carregarAtendimentos
+    carregar
 );
 
 
@@ -1343,10 +1683,10 @@ filtro.addEventListener(
 
 
 /* =========================================================
-   INICIAR
+   INÍCIO
 ========================================================= */
 
-carregarAtendimentos();
+carregar();
 
 </script>
 
