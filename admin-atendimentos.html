@@ -1126,6 +1126,7 @@ function renderizar(dadosPeriodo) {
                     <button
                         type="button"
                         class="btn-cancelar-travado"
+                        data-id="${escaparHTML(item.id)}"
                     >
                         Cancelar travado
                     </button>
@@ -1204,23 +1205,6 @@ function renderizar(dadosPeriodo) {
                 </div>
             `;
 
-            if (avisoTravado) {
-                const botao =
-                    card.querySelector(
-                        ".btn-cancelar-travado"
-                    );
-
-                botao.addEventListener(
-                    "click",
-                    () => {
-                        cancelarAtendimentoTravado(
-                            item,
-                            botao
-                        );
-                    }
-                );
-            }
-
             lista.appendChild(card);
         }
     );
@@ -1295,6 +1279,55 @@ statusFiltro.addEventListener(
 btnAtualizar.addEventListener(
     "click",
     carregar
+);
+
+/* =========================================================
+   CLIQUE DOS BOTÕES "CANCELAR TRAVADO"
+   Usa delegação de evento para funcionar melhor no celular.
+========================================================= */
+
+lista.addEventListener(
+    "click",
+    async event => {
+
+        const botao =
+            event.target.closest(
+                ".btn-cancelar-travado"
+            );
+
+        if (!botao) {
+            return;
+        }
+
+        const id =
+            botao.dataset.id;
+
+        if (!id) {
+            alert(
+                "Não foi possível identificar este atendimento."
+            );
+            return;
+        }
+
+        const item =
+            solicitacoes.find(
+                atendimento =>
+                    atendimento.id === id
+            );
+
+        if (!item) {
+            alert(
+                "Atendimento não encontrado. Atualize a página."
+            );
+            return;
+        }
+
+        await cancelarAtendimentoTravado(
+            item,
+            botao
+        );
+
+    }
 );
 
 /* =========================================================
