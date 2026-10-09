@@ -1025,6 +1025,70 @@ async function cancelarAtendimentoTravado(item, botao) {
     }
 }
 
+
+/* =========================================================
+   FUNÇÃO GLOBAL DO BOTÃO
+   Inline onclick para funcionar de forma confiável no iPhone.
+========================================================= */
+
+window.cancelarTravadoPorBotao =
+    async function(botao) {
+
+        try {
+
+            const id =
+                botao.getAttribute(
+                    "data-id"
+                );
+
+            if (!id) {
+
+                alert(
+                    "Não foi possível identificar este atendimento."
+                );
+
+                return;
+
+            }
+
+            const item =
+                solicitacoes.find(
+                    atendimento =>
+                        atendimento.id === id
+                );
+
+            if (!item) {
+
+                alert(
+                    "Atendimento não encontrado. Toque em Atualizar e tente novamente."
+                );
+
+                return;
+
+            }
+
+            await cancelarAtendimentoTravado(
+                item,
+                botao
+            );
+
+        }
+        catch (erro) {
+
+            console.error(
+                "Erro no botão Cancelar travado:",
+                erro
+            );
+
+            alert(
+                "O botão foi acionado, mas ocorreu um erro. Tente atualizar a página."
+            );
+
+        }
+
+    };
+
+
 /* =========================================================
    RENDERIZAR
 ========================================================= */
@@ -1127,6 +1191,7 @@ function renderizar(dadosPeriodo) {
                         type="button"
                         class="btn-cancelar-travado"
                         data-id="${escaparHTML(item.id)}"
+                        onclick="window.cancelarTravadoPorBotao(this)"
                     >
                         Cancelar travado
                     </button>
@@ -1279,55 +1344,6 @@ statusFiltro.addEventListener(
 btnAtualizar.addEventListener(
     "click",
     carregar
-);
-
-/* =========================================================
-   CLIQUE DOS BOTÕES "CANCELAR TRAVADO"
-   Usa delegação de evento para funcionar melhor no celular.
-========================================================= */
-
-lista.addEventListener(
-    "click",
-    async event => {
-
-        const botao =
-            event.target.closest(
-                ".btn-cancelar-travado"
-            );
-
-        if (!botao) {
-            return;
-        }
-
-        const id =
-            botao.dataset.id;
-
-        if (!id) {
-            alert(
-                "Não foi possível identificar este atendimento."
-            );
-            return;
-        }
-
-        const item =
-            solicitacoes.find(
-                atendimento =>
-                    atendimento.id === id
-            );
-
-        if (!item) {
-            alert(
-                "Atendimento não encontrado. Atualize a página."
-            );
-            return;
-        }
-
-        await cancelarAtendimentoTravado(
-            item,
-            botao
-        );
-
-    }
 );
 
 /* =========================================================
