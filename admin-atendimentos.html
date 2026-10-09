@@ -49,7 +49,8 @@ body {
 }
 
 button,
-select {
+select,
+input {
     font-family: inherit;
 }
 
@@ -81,6 +82,7 @@ select {
     border: none;
     border-radius: 12px;
     background: white;
+
     box-shadow:
         0 4px 14px rgba(
             15,
@@ -88,6 +90,7 @@ select {
             42,
             0.08
         );
+
     font-size: 20px;
     cursor: pointer;
 }
@@ -95,7 +98,7 @@ select {
 .header h1 {
     margin: 0;
     font-size: 26px;
-    font-weight: 800;
+    font-weight: 900;
 }
 
 .header p {
@@ -111,6 +114,7 @@ select {
 
 .resumo-grid {
     display: grid;
+
     grid-template-columns:
         repeat(
             2,
@@ -119,6 +123,7 @@ select {
                 1fr
             )
         );
+
     gap: 12px;
     margin-bottom: 18px;
 }
@@ -127,6 +132,7 @@ select {
     background: white;
     border-radius: 18px;
     padding: 18px;
+
     box-shadow:
         0 5px 20px rgba(
             15,
@@ -149,16 +155,76 @@ select {
     color: #2563eb;
 }
 
+.periodo-texto {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #94a3b8;
+}
+
 
 /* =========================================================
-   CONTROLES
+   AGORA
 ========================================================= */
 
-.barra {
+.agora-card {
     background: white;
     border-radius: 18px;
     padding: 14px;
     margin-bottom: 18px;
+
+    box-shadow:
+        0 5px 20px rgba(
+            15,
+            23,
+            42,
+            0.06
+        );
+}
+
+.agora-titulo {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.agora-linha {
+    display: flex;
+    gap: 10px;
+}
+
+.agora-item {
+    flex: 1;
+    background: #f8fafc;
+    border-radius: 13px;
+    padding: 11px;
+}
+
+.agora-label {
+    display: block;
+    font-size: 10px;
+    color: #94a3b8;
+    font-weight: 800;
+}
+
+.agora-valor {
+    display: block;
+    margin-top: 3px;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.filtros {
+    background: white;
+    border-radius: 18px;
+    padding: 15px;
+    margin-bottom: 18px;
+
     box-shadow:
         0 5px 20px rgba(
             15,
@@ -168,30 +234,54 @@ select {
         );
 }
 
-.barra-linha {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.filtro-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    margin-bottom: 6px;
 }
 
-select {
-    flex: 1;
-    min-width: 0;
+select,
+input[type="month"] {
+    width: 100%;
     border: 1px solid #cbd5e1;
     border-radius: 12px;
     padding: 12px;
     font-size: 14px;
     background: white;
+    color: #1e293b;
 }
 
-.btn {
+.filtro-bloco {
+    margin-bottom: 12px;
+}
+
+.filtro-bloco:last-child {
+    margin-bottom: 0;
+}
+
+#blocoMes {
+    display: none;
+}
+
+.btn-atualizar {
+    width: 100%;
+    margin-top: 14px;
     border: none;
     border-radius: 12px;
-    padding: 12px 16px;
-    background: #2563eb;
+    padding: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
     color: white;
-    font-weight: 800;
     font-size: 14px;
+    font-weight: 900;
     cursor: pointer;
 }
 
@@ -210,6 +300,7 @@ select {
     background: white;
     border-radius: 18px;
     padding: 16px;
+
     box-shadow:
         0 5px 20px rgba(
             15,
@@ -222,8 +313,8 @@ select {
 .atendimento-topo {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
     align-items: flex-start;
+    gap: 12px;
     margin-bottom: 12px;
 }
 
@@ -243,9 +334,10 @@ select {
     border-radius: 999px;
     font-size: 11px;
     font-weight: 900;
+    white-space: nowrap;
+
     background: #e2e8f0;
     color: #334155;
-    white-space: nowrap;
 }
 
 .status-aguardando {
@@ -275,6 +367,7 @@ select {
 
 .info-grid {
     display: grid;
+
     grid-template-columns:
         repeat(
             2,
@@ -283,6 +376,7 @@ select {
                 1fr
             )
         );
+
     gap: 10px;
 }
 
@@ -378,6 +472,10 @@ select {
 <div class="app">
 
 
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
     <div class="header">
 
         <div class="header-topo">
@@ -406,67 +504,46 @@ select {
     </div>
 
 
-    <div class="resumo-grid">
+    <!-- =====================================================
+         SITUAÇÃO ATUAL
+    ====================================================== -->
 
-        <div class="card">
+    <div class="agora-card">
 
-            <div class="card-titulo">
-                Aguardando
-            </div>
-
-            <div
-                class="card-valor"
-                id="totalAguardando"
-            >
-                0
-            </div>
-
+        <div class="agora-titulo">
+            SITUAÇÃO AGORA
         </div>
 
+        <div class="agora-linha">
 
-        <div class="card">
+            <div class="agora-item">
 
-            <div class="card-titulo">
-                Em atendimento
+                <span class="agora-label">
+                    Aguardando
+                </span>
+
+                <span
+                    class="agora-valor"
+                    id="agoraAguardando"
+                >
+                    0
+                </span>
+
             </div>
 
-            <div
-                class="card-valor"
-                id="totalEmAtendimento"
-            >
-                0
-            </div>
+            <div class="agora-item">
 
-        </div>
+                <span class="agora-label">
+                    Em atendimento
+                </span>
 
+                <span
+                    class="agora-valor"
+                    id="agoraAtendimento"
+                >
+                    0
+                </span>
 
-        <div class="card">
-
-            <div class="card-titulo">
-                Finalizados hoje
-            </div>
-
-            <div
-                class="card-valor"
-                id="totalHoje"
-            >
-                0
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-titulo">
-                Tempo hoje
-            </div>
-
-            <div
-                class="card-valor"
-                id="tempoHoje"
-            >
-                0 min
             </div>
 
         </div>
@@ -474,14 +551,181 @@ select {
     </div>
 
 
-    <div class="barra">
+    <!-- =====================================================
+         RESUMO DO PERÍODO
+    ====================================================== -->
 
-        <div class="barra-linha">
+    <div class="resumo-grid">
 
-            <select id="filtro">
+        <div class="card">
+
+            <div class="card-titulo">
+                Atendimentos
+            </div>
+
+            <div
+                class="card-valor"
+                id="totalPeriodo"
+            >
+                0
+            </div>
+
+            <div
+                class="periodo-texto"
+                id="textoPeriodo1"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-titulo">
+                Finalizados
+            </div>
+
+            <div
+                class="card-valor"
+                id="finalizadosPeriodo"
+            >
+                0
+            </div>
+
+            <div
+                class="periodo-texto"
+                id="textoPeriodo2"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-titulo">
+                Tempo total
+            </div>
+
+            <div
+                class="card-valor"
+                id="tempoPeriodo"
+            >
+                0 min
+            </div>
+
+            <div
+                class="periodo-texto"
+                id="textoPeriodo3"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-titulo">
+                Média
+            </div>
+
+            <div
+                class="card-valor"
+                id="mediaPeriodo"
+            >
+                0 min
+            </div>
+
+            <div
+                class="periodo-texto"
+                id="textoPeriodo4"
+            >
+                Por atendimento
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTROS
+    ====================================================== -->
+
+    <div class="filtros">
+
+
+        <div class="filtro-bloco">
+
+            <label class="filtro-label">
+                PERÍODO
+            </label>
+
+            <select id="periodo">
+
+                <option value="hoje">
+                    Hoje
+                </option>
+
+                <option value="1mes">
+                    Último 1 mês
+                </option>
+
+                <option value="3meses">
+                    Últimos 3 meses
+                </option>
+
+                <option value="6meses">
+                    Últimos 6 meses
+                </option>
+
+                <option value="1ano">
+                    Último 1 ano
+                </option>
+
+                <option value="mes">
+                    Escolher mês específico
+                </option>
 
                 <option value="todos">
                     Todos
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            class="filtro-bloco"
+            id="blocoMes"
+        >
+
+            <label class="filtro-label">
+                ESCOLHA O MÊS
+            </label>
+
+            <input
+                type="month"
+                id="mesEscolhido"
+            >
+
+        </div>
+
+
+        <div class="filtro-bloco">
+
+            <label class="filtro-label">
+                STATUS
+            </label>
+
+            <select id="statusFiltro">
+
+                <option value="todos">
+                    Todos os status
                 </option>
 
                 <option value="aguardando">
@@ -489,38 +733,41 @@ select {
                 </option>
 
                 <option value="aceito">
-                    Aceitos
+                    Aceito
                 </option>
 
                 <option value="conectado">
-                    Conectados
+                    Conectado
                 </option>
 
                 <option value="finalizado">
-                    Finalizados
+                    Finalizado
                 </option>
 
                 <option value="cancelado">
-                    Cancelados
-                </option>
-
-                <option value="hoje">
-                    Finalizados hoje
+                    Cancelado
                 </option>
 
             </select>
 
-            <button
-                class="btn"
-                id="btnAtualizar"
-            >
-                Atualizar
-            </button>
-
         </div>
+
+
+        <button
+            type="button"
+            id="btnAtualizar"
+            class="btn-atualizar"
+        >
+            Atualizar
+        </button>
+
 
     </div>
 
+
+    <!-- =====================================================
+         RESULTADOS
+    ====================================================== -->
 
     <div
         id="mensagem"
@@ -540,6 +787,10 @@ select {
 
 
 <script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 import {
     initializeApp
@@ -592,6 +843,10 @@ const db =
     );
 
 
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
 const lista =
     document.getElementById(
         "lista"
@@ -604,9 +859,27 @@ const mensagem =
     );
 
 
-const filtro =
+const periodo =
     document.getElementById(
-        "filtro"
+        "periodo"
+    );
+
+
+const statusFiltro =
+    document.getElementById(
+        "statusFiltro"
+    );
+
+
+const blocoMes =
+    document.getElementById(
+        "blocoMes"
+    );
+
+
+const mesEscolhido =
+    document.getElementById(
+        "mesEscolhido"
     );
 
 
@@ -616,28 +889,56 @@ const btnAtualizar =
     );
 
 
-const totalAguardando =
+const agoraAguardando =
     document.getElementById(
-        "totalAguardando"
+        "agoraAguardando"
     );
 
 
-const totalEmAtendimento =
+const agoraAtendimento =
     document.getElementById(
-        "totalEmAtendimento"
+        "agoraAtendimento"
     );
 
 
-const totalHoje =
+const totalPeriodo =
     document.getElementById(
-        "totalHoje"
+        "totalPeriodo"
     );
 
 
-const tempoHoje =
+const finalizadosPeriodo =
     document.getElementById(
-        "tempoHoje"
+        "finalizadosPeriodo"
     );
+
+
+const tempoPeriodo =
+    document.getElementById(
+        "tempoPeriodo"
+    );
+
+
+const mediaPeriodo =
+    document.getElementById(
+        "mediaPeriodo"
+    );
+
+
+const textosPeriodo =
+    [
+        document.getElementById(
+            "textoPeriodo1"
+        ),
+
+        document.getElementById(
+            "textoPeriodo2"
+        ),
+
+        document.getElementById(
+            "textoPeriodo3"
+        )
+    ];
 
 
 let solicitacoes =
@@ -724,23 +1025,29 @@ function obterDataPrincipal(
 
 
 /* =========================================================
-   HOJE
+   DATA DE CRIAÇÃO
 ========================================================= */
 
-function mesmaData(
-    dataA,
-    dataB
+function obterDataCriacao(
+    item
 ) {
 
     return (
-        dataA.getFullYear() ===
-        dataB.getFullYear() &&
+        timestampParaData(
+            item.criadoEm
+        ) ||
 
-        dataA.getMonth() ===
-        dataB.getMonth() &&
+        timestampParaData(
+            item.timestamp
+        ) ||
 
-        dataA.getDate() ===
-        dataB.getDate()
+        timestampParaData(
+            item.aceitoEm
+        ) ||
+
+        obterDataPrincipal(
+            item
+        )
     );
 
 }
@@ -753,11 +1060,6 @@ function mesmaData(
 function calcularDuracaoSegundos(
     item
 ) {
-
-    /*
-       Primeiro usa conectadoEm.
-       Se não existir, usa aceitoEm.
-    */
 
     const inicio =
         timestampParaData(
@@ -798,12 +1100,20 @@ function calcularDuracaoSegundos(
 }
 
 
+/* =========================================================
+   FORMATAR DURAÇÃO
+========================================================= */
+
 function formatarDuracao(
     segundos
 ) {
 
-    if (!segundos) {
+    if (
+        !segundos
+    ) {
+
         return "0 min";
+
     }
 
 
@@ -813,42 +1123,71 @@ function formatarDuracao(
         );
 
 
-    const resto =
-        segundos % 60;
-
-
     if (
-        minutos ===
-        0
+        minutos <
+        60
     ) {
 
-        return resto + " seg";
+        const resto =
+            segundos %
+            60;
+
+
+        if (
+            minutos ===
+            0
+        ) {
+
+            return resto +
+                " seg";
+
+        }
+
+
+        if (
+            resto ===
+            0
+        ) {
+
+            return minutos +
+                " min";
+
+        }
+
+
+        return (
+            minutos +
+            " min " +
+            resto +
+            " seg"
+        );
 
     }
 
 
-    if (
-        resto ===
-        0
-    ) {
+    const horas =
+        Math.floor(
+            minutos / 60
+        );
 
-        return minutos + " min";
 
-    }
+    const minutosRestantes =
+        minutos %
+        60;
 
 
     return (
-        minutos +
-        " min " +
-        resto +
-        " seg"
+        horas +
+        "h " +
+        minutosRestantes +
+        "m"
     );
 
 }
 
 
 /* =========================================================
-   FORMATAR DATA
+   DATA / HORA
 ========================================================= */
 
 function formatarDataHora(
@@ -866,16 +1205,36 @@ function formatarDataHora(
     }
 
 
+    return formatarDataObjeto(
+        data
+    );
+
+}
+
+
+function formatarDataObjeto(
+    data
+) {
+
     try {
 
         return new Intl.DateTimeFormat(
             "pt-BR",
             {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit"
+                day:
+                    "2-digit",
+
+                month:
+                    "2-digit",
+
+                year:
+                    "numeric",
+
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit"
             }
         ).format(
             data
@@ -887,6 +1246,345 @@ function formatarDataHora(
         return data.toLocaleString();
 
     }
+
+}
+
+
+/* =========================================================
+   PRIMEIRO / ÚLTIMO INSTANTE DO DIA
+========================================================= */
+
+function inicioDoDia(
+    data
+) {
+
+    const resultado =
+        new Date(
+            data
+        );
+
+
+    resultado.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    return resultado;
+
+}
+
+
+function fimDoDia(
+    data
+) {
+
+    const resultado =
+        new Date(
+            data
+        );
+
+
+    resultado.setHours(
+        23,
+        59,
+        59,
+        999
+    );
+
+
+    return resultado;
+
+}
+
+
+/* =========================================================
+   INTERVALO ESCOLHIDO
+========================================================= */
+
+function obterIntervaloPeriodo() {
+
+    const valor =
+        periodo.value;
+
+
+    const agora =
+        new Date();
+
+
+    if (
+        valor ===
+        "todos"
+    ) {
+
+        return {
+            inicio:
+                null,
+
+            fim:
+                null,
+
+            texto:
+                "Todos os registros"
+        };
+
+    }
+
+
+    if (
+        valor ===
+        "hoje"
+    ) {
+
+        return {
+            inicio:
+                inicioDoDia(
+                    agora
+                ),
+
+            fim:
+                fimDoDia(
+                    agora
+                ),
+
+            texto:
+                "Hoje"
+        };
+
+    }
+
+
+    if (
+        valor ===
+        "mes"
+    ) {
+
+        const escolhido =
+            mesEscolhido.value;
+
+
+        if (
+            !escolhido
+        ) {
+
+            return null;
+
+        }
+
+
+        const partes =
+            escolhido.split(
+                "-"
+            );
+
+
+        const ano =
+            Number(
+                partes[0]
+            );
+
+
+        const mes =
+            Number(
+                partes[1]
+            );
+
+
+        const inicio =
+            new Date(
+                ano,
+                mes - 1,
+                1,
+                0,
+                0,
+                0,
+                0
+            );
+
+
+        const fim =
+            new Date(
+                ano,
+                mes,
+                0,
+                23,
+                59,
+                59,
+                999
+            );
+
+
+        const texto =
+            new Intl.DateTimeFormat(
+                "pt-BR",
+                {
+                    month:
+                        "long",
+
+                    year:
+                        "numeric"
+                }
+            ).format(
+                inicio
+            );
+
+
+        return {
+            inicio,
+            fim,
+
+            texto:
+                texto.charAt(
+                    0
+                ).toUpperCase() +
+                texto.slice(
+                    1
+                )
+        };
+
+    }
+
+
+    let meses =
+        1;
+
+
+    let texto =
+        "Último 1 mês";
+
+
+    if (
+        valor ===
+        "3meses"
+    ) {
+
+        meses =
+            3;
+
+        texto =
+            "Últimos 3 meses";
+
+    }
+
+
+    if (
+        valor ===
+        "6meses"
+    ) {
+
+        meses =
+            6;
+
+        texto =
+            "Últimos 6 meses";
+
+    }
+
+
+    if (
+        valor ===
+        "1ano"
+    ) {
+
+        meses =
+            12;
+
+        texto =
+            "Último 1 ano";
+
+    }
+
+
+    const inicio =
+        new Date(
+            agora
+        );
+
+
+    inicio.setMonth(
+        inicio.getMonth() -
+        meses
+    );
+
+
+    inicio.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    return {
+        inicio,
+        fim:
+            agora,
+
+        texto
+    };
+
+}
+
+
+/* =========================================================
+   TESTAR SE ESTÁ NO PERÍODO
+========================================================= */
+
+function estaNoPeriodo(
+    item,
+    intervalo
+) {
+
+    const data =
+        obterDataCriacao(
+            item
+        );
+
+
+    if (
+        !data
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        !intervalo.inicio &&
+        !intervalo.fim
+    ) {
+
+        return true;
+
+    }
+
+
+    if (
+        intervalo.inicio &&
+        data <
+        intervalo.inicio
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        intervalo.fim &&
+        data >
+        intervalo.fim
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
 
 }
 
@@ -987,9 +1685,7 @@ async function carregar() {
         );
 
 
-        atualizarResumo();
-
-        renderizar();
+        atualizarTudo();
 
 
     }
@@ -998,7 +1694,7 @@ async function carregar() {
     ) {
 
         console.error(
-            "Erro ao carregar solicitações:",
+            "Erro:",
             erro
         );
 
@@ -1017,28 +1713,16 @@ async function carregar() {
 
 
 /* =========================================================
-   RESUMO
+   SITUAÇÃO ATUAL
 ========================================================= */
 
-function atualizarResumo() {
-
-    const hoje =
-        new Date();
-
+function atualizarAgora() {
 
     let aguardando =
         0;
 
 
-    let emAtendimento =
-        0;
-
-
-    let finalizadosHoje =
-        0;
-
-
-    let segundosHoje =
+    let atendimento =
         0;
 
 
@@ -1069,39 +1753,7 @@ function atualizarResumo() {
                 "conectado"
             ) {
 
-                emAtendimento++;
-
-            }
-
-
-            if (
-                status ===
-                "finalizado"
-            ) {
-
-                const finalizado =
-                    timestampParaData(
-                        item.finalizadoEm
-                    );
-
-
-                if (
-                    finalizado &&
-                    mesmaData(
-                        finalizado,
-                        hoje
-                    )
-                ) {
-
-                    finalizadosHoje++;
-
-
-                    segundosHoje +=
-                        calcularDuracaoSegundos(
-                            item
-                        );
-
-                }
+                atendimento++;
 
             }
 
@@ -1109,130 +1761,167 @@ function atualizarResumo() {
     );
 
 
-    totalAguardando.textContent =
+    agoraAguardando.textContent =
         aguardando;
 
 
-    totalEmAtendimento.textContent =
-        emAtendimento;
-
-
-    totalHoje.textContent =
-        finalizadosHoje;
-
-
-    const minutos =
-        Math.floor(
-            segundosHoje / 60
-        );
-
-
-    if (
-        minutos <
-        60
-    ) {
-
-        tempoHoje.textContent =
-            minutos +
-            " min";
-
-    }
-    else {
-
-        const horas =
-            Math.floor(
-                minutos / 60
-            );
-
-
-        const resto =
-            minutos %
-            60;
-
-
-        tempoHoje.textContent =
-            horas +
-            "h " +
-            resto +
-            "m";
-
-    }
+    agoraAtendimento.textContent =
+        atendimento;
 
 }
 
 
 /* =========================================================
-   FILTRO
+   DADOS DO PERÍODO
 ========================================================= */
 
-function obterFiltrados() {
+function obterDadosDoPeriodo() {
 
-    const valor =
-        filtro.value;
+    const intervalo =
+        obterIntervaloPeriodo();
 
 
     if (
-        valor ===
+        !intervalo
+    ) {
+
+        return null;
+
+    }
+
+
+    const status =
+        statusFiltro.value;
+
+
+    let dados =
+        solicitacoes.filter(
+            item =>
+                estaNoPeriodo(
+                    item,
+                    intervalo
+                )
+        );
+
+
+    if (
+        status !==
         "todos"
     ) {
 
-        return solicitacoes;
+        dados =
+            dados.filter(
+                function(item) {
 
-    }
-
-
-    if (
-        valor ===
-        "hoje"
-    ) {
-
-        const hoje =
-            new Date();
-
-
-        return solicitacoes.filter(
-            function(item) {
-
-                if (
-                    item.status !==
-                    "finalizado"
-                ) {
-
-                    return false;
-
-                }
-
-
-                const finalizado =
-                    timestampParaData(
-                        item.finalizadoEm
+                    return (
+                        String(
+                            item.status ||
+                            ""
+                        )
+                        .toLowerCase() ===
+                        status
                     );
 
-
-                return (
-                    finalizado &&
-                    mesmaData(
-                        finalizado,
-                        hoje
-                    )
-                );
-
-            }
-        );
+                }
+            );
 
     }
 
 
-    return solicitacoes.filter(
+    return {
+        intervalo,
+        dados
+    };
+
+}
+
+
+/* =========================================================
+   RESUMO
+========================================================= */
+
+function atualizarResumo(
+    dadosPeriodo
+) {
+
+    const dados =
+        dadosPeriodo.dados;
+
+
+    const intervalo =
+        dadosPeriodo.intervalo;
+
+
+    let finalizados =
+        0;
+
+
+    let segundos =
+        0;
+
+
+    dados.forEach(
         function(item) {
 
-            return (
+            if (
                 String(
                     item.status ||
                     ""
                 ).toLowerCase() ===
-                valor
-            );
+                "finalizado"
+            ) {
+
+                finalizados++;
+
+
+                segundos +=
+                    calcularDuracaoSegundos(
+                        item
+                    );
+
+            }
+
+        }
+    );
+
+
+    totalPeriodo.textContent =
+        dados.length;
+
+
+    finalizadosPeriodo.textContent =
+        finalizados;
+
+
+    tempoPeriodo.textContent =
+        formatarDuracao(
+            segundos
+        );
+
+
+    const media =
+        finalizados >
+        0
+            ?
+            Math.floor(
+                segundos /
+                finalizados
+            )
+            :
+            0;
+
+
+    mediaPeriodo.textContent =
+        formatarDuracao(
+            media
+        );
+
+
+    textosPeriodo.forEach(
+        elemento => {
+
+            elemento.textContent =
+                intervalo.texto;
 
         }
     );
@@ -1314,10 +2003,12 @@ function obterClasseStatus(
    RENDERIZAR
 ========================================================= */
 
-function renderizar() {
+function renderizar(
+    dadosPeriodo
+) {
 
     const dados =
-        obterFiltrados();
+        dadosPeriodo.dados;
 
 
     lista.innerHTML =
@@ -1334,7 +2025,7 @@ function renderizar() {
 
 
         mensagem.textContent =
-            "Nenhum atendimento encontrado.";
+            "Nenhum atendimento encontrado neste período.";
 
 
         return;
@@ -1401,48 +2092,14 @@ function renderizar() {
                 );
 
 
-            let dataTopo =
-                "-";
-
-
-            if (
+            const dataTopo =
                 dataPrincipal
-            ) {
-
-                try {
-
-                    dataTopo =
-                        new Intl.DateTimeFormat(
-                            "pt-BR",
-                            {
-                                day:
-                                    "2-digit",
-
-                                month:
-                                    "2-digit",
-
-                                year:
-                                    "numeric",
-
-                                hour:
-                                    "2-digit",
-
-                                minute:
-                                    "2-digit"
-                            }
-                        ).format(
-                            dataPrincipal
-                        );
-
-                }
-                catch {
-
-                    dataTopo =
-                        dataPrincipal.toLocaleString();
-
-                }
-
-            }
+                    ?
+                    formatarDataObjeto(
+                        dataPrincipal
+                    )
+                    :
+                    "-";
 
 
             const duracao =
@@ -1640,7 +2297,66 @@ function renderizar() {
 
 
 /* =========================================================
-   ESCAPAR HTML
+   ATUALIZAR TUDO
+========================================================= */
+
+function atualizarTudo() {
+
+    atualizarAgora();
+
+
+    const dadosPeriodo =
+        obterDadosDoPeriodo();
+
+
+    if (
+        !dadosPeriodo
+    ) {
+
+        totalPeriodo.textContent =
+            "0";
+
+        finalizadosPeriodo.textContent =
+            "0";
+
+        tempoPeriodo.textContent =
+            "0 min";
+
+        mediaPeriodo.textContent =
+            "0 min";
+
+
+        mensagem.style.display =
+            "block";
+
+
+        mensagem.textContent =
+            "Escolha o mês que deseja consultar.";
+
+
+        lista.innerHTML =
+            "";
+
+
+        return;
+
+    }
+
+
+    atualizarResumo(
+        dadosPeriodo
+    );
+
+
+    renderizar(
+        dadosPeriodo
+    );
+
+}
+
+
+/* =========================================================
+   SEGURANÇA HTML
 ========================================================= */
 
 function escaparHTML(
@@ -1679,20 +2395,73 @@ function escaparHTML(
    EVENTOS
 ========================================================= */
 
+periodo.addEventListener(
+    "change",
+    function() {
+
+        if (
+            periodo.value ===
+            "mes"
+        ) {
+
+            blocoMes.style.display =
+                "block";
+
+        }
+        else {
+
+            blocoMes.style.display =
+                "none";
+
+        }
+
+
+        atualizarTudo();
+
+    }
+);
+
+
+mesEscolhido.addEventListener(
+    "change",
+    atualizarTudo
+);
+
+
+statusFiltro.addEventListener(
+    "change",
+    atualizarTudo
+);
+
+
 btnAtualizar.addEventListener(
     "click",
     carregar
 );
 
 
-filtro.addEventListener(
-    "change",
-    renderizar
-);
+/* =========================================================
+   MÊS PADRÃO
+========================================================= */
+
+const agora =
+    new Date();
+
+
+mesEscolhido.value =
+    agora.getFullYear() +
+    "-" +
+    String(
+        agora.getMonth() +
+        1
+    ).padStart(
+        2,
+        "0"
+    );
 
 
 /* =========================================================
-   INÍCIO
+   INICIAR
 ========================================================= */
 
 carregar();
