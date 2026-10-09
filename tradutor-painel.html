@@ -57,21 +57,117 @@ button,input{font-family:inherit}button{cursor:pointer}
 <div class="stats stats-3"><div class="stat"><span class="stat-label">Aguardando</span><span class="stat-value" id="totalAguardando">0</span></div><div class="stat"><span class="stat-label">Atendimentos hoje</span><span class="stat-value" id="totalHoje">0</span></div><div class="stat"><span class="stat-label">Tempo hoje</span><span class="stat-value small" id="tempoHoje">0 min</span></div></div>
 <div class="section-title"><strong>Clientes aguardando</strong><span class="section-small">Tempo real</span></div><div id="listaSolicitacoes"><div class="vazio"><div class="vazio-icon">⏳</div><div class="vazio-title">Carregando...</div><div class="vazio-sub">Buscando solicitações.</div></div></div>
 <div class="section-title"><strong>📋 Meu histórico</strong><span class="section-small">Atendimentos finalizados</span></div><div id="listaHistorico"><div class="vazio"><div class="vazio-icon">📋</div><div class="vazio-title">Carregando histórico...</div></div></div></div>
-<div id="telaAtendimento"><section class="hero"><div class="hero-small">VIDEOCHAMADA</div><h1>Atendimento</h1><p>Comunicação ao vivo com o cliente.</p></section><div class="atendimento-card"><div class="connected-icon">🎥</div><div class="connected-title">Atendimento iniciado</div><div class="connected-sub" id="textoConexao">Preparando videochamada...</div><div id="callStatus" class="call-status">⏳ Aguardando cliente</div><div class="video-area"><video id="videoRemoto" autoplay playsinline></video><div class="video-placeholder" id="videoPlaceholder"><div class="video-placeholder-icon">👤</div><div class="video-placeholder-title">Aguardando vídeo do cliente</div><div class="video-placeholder-sub">A imagem aparecerá automaticamente.</div></div><video id="videoLocal" autoplay muted playsinline></video></div><div class="call-controls"><button type="button" class="control-btn" id="btnMicrofone">🎤 Microfone</button><button type="button" class="control-btn" id="btnCamera">📹 Câmera</button></div><div class="dados-atendimento"><div class="dado"><span>Cliente</span><span id="atendimentoCliente">-</span></div><div class="dado"><span>Local</span><span id="atendimentoLocal">-</span></div><div class="dado"><span>Tempo solicitado</span><span id="atendimentoTempo">-</span></div></div><button type="button" class="btn-finalizar" id="btnFinalizar">Encerrar atendimento</button></div></div>
+<div id="telaAtendimento"><section class="hero"><div class="hero-small">VIDEOCHAMADA</div><h1>Atendimento</h1><p>Comunicação ao vivo com o cliente.</p></section><div class="atendimento-card"><div class="connected-icon">🎥</div><div class="connected-title">Atendimento iniciado</div><div class="connected-sub" id="textoConexao">Preparando videochamada...</div><div id="callStatus" class="call-status">⏳ Aguardando cliente</div><div class="video-area"><video id="videoRemoto" autoplay playsinline></video><div class="video-placeholder" id="videoPlaceholder"><div class="video-placeholder-icon">👤</div><div class="video-placeholder-title">Aguardando vídeo do cliente</div><div class="video-placeholder-sub" id="videoPlaceholderSub">A imagem aparecerá automaticamente.</div></div><video id="videoLocal" autoplay muted playsinline></video></div><div class="call-controls"><button type="button" class="control-btn" id="btnMicrofone">🎤 Microfone</button><button type="button" class="control-btn" id="btnCamera">📹 Câmera</button></div><div class="dados-atendimento"><div class="dado"><span>Cliente</span><span id="atendimentoCliente">-</span></div><div class="dado"><span>Local</span><span id="atendimentoLocal">-</span></div><div class="dado"><span>Tempo solicitado</span><span id="atendimentoTempo">-</span></div></div><button type="button" class="btn-finalizar" id="btnFinalizar">Encerrar atendimento</button></div></div>
 </div></div>
+
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import {getFirestore,collection,query,where,onSnapshot,doc,getDoc,updateDoc,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 const firebaseConfig={apiKey:"AIzaSyCTQTWEyj8f-Ddkj6PD9Fe8JHCVVjmkS_o",authDomain:"ajuda-jp.firebaseapp.com",databaseURL:"https://ajuda-jp-default-rtdb.firebaseio.com",projectId:"ajuda-jp",storageBucket:"ajuda-jp.firebasestorage.app",messagingSenderId:"40121072206",appId:"1:40121072206:web:23168abd254affb6d0a11f"};
 const firebaseApp=initializeApp(firebaseConfig),db=getFirestore(firebaseApp),auth=getAuth(firebaseApp);
-const telaLogin=document.getElementById("telaLogin"),painelTradutor=document.getElementById("painelTradutor"),loginEmail=document.getElementById("loginEmail"),loginSenha=document.getElementById("loginSenha"),btnLogin=document.getElementById("btnLogin"),loginErro=document.getElementById("loginErro"),listaSolicitacoes=document.getElementById("listaSolicitacoes"),totalAguardando=document.getElementById("totalAguardando"),totalHoje=document.getElementById("totalHoje"),tempoHoje=document.getElementById("tempoHoje"),listaHistorico=document.getElementById("listaHistorico"),telaPedidos=document.getElementById("telaPedidos"),telaAtendimento=document.getElementById("telaAtendimento"),videoLocal=document.getElementById("videoLocal"),videoRemoto=document.getElementById("videoRemoto"),videoPlaceholder=document.getElementById("videoPlaceholder"),callStatus=document.getElementById("callStatus"),textoConexao=document.getElementById("textoConexao"),btnStatus=document.getElementById("btnStatus"),textoStatus=document.getElementById("textoStatus");
+
+const telaLogin=document.getElementById("telaLogin"),painelTradutor=document.getElementById("painelTradutor"),loginEmail=document.getElementById("loginEmail"),loginSenha=document.getElementById("loginSenha"),btnLogin=document.getElementById("btnLogin"),loginErro=document.getElementById("loginErro"),listaSolicitacoes=document.getElementById("listaSolicitacoes"),totalAguardando=document.getElementById("totalAguardando"),totalHoje=document.getElementById("totalHoje"),tempoHoje=document.getElementById("tempoHoje"),listaHistorico=document.getElementById("listaHistorico"),telaPedidos=document.getElementById("telaPedidos"),telaAtendimento=document.getElementById("telaAtendimento"),videoLocal=document.getElementById("videoLocal"),videoRemoto=document.getElementById("videoRemoto"),videoPlaceholder=document.getElementById("videoPlaceholder"),videoPlaceholderSub=document.getElementById("videoPlaceholderSub"),callStatus=document.getElementById("callStatus"),textoConexao=document.getElementById("textoConexao"),btnStatus=document.getElementById("btnStatus"),textoStatus=document.getElementById("textoStatus");
+
 let tradutorAtual=null,tradutorOnline=true,unsubscribePedidos=null,unsubscribeHistorico=null,atendimentoAtualId=null,peerConnection=null,localStream=null,remoteStream=null,unsubscribeSolicitacao=null,unsubscribeClienteCandidates=null,microfoneLigado=true,cameraLigada=true,chamadaConectada=false,encerrandoAtendimento=false,timeoutConexao=null;
+
 const rtcConfiguration={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]};
+
+/* =========================================================
+   AUXÍLIO DE VÍDEO - CORREÇÃO iPhone / WebView
+========================================================= */
+
+function esperarTelaVisivel(){
+    return new Promise(resolve=>{
+        requestAnimationFrame(()=>{
+            requestAnimationFrame(resolve);
+        });
+    });
+}
+
+async function reproduzirVideo(video,stream,muted=false){
+    if(!video||!stream)return false;
+
+    video.playsInline=true;
+    video.autoplay=true;
+    video.muted=muted;
+
+    if(video.srcObject!==stream){
+        video.srcObject=stream;
+    }
+
+    try{
+        await video.play();
+        return true;
+    }catch(erro){
+        console.warn("Não foi possível iniciar vídeo automaticamente:",erro);
+        return false;
+    }
+}
+
+async function garantirVideoLocal(){
+    if(!localStream)return false;
+
+    const track=localStream.getVideoTracks()[0];
+
+    if(!track){
+        console.warn("Nenhuma track de vídeo local.");
+        return false;
+    }
+
+    console.log(
+        "Câmera local:",
+        track.readyState,
+        "enabled:",
+        track.enabled,
+        "muted:",
+        track.muted
+    );
+
+    return reproduzirVideo(
+        videoLocal,
+        localStream,
+        true
+    );
+}
+
+async function garantirVideoRemoto(){
+    if(!remoteStream)return false;
+
+    if(remoteStream.getVideoTracks().length===0){
+        return false;
+    }
+
+    const ok=await reproduzirVideo(
+        videoRemoto,
+        remoteStream,
+        false
+    );
+
+    if(ok){
+        videoPlaceholder.style.display="none";
+    }else{
+        videoPlaceholder.style.display="flex";
+        videoPlaceholderSub.textContent="Toque na área do vídeo para tentar iniciar a imagem e o áudio.";
+    }
+
+    return ok;
+}
+
+/*
+   Caso o iPhone/LINE bloqueie autoplay com áudio,
+   tocar na área do vídeo tenta iniciar novamente.
+*/
+document.querySelector(".video-area").addEventListener("click",async()=>{
+    await garantirVideoLocal();
+    await garantirVideoRemoto();
+});
 
 /* =========================================================
    TIMEOUT: 2 MINUTOS SEM CONEXÃO
 ========================================================= */
+
 function cancelarTimeoutConexao(){
     if(timeoutConexao){
         clearTimeout(timeoutConexao);
@@ -104,10 +200,6 @@ function iniciarTimeoutConexao(solicitacaoId){
             const dados=snap.data();
             const status=String(dados.status||"").toLowerCase();
 
-            /*
-               Confere novamente o Firebase antes de cancelar.
-               Assim não cancela uma chamada que já conectou.
-            */
             if(
                 status!=="aceito" ||
                 dados.conectadoEm ||
@@ -124,48 +216,1387 @@ function iniciarTimeoutConexao(solicitacaoId){
                 canceladoEm:serverTimestamp(),
                 atualizadoEm:serverTimestamp()
             });
-        }
-        catch(erro){
+        }catch(erro){
             console.error("Erro no timeout de conexão:",erro);
         }
     },120000);
 }
+
 function atualizarTelaStatus(){btnStatus.classList.toggle("online",tradutorOnline);btnStatus.classList.toggle("offline",!tradutorOnline);textoStatus.textContent=tradutorOnline?"Online":"Offline"}
+
 function mostrarOfflinePedidos(){totalAguardando.textContent="0";listaSolicitacoes.innerHTML=`<div class="vazio"><div class="vazio-icon">📴</div><div class="vazio-title">Você está offline</div><div class="vazio-sub">Toque em Offline no topo para ficar online e receber novas solicitações.</div></div>`}
-async function alternarStatus(){if(!tradutorAtual)return;if(atendimentoAtualId){alert("Finalize o atendimento antes de ficar offline.");return}const novoStatus=!tradutorOnline;btnStatus.disabled=true;try{await updateDoc(doc(db,"tradutor_usuarios",tradutorAtual.uid),{online:novoStatus,statusAtualizadoEm:serverTimestamp()});tradutorOnline=novoStatus;atualizarTelaStatus();if(tradutorOnline)iniciarPedidos();else{pararPedidos();mostrarOfflinePedidos()}}catch(erro){console.error("Erro alterando online/offline:",erro);alert("Não foi possível alterar o status.")}finally{btnStatus.disabled=false}}
+
+async function alternarStatus(){
+    if(!tradutorAtual)return;
+    if(atendimentoAtualId){alert("Finalize o atendimento antes de ficar offline.");return}
+
+    const novoStatus=!tradutorOnline;
+    btnStatus.disabled=true;
+
+    try{
+        await updateDoc(doc(db,"tradutor_usuarios",tradutorAtual.uid),{
+            online:novoStatus,
+            statusAtualizadoEm:serverTimestamp()
+        });
+
+        tradutorOnline=novoStatus;
+        atualizarTelaStatus();
+
+        if(tradutorOnline)iniciarPedidos();
+        else{
+            pararPedidos();
+            mostrarOfflinePedidos();
+        }
+    }catch(erro){
+        console.error("Erro alterando online/offline:",erro);
+        alert("Não foi possível alterar o status.");
+    }finally{
+        btnStatus.disabled=false;
+    }
+}
+
 btnStatus.addEventListener("click",alternarStatus);
-async function fazerLogin(){const email=loginEmail.value.trim(),senha=loginSenha.value;loginErro.style.display="none";if(!email||!senha){mostrarErroLogin("Digite o e-mail e a senha.");return}btnLogin.disabled=true;btnLogin.textContent="Entrando...";try{await signInWithEmailAndPassword(auth,email,senha)}catch(erro){console.error("Erro login:",erro);mostrarErroLogin("E-mail ou senha incorretos.");btnLogin.disabled=false;btnLogin.textContent="Entrar"}}
-function mostrarErroLogin(mensagem){loginErro.textContent=mensagem;loginErro.style.display="block"}
-async function verificarTradutor(user){try{const tradutorSnap=await getDoc(doc(db,"tradutor_usuarios",user.uid));if(!tradutorSnap.exists()){await signOut(auth);mostrarErroLogin("Esta conta não está cadastrada como tradutor.");return false}const dados=tradutorSnap.data();if(dados.ativo!==true){await signOut(auth);mostrarErroLogin("Esta conta de tradutor está desativada.");return false}tradutorAtual={uid:user.uid,email:user.email,nome:dados.nome||"Tradutor"};tradutorOnline=dados.online!==false;atualizarTelaStatus();return true}catch(erro){console.error("Erro verificando tradutor:",erro);await signOut(auth);mostrarErroLogin("Não foi possível verificar a conta.");return false}}
-onAuthStateChanged(auth,async user=>{if(!user){tradutorAtual=null;pararPedidos();pararHistorico();encerrarWebRTC();atendimentoAtualId=null;painelTradutor.style.display="none";telaLogin.style.display="flex";btnLogin.disabled=false;btnLogin.textContent="Entrar";return}const permitido=await verificarTradutor(user);if(!permitido)return;telaLogin.style.display="none";painelTradutor.style.display="block";document.getElementById("boasVindas").textContent="Olá, "+tradutorAtual.nome+". Novos pedidos aparecem aqui automaticamente.";if(tradutorOnline)iniciarPedidos();else{pararPedidos();mostrarOfflinePedidos()}iniciarHistorico()});
-async function sair(){if(atendimentoAtualId){alert("Encerre o atendimento antes de sair.");return}encerrarWebRTC();pararPedidos();pararHistorico();await signOut(auth)}
-document.getElementById("btnSair").addEventListener("click",sair);btnLogin.addEventListener("click",fazerLogin);loginSenha.addEventListener("keydown",event=>{if(event.key==="Enter")fazerLogin()});
-function iniciarPedidos(){if(!tradutorOnline||unsubscribePedidos)return;const consulta=query(collection(db,"solicitacoes"),where("status","==","aguardando"));unsubscribePedidos=onSnapshot(consulta,snapshot=>{if(!tradutorOnline)return;const pedidos=[];snapshot.forEach(documento=>pedidos.push({id:documento.id,...documento.data()}));totalAguardando.textContent=pedidos.length;mostrarPedidos(pedidos)},erro=>{console.error("Erro Firestore:",erro);listaSolicitacoes.innerHTML=`<div class="vazio"><div class="vazio-icon">⚠️</div><div class="vazio-title">Não foi possível carregar</div><div class="vazio-sub">Verifique a conexão e tente novamente.</div></div>`})}
-function pararPedidos(){if(unsubscribePedidos){unsubscribePedidos();unsubscribePedidos=null}}
-function iniciarHistorico(){if(!tradutorAtual||unsubscribeHistorico)return;const consulta=query(collection(db,"solicitacoes"),where("tradutorId","==",tradutorAtual.uid));unsubscribeHistorico=onSnapshot(consulta,snapshot=>{const atendimentos=[];snapshot.forEach(documento=>{const dados=documento.data();if(dados.status==="finalizado")atendimentos.push({id:documento.id,...dados})});atendimentos.sort((a,b)=>timestampParaMillis(b.finalizadoEm)-timestampParaMillis(a.finalizadoEm));atualizarEstatisticas(atendimentos);mostrarHistorico(atendimentos)},erro=>console.error("Erro histórico:",erro))}
-function pararHistorico(){if(unsubscribeHistorico){unsubscribeHistorico();unsubscribeHistorico=null}}
-function timestampParaData(timestamp){if(!timestamp)return null;if(typeof timestamp.toDate==="function")return timestamp.toDate();if(timestamp.seconds)return new Date(timestamp.seconds*1000);return null}
-function timestampParaMillis(timestamp){const data=timestampParaData(timestamp);return data?data.getTime():0}
-/* CORREÇÃO: mesmo critério de duração usado no admin-tradutores.html. */
-function calcularDuracaoSegundos(atendimento){const inicio=timestampParaData(atendimento.conectadoEm)||timestampParaData(atendimento.aceitoEm);const fim=timestampParaData(atendimento.finalizadoEm);if(!inicio||!fim)return 0;return Math.max(0,Math.floor((fim.getTime()-inicio.getTime())/1000))}
-function formatarDuracao(segundos){if(!segundos)return "0 min";const minutos=Math.floor(segundos/60),resto=segundos%60;if(minutos===0)return resto+" seg";if(resto===0)return minutos+" min";return minutos+" min "+resto+" seg"}
-function mesmaData(dataA,dataB){return dataA.getFullYear()===dataB.getFullYear()&&dataA.getMonth()===dataB.getMonth()&&dataA.getDate()===dataB.getDate()}
-/* CORREÇÃO: mostrar minutos E segundos, sem arredondar para baixo. */
-function atualizarEstatisticas(atendimentos){const hoje=new Date();let quantidade=0,segundos=0;atendimentos.forEach(atendimento=>{const finalizado=timestampParaData(atendimento.finalizadoEm);if(finalizado&&mesmaData(finalizado,hoje)){quantidade++;segundos+=calcularDuracaoSegundos(atendimento)}});totalHoje.textContent=quantidade;tempoHoje.textContent=formatarDuracao(segundos)}
-function formatarDataHora(timestamp){const data=timestampParaData(timestamp);if(!data)return "Data não disponível";try{return new Intl.DateTimeFormat("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(data)}catch{return data.toLocaleString()}}
-function escaparHTML(valor){return String(valor??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function mostrarHistorico(atendimentos){if(atendimentos.length===0){listaHistorico.innerHTML=`<div class="vazio"><div class="vazio-icon">📋</div><div class="vazio-title">Nenhum atendimento finalizado</div><div class="vazio-sub">Seus atendimentos concluídos aparecerão aqui.</div></div>`;return}listaHistorico.innerHTML="";atendimentos.slice(0,20).forEach(atendimento=>{const nome=escaparHTML(atendimento.clienteNome||"Cliente"),local=escaparHTML(atendimento.local||"Não informado"),data=escaparHTML(formatarDataHora(atendimento.finalizadoEm)),duracao=escaparHTML(formatarDuracao(calcularDuracaoSegundos(atendimento)));const card=document.createElement("div");card.className="historico-card";card.innerHTML=`<div class="historico-top"><div class="historico-cliente"><div class="historico-avatar">👤</div><div><div class="historico-nome">${nome}</div><div class="historico-data">${data}</div></div></div><div class="historico-badge">CONCLUÍDO</div></div><div class="historico-info"><div class="historico-info-box"><span class="historico-info-label">LOCAL</span><span class="historico-info-value">📍 ${local}</span></div><div class="historico-info-box"><span class="historico-info-label">DURAÇÃO</span><span class="historico-info-value">⏱️ ${duracao}</span></div></div>`;listaHistorico.appendChild(card)})}
-function mostrarPedidos(pedidos){if(!tradutorOnline){mostrarOfflinePedidos();return}if(pedidos.length===0){listaSolicitacoes.innerHTML=`<div class="vazio"><div class="vazio-icon">☕</div><div class="vazio-title">Nenhum cliente aguardando</div><div class="vazio-sub">Quando alguém solicitar um tradutor, aparecerá aqui automaticamente.</div></div>`;return}listaSolicitacoes.innerHTML="";pedidos.forEach(pedido=>{const nome=escaparHTML(pedido.clienteNome||"Cliente"),local=escaparHTML(pedido.local||"Não informado"),tempo=Number(pedido.tempoMinutos||30);const card=document.createElement("div");card.className="solicitacao";card.innerHTML=`<div class="solicitacao-top"><div class="cliente"><div class="avatar">👤</div><div><div class="cliente-nome">${nome}</div><div class="cliente-sub">Solicitação de tradução</div></div></div><div class="badge">AGUARDANDO</div></div><div class="info"><div class="info-item"><span class="info-label">LOCAL</span><span class="info-value">📍 ${local}</span></div><div class="info-item"><span class="info-label">TEMPO</span><span class="info-value">⏱️ ${tempo} min</span></div></div><button type="button" class="btn-aceitar">Aceitar atendimento</button>`;const botao=card.querySelector(".btn-aceitar");botao.addEventListener("click",()=>aceitarAtendimento(pedido,botao));listaSolicitacoes.appendChild(card)})}
-async function aceitarAtendimento(pedido,botao){if(!tradutorAtual)return;if(!tradutorOnline){alert("Você está offline.");return}if(atendimentoAtualId){alert("Você já está em um atendimento.");return}botao.disabled=true;botao.textContent="Aceitando...";try{const ref=doc(db,"solicitacoes",pedido.id),snap=await getDoc(ref);if(!snap.exists()){alert("Esta solicitação não existe mais.");return}const dadosAtuais=snap.data();if(dadosAtuais.status!=="aguardando"){alert("Outro tradutor já aceitou esta solicitação.");return}localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:true});videoLocal.srcObject=localStream;videoLocal.play().catch(()=>{});atendimentoAtualId=pedido.id;encerrandoAtendimento=false;await updateDoc(ref,{status:"aceito",tradutorId:tradutorAtual.uid,tradutorNome:tradutorAtual.nome,tradutorEmail:tradutorAtual.email,aceitoEm:serverTimestamp(),atualizadoEm:serverTimestamp(),webrtcEstado:"tradutor_pronto"});chamadaConectada=false;iniciarTimeoutConexao(pedido.id);abrirAtendimento({...pedido,...dadosAtuais});await iniciarWebRTCTradutor(pedido.id)}catch(erro){console.error("Erro ao aceitar:",erro);if(localStream){localStream.getTracks().forEach(track=>track.stop());localStream=null}atendimentoAtualId=null;if(erro.name==="NotAllowedError")alert("É necessário permitir câmera e microfone para atender.");else alert("Não foi possível iniciar o atendimento.");botao.disabled=false;botao.textContent="Aceitar atendimento"}}
-function abrirAtendimento(pedido){telaPedidos.style.display="none";telaAtendimento.style.display="block";document.getElementById("atendimentoCliente").textContent=pedido.clienteNome||"Cliente";document.getElementById("atendimentoLocal").textContent=pedido.local||"Não informado";document.getElementById("atendimentoTempo").textContent=(pedido.tempoMinutos||30)+" minutos";callStatus.textContent="⏳ Aguardando cliente";callStatus.classList.remove("connected");textoConexao.textContent="Preparando videochamada..."}
-function voltarParaPedidos(){telaAtendimento.style.display="none";telaPedidos.style.display="block"}
-function atendimentoEncerradoRemotamente(status){if(encerrandoAtendimento)return;encerrandoAtendimento=true;const eraAtendimento=atendimentoAtualId!==null;atendimentoAtualId=null;encerrarWebRTC();voltarParaPedidos();if(eraAtendimento){if(status==="timeout")alert("Atendimento cancelado automaticamente: o cliente não conectou em 2 minutos.");else if(status==="cancelado")alert("O cliente cancelou o atendimento.");else alert("O cliente encerrou o atendimento.")}encerrandoAtendimento=false}
-async function iniciarWebRTCTradutor(solicitacaoId){const solicitacaoRef=doc(db,"solicitacoes",solicitacaoId);peerConnection=new RTCPeerConnection(rtcConfiguration);remoteStream=new MediaStream();videoRemoto.srcObject=remoteStream;localStream.getTracks().forEach(track=>peerConnection.addTrack(track,localStream));peerConnection.ontrack=event=>{event.streams[0].getTracks().forEach(track=>{const jaExiste=remoteStream.getTracks().some(t=>t.id===track.id);if(!jaExiste)remoteStream.addTrack(track)});videoPlaceholder.style.display="none";videoRemoto.play().catch(()=>{})};peerConnection.onconnectionstatechange=async()=>{if(!peerConnection)return;const estado=peerConnection.connectionState;console.log("WebRTC:",estado);if(estado==="connected"&&!chamadaConectada){chamadaConectada=true;cancelarTimeoutConexao();callStatus.textContent="● Conectado";callStatus.classList.add("connected");textoConexao.textContent="Videochamada conectada.";try{await updateDoc(solicitacaoRef,{status:"conectado",webrtcEstado:"conectado",conectadoEm:serverTimestamp(),atualizadoEm:serverTimestamp()})}catch(erro){console.error("Erro status conectado:",erro)}}if(estado==="failed"){callStatus.textContent="⚠️ Falha na conexão";callStatus.classList.remove("connected");textoConexao.textContent="Não foi possível conectar a chamada."}if(estado==="disconnected"){callStatus.textContent="⚠️ Reconectando...";callStatus.classList.remove("connected");textoConexao.textContent="Conexão interrompida. Tentando reconectar..."}};peerConnection.onicecandidate=async event=>{if(!event.candidate)return;try{await addDoc(collection(db,"solicitacoes",solicitacaoId,"tradutorCandidates"),event.candidate.toJSON())}catch(erro){console.error("ICE tradutor:",erro)}};unsubscribeSolicitacao=onSnapshot(solicitacaoRef,async snapshot=>{if(!snapshot.exists()){atendimentoEncerradoRemotamente("cancelado");return}const dados=snapshot.data();console.log("Status recebido:",dados.status);if(dados.status==="finalizado"){atendimentoEncerradoRemotamente("finalizado");return}if(dados.status==="cancelado"){if(dados.motivoCancelamento==="timeout_sem_conexao"){atendimentoEncerradoRemotamente("timeout")}else{atendimentoEncerradoRemotamente("cancelado")}return}if(dados.webrtcOffer&&peerConnection&&!peerConnection.currentRemoteDescription){try{const offer=new RTCSessionDescription(dados.webrtcOffer);await peerConnection.setRemoteDescription(offer);const answer=await peerConnection.createAnswer();await peerConnection.setLocalDescription(answer);await updateDoc(solicitacaoRef,{webrtcAnswer:{type:answer.type,sdp:answer.sdp},webrtcEstado:"answer_criada",atualizadoEm:serverTimestamp()});callStatus.textContent="🔗 Conectando...";textoConexao.textContent="Cliente encontrado. Estabelecendo conexão..."}catch(erro){console.error("Erro OFFER:",erro)}}},erro=>console.error("Erro ouvindo atendimento:",erro));const clienteCandidates=collection(db,"solicitacoes",solicitacaoId,"clienteCandidates");unsubscribeClienteCandidates=onSnapshot(clienteCandidates,snapshot=>{snapshot.docChanges().forEach(async change=>{if(change.type!=="added")return;try{if(!peerConnection)return;const candidate=new RTCIceCandidate(change.doc.data());await peerConnection.addIceCandidate(candidate)}catch(erro){console.error("ICE cliente:",erro)}})})}
-function alternarMicrofone(){if(!localStream)return;microfoneLigado=!microfoneLigado;localStream.getAudioTracks().forEach(track=>track.enabled=microfoneLigado);const botao=document.getElementById("btnMicrofone");if(microfoneLigado){botao.textContent="🎤 Microfone";botao.classList.remove("off")}else{botao.textContent="🔇 Sem áudio";botao.classList.add("off")}}
-function alternarCamera(){if(!localStream)return;cameraLigada=!cameraLigada;localStream.getVideoTracks().forEach(track=>track.enabled=cameraLigada);const botao=document.getElementById("btnCamera");if(cameraLigada){botao.textContent="📹 Câmera";botao.classList.remove("off")}else{botao.textContent="🚫 Câmera desligada";botao.classList.add("off")}}
-function encerrarWebRTC(){cancelarTimeoutConexao();const unsubscribeSolicitacaoAtual=unsubscribeSolicitacao;unsubscribeSolicitacao=null;if(unsubscribeSolicitacaoAtual){try{unsubscribeSolicitacaoAtual()}catch{}}const unsubscribeCandidatesAtual=unsubscribeClienteCandidates;unsubscribeClienteCandidates=null;if(unsubscribeCandidatesAtual){try{unsubscribeCandidatesAtual()}catch{}}if(peerConnection){try{peerConnection.ontrack=null;peerConnection.onicecandidate=null;peerConnection.onconnectionstatechange=null;peerConnection.close()}catch{}peerConnection=null}if(localStream){localStream.getTracks().forEach(track=>{try{track.stop()}catch{}});localStream=null}if(remoteStream){remoteStream.getTracks().forEach(track=>{try{track.stop()}catch{}});remoteStream=null}videoLocal.srcObject=null;videoRemoto.srcObject=null;videoPlaceholder.style.display="flex";callStatus.textContent="⏳ Aguardando cliente";callStatus.classList.remove("connected");textoConexao.textContent="Preparando videochamada...";chamadaConectada=false;microfoneLigado=true;cameraLigada=true;const btnMic=document.getElementById("btnMicrofone"),btnCam=document.getElementById("btnCamera");btnMic.textContent="🎤 Microfone";btnMic.classList.remove("off");btnCam.textContent="📹 Câmera";btnCam.classList.remove("off")}
-async function finalizarAtendimento(){if(!atendimentoAtualId||encerrandoAtendimento)return;const confirmar=confirm("Deseja encerrar este atendimento?");if(!confirmar)return;const botao=document.getElementById("btnFinalizar");botao.disabled=true;botao.textContent="Encerrando...";encerrandoAtendimento=true;try{const idFinalizado=atendimentoAtualId,ref=doc(db,"solicitacoes",idFinalizado);await updateDoc(ref,{status:"finalizado",webrtcEstado:"encerrado",encerradoPor:"tradutor",finalizadoEm:serverTimestamp(),atualizadoEm:serverTimestamp()});atendimentoAtualId=null;encerrarWebRTC();voltarParaPedidos();alert("Atendimento finalizado.")}catch(erro){console.error("Erro finalizando:",erro);alert("Não foi possível finalizar.")}finally{encerrandoAtendimento=false;botao.disabled=false;botao.textContent="Encerrar atendimento"}}
-document.getElementById("btnFinalizar").addEventListener("click",finalizarAtendimento);document.getElementById("btnMicrofone").addEventListener("click",alternarMicrofone);document.getElementById("btnCamera").addEventListener("click",alternarCamera);window.addEventListener("beforeunload",()=>encerrarWebRTC());
+
+async function fazerLogin(){
+    const email=loginEmail.value.trim(),senha=loginSenha.value;
+
+    loginErro.style.display="none";
+
+    if(!email||!senha){
+        mostrarErroLogin("Digite o e-mail e a senha.");
+        return;
+    }
+
+    btnLogin.disabled=true;
+    btnLogin.textContent="Entrando...";
+
+    try{
+        await signInWithEmailAndPassword(auth,email,senha);
+    }catch(erro){
+        console.error("Erro login:",erro);
+        mostrarErroLogin("E-mail ou senha incorretos.");
+        btnLogin.disabled=false;
+        btnLogin.textContent="Entrar";
+    }
+}
+
+function mostrarErroLogin(mensagem){
+    loginErro.textContent=mensagem;
+    loginErro.style.display="block";
+}
+
+async function verificarTradutor(user){
+    try{
+        const tradutorSnap=await getDoc(doc(db,"tradutor_usuarios",user.uid));
+
+        if(!tradutorSnap.exists()){
+            await signOut(auth);
+            mostrarErroLogin("Esta conta não está cadastrada como tradutor.");
+            return false;
+        }
+
+        const dados=tradutorSnap.data();
+
+        if(dados.ativo!==true){
+            await signOut(auth);
+            mostrarErroLogin("Esta conta de tradutor está desativada.");
+            return false;
+        }
+
+        tradutorAtual={
+            uid:user.uid,
+            email:user.email,
+            nome:dados.nome||"Tradutor"
+        };
+
+        tradutorOnline=dados.online!==false;
+        atualizarTelaStatus();
+
+        return true;
+    }catch(erro){
+        console.error("Erro verificando tradutor:",erro);
+        await signOut(auth);
+        mostrarErroLogin("Não foi possível verificar a conta.");
+        return false;
+    }
+}
+
+onAuthStateChanged(auth,async user=>{
+    if(!user){
+        tradutorAtual=null;
+        pararPedidos();
+        pararHistorico();
+        encerrarWebRTC();
+        atendimentoAtualId=null;
+        painelTradutor.style.display="none";
+        telaLogin.style.display="flex";
+        btnLogin.disabled=false;
+        btnLogin.textContent="Entrar";
+        return;
+    }
+
+    const permitido=await verificarTradutor(user);
+
+    if(!permitido)return;
+
+    telaLogin.style.display="none";
+    painelTradutor.style.display="block";
+
+    document.getElementById("boasVindas").textContent=
+        "Olá, "+tradutorAtual.nome+". Novos pedidos aparecem aqui automaticamente.";
+
+    if(tradutorOnline)iniciarPedidos();
+    else{
+        pararPedidos();
+        mostrarOfflinePedidos();
+    }
+
+    iniciarHistorico();
+});
+
+async function sair(){
+    if(atendimentoAtualId){
+        alert("Encerre o atendimento antes de sair.");
+        return;
+    }
+
+    encerrarWebRTC();
+    pararPedidos();
+    pararHistorico();
+
+    await signOut(auth);
+}
+
+document.getElementById("btnSair").addEventListener("click",sair);
+btnLogin.addEventListener("click",fazerLogin);
+loginSenha.addEventListener("keydown",event=>{
+    if(event.key==="Enter")fazerLogin();
+});
+
+function iniciarPedidos(){
+    if(!tradutorOnline||unsubscribePedidos)return;
+
+    const consulta=query(
+        collection(db,"solicitacoes"),
+        where("status","==","aguardando")
+    );
+
+    unsubscribePedidos=onSnapshot(
+        consulta,
+        snapshot=>{
+            if(!tradutorOnline)return;
+
+            const pedidos=[];
+
+            snapshot.forEach(documento=>
+                pedidos.push({
+                    id:documento.id,
+                    ...documento.data()
+                })
+            );
+
+            totalAguardando.textContent=pedidos.length;
+            mostrarPedidos(pedidos);
+        },
+        erro=>{
+            console.error("Erro Firestore:",erro);
+
+            listaSolicitacoes.innerHTML=
+                `<div class="vazio"><div class="vazio-icon">⚠️</div><div class="vazio-title">Não foi possível carregar</div><div class="vazio-sub">Verifique a conexão e tente novamente.</div></div>`;
+        }
+    );
+}
+
+function pararPedidos(){
+    if(unsubscribePedidos){
+        unsubscribePedidos();
+        unsubscribePedidos=null;
+    }
+}
+
+function iniciarHistorico(){
+    if(!tradutorAtual||unsubscribeHistorico)return;
+
+    const consulta=query(
+        collection(db,"solicitacoes"),
+        where("tradutorId","==",tradutorAtual.uid)
+    );
+
+    unsubscribeHistorico=onSnapshot(
+        consulta,
+        snapshot=>{
+            const atendimentos=[];
+
+            snapshot.forEach(documento=>{
+                const dados=documento.data();
+
+                if(dados.status==="finalizado"){
+                    atendimentos.push({
+                        id:documento.id,
+                        ...dados
+                    });
+                }
+            });
+
+            atendimentos.sort(
+                (a,b)=>
+                    timestampParaMillis(b.finalizadoEm)-
+                    timestampParaMillis(a.finalizadoEm)
+            );
+
+            atualizarEstatisticas(atendimentos);
+            mostrarHistorico(atendimentos);
+        },
+        erro=>
+            console.error("Erro histórico:",erro)
+    );
+}
+
+function pararHistorico(){
+    if(unsubscribeHistorico){
+        unsubscribeHistorico();
+        unsubscribeHistorico=null;
+    }
+}
+
+function timestampParaData(timestamp){
+    if(!timestamp)return null;
+    if(typeof timestamp.toDate==="function")return timestamp.toDate();
+    if(timestamp.seconds)return new Date(timestamp.seconds*1000);
+    return null;
+}
+
+function timestampParaMillis(timestamp){
+    const data=timestampParaData(timestamp);
+    return data?data.getTime():0;
+}
+
+function calcularDuracaoSegundos(atendimento){
+    const inicio=
+        timestampParaData(atendimento.conectadoEm)||
+        timestampParaData(atendimento.aceitoEm);
+
+    const fim=
+        timestampParaData(atendimento.finalizadoEm);
+
+    if(!inicio||!fim)return 0;
+
+    return Math.max(
+        0,
+        Math.floor(
+            (fim.getTime()-inicio.getTime())/1000
+        )
+    );
+}
+
+function formatarDuracao(segundos){
+    if(!segundos)return "0 min";
+
+    const minutos=Math.floor(segundos/60),
+          resto=segundos%60;
+
+    if(minutos===0)return resto+" seg";
+    if(resto===0)return minutos+" min";
+
+    return minutos+" min "+resto+" seg";
+}
+
+function mesmaData(dataA,dataB){
+    return (
+        dataA.getFullYear()===dataB.getFullYear() &&
+        dataA.getMonth()===dataB.getMonth() &&
+        dataA.getDate()===dataB.getDate()
+    );
+}
+
+function atualizarEstatisticas(atendimentos){
+    const hoje=new Date();
+
+    let quantidade=0,
+        segundos=0;
+
+    atendimentos.forEach(atendimento=>{
+        const finalizado=
+            timestampParaData(
+                atendimento.finalizadoEm
+            );
+
+        if(
+            finalizado &&
+            mesmaData(finalizado,hoje)
+        ){
+            quantidade++;
+            segundos+=
+                calcularDuracaoSegundos(
+                    atendimento
+                );
+        }
+    });
+
+    totalHoje.textContent=
+        quantidade;
+
+    tempoHoje.textContent=
+        formatarDuracao(
+            segundos
+        );
+}
+
+function formatarDataHora(timestamp){
+    const data=
+        timestampParaData(
+            timestamp
+        );
+
+    if(!data)return "Data não disponível";
+
+    try{
+        return new Intl.DateTimeFormat(
+            "pt-BR",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        ).format(data);
+    }catch{
+        return data.toLocaleString();
+    }
+}
+
+function escaparHTML(valor){
+    return String(valor??"")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function mostrarHistorico(atendimentos){
+    if(atendimentos.length===0){
+        listaHistorico.innerHTML=
+            `<div class="vazio"><div class="vazio-icon">📋</div><div class="vazio-title">Nenhum atendimento finalizado</div><div class="vazio-sub">Seus atendimentos concluídos aparecerão aqui.</div></div>`;
+
+        return;
+    }
+
+    listaHistorico.innerHTML="";
+
+    atendimentos
+        .slice(0,20)
+        .forEach(atendimento=>{
+            const nome=
+                escaparHTML(
+                    atendimento.clienteNome||
+                    "Cliente"
+                );
+
+            const local=
+                escaparHTML(
+                    atendimento.local||
+                    "Não informado"
+                );
+
+            const data=
+                escaparHTML(
+                    formatarDataHora(
+                        atendimento.finalizadoEm
+                    )
+                );
+
+            const duracao=
+                escaparHTML(
+                    formatarDuracao(
+                        calcularDuracaoSegundos(
+                            atendimento
+                        )
+                    )
+                );
+
+            const card=
+                document.createElement(
+                    "div"
+                );
+
+            card.className=
+                "historico-card";
+
+            card.innerHTML=
+                `<div class="historico-top"><div class="historico-cliente"><div class="historico-avatar">👤</div><div><div class="historico-nome">${nome}</div><div class="historico-data">${data}</div></div></div><div class="historico-badge">CONCLUÍDO</div></div><div class="historico-info"><div class="historico-info-box"><span class="historico-info-label">LOCAL</span><span class="historico-info-value">📍 ${local}</span></div><div class="historico-info-box"><span class="historico-info-label">DURAÇÃO</span><span class="historico-info-value">⏱️ ${duracao}</span></div></div>`;
+
+            listaHistorico.appendChild(
+                card
+            );
+        });
+}
+
+function mostrarPedidos(pedidos){
+    if(!tradutorOnline){
+        mostrarOfflinePedidos();
+        return;
+    }
+
+    if(pedidos.length===0){
+        listaSolicitacoes.innerHTML=
+            `<div class="vazio"><div class="vazio-icon">☕</div><div class="vazio-title">Nenhum cliente aguardando</div><div class="vazio-sub">Quando alguém solicitar um tradutor, aparecerá aqui automaticamente.</div></div>`;
+
+        return;
+    }
+
+    listaSolicitacoes.innerHTML="";
+
+    pedidos.forEach(pedido=>{
+        const nome=
+            escaparHTML(
+                pedido.clienteNome||
+                "Cliente"
+            );
+
+        const local=
+            escaparHTML(
+                pedido.local||
+                "Não informado"
+            );
+
+        const tempo=
+            Number(
+                pedido.tempoMinutos||
+                30
+            );
+
+        const card=
+            document.createElement(
+                "div"
+            );
+
+        card.className=
+            "solicitacao";
+
+        card.innerHTML=
+            `<div class="solicitacao-top"><div class="cliente"><div class="avatar">👤</div><div><div class="cliente-nome">${nome}</div><div class="cliente-sub">Solicitação de tradução</div></div></div><div class="badge">AGUARDANDO</div></div><div class="info"><div class="info-item"><span class="info-label">LOCAL</span><span class="info-value">📍 ${local}</span></div><div class="info-item"><span class="info-label">TEMPO</span><span class="info-value">⏱️ ${tempo} min</span></div></div><button type="button" class="btn-aceitar">Aceitar atendimento</button>`;
+
+        const botao=
+            card.querySelector(
+                ".btn-aceitar"
+            );
+
+        botao.addEventListener(
+            "click",
+            ()=>
+                aceitarAtendimento(
+                    pedido,
+                    botao
+                )
+        );
+
+        listaSolicitacoes.appendChild(
+            card
+        );
+    });
+}
+
+/* =========================================================
+   ACEITAR ATENDIMENTO
+   CORREÇÃO PRINCIPAL:
+   mostra a tela ANTES de reproduzir o vídeo local
+========================================================= */
+
+async function aceitarAtendimento(pedido,botao){
+    if(!tradutorAtual)return;
+
+    if(!tradutorOnline){
+        alert("Você está offline.");
+        return;
+    }
+
+    if(atendimentoAtualId){
+        alert("Você já está em um atendimento.");
+        return;
+    }
+
+    botao.disabled=true;
+    botao.textContent="Aceitando...";
+
+    try{
+        const ref=
+            doc(
+                db,
+                "solicitacoes",
+                pedido.id
+            );
+
+        const snap=
+            await getDoc(
+                ref
+            );
+
+        if(!snap.exists()){
+            alert("Esta solicitação não existe mais.");
+            return;
+        }
+
+        const dadosAtuais=
+            snap.data();
+
+        if(dadosAtuais.status!=="aguardando"){
+            alert("Outro tradutor já aceitou esta solicitação.");
+            return;
+        }
+
+        /*
+           Primeiro pede permissão e abre a câmera.
+           Ainda NÃO chama play() aqui.
+        */
+        localStream=
+            await navigator.mediaDevices.getUserMedia({
+                video:{
+                    facingMode:"user"
+                },
+                audio:true
+            });
+
+        atendimentoAtualId=
+            pedido.id;
+
+        encerrandoAtendimento=
+            false;
+
+        await updateDoc(
+            ref,
+            {
+                status:"aceito",
+                tradutorId:tradutorAtual.uid,
+                tradutorNome:tradutorAtual.nome,
+                tradutorEmail:tradutorAtual.email,
+                aceitoEm:serverTimestamp(),
+                atualizadoEm:serverTimestamp(),
+                webrtcEstado:"tradutor_pronto"
+            }
+        );
+
+        chamadaConectada=
+            false;
+
+        iniciarTimeoutConexao(
+            pedido.id
+        );
+
+        /*
+           AGORA a tela que contém <video> fica visível.
+        */
+        abrirAtendimento({
+            ...pedido,
+            ...dadosAtuais
+        });
+
+        /*
+           Espera o navegador desenhar a tela.
+           Isso ajuda especialmente no iPhone / LINE WebView.
+        */
+        await esperarTelaVisivel();
+
+        /*
+           Só agora liga a imagem local.
+        */
+        const localOk=
+            await garantirVideoLocal();
+
+        if(!localOk){
+            console.warn(
+                "Preview local não iniciou automaticamente."
+            );
+        }
+
+        await iniciarWebRTCTradutor(
+            pedido.id
+        );
+
+    }catch(erro){
+        console.error(
+            "Erro ao aceitar:",
+            erro
+        );
+
+        if(localStream){
+            localStream
+                .getTracks()
+                .forEach(
+                    track=>track.stop()
+                );
+
+            localStream=
+                null;
+        }
+
+        atendimentoAtualId=
+            null;
+
+        if(
+            erro.name===
+            "NotAllowedError"
+        ){
+            alert(
+                "É necessário permitir câmera e microfone para atender."
+            );
+        }else{
+            alert(
+                "Não foi possível iniciar o atendimento."
+            );
+        }
+
+        botao.disabled=
+            false;
+
+        botao.textContent=
+            "Aceitar atendimento";
+    }
+}
+
+function abrirAtendimento(pedido){
+    telaPedidos.style.display=
+        "none";
+
+    telaAtendimento.style.display=
+        "block";
+
+    document.getElementById(
+        "atendimentoCliente"
+    ).textContent=
+        pedido.clienteNome||
+        "Cliente";
+
+    document.getElementById(
+        "atendimentoLocal"
+    ).textContent=
+        pedido.local||
+        "Não informado";
+
+    document.getElementById(
+        "atendimentoTempo"
+    ).textContent=
+        (pedido.tempoMinutos||30)+
+        " minutos";
+
+    callStatus.textContent=
+        "⏳ Aguardando cliente";
+
+    callStatus.classList.remove(
+        "connected"
+    );
+
+    textoConexao.textContent=
+        "Preparando videochamada...";
+
+    videoPlaceholder.style.display=
+        "flex";
+
+    videoPlaceholderSub.textContent=
+        "A imagem aparecerá automaticamente.";
+}
+
+function voltarParaPedidos(){
+    telaAtendimento.style.display=
+        "none";
+
+    telaPedidos.style.display=
+        "block";
+}
+
+function atendimentoEncerradoRemotamente(status){
+    if(encerrandoAtendimento)return;
+
+    encerrandoAtendimento=
+        true;
+
+    const eraAtendimento=
+        atendimentoAtualId!==null;
+
+    atendimentoAtualId=
+        null;
+
+    encerrarWebRTC();
+    voltarParaPedidos();
+
+    if(eraAtendimento){
+        if(status==="timeout"){
+            alert(
+                "Atendimento cancelado automaticamente: o cliente não conectou em 2 minutos."
+            );
+        }else if(status==="cancelado"){
+            alert(
+                "O cliente cancelou o atendimento."
+            );
+        }else{
+            alert(
+                "O cliente encerrou o atendimento."
+            );
+        }
+    }
+
+    encerrandoAtendimento=
+        false;
+}
+
+/* =========================================================
+   WEBRTC TRADUTOR
+========================================================= */
+
+async function iniciarWebRTCTradutor(solicitacaoId){
+    const solicitacaoRef=
+        doc(
+            db,
+            "solicitacoes",
+            solicitacaoId
+        );
+
+    peerConnection=
+        new RTCPeerConnection(
+            rtcConfiguration
+        );
+
+    remoteStream=
+        new MediaStream();
+
+    videoRemoto.srcObject=
+        remoteStream;
+
+    /*
+       Garante novamente o preview local
+       antes de adicionar as tracks ao WebRTC.
+    */
+    await garantirVideoLocal();
+
+    localStream
+        .getTracks()
+        .forEach(
+            track=>{
+                peerConnection.addTrack(
+                    track,
+                    localStream
+                );
+            }
+        );
+
+    /*
+       CORREÇÃO:
+       trata tanto event.streams[0] quanto event.track.
+       Depois força play() quando a track chega.
+    */
+    peerConnection.ontrack=
+        async event=>{
+            const tracks=[];
+
+            if(
+                event.streams &&
+                event.streams[0]
+            ){
+                event.streams[0]
+                    .getTracks()
+                    .forEach(
+                        track=>
+                            tracks.push(
+                                track
+                            )
+                    );
+            }else if(
+                event.track
+            ){
+                tracks.push(
+                    event.track
+                );
+            }
+
+            tracks.forEach(track=>{
+                const jaExiste=
+                    remoteStream
+                        .getTracks()
+                        .some(
+                            atual=>
+                                atual.id===
+                                track.id
+                        );
+
+                if(!jaExiste){
+                    remoteStream.addTrack(
+                        track
+                    );
+                }
+            });
+
+            console.log(
+                "Tracks remotas:",
+                remoteStream
+                    .getTracks()
+                    .map(
+                        track=>({
+                            kind:track.kind,
+                            readyState:track.readyState,
+                            muted:track.muted,
+                            enabled:track.enabled
+                        })
+                    )
+            );
+
+            const remotoOk=
+                await garantirVideoRemoto();
+
+            if(!remotoOk){
+                console.warn(
+                    "Vídeo remoto recebido, mas o navegador não iniciou a reprodução automaticamente."
+                );
+            }
+        };
+
+    peerConnection.onconnectionstatechange=
+        async ()=>{
+            if(!peerConnection)return;
+
+            const estado=
+                peerConnection.connectionState;
+
+            console.log(
+                "WebRTC:",
+                estado
+            );
+
+            if(
+                estado==="connected" &&
+                !chamadaConectada
+            ){
+                chamadaConectada=
+                    true;
+
+                cancelarTimeoutConexao();
+
+                callStatus.textContent=
+                    "● Conectado";
+
+                callStatus.classList.add(
+                    "connected"
+                );
+
+                textoConexao.textContent=
+                    "Videochamada conectada.";
+
+                /*
+                   Quando o estado vira connected,
+                   tenta mais uma vez reproduzir os vídeos.
+                */
+                await garantirVideoLocal();
+                await garantirVideoRemoto();
+
+                try{
+                    await updateDoc(
+                        solicitacaoRef,
+                        {
+                            status:"conectado",
+                            webrtcEstado:"conectado",
+                            conectadoEm:serverTimestamp(),
+                            atualizadoEm:serverTimestamp()
+                        }
+                    );
+                }catch(erro){
+                    console.error(
+                        "Erro status conectado:",
+                        erro
+                    );
+                }
+            }
+
+            if(estado==="failed"){
+                callStatus.textContent=
+                    "⚠️ Falha na conexão";
+
+                callStatus.classList.remove(
+                    "connected"
+                );
+
+                textoConexao.textContent=
+                    "Não foi possível conectar a chamada.";
+            }
+
+            if(estado==="disconnected"){
+                callStatus.textContent=
+                    "⚠️ Reconectando...";
+
+                callStatus.classList.remove(
+                    "connected"
+                );
+
+                textoConexao.textContent=
+                    "Conexão interrompida. Tentando reconectar...";
+            }
+        };
+
+    peerConnection.onicecandidate=
+        async event=>{
+            if(!event.candidate)return;
+
+            try{
+                await addDoc(
+                    collection(
+                        db,
+                        "solicitacoes",
+                        solicitacaoId,
+                        "tradutorCandidates"
+                    ),
+                    event.candidate.toJSON()
+                );
+            }catch(erro){
+                console.error(
+                    "ICE tradutor:",
+                    erro
+                );
+            }
+        };
+
+    unsubscribeSolicitacao=
+        onSnapshot(
+            solicitacaoRef,
+            async snapshot=>{
+                if(!snapshot.exists()){
+                    atendimentoEncerradoRemotamente(
+                        "cancelado"
+                    );
+
+                    return;
+                }
+
+                const dados=
+                    snapshot.data();
+
+                console.log(
+                    "Status recebido:",
+                    dados.status
+                );
+
+                if(
+                    dados.status===
+                    "finalizado"
+                ){
+                    atendimentoEncerradoRemotamente(
+                        "finalizado"
+                    );
+
+                    return;
+                }
+
+                if(
+                    dados.status===
+                    "cancelado"
+                ){
+                    if(
+                        dados.motivoCancelamento===
+                        "timeout_sem_conexao"
+                    ){
+                        atendimentoEncerradoRemotamente(
+                            "timeout"
+                        );
+                    }else{
+                        atendimentoEncerradoRemotamente(
+                            "cancelado"
+                        );
+                    }
+
+                    return;
+                }
+
+                if(
+                    dados.webrtcOffer &&
+                    peerConnection &&
+                    !peerConnection.currentRemoteDescription
+                ){
+                    try{
+                        const offer=
+                            new RTCSessionDescription(
+                                dados.webrtcOffer
+                            );
+
+                        await peerConnection
+                            .setRemoteDescription(
+                                offer
+                            );
+
+                        const answer=
+                            await peerConnection
+                                .createAnswer();
+
+                        await peerConnection
+                            .setLocalDescription(
+                                answer
+                            );
+
+                        await updateDoc(
+                            solicitacaoRef,
+                            {
+                                webrtcAnswer:{
+                                    type:answer.type,
+                                    sdp:answer.sdp
+                                },
+                                webrtcEstado:"answer_criada",
+                                atualizadoEm:serverTimestamp()
+                            }
+                        );
+
+                        callStatus.textContent=
+                            "🔗 Conectando...";
+
+                        textoConexao.textContent=
+                            "Cliente encontrado. Estabelecendo conexão...";
+                    }catch(erro){
+                        console.error(
+                            "Erro OFFER:",
+                            erro
+                        );
+                    }
+                }
+            },
+            erro=>
+                console.error(
+                    "Erro ouvindo atendimento:",
+                    erro
+                )
+        );
+
+    const clienteCandidates=
+        collection(
+            db,
+            "solicitacoes",
+            solicitacaoId,
+            "clienteCandidates"
+        );
+
+    unsubscribeClienteCandidates=
+        onSnapshot(
+            clienteCandidates,
+            snapshot=>{
+                snapshot.docChanges()
+                    .forEach(
+                        async change=>{
+                            if(
+                                change.type!==
+                                "added"
+                            ){
+                                return;
+                            }
+
+                            try{
+                                if(!peerConnection)return;
+
+                                const candidate=
+                                    new RTCIceCandidate(
+                                        change.doc.data()
+                                    );
+
+                                await peerConnection
+                                    .addIceCandidate(
+                                        candidate
+                                    );
+                            }catch(erro){
+                                console.error(
+                                    "ICE cliente:",
+                                    erro
+                                );
+                            }
+                        }
+                    );
+            }
+        );
+}
+
+function alternarMicrofone(){
+    if(!localStream)return;
+
+    microfoneLigado=
+        !microfoneLigado;
+
+    localStream
+        .getAudioTracks()
+        .forEach(
+            track=>
+                track.enabled=
+                    microfoneLigado
+        );
+
+    const botao=
+        document.getElementById(
+            "btnMicrofone"
+        );
+
+    if(microfoneLigado){
+        botao.textContent=
+            "🎤 Microfone";
+
+        botao.classList.remove(
+            "off"
+        );
+    }else{
+        botao.textContent=
+            "🔇 Sem áudio";
+
+        botao.classList.add(
+            "off"
+        );
+    }
+}
+
+function alternarCamera(){
+    if(!localStream)return;
+
+    cameraLigada=
+        !cameraLigada;
+
+    localStream
+        .getVideoTracks()
+        .forEach(
+            track=>
+                track.enabled=
+                    cameraLigada
+        );
+
+    const botao=
+        document.getElementById(
+            "btnCamera"
+        );
+
+    if(cameraLigada){
+        botao.textContent=
+            "📹 Câmera";
+
+        botao.classList.remove(
+            "off"
+        );
+
+        garantirVideoLocal();
+    }else{
+        botao.textContent=
+            "🚫 Câmera desligada";
+
+        botao.classList.add(
+            "off"
+        );
+    }
+}
+
+function encerrarWebRTC(){
+    cancelarTimeoutConexao();
+
+    const unsubscribeSolicitacaoAtual=
+        unsubscribeSolicitacao;
+
+    unsubscribeSolicitacao=
+        null;
+
+    if(unsubscribeSolicitacaoAtual){
+        try{
+            unsubscribeSolicitacaoAtual();
+        }catch{}
+    }
+
+    const unsubscribeCandidatesAtual=
+        unsubscribeClienteCandidates;
+
+    unsubscribeClienteCandidates=
+        null;
+
+    if(unsubscribeCandidatesAtual){
+        try{
+            unsubscribeCandidatesAtual();
+        }catch{}
+    }
+
+    if(peerConnection){
+        try{
+            peerConnection.ontrack=
+                null;
+
+            peerConnection.onicecandidate=
+                null;
+
+            peerConnection.onconnectionstatechange=
+                null;
+
+            peerConnection.close();
+        }catch{}
+
+        peerConnection=
+            null;
+    }
+
+    if(localStream){
+        localStream
+            .getTracks()
+            .forEach(
+                track=>{
+                    try{
+                        track.stop();
+                    }catch{}
+                }
+            );
+
+        localStream=
+            null;
+    }
+
+    if(remoteStream){
+        remoteStream
+            .getTracks()
+            .forEach(
+                track=>{
+                    try{
+                        track.stop();
+                    }catch{}
+                }
+            );
+
+        remoteStream=
+            null;
+    }
+
+    videoLocal.srcObject=
+        null;
+
+    videoRemoto.srcObject=
+        null;
+
+    videoPlaceholder.style.display=
+        "flex";
+
+    videoPlaceholderSub.textContent=
+        "A imagem aparecerá automaticamente.";
+
+    callStatus.textContent=
+        "⏳ Aguardando cliente";
+
+    callStatus.classList.remove(
+        "connected"
+    );
+
+    textoConexao.textContent=
+        "Preparando videochamada...";
+
+    chamadaConectada=
+        false;
+
+    microfoneLigado=
+        true;
+
+    cameraLigada=
+        true;
+
+    const btnMic=
+        document.getElementById(
+            "btnMicrofone"
+        );
+
+    const btnCam=
+        document.getElementById(
+            "btnCamera"
+        );
+
+    btnMic.textContent=
+        "🎤 Microfone";
+
+    btnMic.classList.remove(
+        "off"
+    );
+
+    btnCam.textContent=
+        "📹 Câmera";
+
+    btnCam.classList.remove(
+        "off"
+    );
+}
+
+async function finalizarAtendimento(){
+    if(
+        !atendimentoAtualId ||
+        encerrandoAtendimento
+    ){
+        return;
+    }
+
+    const confirmar=
+        confirm(
+            "Deseja encerrar este atendimento?"
+        );
+
+    if(!confirmar)return;
+
+    const botao=
+        document.getElementById(
+            "btnFinalizar"
+        );
+
+    botao.disabled=
+        true;
+
+    botao.textContent=
+        "Encerrando...";
+
+    encerrandoAtendimento=
+        true;
+
+    try{
+        const idFinalizado=
+            atendimentoAtualId;
+
+        const ref=
+            doc(
+                db,
+                "solicitacoes",
+                idFinalizado
+            );
+
+        await updateDoc(
+            ref,
+            {
+                status:"finalizado",
+                webrtcEstado:"encerrado",
+                encerradoPor:"tradutor",
+                finalizadoEm:serverTimestamp(),
+                atualizadoEm:serverTimestamp()
+            }
+        );
+
+        atendimentoAtualId=
+            null;
+
+        encerrarWebRTC();
+        voltarParaPedidos();
+
+        alert(
+            "Atendimento finalizado."
+        );
+    }catch(erro){
+        console.error(
+            "Erro finalizando:",
+            erro
+        );
+
+        alert(
+            "Não foi possível finalizar."
+        );
+    }finally{
+        encerrandoAtendimento=
+            false;
+
+        botao.disabled=
+            false;
+
+        botao.textContent=
+            "Encerrar atendimento";
+    }
+}
+
+document.getElementById("btnFinalizar").addEventListener("click",finalizarAtendimento);
+document.getElementById("btnMicrofone").addEventListener("click",alternarMicrofone);
+document.getElementById("btnCamera").addEventListener("click",alternarCamera);
+window.addEventListener("beforeunload",()=>encerrarWebRTC());
 </script>
 </body>
 </html>
