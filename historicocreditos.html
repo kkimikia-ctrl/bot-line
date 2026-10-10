@@ -31,7 +31,7 @@ button{font-family:inherit;cursor:pointer}
 .info-transacao{min-width:0}.info-transacao h4{margin:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.info-transacao p{margin:4px 0 0;color:#94a3b8;font-size:11px}.valor-transacao{font-size:14px;font-weight:900;white-space:nowrap}.valor-entrada{color:#059669}.valor-saida{color:#dc2626}
 .tradutor-detalhes{margin-top:12px;padding:12px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0}.tradutor-detalhes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .tradutor-detalhe{background:#fff;border:1px solid #e2e8f0;border-radius:11px;padding:9px}.tradutor-detalhe-label{display:block;color:#94a3b8;font-size:9px;font-weight:800}.tradutor-detalhe-valor{display:block;margin-top:3px;color:#334155;font-size:11px;font-weight:900}
-.tradutor-renovado{margin-top:9px;padding:9px 10px;border-radius:11px;background:#ecfdf5;color:#047857;font-size:10px;font-weight:900}.tradutor-status{margin-top:9px;padding:9px 10px;border-radius:11px;background:#eff6ff;color:#1d4ed8;font-size:10px;font-weight:800;line-height:1.4}
+.tradutor-renovado{margin-top:9px;padding:9px 10px;border-radius:11px;background:#ecfdf5;color:#047857;font-size:10px;font-weight:900}.tradutor-status{margin-top:9px;padding:9px 10px;border-radius:11px;background:#eff6ff;color:#1d4ed8;font-size:10px;font-weight:800;line-height:1.4}.bloco-badge{display:inline-block;margin-top:6px;padding:5px 8px;border-radius:999px;background:#eef2ff;color:#4338ca;font-size:9px;font-weight:900}.renovacao-card{border-color:#a7f3d0;background:linear-gradient(180deg,#ffffff,#f7fffb)}.renovacao-card .historico-icon.tradutor{background:#ecfdf5}
 .sem-historico{text-align:center;padding:32px 20px;color:#64748b;border-radius:18px}.sem-icon{font-size:35px;margin-bottom:8px}.sem-title{color:#334155;font-size:14px;font-weight:900}.sem-text{margin-top:5px;font-size:12px;line-height:1.4}
 .modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.6);padding:18px;align-items:center;justify-content:center}.modal-overlay.show{display:flex}.modal{width:100%;max-width:430px;background:#fff;border-radius:23px;padding:22px}.modal-icon{width:62px;height:62px;margin:0 auto 12px;border-radius:20px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:30px}.modal-title{text-align:center;font-size:19px;font-weight:900}.modal-text,.modal-warning{text-align:center;font-size:13px;line-height:1.5}.modal-text{margin-top:8px;color:#64748b}.modal-warning{margin-top:15px;background:#fff7ed;color:#9a3412;border-radius:13px;padding:12px;font-size:11px}.modal-buttons{margin-top:17px}.modal-btn{width:100%;border:0;border-radius:13px;padding:13px;font-size:13px;font-weight:900;background:#f1f5f9;color:#475569}
 @media(max-width:380px){.presentes{grid-template-columns:repeat(3,1fr)}.tradutor-detalhes-grid{grid-template-columns:1fr}}
@@ -155,6 +155,12 @@ if(v==="cobranca_nao_confirmada")return"Cobrança não confirmada";
 return v?v:"";
 }
 
+function ehRenovacaoTradutor(t){
+const desc=String(t.descricao||"").toLowerCase();
+const bloco=Number(t.bloco||0);
+return desc.includes("renovação")||desc.includes("renovacao")||bloco>1;
+}
+
 function criarDetalhesTradutor(t,s){
 if(!s)return"";
 const blocos=Math.max(1,Number(s.blocosContratados||t.bloco||1));
@@ -195,14 +201,25 @@ const tipoSalvo=String(t.tipo||"").toLowerCase();
 if(["uso","debito","débito","presente","tradutor"].includes(tipoSalvo)&&valor>0)valor=-valor;
 const tipo=obterTipoTransacao(t,valor);
 const icone=tipo==="entrada"?"💰":tipo==="tradutor"?"🎥":tipo==="presente"?"🎁":"🪙";
-const descricao=escaparHTML(t.descricao||(valor>=0?"Créditos adicionados":"Uso de pontos"));
+const renovacaoTradutor=(tipo==="tradutor"&&ehRenovacaoTradutor(t));
+let descricaoBase=t.descricao||(valor>=0?"Créditos adicionados":"Uso de pontos");
+if(renovacaoTradutor)descricaoBase="Tradutor ao vivo - renovação +30 min";
+const descricao=escaparHTML(descricaoBase);
 const data=escaparHTML(formatarData(t.data||t.criadoEm));
 const entrada=valor>=0;
-let detalhes="";
-if(tipo==="tradutor"&&t.solicitacaoId)detalhes=criarDetalhesTradutor(t,cacheSolicitacoes.get(t.solicitacaoId)||null);
-
-const card=document.createElement("div");card.className="historico-card";
-card.innerHTML=`<div class="historico-main"><div class="historico-left"><div class="historico-icon ${tipo}">${icone}</div><div class="info-transacao"><h4>${descricao}</h4><p>${data}</p></div></div><div class="valor-transacao ${entrada?"valor-entrada":"valor-saida"}">${entrada?"+":"−"}${formatarPontos(Math.abs(valor))}</div></div>${detalhes}`;
+let detalhes="",blocoHtml="";
+if(tipo==="tradutor"&&t.solicitacaoId){
+const solicitacao=cacheSolicitacoes.get(t.solicitacaoId)||null;
+detalhes=criarDetalhesTradutor(t,solicitacao);
+if(renovacaoTradutor){
+const blocoAtual=Math.max(2,Number(t.bloco||2));
+const totalBlocos=Math.max(blocoAtual,Number(solicitacao?.blocosContratados||blocoAtual));
+blocoHtml=`<span class="bloco-badge">Bloco ${blocoAtual} de ${totalBlocos}</span>`;
+}
+}
+const card=document.createElement("div");
+card.className="historico-card"+(renovacaoTradutor?" renovacao-card":"");
+card.innerHTML=`<div class="historico-main"><div class="historico-left"><div class="historico-icon ${tipo}">${icone}</div><div class="info-transacao"><h4>${descricao}</h4><p>${data}</p>${blocoHtml}</div></div><div class="valor-transacao ${entrada?"valor-entrada":"valor-saida"}">${entrada?"+":"−"}${formatarPontos(Math.abs(valor))}</div></div>${detalhes}`;
 listaHistorico.appendChild(card);
 }
 }catch(e){console.error(e);listaHistorico.innerHTML='<div class="sem-historico"><div class="sem-icon">⚠️</div><div class="sem-title">Erro ao carregar histórico</div><div class="sem-text">Tente novamente em alguns instantes.</div></div>'}
