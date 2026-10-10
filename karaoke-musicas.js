@@ -83,25 +83,25 @@ const listaKaraoke = [
     {
         categoria: "Rock Nacional",
         titulo: "Pais e Filhos - Legião Urbana",
-        link: ""
+        link: "https://www.youtube.com/watch?v=HycjqQvu7pM"
     },
 
     {
         categoria: "Rock Nacional",
         titulo: "Meu Erro - Os Paralamas do Sucesso",
-        link: ""
+        link: "https://youtu.be/Ys-7sxxkSgw"
     },
 
     {
         categoria: "Rock Nacional",
         titulo: "Primeiros Erros - Capital Inicial",
-        link: ""
+        link: "https://youtu.be/J4iyXA2joyc"
     },
 
     {
         categoria: "Rock Nacional",
         titulo: "Pro Dia Nascer Feliz - Barão Vermelho",
-        link: ""
+        link: "https://youtu.be/lp52n6DJRgQ"
     },
 
     {
@@ -113,7 +113,7 @@ const listaKaraoke = [
     {
         categoria: "Rock Nacional",
         titulo: "À Sua Maneira - Capital Inicial",
-        link: ""
+        link: "https://www.youtube.com/watch?v=mgrKU6PwRcU"
     },
 
     {
@@ -128,7 +128,7 @@ const listaKaraoke = [
         link: ""
     },
 
-        // =========================
+    // =========================
     // MPB
     // =========================
 
@@ -199,7 +199,7 @@ const listaKaraoke = [
     {
         categoria: "Pagode & Samba",
         titulo: "Cheia de Manias - Raça Negra",
-        link: ""
+        link: "https://www.youtube.com/watch?v=qbCUViw6-5I"
     },
 
     {
@@ -211,19 +211,19 @@ const listaKaraoke = [
     {
         categoria: "Pagode & Samba",
         titulo: "Essa Tal Liberdade - Só Pra Contrariar",
-        link: ""
+        link: "https://youtu.be/tf84CaueT5s"
     },
 
     {
         categoria: "Pagode & Samba",
         titulo: "Tá Vendo Aquela Lua - Exaltasamba",
-        link: ""
+        link: "https://www.youtube.com/watch?v=Jb8LqCjeVBw"
     },
 
     {
         categoria: "Pagode & Samba",
         titulo: "Deixa Acontecer - Grupo Revelação",
-        link: ""
+        link: "https://www.youtube.com/watch?v=z2vtdtoF5qI"
     },
 
     {
@@ -235,7 +235,7 @@ const listaKaraoke = [
     {
         categoria: "Pagode & Samba",
         titulo: "Telegrama - Exaltasamba",
-        link: ""
+        link: "https://www.youtube.com/watch?v=pAEHDFAJBCk"
     },
 
     {
@@ -253,10 +253,10 @@ const listaKaraoke = [
     {
         categoria: "Pagode & Samba",
         titulo: "Marrom Bombom - Os Morenos",
-        link: ""
+        link: "https://youtu.be/94fXFqmsi2c"
     },
 
-        // =========================
+    // =========================
     // POP NACIONAL
     // =========================
 
@@ -384,7 +384,7 @@ const listaKaraoke = [
         link: ""
     },
 
-        // =========================
+    // =========================
     // ROCK INTERNACIONAL
     // =========================
 
@@ -512,7 +512,7 @@ const listaKaraoke = [
         link: ""
     },
 
-        // =========================
+    // =========================
     // FESTA & DANCE
     // =========================
 
