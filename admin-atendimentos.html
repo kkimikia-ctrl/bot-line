@@ -85,10 +85,23 @@ select,input[type="month"]{width:100%;border:1px solid #cbd5e1;border-radius:13p
 .aviso-travado{margin-bottom:12px;background:#fef2f2;color:#b91c1c;border-radius:12px;padding:10px;font-size:12px;font-weight:800}
 .btn-cancelar-travado{width:100%;margin-bottom:14px;border:none;border-radius:13px;padding:13px;background:#dc2626;color:white;font-size:13px;font-weight:900}
 .btn-cancelar-travado:disabled{opacity:.55}
+
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .info{background:#f8fafc;border-radius:12px;padding:10px}
 .rotulo{font-size:10px;color:#64748b;font-weight:800}
 .valor{margin-top:4px;font-size:13px;font-weight:800;word-break:break-word}
+
+.financeiro{margin-top:12px;padding:12px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0}
+.financeiro-titulo{font-size:11px;font-weight:900;color:#475569;margin-bottom:9px}
+.financeiro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.financeiro-item{background:white;border:1px solid #e2e8f0;border-radius:11px;padding:9px}
+.financeiro-label{display:block;font-size:9px;color:#94a3b8;font-weight:800}
+.financeiro-valor{display:block;margin-top:3px;font-size:12px;font-weight:900;color:#334155}
+.renovacao-sim{color:#047857}
+.renovacao-nao{color:#64748b}
+.encerramento-box{margin-top:9px;padding:9px 10px;border-radius:11px;background:#eff6ff;color:#1d4ed8;font-size:10px;font-weight:800;line-height:1.45}
+.cancelamento-box{margin-top:9px;padding:9px 10px;border-radius:11px;background:#fef2f2;color:#b91c1c;font-size:10px;font-weight:800;line-height:1.45}
+
 .separador{height:1px;background:#e2e8f0;margin:14px 0 12px}
 .timeline{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .timeline-item{background:#f8fafc;border-radius:11px;padding:9px}
@@ -373,6 +386,54 @@ function formatarDataHora(timestamp) {
     const data = timestampParaData(timestamp);
     if (!data) return "-";
     return formatarDataObjeto(data);
+}
+
+/* =========================================================
+   FORMATAR PONTOS / ENCERRAMENTO
+========================================================= */
+
+function formatarPontos(valor) {
+    return new Intl.NumberFormat("pt-BR").format(
+        Number(valor) || 0
+    ) + " pts";
+}
+
+function textoEncerradoPor(valor) {
+    const v = String(valor || "").toLowerCase();
+
+    if (v === "cliente") return "Cliente";
+    if (v === "tradutor") return "Tradutor";
+    if (v === "tempo_esgotado") return "Tempo esgotado";
+    if (v === "admin") return "Administrador";
+    if (v === "sistema") return "Sistema";
+
+    return "Não informado";
+}
+
+function textoMotivoCancelamento(valor) {
+    const v = String(valor || "").toLowerCase();
+
+    if (v === "cliente_cancelou_no_teste") {
+        return "Cliente cancelou durante o teste grátis";
+    }
+
+    if (v === "cliente_cancelou") {
+        return "Cliente cancelou";
+    }
+
+    if (v === "timeout_sem_conexao") {
+        return "Não conectou dentro do tempo limite";
+    }
+
+    if (v === "cobranca_nao_confirmada") {
+        return "Cobrança não confirmada";
+    }
+
+    if (v === "atendimento_travado") {
+        return "Atendimento travado cancelado pelo administrador";
+    }
+
+    return valor || "Não informado";
 }
 
 /* =========================================================
@@ -944,12 +1005,6 @@ async function cancelarAtendimentoTravado(item, botao) {
                 item.id
             );
 
-        /*
-           Confere novamente o documento antes de alterar.
-           Isso evita cancelar um atendimento que mudou
-           de status enquanto a tela estava aberta.
-        */
-
         const snap =
             await getDoc(ref);
 
@@ -1025,10 +1080,8 @@ async function cancelarAtendimentoTravado(item, botao) {
     }
 }
 
-
 /* =========================================================
    FUNÇÃO GLOBAL DO BOTÃO
-   Inline onclick para funcionar de forma confiável no iPhone.
 ========================================================= */
 
 window.cancelarTravadoPorBotao =
@@ -1048,7 +1101,6 @@ window.cancelarTravadoPorBotao =
                 );
 
                 return;
-
             }
 
             const item =
@@ -1064,7 +1116,6 @@ window.cancelarTravadoPorBotao =
                 );
 
                 return;
-
             }
 
             await cancelarAtendimentoTravado(
@@ -1083,11 +1134,8 @@ window.cancelarTravadoPorBotao =
             alert(
                 "O botão foi acionado, mas ocorreu um erro. Tente atualizar a página."
             );
-
         }
-
     };
-
 
 /* =========================================================
    RENDERIZAR
@@ -1129,7 +1177,7 @@ function renderizar(dadosPeriodo) {
                 item.local ||
                 "Não informado";
 
-            const tempo =
+            const tempoSolicitado =
                 Number(
                     item.tempoMinutos ||
                     item.tempo ||
@@ -1162,6 +1210,58 @@ function renderizar(dadosPeriodo) {
                 formatarDuracao(
                     calcularDuracaoSegundos(item)
                 );
+
+            const blocos =
+                item.cobrancaRealizada === true
+                    ? Math.max(
+                        1,
+                        Number(
+                            item.blocosContratados ||
+                            1
+                        )
+                    )
+                    : Number(
+                        item.blocosContratados ||
+                        0
+                    );
+
+            const minutosContratados =
+                Number(
+                    item.tempoContratadoMinutos ||
+                    (
+                        blocos > 0
+                            ? blocos * 30
+                            : tempoSolicitado
+                    )
+                );
+
+            const totalCobrado =
+                Number(
+                    item.totalPontosCobrados ||
+                    item.pontosCobrados ||
+                    (
+                        item.cobrancaRealizada === true
+                            ? blocos * 1500
+                            : 0
+                    )
+                );
+
+            const renovou =
+                blocos > 1;
+
+            const encerradoPor =
+                textoEncerradoPor(
+                    item.encerradoPor ||
+                    item.canceladoPor
+                );
+
+            const motivoCancelamento =
+                textoMotivoCancelamento(
+                    item.motivoCancelamento
+                );
+
+            const statusLower =
+                String(status || "").toLowerCase();
 
             card.innerHTML = `
                 <div class="atendimento-topo">
@@ -1210,7 +1310,7 @@ function renderizar(dadosPeriodo) {
                     <div class="info">
                         <div class="rotulo">TEMPO SOLICITADO</div>
                         <div class="valor">
-                            ⏱️ ${tempo} min
+                            ⏱️ ${tempoSolicitado} min
                         </div>
                     </div>
 
@@ -1227,6 +1327,67 @@ function renderizar(dadosPeriodo) {
                             ${escaparHTML(duracao)}
                         </div>
                     </div>
+                </div>
+
+                <div class="financeiro">
+                    <div class="financeiro-titulo">
+                        COBRANÇA E RENOVAÇÃO
+                    </div>
+
+                    <div class="financeiro-grid">
+                        <div class="financeiro-item">
+                            <span class="financeiro-label">BLOCOS</span>
+                            <span class="financeiro-valor">
+                                ${blocos} ${blocos === 1 ? "bloco" : "blocos"}
+                            </span>
+                        </div>
+
+                        <div class="financeiro-item">
+                            <span class="financeiro-label">TEMPO CONTRATADO</span>
+                            <span class="financeiro-valor">
+                                ${minutosContratados} min
+                            </span>
+                        </div>
+
+                        <div class="financeiro-item">
+                            <span class="financeiro-label">TOTAL COBRADO</span>
+                            <span class="financeiro-valor">
+                                ${formatarPontos(totalCobrado)}
+                            </span>
+                        </div>
+
+                        <div class="financeiro-item">
+                            <span class="financeiro-label">RENOVAÇÃO</span>
+                            <span class="financeiro-valor ${renovou ? "renovacao-sim" : "renovacao-nao"}">
+                                ${renovou ? "Sim" : "Não"}
+                            </span>
+                        </div>
+                    </div>
+
+                    ${
+                        statusLower === "finalizado"
+                        ? `
+                        <div class="encerramento-box">
+                            Finalizado · Encerrado por:
+                            ${escaparHTML(encerradoPor)}
+                        </div>
+                        `
+                        : ""
+                    }
+
+                    ${
+                        statusLower === "cancelado"
+                        ? `
+                        <div class="cancelamento-box">
+                            Cancelado · Por:
+                            ${escaparHTML(encerradoPor)}
+                            <br>
+                            Motivo:
+                            ${escaparHTML(motivoCancelamento)}
+                        </div>
+                        `
+                        : ""
+                    }
                 </div>
 
                 <div class="separador"></div>
@@ -1260,10 +1421,46 @@ function renderizar(dadosPeriodo) {
                     </div>
 
                     <div class="timeline-item">
+                        <div class="timeline-label">COBRADO</div>
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(item.cobradoEm)
+                            )}
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-label">ÚLTIMA RENOVAÇÃO</div>
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(item.ultimaRenovacaoEm)
+                            )}
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
                         <div class="timeline-label">FINALIZADO</div>
                         <div class="timeline-value">
                             ${escaparHTML(
                                 formatarDataHora(item.finalizadoEm)
+                            )}
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-label">CANCELADO</div>
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(item.canceladoEm)
+                            )}
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-label">ATUALIZADO</div>
+                        <div class="timeline-value">
+                            ${escaparHTML(
+                                formatarDataHora(item.atualizadoEm)
                             )}
                         </div>
                     </div>
