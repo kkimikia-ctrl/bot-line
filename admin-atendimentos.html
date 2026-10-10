@@ -398,14 +398,33 @@ function formatarPontos(valor) {
     ) + " pts";
 }
 
-function textoEncerradoPor(valor) {
+function textoEncerradoPor(valor, motivoCancelamento = "") {
     const v = String(valor || "").toLowerCase();
+    const motivo = String(motivoCancelamento || "").toLowerCase();
 
     if (v === "cliente") return "Cliente";
     if (v === "tradutor") return "Tradutor";
     if (v === "tempo_esgotado") return "Tempo esgotado";
     if (v === "admin") return "Administrador";
     if (v === "sistema") return "Sistema";
+
+    if (
+        motivo === "cliente_cancelou" ||
+        motivo === "cliente_cancelou_no_teste"
+    ) {
+        return "Cliente";
+    }
+
+    if (motivo === "atendimento_travado") {
+        return "Administrador";
+    }
+
+    if (
+        motivo === "timeout_sem_conexao" ||
+        motivo === "cobranca_nao_confirmada"
+    ) {
+        return "Sistema";
+    }
 
     return "Não informado";
 }
@@ -1252,7 +1271,8 @@ function renderizar(dadosPeriodo) {
             const encerradoPor =
                 textoEncerradoPor(
                     item.encerradoPor ||
-                    item.canceladoPor
+                    item.canceladoPor,
+                    item.motivoCancelamento
                 );
 
             const motivoCancelamento =
