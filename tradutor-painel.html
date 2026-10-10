@@ -37,6 +37,13 @@ button,input{font-family:inherit}button{cursor:pointer}
 .info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.info-item{background:#f8fafc;border-radius:13px;padding:11px}.info-label{display:block;font-size:10px;color:#94a3b8;margin-bottom:4px}.info-value{display:block;font-size:13px;font-weight:800}.btn-aceitar{width:100%;margin-top:14px;padding:14px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;font-size:14px;font-weight:900}.btn-aceitar:disabled{opacity:.55}
 .vazio{background:white;border:1px solid #e2e8f0;border-radius:21px;padding:30px 20px;text-align:center;box-shadow:0 8px 28px rgba(15,23,42,.05)}.vazio-icon{font-size:42px;margin-bottom:10px}.vazio-title{font-size:16px;font-weight:900}.vazio-sub{color:#64748b;font-size:12px;margin-top:6px;line-height:1.45}
 #listaHistorico{display:flex;flex-direction:column;gap:10px}.historico-card{background:white;border:1px solid #e2e8f0;border-radius:18px;padding:15px;box-shadow:0 7px 22px rgba(15,23,42,.05)}.historico-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.historico-cliente{display:flex;align-items:center;gap:10px}.historico-avatar{width:40px;height:40px;border-radius:13px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:19px}.historico-nome{font-size:14px;font-weight:900}.historico-data{margin-top:3px;color:#94a3b8;font-size:10px}.historico-badge{background:#ecfdf5;color:#047857;border-radius:20px;padding:6px 9px;font-size:9px;font-weight:900}.historico-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.historico-info-box{background:#f8fafc;border-radius:12px;padding:10px}.historico-info-label{display:block;color:#94a3b8;font-size:9px;margin-bottom:3px}.historico-info-value{display:block;font-size:12px;font-weight:800}
+.historico-extra{margin-top:10px;padding:11px;border-radius:13px;background:#f8fafc;border:1px solid #e2e8f0}
+.historico-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.historico-extra-item{background:#fff;border:1px solid #e2e8f0;border-radius:11px;padding:9px}
+.historico-extra-label{display:block;color:#94a3b8;font-size:9px;font-weight:800}
+.historico-extra-valor{display:block;margin-top:3px;font-size:11px;font-weight:900;color:#334155}
+.historico-renovado{margin-top:9px;padding:9px 10px;border-radius:11px;background:#ecfdf5;color:#047857;font-size:10px;font-weight:900}
+.historico-encerrado{margin-top:9px;padding:9px 10px;border-radius:11px;background:#eff6ff;color:#1d4ed8;font-size:10px;font-weight:800;line-height:1.4}
 #telaAtendimento{display:none}.atendimento-card{background:white;border:1px solid #e2e8f0;border-radius:22px;padding:18px;box-shadow:0 10px 35px rgba(15,23,42,.08)}.connected-icon{width:70px;height:70px;margin:2px auto 12px;display:flex;align-items:center;justify-content:center;border-radius:23px;background:#ecfdf5;font-size:31px}.connected-title{text-align:center;font-size:20px;font-weight:900}.connected-sub{text-align:center;color:#64748b;margin-top:6px;font-size:13px}.call-status{width:fit-content;margin:14px auto;padding:8px 13px;border-radius:30px;background:#fff7ed;color:#c2410c;font-size:12px;font-weight:900}.call-status.connected{background:#ecfdf5;color:#047857}
 .video-area{position:relative;width:100%;margin-top:15px;background:#0f172a;border-radius:20px;overflow:hidden;min-height:390px}#videoRemoto{display:block;width:100%;min-height:390px;max-height:560px;object-fit:cover;background:#0f172a}.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;text-align:center;padding:25px;pointer-events:none}.video-placeholder-icon{font-size:42px}.video-placeholder-title{margin-top:10px;font-size:15px;font-weight:900}.video-placeholder-sub{margin-top:5px;color:#cbd5e1;font-size:11px}#videoLocal{position:absolute;width:105px;height:145px;right:12px;bottom:12px;border-radius:15px;border:3px solid white;object-fit:cover;background:#111827;transform:scaleX(-1);z-index:5;box-shadow:0 5px 18px rgba(0,0,0,.35)}
 .call-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.control-btn{border:0;border-radius:14px;padding:13px 8px;font-size:13px;font-weight:800;background:#f1f5f9;color:#334155}.control-btn.off{background:#fee2e2;color:#b91c1c}.dados-atendimento{margin-top:15px;background:#f8fafc;border-radius:16px;padding:14px}.dado{display:flex;justify-content:space-between;gap:15px;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:13px}.dado:last-child{border-bottom:0}.dado span:first-child{color:#64748b}.dado span:last-child{font-weight:800;text-align:right}.btn-finalizar{width:100%;margin-top:17px;padding:14px;border:0;border-radius:14px;background:#fee2e2;color:#b91c1c;font-size:14px;font-weight:900}
@@ -578,6 +585,25 @@ function escaparHTML(valor){
         .replaceAll("'","&#039;");
 }
 
+
+function formatarPontos(valor){
+    return new Intl.NumberFormat("pt-BR").format(
+        Number(valor)||0
+    )+" pts";
+}
+
+function textoEncerradoPorHistorico(valor){
+    const v=String(valor||"").toLowerCase();
+
+    if(v==="cliente")return "Cliente";
+    if(v==="tradutor")return "Tradutor";
+    if(v==="tempo_esgotado")return "Tempo esgotado";
+    if(v==="admin")return "Administrador";
+    if(v==="sistema")return "Sistema";
+
+    return "Não informado";
+}
+
 function mostrarHistorico(atendimentos){
     if(atendimentos.length===0){
         listaHistorico.innerHTML=
@@ -619,6 +645,51 @@ function mostrarHistorico(atendimentos){
                     )
                 );
 
+            const blocos=
+                atendimento.cobrancaRealizada===true
+                    ? Math.max(
+                        1,
+                        Number(
+                            atendimento.blocosContratados||
+                            1
+                        )
+                    )
+                    : Number(
+                        atendimento.blocosContratados||
+                        0
+                    );
+
+            const minutosContratados=
+                Number(
+                    atendimento.tempoContratadoMinutos||
+                    (
+                        blocos>0
+                            ? blocos*30
+                            : 0
+                    )
+                );
+
+            const totalCobrado=
+                Number(
+                    atendimento.totalPontosCobrados||
+                    atendimento.pontosCobrados||
+                    (
+                        atendimento.cobrancaRealizada===true
+                            ? blocos*1500
+                            : 0
+                    )
+                );
+
+            const renovou=
+                blocos>1;
+
+            const encerradoPor=
+                escaparHTML(
+                    textoEncerradoPorHistorico(
+                        atendimento.encerradoPor
+                    )
+                );
+
             const card=
                 document.createElement(
                     "div"
@@ -628,7 +699,72 @@ function mostrarHistorico(atendimentos){
                 "historico-card";
 
             card.innerHTML=
-                `<div class="historico-top"><div class="historico-cliente"><div class="historico-avatar">👤</div><div><div class="historico-nome">${nome}</div><div class="historico-data">${data}</div></div></div><div class="historico-badge">CONCLUÍDO</div></div><div class="historico-info"><div class="historico-info-box"><span class="historico-info-label">LOCAL</span><span class="historico-info-value">📍 ${local}</span></div><div class="historico-info-box"><span class="historico-info-label">DURAÇÃO</span><span class="historico-info-value">⏱️ ${duracao}</span></div></div>`;
+                `
+                <div class="historico-top">
+                    <div class="historico-cliente">
+                        <div class="historico-avatar">👤</div>
+                        <div>
+                            <div class="historico-nome">${nome}</div>
+                            <div class="historico-data">${data}</div>
+                        </div>
+                    </div>
+                    <div class="historico-badge">CONCLUÍDO</div>
+                </div>
+
+                <div class="historico-info">
+                    <div class="historico-info-box">
+                        <span class="historico-info-label">LOCAL</span>
+                        <span class="historico-info-value">📍 ${local}</span>
+                    </div>
+
+                    <div class="historico-info-box">
+                        <span class="historico-info-label">DURAÇÃO REAL</span>
+                        <span class="historico-info-value">⏱️ ${duracao}</span>
+                    </div>
+                </div>
+
+                <div class="historico-extra">
+                    <div class="historico-extra-grid">
+                        <div class="historico-extra-item">
+                            <span class="historico-extra-label">BLOCOS</span>
+                            <span class="historico-extra-valor">
+                                ${blocos} ${blocos===1?"bloco":"blocos"}
+                            </span>
+                        </div>
+
+                        <div class="historico-extra-item">
+                            <span class="historico-extra-label">TEMPO CONTRATADO</span>
+                            <span class="historico-extra-valor">
+                                ${minutosContratados>0?minutosContratados+" min":"-"}
+                            </span>
+                        </div>
+
+                        <div class="historico-extra-item">
+                            <span class="historico-extra-label">TOTAL COBRADO</span>
+                            <span class="historico-extra-valor">
+                                ${formatarPontos(totalCobrado)}
+                            </span>
+                        </div>
+
+                        <div class="historico-extra-item">
+                            <span class="historico-extra-label">RENOVAÇÃO</span>
+                            <span class="historico-extra-valor">
+                                ${renovou?"Sim":"Não"}
+                            </span>
+                        </div>
+                    </div>
+
+                    ${
+                        renovou
+                            ? `<div class="historico-renovado">✅ Atendimento renovado ${blocos-1} ${blocos-1===1?"vez":"vezes"}</div>`
+                            : ""
+                    }
+
+                    <div class="historico-encerrado">
+                        Encerrado por: ${encerradoPor}
+                    </div>
+                </div>
+                `;
 
             listaHistorico.appendChild(
                 card
